@@ -26,7 +26,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
@@ -37,7 +36,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * extracted to this method.
 	 *
 	 * @return array
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function createCacheExpectations($mockCache) {
 		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(TRUE));
@@ -53,7 +51,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
 		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('findNodesWithinPath', 'getElement'), array(array()));
@@ -80,7 +77,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function dateTimeFormatIsParsedCorrectly() {
 		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('getElement'), array(array()));
@@ -106,7 +102,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function localizedLiteralsAreCorrectlyReadFromCldr() {
 		$getRawArrayCallback = function() {
@@ -150,7 +145,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with valid format strings and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatStringsAndParsedFormats() {
 		return array(
@@ -167,7 +161,6 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider formatStringsAndParsedFormats
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatStringsAreParsedCorrectly($format, $expectedResult) {
 		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));

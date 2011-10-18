@@ -45,7 +45,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getAvailableCommandsReturnsAllAvailableCommands() {
 		$commandManager = new CommandManager();
@@ -62,7 +61,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCommandByIdentifierReturnsCommandIfIdentifierIsEqual() {
 		$mockCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -75,7 +73,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCommandByIdentifierWorksCaseInsensitive() {
 		$mockCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -88,7 +85,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCommandByIdentifierAllowsThePackageKeyToOnlyContainTheLastPartOfThePackageNamespaceIfCommandsAreUnambiguous() {
 		$mockCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -103,7 +99,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\NoSuchCommandException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCommandByIdentifierThrowsExceptionIfNoMatchingCommandWasFound() {
 		$mockCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -117,7 +112,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCommandByIdentifierThrowsExceptionIfMoreThanOneMatchingCommandWasFound() {
 		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -142,7 +136,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getShortestIdentifierForCommandReturnsTheCompleteIdentifiersForCustomHelpCommands() {
 		$mockFlow3HelpCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -158,7 +151,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getShortestIdentifierForCommandReturnsShortestUnambiguousCommandIdentifiers() {
 		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
@@ -180,7 +172,6 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getShortestIdentifierForCommandReturnsCompleteCommandIdentifierForCommandsWithTheSameControllerAndCommandName() {
 		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);

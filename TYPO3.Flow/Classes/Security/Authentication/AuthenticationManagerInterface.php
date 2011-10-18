@@ -17,7 +17,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * Has to add a \TYPO3\FLOW3\Security\Authentication\TokenInterface to the security context
  * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface AuthenticationManagerInterface {
 

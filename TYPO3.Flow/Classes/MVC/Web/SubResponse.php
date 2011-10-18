@@ -46,7 +46,6 @@ class SubResponse extends \TYPO3\FLOW3\MVC\Web\Response {
 	 * @param integer $code The status code
 	 * @param string $message If specified, this message is sent instead of the standard message
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 * @see \TYPO3\FLOW3\MVC\Web\Response::setStatus()
 	 */
@@ -58,7 +57,6 @@ class SubResponse extends \TYPO3\FLOW3\MVC\Web\Response {
 	 * Returns status code and status message from the parent response
 	 *
 	 * @return string The status code and status message, eg. "404 Not Found"
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 * @see \TYPO3\FLOW3\MVC\Web\Response::getStatus()
 	 */
@@ -73,7 +71,6 @@ class SubResponse extends \TYPO3\FLOW3\MVC\Web\Response {
 	 * @param mixed $value The value of the given header
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 * @see \TYPO3\FLOW3\MVC\Web\Response::setHeader()
 	 */
@@ -85,7 +82,6 @@ class SubResponse extends \TYPO3\FLOW3\MVC\Web\Response {
 	 * Returns the HTTP headers - including the status header - of the parent response
 	 *
 	 * @return string The HTTP headers
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 * @see \TYPO3\FLOW3\MVC\Web\Response::getHeaders()
 	 */

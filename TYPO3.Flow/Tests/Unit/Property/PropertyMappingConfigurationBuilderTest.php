@@ -32,7 +32,6 @@ class PropertyMappingConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTes
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration() {
 		$defaultConfiguration = $this->propertyMappingConfigurationBuilder->build();

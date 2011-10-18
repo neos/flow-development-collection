@@ -19,7 +19,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveValidatorObjectNameReturnsFalseIfValidatorCantBeResolved() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -32,7 +31,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveValidatorObjectNameReturnsTheGivenArgumentIfAnObjectOfThatNameIsRegistered() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -44,7 +42,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveValidatorObjectNameRemovesALeadingBackslashFromThePassedType() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -56,7 +53,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveValidatorObjectNameCanResolveShortNamesOfBuiltInValidators() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -68,7 +64,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createValidatorResolvesAndReturnsAValidatorAndPassesTheGivenOptions() {
 		$className = 'Test' . md5(uniqid(mt_rand(), TRUE));
@@ -91,7 +86,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createValidatorReturnsNullIfAValidatorCouldNotBeResolved() {
 		$validatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver',array('resolveValidatorObjectName'), array(), '', FALSE);
@@ -102,8 +96,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildBaseValidatorCachesTheResultOfTheBuildBaseValidatorConjunctionCalls() {
 		$mockConjunctionValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
@@ -121,7 +113,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyArrayIfMethodHasNoArguments() {
 		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
@@ -138,8 +129,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsBuildsAConjunctionFromValidateAnnotationsOfTheSpecifiedMethod() {
 		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
@@ -205,7 +194,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsBuildsNestedValidationRulesSpecifiedInMethodAnnotations() {
 		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
@@ -270,7 +258,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyConjunctionIfNoValidatorIsFoundForMethodParameter() {
 		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
@@ -299,7 +286,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException TYPO3\FLOW3\Validation\Exception\InvalidValidationConfigurationException
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsThrowsExceptionIfValidationAnnotationForNonExistingArgumentExists() {
@@ -338,8 +324,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction() {
 		$modelClassName = 'Page' . md5(uniqid(mt_rand(), TRUE));
@@ -368,7 +352,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionAddsValidatorsOnlyForPropertiesHoldingPrototypes() {
 		$entityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
@@ -403,7 +386,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionReturnsNullIfNoValidatorBuilt() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
@@ -414,8 +396,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function buildBaseValidatorConjunctionAddsValidatorsDefinedByAnnotationsInTheClassToTheReturnedConjunction() {
 		$mockObject = $this->getMock('stdClass');
@@ -482,7 +462,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValidatorObjectNameCallsGetValidatorType() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -493,7 +472,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getValidatorTypeCorrectlyRenamesPhpDataTypes() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -512,7 +490,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getValidatorTypeRenamesMixedToRaw() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');

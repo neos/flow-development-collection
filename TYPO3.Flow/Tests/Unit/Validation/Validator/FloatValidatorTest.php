@@ -25,7 +25,6 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * Data provider with valid floats
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validFloats() {
 		return array(
@@ -39,7 +38,6 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @dataProvider validFloats
 	 */
@@ -51,7 +49,6 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * Data provider with invalid floats
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function invalidFloats() {
 		return array(
@@ -62,7 +59,6 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @dataProvider invalidFloats
 	 */
@@ -72,7 +68,6 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 
 	/**
 	 * test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$this->assertEquals(1, count($this->validator->validate(123456)->getErrors()));

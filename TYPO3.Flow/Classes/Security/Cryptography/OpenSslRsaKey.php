@@ -36,7 +36,6 @@ class OpenSslRsaKey {
 	 * @param string $modulus The HEX modulus
 	 * @param string $keyString The private key string
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($modulus, $keyString) {
 		$this->modulus = $modulus;
@@ -47,7 +46,6 @@ class OpenSslRsaKey {
 	 * Returns the modulus in HEX representation
 	 *
 	 * @return string The modulus
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getModulus() {
 		return $this->modulus;
@@ -57,7 +55,6 @@ class OpenSslRsaKey {
 	 * Returns the key string
 	 *
 	 * @return string The key string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getKeyString() {
 		return $this->keyString;

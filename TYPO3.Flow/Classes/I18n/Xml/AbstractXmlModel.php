@@ -58,7 +58,6 @@ abstract class AbstractXmlModel {
 
 	/**
 	 * @param string $sourcePath
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($sourcePath) {
 		$this->xmlSourcePath = $sourcePath;
@@ -69,7 +68,6 @@ abstract class AbstractXmlModel {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -80,7 +78,6 @@ abstract class AbstractXmlModel {
 	 * or cache is loaded, if available.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
 		if ($this->cache->has(md5($this->xmlSourcePath))) {
@@ -94,7 +91,6 @@ abstract class AbstractXmlModel {
 	 * Shutdowns the model. Parsed data is saved to the cache if needed.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function shutdownObject() {
 		if ($this->xmlSourcePath !== NULL) {

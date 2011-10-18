@@ -23,7 +23,6 @@ class AlphanumericValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericString() {
 		$this->assertFalse($this->validator->validate('12ssDF34daweidf')->hasErrors());
@@ -31,7 +30,6 @@ class AlphanumericValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorReturnsErrorsForAStringWithSpecialCharacters() {
 		$this->assertTrue($this->validator->validate('adsf%&/$jklsfdö')->hasErrors());
@@ -39,7 +37,6 @@ class AlphanumericValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$this->assertEquals(1, count($this->validator->validate('adsf%&/$jklsfdö')->getErrors()));

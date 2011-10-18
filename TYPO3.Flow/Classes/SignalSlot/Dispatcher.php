@@ -41,7 +41,6 @@ class Dispatcher {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -57,7 +56,6 @@ class Dispatcher {
 	 * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
 	 * @param boolean $passSignalInformation If set to TRUE, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function connect($signalClassName, $signalName, $slotClassNameOrObject, $slotMethodName = '', $passSignalInformation = TRUE) {
@@ -94,7 +92,6 @@ class Dispatcher {
 	 * @param array $signalArguments arguments passed to the signal method
 	 * @return void
 	 * @throws \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException if the slot is not valid
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function dispatch($signalClassName, $signalName, array $signalArguments = array()) {
@@ -130,7 +127,6 @@ class Dispatcher {
 	 * @param string $signalClassName Name of the class containing the signal
 	 * @param string $signalName Name of the signal
 	 * @return array An array of arrays with slot information
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getSlots($signalClassName, $signalName) {

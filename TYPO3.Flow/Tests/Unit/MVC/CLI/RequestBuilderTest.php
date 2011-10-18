@@ -45,7 +45,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -70,7 +69,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if a CLI request specifying a package, controller and action name results in the expected request object
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cliAccessWithPackageControllerAndActionNameBuildsCorrectRequest() {
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array()));
@@ -82,8 +80,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function ifCommandCantBeResolvedTheHelpScreenIsShown() {
 			// The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
@@ -103,7 +99,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if a CLI request specifying some "console style" (--my-argument=value) arguments results in the expected request object
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function cliAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
 		$methodParameters = array(
@@ -123,7 +118,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if a CLI request specifying some "console style" (--my-argument =value) arguments with spaces between name and value results in the expected request object
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkIfCLIAccesWithPackageControllerActionAndArgumentsToleratesSpaces() {
 		$methodParameters = array(
@@ -149,7 +143,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if a CLI request specifying some short "console style" (-c value or -c=value or -c = value) arguments results in the expected request object
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithShortArgumentsBuildsCorrectRequest() {
 		$methodParameters = array(
@@ -173,7 +166,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * without values results in the expected request object
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
 		$methodParameters = array(
@@ -222,7 +214,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function insteadOfNamedArgumentsTheArgumentsCanBePassedUnnamedInTheCorrectOrder() {
 		$methodParameters = array(
@@ -242,7 +233,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedAfterOptions() {
 		$methodParameters = array(
@@ -262,7 +252,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function exceedingArgumentsMayBeSpecified() {
 		$methodParameters = array(
@@ -281,7 +270,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed() {
 		$methodParameters = array(
@@ -296,7 +284,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed() {
 		$methodParameters = array(
@@ -310,7 +297,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function booleanOptionsAreConsideredEvenIfAnUnnamedArgumentFollows() {
 		$methodParameters = array(
@@ -328,7 +314,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function optionsAreNotMappedToCommandArgumentsIfTheyAreUnnamed() {
 		$methodParameters = array(
@@ -346,7 +331,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function afterAllRequiredArgumentsUnnamedParametersAreStoredAsExceedingArguments() {
 		$methodParameters = array(
@@ -364,7 +348,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function booleanOptionsCanHaveOnlyCertainValuesIfTheValueIsAssignedWithoutEqualSign() {
 		$methodParameters = array(

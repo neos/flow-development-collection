@@ -24,7 +24,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		$samplePaths = array('foo', 'bar', 'baz');
@@ -48,7 +47,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function mergesMultipleFilesAndResolvesAliasesCorrectly() {
 		$sampleParsedFilesMerged = require(__DIR__ . '/../Fixtures/MockParsedCldrFilesMerged.php');
@@ -58,7 +56,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsRawArrayCorrectly() {
 		$result = $this->model->getRawArray('dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="abbreviated"]');
@@ -68,7 +65,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsElementCorrectly() {
 		$result = $this->model->getElement('localeDisplayNames/localeDisplayPattern/localePattern');
@@ -82,7 +78,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * When the path points to a leaf, getRawArray() should return FALSE.
 	 *
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function getRawArrayAlwaysReturnsArrayOrFalse() {
 		$result = $this->model->getRawArray('localeDisplayNames/localeDisplayPattern/localePattern');
@@ -91,7 +86,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsNodeNameCorrectly() {
 		$sampleNodeString1 = 'calendar';
@@ -103,7 +97,6 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsAttributeValueCorrectly() {
 		$sampleNodeString = 'dateFormatLength[@type="medium"][@alt="proposed"]';

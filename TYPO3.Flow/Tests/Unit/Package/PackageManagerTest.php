@@ -27,7 +27,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
 		\vfsStreamWrapper::register();
@@ -52,14 +51,12 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeUsesPackageStatesConfigurationForActivePackages() {
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageReturnsTheSpecifiedPackage() {
 		$this->packageManager->createPackage('TYPO3.FLOW3');
@@ -70,7 +67,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 */
 	public function getPackageThrowsExcpetionOnUnknownPackage() {
@@ -79,7 +75,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
 		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
@@ -91,7 +86,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data Provider returning valid package keys and the corresponding path
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function packageKeysAndPaths() {
 		return array(
@@ -103,7 +97,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider packageKeysAndPaths
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds() {
 		$packageKeys = array(
@@ -138,7 +131,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Package\Exception\CorruptPackageException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function scanAvailablePackagesThrowsAnExceptionWhenItFindsACorruptPackage() {
 		mkdir('vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/Meta', 0770, TRUE);
@@ -154,7 +146,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider packageKeysAndPaths
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageCreatesPackageFolderAndReturnsPackage($packageKey, $expectedPackagePath) {
 		$actualPackage = $this->packageManager->createPackage($packageKey);
@@ -168,7 +159,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageWritesAPackageMetaFileUsingTheGivenMetaObject() {
 		$metaData = new \TYPO3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
@@ -186,7 +176,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * the mandatory Package class.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageCreatesCommonFoldersAndThePackageClass() {
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
@@ -209,7 +198,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Makes sure that an exception is thrown and no directory is created on passing invalid package keys.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageThrowsExceptionOnInvalidPackageKey() {
 		try {
@@ -224,7 +212,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageThrowsExceptionForExistingPackageKey() {
 		$this->packageManager->createPackage('Acme.YetAnotherTestPackage');
@@ -233,7 +220,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageActivatesTheNewlyCreatedPackage() {
 		$this->packageManager->createPackage('Acme.YetAnotherTestPackage');
@@ -242,7 +228,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function activatePackageAndDeactivatePackageActivateAndDeactivateTheGivenPackage() {
 		$packageKey = 'Acme.YetAnotherTestPackage';
@@ -259,7 +244,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deactivatePackageThrowsAnExceptionIfPackageIsProtected() {
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
@@ -270,7 +254,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\UnknownPackageException
-	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function deletePackageThrowsErrorIfPackageIsNotAvailable() {
 		$this->packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
@@ -279,7 +262,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deletePackageThrowsAnExceptionIfPackageIsProtected() {
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
@@ -289,7 +271,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deletePackageRemovesPackageFromAvailableAndActivePackagesAndDeletesThePackageDirectory() {
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');

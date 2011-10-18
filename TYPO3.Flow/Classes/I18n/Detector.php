@@ -37,7 +37,6 @@ class Detector {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
@@ -46,7 +45,6 @@ class Detector {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\LocaleCollection $localeCollection
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocaleCollection(\TYPO3\FLOW3\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
@@ -59,7 +57,6 @@ class Detector {
 	 *
 	 * @param string $acceptLanguageHeader The Accept-Language HTTP header
 	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromHttpHeader($acceptLanguageHeader) {
@@ -97,7 +94,6 @@ class Detector {
 	 *
 	 * @param string $localeIdentifier The locale identifier as used in Locale class
 	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromLocaleTag($localeIdentifier) {
@@ -115,7 +111,6 @@ class Detector {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The template Locale object
 	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromTemplateLocale(\TYPO3\FLOW3\I18n\Locale $locale) {

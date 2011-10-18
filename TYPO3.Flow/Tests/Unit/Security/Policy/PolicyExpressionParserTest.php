@@ -21,7 +21,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
 		$resourcesTree = array(
@@ -43,7 +42,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
 		$resourcesTree = array(
@@ -67,7 +65,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseMethodResourcesStoresTheCorrectResourceTreeTraceInTheTraceParameter() {
 		$resourcesTree = array(
@@ -98,7 +95,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseEntityResourcesCallsParseSingleEntityResourceForEachResourceEntryOfAnEntityAndPassesTheCorrectResourceTree() {
 		$resourcesTree = array(
@@ -144,7 +140,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseSingleEntityResourceCallsGetRuntimeEvaluationConditionsFromEvaluateStringAndReturnsAnAppropriateConstraintsArray() {
 		$resourcesTree = array(
@@ -167,7 +162,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseSingleEntityResourceCallsItselfRecursivelyForReferenceResourcesInAConstraintExpression() {
 		$resourcesTree = array(
@@ -200,7 +194,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function parseSingleEntityResourceThrowsAnExceptionIfAnExpressionContainsAReferenceToANotExistingResource() {

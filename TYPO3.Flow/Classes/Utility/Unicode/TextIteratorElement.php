@@ -47,7 +47,6 @@ class TextIteratorElement {
 	 * @param integer $offset The offset in the original string
 	 * @param integer $length
 	 * @param boolean $boundary
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($value, $offset, $length=0, $boundary=FALSE) {
 		$this->value = $value;
@@ -60,7 +59,6 @@ class TextIteratorElement {
 	 * Returns the element's value
 	 *
 	 * @return string	The element's value
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValue() {
 		return $this->value;
@@ -70,7 +68,6 @@ class TextIteratorElement {
 	 * Returns the element's offset
 	 *
 	 * @return int		The element's offset
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getOffset() {
 		return $this->offset;
@@ -80,7 +77,6 @@ class TextIteratorElement {
 	 * Returns the element's length
 	 *
 	 * @return int		The element's length
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getLength() {
 		return $this->length;
@@ -90,7 +86,6 @@ class TextIteratorElement {
 	 * Returns TRUE for a boundary element
 	 *
 	 * @return boolean		TRUE for boundary elements
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isBoundary() {
 		return $this->boundary;

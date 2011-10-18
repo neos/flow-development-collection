@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Security\Authorization;
 /**
  * Contract for a security interceptor.
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface InterceptorInterface {
 

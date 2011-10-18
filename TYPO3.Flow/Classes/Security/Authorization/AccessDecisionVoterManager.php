@@ -50,7 +50,6 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The security context
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager, \TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->objectManager = $objectManager;
@@ -62,7 +61,6 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
 		$this->createAccessDecisionVoters($settings['security']['authorization']['accessDecisionVoters']);
@@ -73,7 +71,6 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 * Returns the configured access decision voters
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccessDecisionVoters() {
 		return $this->accessDecisionVoters();
@@ -164,7 +161,6 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 *
 	 * @param array $voterClassNames Array of access decision voter class names
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createAccessDecisionVoters(array $voterClassNames) {
 		foreach ($voterClassNames as $voterClassName) {

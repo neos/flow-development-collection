@@ -71,7 +71,6 @@ class ResourceManager {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -82,7 +81,6 @@ class ResourceManager {
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectResourcePublisher(\TYPO3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher) {
 		$this->resourcePublisher = $resourcePublisher;
@@ -93,7 +91,6 @@ class ResourceManager {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -104,7 +101,6 @@ class ResourceManager {
 	 *
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -115,7 +111,6 @@ class ResourceManager {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $statusCache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectStatusCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
 		$this->statusCache = $statusCache;
@@ -136,7 +131,6 @@ class ResourceManager {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -147,7 +141,6 @@ class ResourceManager {
 	 * register them.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize() {
 		\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($this->objectManager);
@@ -176,7 +169,6 @@ class ResourceManager {
 	 *
 	 * @param string $uri An URI (can also be a path and filename) pointing to the resource to import
 	 * @return mixed A resource object representing the imported resource or FALSE if an error occurred.
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function importResource($uri) {
@@ -220,7 +212,6 @@ class ResourceManager {
 	 * ...
 	 *
 	 * @return \SplObjectStorage
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getImportedResources() {
@@ -235,7 +226,6 @@ class ResourceManager {
 	 *
 	 * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
 	 * @return mixed A resource object representing the imported resource or FALSE if an error occurred.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function importUploadedResource(array $uploadInfo) {
 		$pathInfo = pathinfo($uploadInfo['name']);
@@ -297,7 +287,6 @@ class ResourceManager {
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteResource($resource) {
 			// instanceof instead of type hinting so it can be used as slot
@@ -316,7 +305,6 @@ class ResourceManager {
 	 * are stored.
 	 *
 	 * @return string The URI
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPersistentResourcesStorageBaseUri() {
 		return $this->persistentResourcesStorageBaseUri;
@@ -328,7 +316,6 @@ class ResourceManager {
 	 *
 	 * @param array $activePackages
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function publishPublicPackageResources(array $activePackages) {
 		if ($this->settings['resource']['publishing']['detectPackageResourceChanges'] === FALSE && $this->statusCache->has('packageResourcesPublished')) {

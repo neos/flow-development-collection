@@ -19,19 +19,16 @@ class RestrictedController extends \TYPO3\FLOW3\MVC\Controller\ActionController 
 
 	/**
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function publicAction() {}
 
 	/**
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function customerAction() {}
 
 	/**
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function adminAction() {}
 }

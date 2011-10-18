@@ -16,7 +16,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * Has to add a \TYPO3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
  * a \TYPO3\FLOW3\Security\Authentication\UserDetailsInterface.
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface AuthenticationProviderInterface {
 
@@ -35,7 +34,6 @@ interface AuthenticationProviderInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $token);
 

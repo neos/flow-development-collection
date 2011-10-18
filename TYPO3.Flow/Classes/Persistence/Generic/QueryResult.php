@@ -46,7 +46,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * Constructor
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		$this->query = $query;
@@ -57,7 +56,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\DataMapper $dataMapper
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectDataMapper(\TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
@@ -68,7 +66,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -78,8 +75,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * Loads the objects this QueryResult is supposed to hold
 	 *
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initialize() {
 		if (!is_array($this->queryResult)) {
@@ -91,7 +86,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * Returns a clone of the query object
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getQuery() {
@@ -102,8 +96,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * Returns the first object in the result set, if any.
 	 *
 	 * @return mixed The first object of the result set or NULL if the result set was empty
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getFirst() {
@@ -121,7 +113,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * Returns the number of objects in the result
 	 *
 	 * @return integer The number of matching objects
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function count() {
@@ -136,7 +127,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * Returns an array with the objects in the result set
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function toArray() {
@@ -151,7 +141,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @param mixed $offset
 	 * @return boolean
 	 * @see \ArrayAccess::offsetExists()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetExists($offset) {
 		$this->initialize();
@@ -162,7 +151,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @param mixed $offset
 	 * @return mixed
 	 * @see \ArrayAccess::offsetGet()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetGet($offset) {
 		$this->initialize();
@@ -176,7 +164,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @param mixed $value
 	 * @return void
 	 * @see \ArrayAccess::offsetSet()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetSet($offset, $value) {
 		$this->initialize();
@@ -189,7 +176,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @param mixed $offset
 	 * @return void
 	 * @see \ArrayAccess::offsetUnset()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetUnset($offset) {
 		$this->initialize();
@@ -199,7 +185,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * @return mixed
 	 * @see \Iterator::current()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function current() {
 		$this->initialize();
@@ -209,7 +194,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * @return mixed
 	 * @see \Iterator::key()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function key() {
 		$this->initialize();
@@ -219,7 +203,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * @return void
 	 * @see \Iterator::next()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function next() {
 		$this->initialize();
@@ -229,7 +212,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * @return void
 	 * @see \Iterator::rewind()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function rewind() {
 		$this->initialize();
@@ -239,7 +221,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * @return void
 	 * @see \Iterator::valid()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valid() {
 		$this->initialize();

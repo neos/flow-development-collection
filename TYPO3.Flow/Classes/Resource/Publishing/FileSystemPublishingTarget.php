@@ -45,7 +45,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -56,7 +55,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -66,7 +64,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * Initializes this publishing target
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
 		if ($this->resourcesPublishingPath === NULL) {
@@ -136,7 +133,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$publishedResourcePathAndFilename = $this->buildPersistentResourcePublishPathAndFilename($resource, TRUE);
@@ -157,7 +153,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to unpublish
 	 * @return boolean TRUE if at least one file was removed, FALSE otherwise
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unpublishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$result = FALSE;
@@ -171,7 +166,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Returns the base URI where persistent resources are published an accessbile from the outside
 	 * @return \TYPO3\FLOW3\Property\DataType\Uri The base URI
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcesBaseUri() {
 		return $this->resourcesBaseUri;
@@ -180,7 +174,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Returns the publishing path where resources are published in the local filesystem
 	 * @return string The resources publishing path
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcesPublishingPath() {
 		return $this->resourcesPublishingPath;
@@ -190,7 +183,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * Returns the base URI pointing to the published static resources
 	 *
 	 * @return string The base URI pointing to web accessible static resources
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getStaticResourcesWebBaseUri() {
 		return $this->resourcesBaseUri . 'Static/';
@@ -201,8 +193,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource) {
 		return $this->publishPersistentResource($resource);
@@ -218,7 +208,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * $this->resourcesPublishingPath must be set prior to calling this method.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function detectResourcesBaseUri() {
 		$uri = $this->environment->getRequestUri();
@@ -240,8 +229,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * @param string $targetPathAndFilename
 	 * @param boolean $createDirectoriesIfNecessary
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mirrorFile($sourcePathAndFilename, $targetPathAndFilename, $createDirectoriesIfNecessary = FALSE) {
 		if ($createDirectoriesIfNecessary === TRUE) {
@@ -278,7 +265,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to build the URI for
 	 * @return string The web URI
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$filename = $resource->getFilename();
@@ -292,7 +278,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to build the publish path and filename for
 	 * @param boolean $returnFilename FALSE if only the directory without the filename should be returned
 	 * @return string The publish path and filename
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildPersistentResourcePublishPathAndFilename(\TYPO3\FLOW3\Resource\Resource $resource, $returnFilename) {
 		$publishPath = $this->resourcesPublishingPath . 'Persistent/';
@@ -306,7 +291,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 *
 	 * @param string $path
 	 * @return string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function realpath($path) {
 		return realpath($path);

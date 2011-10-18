@@ -51,7 +51,6 @@ class Command {
 	 *
 	 * @param string $controllerClassName Class name of the controller providing the command
 	 * @param string $controllerCommandName Command name, i.e. the method name of the command, without the "Command" suffix
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($controllerClassName, $controllerCommandName) {
 		$this->controllerClassName = $controllerClassName;
@@ -90,7 +89,6 @@ class Command {
 	 * Returns the command identifier for this command
 	 *
 	 * @return string The command identifier for this command, following the pattern packagekey:controllername:commandname
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCommandIdentifier() {
 		return $this->commandIdentifier;
@@ -100,7 +98,6 @@ class Command {
 	 * Returns a short description of this command
 	 *
 	 * @return string A short description
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getShortDescription() {
 		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
@@ -113,7 +110,6 @@ class Command {
 	 * If The command description only consists of one line, an empty string is returned
 	 *
 	 * @return string A longer description of this command
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getDescription() {
 		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
@@ -143,7 +139,6 @@ class Command {
 	 * If the command does not expect any arguments, an empty array is returned
 	 *
 	 * @return array<\TYPO3\FLOW3\MVC\CLI\CommandArgumentDefinition>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getArgumentDefinitions() {
 		if (!$this->hasArguments()) {
@@ -172,8 +167,6 @@ class Command {
 	 * by users.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function isInternal() {
 		return $this->getCommandMethodReflection()->isTaggedWith('internal');
@@ -185,7 +178,6 @@ class Command {
 	 * Note that neither this method nor the @FLOW3\FlushesCaches annotation is currently part of the official API.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isFlushingCaches() {
 		return $this->getCommandMethodReflection()->isTaggedWith('flushescaches');
@@ -196,7 +188,6 @@ class Command {
 	 * annotation of a command method.
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRelatedCommandIdentifiers() {
 		$commandMethodReflection = $this->getCommandMethodReflection();

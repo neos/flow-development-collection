@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Configuration\Source;
 /**
  * Contract for a configuration source
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface SourceInterface {
 

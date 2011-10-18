@@ -82,7 +82,6 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand1
 	 * @param integer $operator one of \TYPO3\FLOW3\Persistence\QueryInterface.OPERATOR_*
 	 * @param mixed $operand2
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
 		$this->operand1 = $operand1;
@@ -95,7 +94,6 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * Gets the first operand.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOperand1() {
@@ -106,7 +104,6 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * Gets the operator.
 	 *
 	 * @return integer one of \TYPO3\FLOW3\Persistence\QueryInterface.OPERATOR_*
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOperator() {
@@ -117,7 +114,6 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * Gets the second operand.
 	 *
 	 * @return mixed
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOperand2() {

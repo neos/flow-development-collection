@@ -43,7 +43,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
@@ -54,7 +53,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatMethodsAreChoosenCorrectly() {
 		$formatter = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Formatter\DatetimeFormatter', array('formatDate', 'formatTime', 'formatDateTime'));
@@ -76,7 +74,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with example parsed formats, and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAndFormattedDatetimes() {
 		return array(
@@ -93,7 +90,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider parsedFormatsAndFormattedDatetimes
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAreUsedCorrectly(array $parsedFormat, $expectedResult) {
 		$formatter = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Formatter\DatetimeFormatter', array('dummy'));
@@ -107,7 +103,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function customFormatsAndFormattedDatetimes() {
 		return array(
@@ -118,7 +113,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider customFormatsAndFormattedDatetimes
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formattingUsingCustomPatternWorks($format, array $parsedFormat, $expectedResult) {
 		$mockDatesReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader');
@@ -136,7 +130,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with parsed formats, expected results, and format types.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleDataForSpecificFormattingMethods() {
 		return array(
@@ -161,7 +154,6 @@ class DatetimeFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleDataForSpecificFormattingMethods
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork(array $parsedFormat, $expectedResult, $formatType) {
 		$formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL;

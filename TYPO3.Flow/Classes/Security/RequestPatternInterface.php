@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Security;
 /**
  * Contract for a request pattern.
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface RequestPatternInterface {
 
@@ -23,7 +22,6 @@ interface RequestPatternInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request);
 
@@ -31,7 +29,6 @@ interface RequestPatternInterface {
 	 * Returns the set pattern
 	 *
 	 * @return string The set pattern
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPattern();
 

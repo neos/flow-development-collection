@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Package;
 /**
  * Interface for TYPO3 Package MetaData information
  *
- * @author Christopher Hlubek <hlubek@networkteam.com>
  */
 interface MetaDataInterface {
 

@@ -42,7 +42,6 @@ class NotFoundController extends \TYPO3\FLOW3\MVC\Controller\AbstractController 
 	 *
 	 * @param \TYPO3\FLOW3\MVC\View\NotFoundView $notFoundView
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function injectNotFoundView(\TYPO3\FLOW3\MVC\View\NotFoundView $notFoundView) {
@@ -54,7 +53,6 @@ class NotFoundController extends \TYPO3\FLOW3\MVC\Controller\AbstractController 
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Controller\Exception $exception
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setException(\TYPO3\FLOW3\MVC\Controller\Exception $exception) {
 		$this->exception = $exception;
@@ -66,8 +64,6 @@ class NotFoundController extends \TYPO3\FLOW3\MVC\Controller\AbstractController 
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {

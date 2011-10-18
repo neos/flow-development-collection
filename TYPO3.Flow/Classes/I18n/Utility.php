@@ -43,7 +43,6 @@ class Utility {
 	 *
 	 * @param string $acceptLanguageHeader
 	 * @return mixed The array of locale identifiers or FALSE
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function parseAcceptLanguageHeader($acceptLanguageHeader) {
 		$acceptLanguageHeader = str_replace(' ', '', $acceptLanguageHeader);
@@ -90,7 +89,6 @@ class Utility {
 	 *
 	 * @param string $filename File name / path to extract locale identifier from
 	 * @return mixed The string with extracted locale identifier of FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function extractLocaleTagFromFilename($filename) {
 		$filenameParts = explode('.', $filename);
@@ -108,7 +106,6 @@ class Utility {
 	 * @param string $haystack
 	 * @param string $needle
 	 * @return bool TRUE if $haystack begins with $needle
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function stringBeginsWith($haystack, $needle) {
 		if (!empty($needle) && strncmp($haystack, $needle, strlen($needle)) === 0) {
@@ -124,7 +121,6 @@ class Utility {
 	 * @param string $haystack
 	 * @param string $needle
 	 * @return bool TRUE if $haystack ends with $needle
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function stringEndsWith($haystack, $needle) {
 		if (substr($haystack, - strlen($needle)) === $needle) {

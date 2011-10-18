@@ -19,7 +19,6 @@ class DisjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function allValidatorsInTheDisjunctionAreCalledEvenIfOneReturnsNoError() {
 		$validatorDisjunction = new \TYPO3\FLOW3\Validation\Validator\DisjunctionValidator(array());
@@ -40,7 +39,6 @@ class DisjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validateReturnsNoErrorsIfOneValidatorReturnsNoError() {
 		$validatorDisjunction = new \TYPO3\FLOW3\Validation\Validator\DisjunctionValidator(array());
@@ -61,7 +59,6 @@ class DisjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validateReturnsAllErrorsIfAllValidatorsReturnErrrors() {
 		$validatorDisjunction = new \TYPO3\FLOW3\Validation\Validator\DisjunctionValidator(array());

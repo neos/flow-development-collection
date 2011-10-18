@@ -19,7 +19,6 @@ class LocaleTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers() {
 		try {
@@ -43,7 +42,6 @@ class LocaleTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorRecognizesTheMostImportantValidLocaleIdentifiers() {
 		$locale = new \TYPO3\FLOW3\I18n\Locale('de');
@@ -73,7 +71,6 @@ class LocaleTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function producesCorrectLocaleIdentifierWhenStringCasted() {
 		$locale = new \TYPO3\FLOW3\I18n\Locale('de_DE');

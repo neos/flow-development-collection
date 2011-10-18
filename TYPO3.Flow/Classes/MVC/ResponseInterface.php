@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\MVC;
 /**
  * A generic and very basic response implementation
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface ResponseInterface {

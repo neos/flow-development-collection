@@ -70,7 +70,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectQueryFactory(\TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -81,7 +80,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectDataMapper(\TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
@@ -92,7 +90,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Injects the backend to use
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @FLOW3\Autowiring(false)
 	 */
 	public function injectBackend(\TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
@@ -104,7 +101,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
@@ -114,7 +110,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Initializes the persistence manager
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface) throw new \TYPO3\FLOW3\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
@@ -127,7 +122,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return integer
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getObjectCountByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
@@ -139,7 +133,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getObjectDataByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
@@ -151,8 +144,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * session into the backend
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function persistAll() {
@@ -177,7 +168,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The object to check
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the persistence session
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function isNewObject($object) {
@@ -208,7 +198,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @param string $objectType
 	 * @param boolean $useLazyLoading This option is ignored in this persistence manager
 	 * @return object The object for the identifier if it is known, or NULL
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getObjectByIdentifier($identifier, $objectType = NULL, $useLazyLoading = FALSE) {
@@ -231,7 +220,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @param string $identifier
 	 * @param string $objectType
 	 * @return object The object data for the identifier if it is known, or FALSE
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getObjectDataByIdentifier($identifier, $objectType = NULL) {
 		return $this->backend->getObjectDataByIdentifier($identifier, $objectType);

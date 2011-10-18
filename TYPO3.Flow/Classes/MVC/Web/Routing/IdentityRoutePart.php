@@ -88,7 +88,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * If $this->objectType does not contain identity properties, an empty string is returned.
 	 *
 	 * @return string
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPattern() {
 		if ($this->uriPattern === NULL) {
@@ -111,7 +110,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 *
 	 * @param string $value value to match
 	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 * @todo make findOneByObjectTypeUriPatternAndPathSegment case sensitive if lowerCase = FALSE (this is not yet supported by the persistence)
 	 */
@@ -134,7 +132,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 *
 	 * @param string $routePath The request path to be matched
 	 * @return string value to match, or an empty string if $routePath is empty, split string was not found or uriPattern could not be matched
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function findValueToMatch($routePath) {
@@ -161,7 +158,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @param mixed $value
 	 * @return boolean TRUE if the object could be resolved and stored in $this->value, otherwise FALSE.
 	 * @throws \TYPO3\FLOW3\MVC\Exception\InfiniteLoopException if no unique path segment could be found after 100 iterations
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function resolveValue($value) {
 		if (!$value instanceof $this->objectType) {
@@ -198,7 +194,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 *
 	 * @param mixed $object object of type $this->objectType
 	 * @return string URI representation (path segment) of the given object
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function createPathSegmentForObject($object) {
 		$uriPattern = $this->getUriPattern();
@@ -235,7 +230,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 *
 	 * @var string $pathSegment
 	 * @var mixed $identifier
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function storeObjectPathMapping($pathSegment, $identifier) {
 		$objectPathMapping = new \TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMapping();
@@ -255,7 +249,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @param string $value
 	 * @return string
 	 * @todo use transliteration of the L18n sub package
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function rewriteForUri($value) {
 		$transliteration = array(

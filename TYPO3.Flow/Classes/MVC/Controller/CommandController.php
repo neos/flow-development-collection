@@ -52,7 +52,6 @@ class CommandController implements CommandControllerInterface {
 	/**
 	 * Constructs the controller
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		$this->arguments = new Arguments(array());
@@ -63,7 +62,6 @@ class CommandController implements CommandControllerInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -74,7 +72,6 @@ class CommandController implements CommandControllerInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canProcessRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return $request instanceof \TYPO3\FLOW3\MVC\CLI\Request;
@@ -87,7 +84,6 @@ class CommandController implements CommandControllerInterface {
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this controller
 	 * @return void
 	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
@@ -110,7 +106,6 @@ class CommandController implements CommandControllerInterface {
 	 *       case insensitive regarding method names.
 	 *
 	 * @return string Method name of the current command
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveCommandMethodName() {
 		$commandMethodName = $this->request->getControllerCommandName() . 'Command';
@@ -125,7 +120,6 @@ class CommandController implements CommandControllerInterface {
 	 * method arguments found in the designated command method.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeCommandMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->commandMethodName);
@@ -147,8 +141,6 @@ class CommandController implements CommandControllerInterface {
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		foreach ($this->arguments as $argument) {
@@ -194,7 +186,6 @@ class CommandController implements CommandControllerInterface {
 	 * view exists, the view is rendered automatically.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function callCommandMethod() {
 		$preparedArguments = array();

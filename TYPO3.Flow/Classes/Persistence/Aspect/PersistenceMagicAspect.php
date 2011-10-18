@@ -36,7 +36,6 @@ class PersistenceMagicAspect {
 
 	/**
 	 * @FLOW3\Pointcut("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity || classAnnotatedWith(TYPO3\FLOW3\Annotations\ValueObject)")
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isEntityOrValueObject() {}
 
@@ -52,7 +51,6 @@ class PersistenceMagicAspect {
 	 * Initializes this aspect
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
 		$this->useIgBinary = extension_loaded('igbinary');
@@ -64,7 +62,6 @@ class PersistenceMagicAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->__construct())")
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateUUID(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
@@ -77,7 +74,6 @@ class PersistenceMagicAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Before("classAnnotatedWith(TYPO3\FLOW3\Annotations\ValueObject) && method(.*->__construct())")
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateValueHash(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
@@ -106,7 +102,6 @@ class PersistenceMagicAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 * @FLOW3\AfterReturning("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObject(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->FLOW3_Persistence_clone = TRUE;
@@ -118,7 +113,6 @@ class PersistenceMagicAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 * @FLOW3\AfterReturning("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->__clone())")
-	 * @author Christian Müller <christian.mueller@typo3.org>
 	 */
 	public function generateNewUuidForClone(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();

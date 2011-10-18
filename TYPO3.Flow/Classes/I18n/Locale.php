@@ -86,7 +86,6 @@ class Locale {
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
 	 * @throws \InvalidArgumentException When argument is not a string
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifier If the locale identifier is not valid
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($localeIdentifier) {
@@ -103,7 +102,6 @@ class Locale {
 	 * Returns the language defined in this locale
 	 *
 	 * @return string The language identifier
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getLanguage() {
@@ -114,7 +112,6 @@ class Locale {
 	 * Returns the script defined in this locale
 	 *
 	 * @return string The script identifier
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getScript() {
@@ -125,7 +122,6 @@ class Locale {
 	 * Returns the region defined in this locale
 	 *
 	 * @return string The region identifier
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getRegion() {
@@ -136,7 +132,6 @@ class Locale {
  	 * Returns the variant defined in this locale
  	 *
  	 * @return string The variant identifier
- 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
  	 */
  	public function getVariant() {
@@ -147,7 +142,6 @@ class Locale {
  	 * Returns the string identifier of this locale
  	 *
  	 * @return string The locale identifier (tag)
- 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
  	 */
  	public function __toString() {

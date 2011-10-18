@@ -44,7 +44,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -63,7 +62,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataProviderForCanConvert
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected) {
 		$this->mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TheTargetType', 'valueobject')->will($this->returnValue($isValueObject));
@@ -74,7 +72,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getSourceChildPropertiesToBeConvertedReturnsAllPropertiesExceptTheIdentityProperty() {
 		$source = array(
@@ -91,7 +88,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeOfChildPropertyShouldUseReflectionServiceToDetermineType() {
 		$mockSchema = $this->getMockBuilder('TYPO3\FLOW3\Reflection\ClassSchema')->disableOriginalConstructor()->getMock();
@@ -108,7 +104,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeOfChildPropertyShouldUseConfiguredTypeIfItWasSet() {
 		$this->mockReflectionService->expects($this->never())->method('getClassSchema');
@@ -120,7 +115,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldFetchObjectFromPersistenceIfUuidStringIsGiven() {
 		$identifier = '550e8400-e29b-11d4-a716-446655440000';
@@ -133,8 +127,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromShouldFetchObjectFromPersistenceIfNonUuidStringIsGiven() {
 		$identifier = 'someIdentifier';
@@ -146,7 +138,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldFetchObjectFromPersistenceIfOnlyIdentityArrayGiven() {
 		$identifier = '550e8400-e29b-11d4-a716-446655440000';
@@ -161,7 +152,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	public function convertFromShouldThrowExceptionIfObjectNeedsToBeModifiedButConfigurationIsNotSet() {
@@ -190,8 +180,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @param integer $numberOfResults
 	 * @param Matcher $howOftenIsGetFirstCalled
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setupMockQuery($numberOfResults, $howOftenIsGetFirstCalled) {
 		$mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
@@ -216,7 +204,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldReturnFirstMatchingObjectIfMultipleIdentityPropertiesExist() {
 		$mockObject = $this->setupMockQuery(1, $this->once());
@@ -231,8 +218,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\TargetNotFoundException
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldReturnExceptionIfNoMatchingObjectWasFound() {
 		$this->setupMockQuery(0, $this->never());
@@ -247,8 +232,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\DuplicateObjectException
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldThrowExceptionIfMoreThanOneObjectWasFound() {
 		$this->setupMockQuery(2, $this->never());
@@ -261,7 +244,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	public function convertFromShouldThrowExceptionIfObjectNeedsToBeCreatedButConfigurationIsNotSet() {
@@ -273,7 +255,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldCreateObject() {
 		$source = array(
@@ -293,7 +274,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\InvalidTargetException
 	 */
 	public function convertFromShouldThrowExceptionIfPropertyOnTargetObjectCouldNotBeSet() {
@@ -314,7 +294,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldCreateObjectWhenThereAreConstructorParameters() {
 		$source = array(
@@ -338,7 +317,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldCreateObjectWhenThereAreOptionalConstructorParameters() {
 		$source = array(
@@ -357,7 +335,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\InvalidTargetException
 	 */
 	public function convertFromShouldThrowExceptionIfRequiredConstructorParameterWasNotFound() {
@@ -379,7 +356,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function convertFromShouldReturnNullForEmptyString() {
 		$source = '';

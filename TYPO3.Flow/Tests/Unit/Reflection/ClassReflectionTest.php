@@ -35,7 +35,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertiesReturnsFLOW3sPropertyReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -47,7 +46,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyReturnsFLOW3sPropertyReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -57,7 +55,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodsReturnsFLOW3sMethodReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -69,7 +66,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodsReturnsArrayWithNumericIndex() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -81,7 +77,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodReturnsFLOW3sMethodReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -91,7 +86,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructorReturnsFLOW3sMethodReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -101,7 +95,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfacesReturnsFLOW3sClassReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);
@@ -113,7 +106,6 @@ class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TY
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentClassReturnsFLOW3sClassReflection() {
 		$class = new \TYPO3\FLOW3\Reflection\ClassReflection(__CLASS__);

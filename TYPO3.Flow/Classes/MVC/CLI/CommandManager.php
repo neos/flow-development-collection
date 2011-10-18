@@ -43,7 +43,6 @@ class CommandManager {
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -61,8 +60,6 @@ class CommandManager {
 	 * Returns an array of all commands
 	 *
 	 * @return array<Command>
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getAvailableCommands() {
@@ -125,8 +122,6 @@ class CommandManager {
 	 *
 	 * @param Command $command The command
 	 * @return string The shortest possible command identifier
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getShortestIdentifierForCommand(Command $command) {
@@ -144,7 +139,6 @@ class CommandManager {
 	 * Returns an array that contains all available command identifiers and their shortest non-ambiguous alias
 	 *
 	 * @return array in the format array('full.command:identifier1' => 'alias1', 'full.command:identifier2' => 'alias2')
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getShortCommandIdentifiers() {
 		if ($this->shortCommandIdentifiers === NULL) {
@@ -188,7 +182,6 @@ class CommandManager {
 	 * @param Command $command
 	 * @param string $commandIdentifier command identifier in the format foo:bar:baz (all lower case)
 	 * @return boolean TRUE if the specified command identifier matches this commands identifier
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function commandMatchesIdentifier(Command $command, $commandIdentifier) {
 		$commandIdentifierParts = explode(':', $command->getCommandIdentifier());

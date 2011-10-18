@@ -23,7 +23,6 @@ class MethodsTaggedWithSomething {
 	 * Some method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Session(autoStart=false)
 	 */
 	public function someMethod() {
@@ -33,7 +32,6 @@ class MethodsTaggedWithSomething {
 	 * Some other method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Internal
 	 */
 	public function someOtherMethod() {
@@ -43,7 +41,6 @@ class MethodsTaggedWithSomething {
 	 * Something completely different
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Internal
 	 */
 	public function somethingCompletelyDifferent() {

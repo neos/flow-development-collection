@@ -33,7 +33,6 @@ class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\Intercepto
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $logger A logger to log security relevant actions
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
 		\TYPO3\FLOW3\Security\Context $securityContext,
@@ -47,7 +46,6 @@ class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\Intercepto
 	 * Redirects the current request to HTTP or HTTPS depending on $this->useSSL;
 	 *
 	 * @return boolean TRUE if the security checks was passed
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
 

@@ -66,7 +66,6 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deleteCommand($packageKey) {
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -87,7 +86,6 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 * @see typo3.flow3:package:deactivate
 	 */
 	public function activateCommand($packageKey) {
@@ -110,7 +108,6 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 * @see typo3.flow3:package:activate
 	 */
 	public function deactivateCommand($packageKey) {
@@ -132,7 +129,6 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * package title and its state – active or inactive.
 	 *
 	 * @return string The list of packages
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see typo3.flow3:package:activate
 	 * @see typo3.flow3:package:deactivate
 	 */
@@ -181,7 +177,6 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 *
 	 * @param string $packageKey The package key of the package to import
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see typo3.flow3:package:activate
 	 * @see typo3.flow3:package:create
 	 */

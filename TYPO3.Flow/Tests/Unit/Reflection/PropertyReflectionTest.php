@@ -34,7 +34,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception
 	 */
 	public function getValueThrowsAnExceptionOnReflectingANonObject() {
@@ -44,7 +43,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueReturnsValueOfAPublicProperty() {
 		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'publicProperty');
@@ -53,7 +51,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueEvenReturnsValueOfAProtectedProperty() {
 		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
@@ -65,7 +62,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueReturnsValueOfAProtectedPropertyEvenIfItIsAnObject() {
 		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
@@ -78,7 +74,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setValueEvenSetsValueOfAPublicProperty() {
 		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'publicProperty');
@@ -88,7 +83,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueEvenReturnsValueOfAPrivateProperty() {
 		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
@@ -100,7 +94,6 @@ class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueReturnsValueOfAPrivatePropertyEvenIfItIsAnObject() {
 		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');

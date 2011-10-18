@@ -38,7 +38,6 @@ class LogicalAnd extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
 		$this->constraint1 = $constraint1;
@@ -49,7 +48,6 @@ class LogicalAnd extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * Gets the first constraint.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getConstraint1() {
@@ -60,7 +58,6 @@ class LogicalAnd extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * Gets the second constraint.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getConstraint2() {

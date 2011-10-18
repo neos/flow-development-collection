@@ -32,7 +32,6 @@ class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\A
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function decideOnJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->overrideDecision === FALSE) {
@@ -64,7 +63,6 @@ class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\A
 	 *
 	 * @param boolean $overrideDecision TRUE or FALSE to override the decision, NULL to use the access decision voter manager
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setOverrideDecision($overrideDecision) {
 		$this->overrideDecision = $overrideDecision;
@@ -74,7 +72,6 @@ class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\A
 	 * Resets the AccessDecisionManager to behave transparently.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function reset() {
 		$this->overrideDecision = NULL;

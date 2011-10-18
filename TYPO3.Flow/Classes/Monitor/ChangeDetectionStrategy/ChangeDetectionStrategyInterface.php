@@ -17,7 +17,6 @@ namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
 /**
  * Contract for a change detection strategy
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface ChangeDetectionStrategyInterface {

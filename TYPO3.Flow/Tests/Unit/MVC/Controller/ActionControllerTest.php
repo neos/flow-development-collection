@@ -59,7 +59,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestSticksToSpecifiedSequence() {
 		$this->mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
@@ -103,7 +102,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionMethodAppendsStringsReturnedByActionMethodToTheResponseObject() {
 		$result = new \TYPO3\FLOW3\Error\Result();
@@ -119,7 +117,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionMethodRendersTheViewAutomaticallyIfTheActionReturnedNullAndAViewExists() {
 		$result = new \TYPO3\FLOW3\Error\Result();
@@ -139,7 +136,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionMethodCallsTheErrorActionIfTheArgumentsHaveErrors() {
 		$this->mockResponse->expects($this->once())->method('appendContent')->with('the returned string from error action');
@@ -178,7 +174,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function callActionMethodPassesDefaultValuesAsArguments() {
 		$result = new \TYPO3\FLOW3\Error\Result();
@@ -197,7 +192,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatUsesTextFormatForNonWebRequests() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\CLI\Request', array(), array(), '', FALSE);
@@ -211,7 +205,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatUsesHtmlFormatAsDefaultForWebRequests() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
@@ -229,7 +222,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function detectFormatUsesHtmlFormatAsDefaultForPostWebRequests() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
@@ -247,7 +239,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatPrefersOtherFormatsThanHtmlIfControllerSupportsIt() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
@@ -266,7 +257,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveViewUsesResolvedViewIfItCanRenderTheCurrentAction() {
 		$mockSession = $this->getMock('TYPO3\FLOW3\Session\SessionInterface');
@@ -291,8 +281,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveViewPreparesTheViewSpecifiedInTheRequestObject() {
 		$mockSession = $this->getMock('TYPO3\FLOW3\Session\SessionInterface');
@@ -316,8 +304,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveViewReturnsTheNonFoundViewIfNoOtherViewCouldNotBeResolved() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -350,7 +336,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveViewObjectNameUsesViewObjectNamePatternToResolveViewObjectName() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -373,7 +358,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveViewObjectNameReturnsExplicitlyConfiguredFormatView() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -392,7 +376,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveActionMethodNameReturnsTheCurrentActionMethodNameFromTheRequest() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -407,7 +390,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\NoSuchActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveActionMethodNameThrowsAnExceptionIfTheActionDefinedInTheRequestDoesNotExist() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -421,7 +403,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveActionMethodNameDoesNotThrowAnExceptionIfTheActionDefinedInTheRequestCanBeHandledByAMagicCallMethod() {
 		$controllerClassName = 'TestController' . md5(uniqid(mt_rand(), TRUE));
@@ -443,7 +424,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeActionMethodArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
@@ -494,7 +474,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeActionMethodArgumentsRegistersOptionalArgumentsAsSuch() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
@@ -546,7 +525,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException TYPO3\FLOW3\MVC\Exception\InvalidArgumentTypeException
 	 */
 	public function initializeActionMethodArgumentsThrowsExceptionIfDataTypeWasNotSpecified() {
@@ -578,7 +556,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsCorrectlyRegistersValidatorsBasedOnDataType() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD is long ago');
@@ -606,7 +583,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsRegistersModelBasedValidators() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD is long ago');
@@ -648,7 +624,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsDoesNotRegisterModelBasedValidatorsIfDontValidateAnnotationIsSet() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD is long ago');
@@ -716,8 +691,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @dataProvider dataProviderForErrorActionForward
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 */
@@ -748,7 +721,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function defaultErrorActionAddsFlashMessageToFlashMessageContainer() {
 		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\FlashMessageContainer', array(), array(), '', FALSE);

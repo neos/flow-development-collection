@@ -40,7 +40,6 @@ class LazyLoadingObjectAspect {
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())")
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();

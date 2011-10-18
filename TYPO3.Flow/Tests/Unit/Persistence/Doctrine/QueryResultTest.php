@@ -30,7 +30,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
 		$this->query = $this->getMockBuilder('TYPO3\FLOW3\Persistence\Doctrine\Query')->disableOriginalConstructor()->disableOriginalClone()->getMock();
@@ -39,7 +38,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getQueryReturnsQueryObject() {
 		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\QueryInterface', $this->queryResult->getQuery());
@@ -47,7 +45,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getQueryReturnsAClone() {
 		$this->assertNotSame($this->query, $this->queryResult->getQuery());

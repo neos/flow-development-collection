@@ -43,7 +43,6 @@ class DatetimeParser {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectDatesReader(\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader) {
 		$this->datesReader = $datesReader;
@@ -62,7 +61,6 @@ class DatetimeParser {
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale used for finding literals array
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date / time elements, FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
@@ -80,7 +78,6 @@ class DatetimeParser {
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date elements, FALSE on failure
 	 * @api
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseDate($dateToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
 		\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
@@ -97,7 +94,6 @@ class DatetimeParser {
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed time elements, FALSE on failure
 	 * @api
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseTime($timeToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
 		\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
@@ -113,7 +109,6 @@ class DatetimeParser {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date and time elements, FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseDateAndTime($dateAndTimeToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
 		\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
@@ -128,7 +123,6 @@ class DatetimeParser {
 	 * @param array $localizedLiterals An array with symbols to use
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date and / or time elements, FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingWithParsedFormat($datetimeToParse, array $parsedFormat, array $localizedLiterals, $strictMode) {
 		return ($strictMode) ? $this->doParsingInStrictMode($datetimeToParse, $parsedFormat, $localizedLiterals) : $this->doParsingInLenientMode($datetimeToParse, $parsedFormat, $localizedLiterals);
@@ -142,7 +136,6 @@ class DatetimeParser {
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @return mixed Array of parsed date and / or time elements, FALSE on failure
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
 	protected function doParsingInStrictMode($datetimeToParse, array $parsedFormat, array $localizedLiterals) {
@@ -327,7 +320,6 @@ class DatetimeParser {
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @return array Array of parsed date and / or time elements (can be array of NULLs if nothing was parsed)
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
 	protected function doParsingInLenientMode($datetimeToParse, array $parsedFormat, array $localizedLiterals) {
@@ -547,7 +539,6 @@ class DatetimeParser {
 	 * @param int $maxValue
 	 * @return int Parsed number
 	 * @throws \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException When string cannot be parsed or number does not conforms constraints
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function extractAndCheckNumber($datetimeToParse, $isTwoDigits, $minValue, $maxValue) {
 		if ($isTwoDigits || is_numeric($datetimeToParse[1])) {
@@ -577,7 +568,6 @@ class DatetimeParser {
 	 * @param int $position Index of first digit in string
 	 * @return string Extracted number
 	 * @throws \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException When no digit found in string
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function extractNumberAndGetPosition($datetimeToParse, &$position) {
 		$characters = str_split($datetimeToParse);

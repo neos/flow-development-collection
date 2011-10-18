@@ -32,7 +32,6 @@ class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterf
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return ($request instanceof \TYPO3\FLOW3\MVC\Web\Request);
@@ -43,7 +42,6 @@ class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterf
 	 *
 	 * @param array $options An array of configuration options
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setOptions(array $options) {
 		$this->options = $options;
@@ -53,7 +51,6 @@ class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterf
 	 * Returns the options array
 	 *
 	 * @return array The configuration options of this entry point
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getOptions() {
 		return $this->options;
@@ -65,7 +62,6 @@ class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterf
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The current response
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthentication(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
 		if (!$this->canForward($request)) throw new \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException('Unsupported request type for authentication entry point given.', 1237282465);

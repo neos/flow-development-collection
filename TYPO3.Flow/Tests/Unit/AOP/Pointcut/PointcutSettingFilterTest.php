@@ -19,8 +19,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnConfigurationSettingSetToTrue() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -35,8 +33,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnConfigurationSettingSetToFalse() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -51,7 +47,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 */
 	public function filterThrowsAnExceptionForNotExistingConfigurationSetting() {
@@ -66,8 +61,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterDoesNotMatchOnConfigurationSettingThatIsNotBoolean() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -82,8 +75,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterCanHandleMissingSpacesInTheConfigurationSettingPath() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -98,8 +89,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnAConditionSetInSingleQuotes() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -114,8 +103,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnAConditionSetInDoubleQuotes() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -130,8 +117,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterDoesNotMatchOnAFalseCondition() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -146,7 +131,6 @@ class PointcutSettingFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 */
 	public function filterThrowsAnExceptionForAnIncorectCondition() {

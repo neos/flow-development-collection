@@ -64,7 +64,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 *
 	 * @param string $partName
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setName($partName) {
 		$this->name = $partName;
@@ -74,7 +73,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Returns name of the Route Part.
 	 *
 	 * @return string
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getName() {
 		return $this->name;
@@ -84,7 +82,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
 	 *
 	 * @return boolean
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function hasValue() {
 		return isset($this->value);
@@ -94,7 +91,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Returns value of the Route Part. Before match() is called this returns NULL.
 	 *
 	 * @return mixed
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getValue() {
 		return $this->value;
@@ -104,7 +100,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
 	 *
 	 * @return boolean
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function hasDefaultValue() {
 		return isset($this->defaultValue);
@@ -115,7 +110,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 *
 	 * @param mixed $defaultValue
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setDefaultValue($defaultValue) {
 		$this->defaultValue = $defaultValue;
@@ -125,7 +119,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Gets default value of the Route Part.
 	 *
 	 * @return mixed $defaultValue
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getDefaultValue() {
 		return $this->defaultValue;
@@ -137,7 +130,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 *
 	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setOptional($isOptional) {
 		$this->isOptional = $isOptional;
@@ -147,7 +139,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Getter for $this->isOptional.
 	 *
 	 * @return boolean TRUE if this Route part is optional, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see setOptional()
 	 */
 	public function isOptional() {
@@ -159,7 +150,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 *
 	 * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setLowerCase($lowerCase) {
 		$this->lowerCase = $lowerCase;
@@ -169,7 +159,6 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 * Getter for $this->lowerCase.
 	 *
 	 * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see setLowerCase()
 	 */
 	public function isLowerCase() {

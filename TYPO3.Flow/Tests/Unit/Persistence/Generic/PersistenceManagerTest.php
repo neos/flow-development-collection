@@ -24,7 +24,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeInitializesBackendWithBackendOptions() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
@@ -39,7 +38,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function persistAllCanBeCalledIfNoRepositoryClassesAreFound() {
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
@@ -57,7 +55,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAllPassesAddedObjectsToBackend() {
 		$entity2 = new \TYPO3\FLOW3\Tests\Persistence\Fixture\Model\Entity2();
@@ -75,7 +72,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAllPassesRemovedObjectsToBackend() {
 		$entity2 = new \TYPO3\FLOW3\Tests\Persistence\Fixture\Model\Entity2();
@@ -93,7 +89,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifierByObjectReturnsIdentifierFromSession() {
 		$fakeUuid = 'fakeUuid';
@@ -110,7 +105,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getObjectByIdentifierReturnsObjectFromSessionIfAvailable() {
 		$fakeUuid = 'fakeUuid';
@@ -128,7 +122,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getObjectByIdentifierReturnsObjectFromPersistenceIfAvailable() {
 		$fakeUuid = 'fakeUuid';
@@ -153,7 +146,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getObjectByIdentifierReturnsNullForUnknownObject() {
 		$fakeUuid = 'fakeUuid';
@@ -173,7 +165,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addActuallyAddsAnObjectToTheInternalObjectsArray() {
 		$someObject = new \stdClass();
@@ -185,7 +176,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeActuallyRemovesAnObjectFromTheInternalObjectsArray() {
 		$object1 = new \stdClass();
@@ -206,7 +196,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeRemovesTheRightObjectEvenIfItHasBeenModifiedSinceItsAddition() {
 		$object1 = new \ArrayObject(array('val' => '1'));
@@ -233,7 +222,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * but might be in persistent storage.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeRetainsObjectForObjectsNotInCurrentSession() {
 		$object = new \ArrayObject(array('val' => '1'));
@@ -245,7 +233,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateSchedulesAnObjectForPersistence() {
 		$this->markTestIncomplete('Needs to be tested and coded');

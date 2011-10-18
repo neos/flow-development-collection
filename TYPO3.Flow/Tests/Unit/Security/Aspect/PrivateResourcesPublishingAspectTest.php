@@ -21,7 +21,6 @@ use \TYPO3\FLOW3\Security\Policy\Role;
 class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -30,7 +29,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed() {
 		$mockPublishingConfiguration = $this->getMock('TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', FALSE);
@@ -52,7 +50,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext() {
 		$allowedRoles = array (
@@ -86,7 +83,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfThePublishingConfigurationContainsNoAllowedRoles() {
 		$allowedRoles = array ();
@@ -116,7 +112,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResourcesCalculatesTheCorrectUriForAPrivateResourceThatIsPublishedInLinkModeAndHasAFileName() {
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
@@ -170,7 +165,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResourcesCalculatesTheCorrectUriForAPrivateResourceThatIsPublishedInCopyModeAndHasAFileName() {
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
@@ -224,7 +218,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed() {
 		$mockPublishingConfiguration = $this->getMock('TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', FALSE);
@@ -247,7 +240,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext() {
 		$allowedRoles = array (
@@ -282,7 +274,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndNoFilenameIsRequested() {
 		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
@@ -348,7 +339,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndTheFilenameIsRequested() {
 		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
@@ -416,7 +406,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested() {
 		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
@@ -473,7 +462,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested() {
 		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
@@ -533,7 +521,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesTheSessionDirectoryIfNeeded() {
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
@@ -589,7 +576,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function inLinkModeRewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesRoleDirectoriesForEachAllowedRoleAndSymlinksThemIntoTheCurrentSessionDirectory() {
 		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
@@ -663,7 +649,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCallsTheAccessRestrictionPublisherWithTheCalculatedSessionDirectoryPublishPath() {
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));

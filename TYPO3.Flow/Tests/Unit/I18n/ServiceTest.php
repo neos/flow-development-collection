@@ -29,7 +29,6 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -38,7 +37,6 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsCorrectlyLocalizedFilename() {
 		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
@@ -72,7 +70,6 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsCorrectFilenameInStrictMode() {
 		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
@@ -92,7 +89,6 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function correctlyGeneratesAvailableLocales() {
 		mkdir('vfs://Foo/Bar/Private/', 0777, TRUE);

@@ -42,7 +42,6 @@ class RequestDispatchingAspect {
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext
 	 * @param \TYPO3\FLOW3\Security\Authorization\FirewallInterface $firewall
 	 * @param \TYPO3\FLOW3\Log\SecurityLoggerInterface $securityLogger
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Security\Authorization\FirewallInterface $firewall, \TYPO3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
 		$this->securityContext = $securityContext;
@@ -57,7 +56,6 @@ class RequestDispatchingAspect {
 	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
@@ -100,7 +98,6 @@ class RequestDispatchingAspect {
 	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAccessDeniedResponseHeader(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$response = $joinPoint->getMethodArgument('response');

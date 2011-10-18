@@ -21,7 +21,6 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesIgnoresFinalMethodsEvenIfTheirNameMatches() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -42,7 +41,6 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTakesTheVisibilityModifierIntoAccountIfOneWasSpecified() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -77,7 +75,6 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchesChecksTheAvailablityOfAnArgumentNameIfArgumentConstraintsHaveBeenConfigured() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -124,7 +121,6 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsReturnsTheMethodArgumentConstraintsDefinitions() {
 		$argumentConstraints = array(

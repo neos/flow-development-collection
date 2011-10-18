@@ -34,7 +34,6 @@ class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
@@ -43,7 +42,6 @@ class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectDatetimeParser(\TYPO3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser) {
 		$this->datetimeParser = $datetimeParser;
@@ -55,8 +53,6 @@ class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	 * @param mixed $value The value that should be validated
 	 * @param array $validationOptions Not used
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	protected function isValid($value) {

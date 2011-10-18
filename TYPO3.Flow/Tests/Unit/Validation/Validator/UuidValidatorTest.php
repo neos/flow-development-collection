@@ -23,7 +23,6 @@ class UuidValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validatorAcceptsCorrectUUIDs() {
 		$this->assertFalse($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1')->hasErrors());
@@ -32,7 +31,6 @@ class UuidValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tooShortUUIDIsRejected() {
 		$this->assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07')->hasErrors());
@@ -40,7 +38,6 @@ class UuidValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
 		$this->assertTrue($this->validator->validate('e104e469-9030-4g98-babf-3990f07dd3f1')->hasErrors());
@@ -48,8 +45,6 @@ class UuidValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid() {
 		$expected = array(new \TYPO3\FLOW3\Validation\Error('The given subject was not a valid UUID.', 1221565853));

@@ -19,7 +19,6 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultStatusHeaderIs200OK() {
 		$response = new \TYPO3\FLOW3\MVC\Web\Response();
@@ -28,7 +27,6 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function itIsPossibleToSetTheHTTPStatusCodeAndMessage() {
 		$response = new \TYPO3\FLOW3\MVC\Web\Response();
@@ -38,7 +36,6 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function additionalHeadersCanBeSetAndRetrieved() {
 		$response = new \TYPO3\FLOW3\MVC\Web\Response();
@@ -57,7 +54,6 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultHeadersOfTheSameNameAreReplaced() {
 		$response = new \TYPO3\FLOW3\MVC\Web\Response();
@@ -74,7 +70,6 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleHeadersOfTheSameNameMayBeDefined() {
 		$response = new \TYPO3\FLOW3\MVC\Web\Response();

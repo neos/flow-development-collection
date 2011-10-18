@@ -40,7 +40,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderThrowsExceptionIfNoRequestIsAvailable() {
 		$this->controllerContext->expects($this->atLeastOnce())->method('getRequest')->will($this->returnValue(NULL));
@@ -50,7 +49,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsContentOfTemplateReturnedByGetTemplatePathAndFilename() {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
@@ -65,7 +63,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesErrorMessageMarker() {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
@@ -82,7 +79,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesErrorMessageMarkerWithEmptyStringIfNoErrorMessageIsSet() {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
@@ -97,7 +93,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesBaseUriMarkerIfRequestIsWebRequest() {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\Web\Request', array('getBaseUri'));
@@ -113,7 +108,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderDoesNotReplaceBaseUriMarkerIfRequestIsNoWebRequest() {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
@@ -129,7 +123,6 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);

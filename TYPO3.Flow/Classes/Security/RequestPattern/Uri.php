@@ -32,7 +32,6 @@ class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		if ($request instanceof \TYPO3\FLOW3\MVC\Web\Request) return TRUE;
@@ -43,7 +42,6 @@ class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 * Returns the set pattern.
 	 *
 	 * @return string The set pattern
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPattern() {
 		return str_replace('\/', '/', $this->uriPattern);
@@ -58,7 +56,6 @@ class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param string $uriPattern The preg_match() styled URL pattern
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setPattern($uriPattern) {
 		$this->uriPattern = str_replace('/', '\/', $uriPattern);
@@ -70,7 +67,6 @@ class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		if (!($request instanceof \TYPO3\FLOW3\MVC\Web\Request)) throw new \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException('The given request type is not supported.', 1216903641);

@@ -33,7 +33,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -42,7 +41,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Object\Proxy\Compiler $compiler
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCompiler(\TYPO3\FLOW3\Object\Proxy\Compiler $compiler) {
 		$this->compiler = $compiler;
@@ -55,7 +53,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
 	 * @param string $targetClassName Name of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	abstract public function build($methodName, array $methodMetaInformation, $targetClassName);
 
@@ -64,7 +61,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 *
 	 * @param array $array
 	 * @return string e.g. 'array()' or 'array(1 => 'bar')
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildArraySetupCode(array $array) {
 		$code = 'array(';
@@ -94,7 +90,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $methodName Name of the method to create arguments array code for
 	 * @param boolean $useArgumentsArray If set, the $methodArguments array will be built from $arguments instead of using the actual parameter variables.
 	 * @return string The generated code to be used in an "array()" definition
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildMethodArgumentsArrayCode($className, $methodName, $useArgumentsArray = FALSE) {
 		if ($className === NULL || $methodName === NULL) return '';
@@ -123,7 +118,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 *
 	 * @param string $className Name of the class the method is declared in
 	 * @return string The generated paramters code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildSavedConstructorParametersCode($className) {
 		if ($className === NULL) return '';
@@ -146,7 +140,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $methodName Name of the method the advice applies to
 	 * @param string $targetClassName Name of the target class
 	 * @return string PHP code to be used in the method interceptor
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName) {
 		$advicesCode = $this->buildMethodArgumentsArrayCode($targetClassName, $methodName, ($methodName === '__construct'));

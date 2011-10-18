@@ -23,7 +23,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $dummyObject;
 
 	/**
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setUp() {
 		$this->dummyObject = new \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
@@ -34,7 +33,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyReturnsExpectedValueForGetterProperty() {
 		$property = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'property');
@@ -43,7 +41,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyReturnsExpectedValueForPublicProperty() {
 		$property = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'publicProperty2');
@@ -52,7 +49,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyReturnsExpectedValueForUnexposedPropertyIfForceDirectAccessIsTrue() {
 		$property = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'unexposedProperty', TRUE);
@@ -61,7 +57,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyReturnsExpectedValueForUnknownPropertyIfForceDirectAccessIsTrue() {
 		$this->dummyObject->unknownProperty = 'unknown';
@@ -71,7 +66,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
 	 */
 	public function getPropertyReturnsPropertyNotAccessibleExceptionForNotExistingPropertyIfForceDirectAccessIsTrue() {
@@ -81,8 +75,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyReturnsThrowsExceptionIfPropertyDoesNotExist() {
 		\TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty');
@@ -91,7 +83,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyReturnsThrowsExceptionIfArrayKeyDoesNotExist() {
 		\TYPO3\FLOW3\Reflection\ObjectAccess::getProperty(array(), 'notExistingProperty');
@@ -99,7 +90,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyTriesToCallABooleanGetterMethodIfItExists() {
 		$property = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'booleanProperty');
@@ -109,7 +99,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyThrowsExceptionIfThePropertyNameIsNotAString() {
 		\TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, new \ArrayObject());
@@ -118,7 +107,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setPropertyThrowsExceptionIfThePropertyNameIsNotAString() {
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, new \ArrayObject(), 42);
@@ -126,7 +114,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPropertyReturnsFalseIfPropertyIsNotAccessible() {
 		$this->assertFalse(\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42));
@@ -134,7 +121,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPropertySetsValueIfPropertyIsNotAccessibleWhenForceDirectAccessIsTrue() {
 		$this->assertTrue(\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'unexposedProperty', 'was set anyway', TRUE));
@@ -143,7 +129,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPropertySetsValueIfPropertyDoesNotExistWhenForceDirectAccessIsTrue() {
 		$this->assertTrue(\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'unknownProperty', 'was set anyway', TRUE));
@@ -152,7 +137,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setPropertyCallsASetterMethodToSetThePropertyValueIfOneIsAvailable() {
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'property', 4242);
@@ -161,7 +145,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setPropertyWorksWithPublicProperty() {
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'publicProperty', 4242);
@@ -170,8 +153,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPropertyCanDirectlySetValuesInAnArrayObjectOrArray() {
 		$arrayObject = new \ArrayObject();
@@ -186,7 +167,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyCanAccessPropertiesOfAnArrayObject() {
 		$arrayObject = new \ArrayObject(array('key' => 'value'));
@@ -196,7 +176,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
 		$arrayAccessInstance = new \TYPO3\FLOW3\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
@@ -206,7 +185,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyCanAccessPropertiesOfAnArray() {
 		$array = array('key' => 'value');
@@ -216,7 +194,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyPathCanAccessPropertiesOfAnArray() {
 		$array = array('parent' => array('key' => 'value'));
@@ -226,7 +203,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyPathCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
 		$array = array('parent' => new \ArrayObject(array('key' => 'value')));
@@ -236,7 +212,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
 		$gettablePropertyNames = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
@@ -246,7 +221,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
 		$settablePropertyNames = \TYPO3\FLOW3\Reflection\ObjectAccess::getSettablePropertyNames($this->dummyObject);
@@ -256,7 +230,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getSettablePropertyNamesReturnsPropertyNamesOfStdClass() {
 		$stdClassObject = new \stdClass();
@@ -270,7 +243,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getGettablePropertiesReturnsTheCorrectValuesForAllProperties() {
 		$allProperties = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
@@ -286,7 +258,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getGettablePropertiesReturnsPropertiesOfStdClass() {
 		$stdClassObject = new \stdClass();
@@ -303,7 +274,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPropertySettableTellsIfAPropertyCanBeSet() {
 		$this->assertTrue(\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'writeOnlyMagicProperty'));
@@ -316,7 +286,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function isPropertySettableWorksOnStdClass() {
 		$stdClassObject = new \stdClass();
@@ -329,7 +298,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPropertyGettableTellsIfAPropertyCanBeRetrieved() {
 		$this->assertTrue(\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
@@ -343,7 +311,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function isPropertyGettableWorksOnArrayAccessObjects() {
 		$arrayObject = new \ArrayObject();
@@ -355,7 +322,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function isPropertyGettableWorksOnStdClass() {
 		$stdClassObject = new \stdClass();
@@ -368,7 +334,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyPathCanRecursivelyGetPropertiesOfAnObject() {
 		$alternativeObject = new \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
@@ -382,7 +347,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyPathReturnsNullForNonExistingPropertyPath() {
 		$alternativeObject = new \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
@@ -394,7 +358,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyPathReturnsNullIfSubjectIsNoObject() {
 		$string = 'Hello world';
@@ -404,7 +367,6 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyPathReturnsNullIfSubjectOnPathIsNoObject() {
 		$object = new \stdClass();

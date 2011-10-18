@@ -39,7 +39,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $identifier A identifier which describes this cache
 	 * @param \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend Backend to be used for this cache
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
 	 */
 	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend) {
@@ -53,7 +52,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * Returns this cache's identifier
 	 *
 	 * @return string The identifier for this cache
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getIdentifier() {
@@ -64,7 +62,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * Returns the backend used by this cache
 	 *
 	 * @return \TYPO3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getBackend() {
@@ -76,8 +73,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -91,8 +86,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -105,7 +98,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flush() {
@@ -117,8 +109,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -131,7 +121,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * Does garbage collection
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function collectGarbage() {
@@ -147,7 +136,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $className The class name
 	 * @return string Class Tag
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 * @deprecated since 1.0.0beta1 – Use CacheManager::getClassTag() instead
 	 */
@@ -160,7 +148,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $identifier An identifier to be checked for validity
 	 * @return boolean
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @api
 	 */
 	public function isValidEntryIdentifier($identifier) {
@@ -172,7 +159,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $tag An identifier to be checked for validity
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function isValidTag($tag) {

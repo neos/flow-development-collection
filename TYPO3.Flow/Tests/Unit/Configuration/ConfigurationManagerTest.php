@@ -19,7 +19,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructLoadsPotentiallyExistingCachedConfiguration() {
 		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfigurationCache'), array(), '', FALSE);
@@ -33,7 +32,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationForSettingsLoadsConfigurationIfNecessary() {
 		$initialConfigurations = array(
@@ -49,7 +47,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationForTypePackageOrObjectReturnsRespectiveConfigurationArray() {
 		$expectedConfiguration = array('foo' => 'bar');
@@ -68,7 +65,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationForTypePackageOrObjectLoadsConfigurationIfNecessary() {
 		$packages = array('SomePackage' => $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE));
@@ -83,7 +79,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationForRoutesSignalsCachesAndPackageStatesLoadsConfigurationIfNecessary() {
 		$initialConfigurations = array(
@@ -110,7 +105,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationForRoutesSignalsCachesAndPackageStatesReturnsRespectiveConfigurationArray() {
 		$expectedConfigurations = array(
@@ -132,7 +126,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConfigurationAllowsForUpdatingPackageStates() {
 		$expectedPackageStates = array('Foo' => array('active' => TRUE));
@@ -147,7 +140,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConfigurationThrowsExceptionOnUnsupportedConfigurationType() {
 		$unsupportedConfigurationTypes = array(
@@ -172,7 +164,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveConfigurationAllowsForSavingBackPackageStates() {
 		$configurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES]['Foo']['active'] = TRUE;
@@ -189,7 +180,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveConfigurationThrowsExceptionOnUnsupportedConfigurationType() {
 		$unsupportedConfigurationTypes = array(
@@ -218,7 +208,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownSavesConfigurationCacheIfNeccessary() {
 		$configurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['FLOW3']['configuration']['compileConfigurationFiles'] = TRUE;
@@ -233,7 +222,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownOmitsSavingTheConfigurationCacheIfNotNeccessary() {
 		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('saveConfigurationCache'), array(), '', FALSE);
@@ -252,7 +240,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function loadConfigurationOverridesSettingsByContext() {
 		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
@@ -285,8 +272,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function loadConfigurationOverridesGlobalSettingsByContext() {
 		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
@@ -324,7 +309,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Callback for the above test.
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function packageSettingsCallback() {
 		$filenameAndPath = func_get_arg(0);
@@ -408,7 +392,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function loadConfigurationForObjectsOverridesConfigurationByContext() {
 		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
@@ -445,7 +428,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Callback for the above test.
 	 *
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function packageObjectsCallback() {
 		$filenameAndPath = func_get_arg(0);
@@ -474,7 +456,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists() {
 		\vfsStreamWrapper::register();
@@ -503,7 +484,6 @@ EOD;
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function loadConfigurationCorrectlyMergesSettings() {
 		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
@@ -518,7 +498,6 @@ EOD;
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveConfigurationCacheSavesTheCurrentConfigurationAsPhpCode() {
 		\vfsStreamWrapper::register();
@@ -565,7 +544,6 @@ EOD;
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function postProcessConfigurationReplacesConstantMarkersByRealGlobalConstants() {
 		$settings = array(
@@ -588,8 +566,6 @@ EOD;
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages() {
 		$routesConfiguration= array(
@@ -611,7 +587,6 @@ EOD;
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSubrouteConfigurationsCorrectlyMergesRoutes() {
 		$routesConfiguration= array(

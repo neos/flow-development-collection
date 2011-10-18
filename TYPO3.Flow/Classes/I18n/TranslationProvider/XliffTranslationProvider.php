@@ -52,7 +52,6 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
@@ -61,7 +60,6 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectPluralsReader(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
 		$this->pluralsReader = $pluralsReader;
@@ -126,7 +124,6 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * @param string $sourceName Relative path to existing CLDR file
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale object
 	 * @return \TYPO3\FLOW3\I18n\Xliff\XliffModel New or existing instance
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function getModel($sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
 		$sourceName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->xliffBasePath, $sourceName . '.xlf'));

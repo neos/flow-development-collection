@@ -20,7 +20,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function connectAllowsForConnectingASlotWithASignal() {
 		$mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
@@ -37,7 +36,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function connectAlsoAcceptsObjectsInPlaceOfTheClassName() {
 		$mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
@@ -54,7 +52,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function connectAlsoAcceptsClosuresActingAsASlot() {
 		$mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));
@@ -71,7 +68,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchPassesTheSignalArgumentsToTheSlotMethod() {
 		$arguments = array();
@@ -89,7 +85,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified() {
 		$slotClassName = 'Mock_' . md5(uniqid(mt_rand(), TRUE));
@@ -111,7 +106,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -126,7 +120,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist() {
 		$slotClassName = 'Mock_' . md5(uniqid(mt_rand(), TRUE));
@@ -147,7 +140,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchPassesArgumentContainingSlotInformationLastIfTheConnectionStatesSo() {
 		$arguments = array();
@@ -166,7 +158,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function connectWithSignalNameStartingWithEmitShouldNotBeAllowed() {
 		$mockSignal = $this->getMock('ClassA', array('emitSomeSignal'));

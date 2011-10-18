@@ -24,7 +24,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		$className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
@@ -51,7 +50,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
 		$className = get_class($this->backend);

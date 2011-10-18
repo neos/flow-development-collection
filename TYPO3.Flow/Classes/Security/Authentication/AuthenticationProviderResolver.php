@@ -30,7 +30,6 @@ class AuthenticationProviderResolver {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -42,8 +41,6 @@ class AuthenticationProviderResolver {
 	 * @param string $providerName The (short) name of the provider
 	 * @return string The object name of the authentication provider
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveProviderClass($providerName) {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);

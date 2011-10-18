@@ -48,7 +48,6 @@ class CacheFactory {
 	 * @param string $context The current FLOW3 context
 	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($context, \TYPO3\FLOW3\Cache\CacheManager $cacheManager, \TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->context = $context;
@@ -66,7 +65,6 @@ class CacheFactory {
 	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
 	 * @return \TYPO3\FLOW3\Cache\Frontend\FrontendInterface The created cache frontend
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {

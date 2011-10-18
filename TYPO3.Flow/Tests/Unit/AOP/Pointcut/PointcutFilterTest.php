@@ -21,7 +21,6 @@ class PointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\UnknownPointcutException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesThrowsAnExceptionIfTheSpecifiedPointcutDoesNotExist() {
 		$className = 'Foo';
@@ -39,7 +38,6 @@ class PointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenClassName() {
 		$className = 'Foo';
@@ -60,7 +58,6 @@ class PointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinitionReturnsTheDefinitionArrayFromThePointcut() {
 		$mockPointcut = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\Pointcut', array(), array(), '', FALSE);
@@ -76,7 +73,6 @@ class PointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinitionReturnsAnEmptyArrayIfThePointcutDoesNotExist() {
 		$mockProxyClassBuilder = $this->getMock('TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);

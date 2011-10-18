@@ -29,7 +29,6 @@ class StringFrontend extends \TYPO3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $string, array $tags = array(), $lifetime = NULL) {
@@ -47,7 +46,6 @@ class StringFrontend extends \TYPO3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 *
 	 * @param string $entryIdentifier Identifier of the cache entry to fetch
 	 * @return string The value
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -61,7 +59,6 @@ class StringFrontend extends \TYPO3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 *
 	 * @param string $tag The tag to search for
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getByTag($tag) {

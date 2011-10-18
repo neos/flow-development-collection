@@ -38,7 +38,6 @@ class LoggingAspect {
 	 * @FLOW3\After("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logManagerAuthenticate(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($joinPoint->hasException()) {
@@ -61,7 +60,6 @@ class LoggingAspect {
 	 * @FLOW3\AfterReturning("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logManagerLogout(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$accountIdentifiers = array();
@@ -80,7 +78,6 @@ class LoggingAspect {
 	 * @FLOW3\AfterReturning("within(TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logPersistedUsernamePasswordProviderAuthenticate(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$token = $joinPoint->getMethodArgument('authenticationToken');
@@ -106,7 +103,6 @@ class LoggingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logJoinPointAccessDecisions(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$exception = $joinPoint->getException();

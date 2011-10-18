@@ -20,7 +20,6 @@ class ControllerObjectNameTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function requestMatchingBasicallyWorks() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');

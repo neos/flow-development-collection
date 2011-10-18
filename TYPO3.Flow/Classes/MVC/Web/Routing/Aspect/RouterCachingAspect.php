@@ -36,7 +36,6 @@ class RouterCachingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectFindMatchResultsCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->findMatchResultsCache = $cache;
@@ -47,7 +46,6 @@ class RouterCachingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectResolveCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
 		$this->resolveCache = $cache;
@@ -59,7 +57,6 @@ class RouterCachingAspect {
 	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Web\Routing\Router->findMatchResults())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return array Result of the target method
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function cacheMatchingCall(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routePath = $joinPoint->getMethodArgument('routePath');
@@ -82,8 +79,6 @@ class RouterCachingAspect {
 	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Web\Routing\Router->resolve())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return string Result of the target method
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function cacheResolveCall(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
@@ -107,7 +102,6 @@ class RouterCachingAspect {
 	 *
 	 * @param mixed $subject
 	 * @return boolean If it contains an object or not
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function containsObject($subject) {
 		if (is_object($subject)) {
@@ -129,7 +123,6 @@ class RouterCachingAspect {
 	 *
 	 * @param array $routeValues the array to be processed
 	 * @return array the modified array
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function convertObjectsToHashes(array $routeValues) {
 		foreach ($routeValues as &$value) {

@@ -31,7 +31,6 @@ class Algorithms {
 	 * @param integer $derivedKeyLength Derived key length
 	 * @param string $algorithm Hash algorithm to use, see hash_algos(), defaults to sha256
 	 * @return string The computed derived key as raw binary data
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static public function pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, $algorithm = 'sha256') {
 		$hashLength = strlen(hash($algorithm, NULL, TRUE));

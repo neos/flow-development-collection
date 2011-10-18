@@ -78,7 +78,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 *
 	 * @param boolean $colorSupport TRUE, FALSE or NULL (= autodetection)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setColorSupport($colorSupport) {
 		$this->colorSupport = $colorSupport;
@@ -91,7 +90,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * set to "styled".
 	 *
 	 * @return boolean TRUE if the terminal support ANSI colors, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasColorSupport() {
 		if ($this->colorSupport !== NULL) {
@@ -109,7 +107,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 *
 	 * @param integer $outputFormat One of the OUTPUTFORMAT_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setOutputFormat($outputFormat) {
 		$this->outputFormat = $outputFormat;
@@ -119,7 +116,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * Returns the currently set output format.
 	 *
 	 * @return integer One of the OUTPUTFORMAT_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getOutputFormat() {
 		return $this->outputFormat;
@@ -129,7 +125,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * Sends the response
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function send() {

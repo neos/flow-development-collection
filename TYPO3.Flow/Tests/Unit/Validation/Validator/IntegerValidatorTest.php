@@ -25,7 +25,6 @@ class IntegerValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\
 	 * Data provider with valid integers
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validIntegers() {
 		return array(
@@ -37,7 +36,6 @@ class IntegerValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @dataProvider validIntegers
 	 */
@@ -49,7 +47,6 @@ class IntegerValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\
 	 * Data provider with invalid integers
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function invalidIntegers() {
 		return array(
@@ -60,7 +57,6 @@ class IntegerValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @dataProvider invalidIntegers
 	 */
@@ -70,7 +66,6 @@ class IntegerValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$this->assertEquals(1, count($this->validator->validate('not a number')->getErrors()));

@@ -59,7 +59,6 @@ class ConfigurationProperty {
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
 		$this->set($name, $value, $type, $objectConfiguration);
@@ -73,7 +72,6 @@ class ConfigurationProperty {
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
 		$this->name = $name;
@@ -86,7 +84,6 @@ class ConfigurationProperty {
 	 * Returns the name of the property
 	 *
 	 * @return string Name of the property
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
 		return $this->name;
@@ -96,7 +93,6 @@ class ConfigurationProperty {
 	 * Returns the value of the property
 	 *
 	 * @return mixed Value of the property
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValue() {
 		return $this->value;
@@ -106,7 +102,6 @@ class ConfigurationProperty {
 	 * Returns the type of the property
 	 *
 	 * @return integer Type of the property
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getType() {
 		return $this->type;
@@ -116,7 +111,6 @@ class ConfigurationProperty {
 	 * Returns the (optional) object configuration which may be defined for properties of type OBJECT
 	 *
 	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration or NULL
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfiguration() {
 		return $this->objectConfiguration;
@@ -127,7 +121,6 @@ class ConfigurationProperty {
 	 *
 	 * @param integer $autowiring One of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAutowiring($autowiring) {
 		$this->autowiring = $autowiring;
@@ -137,7 +130,6 @@ class ConfigurationProperty {
 	 * Returns the autowiring mode for this property
 	 *
 	 * @return integer Value of one of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;

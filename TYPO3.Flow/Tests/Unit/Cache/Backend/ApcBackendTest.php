@@ -26,7 +26,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up this testcase
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
 		$this->markTestSkipped('Disabling ALL apc tests for now as they are so unreliable');
@@ -41,8 +40,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
@@ -55,7 +52,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
@@ -68,7 +64,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @ test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndGetEntry() {
 		$backend = $this->setUpBackend();
@@ -81,7 +76,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
@@ -95,7 +89,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
@@ -110,7 +103,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findIdentifiersByTagFindsSetEntries() {
 		$backend = $this->setUpBackend();
@@ -128,7 +120,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setRemovesTagsFromPreviousSet() {
 		$backend = $this->setUpBackend();
@@ -144,7 +135,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -155,7 +145,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -166,8 +155,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
 		$backend = $this->setUpBackend();
@@ -186,7 +173,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesAllCacheEntries() {
 		$this->markTestSkipped('Somehow, this test does not work...');
@@ -206,7 +192,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesOnlyOwnEntries() {
 		$thisCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
@@ -233,7 +218,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Check if we can store ~5 MB of data, this gives some headroom.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function largeDataIsStored() {
 		$backend = $this->setUpBackend();
@@ -250,7 +234,6 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up the APC backend used for testing
 	 *
 	 * @return \TYPO3\FLOW3\Cache\Backend\ApcBackend
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);

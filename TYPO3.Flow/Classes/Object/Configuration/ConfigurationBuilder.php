@@ -37,7 +37,6 @@ class ConfigurationBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -46,7 +45,6 @@ class ConfigurationBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -61,7 +59,6 @@ class ConfigurationBuilder {
 	 * @param array $availableClassNamesByPackage An array of available class names, grouped by package key
 	 * @param array $rawObjectconfigurationsByPackages An array of package keys and their raw (ie. unparsed) object configurations
 	 * @return array<TYPO3\FLOW3\Object\Configuration\Configuration> Object configurations
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildObjectConfigurations(array $availableClassNamesByPackage, array $rawObjectConfigurationsByPackages) {
 		$objectConfigurations = array();
@@ -152,7 +149,6 @@ class ConfigurationBuilder {
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
 	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration object
 	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if errors occurred during parsing
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = NULL) {
 		$className = (isset($rawConfigurationOptions['className']) ? $rawConfigurationOptions['className'] : $objectName);
@@ -220,7 +216,6 @@ class ConfigurationBuilder {
 	 * @param  string $value Value of the option
 	 * @return integer The scope translated into a Configuration::SCOPE_* constant
 	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid scope has been specified
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseScope($value) {
 		switch ($value) {
@@ -241,7 +236,6 @@ class ConfigurationBuilder {
 	 * @param  mixed $value Value of the option
 	 * @return integer The autowiring option translated into one of Configuration::AUTOWIRING_MODE_*
 	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid option has been specified
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function parseAutowiring($value) {
 		switch ($value) {
@@ -263,7 +257,6 @@ class ConfigurationBuilder {
 	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the property configuration - either a string or an array
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
 	 * @return \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty A configuration property of type object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parsePropertyOfTypeObject($propertyName, $objectNameOrConfiguration, $configurationSourceHint) {
 		if (is_array($objectNameOrConfiguration)) {
@@ -292,7 +285,6 @@ class ConfigurationBuilder {
 	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the argument configuration - either a string or an array
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
 	 * @return \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument A configuration argument of type object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, $configurationSourceHint) {
 		if (is_array($objectNameOrConfiguration)) {
@@ -312,7 +304,6 @@ class ConfigurationBuilder {
 	 *
 	 * @param array
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function autowireArguments(array &$objectConfigurations) {
 		foreach ($objectConfigurations as $objectConfiguration) {
@@ -358,7 +349,6 @@ class ConfigurationBuilder {
 	 * @param array
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException if a required property could not be autowired.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function autowireProperties(array &$objectConfigurations) {
 		foreach ($objectConfigurations as $objectConfiguration) {

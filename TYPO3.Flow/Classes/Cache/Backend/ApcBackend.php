@@ -51,8 +51,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options - unused here
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($context, array $options = array()) {
 		if (!extension_loaded('apc')) throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
@@ -64,7 +62,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
@@ -84,8 +81,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
 	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -109,7 +104,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -123,7 +117,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -139,8 +132,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -154,7 +145,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
@@ -173,8 +163,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $identifier Identifier to find tags by
 	 * @return array Array with tags
-	 * @author Dmitry Dulepov
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function findTagsByIdentifier($identifier) {
 		$success = FALSE;
@@ -186,7 +174,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function flush() {
@@ -199,7 +186,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -214,8 +200,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier
 	 * @param array $tags
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Dmitry Dulepov <dmitry.@typo3.org>
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
@@ -240,8 +224,6 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier
 	 * @param array $tags
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Dmitry Dulepov <dmitry@typo3.org>
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
 			// Get tags for this identifier

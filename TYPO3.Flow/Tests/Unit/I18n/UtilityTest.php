@@ -31,7 +31,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with valid Accept-Language headers and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleHttpAcceptLanguageHeaders() {
 		return array(
@@ -44,7 +43,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleHttpAcceptLanguageHeaders
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function httpAcceptLanguageHeadersAreParsedCorrectly($acceptLanguageHeader, array $expectedResult) {
 		$languages = \TYPO3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
@@ -55,7 +53,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with filenames with locale tags and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function filenamesWithLocale() {
 		return array(
@@ -68,7 +65,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider filenamesWithLocale
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function localeIdentifiersAreCorrectlyExtractedFromFilename($filename, $expectedResult) {
 		$result = \TYPO3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($filename);
@@ -81,7 +77,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * as beginning of the haystack, or it's ending, or both or none.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleHaystackStringsAndNeedleStrings() {
 		return array(
@@ -96,7 +91,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleHaystackStringsAndNeedleStrings
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $comparison) {
 		$expectedResult = ($comparison === 'beginning' || $comparison === 'both') ? TRUE : FALSE;
@@ -107,7 +101,6 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleHaystackStringsAndNeedleStrings
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $comparison) {
 		$expectedResult = ($comparison === 'ending' || $comparison === 'both') ? TRUE : FALSE;

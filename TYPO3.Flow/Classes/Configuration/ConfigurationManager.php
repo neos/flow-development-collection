@@ -124,7 +124,6 @@ class ConfigurationManager {
 	 * @param string $packageKey Key of the package to return the configuration for, e.g. 'TYPO3.FLOW3'
 	 * @return array The configuration
 	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfiguration($configurationType, $packageKey = NULL) {
 		$configuration = array();
@@ -183,7 +182,6 @@ class ConfigurationManager {
 	 * @param array $configuration The new configuration
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConfiguration($configurationType, array $configuration) {
 		switch ($configurationType) {
@@ -202,7 +200,6 @@ class ConfigurationManager {
 	 *
 	 * @param string $configurationType The kind of configuration to save - must be one of the supported CONFIGURATION_TYPE_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveConfiguration($configurationType) {
 		switch ($configurationType) {
@@ -219,7 +216,6 @@ class ConfigurationManager {
 	 * This method writes the current configuration into a cache file if FLOW3 was configured to do so.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdown() {
 		if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['FLOW3']['configuration']['compileConfigurationFiles'] === TRUE && $this->cacheNeedsUpdate === TRUE) {
@@ -236,8 +232,6 @@ class ConfigurationManager {
 	 * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param array $packages An array of Package objects (indexed by package key) to consider
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function loadConfiguration($configurationType, array $packages) {
 		$this->cacheNeedsUpdate = TRUE;
@@ -335,7 +329,6 @@ class ConfigurationManager {
 	 * If a cache file with previously saved configuration exists, it is loaded.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function loadConfigurationCache() {
 		if (file_exists($this->includeCachedConfigurationsPathAndFilename)) {
@@ -348,7 +341,6 @@ class ConfigurationManager {
 	 * in the context's Configuration directory.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function saveConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
@@ -376,7 +368,6 @@ EOD;
 	 *
 	 * @param array &$configurations The configuration to post process. The results are stored directly in the given array
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function postProcessConfiguration(array &$configurations) {
 		foreach ($configurations as $key => $configuration) {
@@ -400,7 +391,6 @@ EOD;
 	 * @param array $routesConfiguration
 	 * @param array $subRoutesConfiguration
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function mergeRoutesWithSubRoutes(array &$routesConfiguration, array $subRoutesConfiguration) {
 		$mergedRoutesConfiguration = array();
@@ -429,7 +419,6 @@ EOD;
 	 * @param array $subRoutesConfiguration
 	 * @param string $subRouteKey the key of the sub route: <subRouteKey>
 	 * @return array the merged route configuration
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
 		$mergedSubRoutesConfigurations = array();

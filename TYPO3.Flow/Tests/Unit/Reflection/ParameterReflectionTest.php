@@ -19,7 +19,6 @@ class ParameterReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
 		$parameter = new \TYPO3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
@@ -28,7 +27,6 @@ class ParameterReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
 		$parameter = new \TYPO3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');

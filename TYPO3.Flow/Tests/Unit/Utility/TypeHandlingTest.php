@@ -20,7 +20,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Utility\Exception\InvalidTypeException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeThrowsExceptionOnInvalidType() {
 		\TYPO3\FLOW3\Utility\TypeHandling::parseType('something not a type');
@@ -29,7 +28,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Utility\Exception\InvalidTypeException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeThrowsExceptionOnInvalidElementTypeHint() {
 		\TYPO3\FLOW3\Utility\TypeHandling::parseType('string<integer>');
@@ -37,7 +35,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * data provider for parseTypeReturnsArrayWithInformation
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function types() {
 		return array(
@@ -56,7 +53,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider types
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeReturnsArrayWithInformation($type, $expectedResult) {
 		$this->assertEquals(
@@ -67,7 +63,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * data provider for normalizeTypesReturnsNormalizedType
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function normalizeTypes() {
 		return array(
@@ -81,7 +76,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider normalizeTypes
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function normalizeTypesReturnsNormalizedType($type, $normalized) {
 		$this->assertEquals(\TYPO3\FLOW3\Utility\TypeHandling::normalizeType($type), $normalized);
@@ -89,7 +83,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * data provider for isLiteralReturnsFalseForNonLiteralTypes
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function nonLiteralTypes() {
 		return array(
@@ -104,7 +97,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider nonliteralTypes
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isLiteralReturnsFalseForNonLiteralTypes($type) {
 		$this->assertFalse(\TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type));
@@ -112,7 +104,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * data provider for isLiteralReturnsTrueForLiteralType
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function literalTypes() {
 		return array(
@@ -129,7 +120,6 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider literalTypes
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isLiteralReturnsTrueForLiteralType($type) {
 		$this->assertTrue(\TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type));

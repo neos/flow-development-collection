@@ -22,7 +22,6 @@ final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setControllerContext(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
@@ -34,7 +33,6 @@ final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 * @param string $key
 	 * @param mixed $value
 	 * @return \TYPO3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function assign($key, $value) {
@@ -46,7 +44,6 @@ final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param array $values
 	 * @return \TYPO3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function assignMultiple(array $values) {
@@ -68,7 +65,6 @@ final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 * Renders the empty view
 	 *
 	 * @return string An empty string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		return '';
@@ -85,7 +81,6 @@ final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 * @param string $methodName Name of the method
 	 * @param array $arguments Arguments passed to the method
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __call($methodName, array $arguments) {
 	}

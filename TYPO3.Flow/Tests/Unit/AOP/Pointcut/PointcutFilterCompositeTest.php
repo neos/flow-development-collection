@@ -19,7 +19,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefintionReturnsTheEvaluationsFromAllContainedFiltersThatMatchedThePointcutWithTheCorrectOperators() {
 		$runtimeEvaluations1 = array('methodArgumentConstraint' => array('arg1' => 'eval1'));
@@ -79,7 +78,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchesReturnsTrueForNegatedSubfiltersWithRuntimeEvaluations() {
 		$mockPointcutFilter1 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
@@ -109,7 +107,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function matchesReturnsTrueForNegatedSubfilter() {
 		$mockPointcutFilter1 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
@@ -129,7 +126,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function matchesReturnsFalseEarlyForAndedSubfilters() {
 		$mockPointcutFilter1 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
@@ -149,7 +145,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function matchesReturnsFalseEarlyForAndedNegatedSubfilters() {
 		$mockPointcutFilter1 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
@@ -169,7 +164,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function globalRuntimeEvaluationsDefinitionAreAddedCorrectlyToThePointcutFilterComposite() {
 		$existingRuntimeEvaluationsDefintion = array (
@@ -227,7 +221,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeReturnsTheCorrectStringForBasicRuntimeEvaluationsDefintion() {
 		$runtimeEvaluationsDefintion = array (
@@ -277,7 +270,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeHandlesDefinitionsConcatenatedByNegatedOperatorsCorrectly() {
 		$runtimeEvaluationsDefintion = array (
@@ -327,7 +319,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeReturnsTheCorrectStringForAnEmptyDefinition() {
 		$expectedResult = 'NULL';
@@ -343,7 +334,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildMethodArgumentsEvaluationConditionCodeBuildsTheCorrectCodeForAnArgumentWithMoreThanOneCondition() {
 		$condition = array (
@@ -370,7 +360,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildMethodArgumentsEvaluationConditionCodeBuildsTheCorrectCodeForAConditionWithObjectAccess() {
 		$condition = array (
@@ -405,7 +394,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildMethodArgumentsEvaluationConditionCodeBuildsTheCorrectCodeForAConditionWithInOperator() {
 		$condition = array (
@@ -430,7 +418,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildMethodArgumentsEvaluationConditionCodeBuildsTheCorrectCodeForAConditionWithMatchesOperator() {
 		$condition = array (
@@ -457,7 +444,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildGlobalRuntimeEvaluationsConditionCodeBuildsTheCorrectCodeForConditionsWithObjectAccess() {
 		$condition = array (
@@ -484,7 +470,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildGlobalRuntimeEvaluationsConditionCodeBuildsTheCorrectCodeForAConditionWithInOperator() {
 		$condition = array (
@@ -506,7 +491,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildGlobalRuntimeEvaluationsConditionCodeBuildsTheCorrectCodeForAConditionWithMatchesOperator() {
 		$condition = array (
@@ -533,7 +517,6 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function hasRuntimeEvaluationsDefinitionConsidersGlobalAndFilterRuntimeEvaluationsDefinitions() {
 		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);

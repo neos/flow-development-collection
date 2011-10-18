@@ -96,7 +96,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 	/**
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function runBare() {
 		$this->objectManager = self::$flow3->getObjectManager();
@@ -107,7 +106,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Enables security tests for this testcase
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function enableTestableSecurity() {
 		$this->testableSecurityEnabled = TRUE;
@@ -117,7 +115,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Sets up test requirements depending on the enabled tests
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
 		$this->mockWebRequestHandler = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler');
@@ -146,7 +143,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Sets up security test requirements
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function setupSecurity() {
 		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
@@ -168,7 +164,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 *       exception message by adding an echo($this->statusMessage) as the first line of this method.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function tearDown() {
 		if ($this->testableSecurityEnabled === TRUE) {
@@ -185,7 +180,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Resets security test requirements
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function tearDownSecurity() {
 		$this->accessDecisionManager->reset();
@@ -201,7 +195,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @param array $arguments Optional arguments passed to controller
 	 * @param string $format The request format, defaults to 'html'
 	 * @return string The result of the controller action
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
 		if (!getenv('FLOW3_REWRITEURLS')) {
@@ -252,7 +245,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 *
 	 * @param array $roleNames A list of roles the new account should have
 	 * @return \TYPO3\FLOW3\Security\Account The created account
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function authenticateRoles(array $roleNames) {
 		$account = new \TYPO3\FLOW3\Security\Account();
@@ -277,7 +269,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Disables authorization for the current test
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function disableAuthorization() {
 		$this->accessDecisionManager->setOverrideDecision(TRUE);

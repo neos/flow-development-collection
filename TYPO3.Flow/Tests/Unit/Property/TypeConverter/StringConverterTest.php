@@ -29,7 +29,6 @@ class StringConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string', 'integer'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,7 +38,6 @@ class StringConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldReturnSourceString() {
 		$this->assertEquals('myString', $this->converter->convertFrom('myString', 'string'));
@@ -47,7 +45,6 @@ class StringConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function canConvertFromShouldReturnTrue() {
 		$this->assertTrue($this->converter->canConvertFrom('myString', 'string'));
@@ -55,7 +52,6 @@ class StringConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
 		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));

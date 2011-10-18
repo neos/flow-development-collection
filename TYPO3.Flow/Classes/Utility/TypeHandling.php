@@ -38,7 +38,6 @@ class TypeHandling {
 	 *
 	 * @param string $type Type of the property (see PARSE_TYPE_PATTERN)
 	 * @return array An array with information about the type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function parseType($type) {
 		$matches = array();
@@ -67,7 +66,6 @@ class TypeHandling {
 	 *
 	 * @param string $type Data type to unify
 	 * @return string unified data type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function normalizeType($type) {
 		switch ($type) {
@@ -89,7 +87,6 @@ class TypeHandling {
 	 *
 	 * @param string $type
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function isLiteral($type) {
 		return preg_match(self::LITERAL_TYPE_PATTERN, $type) === 1;
@@ -100,7 +97,6 @@ class TypeHandling {
 	 *
 	 * @param string $type
 	 * @return boolean
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function isSimpleType($type) {
 		return in_array(self::normalizeType($type), array('array', 'string', 'float', 'integer', 'boolean'), TRUE);

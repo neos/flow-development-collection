@@ -40,7 +40,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -57,7 +56,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -69,7 +67,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -81,7 +78,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if the entry could be removed or FALSE if no entry was found
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -104,7 +100,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 *
 	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
@@ -119,7 +114,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flush() {
@@ -132,7 +126,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -146,7 +139,6 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 * Does nothing
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function collectGarbage() {

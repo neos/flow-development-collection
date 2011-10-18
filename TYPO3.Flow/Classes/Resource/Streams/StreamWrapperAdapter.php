@@ -53,7 +53,6 @@ class StreamWrapperAdapter {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		self::$objectManager = $objectManager;
@@ -66,7 +65,6 @@ class StreamWrapperAdapter {
 	 * @param string $scheme
 	 * @param string $objectName
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function registerStreamWrapper($scheme, $objectName) {
 		self::$registeredStreamWrappers[$scheme] = $objectName;
@@ -76,7 +74,6 @@ class StreamWrapperAdapter {
 	 * Returns the stream wrappers registered with this class.
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getRegisteredStreamWrappers() {
 		return self::$registeredStreamWrappers;
@@ -87,7 +84,6 @@ class StreamWrapperAdapter {
 	 *
 	 * @param string $path The path to fetch the scheme from.
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createStreamWrapper($path) {
 		if ($this->streamWrapper === NULL) {

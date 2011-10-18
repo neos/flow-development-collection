@@ -31,7 +31,6 @@ class SecurityPublishingConfiguration implements \TYPO3\FLOW3\Resource\Publishin
 	 *
 	 * @param array<\TYPO3\FLOW3\Security\Policy\Role> $allowedRoles An array of roles
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAllowedRoles(array $allowedRoles) {
 		$this->allowedRoles = $allowedRoles;
@@ -41,7 +40,6 @@ class SecurityPublishingConfiguration implements \TYPO3\FLOW3\Resource\Publishin
 	 * Returns the roles that are allowed to see the corresponding resource
 	 *
 	 * @return array An array of roles
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAllowedRoles() {
 		return $this->allowedRoles;

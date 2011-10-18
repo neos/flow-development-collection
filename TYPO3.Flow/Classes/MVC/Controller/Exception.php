@@ -31,7 +31,6 @@ class Exception extends \TYPO3\FLOW3\Exception {
 	 * @param \Exception $previousException
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
 	 * @see \Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function __construct($message = '', $code = 0, \Exception $previousException = NULL, \TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
@@ -42,7 +41,6 @@ class Exception extends \TYPO3\FLOW3\Exception {
 	 * Returns the request object that exception belongs to.
 	 *
 	 * @return \TYPO3\FLOW3\MVC\RequestInterface
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getRequest() {
 		return $this->request;

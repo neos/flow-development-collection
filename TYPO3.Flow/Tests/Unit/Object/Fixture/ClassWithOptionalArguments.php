@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Fixture class for various unit tests (mainly the package- and object
  * manager)
  *
- * @author Robert Lemke <robert@typo3.org>
  * @FLOW3\Scope("prototype")
  */
 class ClassWithOptionalArguments {

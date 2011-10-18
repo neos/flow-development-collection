@@ -31,7 +31,6 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $cache;
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -45,7 +44,6 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusReturnsStatusUnchangedIfFileDoesNotExistAndDidNotExistEarlier() {
 		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
@@ -56,7 +54,6 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusReturnsStatusUnchangedIfFileExistedAndTheModificationTimeDidNotChange() {
 		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
@@ -71,7 +68,6 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusDetectsANewlyCreatedFile() {
 		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
@@ -83,7 +79,6 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusDetectsADeletedFile() {
 		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
@@ -98,7 +93,6 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusReturnsStatusChangedIfTheFileExistedEarlierButTheModificationTimeHasChangedSinceThen() {
 		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';

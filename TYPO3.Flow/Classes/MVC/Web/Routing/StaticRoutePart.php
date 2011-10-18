@@ -24,7 +24,6 @@ class StaticRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * Gets default value of the Route Part.
 	 *
 	 * @return string $defaultValue
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getDefaultValue() {
 		return $this->name;
@@ -36,8 +35,6 @@ class StaticRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 *
 	 * @param string $routePath The request path to be matched - without query parameters, host and fragment.
 	 * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function match(&$routePath) {
 		$this->value = NULL;
@@ -62,8 +59,6 @@ class StaticRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 *
 	 * @param array $routeValues not used but needed to implement \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart
 	 * @return boolean
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolve(array &$routeValues) {
 		if ($this->name === NULL || $this->name === '') {

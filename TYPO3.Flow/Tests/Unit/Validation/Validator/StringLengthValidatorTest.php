@@ -23,7 +23,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorForAStringShorterThanMaxLengthAndLongerThanMinLength() {
 		$this->validatorOptions(array('minimum' => 0, 'maximum' => 50));
@@ -32,7 +31,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsErrorForAStringShorterThanThanMinLength() {
 		$this->validatorOptions(array('minimum' => 50, 'maximum' => 100));
@@ -41,7 +39,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsErrorsForAStringLongerThanThanMaxLength() {
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 10));
@@ -50,7 +47,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorsForAStringLongerThanThanMinLengthAndMaxLengthNotSpecified() {
 		$this->validatorOptions(array('minimum' => 5));
@@ -59,7 +55,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorsForAStringShorterThanThanMaxLengthAndMinLengthNotSpecified() {
 		$this->validatorOptions(array('maximum' => 100));
@@ -68,7 +63,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorsForAStringLengthEqualToMaxLengthAndMinLengthNotSpecified() {
 		$this->validatorOptions(array('maximum' => 10));
@@ -77,7 +71,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorForAStringLengthEqualToMinLengthAndMaxLengthNotSpecified() {
 		$this->validatorOptions(array('minimum' => 10));
@@ -86,7 +79,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorIfMinLengthAndMaxLengthAreEqualAndTheGivenStringMatchesThisValue() {
 		$this->validatorOptions(array('minimum' => 10, 'maximum' => 10));
@@ -95,7 +87,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorsfTheStringLengthIsEqualToMaxLength() {
 		$this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
@@ -104,7 +95,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsNoErrorIfTheStringLengthIsEqualToMinLength() {
 		$this->validatorOptions(array('minimum' => 10, 'maximum' => 100));
@@ -114,7 +104,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength() {
 		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
@@ -124,7 +113,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorInsertsAnErrorObjectIfValidationFails() {
 		$this->validatorOptions(array('minimum' => 50, 'maximum' => 100));
@@ -134,7 +122,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorCanHandleAnObjectWithAToStringMethod() {
 		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
@@ -157,7 +144,6 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfTheGivenObjectCanNotBeConvertedToAString() {
 		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);

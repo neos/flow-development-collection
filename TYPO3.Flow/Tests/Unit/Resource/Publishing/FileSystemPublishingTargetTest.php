@@ -19,7 +19,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Resource\Publishing;
 class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -30,7 +29,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the package autoloader loads classes from subdirectories.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initalizeObjectCreatesDirectoriesAndDetectsTheResourcesBaseUri() {
 		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('detectResourcesBaseUri'));
@@ -45,7 +43,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishStaticResourcesReturnsFalseIfTheGivenSourceDirectoryDoesntExist() {
 		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
@@ -54,7 +51,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishStaticResourcesMirrorsRecursivelyAllFilesExceptPHPFoundInTheSpecifiedDirectory() {
 		mkdir('vfs://Foo/Sources');
@@ -90,7 +86,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function publishStaticResourcesLinksTheSpecifiedDirectoryIfMirrorModeIsLink() {
 		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
@@ -116,7 +111,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishStaticResourcesDoesNotMirrorAFileIfItAlreadyExistsAndTheModificationTimeIsEqualOrNewer() {
 		mkdir('vfs://Foo/Sources');
@@ -154,7 +148,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResourceMirrorsTheGivenResource() {
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
@@ -177,7 +170,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function publishPersistentResourceLeavesOutEmptyFileName() {
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
@@ -201,7 +193,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResourceMirrorsTheGivenSourceFileDoesntExist() {
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
@@ -221,7 +212,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResourceDoesNotMirrorTheResourceIfItAlreadyExistsInThePublishingDirectory() {
 		mkdir('vfs://Foo/Web');
@@ -245,7 +235,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unpublishPersistentResourceMirrorsTheGivenResource() {
 		$this->marktestSkipped('It seems glob() does not work on vfsStream...');
@@ -270,7 +259,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getStaticResourcesWebBaseUriReturnsJustThat() {
 		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
@@ -281,7 +269,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPersistentResourceWebUriJustCallsPublishPersistentResource() {
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
@@ -296,7 +283,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Because mirrorFile() uses touch() we can't use vfs to mock the file system.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mirrorFileCopiesTheGivenFileIfTheSettingSaysSo() {
 		$sourcePathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
@@ -324,7 +310,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Because mirrorFile() uses touch() we can't use vfs to mock the file system.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mirrorFileSymLinksTheGivenFileIfTheSettingSaysSo() {
 		$sourcePathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
@@ -348,7 +333,6 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectResourcesBaseUriDetectsUriWithSubDirectoryCorrectly() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);

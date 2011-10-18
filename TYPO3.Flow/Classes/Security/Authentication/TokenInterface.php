@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
 /**
  * Contract for an authentication token.
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface TokenInterface {
 

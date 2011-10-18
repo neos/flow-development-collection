@@ -86,7 +86,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 *
 	 * @param array $settings Settings of the FLOW3 package
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -97,7 +96,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 *
 	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager The configuration manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -108,7 +106,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 *
 	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
 		$this->cache = $cacheManager->getCache('FLOW3_Security_Policy');
@@ -119,7 +116,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 *
 	 * @param \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser $parser
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPolicyExpressionParser(\TYPO3\FLOW3\Security\Policy\PolicyExpressionParser $parser) {
 		$this->policyExpressionParser = $parser;
@@ -130,7 +126,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -140,7 +135,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Initializes this Policy Service
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
 		$this->policy = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
@@ -171,8 +165,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->settings['security']['enable'] === FALSE) {
@@ -265,7 +257,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return FALSE;
@@ -275,7 +266,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
@@ -285,7 +275,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Returns an array of all configured roles
 	 *
 	 * @return array Array of all configured roles
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
 		$roles = array();
@@ -300,7 +289,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 *
 	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role to get the parents for
 	 * @return array<TYPO3\Security\Policy\Role> Array of parent roles
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAllParentRoles(\TYPO3\FLOW3\Security\Policy\Role $role) {
 		$result = array();
@@ -322,7 +310,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @return array Array of roles
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesForJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
@@ -343,7 +330,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
 	 * @return array Array of privileges
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function getPrivilegesForJoinPoint(\TYPO3\FLOW3\Security\Policy\Role $role, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -376,7 +362,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param string $resource The resource for which the privileges should be returned
 	 * @return integer One of: PRIVILEGE_GRANT, PRIVILEGE_DENY
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function getPrivilegeForResource(\TYPO3\FLOW3\Security\Policy\Role $role, $resource) {
@@ -409,7 +394,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param string $methodName The method name to check the policy for
 	 * @param array $roles
 	 * @return boolean TRUE if the given controller action has a policy entry
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForMethod($className, $methodName, array $roles = array()) {
 		$methodIdentifier = strtolower($className . '->' . $methodName);
@@ -433,7 +417,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param string $entityType The entity type (object name) to be checked
      * @param array $roles The roles to be checked
 	 * @return boolean TRUE if the given entity type has a policy entry
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForEntityType($entityType, array $roles) {
 		$entityType = str_replace('\\', '_', $entityType);
@@ -458,7 +441,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @param string $entityType The entity type (object name)
 	 * @param array $roles An array of roles the resources have to be configured for
 	 * @return array An array resource constraints
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRoles($entityType, array $roles) {
 		$deniedResources = array();
@@ -489,7 +471,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Parses the policy and stores the configured entity acls in the internal acls array
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseEntityAcls() {
 		foreach ($this->policy['acls'] as $role => $aclEntries) {
@@ -508,7 +489,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Sets the default ACLs for the Everybody role
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function setAclsForEverybodyRole() {
 		$this->policy['roles']['Everybody'] = array();
@@ -531,8 +511,6 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * Save the found matches to the cache.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function savePolicyCache() {
 		$tags = array('TYPO3_FLOW3_AOP');

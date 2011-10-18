@@ -20,7 +20,6 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequestReturnsFalseIfTheTargetActionIsTaggedWithSkipCsrfProtection() {
 		$controllerObjectName = 'SomeControllerObjectName';
@@ -50,7 +49,6 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequestReturnsFalseIfTheTargetActionIsNotMentionedInThePolicy() {
 		$controllerObjectName = 'SomeControllerObjectName';
@@ -76,7 +74,6 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequestReturnsTrueIfTheTargetActionIsMentionedInThePolicyButNoCsrfTokenHasBeenSent() {
 		$controllerObjectName = 'SomeControllerObjectName';
@@ -107,7 +104,6 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequestReturnsTrueIfTheTargetActionIsMentionedInThePolicyButTheCsrfTokenIsInvalid() {
 		$controllerObjectName = 'SomeControllerObjectName';
@@ -143,7 +139,6 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequestReturnsFalseIfTheTargetActionIsMentionedInThePolicyAndTheCsrfTokenIsValid() {
 		$controllerObjectName = 'SomeControllerObjectName';

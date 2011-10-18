@@ -19,7 +19,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function objectRegisteredWithRegisterReconstitutedEntityCanBeRetrievedWithGetReconstitutedEntities() {
 		$someObject = new \ArrayObject(array());
@@ -32,7 +31,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterReconstitutedEntityRemovesObjectFromSession() {
 		$someObject = new \ArrayObject(array());
@@ -47,7 +45,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasObjectReturnsTrueForRegisteredObject() {
 		$object1 = new \stdClass();
@@ -61,7 +58,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasIdentifierReturnsTrueForRegisteredObject() {
 		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
@@ -73,7 +69,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifierByObjectReturnsRegisteredUUIDForObject() {
 		$object = new \stdClass();
@@ -85,7 +80,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getObjectByIdentifierReturnsRegisteredObjectForUUID() {
 		$object = new \stdClass();
@@ -97,7 +91,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterObjectRemovesRegisteredObject() {
 		$object1 = new \stdClass();
@@ -121,7 +114,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function newObjectsAreConsideredDirty() {
 		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
@@ -130,7 +122,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForUnregisteredReconstitutedEntities() {
 		$session = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session', array('isReconstitutedEntity'));
@@ -140,7 +131,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsFalseForNullInBothCurrentAndCleanValue() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -156,7 +146,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyAsksIsPropertyDirtyForChangedLiterals() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -184,7 +173,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsFalseForUnactivatedLazyObjects() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -199,7 +187,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForTraversablesWhoseCountDiffers() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -226,7 +213,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForNestedArrayWhoseCountDiffers() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -260,7 +246,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForSplObjectStorageWhoseContainedObjectsDiffer() {
 		$object = new \stdClass();
@@ -295,7 +280,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForArraysWhoseContainedObjectsDiffer() {
 		$object = new \stdClass();
@@ -333,7 +317,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsFalseForCleanArrays() {
 		$object = new \stdClass();
@@ -371,7 +354,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsFalseForCleanNestedArrays() {
 		$object = new \stdClass();
@@ -414,7 +396,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForArraysWithNewMembers() {
 		$object = new \stdClass();
@@ -452,7 +433,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Returns tuples of the form <type, current, clean, expected> for
 	 * isSingleValuedPropertyDirty()
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function propertyData() {
 		$dateTime = new \DateTime();
@@ -480,7 +460,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider propertyData
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isSingleValuedPropertyDirtyWorksAsExpected($type, $current, $clean, $expected) {
 		$session = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Persistence\Generic\Session'), array('getIdentifierByObject'));
@@ -489,7 +468,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getCleanStateOfPropertyReturnsNullIfPropertyWasNotInObjectData() {
 		$entity = new \stdClass();
@@ -514,7 +492,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getCleanStateOfPropertyReturnsNullIfObjectWasNotReconstituted() {
 		$entity = new \stdClass();
@@ -529,7 +506,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getCleanStateOfPropertyReturnsPropertyData() {
 		$entity = new \stdClass();
@@ -556,8 +532,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Does it return the UUID for an object know to the identity map?
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getIdentifierByObjectReturnsUUIDForKnownObject() {
 		$knownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
@@ -574,8 +548,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * but having FLOW3_Persistence_Identifier?
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getIdentifierByObjectReturnsUuidForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
@@ -592,7 +564,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * identity map but having FLOW3_Persistence_Identifier?
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifierByObjectReturnsHashForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
@@ -609,8 +580,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * not having FLOW3_Persistence_Identifier?
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
 		$unknownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
@@ -623,7 +592,6 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getIdentifierByObjectReturnsValueOfPropertyTaggedWithId() {
 		$object = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');

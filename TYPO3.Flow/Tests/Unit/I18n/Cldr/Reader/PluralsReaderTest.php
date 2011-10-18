@@ -24,7 +24,6 @@ class PluralsReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		$samplePluralRulesData = array(
@@ -53,7 +52,6 @@ class PluralsReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsCorrectPluralForm() {
 		$locale = new \TYPO3\FLOW3\I18n\Locale('mo');

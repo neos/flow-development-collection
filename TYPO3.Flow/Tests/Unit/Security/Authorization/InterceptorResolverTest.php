@@ -20,7 +20,6 @@ class InterceptorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\NoInterceptorFoundException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
@@ -33,7 +32,6 @@ class InterceptorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForAShortName() {
 		$getCaseSensitiveObjectNameCallback = function() {
@@ -56,7 +54,6 @@ class InterceptorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);

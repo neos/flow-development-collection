@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\Cache\Frontend;
  * Contract for a Cache (frontend)
  *
  * @api
- * @author Robert Lemke <robert@typo3.org>
  */
 interface FrontendInterface {
 

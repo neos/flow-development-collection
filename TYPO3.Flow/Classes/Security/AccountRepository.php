@@ -36,7 +36,6 @@ class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $accountIdentifier The account identifier
 	 * @param string $authenticationProviderName The authentication provider name
 	 * @return \TYPO3\FLOW3\Security\Account
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName) {
 		$query = $this->createQuery();
@@ -54,7 +53,6 @@ class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $accountIdentifier The account identifier
 	 * @param string $authenticationProviderName The authentication provider name
 	 * @return \TYPO3\FLOW3\Security\Account
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName) {
 		$query = $this->createQuery();

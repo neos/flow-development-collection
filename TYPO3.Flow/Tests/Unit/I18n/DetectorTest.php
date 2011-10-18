@@ -24,7 +24,6 @@ class DetectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$findBestMatchingLocaleCallback = function() {
@@ -58,7 +57,6 @@ class DetectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with valid Accept-Language headers and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleHttpAcceptLanguageHeaders() {
 		return array(
@@ -71,7 +69,6 @@ class DetectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleHttpAcceptLanguageHeaders
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function detectingBestMatchingLocaleFromHttpAcceptLanguageHeaderWorksCorrectly($acceptLanguageHeader, $expectedResult) {
 		$locale = $this->detector->detectLocaleFromHttpHeader($acceptLanguageHeader);
@@ -82,7 +79,6 @@ class DetectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with valid locale identifiers (tags) and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleLocaleIdentifiers() {
 		return array(
@@ -95,7 +91,6 @@ class DetectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleLocaleIdentifiers
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function detectingBestMatchingLocaleFromLocaleIdentifierWorksCorrectly($localeIdentifier, $expectedResult) {
 		$locale = $this->detector->detectLocaleFromLocaleTag($localeIdentifier);

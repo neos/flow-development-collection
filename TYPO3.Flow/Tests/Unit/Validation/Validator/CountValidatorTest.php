@@ -22,7 +22,6 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\CountValidator';
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countables() {
 		$splObjectStorage = new \SplObjectStorage();
@@ -37,7 +36,6 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	/**
 	 * @test
 	 * @dataProvider countables
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countValidatorReturnsTrueForValidCountables($countable) {
 		$this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
@@ -47,7 +45,6 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	/**
 	 * @test
 	 * @dataProvider countables
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countValidatorReturnsFalseForInvalidCountables($countable) {
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 10));
@@ -55,7 +52,6 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function nonCountables() {
 		$splObjectStorage = new \SplObjectStorage();
@@ -70,7 +66,6 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	/**
 	 * @test
 	 * @dataProvider nonCountables
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countValidatorReturnsFalseForNonCountables($nonCountable) {
 		$this->assertTrue($this->validator->validate($nonCountable)->hasErrors());

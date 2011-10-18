@@ -35,7 +35,6 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Xliff\XliffParser $parser
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectParser(\TYPO3\FLOW3\I18n\Xliff\XliffParser $parser) {
 		$this->xmlParser = $parser;
@@ -48,7 +47,6 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * @param string $source Label in original language ("source" tag in XLIFF)
 	 * @param string $pluralFormIndex Index of plural form to use (starts with 0)
 	 * @return mixed Translated label or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getTargetBySource($source, $pluralFormIndex = 0) {
 		foreach ($this->xmlParsedData as $translationUnit) {
@@ -76,7 +74,6 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * @param string $transUnitId The "id" attribute of "trans-unit" tag in XLIFF
 	 * @param string $pluralFormIndex Index of plural form to use (starts with 0)
 	 * @return mixed Translated label or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0) {
 		if (!isset($this->xmlParsedData[$transUnitId])) {

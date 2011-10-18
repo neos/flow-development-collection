@@ -20,7 +20,6 @@ class AbstractExceptionHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleExceptionLogsInformationAboutTheExceptionInTheSystemLog() {
 		$exception = new \Exception('The Message', 12345);

@@ -19,7 +19,6 @@ class EmptyViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsEmptyString() {
 		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
@@ -28,7 +27,6 @@ class EmptyViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
 		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
@@ -39,7 +37,6 @@ class EmptyViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignReturnsViewToAllowChaining() {
 		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
@@ -49,7 +46,6 @@ class EmptyViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignMultipleReturnsViewToAllowChaining() {
 		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();

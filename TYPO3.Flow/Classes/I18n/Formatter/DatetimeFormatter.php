@@ -34,7 +34,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectDatesReader(\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader) {
 		$this->datesReader = $datesReader;
@@ -47,7 +46,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function format($value, \TYPO3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {
@@ -88,7 +86,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param string $format Format string
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale used for finding literals array
 	 * @return string Formatted date / time. Unimplemented subformats in format string will be silently ignored
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
@@ -104,7 +101,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
 	 * @return string Formatted date
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function formatDate(\DateTime $date, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT) {
@@ -120,7 +116,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
 	 * @return string Formatted time
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function formatTime(\DateTime $time, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT) {
@@ -139,7 +134,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
 	 * @return string Formatted date and time
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function formatDateTime(\DateTime $dateTime, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT) {
@@ -157,7 +151,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param array $parsedFormat An array describing format (as in $parsedFormats property)
 	 * @param array $localizedLiterals An array with literals to use (as in $localizedLiterals property)
 	 * @return string Formatted date / time
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doFormattingWithParsedFormat(\DateTime $dateTime, array $parsedFormat, array $localizedLiterals) {
 		$formattedDateTime = '';
@@ -191,7 +184,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @return string Formatted part of date / time
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When $subformat use symbol that is not recognized
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
 	protected function doFormattingForSubpattern(\DateTime $dateTime, $subformat, array $localizedLiterals) {
@@ -303,7 +295,6 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * @param string $string
 	 * @param int $formatLength
 	 * @return string Padded string (can be unchanged if $formatLength is lower than length of string)
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function padString($string, $formatLength) {
 		return str_pad($string, $formatLength, '0', \STR_PAD_LEFT);

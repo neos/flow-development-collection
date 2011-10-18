@@ -40,7 +40,6 @@ class RequestHandlerResolver {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -51,7 +50,6 @@ class RequestHandlerResolver {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -66,7 +64,6 @@ class RequestHandlerResolver {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestHandlerInterface $requestHandler
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPreselectedRequestHandler(\TYPO3\FLOW3\MVC\RequestHandlerInterface $requestHandler) {
 		$this->preselectedRequestHandler = $requestHandler;
@@ -78,7 +75,6 @@ class RequestHandlerResolver {
 	 *
 	 * @return \TYPO3\FLOW3\MVC\RequestHandler A request handler
 	 * @throws \TYPO3\FLOW3\MVC\Exception
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
 		if (isset($this->preselectedRequestHandler)) {

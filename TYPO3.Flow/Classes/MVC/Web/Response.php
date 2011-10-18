@@ -102,7 +102,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * @param string $message If specified, this message is sent instead of the standard message
 	 * @return void
 	 * @throws \InvalidArgumentException if the specified status code is not valid
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setStatus($code, $message = NULL) {
@@ -117,7 +116,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * Returns status code and status message.
 	 *
 	 * @return string The status code and status message, eg. "404 Not Found"
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getStatus() {
@@ -131,7 +129,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * @param mixed $value The value of the given header
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
@@ -147,7 +144,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * Returns the HTTP headers - including the status header - of this web response
 	 *
 	 * @return string The HTTP headers
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getHeaders() {
@@ -169,7 +165,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * If headers have already been sent, this method fails silently.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function sendHeaders() {
@@ -183,7 +178,6 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	 * Renders and sends the whole web response
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function send() {

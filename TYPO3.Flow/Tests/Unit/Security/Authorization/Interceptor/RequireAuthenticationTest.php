@@ -20,7 +20,6 @@ class RequireAuthenticationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManagerToPerformAuthentication() {
 		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');

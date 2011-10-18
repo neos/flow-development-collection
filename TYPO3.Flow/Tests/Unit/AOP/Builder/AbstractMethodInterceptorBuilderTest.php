@@ -19,7 +19,6 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodArgumentsArrayCodeRendersCodeForPassingParametersToTheJoinPoint() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -88,7 +87,6 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodArgumentsArrayCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
 		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
@@ -99,7 +97,6 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildSavedConstructorParametersCodeReturnsTheCorrectParametersCode() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));

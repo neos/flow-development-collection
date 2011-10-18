@@ -35,7 +35,6 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * The constructor - initializes the class type filter with the class type filter expression
 	 *
 	 * @param string $classTypeFilterExpression A regular expression which defines which class types should match
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classTypeFilterExpression) {
 		$this->classTypeFilterExpression = str_replace('\\', '\\\\', $classTypeFilterExpression);
@@ -46,7 +45,6 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -60,7 +58,6 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matches = FALSE;
@@ -76,7 +73,6 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return FALSE;
@@ -86,7 +82,6 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();

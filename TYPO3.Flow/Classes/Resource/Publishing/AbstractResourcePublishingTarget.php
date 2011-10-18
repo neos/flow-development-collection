@@ -23,7 +23,6 @@ abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource
 	 *
 	 * @param string $filename The raw resource file name
 	 * @return string The rewritten title
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function rewriteFileNameForUri($filename) {
 		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
@@ -34,7 +33,6 @@ abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Resource $resource
 	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPersistentResourceSourcePathAndFilename(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();

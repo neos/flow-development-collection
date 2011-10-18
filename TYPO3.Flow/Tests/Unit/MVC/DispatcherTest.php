@@ -19,8 +19,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchCallsTheControllersProcessRequestMethodUntilTheIsDispatchedFlagInTheRequestObjectIsSet() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -40,7 +38,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchIgnoresStopExceptionsByDefault() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -59,7 +56,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchRethrowsStopExceptionsForSubRequests() {
 		$mockSubRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
@@ -78,8 +74,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\MVC\Exception\InfiniteLoopException
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchThrowsAnInfiniteLoopExceptionIfTheRequestCouldNotBeDispachedAfter99Iterations() {
 		$requestCallCounter = 0;
@@ -99,7 +93,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveControllerReturnsTheNotFoundControllerDefinedInTheFLOW3SettingsAndInjectsCorrectExceptionIfTheResolvedControllerDoesNotExist() {
 		$mockController = $this->getMock('TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface');
@@ -121,7 +114,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Controller\Exception\InvalidControllerException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolveControllerThrowsInvalidControllerExceptionIfTheNotFoundControllerDefinedInTheFLOW3SettingsDoesNotImplementTheNotFoundControllerInterface() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');

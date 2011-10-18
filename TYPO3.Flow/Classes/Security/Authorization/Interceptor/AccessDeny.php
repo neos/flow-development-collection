@@ -25,7 +25,6 @@ class AccessDeny implements \TYPO3\FLOW3\Security\Authorization\InterceptorInter
 	 *
 	 * @return boolean Always returns FALSE
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
 		throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);

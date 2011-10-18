@@ -85,7 +85,6 @@ class ProxyClass {
 	 * Creates a new ProxyClass instance.
 	 *
 	 * @param string $fullOriginalClassName The fully qualified class name of the original class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($fullOriginalClassName) {
 		if (strpos($fullOriginalClassName, '\\') === FALSE) {
@@ -106,7 +105,6 @@ class ProxyClass {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -116,7 +114,6 @@ class ProxyClass {
 	 * Returns the ProxyConstructor for this ProxyClass. Creates it if needed.
 	 *
 	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyConstructor
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructor() {
 		if (!isset($this->constructor)) {
@@ -131,7 +128,6 @@ class ProxyClass {
 	 *
 	 * @param string $methodName The name of the methods to return
 	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyMethod
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod($methodName) {
 		if ($methodName === '__construct') {
@@ -150,7 +146,6 @@ class ProxyClass {
 	 * @param string $name Name of the constant. Should be ALL_UPPERCASE_WITH_UNDERSCORES
 	 * @param string $value PHP code which assigns the value. Example: 'foo' (including quotes!)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addConstant($name, $valueCode) {
 		$this->constants[$name] = $valueCode;
@@ -162,7 +157,6 @@ class ProxyClass {
 	 * @param string $name Name of the property
 	 * @param string $initialValueCode PHP code of the initial value assignment
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addProperty($name, $initialValueCode, $visibility = 'private', $docComment = '') {
 		$this->properties[$name] = array(
@@ -180,7 +174,6 @@ class ProxyClass {
 	 *
 	 * @param array $interfaceNames Fully qualified names of the interfaces to introduce
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addInterfaces(array $interfaceNames) {
 		$this->interfaces = array_merge($this->interfaces, $interfaceNames);
@@ -213,7 +206,6 @@ class ProxyClass {
 	 * Returns a list of cache tags for the cache entry of this proxy class
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCacheTags() {
 		return array_unique($this->cacheTags);
@@ -223,7 +215,6 @@ class ProxyClass {
 	 * Renders and returns the PHP code for this ProxyClass.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		$namespace = $this->namespace;
@@ -278,7 +269,6 @@ class ProxyClass {
 	 * Renders code for the added class constants
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function renderConstantsCode() {
 		$code = '';
@@ -292,7 +282,6 @@ class ProxyClass {
 	 * Renders code for the added class properties
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function renderPropertiesCode() {
 		$code = '';

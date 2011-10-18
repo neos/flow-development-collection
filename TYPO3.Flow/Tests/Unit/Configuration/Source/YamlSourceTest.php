@@ -20,7 +20,6 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function setUp() {
 		\vfsStreamWrapper::register();
@@ -29,7 +28,6 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function returnsEmptyArrayOnNonExistingFile() {
 		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
@@ -39,7 +37,6 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
 		$pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
@@ -50,7 +47,6 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function saveWritesArrayToGivenFileAsYAML() {
 		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
@@ -63,7 +59,6 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function saveWritesDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
 		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';

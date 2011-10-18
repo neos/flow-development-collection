@@ -34,7 +34,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Log\Backend\BackendInterf
 	 * Constructs this log backend
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($options = array()) {
@@ -53,7 +52,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Log\Backend\BackendInterf
 	 *
 	 * @param integer $severityThreshold One of the LOG_* constants
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setSeverityThreshold($severityThreshold) {
@@ -65,7 +63,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Log\Backend\BackendInterf
 	 *
 	 * @param boolean $logIpAddress Set to TRUE to enable logging of IP address, or FALSE to disable
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLogIpAddress($logIpAddress) {
 		$this->logIpAddress = $logIpAddress;
@@ -77,8 +74,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Log\Backend\BackendInterf
 	 * @param mixed $var The variable
 	 * @param integer $spaces Number of spaces to add before a line
 	 * @return string text output
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getFormattedVarDump($var, $spaces = 4) {
 		if ($spaces > 100) {

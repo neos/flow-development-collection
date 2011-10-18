@@ -54,7 +54,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options - depends on the actual backend
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($context, array $options = array()) {
@@ -76,7 +75,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -87,7 +85,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
@@ -100,7 +97,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setDefaultLifetime($defaultLifetime) {
@@ -114,7 +110,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param integer $lifetime The lifetime in seconds
 	 * @return \DateTime The expiry time
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function calculateExpiryTime($lifetime = NULL) {
 		if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === NULL && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {

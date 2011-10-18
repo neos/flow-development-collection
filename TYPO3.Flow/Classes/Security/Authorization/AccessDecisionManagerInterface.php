@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Security\Authorization;
 /**
  * Contract for an access decision manager.
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface AccessDecisionManagerInterface {
 

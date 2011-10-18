@@ -44,7 +44,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Set up this testcase
 	 *
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setUp() {
 		if (!extension_loaded('redis')) {
@@ -66,7 +65,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up the redis backend used for testing
 	 *
 	 * @param array Options for the memcache backend
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
@@ -80,7 +78,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up an own redis instance for implementation tests
 	 *
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	protected function setUpRedis() {
 		$this->redis = new \Redis();
@@ -90,7 +87,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Tear down this testcase
 	 *
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function tearDown() {
 		if ($this->backend instanceof \TYPO3\FLOW3\Cache\Backend\RedisBackend) {
@@ -100,7 +96,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function initializeObjectThrowsNoExceptionIfPasswordOptionIsSet() {
 		try {
@@ -112,7 +107,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function initializeObjectThrowsNoExceptionIfGivenDatabaseWasSuccessfullySelected() {
 		try {
@@ -124,7 +118,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setDatabaseThrowsExceptionIfGivenDatabaseNumberIsNotAnInteger() {
@@ -133,7 +126,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setDatabaseThrowsExceptionIfGivenDatabaseNumberIsNegative() {
@@ -142,7 +134,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setCompressionThrowsExceptionIfCompressionParameterIsNotOfTypeBoolean() {
@@ -151,7 +142,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setCompressionLevelThrowsExceptionIfCompressionLevelIsNotInteger() {
@@ -160,7 +150,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setCompressionLevelThrowsExceptionIfCompressionLevelIsNotBetweenMinusOneAndNine() {
@@ -169,7 +158,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setThrowsExceptionIfIdentifierIsNotAString() {
@@ -179,7 +167,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsExceptionIfDataIsNotAString() {
@@ -189,7 +176,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setThrowsExceptionIfLifetimeIsNegative() {
@@ -199,7 +185,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setThrowsExceptionIfLifetimeIsNotNullOrAnInteger() {
@@ -209,7 +194,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setStoresEntriesInSelectedDatabase() {
 		$this->setUpRedis();
@@ -224,7 +208,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesStringDataTypeForIdentifierToDataEntry() {
 		$this->setUpBackend();
@@ -238,7 +221,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesEntryWithDefaultLifeTime() {
 		$this->setUpBackend();
@@ -255,7 +237,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesEntryWithSpecifiedLifeTime() {
 		$this->setUpBackend();
@@ -271,7 +252,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesEntryWithUnlimitedLifeTime() {
 		$this->setUpBackend();
@@ -286,8 +266,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setOverwritesExistingEntryWithNewData() {
 		$this->setUpBackend();
@@ -302,7 +280,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setOverwritesExistingEntryWithSpecifiedLifetime() {
 		$this->setUpBackend();
@@ -320,7 +297,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setOverwritesExistingEntryWithNewDefaultLifetime() {
 		$this->setUpBackend();
@@ -340,7 +316,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setOverwritesExistingEntryWithNewUnlimitedLifetime() {
 		$this->setUpBackend();
@@ -358,7 +333,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesSetDataTypeForIdentifierToTagsSet() {
 		$this->setUpBackend();
@@ -372,7 +346,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesSpecifiedTagsInIdentifierToTagsSet() {
 		$this->setUpBackend();
@@ -389,7 +362,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setRemovesAllPreviouslySetTagsFromIdentifierToTagsSet() {
 		$this->setUpBackend();
@@ -405,7 +377,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setRemovesMultiplePreviouslySetTagsFromIdentifierToTagsSet() {
 		$this->setUpBackend();
@@ -424,7 +395,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesSetDataTypeForTagToIdentifiersSet() {
 		$this->setUpBackend();
@@ -439,7 +409,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesIdentifierInTagToIdentifiersSetOfSpecifiedTag() {
 		$this->setUpBackend();
@@ -455,7 +424,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setAppendsSecondIdentifierInTagToIdentifiersEntry() {
 		$this->setUpBackend();
@@ -476,7 +444,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setRemovesIdentifierFromTagToIdentifiersEntryIfTagIsOmittedOnConsecutiveSet() {
 		$this->setUpBackend();
@@ -493,7 +460,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setAddsIdentifierInTagToIdentifiersEntryIfTagIsAddedOnConsecutiveSet() {
 		$this->setUpBackend();
@@ -510,7 +476,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesCompressedDataWithEnabledCompression() {
 		$this->setUpBackend(
@@ -535,7 +500,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setSavesPlaintextDataWithEnabledCompressionAndCompressionLevel0() {
 		$this->setUpBackend(
@@ -555,7 +519,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function hasThrowsExceptionIfIdentifierIsNotAString() {
@@ -565,7 +528,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function hasReturnsFalseForNotExistingEntry() {
 		$this->setUpBackend();
@@ -575,7 +537,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function hasReturnsTrueForPreviouslySetEntry() {
 		$this->setUpBackend();
@@ -586,7 +547,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function getThrowsExceptionIfIdentifierIsNotAString() {
@@ -596,7 +556,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function getReturnsPreviouslyCompressedSetEntry() {
 		$this->setUpBackend(
@@ -613,7 +572,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function getReturnsPreviouslySetEntry() {
 		$this->setUpBackend();
@@ -626,7 +584,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function removeThrowsExceptionIfIdentifierIsNotAString() {
@@ -636,7 +593,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeReturnsFalseIfNoEntryWasDeleted() {
 		$this->setUpBackend();
@@ -645,7 +601,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeReturnsTrueIfAnEntryWasDeleted() {
 		$this->setUpBackend();
@@ -656,8 +611,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeDeletesEntryFromCache() {
 		$this->setUpBackend();
@@ -669,7 +622,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeDeletesIdentifierToTagEntry() {
 		$this->setUpBackend();
@@ -685,7 +637,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeDeletesIdentifierFromTagToIdentifiersSet() {
 		$this->setUpBackend();
@@ -702,7 +653,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeDeletesIdentifierFromTagToIdentifiersSetWithMultipleEntries() {
 		$this->setUpBackend();
@@ -721,7 +671,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function findIdentifiersByTagThrowsExceptionIfTagIsNotAString() {
@@ -731,7 +680,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function findIdentifiersByTagReturnsEmptyArrayForNotExistingTag() {
 		$this->setUpBackend();
@@ -740,7 +688,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function findIdentifiersByTagReturnsAllIdentifiersTagedWithSpecifiedTag() {
 		$this->setUpBackend();
@@ -765,7 +712,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushRemovesAllEntriesFromCache() {
 		$this->setUpBackend();
@@ -780,7 +726,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function flushByTagThrowsExceptionIfTagIsNotAString() {
@@ -790,7 +735,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushByTagRemovesEntriesTaggedWithSpecifiedTag() {
 		$this->setUpBackend();
@@ -812,7 +756,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushByTagRemovesTemporarySet() {
 		$this->setUpBackend();
@@ -828,7 +771,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushByTagRemovesIdentifierToTagsSetOfEntryTaggedWithGivenTag() {
 		$this->setUpBackend();
@@ -844,7 +786,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushByTagDoesNotRemoveIdentifierToTagsSetOfUnrelatedEntry() {
 		$this->setUpBackend();
@@ -865,7 +806,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushByTagRemovesTagToIdentifiersSetOfGivenTag() {
 		$this->setUpBackend();
@@ -881,7 +821,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function flushByTagRemovesIdentifiersTaggedWithGivenTagFromTagToIdentifiersSets() {
 		$this->setUpBackend();
@@ -899,7 +838,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function collectGarbageDoesNotRemoveNotExpiredIdentifierToDataEntry() {
 		$this->setUpBackend();
@@ -918,7 +856,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function collectGarbageRemovesLeftOverIdentifierToTagsSet() {
 		$this->setUpBackend();
@@ -942,7 +879,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Implementation
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function collectGarbageRemovesExpiredIdentifierFromTagsToIdentifierSet() {
 		$this->setUpBackend();

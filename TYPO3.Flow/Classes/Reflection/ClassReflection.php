@@ -32,7 +32,6 @@ class ClassReflection extends \ReflectionClass {
 	 * orginal ReflectionMethod instances.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructor() {
 		$parentConstructor = parent::getConstructor();
@@ -45,7 +44,6 @@ class ClassReflection extends \ReflectionClass {
 	 * orginal ReflectionClass instances.
 	 *
 	 * @return array of \TYPO3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfaces() {
 		$extendedInterfaces = array();
@@ -62,7 +60,6 @@ class ClassReflection extends \ReflectionClass {
 	 * orginal ReflectionMethod instances.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod($name) {
 		return new MethodReflection($this->getName(), $name);
@@ -75,7 +72,6 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @param long $filter A filter mask
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection objects of the methods in this class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethods($filter = NULL) {
 		$extendedMethods = array();
@@ -93,7 +89,6 @@ class ClassReflection extends \ReflectionClass {
 	 * orginal ReflectionClass instance.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\ClassReflection Reflection of the parent class - if any
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentClass() {
 		$parentClass = parent::getParentClass();
@@ -107,7 +102,6 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @param long $filter A filter mask
 	 * @return array of \TYPO3\FLOW3\Reflection\PropertyReflection Property reflection objects of the properties in this class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties($filter = NULL) {
 		$extendedProperties = array();
@@ -125,7 +119,6 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @param string $name Name of the property
 	 * @return \TYPO3\FLOW3\Reflection\PropertyReflection Property reflection object of the specified property in this class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($name) {
 		return new PropertyReflection($this->getName(), $name);
@@ -137,7 +130,6 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @param string $tag Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isTaggedWith($tag) {
 		return $this->getDocCommentParser()->isTaggedWith($tag);
@@ -147,7 +139,6 @@ class ClassReflection extends \ReflectionClass {
 	 * Returns an array of tags and their values
 	 *
 	 * @return array Tags and values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
 		return $this->getDocCommentParser()->getTagsValues();
@@ -156,7 +147,6 @@ class ClassReflection extends \ReflectionClass {
 	/**
 	 * Returns the values of the specified tag
 	 * @return array Values of the given tag
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {
 		return $this->getDocCommentParser()->getTagValues($tag);
@@ -166,7 +156,6 @@ class ClassReflection extends \ReflectionClass {
 	 * Returns the description part of the doc comment
 	 *
 	 * @return string Doc comment description
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getDescription() {
 		return $this->getDocCommentParser()->getDescription();
@@ -177,7 +166,6 @@ class ClassReflection extends \ReflectionClass {
 	 * runs the parse() method.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

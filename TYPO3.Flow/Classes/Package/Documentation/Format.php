@@ -37,7 +37,6 @@ class Format {
 	 *
 	 * @param string $formatName Name of the documentation format
 	 * @param string $formatPath Absolute path to the documentation format
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($formatName, $formatPath) {
 		$this->formatName = $formatName;
@@ -48,7 +47,6 @@ class Format {
 	 * Get the name of this documentation format
 	 *
 	 * @return string The name of this documentation format
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getFormatName() {
@@ -59,7 +57,6 @@ class Format {
 	 * Get the full path to the directory of this documentation format
 	 *
 	 * @return string Path to the directory of this documentation format
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getFormatPath() {
@@ -70,7 +67,6 @@ class Format {
 	 * Returns the available languages for this documentation format
 	 *
 	 * @return array Array of string language codes
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getAvailableLanguages() {

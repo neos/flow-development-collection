@@ -54,7 +54,6 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	 * @param string $methodNameFilterExpression A regular expression which filters method names
 	 * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
 	 * @param array $methodArgumentConstraints array of method constraints
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, array $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
@@ -68,7 +67,6 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -77,7 +75,6 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	/**
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -95,8 +92,6 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
@@ -140,7 +135,6 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return (count($this->methodArgumentConstraints) > 0);
@@ -150,7 +144,6 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	 * Returns runtime evaluations for a previously matched pointcut
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array(

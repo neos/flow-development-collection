@@ -41,7 +41,6 @@ class Documentation {
 	 * @param \TYPO3\FLOW3\Package\PackageInterface $package Reference to the package of this documentation
 	 * @param string $documentationName Name of the documentation
 	 * @param string $documentationPath Absolute path to the documentation directory
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($package, $documentationName, $documentationPath) {
 		$this->package = $package;
@@ -53,7 +52,6 @@ class Documentation {
 	 * Get the package of this documentation
 	 *
 	 * @return \TYPO3\FLOW3\Package\PackageInterface The package of this documentation
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getPackage() {
@@ -64,7 +62,6 @@ class Documentation {
 	 * Get the name of this documentation
 	 *
 	 * @return string The name of this documentation
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getDocumentationName() {
@@ -75,7 +72,6 @@ class Documentation {
 	 * Get the full path to the directory of this documentation
 	 *
 	 * @return string Path to the directory of this documentation
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getDocumentationPath() {
@@ -86,7 +82,6 @@ class Documentation {
 	 * Returns the available documentation formats for this documentation
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Package\DocumentationFormat
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getDocumentationFormats() {

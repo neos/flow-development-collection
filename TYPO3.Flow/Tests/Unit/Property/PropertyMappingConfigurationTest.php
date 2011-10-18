@@ -32,7 +32,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::getTargetPropertyName
 	 */
 	public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration() {
@@ -43,7 +42,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function shouldMapReturnsTrue() {
 		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
@@ -52,7 +50,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setTypeConverterOptionsCanBeRetrievedAgain() {
 		$this->propertyMappingConfiguration->setTypeConverterOptions('someConverter', array('k1' => 'v1', 'k2' => 'v2'));
@@ -62,7 +59,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function inexistentTypeConverterOptionsReturnNull() {
 		$this->assertNull($this->propertyMappingConfiguration->getConfigurationValue('foo', 'bar'));
@@ -70,7 +66,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setTypeConverterOptionsShouldOverrideAlreadySetOptions() {
 		$this->propertyMappingConfiguration->setTypeConverterOptions('someConverter', array('k1' => 'v1', 'k2' => 'v2'));
@@ -82,7 +77,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setTypeConverterOptionShouldOverrideAlreadySetOptions() {
 		$this->propertyMappingConfiguration->setTypeConverterOptions('someConverter', array('k1' => 'v1', 'k2' => 'v2'));
@@ -94,7 +88,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeConverterReturnsNullIfNoTypeConverterSet() {
 		$this->assertNull($this->propertyMappingConfiguration->getTypeConverter());
@@ -102,7 +95,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeConverterReturnsTypeConverterIfItHasBeenSet() {
 		$mockTypeConverter = $this->getMock('TYPO3\FLOW3\Property\TypeConverterInterface');
@@ -112,7 +104,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function buildChildConfigurationForSingleProperty() {
 		$childConfiguration = $this->propertyMappingConfiguration->forProperty('key1.key2');
@@ -124,7 +115,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTargetPropertyNameShouldRespectMapping() {
 		$this->propertyMappingConfiguration->setMapping('k1', 'k1a');

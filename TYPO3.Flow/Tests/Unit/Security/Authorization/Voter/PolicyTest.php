@@ -20,7 +20,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointAbstainsIfNoPrivilegeWasConfigured() {
 		$mockRoleAdministrator = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), 'role1' . md5(uniqid(mt_rand(), TRUE)), FALSE);
@@ -43,7 +42,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointAbstainsIfNoRolesAreAvailable() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -58,7 +56,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointAbstainsIfNoPolicyEntryCouldBeFound() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -75,7 +72,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
 		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
@@ -110,7 +106,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
 		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
@@ -145,7 +140,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForResourceAbstainsIfNoRolesAreAvailable() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -159,7 +153,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForResourceAbstainsIfNoPolicyEntryCouldBeFound() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -175,7 +168,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForResourceDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
 		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
@@ -209,7 +201,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForResourceGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
 		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));

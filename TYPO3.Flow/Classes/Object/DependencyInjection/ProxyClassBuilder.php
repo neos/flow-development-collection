@@ -58,7 +58,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -67,7 +66,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Object\Proxy\Compiler $compiler
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCompiler(\TYPO3\FLOW3\Object\Proxy\Compiler $compiler) {
 		$this->compiler = $compiler;
@@ -76,7 +74,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -85,7 +82,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -94,7 +90,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
@@ -105,7 +100,6 @@ class ProxyClassBuilder {
 	 * to realize dependency injection.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
 		$this->objectConfigurations = $this->objectManager->getObjectConfigurations();
@@ -169,7 +163,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildSetInstanceCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		if ($objectConfiguration->getScope() === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
@@ -311,7 +304,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @return string The built code
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildConstructorInjectionCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$assignments = array();
@@ -390,7 +382,6 @@ class ProxyClassBuilder {
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration (needed to produce helpful exception message)
 	 * @return string The built code
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildPropertyInjectionCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$commands = array();
@@ -476,7 +467,6 @@ class ProxyClassBuilder {
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @param integer $cause a \TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildLifecycleInitializationCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration, $cause) {
 		$lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
@@ -491,7 +481,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @return string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildLifecycleShutdownCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
@@ -506,7 +495,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array $argumentConfigurations
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildMethodParametersCode(array $argumentConfigurations) {
 		$preparedArguments = array();
@@ -553,7 +541,6 @@ class ProxyClassBuilder {
 	 * @param string $customFactoryObjectName
 	 * @param string $customFactoryMethodName
 	 * @param array $arguments
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildCustomFactoryCall($customFactoryObjectName, $customFactoryMethodName, array $arguments) {
 		$parametersCode = $this->buildMethodParametersCode($arguments);

@@ -48,7 +48,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * The constructor - initializes the configuration filter with the path to a configuration option
 	 *
 	 * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($settingComparisonExpression) {
 		$this->settingComparisonExpression = $settingComparisonExpression;
@@ -59,7 +58,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 *
 	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -75,7 +73,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if (is_bool($this->actualSettingValue)) {
@@ -89,7 +86,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return FALSE;
@@ -99,7 +95,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
@@ -111,7 +106,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 *
 	 * @param string settingComparisonExpression The configuration expression (path + optional condition)
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseConfigurationOptionPath($settingComparisonExpression) {
 		$settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);

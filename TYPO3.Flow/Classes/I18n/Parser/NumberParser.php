@@ -45,7 +45,6 @@ class NumberParser {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectNumbersReader(\TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader) {
 		$this->numbersReader = $numbersReader;
@@ -59,7 +58,6 @@ class NumberParser {
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function parseNumberWithCustomPattern($numberToParse, $format, \TYPO3\FLOW3\I18n\Locale $locale, $strictMode = TRUE) {
@@ -74,7 +72,6 @@ class NumberParser {
 	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function parseDecimalNumber($numberToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
@@ -90,7 +87,6 @@ class NumberParser {
 	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function parsePercentNumber($numberToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
@@ -106,7 +102,6 @@ class NumberParser {
 	 * @param array $localizedSymbols An array with symbols to use
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingWithParsedFormat($numberToParse, array $parsedFormat, array $localizedSymbols, $strictMode) {
 		return ($strictMode) ? $this->doParsingInStrictMode($numberToParse, $parsedFormat, $localizedSymbols) : $this->doParsingInLenientMode($numberToParse, $parsedFormat, $localizedSymbols);
@@ -122,7 +117,6 @@ class NumberParser {
 	 * @param array $parsedFormat Parsed format (from NumbersReader)
 	 * @param array $localizedSymbols An array with symbols to use
 	 * @return mixed Parsed float number or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingInStrictMode($numberToParse, array $parsedFormat, array $localizedSymbols) {
 		$numberIsNegative = FALSE;
@@ -239,7 +233,6 @@ class NumberParser {
 	 * @param array $parsedFormat Parsed format (from NumbersReader)
 	 * @param array $localizedSymbols An array with symbols to use
 	 * @return mixed Parsed float number or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingInLenientMode($numberToParse, array $parsedFormat, array $localizedSymbols) {
 		$numberIsNegative = FALSE;

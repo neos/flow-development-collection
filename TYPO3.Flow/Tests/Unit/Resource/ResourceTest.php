@@ -19,8 +19,6 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFilenameStoresTheFileExtensionInLowerCase() {
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
@@ -31,7 +29,6 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFilenameDoesNotAppendFileExtensionIfItIsEmpty() {
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
@@ -42,7 +39,6 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMimeTypeReturnsMimeTypeBasedOnFileExtension() {
 		$resource = new \TYPO3\FLOW3\Resource\Resource();

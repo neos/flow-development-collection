@@ -30,7 +30,6 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -42,7 +41,6 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsErrorsOnIncorrectValues() {
 		$sampleInvalidTime = 'this is not a time string';
@@ -56,7 +54,6 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsTrueForCorrectValues() {
 		$sampleValidDateTime = '10.08.2010, 18:00 CEST';

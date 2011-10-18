@@ -29,7 +29,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -38,7 +37,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function publicActionIsGrantedForEverybody() {
 		$this->restrictedController->publicAction();
@@ -46,7 +44,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function publicActionIsGrantedForCustomer() {
 		$this->authenticateRoles(array('Customer'));
@@ -55,7 +52,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function publicActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('Administrator'));
@@ -65,7 +61,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function customerActionIsDeniedForEverybody() {
 		$this->restrictedController->customerAction();
@@ -73,7 +68,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function customerActionIsGrantedForCustomer() {
 		$this->authenticateRoles(array('Customer'));
@@ -82,7 +76,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function customerActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('Administrator'));
@@ -92,7 +85,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function adminActionIsDeniedForEverybody() {
 		$this->restrictedController->adminAction();
@@ -101,7 +93,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function adminActionIsDeniedForCustomer() {
 		$this->authenticateRoles(array('Customer'));
@@ -110,7 +101,6 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function adminActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('Administrator'));

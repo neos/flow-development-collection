@@ -137,7 +137,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @dataProvider jsonViewTestData
 	 */
 	public function testTransformValue($object, $configuration, $expected, $description) {
@@ -150,7 +149,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderSetsContentTypeHeader() {
 		$this->response->expects($this->once())->method('setHeader')->with('Content-Type', 'application/json');
@@ -160,7 +158,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsJsonRepresentationOfAssignedObject() {
 		$object = new \stdClass();
@@ -174,7 +171,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsJsonRepresentationOfAssignedArray() {
 		$array = array('foo' => 'Foo', 'bar' => 'Bar');
@@ -187,7 +183,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsJsonRepresentationOfAssignedSimpleValue() {
 		$value = 'Foo';
@@ -200,7 +195,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsNullIfNameOfAssignedVariableIsNotEqualToValue() {
 		$value = 'Foo';
@@ -213,7 +207,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderOnlyRendersVariableWithTheNameValue() {
 		$this->view
@@ -227,7 +220,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setVariablesToRenderOverridesValueToRender() {
 		$value = 'Foo';
@@ -241,7 +233,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderRendersMultipleValuesIfTheyAreSpecifiedAsVariablesToRender() {
 		$this->view
@@ -257,7 +248,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderCanRenderMultipleComplexObjects() {
 		$array = array('foo' => array('bar' => 'Baz'));
@@ -277,7 +267,6 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function renderCanRenderPlainArray() {
 		$array = array(array('name' => 'Foo', 'secret' => TRUE), array('name' => 'Bar', 'secret' => TRUE));

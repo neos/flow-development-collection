@@ -29,7 +29,6 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\FLOW3\AOP\Builder\Abst
 	 * @param string $targetClassName Name of the target class to build the interceptor for
 	 * @param array
 	 * @return string PHP code of the interceptor
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName !== '__construct') throw new \TYPO3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);

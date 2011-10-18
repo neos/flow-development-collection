@@ -45,7 +45,6 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 	 * @param string $name The name of this authentication provider
 	 * @param array $options Additional configuration options
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($name, array $options) {
 		$this->name = $name;
@@ -56,7 +55,6 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
@@ -67,7 +65,6 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 	 * Returns the classnames of the tokens this provider is responsible for.
 	 *
 	 * @return string The classname of the token this provider is responsible for
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
 		return array('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', 'TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic');
@@ -78,7 +75,6 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if (!($authenticationToken instanceof \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword)) {

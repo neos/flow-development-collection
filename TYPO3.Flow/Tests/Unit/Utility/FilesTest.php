@@ -19,7 +19,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithoutSlashes() {
 		$path = 'foobar';
@@ -28,7 +27,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithForwardSlashes() {
 		$path = 'foo/bar/test/';
@@ -37,7 +35,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithBackwardSlashes() {
 		$path = 'foo\\bar\\test\\';
@@ -46,7 +43,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithForwardAndBackwardSlashes() {
 		$path = 'foo/bar\\test/';
@@ -55,7 +51,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForEmptyPath() {
 		$this->assertEquals('', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array()));
@@ -63,7 +58,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForOnePath() {
 		$this->assertEquals('foo', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo')));
@@ -71,7 +65,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForTwoPath() {
 		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar')));
@@ -79,7 +72,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingSlash() {
 		$this->assertEquals('/foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('/foo', 'bar')));
@@ -87,7 +79,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithTrailingSlash() {
 		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar/')));
@@ -95,7 +86,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingAndTrailingSlash() {
 		$this->assertEquals('/foo/bar/bar/foo', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
@@ -103,7 +93,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForBrokenPaths() {
 		$this->assertEquals('/foo/bar/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
@@ -111,7 +100,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForEmptyPathArrayElements() {
 		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', '', 'bar')));
@@ -119,7 +107,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithDriveLetterAndBackwardSlashes() {
 		$path = 'c:\\foo\\bar\\test\\';
@@ -127,7 +114,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function pathsWithProtocol() {
 		return array(
@@ -140,7 +126,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider pathsWithProtocol
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithProtocol($path, $expected) {
 		$this->assertEquals($expected, \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
@@ -148,7 +133,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsFalseForNonExistingFiles() {
 		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link('NonExistingPath'));
@@ -156,7 +140,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
 		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
@@ -166,7 +149,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsTrueForExistingSymlink() {
 		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
@@ -181,7 +163,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsFalseForExistingDirectoryThatIsNoSymlink() {
 		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory')) . '/';
@@ -193,7 +174,6 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsTrueForExistingSymlinkDirectory() {
 		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory'));

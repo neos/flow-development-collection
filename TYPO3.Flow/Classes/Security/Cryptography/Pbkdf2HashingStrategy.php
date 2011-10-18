@@ -50,7 +50,6 @@ class Pbkdf2HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 	 * @param integer $iterationCount Hash iteration count, high counts (>10.000) make brute-force attacks unfeasible
 	 * @param integer $derivedKeyLength Derived key length
 	 * @param string $algorithm Hash algorithm to use, see hash_algos()
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($dynamicSaltLength, $iterationCount, $derivedKeyLength, $algorithm) {
 		$this->dynamicSaltLength = $dynamicSaltLength;
@@ -81,7 +80,6 @@ class Pbkdf2HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 	 * @param string $hashedPasswordAndSalt The derived key and salt in Base64 encoding as returned by hashPassword for verification
 	 * @param string $staticSalt Static salt that will be appended to the dynamic salt
 	 * @return boolean TRUE if the given password matches the hashed password
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL) {
 		$parts = explode(',', $hashedPasswordAndSalt);

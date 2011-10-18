@@ -27,7 +27,6 @@ class MethodReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection() {
 		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
@@ -36,7 +35,6 @@ class MethodReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
 		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);

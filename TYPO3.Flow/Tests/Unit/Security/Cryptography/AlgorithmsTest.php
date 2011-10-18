@@ -23,7 +23,6 @@ class AlgorithmsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Based on certified test vectors from http://tools.ietf.org/html/rfc6070
 	 *
 	 * @return array
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function pbkdf2TestVectors() {
 		$output = array();
@@ -40,7 +39,6 @@ class AlgorithmsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider pbkdf2TestVectors
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function pbkdf2TestVectorsAreCorrect($password, $salt, $iterationCount, $derivedKeyLength, $output) {
 		$result = \TYPO3\FLOW3\Security\Cryptography\Algorithms::pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, 'sha1');

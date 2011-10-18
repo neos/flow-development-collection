@@ -49,9 +49,6 @@ class ObjectAccess {
 	 * @return mixed Value of the property
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
 	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getProperty($subject, $propertyName, $forceDirectAccess = FALSE) {
 		if (!is_object($subject) && !is_array($subject)) {
@@ -80,10 +77,6 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
 	 * @return mixed Value of the property
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	static public function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
 		if ($subject === NULL) {
@@ -135,8 +128,6 @@ class ObjectAccess {
 	 * @param mixed $subject An object or array
 	 * @param string $propertyPath
 	 * @return mixed Value of the property
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getPropertyPath($subject, $propertyPath) {
 		$propertyPathSegments = explode('.', $propertyPath);
@@ -169,8 +160,6 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @return boolean TRUE if the property could be set, FALSE otherwise
 	 * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function setProperty(&$subject, $propertyName, $propertyValue, $forceDirectAccess = FALSE) {
 		if (is_array($subject)) {
@@ -209,8 +198,6 @@ class ObjectAccess {
 	 *
 	 * @param object $object Object to receive property names for
 	 * @return array Array of all gettable property names
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getGettablePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
@@ -245,7 +232,6 @@ class ObjectAccess {
 	 *
 	 * @param object $object Object to receive property names for
 	 * @return array Array of all settable property names
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getSettablePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1264022994);
@@ -272,7 +258,6 @@ class ObjectAccess {
 	 * @param object $object Object containting the property
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function isPropertySettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828920);
@@ -290,7 +275,6 @@ class ObjectAccess {
 	 * @param object $object Object containting the property
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function isPropertyGettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
@@ -310,7 +294,6 @@ class ObjectAccess {
 	 *
 	 * @param object $object Object to get all properties from.
 	 * @return array Associative array of all properties.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo What to do with ArrayAccess
 	 */
 	static public function getGettableProperties($object) {
@@ -332,7 +315,6 @@ class ObjectAccess {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return string Name of the setter method name
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function buildSetterMethodName($propertyName) {
 		return 'set' . ucfirst($propertyName);

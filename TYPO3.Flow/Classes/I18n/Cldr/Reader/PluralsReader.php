@@ -96,7 +96,6 @@ class PluralsReader {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCldrRepository(\TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
@@ -107,7 +106,6 @@ class PluralsReader {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -117,7 +115,6 @@ class PluralsReader {
 	 * Constructs the reader, loading parsed data from cache if available.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
 		if ($this->cache->has('rulesets') && $this->cache->has('rulesetsIndices')) {
@@ -140,7 +137,6 @@ class PluralsReader {
 	 * @param mixed $quantity A number to find plural form for (float or int)
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @return string One of plural form constants
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getPluralForm($quantity, \TYPO3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
@@ -202,7 +198,6 @@ class PluralsReader {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to return plural forms for
 	 * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getPluralForms(\TYPO3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
@@ -220,7 +215,6 @@ class PluralsReader {
 	 * running this method.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::$rulesets
 	 */
 	protected function generateRulesets() {
@@ -274,7 +268,6 @@ class PluralsReader {
 	 * @param string $rule
 	 * @return array Parsed rule
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseRule($rule) {
 		$parsedRule = array();

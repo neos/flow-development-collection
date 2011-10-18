@@ -70,7 +70,6 @@ class ProxyMethod {
 	 *
 	 * @param string $fullOriginalClassName The fully qualified class name of the original class
 	 * @param string $methodName Name of the proxy (and original) method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($fullOriginalClassName, $methodName) {
 		$this->fullOriginalClassName = $fullOriginalClassName;
@@ -82,7 +81,6 @@ class ProxyMethod {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -93,7 +91,6 @@ class ProxyMethod {
 	 *
 	 * @param string $visibility One of 'public', 'protected', 'private'
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function overrideMethodVisibility($visibility) {
 		$this->visibility = $visibility;
@@ -104,7 +101,6 @@ class ProxyMethod {
 	 *
 	 * @param string $code
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addPreParentCallCode($code) {
 		$this->addedPreParentCallCode .= $code;
@@ -115,7 +111,6 @@ class ProxyMethod {
 	 *
 	 * @param string $code
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addPostParentCallCode($code) {
 		$this->addedPostParentCallCode .= $code;
@@ -126,7 +121,6 @@ class ProxyMethod {
 	 *
 	 * @param string $code Parameters code, for example: '$foo, array $bar, \Foo\Bar\Baz $baz'
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setMethodParametersCode($code) {
 		$this->methodParametersCode = $code;
@@ -136,7 +130,6 @@ class ProxyMethod {
 	 * Renders the PHP code for this Proxy Method
 	 *
 	 * @return string PHP code
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		$methodDocumentation = $this->buildMethodDocumentation($this->fullOriginalClassName, $this->methodName);
@@ -172,7 +165,6 @@ class ProxyMethod {
 	 * if render() is called.
 	 *
 	 * @return boolean TRUE if there is any code to render, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function willBeRendered() {
 		return (strlen($this->addedPreParentCallCode) + strlen($this->addedPostParentCallCode) > 0);
@@ -211,8 +203,6 @@ class ProxyMethod {
 	 * @param string $methodName Name of the method to create the parameters code for
 	 * @param boolean $addTypeAndDefaultValue If the type and default value for each parameters should be rendered
 	 * @return string A comma speparated list of parameters
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodParametersCode($fullClassName, $methodName, $addTypeAndDefaultValue = TRUE) {
 		$methodParametersCode = '';
@@ -263,7 +253,6 @@ class ProxyMethod {
 	 * @param string $fullClassName Fully qualified name of the original class
 	 * @param string $methodName Name of the original method
 	 * @return string PHP code
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildCallParentMethodCode($fullClassName, $methodName) {
 		if (!$this->reflectionService->hasMethod($fullClassName, $methodName)) {
@@ -277,7 +266,6 @@ class ProxyMethod {
 	 *
 	 * @param array $array
 	 * @return string e.g. 'array()' or 'array(1 => 'bar')
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildArraySetupCode(array $array) {
 		$code = 'array(';
@@ -304,7 +292,6 @@ class ProxyMethod {
 	 * 'public' is returned.
 	 *
 	 * @return string One of 'public', 'protected' or 'private'
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getMethodVisibilityString() {
 		if ($this->reflectionService->isMethodProtected($this->fullOriginalClassName, $this->methodName)) {

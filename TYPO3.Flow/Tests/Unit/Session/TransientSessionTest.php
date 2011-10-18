@@ -19,7 +19,6 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theTransientSessionImplementsTheSessionInterface() {
 		$session = new \TYPO3\FLOW3\Session\TransientSession();
@@ -28,7 +27,6 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSessionIdIsGeneratedOnStartingTheSession() {
 		$session = new \TYPO3\FLOW3\Session\TransientSession();
@@ -39,7 +37,6 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException() {
 		$session = new \TYPO3\FLOW3\Session\TransientSession();
@@ -48,7 +45,6 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringsCanBeStoredByCallingPutData() {
 		$session = new \TYPO3\FLOW3\Session\TransientSession();
@@ -59,7 +55,6 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allSessionDataCanBeFlushedByCallingDestroy() {
 		$session = new \TYPO3\FLOW3\Session\TransientSession();
@@ -71,7 +66,6 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasKeyReturnsTrueOrFalseAccordingToAvailableKeys() {
 		$session = new \TYPO3\FLOW3\Session\TransientSession();

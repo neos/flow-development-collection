@@ -62,7 +62,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPatternReturnsTheSpecifiedUriPatternIfItsNotEmpty() {
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
@@ -71,7 +70,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPatternReturnsAnEmptyStringIfObjectTypeHasNotIdentityPropertiesAndNoPatternWasSpecified() {
 		$this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array()));
@@ -83,7 +81,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPatternReturnsBasedOnTheIdentityPropertiesOfTheObjectTypeIfNoPatternWasSpecified() {
 		$this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('property1' => 'string', 'property2' => 'integer', 'property3' => 'DateTime')));
@@ -93,7 +90,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchValueReturnsFalseIfTheGivenValueIsEmptyOrNull() {
 		$this->assertFalse($this->identityRoutePart->_call('matchValue', ''));
@@ -102,7 +98,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchValueReturnsFalseIfNoObjectPathMappingCouldBeFound() {
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('SomeObjectType', 'SomeUriPattern', 'TheRoutePath')->will($this->returnValue(NULL));
@@ -113,7 +108,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchValueSetsTheIdentifierOfTheObjectPathMappingAndReturnsTrueIfAMatchingObjectPathMappingWasFound() {
 		$mockObjectPathMapping = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMapping');
@@ -128,7 +122,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findValueToMatchReturnsAnEmptyStringIfTheRoutePathIsEmpty() {
 		$this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', NULL));
@@ -138,7 +131,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findValueToMatchReturnsAnEmptyStringIfTheSpecifiedSplitStringCantBeFoundInTheRoutePath() {
 		$this->identityRoutePart->setUriPattern('');
@@ -148,7 +140,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findValueToMatchReturnsAnEmptyStringIfTheCalculatedUriPatternIsEmpty() {
 		$this->identityRoutePart->setUriPattern('');
@@ -177,7 +168,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @dataProvider findValueToMatchProvider
 	 * @param string $routePath
 	 * @param string $uriPattern
@@ -193,7 +183,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueReturnsFalseIfTheGivenValueIsNotOfTheSpecifiedType() {
 		$this->identityRoutePart->setObjectType('SomeObjectType');
@@ -202,7 +191,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueSetsTheValueToThePathSegmentOfTheObjectPathMappingAndReturnsTrueIfAMatchingObjectPathMappingWasFound() {
 		$object = new \stdClass();
@@ -219,7 +207,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueCreatesAndStoresANewObjectPathMappingIfNoMatchingObjectPathMappingWasFound() {
 		$object = new \stdClass();
@@ -245,7 +232,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueAppendsCounterIfNoMatchingObjectPathMappingWasFoundAndCreatedPathSegmentIsNotUnique() {
 		$object = new \stdClass();
@@ -279,7 +265,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueAppendsCounterIfCreatedPathSegmentIsEmpty() {
 		$object = new \stdClass();
@@ -306,7 +291,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InfiniteLoopException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueThrowsInfiniteLoopExceptionIfNoUniquePathSegmentCantBeFound() {
 		$object = new \stdClass();
@@ -329,7 +313,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function createPathSegmentForObjectReturnsTheCleanedUpObjectIdentifierIfUriPatternIsEmpty() {
 		$identityRoutePart = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\IdentityRoutePart', array('dummy'));
@@ -371,7 +354,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @dataProvider createPathSegmentForObjectProvider
 	 * @param object $object
 	 * @param string $uriPattern
@@ -388,7 +370,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function createPathSegmentForObjectThrowsInvalidUriPatterExceptionIfItSpecifiedPropertiesContainObjects() {
 		$identityRoutePart = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\IdentityRoutePart', array('dummy'));

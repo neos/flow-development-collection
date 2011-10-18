@@ -79,7 +79,6 @@ class EntityManagerFactory {
 	 * Factory method which creates an EntityManager.
 	 *
 	 * @return \Doctrine\ORM\EntityManager
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function create() {
 		$config = new \Doctrine\ORM\Configuration();

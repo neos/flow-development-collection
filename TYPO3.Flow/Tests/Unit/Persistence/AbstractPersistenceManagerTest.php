@@ -28,7 +28,6 @@ class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectToIdentityArrayConvertsAnObject() {
 		$someObject = new \stdClass();
@@ -42,7 +41,6 @@ class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectToIdentityArrayThrowsExceptionIfIdentityForTheGivenObjectCantBeDetermined() {
 		$someObject = new \stdClass();
@@ -53,7 +51,6 @@ class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectsToIdentityArraysRecursivelyConvertsObjects() {
 		$object1 = new \stdClass();
@@ -70,7 +67,6 @@ class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectsToIdentityArraysConvertsObjectsInIterators() {
 		$object1 = new \stdClass();

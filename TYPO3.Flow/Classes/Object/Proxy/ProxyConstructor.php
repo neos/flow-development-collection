@@ -28,7 +28,6 @@ class ProxyConstructor extends \TYPO3\FLOW3\Object\Proxy\ProxyMethod {
 	 *
 	 *
 	 * @param string $fullOriginalClassName The fully qualified class name of the original class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($fullOriginalClassName) {
 		$this->fullOriginalClassName = $fullOriginalClassName;
@@ -38,7 +37,6 @@ class ProxyConstructor extends \TYPO3\FLOW3\Object\Proxy\ProxyMethod {
 	 * Renders the code for a proxy constructor
 	 *
 	 * @return string PHP code
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		$methodDocumentation = $this->buildMethodDocumentation($this->fullOriginalClassName, $this->methodName);
@@ -65,7 +63,6 @@ class ProxyConstructor extends \TYPO3\FLOW3\Object\Proxy\ProxyMethod {
 	 * @param string $fullClassName Fully qualified name of the original class
 	 * @param string $methodName Name of the original method
 	 * @return string PHP code
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildCallParentMethodCode($fullClassName, $methodName) {
 		if (!$this->reflectionService->hasMethod($fullClassName, $methodName)) {

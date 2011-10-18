@@ -39,7 +39,6 @@ class LocaleCollectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->locales = array(
@@ -54,7 +53,6 @@ class LocaleCollectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function localesAreAddedToTheCollectionCorrectlyWithHierarchyRelation() {
 		foreach ($this->locales as $locale) {
@@ -66,7 +64,6 @@ class LocaleCollectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function existingLocaleIsNotAddedToTheCollection() {
 		$localeShouldBeAdded = $this->localeCollection->addLocale($this->locales[0]);
@@ -77,7 +74,6 @@ class LocaleCollectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function bestMatchingLocalesAreFoundCorrectly() {
 		foreach ($this->locales as $locale) {
@@ -91,7 +87,6 @@ class LocaleCollectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsNullWhenNoParentLocaleCouldBeFound() {
 		foreach ($this->locales as $locale) {

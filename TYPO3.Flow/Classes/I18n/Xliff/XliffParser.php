@@ -33,7 +33,6 @@ class XliffParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 *
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed XLIFF
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @todo Support "approved" attribute
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {

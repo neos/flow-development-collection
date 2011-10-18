@@ -20,7 +20,6 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObjectMarksTheObjectAsCloned() {
 		$object = new \stdClass();
@@ -35,7 +34,6 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @return void
-	 * @author Christian Müller <christian.mueller@typo3.org>
 	 */
 	public function cloneEntityCreatesNewUuid() {
 		$object = new \stdClass();
@@ -82,7 +80,6 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateValueHashUsesExistingPersistenceIdentifierForNestedConstructorCalls() {
 		$methodArguments = array(
@@ -105,7 +102,6 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateValueHashUsesTimestampOfDateTime() {
 		$date = new \DateTime();

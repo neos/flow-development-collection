@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\MVC;
 /**
  * Contract for a request.
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface RequestInterface {

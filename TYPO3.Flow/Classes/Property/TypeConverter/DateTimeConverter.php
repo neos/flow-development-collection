@@ -78,7 +78,6 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 * @param string $source
 	 * @param string $targetType
 	 * @return boolean
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function canConvertFrom($source, $targetType) {
 		if ($targetType !== 'DateTime') {
@@ -98,7 +97,6 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 * @param array $convertedChildProperties not used currently
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \DateTime
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$dateFormat = $this->getDefaultDateFormat($configuration);
@@ -133,7 +131,6 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 *
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getDefaultDateFormat(\TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if ($configuration === NULL) {

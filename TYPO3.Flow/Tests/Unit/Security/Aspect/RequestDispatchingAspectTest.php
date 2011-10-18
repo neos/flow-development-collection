@@ -19,7 +19,6 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -48,7 +47,6 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -92,7 +90,6 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
@@ -134,7 +131,6 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAccessDeniedResponseHeaderSetsTheResponseContentToAccessDeniedIfAnAccessDeniedExceptionHasBeenThrown() {
 		$response = $this->getMock('TYPO3\FLOW3\MVC\Response', array(), array(), '', FALSE);
@@ -163,7 +159,6 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAccessDeniedResponseHeaderSetsTheResponseStatusTo403IfAnAccessDeniedExceptionHasBeenThrownWhileExecutingAWebRequest() {
 		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);

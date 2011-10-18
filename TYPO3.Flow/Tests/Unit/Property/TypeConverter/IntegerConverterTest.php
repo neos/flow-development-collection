@@ -29,7 +29,6 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('integer', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,7 +38,6 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldCastTheStringToInteger() {
 		$this->assertSame(15, $this->converter->convertFrom('15', 'integer'));
@@ -47,7 +45,6 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromDoesNotModifyIntegers() {
 		$source = 123;
@@ -56,7 +53,6 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function canConvertFromShouldReturnTrueForANumericStringSource() {
 		$this->assertTrue($this->converter->canConvertFrom('15', 'integer'));
@@ -64,7 +60,6 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function canConvertFromShouldReturnTrueForAnIntegerSource() {
 		$this->assertTrue($this->converter->canConvertFrom(123, 'integer'));
@@ -72,7 +67,6 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
 		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));

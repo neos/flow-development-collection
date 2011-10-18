@@ -22,8 +22,6 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 *
 	 * @param string $clearString The unencrypted string which is the subject to be hashed
 	 * @return string Salted hash and the salt, separated by a comma ","
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function generateSaltedMd5($clearString) {
 		$salt = substr(md5(uniqid(rand(), TRUE)), 0, rand(6, 10));
@@ -37,7 +35,6 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 * @param string $clearString
 	 * @param string $hashedStringAndSalt
 	 * @return boolean TRUE if the clear string matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function validateSaltedMd5($clearString, $hashedStringAndSalt) {
 		if (strpos($hashedStringAndSalt, ',') === FALSE) {
@@ -52,7 +49,6 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 *
 	 * @param string $password The cleartext password
 	 * @return string A hashed password with salt
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function hashPassword($password, $staticSalt = NULL) {
 		return self::generateSaltedMd5($password);
@@ -64,7 +60,6 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 * @param string $password The cleartext password
 	 * @param string $hashedPasswordAndSalt The hashed password with salt
 	 * @return boolean TRUE if the given password matches the hashed password
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL) {
 		return self::validateSaltedMd5($password, $hashedPasswordAndSalt);

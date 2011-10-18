@@ -39,7 +39,6 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function commandIdentifiers() {
 		return array(
@@ -52,7 +51,6 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider commandIdentifiers
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructRendersACommandIdentifierByTheGivenControllerAndCommandName($controllerClassName, $commandName, $expectedCommandIdentifier) {
 		$command = new Command($controllerClassName, $commandName);
@@ -61,7 +59,6 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function hasArgumentsReturnsFalseIfCommandExpectsNoArguments() {
 		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
@@ -70,7 +67,6 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function hasArgumentsReturnsTrueIfCommandExpectsArguments() {
 		$mockParameterReflection = $this->getMock('TYPO3\FLOW3\Reflection\ParameterReflection', array(), array(), '', FALSE);
@@ -80,7 +76,6 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getArgumentDefinitionsReturnsEmptyArrayIfCommandExpectsNoArguments() {
 		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
@@ -89,7 +84,6 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments() {
 		$mockParameterReflection = $this->getMock('TYPO3\FLOW3\Reflection\ParameterReflection', array(), array(), '', FALSE);

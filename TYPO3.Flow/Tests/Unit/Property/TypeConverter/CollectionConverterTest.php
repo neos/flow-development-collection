@@ -29,7 +29,6 @@ class CollectionConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,7 +38,6 @@ class CollectionConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeOfChildPropertyReturnsElementTypeFromTargetTypeIfGiven() {
 		$this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface')));
@@ -47,7 +45,6 @@ class CollectionConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType() {
 		$this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface')));

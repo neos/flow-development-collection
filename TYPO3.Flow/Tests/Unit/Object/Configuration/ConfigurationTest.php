@@ -25,7 +25,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Prepares everything for a test
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		$this->objectConfiguration = new \TYPO3\FLOW3\Object\Configuration\Configuration('TYPO3\Foo\Bar');
@@ -35,7 +34,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if setProperties accepts only valid values
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \Exception
 	 */
 	public function setPropertiesOnlyAcceptsValidValues() {
@@ -49,7 +47,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingAnEmptyArrayToSetPropertiesRemovesAllExistingproperties() {
 		$someProperties = array (
@@ -67,7 +64,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if setArguments accepts only valid values
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \Exception
 	 */
 	public function setArgumentsOnlyAcceptsValidValues() {
@@ -81,7 +77,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingAnEmptyArrayToSetArgumentsRemovesAllExistingArguments() {
 		$someArguments = array (
@@ -97,7 +92,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryObjectNameAcceptsValidClassNames() {
 		$this->objectConfiguration->setFactoryObjectName(__CLASS__);
@@ -107,7 +101,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Object\Exception\InvalidClassException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryObjectNameRejectsNamesOfNonExistingNlasses() {
 		$this->objectConfiguration->setFactoryObjectName('TYPO3\Virtual\NonExistingClass');
@@ -124,7 +117,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryMethodNameRejectsAnythingElseThanAString() {
 		$this->objectConfiguration->setFactoryMethodName(array());
@@ -132,7 +124,6 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultFactoryMethodNameIsCreate() {
 		$this->assertSame('create', $this->objectConfiguration->getFactoryMethodName());

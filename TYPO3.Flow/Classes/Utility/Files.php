@@ -23,7 +23,6 @@ class Files {
 	 *
 	 * @param string $path Path which should transformed to the Unix Style.
 	 * @return string
-	 * @author Malte Jansen <typo3@maltejansen.de>
 	 */
 	static public function getUnixStylePath($path) {
 		if (strpos($path, ':') === FALSE) {
@@ -41,7 +40,6 @@ class Files {
 	 *
 	 * @param array $paths the file paths to be combined. Last array element may include the filename.
 	 * @return string concatenated path without trailing slash.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getUnixStylePath()
 	 */
 	static public function concatenatePaths(array $paths) {
@@ -69,7 +67,6 @@ class Files {
 	 * @param boolean $returnRealPath If turned on, all paths are resolved by calling realpath()
 	 * @param array $filenames Internally used for the recursion - don't specify!
 	 * @return array Filenames including full path
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, &$filenames = array()) {
 		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
@@ -95,7 +92,6 @@ class Files {
 	 *
 	 * @param string $path Path to the directory which shall be emptied.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see removeDirectoryRecursively()
 	 */
 	static public function emptyDirectoryRecursively($path) {
@@ -127,7 +123,6 @@ class Files {
 	 *
 	 * @param  string $path Path to the directory which shall be removed completely.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see emptyDirectoryRecursively()
 	 */
 	static public function removeDirectoryRecursively($path) {
@@ -153,8 +148,6 @@ class Files {
 	 *
 	 * @param string $path Path to the directory which shall be created
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Make mode configurable / make umask configurable
 	 */
 	static public function createDirectoryRecursively($path) {
@@ -176,7 +169,6 @@ class Files {
 	 * @param string $sourceDirectory
 	 * @param string $targetDirectory
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
 		if (!is_dir($sourceDirectory)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
@@ -202,7 +194,6 @@ class Files {
 	 * @param integer $offset (optional) Offset where reading of the file starts.
 	 * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
 	 * @return mixed The file content as a string or FALSE if the file could not be opened.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function getFileContents($pathAndFilename, $flags = 0, $context = NULL, $offset = -1, $maximumLength = -1) {
 		if ($flags === TRUE) $flags = FILE_USE_INCLUDE_PATH;
@@ -224,7 +215,6 @@ class Files {
 	 *
 	 * @param integer $errorCode One of the UPLOAD_ERR_ constants
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getUploadErrorMessage($errorCode) {
 		switch ($errorCode) {
@@ -255,7 +245,6 @@ class Files {
 	 *
 	 * @param string $pathAndFilename Path and name of the file or directory
 	 * @return boolean TRUE if the path exists and is a symbolic link, FALSE otherwise
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	static public function is_link($pathAndFilename) {
 			// if not on Windows, call PHPs own is_link() function

@@ -20,7 +20,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @expectedException \InvalidArgumentException
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setChecksIfTheIdentifierIsValid() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
@@ -30,7 +29,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPassesStringToBackend() {
 		$theString = 'Just some value';
@@ -43,7 +41,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPassesLifetimeToBackend() {
 		$theString = 'Just some value';
@@ -57,7 +54,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsInvalidDataExceptionOnNonStringValues() {
@@ -69,8 +65,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getFetchesStringValueFromBackend() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
@@ -82,7 +76,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsResultFromBackend() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
@@ -94,7 +87,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function removeCallsBackend() {
 		$cacheIdentifier = 'someCacheIdentifier';
@@ -109,7 +101,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException InvalidArgumentException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTagRejectsInvalidTags() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
@@ -121,7 +112,6 @@ class StringFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTagCallsBackend() {
 		$tag = 'sometag';

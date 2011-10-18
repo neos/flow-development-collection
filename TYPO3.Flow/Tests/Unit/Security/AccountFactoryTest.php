@@ -19,7 +19,6 @@ class AccountFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAccountWithPasswordCreatesANewAccountWithTheGivenIdentifierPasswordRolesAndProviderName() {
 		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');

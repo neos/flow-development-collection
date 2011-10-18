@@ -57,7 +57,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modificationsOnRetrievedEntitiesAreNotPersistedAutomatically() {
 		$this->postRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository');
@@ -88,7 +87,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modificationsOnRetrievedEntitiesArePersistedIfUpdateHasBeenCalled() {
 		$this->postRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository');

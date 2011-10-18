@@ -19,7 +19,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function singletonObjectsCanBeInjectedIntoConstructorsOfSingletonObjects() {
 		$objectA = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA');
@@ -30,7 +29,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments() {
 		$objectC = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC');
@@ -41,7 +39,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertiesAreReinjectedIfTheObjectIsUnserialized() {
 		$className = 'TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA';
@@ -54,7 +51,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function virtualObjectsDefinedInObjectsYamlCanUseAFactoryForTheirActualImplementation() {
 		$prototypeA = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface');
@@ -65,7 +61,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings() {
 		$objectC = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC');
@@ -76,7 +71,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function singletonCanHandleInjectedPrototypeWithSettingArgument() {
 		$objectD = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassD');
@@ -87,7 +81,6 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function singletonCanHandleInjectedPrototypeWithCustomFactory() {
 		$objectD = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassD');

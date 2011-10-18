@@ -23,7 +23,6 @@ class QueryFactory implements \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInter
 	 *
 	 * @param string $className
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function create($className) {

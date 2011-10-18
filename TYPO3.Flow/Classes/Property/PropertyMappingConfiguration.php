@@ -53,7 +53,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	/**
 	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
 	 * @todo extend to enable whitelisting / blacklisting of properties.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function shouldMap($propertyName) {
@@ -65,7 +64,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param string $propertyName
 	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getConfigurationFor($propertyName) {
@@ -81,7 +79,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param string $sourcePropertyName
 	 * @return string property name of target
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getTargetPropertyName($sourcePropertyName) {
@@ -95,7 +92,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @param string $typeConverterClassName
 	 * @param string $key
 	 * @return mixed configuration value for the specific $typeConverterClassName. Can be used by Type Converters to fetch converter-specific configuration.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getConfigurationValue($typeConverterClassName, $key) {
@@ -112,7 +108,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @param string $sourcePropertyName
 	 * @param string $targetPropertyName
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function setMapping($sourcePropertyName, $targetPropertyName) {
@@ -124,7 +119,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @param string $typeConverter class name of type converter
 	 * @param array $options
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function setTypeConverterOptions($typeConverter, array $options) {
@@ -138,7 +132,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @param string $optionKey
 	 * @param mixed $optionValue
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function setTypeConverterOption($typeConverter, $optionKey, $optionValue) {
@@ -152,7 +145,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param string $propertyPath
 	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function forProperty($propertyPath) {
@@ -165,7 +157,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param array $splittedPropertyPath
 	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function traverseProperties(array $splittedPropertyPath) {
 		if (count($splittedPropertyPath) === 0) {

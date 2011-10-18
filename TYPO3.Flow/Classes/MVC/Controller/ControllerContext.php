@@ -71,7 +71,6 @@ class ControllerContext {
 	 * Get the request of the controller
 	 *
 	 * @return \TYPO3\FLOW3\MVC\RequestInterface
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getRequest() {
@@ -82,7 +81,6 @@ class ControllerContext {
 	 * Get the response of the controller
 	 *
 	 * @return \TYPO3\FLOW3\MVC\RequestInterface
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getResponse() {
@@ -93,7 +91,6 @@ class ControllerContext {
 	 * Get the arguments of the controller
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Controller\Arguments
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getArguments() {
@@ -104,7 +101,6 @@ class ControllerContext {
 	 * Returns the URI Builder bound to this context
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getUriBuilder() {
@@ -115,7 +111,6 @@ class ControllerContext {
 	 * Get the flash message container
 	 *
 	 * @return \TYPO3\FLOW3\MVC\FlashMessageContainer A container for flash messages
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getFlashMessageContainer() {

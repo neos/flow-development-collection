@@ -49,7 +49,6 @@ class LocaleCollection {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to be inserted
 	 * @return boolean FALSE when same locale was already inserted before
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function addLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localeCollection[(string)$locale])) {
@@ -79,7 +78,6 @@ class LocaleCollection {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
 	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
 		$localeIdentifier = (string)$locale;
@@ -111,7 +109,6 @@ class LocaleCollection {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The "template" locale to be matched
 	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance on success, NULL on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function findBestMatchingLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		$localeIdentifier = (string)$locale;

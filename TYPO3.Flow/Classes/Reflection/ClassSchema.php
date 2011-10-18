@@ -69,7 +69,6 @@ class ClassSchema {
 	 * Constructs this class schema
 	 *
 	 * @param string $className Name of the class this schema is referring to
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($className) {
 		$this->className = $className;
@@ -79,7 +78,6 @@ class ClassSchema {
 	 * Returns the class name this schema is referring to
 	 *
 	 * @return string The class name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -90,7 +88,6 @@ class ClassSchema {
 	 *
 	 * @param boolean $lazyLoadable
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setLazyLoadableObject($lazyLoadable) {
 		$this->lazyLoadable = $lazyLoadable;
@@ -100,7 +97,6 @@ class ClassSchema {
 	 * Marks the class as being lazy-loadable.
 	 *
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isLazyLoadableObject() {
 		return $this->lazyLoadable;
@@ -113,8 +109,6 @@ class ClassSchema {
 	 * @param string $type Type of the property
 	 * @param boolean $lazy Whether the property should be lazy-loaded when reconstituting
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
 		try {
@@ -135,7 +129,6 @@ class ClassSchema {
 	 *
 	 * @param string $propertyName
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($propertyName) {
 		return $this->properties[$propertyName];
@@ -145,7 +138,6 @@ class ClassSchema {
 	 * Returns all properties defined in this schema
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
 		return $this->properties;
@@ -157,7 +149,6 @@ class ClassSchema {
 	 *
 	 * @param string $propertyName
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isMultiValuedProperty($propertyName) {
 		return ($this->properties[$propertyName]['type'] === 'array' || $this->properties[$propertyName]['type'] === 'SplObjectStorage' || $this->properties[$propertyName]['type'] === 'Doctrine\Common\Collections\Collection' || $this->properties[$propertyName]['type'] === 'Doctrine\Common\Collections\ArrayCollection');
@@ -168,8 +159,6 @@ class ClassSchema {
 	 *
 	 * @param integer $modelType The model type, one of the MODELTYPE_* constants.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setModelType($modelType) {
 		if ($modelType !== self::MODELTYPE_ENTITY && $modelType !== self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
@@ -184,7 +173,6 @@ class ClassSchema {
 	 * Returns the model type of the class this schema is referring to.
 	 *
 	 * @return integer The model type, one of the MODELTYPE_* constants.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getModelType() {
 		return $this->modelType;
@@ -196,7 +184,6 @@ class ClassSchema {
 	 * @param string $repositoryClassName
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setRepositoryClassName($repositoryClassName) {
 		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
@@ -205,7 +192,6 @@ class ClassSchema {
 
 	/**
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRepositoryClassName() {
 		return $this->repositoryClassName;
@@ -215,7 +201,6 @@ class ClassSchema {
 	 * Whether the class is accessible through a repository and therefore an aggregate root.
 	 *
 	 * @return boolean TRUE
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isAggregateRoot() {
 		return $this->repositoryClassName !== NULL;
@@ -226,7 +211,6 @@ class ClassSchema {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
 		return array_key_exists($propertyName, $this->properties);
@@ -239,7 +223,6 @@ class ClassSchema {
 	 *
 	 * @param string $propertyName
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityProperty($propertyName) {
 		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have identity properties', 1264102084);
@@ -257,7 +240,6 @@ class ClassSchema {
 	 * Gets the properties (names and types) forming the identity of an object.
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see markAsIdentityProperty()
 	 */
 	public function getIdentityProperties() {

@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Log\Backend;
 class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -27,7 +26,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theLogFileIsOpenedWithOpen() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
@@ -39,7 +37,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function openDoesNotCreateParentDirectoriesByDefault() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/foo/test.log';
@@ -49,7 +46,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function openCreatesParentDirectoriesIfTheOptionSaysSo() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/foo/test.log';
@@ -60,7 +56,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
@@ -75,7 +70,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
@@ -91,7 +85,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
@@ -106,7 +99,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function logFileIsRotatedIfMaximumSizeIsExceeded() {
 		$this->markTestSkipped('vfsStream does not support touch() and rename(), see http://bugs.php.net/38025...');

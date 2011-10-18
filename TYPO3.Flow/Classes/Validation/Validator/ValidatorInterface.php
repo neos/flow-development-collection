@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Validation\Validator;
 /**
  * Contract for a validator
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface ValidatorInterface {

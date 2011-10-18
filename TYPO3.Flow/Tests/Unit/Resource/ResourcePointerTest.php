@@ -20,7 +20,6 @@ class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsExceptionOnFormallyInvalidHash() {
 		$resourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer('69e73da3ce0ad08c717b7b9f1c759182d64');
@@ -28,7 +27,6 @@ class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHashReturnsTheResourceHash() {
 		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
@@ -38,7 +36,6 @@ class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toStringReturnsTheResourceHashObject() {
 		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';

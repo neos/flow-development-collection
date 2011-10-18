@@ -20,7 +20,6 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUsernamePasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword() {
 		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
@@ -47,7 +46,6 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
 		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
@@ -74,7 +72,6 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	 * @test
 	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUnsupportedTokenThrowsAnException() {
 		$someNiceToken = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface');
@@ -87,7 +84,6 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet() {
 		$mockToken1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface');

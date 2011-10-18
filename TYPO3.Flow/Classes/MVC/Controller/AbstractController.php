@@ -96,7 +96,6 @@ abstract class AbstractController implements ControllerInterface {
 	/**
 	 * Constructs the controller
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		$this->arguments = new Arguments(array());
@@ -107,7 +106,6 @@ abstract class AbstractController implements ControllerInterface {
 	 *
 	 * @param array $settings Settings container of the current package
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -122,7 +120,6 @@ abstract class AbstractController implements ControllerInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function canProcessRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
@@ -139,7 +136,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
 	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
@@ -160,7 +156,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * Initialize the URI builder in $this->uriBuilder
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function initializeUriBuilder() {
 		$this->uriBuilder = new UriBuilder();
@@ -172,7 +167,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * Note that the context is only available after processRequest() has been called.
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Controller\ControllerContext The current controller context
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getControllerContext() {
@@ -226,7 +220,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param array $arguments Arguments to pass to the target action
 	 * @return void
 	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see redirect()
 	 * @api
 	 */
@@ -265,7 +258,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param string $format The format to use for the redirect URI
 	 * @return void
 	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see forward()
 	 * @api
 	 */
@@ -299,7 +291,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
 	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
 	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
@@ -324,7 +315,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param string $content Body content which further explains the status
 	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
 	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
@@ -341,7 +331,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * controller argument and adds them to the argument's validator conjunction.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeControllerArgumentsBaseValidators() {
 		foreach ($this->arguments as $argument) {
@@ -354,7 +343,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		foreach ($this->arguments as $argument) {

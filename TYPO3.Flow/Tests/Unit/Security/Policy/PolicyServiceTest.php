@@ -20,7 +20,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function thePolicyIsLoadedCorrectlyFromTheConfigurationManager() {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -63,7 +62,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectSetsTheEverybodyRoleInThePolicy() {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -114,7 +112,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectAddsTheAbstainPrivilegeForTheEverybodyRoleToEveryResourceWhereNoOtherPrivilegeIsSetInThePolicy() {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -196,7 +193,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesAsksThePolicyExpressionParserToBuildPointcutFiltersForMethodResourcesAndChecksIfTheyMatchTheGivenClassAndMethod() {
 		$settings = array(
@@ -232,7 +228,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchesAddsRuntimeEvaluationsCorrectlyToTheInternalPolicyCache() {
 		$settings = array(
@@ -307,7 +302,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesAlwaysReturnsFalseIfSecurityIsDisabled() {
 		$settings = array('security' => array('enable' => FALSE));
@@ -320,8 +314,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchesStoresMatchedPoliciesInAnArrayForLaterCaching() {
 		$settings = array(
@@ -371,7 +363,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForJoinPointReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -387,7 +378,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForJoinPointReturnsThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -428,7 +418,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForJoinPointReturnsOnlyPrivilgesThatPassedRuntimeEvaluationsInThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -464,7 +453,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsThePrivilegeThatHasBeenParsedForTheGivenResource() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -488,7 +476,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfTheResourceHasRuntimeEvaluationsDefined() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -512,7 +499,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsNullIfTheGivenRoleHasNoPriviligesDefinedForTheGivenResource() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -536,7 +522,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -553,7 +538,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectLoadsTheEntityConstraintsFromTheCache() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -579,7 +563,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectCallsThePolicyExpressionPraserAndBuildsTheEntityConstraintsIfTheCacheIsEmpty() {
 		$policy = array(
@@ -616,7 +599,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectCallsParseEntityAclsIfTheAclCacheIsEmpty() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -642,7 +624,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseEntityAclsParsesTheEntityAclsCorrectly() {
 		$policy = array(
@@ -684,7 +665,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function savePolicyCacheStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -707,7 +687,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesBasicallyWorks() {
 		$entityResourcesConstraints = array(
@@ -748,7 +727,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesDoesNotReturnConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
 		$entityResourcesConstraints = array(
@@ -792,7 +770,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForEntityTypeWorks() {
 		$entityResourcesConstraints = array(
@@ -839,7 +816,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAllParentRolesUnnestsRoleInheritanceCorrectly() {
 		$policy = array(
@@ -877,7 +853,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForMethodWorksCorrectlyIfNoRolesAreGiven() {
 		$aclsCache = array(
@@ -912,7 +887,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForMethodWorksCorrectlyIfRolesAreGiven() {
 		$aclsCache = array(
@@ -951,7 +925,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForMethodWorksWithCaseInsensitiveClassAndMethodNames() {
 		$aclsCache = array(

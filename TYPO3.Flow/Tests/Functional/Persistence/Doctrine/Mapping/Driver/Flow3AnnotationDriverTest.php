@@ -18,7 +18,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function lifecycleEventAnnotationsAreDetected() {
 		$classMetadataInfo = new \Doctrine\ORM\Mapping\ClassMetadataInfo('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
@@ -34,7 +33,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * - using joincolumn without name on single associations uses the property name
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function columnNamesAreBuiltCorrectly() {
 		$expectedTitleMapping = array(
@@ -107,7 +105,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * The "related_post_id" column given manually must be kept.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function joinColumnAnnotationsAreObserved() {
 		$expectedRelatedAssociationMapping = array(

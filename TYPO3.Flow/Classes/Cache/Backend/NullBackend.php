@@ -31,7 +31,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * @param array $tags ignored
 	 * @param integer $lifetime ignored
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -42,7 +41,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier ignored
 	 * @return boolean FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -54,7 +52,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier ignored
 	 * @return boolean FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -66,7 +63,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier ignored
 	 * @return boolean FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -78,7 +74,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $tag ignored
 	 * @return array An empty array
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
@@ -89,7 +84,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * Does nothing
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flush() {
@@ -100,7 +94,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $tag ignored
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -110,7 +103,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * Does nothing
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function collectGarbage() {
@@ -121,7 +113,6 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $identifier An identifier which describes the cache entry to load
 	 * @return void
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function requireOnce($identifier) {

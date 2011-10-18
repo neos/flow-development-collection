@@ -30,7 +30,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
 		$this->persistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\Generic\PersistenceManager', array(), array(), '', FALSE);
@@ -47,7 +46,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getQueryReturnsQueryObject() {
 		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\QueryInterface', $this->queryResult->getQuery());
@@ -55,7 +53,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getQueryReturnsAClone() {
 		$this->assertNotSame($this->query, $this->queryResult->getQuery());
@@ -63,7 +60,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetExistsWorksAsExpected() {
 		$this->assertTrue($this->queryResult->offsetExists(0));
@@ -73,7 +69,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetGetWorksAsExpected() {
 		$this->assertEquals(array('foo' => 'Foo1', 'bar' => 'Bar1'), $this->queryResult->offsetGet(0));
@@ -83,7 +78,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetSetWorksAsExpected() {
 		$this->queryResult->offsetSet(0, array('foo' => 'FooOverridden', 'bar' => 'BarOverridden'));
@@ -92,7 +86,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function offsetUnsetWorksAsExpected() {
 		$this->queryResult->offsetUnset(0);
@@ -101,7 +94,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function countDoesNotInitializeProxy() {
 		$queryResult = $this->getMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
@@ -112,7 +104,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function countCallsGetObjectCountByQueryOnPersistenceManager() {
 		$queryResult = $this->getMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
@@ -122,7 +113,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function iteratorMethodsAreCorrectlyImplemented() {
 		$array1 = array('foo' => 'Foo1', 'bar' => 'Bar1');
@@ -144,7 +134,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function initializeExecutesQueryWithArrayFetchMode() {
 		$queryResult = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
@@ -156,7 +145,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getFirstReturnsFirstResultIfQueryIsInitialized() {
 		$initializedQueryResult = array(
@@ -173,7 +161,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getFirstReturnsNullIfResultSetIsEmptyAndQueryIsInitialized() {
 		$initializedQueryResult = array();
@@ -185,7 +172,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getFirstMapsAndReturnsFirstResultIfQueryIsNotInitialized() {
 		$initializedQueryResult = array(
@@ -208,7 +194,6 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getFirstReturnsNullIfResultSetIsEmptyAndQueryIsNotInitialized() {
 		$initializedQueryResult = array();

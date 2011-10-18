@@ -66,7 +66,6 @@ abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\Pe
 	 * @param object $object The object to be converted
 	 * @return array The identity array in the format array('__identity' => '...')
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectToIdentityArray($object) {
 		$identifier = $this->getIdentifierByObject($object);
@@ -83,7 +82,6 @@ abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\Pe
 	 * @param array $array The array to be iterated over
 	 * @return array The modified array without objects
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectsToIdentityArrays(array $array) {
 		foreach ($array as $key => $value) {

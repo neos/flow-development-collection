@@ -39,7 +39,6 @@ class DocCommentParser {
 	 *
 	 * @param string $docComment A doc comment as returned by the reflection getDocComment() method
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDocComment($docComment) {
 		$this->description = '';
@@ -60,7 +59,6 @@ class DocCommentParser {
 	 * Returns the tags which have been previously parsed
 	 *
 	 * @return array Array of tag names and their (multiple) values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
 		return $this->tags;
@@ -73,7 +71,6 @@ class DocCommentParser {
 	 *
 	 * @param string $tagName The tag name to retrieve the values for
 	 * @return array The tag's values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tagName) {
 		if (!$this->isTaggedWith($tagName)) throw new \TYPO3\FLOW3\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
@@ -85,7 +82,6 @@ class DocCommentParser {
 	 *
 	 * @param string $tagName The tag name to check for
 	 * @return boolean TRUE the tag exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isTaggedWith($tagName) {
 		return (isset($this->tags[$tagName]));
@@ -95,7 +91,6 @@ class DocCommentParser {
 	 * Returns the description which has been previously parsed
 	 *
 	 * @return string The description which has been parsed
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getDescription() {
 		return $this->description;
@@ -107,7 +102,6 @@ class DocCommentParser {
 	 *
 	 * @param string $line A line of a doc comment which starts with an @-sign
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseTag($line) {
 		$tagAndValue = array();

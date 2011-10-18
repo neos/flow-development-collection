@@ -94,7 +94,6 @@ class PointcutExpressionParser {
 	/**
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -108,8 +107,6 @@ class PointcutExpressionParser {
 	 * @param string $sourceHint A message giving a hint on where the expression was defined. This is used in error messages.
 	 * @return PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parse($pointcutExpression, $sourceHint) {
 		$this->sourceHint = $sourceHint;
@@ -186,7 +183,6 @@ class PointcutExpressionParser {
 	 * @param string $classTagPattern The pattern expression as configuration for the class tag filter
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class tag filter) will be added to this composite object.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @deprecated since 1.0
 	 */
 	protected function parseDesignatorClassTaggedWith($operator, $classTagPattern, PointcutFilterComposite $pointcutFilterComposite) {
@@ -203,7 +199,6 @@ class PointcutExpressionParser {
 	 * @param string $classPattern The pattern expression as configuration for the class filter
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorClass($operator, $classPattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutClassNameFilter($classPattern);
@@ -235,7 +230,6 @@ class PointcutExpressionParser {
 	 * @param string $methodTagPattern The pattern expression as configuration for the method tag filter
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method tag filter) will be added to this composite object.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorMethodTaggedWith($operator, $methodTagPattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutMethodTaggedWithFilter($methodTagPattern);
@@ -253,7 +247,6 @@ class PointcutExpressionParser {
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class and method filter) will be added to this composite object.
 	 * @return void
 	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException if there's an error in the pointcut expression
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorMethod($operator, $signaturePattern, PointcutFilterComposite $pointcutFilterComposite) {
 		if (strpos($signaturePattern, '->') === FALSE) {
@@ -297,7 +290,6 @@ class PointcutExpressionParser {
 	 * @param string $signaturePattern The pattern expression defining the class type
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorWithin($operator, $signaturePattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutClassTypeFilter($signaturePattern);
@@ -315,7 +307,6 @@ class PointcutExpressionParser {
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
 	 * @return void
 	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite) {
 		if (strpos($pointcutExpression, '->') === FALSE) {
@@ -334,7 +325,6 @@ class PointcutExpressionParser {
 	 * @param string $filterObjectName Object Name of the custom filter (value of the designator)
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorFilter($operator, $filterObjectName, PointcutFilterComposite $pointcutFilterComposite) {
 		$customFilter = $this->objectManager->get($filterObjectName);
@@ -351,7 +341,6 @@ class PointcutExpressionParser {
 	 * @param string $configurationPath The path to the settings option, that should be used
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseDesignatorSetting($operator, $configurationPath, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutSettingFilter($configurationPath);
@@ -367,7 +356,6 @@ class PointcutExpressionParser {
 	 * @param string $runtimeEvaluations The runtime evaluations string
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseRuntimeEvaluations($operator, $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite) {
 		$runtimeEvaluationsDefintion = array(
@@ -386,7 +374,6 @@ class PointcutExpressionParser {
 	 * @param string $string The string to parse
 	 * @return string The inner part between the first level of parentheses
 	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getSubstringBetweenParentheses($string) {
 		$startingPosition = 0;
@@ -420,7 +407,6 @@ class PointcutExpressionParser {
 	 * @param string &$signaturePattern The regular expression for matching the method() signature
 	 * @return string Visibility modifier or NULL of none was found
 	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getVisibilityFromSignaturePattern(&$signaturePattern) {
 		$visibility = NULL;
@@ -444,7 +430,6 @@ class PointcutExpressionParser {
 	*
 	* @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
 	* @return array The corresponding constraints array
-	* @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	*/
 	protected function getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentsPattern) {
 		$matches = array();
@@ -474,7 +459,6 @@ class PointcutExpressionParser {
 	 *
 	 * @param string $evaluateString The evaluate string defined in the pointcut expression
 	 * @return array The corresponding constraints array
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getRuntimeEvaluationConditionsFromEvaluateString($evaluateString) {
 		$matches = array();

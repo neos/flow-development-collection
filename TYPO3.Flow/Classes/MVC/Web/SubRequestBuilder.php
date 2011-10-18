@@ -35,7 +35,6 @@ class SubRequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -46,7 +45,6 @@ class SubRequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -60,7 +58,6 @@ class SubRequestBuilder {
 	 * @param string $argumentNamespace namespace that will be prefixed to URIs of this sub request
 	 * @param string $subRequestClassName the class name which should be instanciated. Must be a subclass of
 	 * @return \TYPO3\FLOW3\MVC\Web\SubRequest The sub request as an object
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function build(\TYPO3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '', $subRequestClassName = 'TYPO3\FLOW3\MVC\Web\SubRequest') {
 		$subRequest = $this->objectManager->create($subRequestClassName, $parentRequest);
@@ -77,7 +74,6 @@ class SubRequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Web\SubRequest $subRequest
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setArgumentsFromRawRequestData(\TYPO3\FLOW3\MVC\Web\SubRequest $subRequest) {
 		$parentRequest = $subRequest->getParentRequest();
@@ -94,7 +90,6 @@ class SubRequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Web\SubRequest $subRequest
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setControllerKeysAndFormat(\TYPO3\FLOW3\MVC\Web\SubRequest $subRequest) {
 		foreach($subRequest->getArguments() as $argumentName => $argumentValue) {

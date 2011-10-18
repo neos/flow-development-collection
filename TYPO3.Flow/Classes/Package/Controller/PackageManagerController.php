@@ -45,7 +45,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * Forwards to the helpAction.
 	 *
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function indexAction() {
 		return $this->helpAction();
@@ -56,8 +55,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function createAction($packageKey) {
 		if ($packageKey === '') {
@@ -78,7 +75,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deleteAction($packageKey) {
 		if ($packageKey === '') {
@@ -96,7 +92,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function activateAction($packageKey) {
 		if ($packageKey === '') {
@@ -116,7 +111,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function deactivateAction($packageKey) {
 		if ($packageKey === '') {
@@ -135,7 +129,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * Action for listing active packages
 	 *
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function listAvailableAction() {
 		$packages = $this->packageManager->getAvailablePackages();
@@ -150,7 +143,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * Action for listing active packages
 	 *
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function listActiveAction() {
 		$packages = $this->packageManager->getActivePackages();
@@ -165,7 +157,6 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * Action for displaying a help screen
 	 *
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function helpAction() {
 		return PHP_EOL .

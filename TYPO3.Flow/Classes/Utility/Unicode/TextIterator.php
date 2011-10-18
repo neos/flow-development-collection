@@ -86,8 +86,6 @@ class TextIterator implements \Iterator {
 	 *
 	 * @param string $subject
 	 * @param integer $iteratorType The type of iterator
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($subject, $iteratorType = self::CHARACTER) {
 		if ($iteratorType < 1 || $iteratorType > 6) throw new \TYPO3\FLOW3\Error\Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
@@ -107,7 +105,6 @@ class TextIterator implements \Iterator {
 	 * Returns the current element
 	 *
 	 * @return string The value of the current element
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function current() {
 		return $this->getCurrentElement()->getValue();
@@ -117,7 +114,6 @@ class TextIterator implements \Iterator {
 	 * Advances the iterator to the next element
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function next() {
 		$this->previousElement = $this->getCurrentElement();
@@ -129,7 +125,6 @@ class TextIterator implements \Iterator {
 	 * current element starting with 0.
 	 *
 	 * @return Key (number) of the current element
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function key() {
 		return $this->iteratorCacheIterator->key();
@@ -139,7 +134,6 @@ class TextIterator implements \Iterator {
 	 * Returns true, if the current element is not the end of the iterator
 	 *
 	 * @return boolean True if the iterator has not reached it's end
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function valid() {
 		if ($this->getCurrentElement()->getValue() != self::DONE && $this->getCurrentElement()->getOffset() != -1) return TRUE;
@@ -150,7 +144,6 @@ class TextIterator implements \Iterator {
 	 * Sets the iterator back to the first element
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewind() {
 		$this->iteratorCacheIterator->rewind();
@@ -160,7 +153,6 @@ class TextIterator implements \Iterator {
 	 * Returns the offset in the original given string of the current element
 	 *
 	 * @return integer The offset of the current element
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function offset() {
 		return $this->getCurrentElement()->getOffset();
@@ -170,7 +162,6 @@ class TextIterator implements \Iterator {
 	 * Returns the previous element
 	 *
 	 * @return string The previous element of the iterator
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function previous() {
 		return $this->previousElement->getValue();
@@ -180,7 +171,6 @@ class TextIterator implements \Iterator {
 	 * Returns the last element of the iterator
 	 *
 	 * @return string the last element of the iterator
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function last() {
 		$this->rewind();
@@ -198,7 +188,6 @@ class TextIterator implements \Iterator {
 	 *
 	 * @param integer $offset The offset of the character
 	 * @return string The element following this character
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function following($offset) {
 		$this->rewind();
@@ -215,7 +204,6 @@ class TextIterator implements \Iterator {
 	 *
 	 * @param integer $offset The offset of the character
 	 * @return string The element preceding this character
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function preceding($offset) {
 		$this->rewind();
@@ -238,7 +226,6 @@ class TextIterator implements \Iterator {
 	 * LINE:      <\n>
 	 *
 	 * @return boolean True if the current element is a boundary element
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isBoundary() {
 		return $this->getCurrentElement()->isBoundary();
@@ -248,7 +235,6 @@ class TextIterator implements \Iterator {
 	 * Returns all elements of the iterator in an array
 	 *
 	 * @return array All elements of the iterator
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAll() {
 		$this->rewind();
@@ -262,7 +248,6 @@ class TextIterator implements \Iterator {
 
 	/**
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRuleStatus() {
 		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getRuleStatus() is not supported.', 1210849057);
@@ -270,7 +255,6 @@ class TextIterator implements \Iterator {
 
 	/**
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRuleStatusArray() {
 		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getRuleStatusArray() is not supported.', 1210849076);
@@ -278,7 +262,6 @@ class TextIterator implements \Iterator {
 
 	/**
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAvailableLocales() {
 		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getAvailableLocales() is not supported.', 1210849105);
@@ -288,7 +271,6 @@ class TextIterator implements \Iterator {
 	 * Returns the first element
 	 *
 	 * @return string The first element of the iterator
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function first() {
 		$this->rewind();
@@ -299,7 +281,6 @@ class TextIterator implements \Iterator {
 	 * Helper function to coordinate the "string splitting"
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function generateIteratorElements() {
 
@@ -321,7 +302,6 @@ class TextIterator implements \Iterator {
 	/**
 	 * Helper function to do the splitting by character
 	 *
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function parseSubjectByCharacter() {
 		$i = 0;
@@ -336,7 +316,6 @@ class TextIterator implements \Iterator {
 	 * Helper function to do the splitting by word. Note: punctuation marks are 
 	 * treated as words, spaces as boundary elements
 	 *
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function parseSubjectByWord() {
 		$i = 0;
@@ -383,7 +362,6 @@ class TextIterator implements \Iterator {
 	 * belongs to the preceding sentence.
 	 * "\n" is boundary element.
 	 *
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function parseSubjectByLine() {
 		$lines = array();
@@ -408,7 +386,6 @@ class TextIterator implements \Iterator {
 	 * mark belongs to the preceeding sentence. Whitespace between sentences is 
 	 * marked as boundary.
 	 *
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function parseSubjectBySentence() {
 		$i = 0;
@@ -448,7 +425,6 @@ class TextIterator implements \Iterator {
 	 * Helper function to get the current element from the cache.
 	 *
 	 * @return \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement The current element of the cache
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function getCurrentElement() {
 		return $this->iteratorCacheIterator->current();

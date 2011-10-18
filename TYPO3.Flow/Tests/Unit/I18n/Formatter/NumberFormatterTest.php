@@ -64,7 +64,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
@@ -72,7 +71,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatMethodsAreChoosenCorrectly() {
 		$sampleNumber = 123.456;
@@ -96,7 +94,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * more readable.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleNumbersAndParsedFormats() {
 		return array(
@@ -109,7 +106,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersAndParsedFormats
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, array $parsedFormat) {
 		$formatter = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Formatter\NumberFormatter', array('dummy'));
@@ -121,7 +117,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with example numbers, parsed formats, and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function customFormatsAndFormatterNumbers() {
 		return array(
@@ -146,7 +141,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider customFormatsAndFormatterNumbers
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult) {
 		$mockNumbersReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader');
@@ -165,7 +159,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * (decimal, percent or currency) and currency sign if applicable.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleDataForSpecificFormattingMethods() {
 		return array(
@@ -204,7 +197,6 @@ class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleDataForSpecificFormattingMethods
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = NULL) {
 		$mockNumbersReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader');

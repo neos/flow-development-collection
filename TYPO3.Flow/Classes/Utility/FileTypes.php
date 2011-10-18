@@ -415,7 +415,6 @@ class FileTypes {
 	 *
 	 * @param  string $filename Filename to determine the mime type for
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getMimeTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
@@ -431,7 +430,6 @@ class FileTypes {
 	 *
 	 * @param string $mimeType Mime type
 	 * @return string filename extension
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function getFilenameExtensionFromMimeType($mimeType) {
 		return isset(self::$mimeTypeToExtension[$mimeType]) ? self::$mimeTypeToExtension[$mimeType] : '';
@@ -442,7 +440,6 @@ class FileTypes {
 	 *
 	 * @param  string $filename Filename to determine the media type for
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getMediaTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);

@@ -19,7 +19,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theReflectionServiceBuildsClassSchemataForEntities() {
 		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
@@ -31,7 +30,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function theReflectionServiceCorrectlyBuildsMethodTagsValues() {
 		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
@@ -57,7 +55,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * This test case checks for http://forge.typo3.org/issues/29449
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\InvalidClassException
 	 */
 	public function theReflectionServiceThrowsExceptionIfDoctrineProxyIsReflected() {

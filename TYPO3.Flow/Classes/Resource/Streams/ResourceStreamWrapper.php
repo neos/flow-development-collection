@@ -55,7 +55,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * Returns the scheme ("protocol") this wrapper handles.
 	 *
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getScheme() {
 		return self::SCHEME;
@@ -70,7 +69,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * the directory stream should be released.
 	 *
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function closeDirectory() {
 		return closedir($this->handle);
@@ -84,7 +82,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $path Specifies the URL that was passed to opendir().
 	 * @param int $options Whether or not to enforce safe_mode (0x04).
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function openDirectory($path, $options) {
 		$resourcePath = $this->evaluateResourcePath($path);
@@ -102,7 +99,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * This method is called in response to readdir().
 	 *
 	 * @return string Should return string representing the next filename, or FALSE if there is no next file.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function readDirectory() {
 		return readdir($this->handle);
@@ -118,7 +114,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * by dir_opendir().
 	 *
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function rewindDirectory() {
 		return rewinddir($this->handle);
@@ -133,7 +128,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param integer $mode The value passed to mkdir().
 	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function makeDirectory($path, $mode, $options) {
 		$path = $this->evaluateResourcePath($path, FALSE);
@@ -151,7 +145,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $path The directory URL which should be removed.
 	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeDirectory($path, $options) {
 		throw new \BadMethodCallException(__CLASS__ . ' does not support rmdir.', 1256827649);
@@ -167,7 +160,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $source The URL to the current file.
 	 * @param string $target The URL which the path_from should be renamed to.
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function rename($source, $target) {
 		return FALSE;
@@ -180,7 +172,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 *
 	 * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
 	 * @return resource Should return the underlying stream resource used by the wrapper, or FALSE.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function cast($castType) {
 		return FALSE;
@@ -195,7 +186,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * released.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function close() {
 		fclose($this->handle);
@@ -207,7 +197,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * This method is called in response to feof().
 	 *
 	 * @return boolean Should return TRUE if the read/write position is at the end of the stream and if no more data is available to be read, or FALSE otherwise.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isAtEof() {
 		return feof($this->handle);
@@ -224,7 +213,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * Note: If not implemented, FALSE is assumed as the return value.
 	 *
 	 * @return boolean Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flush() {
 		return TRUE;
@@ -243,7 +231,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 *
 	 * @param integer $operation One of the LOCK_* constants
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function lock($operation) {
 		return FALSE;
@@ -255,7 +242,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * This method is called when closing the stream (LOCK_UN).
 	 *
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unlock() {
 		return TRUE;
@@ -280,7 +266,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param integer $options Holds additional flags set by the streams API.
 	 * @param string &$openedPathAndFilename If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function open($path, $mode, $options, &$openedPathAndFilename) {
 			// w, a or x should try to create the file
@@ -310,7 +295,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 *
 	 * @param integer $count How many bytes of data from the current position should be returned.
 	 * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either FALSE or an empty string.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function read($count) {
 		return fread($this->handle, $count);
@@ -332,7 +316,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param integer $offset The stream offset to seek to.
 	 * @param integer $whence
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function seek($offset, $whence = SEEK_SET) {
 		return fseek($this->handle, $offset, $whence);
@@ -362,7 +345,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param integer $argument1
 	 * @param integer $argument2
 	 * @return boolean TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setOption($option, $argument1, $argument2) {
 		return FALSE;
@@ -374,7 +356,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * This method is called in response to ftell().
 	 *
 	 * @return int Should return the current position of the stream.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function tell() {
 		return ftell($this->handle);
@@ -393,7 +374,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 *
 	 * @param string $data Should be stored into the underlying stream.
 	 * @return int Should return the number of bytes that were successfully stored, or 0 if none could be stored.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function write($data) {
 		return fwrite($this->handle, $data);
@@ -410,7 +390,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 *
 	 * @param string $path The file URL which should be deleted.
 	 * @return boolean TRUE on success or FALSE on failure.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unlink($path) {
 		throw new \BadMethodCallException('The package stream wrapper does not support unlink.', 1256052118);
@@ -422,7 +401,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * This method is called in response to fstat().
 	 *
 	 * @return array See http://php.net/stat
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resourceStat() {
 		return fstat($this->handle);
@@ -448,7 +426,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
 	 * @param integer $flags Holds additional flags set by the streams API.
 	 * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function pathStat($path, $flags) {
 		$resourcePath = $this->evaluateResourcePath($path);
@@ -462,8 +439,6 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $requestedPath
 	 * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
 	 * @return mixed The full path and filename or FALSE if the file doesn't exist
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function evaluateResourcePath($requestedPath, $checkForExistence = TRUE) {
 		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {

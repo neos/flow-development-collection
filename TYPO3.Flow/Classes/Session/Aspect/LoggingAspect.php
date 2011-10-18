@@ -33,7 +33,6 @@ class LoggingAspect {
 	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->start())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logStart(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
@@ -48,7 +47,6 @@ class LoggingAspect {
 	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->resume())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logResume(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
@@ -63,7 +61,6 @@ class LoggingAspect {
 	 * @FLOW3\Before("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->destroy())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logDestroy(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
@@ -78,7 +75,6 @@ class LoggingAspect {
 	 * @FLOW3\Around("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->renewId())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logRenewId(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();

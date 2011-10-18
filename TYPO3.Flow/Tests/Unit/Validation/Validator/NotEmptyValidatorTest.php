@@ -23,7 +23,6 @@ class NotEmptyValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsNoErrorForASimpleString() {
 		$this->assertFalse($this->validator->validate('a not empty string')->hasErrors());
@@ -31,7 +30,6 @@ class NotEmptyValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsErrorForAnEmptyString() {
 		$this->assertTrue($this->validator->validate('')->hasErrors());
@@ -39,7 +37,6 @@ class NotEmptyValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsErrorForANullValue() {
 		$this->assertTrue($this->validator->validate(NULL)->hasErrors());
@@ -47,7 +44,6 @@ class NotEmptyValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForAnEmptySubject() {
 		$this->assertEquals(1, count($this->validator->validate('')->getErrors()));
@@ -55,7 +51,6 @@ class NotEmptyValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForANullValue() {
 		$this->assertEquals(1, count($this->validator->validate(NULL)->getErrors()));

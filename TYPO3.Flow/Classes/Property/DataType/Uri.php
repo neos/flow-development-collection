@@ -88,7 +88,6 @@ class Uri {
 	 *
 	 * @param string $uriString String representation of the URI
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($uriString) {
@@ -113,7 +112,6 @@ class Uri {
 	 * Returns the URI's scheme / protocol
 	 *
 	 * @return string URI scheme / protocol
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getScheme() {
@@ -125,7 +123,6 @@ class Uri {
 	 *
 	 * @param  string $scheme The scheme. Allowed values are "http" and "https"
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setScheme($scheme) {
@@ -140,7 +137,6 @@ class Uri {
 	 * Returns the username of a login
 	 *
 	 * @return string User name of the login
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getUsername() {
@@ -152,7 +148,6 @@ class Uri {
 	 *
 	 * @param string $username User name of the login
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setUsername($username) {
@@ -167,7 +162,6 @@ class Uri {
 	 * Returns the password of a login
 	 *
 	 * @return string Password of the login
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPassword() {
@@ -179,7 +173,6 @@ class Uri {
 	 *
 	 * @param string $password Password of the login
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setPassword($password) {
@@ -194,7 +187,6 @@ class Uri {
 	 * Returns the host(s) of the URI
 	 *
 	 * @return string The hostname(s)
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getHost() {
@@ -206,7 +198,6 @@ class Uri {
 	 *
 	 * @param string $host The hostname(s)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setHost($host) {
@@ -221,7 +212,6 @@ class Uri {
 	 * Returns the port of the URI
 	 *
 	 * @return integer Port
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPort() {
@@ -233,7 +223,6 @@ class Uri {
 	 *
 	 * @param string $port The port number
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setPort($port) {
@@ -248,7 +237,6 @@ class Uri {
 	 * Returns the URI path
 	 *
 	 * @return string URI path
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPath() {
@@ -260,7 +248,6 @@ class Uri {
 	 *
 	 * @param string $path The path
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setPath($path) {
@@ -275,7 +262,6 @@ class Uri {
 	 * Returns the URI's query part
 	 *
 	 * @return string The query part
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getQuery() {
@@ -298,7 +284,6 @@ class Uri {
 	 * Returns the arguments from the URI's query part
 	 *
 	 * @return array Associative array of arguments and values of the URI's query part
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getArguments() {
@@ -309,7 +294,6 @@ class Uri {
 	 * Returns the fragment / anchor, if any
 	 *
 	 * @return string The fragment
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getFragment() {
@@ -321,7 +305,6 @@ class Uri {
 	 *
 	 * @param string $fragment The fragment (aka "anchor")
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setFragment($fragment) {
@@ -336,7 +319,6 @@ class Uri {
 	 * Returns a string representation of this URI
 	 *
 	 * @return string This URI as a string
-	 * @author Robert Lemke	<robert@typo3.org>
 	 * @api
 	 */
 	public function __toString() {

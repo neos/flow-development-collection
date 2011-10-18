@@ -35,7 +35,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
 		$this->mockEnvironment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
@@ -49,8 +48,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
 		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
@@ -76,7 +73,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider caseSensitiveObjectNames
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -142,7 +138,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -153,7 +148,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentThrowsExceptionIfTheGivenArgumentNameIsNoString() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -163,7 +157,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentThrowsExceptionIfTheGivenArgumentNameIsAnEmptyString() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -173,7 +166,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentTypeException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentThrowsExceptionIfTheGivenArgumentValueIsAnObject() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -182,7 +174,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentsOverridesAllExistingArguments() {
 		$arguments = array('key1' => 'value1', 'key2' => 'value2');
@@ -196,7 +187,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentsCallsSetArgumentForEveryArrayEntry() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('setArgument'));
@@ -283,7 +273,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setArgumentAcceptsObjectIfArgumentIsInternal() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -294,7 +283,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleArgumentsCanBeSetWithSetArgumentsAndRetrievedWithGetArguments() {
 		$arguments = array(
@@ -309,7 +297,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasArgumentTellsIfAnArgumentExists() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -321,7 +308,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerNameCanBeSetAndRetrieved() {
 		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
@@ -343,7 +329,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('getControllerObjectName'), array(), '', FALSE);
@@ -355,7 +340,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
 		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
@@ -370,8 +354,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function invalidPackageKeysAreRejected() {
 		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
@@ -385,7 +367,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('getControllerObjectName'), array(), '', FALSE);
@@ -397,7 +378,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theActionNamesCaseIsFixedIfItIsallLowerCaseAndTheControllerObjectNameIsKnown() {
 		$mockControllerClassName = 'Mock' . md5(uniqid(mt_rand(), TRUE));
@@ -424,7 +404,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRepresentationFormatCanBeSetAndRetrieved() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -443,7 +422,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aFlagCanBeSetIfTheRequestNeedsToBeDispatchedAgain() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -455,7 +433,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerNameDefaultsToNull() {
 		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
@@ -469,7 +446,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerActionNameDefaultsToNull() {
 		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
@@ -483,7 +459,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentsReturnsProperlyInitializedArgumentsArrayForNewRequest() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -494,7 +469,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the request URI is returned as expected.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestUriReturnsTheBaseUriDetectedByTheEnvironmentClass() {
 		$expectedRequestUri = new \TYPO3\FLOW3\Property\DataType\Uri('http://www.server.com/foo/bar');
@@ -509,7 +483,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Returns the base URI of the current request.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseUriReturnsTheBaseUriDetectedByTheEnvironmentClass() {
 		$expectedBaseUri = new \TYPO3\FLOW3\Property\DataType\Uri('http://www.server.com/');
@@ -522,7 +495,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRequestMethodCanBeSetAndRetrieved() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -537,7 +509,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidRequestMethodException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function requestMethodsWhichAreNotCompletelyUpperCaseAreRejected() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();

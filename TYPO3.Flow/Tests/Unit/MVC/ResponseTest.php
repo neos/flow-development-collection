@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Tests\Unit\MVC;
 class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function toStringReturnsContentOfResponse() {
 		$response = new \TYPO3\FLOW3\MVC\Response();

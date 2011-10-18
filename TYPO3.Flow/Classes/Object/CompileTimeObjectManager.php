@@ -68,7 +68,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -77,7 +76,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	/**
 	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -88,7 +86,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache) {
 		$this->configurationCache = $configurationCache;
@@ -97,7 +94,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	/**
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -108,7 +104,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param array $packages An array of active packages to consider
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize(array $packages) {
 		$this->registeredClassNames = $this->registerClassFiles($packages);
@@ -134,7 +129,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param string $objectName The object name
 	 * @param object $instance A prebuilt instance
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setInstance($objectName, $instance) {
 		if ($this->registeredClassNames === array()) {
@@ -149,7 +143,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 * Returns a list of all class names, grouped by package key,  which were registered by registerClassFiles()
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRegisteredClassNames() {
 		return $this->registeredClassNames;
@@ -164,7 +157,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param array $packages A list of packages to consider
 	 * @return array A list of class names which were discovered in the given packages
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function registerClassFiles(array $packages) {
 		$availableClassNames = array('' => array('DateTime'));
@@ -191,7 +183,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 * their scope, class, built method etc.
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildObjectsArray() {
 		$objects = array();
@@ -231,7 +222,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 * Returns object configurations which were previously built by the ConfigurationBuilder.
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfigurations() {
 		return $this->objectConfigurations;
@@ -245,7 +235,6 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function get($objectName) {
 		if (isset($this->objects[$objectName]['i'])) {

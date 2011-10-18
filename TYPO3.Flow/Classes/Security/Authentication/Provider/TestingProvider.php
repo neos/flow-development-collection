@@ -42,7 +42,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 * @param string $name The name of this authentication provider
 	 * @param array $options Additional configuration options
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($name, array $options = array()) {
 		$this->name = $name;
@@ -53,7 +52,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
@@ -64,7 +62,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 * Returns the classnames of the tokens this provider is responsible for.
 	 *
 	 * @return string The classname of the token this provider is responsible for
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
 		return array('TYPO3\FLOW3\Security\Authentication\Token\TestingToken');
@@ -75,8 +72,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		$authenticationToken->setAuthenticationStatus($this->authenticationStatus);
@@ -92,7 +87,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 *
 	 * @param \TYPO3\FLOW3\Security\Account $account
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setAccount($account) {
 		$this->account = $account;
@@ -103,7 +97,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 *
 	 * @param int $authenticationStatus
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
 		$this->authenticationStatus = $authenticationStatus;
@@ -114,7 +107,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 *
 	 * @param string $name
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -124,7 +116,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	 * Reset the authentication status and account
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function reset() {
 		$this->account = NULL;

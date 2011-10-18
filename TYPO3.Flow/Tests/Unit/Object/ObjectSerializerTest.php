@@ -19,7 +19,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesTheCorrectPropertyArrayUnderTheCorrectObjectName() {
 		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -61,7 +60,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesArrayPropertiesCorrectly() {
 		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -95,7 +93,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesArrayObjectPropertiesCorrectly() {
 		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -133,7 +130,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesObjectPropertiesCorrectly() {
 		$className1 = 'DummyClass1' . md5(uniqid(mt_rand(), TRUE));
@@ -190,7 +186,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySkipsObjectPropertiesThatAreScopeSingleton() {
 		$propertyClassName1 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -275,7 +270,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySkipsPropertiesThatAreAnnotatedToBeTransient() {
 		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -317,7 +311,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function serializeObjectSerializesObjectInstancesOnlyOnceToPreventRecursion() {
 		$className = 'DummyClassForRecursion' . md5(uniqid(mt_rand(), TRUE));
@@ -392,7 +385,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesOnlyTheUuidOfEntityObjectsIfTheyAreNotMarkedAsNew() {
 		$sessionClassName = 'dummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -440,7 +432,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializessOnlyTheUuidOfPersistenceValueobjectsIfTheyAreNotMarkedAsNew() {
 		$sessionClassName = 'dummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -489,7 +480,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function deserializeObjectsArraySetsTheInternalObjectsAsArrayPropertyCorreclty() {
 		$someDataArray = array(
@@ -511,7 +501,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function deserializeObjectsArrayCallsReconstituteObjectWithTheCorrectObjectData() {
 		$className = 'dummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -566,7 +555,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildStorageArrayCreatesTheCorrectArrayForAnArrayProperty() {
 		$objectSerializerClassName = $this->buildAccessibleProxy('TYPO3\FLOW3\Object\ObjectSerializer');
@@ -610,7 +598,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildStorageArrayCreatesTheCorrectArrayForAnArrayPropertyWithContainingObject() {
 		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -642,7 +629,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArrayForSplObjectStoragePropertyBuildsTheCorrectArrayStructureAndStoresEveryObjectInsideSeparately() {
 		$propertyClassName1 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -706,8 +692,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteObjectCallsTheCorrectReconstitutePropertyTypeFunctionsAndSetsTheValuesInTheObject() {
 		$emptyClassName = 'emptyClass' . md5(uniqid(mt_rand(), TRUE));
@@ -792,7 +776,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstituteArrayWorks() {
 		$objectSerializer = $this->getAccessibleMock('TYPO3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
@@ -835,7 +818,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstituteArrayWorksWithObjectsInTheArray() {
 		$objectsAsArray = array(
@@ -871,7 +853,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstituteArrayWorksWithSplObjectStorageInTheArray() {
 		$objectsAsArray = array(
@@ -907,7 +888,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstituteArrayWorksWithPersistenceObjectsInTheArray() {
 		$objectsAsArray = array(
@@ -945,7 +925,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstituteSplObjectStorageWorks() {
 		$mockObject1 = $this->getMock('dummyClass1' . md5(uniqid(mt_rand(), TRUE)), array(), array(), '', FALSE);
@@ -973,7 +952,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstitutePersistenceObjectRetrievesTheObjectCorrectlyFromThePersistenceFramework() {
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');

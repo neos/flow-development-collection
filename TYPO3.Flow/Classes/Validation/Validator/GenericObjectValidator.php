@@ -48,7 +48,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return \TYPO3\FLOW3\Error\Result
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function validate($object) {
@@ -90,7 +89,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 * @param object $object
 	 * @param string $propertyName
 	 * @return mixed
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function getPropertyValue($object, $propertyName) {
 		if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
@@ -114,7 +112,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 * @param array $validators The validators to be called on the value
 	 * @param \TYPO3\FLOW3\Error\Result $messages the result object to which the validation errors should be added
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function checkProperty($value, $validators, \TYPO3\FLOW3\Error\Result $messages) {
 		foreach ($validators as $validator) {
@@ -128,7 +125,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 *
 	 * @param object $object The object to be checked
 	 * @return boolean TRUE if the given value is an object
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function canValidate($object) {
@@ -141,7 +137,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 * @param string $propertyName Name of the property to validate
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The property validator
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function addPropertyValidator($propertyName, \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
@@ -156,7 +151,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 *
 	 * @param string $propertyName (optional) Name of the property to return validators for
 	 * @return array An array of validators
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyValidators($propertyName = NULL) {
 		if ($propertyName !== NULL) {

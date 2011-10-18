@@ -73,7 +73,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $type
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($type, \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->type = $type;
@@ -85,7 +84,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $qomFactory
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $qomFactory) {
 		$this->objectManager = $qomFactory;
@@ -96,7 +94,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\QueryObjectModelFactory $qomFactory
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectQomFactory(\TYPO3\FLOW3\Persistence\Generic\Qom\QueryObjectModelFactory $qomFactory) {
 		$this->qomFactory = $qomFactory;
@@ -106,7 +103,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the type this query cares for.
 	 *
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getType() {
@@ -117,7 +113,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Executes the query and returns the result
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function execute() {
@@ -144,7 +139,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param array $orderings The property names to order by
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setOrderings(array $orderings) {
@@ -160,7 +154,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * )
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOrderings() {
@@ -173,7 +166,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $limit
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setLimit($limit) {
@@ -189,7 +181,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the maximum size of the result set to limit.
 	 *
 	 * @param integer
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getLimit() {
@@ -203,7 +194,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $offset
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setOffset($offset) {
@@ -219,7 +209,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the start offset of the result set.
 	 *
 	 * @return integer
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOffset() {
@@ -243,7 +232,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Gets the constraint for this query.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint, or null if none
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	*/
 	public function getConstraint() {
@@ -257,7 +245,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\And
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function logicalAnd($constraint1) {
@@ -286,7 +273,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param object $constraint1 The first of multiple constraints or an array of constraints.
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Or
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function logicalOr($constraint1) {
@@ -313,7 +299,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param object $constraint Constraint to negate
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Not
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function logicalNot($constraint) {
@@ -331,7 +316,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
 	 * @return object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Decide what to do about equality on multi-valued properties
 	 * @api
 	 */
@@ -370,7 +354,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param boolean $caseSensitive Whether the matching should be done case-sensitive
 	 * @return object
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a non-string property
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function like($propertyName, $operand, $caseSensitive = TRUE) {
@@ -406,7 +389,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function contains($propertyName, $operand){
@@ -447,7 +429,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with, multivalued
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with single-valued operand
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function in($propertyName, $operand) {
@@ -472,7 +453,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
@@ -497,7 +477,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
@@ -522,7 +501,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
@@ -547,7 +525,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {

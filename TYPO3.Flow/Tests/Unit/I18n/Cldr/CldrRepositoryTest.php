@@ -29,7 +29,6 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -43,7 +42,6 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function modelIsReturnedCorrectlyForSingleFile() {
 		file_put_contents('vfs://Foo/Bar.xml', '');
@@ -58,7 +56,6 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function modelIsReturnedCorrectlyForGroupOfFiles() {
 		mkdir('vfs://Foo/Directory');

@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * RSA related service functions (e.g. used for the RSA authentication provider)
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface RsaWalletServiceInterface {
 
@@ -32,7 +31,6 @@ interface RsaWalletServiceInterface {
 	 * @param string $privateKeyString The private key in its string representation
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
 	 * @return string The UUID used for storing
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = FALSE);
 
@@ -43,7 +41,6 @@ interface RsaWalletServiceInterface {
 	 *
 	 * @param string $publicKeyString The public key in its string representation
 	 * @return string The UUID used for storing
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function registerPublicKeyFromString($publicKeyString);
 
@@ -96,7 +93,6 @@ interface RsaWalletServiceInterface {
 	 * @param string $plaintext The plaintext to encrypt
 	 * @param string $uuid The uuid to identify to correct public key
 	 * @return string The ciphertext
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function encryptWithPublicKey($plaintext, $uuid);
 

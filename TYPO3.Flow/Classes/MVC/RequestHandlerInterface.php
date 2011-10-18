@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\MVC;
 /**
  * The interface for a request handler
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface RequestHandlerInterface {

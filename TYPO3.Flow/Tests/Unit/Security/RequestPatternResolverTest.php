@@ -20,7 +20,6 @@ class RequestPatternResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\NoRequestPatternFoundException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
@@ -33,7 +32,6 @@ class RequestPatternResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
 		$getCaseSensitiveObjectNameCallback = function() {
@@ -55,7 +53,6 @@ class RequestPatternResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);

@@ -19,7 +19,6 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignAddsValueToInternalVariableCollection() {
 		$view = $this->getAccessibleMock('TYPO3\FLOW3\MVC\View\AbstractView', array('setControllerContext', 'render'));
@@ -34,7 +33,6 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignCanOverridePreviouslyAssignedValues() {
 		$view = $this->getAccessibleMock('TYPO3\FLOW3\MVC\View\AbstractView', array('setControllerContext', 'render'));
@@ -48,7 +46,6 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignMultipleAddsValuesToInternalVariableCollection() {
 		$view = $this->getAccessibleMock('TYPO3\FLOW3\MVC\View\AbstractView', array('setControllerContext', 'render'));
@@ -63,7 +60,6 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignMultipleCanOverridePreviouslyAssignedValues() {
 		$view = $this->getAccessibleMock('TYPO3\FLOW3\MVC\View\AbstractView', array('setControllerContext', 'render'));

@@ -56,7 +56,6 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 *
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed CLDR File
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\Xml\AbstractXmlParser::doParsingFromRoot()
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
@@ -72,7 +71,6 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 *
 	 * @param \SimpleXMLElement $node A node to start parsing from
 	 * @return mixed An array representing parsed XML node or string value if leaf
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseNode(\SimpleXMLElement $node) {
 		$parsedNode = array();
@@ -114,7 +112,6 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 *
 	 * @param string $attributeName
 	 * @return boolean
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	protected function isDistinguishingAttribute($attributeName) {
 			// Taken from SupplementalMetadata and hardcoded for now

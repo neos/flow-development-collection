@@ -120,7 +120,6 @@ class Route {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
-	 * @author Robert Lemke <rober@typo3.org>
 	 */
 	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -139,7 +138,6 @@ class Route {
 	 *
 	 * @param string $name The Route name
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -149,7 +147,6 @@ class Route {
 	 * Returns the name of this Route.
 	 *
 	 * @return string Route name.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getName() {
 		return $this->name;
@@ -161,7 +158,6 @@ class Route {
 	 *
 	 * @param array $defaults
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setDefaults(array $defaults) {
 		$this->defaults = $defaults;
@@ -171,7 +167,6 @@ class Route {
 	 * Returns default values for this Route.
 	 *
 	 * @return array Route defaults
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getDefaults() {
 		return $this->defaults;
@@ -182,7 +177,6 @@ class Route {
 	 *
 	 * @param string $uriPattern
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUriPattern($uriPattern) {
 		if (!is_string($uriPattern)) throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
@@ -194,7 +188,6 @@ class Route {
 	 * Returns the URI pattern this route should match with
 	 *
 	 * @return string the URI pattern
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPattern() {
 		return $this->uriPattern;
@@ -206,7 +199,6 @@ class Route {
 	 *
 	 * @param boolean $lowerCase TRUE: Route parts are converted to lower case by default. FALSE: Route parts are not altered.
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setLowerCase($lowerCase) {
 		$this->lowerCase = (boolean)$lowerCase;
@@ -216,7 +208,6 @@ class Route {
 	 * Getter for $this->lowerCase.
 	 *
 	 * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see setLowerCase()
 	 */
 	public function isLowerCase() {
@@ -258,7 +249,6 @@ class Route {
 	 *
 	 * @param array $routePartsConfiguration Route Parts configuration options
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRoutePartsConfiguration(array $routePartsConfiguration) {
 		$this->routePartsConfiguration = $routePartsConfiguration;
@@ -268,7 +258,6 @@ class Route {
 	 * Returns the route parts configuration of this route
 	 *
 	 * @return array $routePartsConfiguration
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getRoutePartsConfiguration() {
 		return $this->routePartsConfiguration;
@@ -279,7 +268,6 @@ class Route {
 	 *
 	 * @return array An array of Route Parts and their values for further handling by the Router
 	 * @see \TYPO3\FLOW3\MVC\Web\Routing\Router
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMatchResults() {
 		return $this->matchResults;
@@ -289,7 +277,6 @@ class Route {
 	 * Returns the uri which corresponds to this Route.
 	 *
 	 * @return string A string containing the corresponding uri (excluding protocol and host)
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getMatchingUri() {
 		return $this->matchingUri;
@@ -303,7 +290,6 @@ class Route {
 	 *
 	 * @param string $routePath the route path without protocol, host and query string
 	 * @return boolean TRUE if this Route corresponds to the given $routePath, otherwise FALSE
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getMatchResults()
 	 */
 	public function matches($routePath) {
@@ -368,7 +354,6 @@ class Route {
 	 *
 	 * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
 	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getMatchingUri()
 	 */
 	public function resolves(array $routeValues) {
@@ -527,7 +512,6 @@ class Route {
 	 *
 	 * @param mixed $subject
 	 * @return boolean If it contains an object or not
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function containsObject($subject) {
 		if (is_object($subject)) {
@@ -549,7 +533,6 @@ class Route {
 	 * appropriate RoutePart instances.
 	 *
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parse() {
 		if ($this->isParsed || $this->uriPattern === NULL || $this->uriPattern === '') {

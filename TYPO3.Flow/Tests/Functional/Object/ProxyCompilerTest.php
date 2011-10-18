@@ -21,7 +21,6 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function proxyClassesStillContainAnnotationsFromItsOriginalClass() {
 		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
@@ -34,7 +33,6 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesAnnotatedWithProxyDisableAreNotProxied() {
 		$singletonB = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB');
@@ -43,7 +41,6 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setInstanceOfSubClassDoesNotOverrideParentClass() {
 		$singletonE = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassE');

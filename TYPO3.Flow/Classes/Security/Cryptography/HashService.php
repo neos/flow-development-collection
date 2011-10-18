@@ -33,7 +33,6 @@ class HashService {
 	protected $passwordHashingStrategy;
 
 	/**
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function __construct() {
 		if (!file_exists(FLOW3_PATH_DATA . 'Persistent/EncryptionKey')) {
@@ -52,7 +51,6 @@ class HashService {
 	 * @param string $string The string for which a hash should be generated
 	 * @return string The hash of the string
 	 * @throws TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo Mark as API once it is more stable
 	 */
 	public function generateHmac($string) {
@@ -67,7 +65,6 @@ class HashService {
 	 * @param string $string The string which should be validated
 	 * @param string $hmac The hash of the string
 	 * @return boolean TRUE if string and hash fit together, FALSE otherwise.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo Mark as API once it is more stable
 	 */
 	public function validateHmac($string, $hmac) {
@@ -79,8 +76,6 @@ class HashService {
 	 *
 	 * @param string $clearString The unencrypted string which is the subject to be hashed
 	 * @return string Salted hash and the salt, separated by a comma ","
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @deprecated Use hashPassword(...) instead
 	 */
 	public function generateSaltedMd5($clearString) {
@@ -94,7 +89,6 @@ class HashService {
 	 * @param string $clearString
 	 * @param string $hashedStringAndSalt
 	 * @return boolean TRUE if the clear string matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @deprecated Use validatePassword(...) instead
 	 */
 	public function validateSaltedMd5($clearString, $hashedStringAndSalt) {
@@ -106,7 +100,6 @@ class HashService {
 	 *
 	 * @param string $password The cleartext password
 	 * @return string A hashed password with salt (if used)
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function hashPassword($password) {
@@ -119,7 +112,6 @@ class HashService {
 	 * @param string $password The cleartext password
 	 * @param string $hashedPasswordAndSalt The hashed password with salt (if used)
 	 * @return boolean TRUE if the given password matches the hashed password
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function validatePassword($password, $hashedPasswordAndSalt) {

@@ -21,7 +21,6 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorParsesAFullBlownUriStringCorrectly() {
 		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
@@ -43,7 +42,6 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
 		$uriString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
@@ -63,7 +61,6 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringRepresentationIsCorrect() {
 		$uriString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';

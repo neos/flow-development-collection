@@ -20,7 +20,6 @@ use \TYPO3\FLOW3\Package\Package;
 class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -30,14 +29,12 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
 		new Package('Vendor.TestPackage', './ThisPackageSurelyDoesNotExist');
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validPackageKeys() {
 		return array(
@@ -52,7 +49,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider validPackageKeys
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructAcceptsValidPackageKeys($packageKey) {
 		$packagePath = 'vfs://Packages/' . str_replace('\\', '/', $packageKey) . '/';
@@ -63,7 +59,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidPackageKeys() {
 		return array(
@@ -79,7 +74,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidPackageKeys
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructRejectsInvalidPackageKeys($packageKey) {
 		$packagePath = 'vfs://Packages/' . str_replace('\\', '/', $packageKey) . '/';
@@ -89,7 +83,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageNamespaceReturnsThePhpNamespaceCorrespondingToThePageKey() {
 		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
@@ -100,7 +93,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMetaPathReturnsPathToMetaDirectory() {
 		$package = new Package('TYPO3.FLOW3', FLOW3_PATH_FLOW3);
@@ -110,7 +102,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getDocumentationPathReturnsPathToDocumentationDirectory() {
 		$package = new Package('TYPO3.FLOW3', FLOW3_PATH_FLOW3);
@@ -121,7 +112,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPackageDocumentationsReturnsEmptyArrayIfDocumentationDirectoryDoesntExist() {
 		\vfsStreamWrapper::register();
@@ -137,7 +127,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPackageCanBeFlaggedAsProtected() {
 		$packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
@@ -151,7 +140,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isObjectManagementEnabledTellsIfObjectManagementShouldBeEnabledForThePackage() {
 		$packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
@@ -163,7 +151,6 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassFilesReturnsAListOfClassFilesOfThePackage() {
 		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';

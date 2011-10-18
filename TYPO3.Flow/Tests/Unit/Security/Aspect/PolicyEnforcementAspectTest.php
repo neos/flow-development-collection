@@ -19,7 +19,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyPassesTheGivenJoinPointOverToThePolicyEnforcementInterceptor() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -36,7 +35,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyCallsThePolicyEnforcementInterceptorCorrectly() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -53,7 +51,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyPassesTheGivenJoinPointOverToTheAfterInvocationInterceptor() {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
@@ -72,7 +69,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyPassesTheReturnValueOfTheInterceptedMethodOverToTheAfterInvocationInterceptor() {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
@@ -94,7 +90,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyCallsTheTheAfterInvocationInterceptorCorrectly() {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
@@ -113,7 +108,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo adjust when AfterInvocationInterceptor is used again
 	 */
 	public function enforcePolicyCallsTheAdviceChainCorrectly() {
@@ -132,7 +126,6 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo adjust when AfterInvocationInterceptor is used again
 	 */
 	public function enforcePolicyReturnsTheResultOfTheOriginalMethodCorrectly() {

@@ -19,7 +19,6 @@ class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logPassesItsArgumentsToTheBackendsAppendMethod() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
@@ -32,7 +31,6 @@ class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addBackendAllowsForAddingMultipleBackends() {
 		$mockBackend1 = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
@@ -49,7 +47,6 @@ class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addBackendRunsTheBackendsOpenMethod() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
@@ -61,7 +58,6 @@ class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeBackendRunsTheBackendsCloseMethodAndRemovesItFromTheLogger() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
@@ -79,7 +75,6 @@ class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Log\Exception\NoSuchBackendException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeThrowsAnExceptionOnTryingToRemoveABackendNotPreviouslyAdded() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
@@ -90,7 +85,6 @@ class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theShutdownMethodRunsCloseOnAllRegisteredBackends() {
 		$mockBackend1 = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));

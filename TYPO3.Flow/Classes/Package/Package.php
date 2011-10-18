@@ -66,7 +66,6 @@ class Package implements PackageInterface {
 	 * @param string $packagePath Absolute path to the package's main directory
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($packageKey, $packagePath) {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
@@ -90,7 +89,6 @@ class Package implements PackageInterface {
 	 * Returns the package meta data object of this package.
 	 *
 	 * @return \TYPO3\FLOW3\Package\MetaData
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageMetaData() {
 		if ($this->packageMetaData === NULL) {
@@ -103,7 +101,6 @@ class Package implements PackageInterface {
 	 * Returns the array of filenames of the class files
 	 *
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
@@ -116,7 +113,6 @@ class Package implements PackageInterface {
 	 * Returns the array of filenames of class files provided by functional tests contained in this package
 	 *
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFunctionalTestsClassFiles() {
 		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, 'Tests\\Functional\\');
@@ -126,7 +122,6 @@ class Package implements PackageInterface {
 	 * Returns the package key of this package.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPackageKey() {
@@ -148,7 +143,6 @@ class Package implements PackageInterface {
 	 * Tells if this package is protected and therefore cannot be deactivated or deleted
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function isProtected() {
@@ -159,7 +153,6 @@ class Package implements PackageInterface {
 	 * Tells if files in the Classes directory should be registered and object management enabled for this package.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isObjectManagementEnabled() {
 		return $this->objectManagementEnabled;
@@ -170,7 +163,6 @@ class Package implements PackageInterface {
 	 *
 	 * @param boolean $protected TRUE if the package should be protected, otherwise FALSE
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setProtected($protected) {
@@ -181,7 +173,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to this package's main directory
 	 *
 	 * @return string Path to this package's main directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPackagePath() {
@@ -192,7 +183,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to this package's Classes directory
 	 *
 	 * @return string Path to this package's Classes directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getClassesPath() {
@@ -203,7 +193,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to this package's functional tests directory
 	 *
 	 * @return string Path to this package's functional tests directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getFunctionalTestsPath() {
@@ -214,7 +203,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to this package's Resources directory
 	 *
 	 * @return string Path to this package's Resources directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getResourcesPath() {
@@ -225,7 +213,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to this package's Configuration directory
 	 *
 	 * @return string Path to this package's Configuration directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getConfigurationPath() {
@@ -236,7 +223,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to the package's meta data directory
 	 *
 	 * @return string Full path to the package's meta data directory
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getMetaPath() {
@@ -247,7 +233,6 @@ class Package implements PackageInterface {
 	 * Returns the full path to the package's documentation directory
 	 *
 	 * @return string Full path to the package's documentation directory
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getDocumentationPath() {
@@ -258,7 +243,6 @@ class Package implements PackageInterface {
 	 * Returns the available documentations for this package
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Package\Documentation
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function getPackageDocumentations() {
@@ -290,7 +274,6 @@ class Package implements PackageInterface {
 	 * @param string $subDirectory Used internally
 	 * @param integer $recursionLevel Used internally
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \TYPO3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
 	 */
 	protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0) {

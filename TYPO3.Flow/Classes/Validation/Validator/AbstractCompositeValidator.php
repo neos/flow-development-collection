@@ -30,7 +30,6 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 * Constructs the validator conjunction
 	 *
 	 * @param array $validationOptions The validation options
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($validationOptions = array()) {
@@ -42,7 +41,6 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 *
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function addValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
@@ -53,7 +51,6 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 * Removes the specified validator.
 	 *
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator to remove
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function removeValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
@@ -65,7 +62,6 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 * Returns the number of validators contained in this conjunction.
 	 *
 	 * @return integer The number of validators
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function count() {

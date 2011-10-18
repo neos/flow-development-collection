@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\I18n\Formatter;
 /**
  * An interface for formatters.
  *
- * @author Karol Gusak <firstname@lastname.eu>
  * @api
  */
 interface FormatterInterface {

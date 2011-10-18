@@ -73,7 +73,6 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @return boolean
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function canConvertFrom($source, $targetType) {
 		$isValueObject = $this->reflectionService->isClassTaggedWith($targetType, 'valueobject');
@@ -86,7 +85,6 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 *
 	 * @param mixed $source
 	 * @return array
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getSourceChildPropertiesToBeConverted($source) {
 		return $source;
@@ -99,7 +97,6 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @param string $propertyName
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_TARGET_TYPE);
@@ -133,7 +130,6 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$object = $this->buildObject($convertedChildProperties, $targetType);
@@ -159,8 +155,6 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @param string $objectType
 	 * @return object The created instance
 	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
 		$constructorSignature = $this->reflectionService->getMethodParameters($objectType, '__construct');

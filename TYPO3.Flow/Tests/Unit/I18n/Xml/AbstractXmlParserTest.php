@@ -19,7 +19,6 @@ class AbstractXmlParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function invokesDoParsingFromRootMethodForActualParsing() {
 		$sampleXmlFilePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
@@ -32,7 +31,6 @@ class AbstractXmlParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenBadFilenameGiven() {
 		$mockFilenamePath = 'foo';

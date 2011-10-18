@@ -53,7 +53,6 @@ class Session {
 	/**
 	 * Constructs a new Session
 	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct() {
 		$this->reconstitutedEntities = new \SplObjectStorage();
@@ -65,7 +64,6 @@ class Session {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -80,7 +78,6 @@ class Session {
 	 * @param object $entity
 	 * @param array $entityData
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerReconstitutedEntity($entity, array $entityData) {
 		$this->reconstitutedEntities->attach($entity);
@@ -93,7 +90,6 @@ class Session {
 	 * @param object $oldEntity
 	 * @param object $newEntity
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function replaceReconstitutedEntity($oldEntity, $newEntity) {
 		$this->reconstitutedEntities->detach($oldEntity);
@@ -105,7 +101,6 @@ class Session {
 	 *
 	 * @param object $entity
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterReconstitutedEntity($entity) {
 		if ($this->reconstitutedEntities->contains($entity)) {
@@ -118,7 +113,6 @@ class Session {
 	 * Returns all objects which have been registered as reconstituted
 	 *
 	 * @return \SplObjectStorage All reconstituted objects
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getReconstitutedEntities() {
 		return $this->reconstitutedEntities;
@@ -129,7 +123,6 @@ class Session {
 	 *
 	 * @param object $entity
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isReconstitutedEntity($entity) {
 		return $this->reconstitutedEntities->contains($entity);
@@ -142,7 +135,6 @@ class Session {
 	 * @param object $object
 	 * @param string $propertyName
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function isDirty($object, $propertyName) {
@@ -175,7 +167,6 @@ class Session {
 	 * @param array $cleanData
 	 * @param \Traversable $currentValue
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function isMultiValuedPropertyDirty(array $cleanData, $currentValue) {
 		if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
@@ -252,7 +243,6 @@ class Session {
 	 * @param object $object
 	 * @param string $propertyName
 	 * @return mixed
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getCleanStateOfProperty($object, $propertyName) {
 		if ($this->isReconstitutedEntity($object) === FALSE) {
@@ -270,7 +260,6 @@ class Session {
 	 *
 	 * @param object $object
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function hasObject($object) {
@@ -282,7 +271,6 @@ class Session {
 	 *
 	 * @param string $identifier
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasIdentifier($identifier) {
 		return array_key_exists($identifier, $this->identifierMap);
@@ -293,7 +281,6 @@ class Session {
 	 *
 	 * @param string $identifier
 	 * @return object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getObjectByIdentifier($identifier) {
@@ -312,7 +299,6 @@ class Session {
 	 *
 	 * @param object $object
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getIdentifierByObject($object) {
@@ -336,7 +322,6 @@ class Session {
 	 *
 	 * @param object $object
 	 * @param string $identifier
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function registerObject($object, $identifier) {
@@ -349,7 +334,6 @@ class Session {
 	 *
 	 * @param string $object
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterObject($object) {
 		unset($this->identifierMap[$this->objectMap[$object]]);
@@ -361,7 +345,6 @@ class Session {
 	 * all internal data.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function destroy() {
 		$this->identifierMap = array();

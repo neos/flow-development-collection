@@ -29,7 +29,6 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
@@ -47,7 +46,6 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function translatingIsDoneCorrectly() {
 		$mockTranslationProvicer = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
@@ -65,7 +63,6 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsOriginalLabelOrIdWhenTranslationNotAvailable() {
 		$mockTranslationProvicer = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');

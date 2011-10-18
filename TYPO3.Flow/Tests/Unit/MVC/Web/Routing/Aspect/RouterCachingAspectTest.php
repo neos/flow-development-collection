@@ -20,7 +20,6 @@ class RouterCachingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @dataProvider subjectsWithAndWithoutObjects()
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function containsObjectDetectsObjectsInVariousSituations($expectedResult, $subject) {
 		$aspect = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect', array('dummy'));

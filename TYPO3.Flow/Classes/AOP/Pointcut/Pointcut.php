@@ -69,7 +69,6 @@ class Pointcut {
 	 * @param \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite
 	 * @param string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
 	 * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($pointcutExpression, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, $aspectClassName, $pointcutMethodName = NULL) {
 		$this->pointcutExpression = $pointcutExpression;
@@ -88,7 +87,6 @@ class Pointcut {
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
 	 * @throws TYPO3\FLOW3\AOP\Exception\CircularPointcutReferenceException if a circular pointcut reference was detected
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
@@ -109,7 +107,6 @@ class Pointcut {
 	 * This can be used for debugging pointcuts.
 	 *
 	 * @return string The pointcut expression
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcutExpression() {
 		return $this->pointcutExpression;
@@ -119,7 +116,6 @@ class Pointcut {
 	 * Returns the aspect class name where the pointcut was declared.
 	 *
 	 * @return string The aspect class name where the pointcut was declared
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAspectClassName() {
 		return $this->aspectClassName;
@@ -129,7 +125,6 @@ class Pointcut {
 	 * Returns the pointcut method name (if any was defined)
 	 *
 	 * @return string The pointcut method name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcutMethodName() {
 		return $this->pointcutMethodName;
@@ -139,7 +134,6 @@ class Pointcut {
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return $this->pointcutFilterComposite->hasRuntimeEvaluationsDefinition();
@@ -149,7 +143,6 @@ class Pointcut {
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return $this->pointcutFilterComposite->getRuntimeEvaluationsDefinition();
@@ -159,7 +152,6 @@ class Pointcut {
 	 * Returns the PHP code (closure) that evaluates the runtime evaluations
 	 *
 	 * @return string The closure code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCode() {
 		return $this->pointcutFilterComposite->getRuntimeEvaluationsClosureCode();

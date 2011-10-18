@@ -70,7 +70,6 @@ class AspectContainer {
 	 * The constructor
 	 *
 	 * @param string $className Name of the aspect class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($className) {
 		$this->className = $className;
@@ -80,7 +79,6 @@ class AspectContainer {
 	 * Returns the name of the aspect class
 	 *
 	 * @return string Name of the aspect class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -90,7 +88,6 @@ class AspectContainer {
 	 * Returns the advisors which were defined in the aspect
 	 *
 	 * @return array Array of \TYPO3\FLOW3\AOP\Advisor objects
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvisors() {
 		return $this->advisors;
@@ -100,7 +97,6 @@ class AspectContainer {
 	 * Returns the interface introductions which were defined in the aspect
 	 *
 	 * @return array Array of \TYPO3\FLOW3\AOP\InterfaceIntroduction objects
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfaceIntroductions() {
 		return $this->interfaceIntroductions;
@@ -121,7 +117,6 @@ class AspectContainer {
 	 * expressions for the advisors!
 	 *
 	 * @return array Array of \TYPO3\FLOW3\AOP\Pointcut\Pointcut objects
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcuts() {
 		return $this->pointcuts;
@@ -132,7 +127,6 @@ class AspectContainer {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\Advisor $advisor The advisor to add
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addAdvisor(\TYPO3\FLOW3\AOP\Advisor $advisor) {
 		$this->advisors[] = $advisor;
@@ -143,7 +137,6 @@ class AspectContainer {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\InterfaceIntroduction $introduction
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addInterfaceIntroduction(\TYPO3\FLOW3\AOP\InterfaceIntroduction $introduction) {
 		$this->interfaceIntroductions[] = $introduction;
@@ -164,7 +157,6 @@ class AspectContainer {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut The poincut to add
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addPointcut(\TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->pointcuts[] = $pointcut;

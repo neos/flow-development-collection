@@ -23,7 +23,6 @@ class PackageConstraint extends \TYPO3\FLOW3\Package\MetaData\AbstractConstraint
 	/**
 	 * @return string The constraint scope
 	 * @see \TYPO3\FLOW3\Package\MetaData\Constraint::getConstraintScope()
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraintScope() {
 		return \TYPO3\FLOW3\Package\MetaDataInterface::CONSTRAINT_SCOPE_PACKAGE;

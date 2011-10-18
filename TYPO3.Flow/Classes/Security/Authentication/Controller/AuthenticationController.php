@@ -39,7 +39,6 @@ class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * is one stored in the security context)
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateAction() {
 		$authenticated = FALSE;
@@ -66,7 +65,6 @@ class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * Sets the authentication status of all active tokens back to NO_CREDENTIALS_GIVEN
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function logoutAction() {
 		$this->authenticationManager->logout();

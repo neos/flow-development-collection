@@ -77,7 +77,6 @@ class Request implements RequestInterface {
 	 * addressed yet.
 	 *
 	 * @return boolean TRUE if this request has been dispatched successfully
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isDispatched() {
 		return $this->dispatched;
@@ -88,7 +87,6 @@ class Request implements RequestInterface {
 	 *
 	 * @param string $controllerObjectName Object name of the controller which processes this request
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerObjectName($controllerObjectName) {
 		$this->controllerObjectName = $controllerObjectName;
@@ -99,7 +97,6 @@ class Request implements RequestInterface {
 	 * Returns the object name of the controller
 	 *
 	 * @return string The controller's object name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerObjectName() {
 		return $this->controllerObjectName;
@@ -112,7 +109,6 @@ class Request implements RequestInterface {
 	 *
 	 * @param string $commandName Name of the command to execute by the controller
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerCommandName($commandName) {
 		$this->controllerCommandName = $commandName;
@@ -123,7 +119,6 @@ class Request implements RequestInterface {
 	 * Returns the name of the command the controller is supposed to execute.
 	 *
 	 * @return string Command name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerCommandName() {
 		return $this->controllerCommandName;
@@ -133,7 +128,6 @@ class Request implements RequestInterface {
 	 * Returns the command object for this request
 	 *
 	 * @return \TYPO3\FLOW3\MVC\CLI\Command
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCommand() {
 		if ($this->command === NULL) {
@@ -148,7 +142,6 @@ class Request implements RequestInterface {
 	 * @param string $argumentName Name of the argument to set
 	 * @param mixed $value The new value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || $argumentName === '') throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name.', 1300893885);
@@ -160,7 +153,6 @@ class Request implements RequestInterface {
 	 *
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArguments(array $arguments) {
 		$this->arguments = $arguments;
@@ -171,7 +163,6 @@ class Request implements RequestInterface {
 	 *
 	 * @param string $argumentName Name of the argument
 	 * @return string Value of the argument
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchArgumentException if such an argument does not exist
 	 */
 	public function getArgument($argumentName) {
@@ -184,7 +175,6 @@ class Request implements RequestInterface {
 	 *
 	 * @param string $argumentName Name of the argument to check
 	 * @return boolean TRUE if the argument is set, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasArgument($argumentName) {
 		return isset($this->arguments[$argumentName]);
@@ -194,7 +184,6 @@ class Request implements RequestInterface {
 	 * Returns an ArrayObject of arguments and their values
 	 *
 	 * @return array Array of arguments and their values (which may be arguments and values as well)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArguments() {
 		return $this->arguments;
@@ -205,7 +194,6 @@ class Request implements RequestInterface {
 	 *
 	 * @param array $exceedingArguments Numeric array of exceeding arguments
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setExceedingArguments(array $exceedingArguments) {
 		$this->exceedingArguments = $exceedingArguments;
@@ -220,7 +208,6 @@ class Request implements RequestInterface {
 	 * this method would return array(0 => 'baz', 1 => 'quux')
 	 *
 	 * @return array Numeric array of exceeding argument values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getExceedingArguments() {
 		return $this->exceedingArguments;

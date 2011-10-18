@@ -28,9 +28,6 @@ class TextValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator 
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Jochen Rau <jochen.rau@typoplanet.de>
 	 * @api
 	 */
 	protected function isValid($value) {

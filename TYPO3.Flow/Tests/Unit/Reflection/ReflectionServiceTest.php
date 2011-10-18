@@ -41,7 +41,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassReflectedTellsIfTheReflectionServiceKnowsTheSpecifiedClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -58,7 +57,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAllClassNamesReturnsNamesOfAllReflectedClasses() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -74,7 +72,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDefaultImplementationClassNameForInterfaceReturnsClassNameOfOnlyClassImplementingTheInterface() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -100,7 +97,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDefaultImplementationClassNameForInterfaceReturnsFalseIfNoClassImplementsTheInterface() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -130,7 +126,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * of the proxy class is returned.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see http://typo3.org/go/issue/3027
 	 */
 	public function getDefaultImplementationClassNameForInterfaceReturnsClassNameOfTheProxyIfTwoClassesWereFound() {
@@ -173,7 +168,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAllImplementationClassNamesForInterfaceReturnsAllNamesOfClassesImplementingTheInterface() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -205,7 +199,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAllImplementationClassNamesForInterfaceReturnsEmptyArrayIfNoClassImplementsTheInterface() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -232,7 +225,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAllSubClassNamesForClassReturnsEmptyArrayIfNoClassInheritsTheClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -256,7 +248,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAllSubClassNamesForClassReturnsArrayOfSubClasses() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -288,7 +279,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassNamesByTagReturnsArrayOfClassesTaggedBySpecifiedTag() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -315,7 +305,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassTagsValuesReturnsArrayOfTagsAndValuesOfAClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -340,7 +329,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassTagValuesReturnsArrayOfValuesOfASpecificClassTag() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -365,7 +353,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassTaggedWithReturnsTrueIfClassIsTaggedWithSpecifiedTag() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -390,7 +377,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassAbstractTellsIfAClassIsAbstract() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -414,7 +400,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassFinalTellsIfAClassIsFinal() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -438,7 +423,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassMethodNamesReturnsNamesOfAllMethodsOfAClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -463,7 +447,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassPropertyNamesReturnsNamesOfAllPropertiesOfAClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -488,7 +471,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodTagsValuesReturnsArrayOfTagsAndValuesOfAMethod() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -513,7 +495,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodParametersReturnsAnArrayOfParameterNamesAndAdditionalInformation() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -543,7 +524,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNamesByTagReturnsArrayOfPropertiesTaggedBySpecifiedTag() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -568,7 +548,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertyNamesByTagReturnsEmptyArrayIfNoPropertiesTaggedBySpecifiedTagWhereFound() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -596,7 +575,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyTagsValuesReturnsArrayOfTagsAndValuesOfAProperty() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -621,7 +599,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyTagValuesReturnsArrayOfValuesOfAPropertysTag() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -646,7 +623,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPropertyTaggedWithReturnsTrueIfTheSpecifiedClassPropertyIsTaggedWithTheGivenTag() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -670,7 +646,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isClassImplementationOfReturnsTrueIfClassImplementsSpecifiedInterface() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -693,7 +668,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reflectClassStoresATimeStampWithEachReflectedClassIfClassChangeDetectionIsEnabled() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -713,7 +687,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaOnlyContainsNonTransientProperties() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -733,7 +706,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertyDataIsDetectedFromVarAnnotations() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -761,7 +733,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeEntityIsRecognizedByEntityAnnotation() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -777,7 +748,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectIsRecognizedByValueObjectAnnotation() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -794,7 +764,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectTriggersCheckValueObjectRequirementsCall() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -812,7 +781,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\InvalidValueObjectException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function checkValueObjectRequirementsThrowsExceptionIfConstructorIsMissing() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -825,7 +793,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\InvalidValueObjectException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function checkValueObjectRequirementsThrowsExceptionIfSetterExists() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -837,7 +804,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function checkValueObjectRequirementsRequiresConstructorAndNoSetters() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -849,7 +815,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaContainsNameOfItsRelatedClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -864,7 +829,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function identityPropertiesAreDetectedFromAnnotation() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -885,7 +849,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function aggregateRootIsTrueWhenRepositoryClassNameIsNotNull() {
 		$classSchema = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ClassSchema', array('dummy'), array('FooBar'));
@@ -896,7 +859,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function repositoryClassNameIsDetectedForEntities() {
 		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'loadFromCache'));
@@ -914,7 +876,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Does detection work for models where a repository declares itself responsible?
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function aggregateRootIsDetectedForEntitiesWithNonStandardRepository() {
 		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'getAllImplementationClassNamesForInterface', 'loadFromCache'));
@@ -933,7 +894,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function entitiesMustBePrototype() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -949,7 +909,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function valueObjectsMustBePrototype() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -964,7 +923,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectAvailableClassNamesCollectsClassNamesFromActivePackages() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
@@ -1000,7 +958,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectAvailableClassNamesAlsoRegistersFunctionalTestClassesIfObjectManagerIsConfiguredToDoSo() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');

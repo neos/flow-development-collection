@@ -19,7 +19,6 @@ class Pbkdf2HashingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function hashPasswordWithMatchingPasswordAndParametersSucceeds() {
 		$strategy = new \TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');
@@ -32,7 +31,6 @@ class Pbkdf2HashingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function hashAndValidatePasswordWithNotMatchingPasswordOrParametersFails() {
 		$strategy = new \TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy(8, 1000, 64, 'sha256');

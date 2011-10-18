@@ -53,8 +53,6 @@ class Resource {
 	 *
 	 * @param string $filename
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFileName($filename) {
 		$pathInfo = pathinfo($filename);
@@ -73,7 +71,6 @@ class Resource {
 	 * Gets the filename
 	 *
 	 * @return string The filename
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileName() {
 		return $this->filename;
@@ -83,7 +80,6 @@ class Resource {
 	 * Returns the file extension used for this resource
 	 *
 	 * @return string The file extension used for this file
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getFileExtension() {
 		return $this->fileExtension;
@@ -93,7 +89,6 @@ class Resource {
 	 * Returns the mime type for this resource
 	 *
 	 * @return string The mime type
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getMimeType() {
 		return \TYPO3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->getFileExtension());
@@ -104,7 +99,6 @@ class Resource {
 	 *
 	 * @param \TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setResourcePointer(\TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer) {
 		$this->resourcePointer = $resourcePointer;
@@ -114,7 +108,6 @@ class Resource {
 	 * Returns the resource pointer
 	 *
 	 * @return \TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcePointer() {
 		return $this->resourcePointer;
@@ -125,7 +118,6 @@ class Resource {
 	 *
 	 * @param \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration The publishing configuration
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setPublishingConfiguration(\TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration = NULL) {
 		$this->publishingConfiguration = $publishingConfiguration;
@@ -135,7 +127,6 @@ class Resource {
 	 * Returns the publishing configuration for this resource
 	 *
 	 * @return \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface The publishing configuration
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPublishingConfiguration() {
 		return $this->publishingConfiguration;

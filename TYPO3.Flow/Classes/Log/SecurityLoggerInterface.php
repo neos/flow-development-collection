@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Log;
 /**
  * Marker interface for the security logger.
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface SecurityLoggerInterface extends \TYPO3\FLOW3\Log\LoggerInterface {
 }

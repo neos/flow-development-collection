@@ -64,7 +64,6 @@ class Debugger {
 	 *
 	 * @param ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		self::$objectManager = $objectManager;
@@ -74,7 +73,6 @@ class Debugger {
 	 * Clear the state of the debugger
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function clearState() {
 		self::$renderedObjects = new \SplObjectStorage;
@@ -88,8 +86,6 @@ class Debugger {
 	 * @param boolean $plaintext
 	 * @param boolean $ansiColors
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static public function renderDump($variable, $level, $plaintext = FALSE, $ansiColors = FALSE) {
 		if ($level > 50) {
@@ -124,8 +120,6 @@ class Debugger {
 	 * @param boolean $plaintext
 	 * @param boolean $ansiColors
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function renderArrayDump($array, $level, $plaintext = FALSE, $ansiColors = FALSE) {
 		$type = is_array($array) ? 'array' : get_class($array);
@@ -146,8 +140,6 @@ class Debugger {
 	 * @param boolean $plaintext
 	 * @param boolean $ansiColors
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function renderObjectDump($object, $level, $renderProperties = TRUE, $plaintext = FALSE, $ansiColors = FALSE) {
 		$dump = '';
@@ -275,7 +267,6 @@ class Debugger {
 	 * @param boolean $plaintext
 	 * @param boolean $ansiColors
 	 * @return string Backtrace information
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function getBacktraceCode(array $trace, $includeCode = TRUE, $plaintext = FALSE) {
 		$backtraceCode = '';
@@ -357,7 +348,6 @@ class Debugger {
 	 * @param integer $lineNumber Line number defining the center of the code snippet
 	 * @param boolean $plaintext
 	 * @return string The code snippet
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo make plaintext-aware
 	 */
 	static public function getCodeSnippet($filePathAndName, $lineNumber, $plaintext = FALSE) {
@@ -415,7 +405,6 @@ class Debugger {
 	 * @param string $ansiColors The ansi color sequence (e.g. "1;37")
 	 * @param boolean $enable If FALSE, the raw string will be returned
 	 * @return string The wrapped or raw string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function ansiEscapeWrap($string, $ansiColors, $enable = TRUE) {
 		if ($enable) {
@@ -436,9 +425,6 @@ namespace TYPO3\FLOW3;
  * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If FALSE (default), the variable dump is directly displayed.
  * @param boolean $plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW3_SAPITYPE
  * @return void/string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
- * @author Robert Lemke <robert@typo3.org>
- * @author Bastian Waidelich <bastian@typo3.org>
- * @author Sebastian Kurfürst <sebastian@typo3.org>
  * @api
  */
 function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) {

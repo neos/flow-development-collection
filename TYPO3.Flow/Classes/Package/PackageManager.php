@@ -89,7 +89,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param $packageClassTemplateUri Full path and filename or other valid URI pointing to the template file
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPackageClassTemplateUri($packageClassTemplateUri) {
 		$this->packageClassTemplateUri = $packageClassTemplateUri;
@@ -109,7 +108,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
 	 * @param $packagesBasePath Absolute path of the Packages directory
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap, $packagesBasePath = FLOW3_PATH_PACKAGES, $packageStatesPathAndFilename = '') {
 		$this->packagesBasePath = $packagesBasePath;
@@ -138,7 +136,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The key of the package to check
 	 * @return boolean TRUE if the package is available, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function isPackageAvailable($packageKey) {
@@ -150,7 +147,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The key of the package to check
 	 * @return boolean TRUE if package is active, otherwise FALSE
-	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @api
 	 */
 	public function isPackageActive($packageKey) {
@@ -164,7 +160,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param string $packageKey
 	 * @return \TYPO3\FLOW3\Package The requested package object
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException if the specified package is not known
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPackage($packageKey) {
@@ -179,7 +174,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * A package is available, if the package directory contains valid meta information.
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Package
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getAvailablePackages() {
@@ -192,7 +186,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * manager settings.
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Package
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getActivePackages() {
@@ -205,7 +198,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $unknownCasedPackageKey The package key to convert
 	 * @return mixed The upper camel cased package key or FALSE if no such package exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getCaseSensitivePackageKey($unknownCasedPackageKey) {
@@ -218,7 +210,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package key to validate
 	 * @return boolean If the package key is valid, returns TRUE otherwise FALSE
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function isPackageKeyValid($packageKey) {
@@ -232,8 +223,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param \TYPO3\FLOW3\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
 	 * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
 	 * @return \TYPO3\FLOW3\Package\Package The newly created package
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function createPackage($packageKey, \TYPO3\FLOW3\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
@@ -325,7 +314,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package to deactivate
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function deactivatePackage($packageKey) {
@@ -348,7 +336,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package to activate
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function activatePackage($packageKey) {
@@ -368,8 +355,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param string $packageKey package to remove
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException if the specified package is not known
-	 * @author Thomas Hempel <thomas@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function deletePackage($packageKey) {
@@ -402,7 +387,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * For each package a Package object is created and stored in $this->packages.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
 		$packagePaths = array();
@@ -466,7 +450,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * The result is stored in $this->packageStatesConfiguration.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function loadPackageStates() {
 		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
@@ -483,7 +466,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * Saves the current content of $this->packageStatesConfiguration to the PackageStates.php file.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function savePackageStates() {
 		$packageStatesCode = "<?php\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";

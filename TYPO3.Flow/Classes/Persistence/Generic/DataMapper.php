@@ -40,7 +40,6 @@ class DataMapper {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
@@ -51,7 +50,6 @@ class DataMapper {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -62,7 +60,6 @@ class DataMapper {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -76,7 +73,6 @@ class DataMapper {
 	 *
 	 * @param array $objectsData
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjects(array $objectsData) {
 		$objects = array();
@@ -93,7 +89,6 @@ class DataMapper {
 	 *
 	 * @param array $objectData
 	 * @return object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObject(array $objectData) {
 		if ($objectData === array()) {
@@ -142,7 +137,6 @@ class DataMapper {
 	 * @param string $identifier The identifier of the object
 	 * @param array $objectData
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawProperties($object, $identifier, array $objectData) {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
@@ -220,7 +214,6 @@ class DataMapper {
 	 *
 	 * @param integer $timestamp
 	 * @return \DateTime
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapDateTime($timestamp) {
 		$datetime = new \DateTime();
@@ -233,7 +226,6 @@ class DataMapper {
 	 *
 	 * @param array $arrayValues
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapArray(array $arrayValues = NULL) {
 		if ($arrayValues === NULL) return array();
@@ -281,7 +273,6 @@ class DataMapper {
 	 * @param array $objectStorageValues
 	 * @param boolean $createLazySplObjectStorage
 	 * @return \SplObjectStorage
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo restore information attached to objects?
 	 */
 	protected function mapSplObjectStorage(array $objectStorageValues = NULL, $createLazySplObjectStorage = FALSE) {

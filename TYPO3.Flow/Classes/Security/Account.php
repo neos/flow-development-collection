@@ -76,7 +76,6 @@ class Account {
 	 * Returns the account identifier
 	 *
 	 * @return string The account identifier
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccountIdentifier() {
 		return $this->accountIdentifier;
@@ -87,7 +86,6 @@ class Account {
 	 *
 	 * @param string $accountIdentifier The account identifier
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAccountIdentifier($accountIdentifier) {
 		$this->accountIdentifier = $accountIdentifier;
@@ -97,7 +95,6 @@ class Account {
 	 * Returns the authenitcation provider name this account corresponds to
 	 *
 	 * @return string The authentication provider name
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationProviderName() {
 		return $this->authenticationProviderName;
@@ -108,7 +105,6 @@ class Account {
 	 *
 	 * @param string $authenticationProviderName The authentication provider name
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationProviderName($authenticationProviderName) {
 		$this->authenticationProviderName = $authenticationProviderName;
@@ -118,7 +114,6 @@ class Account {
 	 * Returns the credentials source
 	 *
 	 * @return mixed The credentials source
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCredentialsSource() {
 		return $this->credentialsSource;
@@ -129,7 +124,6 @@ class Account {
 	 *
 	 * @param mixed $credentialsSource The credentials source
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setCredentialsSource($credentialsSource) {
 		$this->credentialsSource = $credentialsSource;
@@ -139,7 +133,6 @@ class Account {
 	 * Returns the party object this account corresponds to
 	 *
 	 * @return \TYPO3\Party\Domain\Model\AbstractParty The party object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getParty() {
 		return $this->party;
@@ -150,7 +143,6 @@ class Account {
 	 *
 	 * @param \TYPO3\Party\Domain\Model\AbstractParty $party The party object
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setParty(\TYPO3\Party\Domain\Model\AbstractParty $party) {
 		$this->party = $party;
@@ -160,7 +152,6 @@ class Account {
 	 * Returns the roles this account has assigned
 	 *
 	 * @return array The assigned roles
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
 		$roleObjects = array();
@@ -175,7 +166,6 @@ class Account {
 	 *
 	 * @param array $roles An array of TYPO3\FLOW3\Security\Policy\Role objects
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setRoles(array $roles) {
 		$this->roles = array();
@@ -212,7 +202,6 @@ class Account {
 
 	/**
 	 * @return \DateTime
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCreationDate() {
 		return $this->creationDate;
@@ -220,7 +209,6 @@ class Account {
 
 	/**
 	 * @return \DateTime
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getExpirationDate() {
 		return $this->expirationDate;
@@ -229,7 +217,6 @@ class Account {
 	/**
 	 * @param \DateTime $expirationDate
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setExpirationDate(\DateTime $expirationDate) {
 		$this->expirationDate = $expirationDate;

@@ -26,7 +26,6 @@ class XmlReader {
 	 *
 	 * @param \TYPO3\FLOW3\Package\PackageInterface $package The package to read metadata for
 	 * @return MetaData A package meta data instance with the data from the package's Package.xml file.
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static public function readPackageMetaData(\TYPO3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getMetaPath();
@@ -57,7 +56,6 @@ class XmlReader {
 	 * @param \SimpleXMLElement $xml The XML document
 	 * @param \TYPO3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function readCategories(\SimpleXMLElement $xml, \TYPO3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->categories) && count($xml->categories)) {
@@ -73,7 +71,6 @@ class XmlReader {
 	 * @param \SimpleXMLElement $xml The XML document
 	 * @param \TYPO3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function readParties(\SimpleXMLElement $xml, \TYPO3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->parties) && count($xml->parties)) {
@@ -101,7 +98,6 @@ class XmlReader {
 	 * @param \SimpleXMLElement $xml The XML document
 	 * @param \TYPO3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function readConstraints(\SimpleXMLElement $xml, \TYPO3\FLOW3\Package\MetaData $meta) {
 		foreach ($meta->getConstraintTypes() as $constraintType) {

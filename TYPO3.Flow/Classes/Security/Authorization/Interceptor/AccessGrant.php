@@ -24,7 +24,6 @@ class AccessGrant implements \TYPO3\FLOW3\Security\Authorization\InterceptorInte
 	 * Invokes nothing, always returns TRUE.
 	 *
 	 * @return boolean Always returns TRUE
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
 		return TRUE;

@@ -34,7 +34,6 @@ class AccountFactory {
 	 * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
 	 * @param string $authenticationProviderName Optinally the name of the authentication provider the account is affiliated with
 	 * @return \TYPO3\FLOW3\Security\Account A new account, not yet added to the account repository
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider') {
 		$roles = array();

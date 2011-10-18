@@ -29,7 +29,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -42,7 +41,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function canConvertFromReturnsFalseIfTargetTypeIsNotDateTime() {
 		$this->assertFalse($this->converter->canConvertFrom('Foo', 'SomeOtherType'));
@@ -50,7 +48,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function canConvertFromReturnsTrueIfSourceTypeIsAString() {
 		$this->assertTrue($this->converter->canConvertFrom('Foo', 'DateTime'));
@@ -58,7 +55,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function canConvertFromReturnsTrueIfSourceTypeIsAnEmptyString() {
 		$this->assertTrue($this->converter->canConvertFrom('', 'DateTime'));
@@ -66,7 +62,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromReturnsErrorIfGivenStringCantBeConverted() {
 		$error = $this->converter->convertFrom('1980-12-13', 'DateTime');
@@ -75,7 +70,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromProperlyConvertsStringWithDefaultDateFormat() {
 		$expectedResult = '1980-12-13T20:15:07+01:23';
@@ -86,7 +80,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromUsesDefaultDateFormatIfItIsNotConfigured() {
 		$expectedResult = '1980-12-13T20:15:07+01:23';
@@ -113,7 +106,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @return array
 	 * @see convertFromStringTests()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromStringDataProvider() {
 		return array(
@@ -134,7 +126,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param boolean $isValid TRUE if the conversion is expected to be successful, otherwise FALSE
 	 * @test
 	 * @dataProvider convertFromStringDataProvider
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromStringTests($source, $dateFormat, $isValid) {
 		if ($dateFormat !== NULL) {
@@ -164,7 +155,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function canConvertFromReturnsTrueIfSourceTypeIsAnArray() {
 		$this->assertTrue($this->converter->canConvertFrom(array(), 'DateTime'));
@@ -172,8 +162,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromReturnsErrorIfGivenArrayCantBeConverted() {
 		$error = $this->converter->convertFrom(array('date' => '1980-12-13'), 'DateTime');
@@ -183,7 +171,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\TypeConverterException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromThrowsExceptionIfGivenArrayDoesNotSpecifyTheDate() {
 		$this->converter->convertFrom(array('hour' => '12', 'minute' => '30'), 'DateTime');
@@ -191,7 +178,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromProperlyConvertsArrayWithDefaultDateFormat() {
 		$expectedResult = '1980-12-13T20:15:07+01:23';
@@ -202,7 +188,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromAllowsToOverrideTheTime() {
 		$source = array(
@@ -221,7 +206,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromAllowsToOverrideTheTimezone() {
 		$source = array(
@@ -236,7 +220,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Property\Exception\TypeConverterException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromThrowsExceptionIfSpecifiedTimezoneIsInvalid() {
 		$source = array(
@@ -250,7 +233,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Property\Exception\TypeConverterException
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromArrayThrowsExceptionForEmptyArray() {
 		$this->converter->convertFrom(array(), 'DateTime', array(), NULL);
@@ -258,7 +240,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromArrayReturnsNullForEmptyDate() {
 		$this->assertNull($this->converter->convertFrom(array('date' => ''), 'DateTime', array(), NULL));
@@ -267,7 +248,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @return array
 	 * @see convertFromArrayTests()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromArrayDataProvider() {
 		return array(
@@ -289,7 +269,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param boolean $isValid TRUE if the conversion is expected to be successful, otherwise FALSE
 	 * @test
 	 * @dataProvider convertFromArrayDataProvider
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromArrayTests(array $source, $isValid) {
 		$dateFormat = isset($source['dateFormat']) && strlen($source['dateFormat']) > 0 ? $source['dateFormat'] : NULL;

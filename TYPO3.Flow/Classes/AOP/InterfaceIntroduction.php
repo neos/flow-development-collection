@@ -44,7 +44,6 @@ class InterfaceIntroduction {
 	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
 	 * @param string $interfaceName Name of the interface to introduce
 	 * @param \TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut The pointcut for this introduction
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($declaringAspectClassName, $interfaceName, \TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->declaringAspectClassName = $declaringAspectClassName;
@@ -56,7 +55,6 @@ class InterfaceIntroduction {
 	 * Returns the name of the introduced interface
 	 *
 	 * @return string Name of the introduced interface
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfaceName() {
 		return $this->interfaceName;
@@ -66,7 +64,6 @@ class InterfaceIntroduction {
 	 * Returns the poincut this introduction applies to
 	 *
 	 * @return \TYPO3\FLOW3\AOP\Pointcut\Pointcut The pointcut
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcut() {
 		return $this->pointcut;
@@ -76,7 +73,6 @@ class InterfaceIntroduction {
 	 * Returns the object name of the aspect which declared this introduction
 	 *
 	 * @return string The aspect object name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringAspectClassName() {
 		return $this->declaringAspectClassName;

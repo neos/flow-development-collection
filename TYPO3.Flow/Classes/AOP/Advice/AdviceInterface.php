@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\AOP\Advice;
  * This is the interface for a generic AOP advice. It is never implemented directly.
  * In FLOW3 all advices are implemented as interceptors.
  *
- * @author Robert Lemke <robert@typo3.org>
  * @see \TYPO3\FLOW3\AOP\InterceptorInterface
  */
 interface AdviceInterface {

@@ -27,7 +27,6 @@ class ConjunctionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractCom
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return \TYPO3\FLOW3\Error\Result
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function validate($value) {

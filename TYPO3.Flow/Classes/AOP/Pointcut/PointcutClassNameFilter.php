@@ -35,7 +35,6 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * The constructor - initializes the class filter with the class filter expression
 	 *
 	 * @param string $classFilterExpression A regular expression which defines which class names should match
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classFilterExpression) {
 		$this->classFilterExpression = '/^' . str_replace('\\', '\\\\', $classFilterExpression) . '$/';
@@ -46,7 +45,6 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -60,7 +58,6 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Collect information why class was ignored for debugging in a future AOP browser
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
@@ -83,7 +80,6 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return FALSE;
@@ -93,7 +89,6 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();

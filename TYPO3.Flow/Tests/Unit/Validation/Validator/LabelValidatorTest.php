@@ -25,7 +25,6 @@ class LabelValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * Data provider with valid labels
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validLabels() {
 		return array(
@@ -45,7 +44,6 @@ class LabelValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * Data provider with invalid labels
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidLabels() {
 		return array(
@@ -57,7 +55,6 @@ class LabelValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 * @dataProvider validLabels
 	 */
@@ -66,7 +63,6 @@ class LabelValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 * @dataProvider invalidLabels
 	 */

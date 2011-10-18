@@ -19,7 +19,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function commitDelegatesToPersistObjectsAndProcessDeletedObjects() {
 		$backend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
@@ -30,7 +29,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistObjectsPassesObjectsToPersistObject() {
 		$objects = new \SplObjectStorage();
@@ -48,7 +46,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function processDeletedObjectsPassesObjectsToRemoveEntity() {
 		$object = new \stdClass();
@@ -69,7 +66,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function processDeletedObjectsPassesOnlyKnownObjectsToRemoveEntity() {
 		$object = new \stdClass();
@@ -89,7 +85,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeNormalizesDoubleToFloat() {
 		$backend = $this->getAccessibleMockForAbstractClass('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend');
@@ -98,7 +93,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeReturnsClassNameForObjects() {
 		$backend = $this->getAccessibleMockForAbstractClass('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend');
@@ -107,7 +101,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function arrayContainsObjectReturnsTrueForSameObject() {
 		$object = new \stdClass();
@@ -122,7 +115,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function arrayContainsObjectReturnsFalseForDifferentObject() {
 		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
@@ -136,7 +128,6 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function arrayContainsObjectReturnsFalseForClone() {
 		$object = new \stdClass();

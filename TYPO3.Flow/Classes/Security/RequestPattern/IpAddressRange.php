@@ -30,7 +30,6 @@ class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return TRUE;
@@ -40,7 +39,6 @@ class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 * Returns the set pattern
 	 *
 	 * @return string The set pattern
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPattern() {
 		return $this->ipAddressRange;
@@ -51,7 +49,6 @@ class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param string $ipAddressRange The ip address range
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setPattern($ipAddressRange) {
 		$this->ipAddressRange = $ipAddressRange;
@@ -63,7 +60,6 @@ class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return FALSE;

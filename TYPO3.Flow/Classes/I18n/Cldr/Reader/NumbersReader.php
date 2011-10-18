@@ -159,7 +159,6 @@ class NumbersReader {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCldrRepository(\TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
@@ -170,7 +169,6 @@ class NumbersReader {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -180,7 +178,6 @@ class NumbersReader {
 	 * Constructs the reader, loading parsed data from cache if available.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
 		if ($this->cache->has('parsedFormats') && $this->cache->has('parsedFormatsIndices') && $this->cache->has('localizedSymbols')) {
@@ -194,7 +191,6 @@ class NumbersReader {
 	 * Shutdowns the object, saving parsed format strings to the cache.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function shutdownObject() {
 		$this->cache->set('parsedFormats', $this->parsedFormats);
@@ -214,7 +210,6 @@ class NumbersReader {
 	 * @param int $formatLength A length of format (one of constant values)
 	 * @return array An array representing parsed format
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseFormatFromCldr(\TYPO3\FLOW3\I18n\Locale $locale, $formatType, $formatLength = self::FORMAT_LENGTH_DEFAULT) {
 		self::validateFormatType($formatType);
@@ -248,7 +243,6 @@ class NumbersReader {
 	 *
 	 * @param string $format Format string to parse
 	 * @return array An array representing parsed format
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseCustomFormat($format) {
 		if (isset($this->parsedFormats[$format])) {
@@ -269,7 +263,6 @@ class NumbersReader {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @return array Symbols array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getLocalizedSymbolsForLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localizedSymbols[(string)$locale])) {
@@ -287,7 +280,6 @@ class NumbersReader {
 	 * @param string $formatType
 	 * @return void
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatTypeException When value is unallowed
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function validateFormatType($formatType) {
 		if (!in_array($formatType, array(self::FORMAT_TYPE_DECIMAL, self::FORMAT_TYPE_PERCENT, self::FORMAT_TYPE_CURRENCY))) {
@@ -302,7 +294,6 @@ class NumbersReader {
 	 * @param string $formatLength
 	 * @return void
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is unallowed
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function validateFormatLength($formatLength) {
 		if (!in_array($formatLength, array(self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT))) {
@@ -319,7 +310,6 @@ class NumbersReader {
 	 * @param string $format
 	 * @return array Parsed format
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException When unsupported format characters encountered
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {

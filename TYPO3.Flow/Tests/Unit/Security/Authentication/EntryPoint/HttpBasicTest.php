@@ -20,7 +20,6 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsTrueForWebRequests() {
 		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
@@ -31,7 +30,6 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsFalseForNonWebRequests() {
 		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
@@ -44,7 +42,6 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @category unit
 	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
 		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
@@ -55,7 +52,6 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');

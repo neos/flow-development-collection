@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * The contract for an AOP Pointcut Filter class
  *
- * @author Robert Lemke <robert@typo3.org>
  * @FLOW3\Proxy(false)
  */
 interface PointcutFilterInterface {

@@ -19,7 +19,6 @@ class AbstractXmlModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function modelCallsParserIfNoCacheAvailable() {
 		$mockFilenamePath = 'foo';

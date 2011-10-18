@@ -155,7 +155,6 @@ class DatesReader {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCldrRepository(\TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
@@ -166,7 +165,6 @@ class DatesReader {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -176,7 +174,6 @@ class DatesReader {
 	 * Constructs the reader, loading parsed data from cache if available.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
 		if ($this->cache->has('parsedFormats') && $this->cache->has('parsedFormatsIndices') && $this->cache->has('localizedLiterals')) {
@@ -190,7 +187,6 @@ class DatesReader {
 	 * Shutdowns the object, saving parsed format strings to the cache.
 	 * 
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function shutdownObject() {
 		$this->cache->set('parsedFormats', $this->parsedFormats);
@@ -210,7 +206,6 @@ class DatesReader {
 	 * @param string $formatLength A length of format (one of constant values)
 	 * @return array An array representing parsed format
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseFormatFromCldr(\TYPO3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
 		self::validateFormatType($formatType);
@@ -252,7 +247,6 @@ class DatesReader {
 	 *
 	 * @param string $format Format string to parse
 	 * @return array An array representing parsed format
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseCustomFormat($format) {
 		if (isset($this->parsedFormats[$format])) {
@@ -269,7 +263,6 @@ class DatesReader {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @return array An array with localized literals
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getLocalizedLiteralsForLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localizedLiterals[(string)$locale])) {
@@ -294,7 +287,6 @@ class DatesReader {
 	 * @param string $formatType
 	 * @return void
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatTypeException When value is unallowed
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function validateFormatType($formatType) {
 		if (!in_array($formatType, array(self::FORMAT_TYPE_DATE, self::FORMAT_TYPE_TIME, self::FORMAT_TYPE_DATETIME))) {
@@ -309,7 +301,6 @@ class DatesReader {
 	 * @param string $formatLength
 	 * @return void
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is unallowed
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function validateFormatLength($formatLength) {
 		if (!in_array($formatLength, array(self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT))) {
@@ -326,7 +317,6 @@ class DatesReader {
 	 * @param string $format
 	 * @return array Parsed format
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
@@ -394,7 +384,6 @@ class DatesReader {
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrModel $model CldrModel to read data from
 	 * @param string $literalType One of: month, day, quarter, dayPeriod
 	 * @return array An array with localized literals for given type
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseLocalizedLiterals(\TYPO3\FLOW3\I18n\Cldr\CldrModel $model, $literalType) {
 		$data = array();
@@ -422,7 +411,6 @@ class DatesReader {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrModel $model CldrModel to read data from
 	 * @return array An array with localized literals for "eras" node
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseLocalizedEras(\TYPO3\FLOW3\I18n\Cldr\CldrModel $model) {
 		$data = array();
@@ -449,7 +437,6 @@ class DatesReader {
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one from CLDR
 	 * @return array Merged formats of date and time
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function prepareDateAndTimeFormat($format, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength) {
 		$parsedFormatForDate = $this->parseFormatFromCldr($locale, 'date', $formatLength);

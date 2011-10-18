@@ -19,7 +19,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
 		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
@@ -30,7 +29,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
 		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
@@ -42,7 +40,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilename() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
@@ -57,7 +54,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilenameForWindowsStylePath() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
@@ -72,7 +68,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getScriptRequestPathReturnsCorrectPath() {
 		$expectedPath = '/blog/Web/';
@@ -86,7 +81,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function requestUriServerVariableArrayPairs() {
 		return array(
@@ -136,7 +130,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider requestUriServerVariableArrayPairs
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRequestUriReturnsExpectedUri($expectedUri, $SERVER) {
 		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
@@ -148,7 +141,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function requestUriBaseUriScriptNameTuples() {
 		return array(
@@ -173,7 +165,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider requestUriBaseUriScriptNameTuples
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function detectBaseUriRendersExpectedUriWhenUsingPlainRequests($requestUri, $expectedBaseUri, $SCRIPT_NAME) {
 		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('getRequestUri'), array('Testing'));
@@ -187,7 +178,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider httpAcceptStringsAndCorrespondingFormats
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAcceptedFormatsReturnsListOfAcceptedFormatsAccordingToHTTPHeader($httpAcceptString, $expectedFormats) {
 		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('getHTTPAccept'), array('Testing'));
@@ -200,7 +190,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider for accepted format detection
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function httpAcceptStringsAndCorrespondingFormats() {
 		return array(
@@ -213,7 +202,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getUploadedFilesJustReturnsThePreviouslyUntangledFILESVariable() {
 		$_FILES = array('foo' => 'bar');
@@ -223,7 +211,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawServerEnvironmentJustReturnsTheSERVERVariable() {
 		$_SERVER = array('foo' => 'bar', 'REQUEST_TIME' => $_SERVER['REQUEST_TIME']);
@@ -233,7 +220,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSAPINameReturnsNotNullOnFreshlyConstructedEnvironment() {
 		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
@@ -242,7 +228,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getMaximumPathLengthReturnsCorrectValue() {
 		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
@@ -255,7 +240,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function untangleFilesArrayTransformsTheFilesSuperglobalIntoAMangeableForm() {
 		$convolutedFiles = array (
@@ -450,7 +434,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getRequestHeadersConvertsHTTPServerVariables() {
 		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
@@ -469,7 +452,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRequestHeadersRespectsAuthorizationVariables() {
 		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
@@ -492,7 +474,6 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRequestHeadersRespectsAuthorizationVariablesRedirectedWhenRunningPhpAsCgi() {
 		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);

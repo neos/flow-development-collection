@@ -106,7 +106,6 @@ class Configuration {
 	 * @param string $objectName The unique identifier of the object
 	 * @param string $className Name of the class which provides the functionality of this object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($objectName, $className = NULL) {
 		$backtrace = debug_backtrace();
@@ -124,7 +123,6 @@ class Configuration {
 	 * Returns the object name
 	 *
 	 * @return string object name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectName() {
 		return $this->objectName;
@@ -135,7 +133,6 @@ class Configuration {
 	 *
 	 * @param string $className Name of the class which provides the functionality for this object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setClassName($className) {
 		$this->className = $className;
@@ -145,7 +142,6 @@ class Configuration {
 	 * Returns the class name
 	 *
 	 * @return string Name of the implementing class of this object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -156,7 +152,6 @@ class Configuration {
 	 *
 	 * @param string $packageKey Key of the package this object is part of
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPackageKey($packageKey) {
 		$this->packageKey = $packageKey;
@@ -166,7 +161,6 @@ class Configuration {
 	 * Returns the package key
 	 *
 	 * @return string Key of the package this object is part of
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
@@ -189,7 +183,6 @@ class Configuration {
 	 * Returns the class name of the factory for this object, if any
 	 *
 	 * @return string The factory class name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFactoryObjectName() {
 		return $this->factoryObjectName;
@@ -200,7 +193,6 @@ class Configuration {
 	 *
 	 * @param string $methodName The factory method name
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryMethodName($methodName) {
 		if (!is_string($methodName) || $methodName === '') {
@@ -213,7 +205,6 @@ class Configuration {
 	 * Returns the factory method name
 	 *
 	 * @return string The factory method name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFactoryMethodName() {
 		return $this->factoryMethodName;
@@ -224,7 +215,6 @@ class Configuration {
 	 *
 	 * @param integer $scope Name of the scope
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setScope($scope) {
 		$this->scope = $scope;
@@ -234,7 +224,6 @@ class Configuration {
 	 * Returns the scope for this object
 	 *
 	 * @return string The scope, one of the SCOPE constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScope() {
 		return $this->scope;
@@ -245,7 +234,6 @@ class Configuration {
 	 *
 	 * @param integer $autowiring One of the AUTOWIRING_MODE_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAutowiring($autowiring) {
 		$this->autowiring = $autowiring;
@@ -255,7 +243,6 @@ class Configuration {
 	 * Returns the autowiring mode for the configured object
 	 *
 	 * @return integer Value of one of the AUTOWIRING_MODE_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;
@@ -266,7 +253,6 @@ class Configuration {
 	 *
 	 * @param string $lifecycleInitializationMethodName Name of the method to call after setter injection
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLifecycleInitializationMethodName($lifecycleInitializationMethodName) {
 		$this->lifecycleInitializationMethodName = $lifecycleInitializationMethodName;
@@ -276,7 +262,6 @@ class Configuration {
 	 * Returns the name of the lifecycle initialization method for this object
 	 *
 	 * @return string The name of the intialization method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLifecycleInitializationMethodName() {
 		return $this->lifecycleInitializationMethodName;
@@ -296,7 +281,6 @@ class Configuration {
 	 * Returns the name of the lifecycle shutdown method for this object
 	 *
 	 * @return string The name of the shutdown method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLifecycleShutdownMethodName() {
 		return $this->lifecycleShutdownMethodName;
@@ -308,7 +292,6 @@ class Configuration {
 	 *
 	 * @param array $properties Array of \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperties(array $properties) {
 		if ($properties === array()) {
@@ -324,7 +307,6 @@ class Configuration {
 	 * Returns the currently set injection properties of the object
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
 		return $this->properties;
@@ -335,7 +317,6 @@ class Configuration {
 	 *
 	 * @param \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty $property
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperty(\TYPO3\FLOW3\Object\Configuration\ConfigurationProperty $property) {
 		$this->properties[$property->getName()] = $property;
@@ -347,8 +328,6 @@ class Configuration {
 	 *
 	 * @param array $arguments Array of \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setArguments(array $arguments) {
 		if ($arguments === array()) {
@@ -367,7 +346,6 @@ class Configuration {
 	 *
 	 * @param \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument $argument The argument
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgument(\TYPO3\FLOW3\Object\Configuration\ConfigurationArgument $argument) {
 		$this->arguments[$argument->getIndex()] = $argument;
@@ -377,7 +355,6 @@ class Configuration {
 	 * Returns a sorted array of constructor arguments indexed by position (starting with "1")
 	 *
 	 * @return array A sorted array of \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument objects with the argument position as index
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArguments() {
 		if (count($this->arguments) < 1 ) {
@@ -399,7 +376,6 @@ class Configuration {
 	 *
 	 * @param string $hint The hint - e.g. the file name of the configuration file
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConfigurationSourceHint($hint) {
 		$this->configurationSourceHint = $hint;
@@ -409,7 +385,6 @@ class Configuration {
 	 * Returns some information (if any) about where this configuration has been created.
 	 *
 	 * @return string The hint - e.g. the file name of the configuration file
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationSourceHint() {
 		return $this->configurationSourceHint;

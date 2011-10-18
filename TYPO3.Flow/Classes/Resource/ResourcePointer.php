@@ -31,7 +31,6 @@ class ResourcePointer {
 	/**
 	 * Constructs this resource pointer
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($hash) {
 		if (!is_string($hash) || strlen($hash) !== 40) {
@@ -44,7 +43,6 @@ class ResourcePointer {
 	 * Returns the hash of this resource
 	 *
 	 * @return string A 40 character hexadecimal sha1 hash over the content of this resource
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHash() {
 		return $this->hash;
@@ -54,7 +52,6 @@ class ResourcePointer {
 	 * Returns a string representation of this resource object.
 	 *
 	 * @return string The hash of this resource
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
 		return $this->hash;

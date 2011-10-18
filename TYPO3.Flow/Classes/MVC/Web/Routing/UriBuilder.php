@@ -77,7 +77,6 @@ class UriBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectRouter(\TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
@@ -88,7 +87,6 @@ class UriBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -100,7 +98,6 @@ class UriBuilder {
 	 * @param \TYPO3\FLOW3\MVC\Web\Request $request
 	 * @return void
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see reset()
 	 */
 	public function setRequest(\TYPO3\FLOW3\MVC\Web\Request $request) {
@@ -112,7 +109,6 @@ class UriBuilder {
 	 * Gets the current request
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Web\Request
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getRequest() {
 		return $this->request;
@@ -126,7 +122,6 @@ class UriBuilder {
 	 * @param array $arguments
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArguments(array $arguments) {
 		$this->arguments = $arguments;
@@ -136,7 +131,6 @@ class UriBuilder {
 	/**
 	 * @return array
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getArguments() {
 		return $this->arguments;
@@ -148,7 +142,6 @@ class UriBuilder {
 	 * @param string $section
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setSection($section) {
 		$this->section = $section;
@@ -158,7 +151,6 @@ class UriBuilder {
 	/**
 	 * @return string
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getSection() {
 		return $this->section;
@@ -170,7 +162,6 @@ class UriBuilder {
 	 * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFormat($format) {
 		$this->format = strtolower($format);
@@ -180,7 +171,6 @@ class UriBuilder {
 	/**
 	 * @return string
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getFormat() {
 		return $this->format;
@@ -192,7 +182,6 @@ class UriBuilder {
 	 * @param boolean $createAbsoluteUri
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setCreateAbsoluteUri($createAbsoluteUri) {
 		$this->createAbsoluteUri = (boolean)$createAbsoluteUri;
@@ -202,7 +191,6 @@ class UriBuilder {
 	/**
 	 * @return boolean
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCreateAbsoluteUri() {
 		return $this->createAbsoluteUri;
@@ -214,7 +202,6 @@ class UriBuilder {
 	 * @param boolean $addQueryString
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setAddQueryString($addQueryString) {
 		$this->addQueryString = (boolean)$addQueryString;
@@ -224,7 +211,6 @@ class UriBuilder {
 	/**
 	 * @return boolean
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getAddQueryString() {
 		return $this->addQueryString;
@@ -237,7 +223,6 @@ class UriBuilder {
 	 * @param array $argumentsToBeExcludedFromQueryString
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString) {
 		$this->argumentsToBeExcludedFromQueryString = $argumentsToBeExcludedFromQueryString;
@@ -247,7 +232,6 @@ class UriBuilder {
 	/**
 	 * @return array
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getArgumentsToBeExcludedFromQueryString() {
 		return $this->argumentsToBeExcludedFromQueryString;
@@ -258,7 +242,6 @@ class UriBuilder {
 	 * This is only set after build() / uriFor() has been called.
 	 *
 	 * @return array The last arguments
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getLastArguments() {
 		return $this->lastArguments;
@@ -270,7 +253,6 @@ class UriBuilder {
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function reset() {
 		$this->arguments = array();
@@ -294,7 +276,6 @@ class UriBuilder {
 	 * @return string the rendered URI
 	 * @api
 	 * @see build()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriFor($actionName = NULL, $controllerArguments = array(), $controllerName = NULL, $packageKey = NULL, $subPackageKey = NULL) {
 		if ($actionName !== NULL) {
@@ -354,7 +335,6 @@ class UriBuilder {
 	 * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
 	 * @return string The URI
 	 * @api
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function build(array $arguments = array()) {
 		$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
@@ -384,7 +364,6 @@ class UriBuilder {
 	 *
 	 * @param array $arguments
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function mergeArgumentsWithRequestArguments(array &$arguments) {
 		$requestArguments = array();

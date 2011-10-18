@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Log;
  *   LOG_INFO    # Informational: informational messages
  *   LOG_DEBUG   # Debug: debug-level messages
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface LoggerInterface {

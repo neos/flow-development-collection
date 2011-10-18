@@ -73,7 +73,6 @@ class Entity1 {
 	/**
 	 * Just an empty constructor
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 
@@ -83,7 +82,6 @@ class Entity1 {
 	 * Just a dummy method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function someDummyMethod() {
 

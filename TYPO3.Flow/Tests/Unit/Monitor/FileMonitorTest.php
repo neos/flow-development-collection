@@ -34,7 +34,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Setup
 	 *
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
 		$this->unixStylePath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(__DIR__);
@@ -46,7 +45,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function fileMonitorCachesTheListOfKnownDirectoriesAndFiles() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -68,7 +66,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function monitorFileRegistersAFileForMonitoring() {
 		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_Test');
@@ -78,7 +75,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aFileAppearsOnlyOnceInTheListOfMonitoredFiles() {
 		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_Test');
@@ -89,7 +85,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function monitorDirectoryRegistersAWholeDirectoryForMonitoring() {
 		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_Test');
@@ -99,7 +94,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aDirectoryAppearsOnlyOnceInTheListOfMonitoredDirectories() {
 		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_Test');
@@ -110,7 +104,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangesDetectsChangesInMonitoredFiles() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -126,7 +119,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangesEmitsFilesHaveChangedSignalIfFilesHaveChanged() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -149,7 +141,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangesDetectsChangesInFilesOfMonitoredDirectories() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -178,7 +169,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangesDetectsNewlyCreatedFilesInMonitoredDirectories() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -214,7 +204,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangesEmitsDirectoryChangedSignalAndMemorizesDirectoryIfDirectoryHasNotBeenMonitoredPreviously() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -237,7 +226,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangesEmitsDirectoryChangedSignalIfDirectoryHasBeenRemoved() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -256,7 +244,6 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChangedFilesFetchesTheStatusOfGivenFilesAndReturnsAListOfChangeFilesAndTheirStatus() {
 		$mockStrategy = $this->getMock('TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');

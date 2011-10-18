@@ -25,8 +25,6 @@ class AroundAdvice extends \TYPO3\FLOW3\AOP\Advice\AbstractAdvice implements \TY
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return Result of the advice method
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) {

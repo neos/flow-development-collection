@@ -51,7 +51,6 @@ class RequestBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -60,7 +59,6 @@ class RequestBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -69,7 +67,6 @@ class RequestBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -78,7 +75,6 @@ class RequestBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -87,7 +83,6 @@ class RequestBuilder {
 	/**
 	 * @param CommandManager $commandManager
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectCommandManager(CommandManager $commandManager) {
 		$this->commandManager = $commandManager;
@@ -102,7 +97,6 @@ class RequestBuilder {
 	 *
 	 * @param mixed $commandLine The command line, either as a string or as an array
 	 * @return \TYPO3\FLOW3\MVC\CLI\Request The CLI request as an object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build($commandLine) {
 		$request = new Request();
@@ -141,7 +135,6 @@ class RequestBuilder {
 	 * @param string $controllerObjectName Object name of the designated command controller
 	 * @param string $controllerCommandName Command name of the recognized command (ie. method name without "Command" suffix)
 	 * @return array All and exceeding command line arguments
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseRawCommandLineArguments(array $rawCommandLineArguments, $controllerObjectName, $controllerCommandName) {
 		$commandLineArguments = array();
@@ -224,8 +217,6 @@ class RequestBuilder {
 	 * @param array &$rawCommandLineArguments Array of the remaining command line arguments
 	 * @param string $expectedArgumentType The expected type of the current argument, because booleans get special attention
 	 * @return string The value of the first argument
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments, $expectedArgumentType) {
 		if (!isset($rawCommandLineArguments[0]) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === FALSE))) {

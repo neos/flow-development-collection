@@ -36,7 +36,6 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	 *
 	 * @param array $validationOptions Options for the validator
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct(array $validationOptions = array()) {
@@ -72,8 +71,6 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	 * @param integer $code The error code (a unix timestamp)
 	 * @param array $arguments Arguments to be replaced in message
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	protected function addError($message, $code, array $arguments = array()) {

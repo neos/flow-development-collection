@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * A contract for a Cache Backend
  *
  * @api
- * @author Robert Lemke <robert@typo3.org>
  */
 interface BackendInterface {
 

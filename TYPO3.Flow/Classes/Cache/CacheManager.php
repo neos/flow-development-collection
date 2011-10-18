@@ -47,7 +47,6 @@ class CacheManager {
 	/**
 	 * @param \TYPO3\FLOW3\Cache\CacheFactory $cacheFactory
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCacheFactory(\TYPO3\FLOW3\Cache\CacheFactory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
@@ -67,7 +66,6 @@ class CacheManager {
 	 *
 	 * @param array $cacheConfigurations The cache configurations to set
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCacheConfigurations(array $cacheConfigurations) {
 		foreach ($cacheConfigurations as $identifier => $configuration) {
@@ -82,7 +80,6 @@ class CacheManager {
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function registerCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
@@ -99,7 +96,6 @@ class CacheManager {
 	 * @param string $identifier Identifies which cache to return
 	 * @return \TYPO3\FLOW3\Cache\Frontend\FrontendInterface The specified cache frontend
 	 * @throws \TYPO3\FLOW3\Cache\Exception\NoSuchCacheException
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getCache($identifier) {
@@ -117,7 +113,6 @@ class CacheManager {
 	 *
 	 * @param string $identifier The identifier of the cache
 	 * @return boolean TRUE if a cache with the given identifier exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function hasCache($identifier) {
@@ -128,7 +123,6 @@ class CacheManager {
 	 * Flushes all registered caches
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flushCaches() {
@@ -144,7 +138,6 @@ class CacheManager {
 	 *
 	 * @param string $tag Tag to search for
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flushCachesByTag($tag) {
@@ -163,7 +156,6 @@ class CacheManager {
 	 * @param string $fileMonitorIdentifier Identifier of the File Monitor (must be "FLOW3_ClassFiles")
 	 * @param array $changedFiles A list of full paths to changed files
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushClassFileCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
 		if ($fileMonitorIdentifier !== 'FLOW3_ClassFiles') {
@@ -215,7 +207,6 @@ class CacheManager {
 	 *
 	 * @param string $className The class name
 	 * @return string Class Tag
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function getClassTag($className = '') {
@@ -226,7 +217,6 @@ class CacheManager {
 	 * Instantiates all registered caches.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createAllCaches() {
 		foreach (array_keys($this->cacheConfigurations) as $identifier) {
@@ -241,7 +231,6 @@ class CacheManager {
 	 *
 	 * @param string $identifier
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createCache($identifier) {
 		$frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];

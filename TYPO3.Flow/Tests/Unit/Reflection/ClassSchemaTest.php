@@ -22,7 +22,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasPropertyReturnsTrueOnlyForExistingProperties() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -36,7 +35,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPropertiesReturnsAddedProperties() {
 		$expectedProperties = array(
@@ -53,7 +51,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function markAsIdentityPropertyRejectsUnknownProperties() {
@@ -64,7 +61,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function markAsIdentityPropertyRejectsLazyLoadedProperties() {
@@ -76,7 +72,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentityPropertiesReturnsNamesAndTypes() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -90,7 +85,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * data provider for addPropertyAcceptsValidPropertyTypes
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validPropertyTypes() {
 		return array(
@@ -116,7 +110,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @dataProvider validPropertyTypes()
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyAcceptsValidPropertyTypes($propertyType) {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -126,7 +119,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * data provider for addPropertyRejectsInvalidPropertyTypes
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function invalidPropertyTypes() {
 		return array(
@@ -140,7 +132,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider invalidPropertyTypes()
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyRejectsInvalidPropertyTypes($propertyType) {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -151,7 +142,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Collections are arrays, ArrayObject and SplObjectStorage
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyStoresElementTypesForCollectionProperties() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -165,7 +155,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityPropertyThrowsExceptionForValueObjects() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -176,7 +165,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setModelTypeResetsIdentityPropertiesAndAggregateRootForValueObjects() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');

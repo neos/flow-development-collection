@@ -21,7 +21,6 @@ class PointcutClassAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation() {
 		$className = 'TYPO3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';

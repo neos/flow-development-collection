@@ -48,7 +48,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
@@ -73,7 +72,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * Returns the directory where the cache files are stored
 	 *
 	 * @return string Full path of the cache directory
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getCacheDirectory() {
@@ -89,7 +87,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -122,8 +119,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -142,7 +137,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -157,7 +151,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -176,7 +169,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $searchedTag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function findIdentifiersByTag($searchedTag) {
@@ -207,7 +199,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flush() {
@@ -219,7 +210,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -237,7 +227,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $cacheEntryPathAndFilename
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function isCacheFileExpired($cacheEntryPathAndFilename) {
@@ -252,7 +241,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 * Does garbage collection
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function collectGarbage() {
@@ -277,7 +265,6 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 	 *
 	 * @param string $entryIdentifier The cache entry identifier
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no frontend has been set
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {

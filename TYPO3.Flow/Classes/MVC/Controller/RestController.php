@@ -47,7 +47,6 @@ class RestController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return string The action method name
 	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveActionMethodName() {
 		if ($this->request->getControllerActionName() === 'index') {
@@ -89,7 +88,6 @@ class RestController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
 	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
 	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {

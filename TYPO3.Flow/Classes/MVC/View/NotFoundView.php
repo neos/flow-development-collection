@@ -35,7 +35,6 @@ class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * Renders the not found view
 	 *
 	 * @return string The rendered view
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @throws \TYPO3\FLOW3\MVC\Exception if no request has been set
 	 * @api
 	 */
@@ -60,7 +59,6 @@ class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * Retrieves path and filename of the not-found-template
 	 *
 	 * @return string path and filename of the not-found-template
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getTemplatePathAndFilename() {
 		return FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/NotFoundView_Template.html';
@@ -77,7 +75,6 @@ class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * @param string $methodName Name of the method
 	 * @param array $arguments Arguments passed to the method
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __call($methodName, array $arguments) {
 	}

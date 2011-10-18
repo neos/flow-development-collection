@@ -53,7 +53,6 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @param \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \TYPO3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager,
 			\TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
@@ -69,7 +68,6 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
 		$this->rejectAll = $settings['security']['firewall']['rejectAll'];
@@ -83,7 +81,6 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to be analyzed
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException if the
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function blockIllegalRequests(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$filterMatched = FALSE;
@@ -98,7 +95,6 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	 *
 	 * @param array $filterSettings The filter settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildFiltersFromSettings(array $filterSettings) {
 		foreach($filterSettings as $singleFilterSettings) {

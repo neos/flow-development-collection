@@ -29,7 +29,6 @@ class BooleanConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('boolean', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,7 +38,6 @@ class BooleanConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromDoesNotModifyTheBooleanSource() {
 		$source = TRUE;
@@ -48,7 +46,6 @@ class BooleanConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromCastsSourceStringToBoolean() {
 		$source = 'true';
@@ -57,7 +54,6 @@ class BooleanConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromCastsNumericSourceStringToBoolean() {
 		$source = '1';

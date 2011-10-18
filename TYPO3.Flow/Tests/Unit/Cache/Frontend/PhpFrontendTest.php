@@ -20,7 +20,6 @@ class PhpFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @expectedException \InvalidArgumentException
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setChecksIfTheIdentifierIsValid() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
@@ -30,7 +29,6 @@ class PhpFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPassesPhpSourceCodeTagsAndLifetimeToBackend() {
 		$originalSourceCode = 'return "hello world!";';
@@ -46,7 +44,6 @@ class PhpFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsInvalidDataExceptionOnNonStringValues() {
@@ -56,7 +53,6 @@ class PhpFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function requireOnceCallsTheBackendsRequireOnceMethod() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);

@@ -29,7 +29,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	/**
 	 * Constructs the logger
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		$this->backends = new \SplObjectStorage();
@@ -42,7 +41,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 *
 	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
@@ -55,7 +53,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 *
 	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function addBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
@@ -70,7 +67,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function removeBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
@@ -89,7 +85,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function log($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
@@ -112,7 +107,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 * @param \Exception $exception The exception to log
 	 * @param array $additionalData Additional data to log
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function logException(\Exception $exception, array $additionalData = array()) {
@@ -147,7 +141,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	/**
 	 * @param \Exception $exception
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getExceptionLogMessage(\Exception $exception) {
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
@@ -160,7 +153,6 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 * Cleanly closes all registered backends before destructing this Logger
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownObject() {
 		foreach ($this->backends as $backend) {

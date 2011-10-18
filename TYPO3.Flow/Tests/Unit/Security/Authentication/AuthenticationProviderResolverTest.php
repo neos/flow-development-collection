@@ -20,7 +20,6 @@ class AuthenticationProviderResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
@@ -33,7 +32,6 @@ class AuthenticationProviderResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForAShortName() {
 		$getCaseSensitiveObjectNameCallback = function() {
@@ -55,7 +53,6 @@ class AuthenticationProviderResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForACompleteClassName() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);

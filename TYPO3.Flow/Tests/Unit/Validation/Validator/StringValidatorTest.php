@@ -22,7 +22,6 @@ class StringValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorShouldValidateString() {
 		$this->assertFalse($this->validator->validate('Hello World')->hasErrors());
@@ -30,7 +29,6 @@ class StringValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorShouldReturnErrorIfNumberIsGiven() {
 		$this->assertTrue($this->validator->validate(42)->hasErrors());
@@ -38,7 +36,6 @@ class StringValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorShouldReturnErrorIfObjectWithToStringMethodStringIsGiven() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));

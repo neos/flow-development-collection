@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Object\Proxy;
 /**
  * A marker interface for Proxy Classes
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface ProxyInterface {
 

@@ -44,7 +44,6 @@ class PropertyValue extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand 
 	 *
 	 * @param string $propertyName
 	 * @param string $selectorName
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($propertyName, $selectorName = '') {
 		$this->propertyName = $propertyName;
@@ -55,7 +54,6 @@ class PropertyValue extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand 
 	 * Gets the name of the selector against which to evaluate this operand.
 	 *
 	 * @return string the selector name; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getSelectorName() {
@@ -66,7 +64,6 @@ class PropertyValue extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand 
 	 * Gets the name of the property.
 	 *
 	 * @return string the property name; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getPropertyName() {

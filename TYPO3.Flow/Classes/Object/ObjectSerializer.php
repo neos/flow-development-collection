@@ -69,7 +69,6 @@ class ObjectSerializer {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -80,7 +79,6 @@ class ObjectSerializer {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -91,7 +89,6 @@ class ObjectSerializer {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -101,7 +98,6 @@ class ObjectSerializer {
 	 * Clears the internal state, discarding all stored objects.
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearState() {
 		$this->objectsAsArray = array();
@@ -114,8 +110,6 @@ class ObjectSerializer {
 	 * @param object $object The object to store in the registry
      * @param boolean $isTopLevelItem Internal flag for managing the recursion
 	 * @return array The property array
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function serializeObjectAsPropertyArray($object, $isTopLevelItem = TRUE) {
 		if ($isTopLevelItem) {
@@ -199,7 +193,6 @@ class ObjectSerializer {
 	 *
 	 * @param array $arrayProperty The source array property
 	 * @return array The array property to store
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildStorageArrayForArrayProperty(array $arrayProperty) {
 		$storableArray = array();
@@ -229,7 +222,6 @@ class ObjectSerializer {
 	 *
 	 * @param array $dataArray The serialized objects array
 	 * @return array The deserialized objects in an array
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function deserializeObjectsArray(array $dataArray) {
 		$this->objectsAsArray = $dataArray;
@@ -251,7 +243,6 @@ class ObjectSerializer {
 	 * @param string $objectHash Identifier of the serialized object
 	 * @param array $objectData The object data array
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function reconstituteObject($objectHash, array $objectData) {
 		if (isset($this->reconstitutedObjects[$objectHash])) {
@@ -297,7 +288,6 @@ class ObjectSerializer {
 	 *
 	 * @param array $dataArray The data array to reconstitute from
 	 * @return array The reconstituted array
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function reconstituteArray($dataArray) {
 		$result = array();
@@ -334,7 +324,6 @@ class ObjectSerializer {
 	 *
 	 * @param array $dataArray The data array to reconstitute from
 	 * @return SplObjectStorage The reconstituted SplObjectStorage
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function reconstituteSplObjectStorage($dataArray) {
 		$result = new \SplObjectStorage();
@@ -352,7 +341,6 @@ class ObjectSerializer {
 	 * @param string $className The class name of the object to retrieve
 	 * @param string $uuid The UUID of the object
 	 * @return object The reconstituted persistence object, NULL if none was found
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function reconstitutePersistenceObject($className, $uuid) {
 		return $this->persistenceManager->getObjectByIdentifier($uuid, $className);

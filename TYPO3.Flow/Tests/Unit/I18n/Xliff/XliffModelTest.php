@@ -24,7 +24,6 @@ class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$mockFilename = 'foo';
@@ -44,7 +43,6 @@ class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function targetIsReturnedCorretlyWhenSourceProvided() {
 		$result = $this->model->getTargetBySource('Source string');
@@ -62,7 +60,6 @@ class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function targetIsReturnedCorrectlyWhenIdProvided() {
 		$result = $this->model->getTargetByTransUnitId('key1');

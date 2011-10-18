@@ -62,7 +62,6 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @param array $settings The current FLOW3 settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings($settings) {
 		$this->globalObjects = $settings['aop']['globalObjects'];
@@ -74,7 +73,6 @@ class PersistenceQueryRewritingAspect {
 	 * @FLOW3\Before("within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewriteQomQuery(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
@@ -103,7 +101,6 @@ class PersistenceQueryRewritingAspect {
 	 * @FLOW3\Around("within(TYPO3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -134,7 +131,6 @@ class PersistenceQueryRewritingAspect {
 	 * @param array $constraintDefinitions The constraint expressions
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \TYPO3\FLOW3\Persistence\Qom\Constraint The build constraint object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		$compositeConstraint = NULL;
@@ -180,7 +176,6 @@ class PersistenceQueryRewritingAspect {
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \TYPO3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
@@ -244,7 +239,6 @@ class PersistenceQueryRewritingAspect {
 	 * @param array $constraintDefinitions The constraint definitions array
 	 * @param object $result The result object returned by the persistence manager
 	 * @return boolean TRUE if the query result is valid for the given constraint
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function checkConstraintDefinitionsOnResultObject(array $constraintDefinitions, $result) {
 		$overallResult = TRUE;
@@ -285,7 +279,6 @@ class PersistenceQueryRewritingAspect {
 	 * @param array $constraintDefinition The constraint definition array
 	 * @param object $result The result object returned by the persistence manager
 	 * @return boolean TRUE if the query result is valid for the given constraint
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function checkSingleConstraintDefinitionOnResultObject(array $constraintDefinition, $result) {
 		$referenceToThisFound = FALSE;
@@ -360,7 +353,6 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @param string $expression The expression string representing the operand
 	 * @return mixed The calculated value
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getValueForOperand($expression) {
 		if (is_array($expression)) {
@@ -393,7 +385,6 @@ class PersistenceQueryRewritingAspect {
 	 * @param mixed $object The object to fetch the property from
 	 * @param string $propertyPath The path to the property to be fetched
 	 * @return mixed The property value
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getObjectValueByPath($object, $path) {
 		return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, $path);

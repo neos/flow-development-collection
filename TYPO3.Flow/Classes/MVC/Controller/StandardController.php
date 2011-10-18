@@ -25,7 +25,6 @@ class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Overrides the standard resolveView method
 	 *
 	 * @return \TYPO3\FLOW3\MVC\View\ViewInterface $view The view
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
 		$view = new \TYPO3\Fluid\View\TemplateView();
@@ -38,7 +37,6 @@ class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Displays the default view
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
 

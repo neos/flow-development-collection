@@ -64,7 +64,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * Constructor for this Object Container
 	 *
 	 * @param string $context The configuration context for this FLOW3 run
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($context) {
 		$this->context = $context;
@@ -76,7 +75,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param array $objects An array of object names and some information about each registered object (scope, lower cased name etc.)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setObjects(array $objects) {
 		$this->objects = $objects;
@@ -90,7 +88,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param array $settings The global settings
 	 * @return void
 	 * @FLOW3\Autowiring(false)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectAllSettings(array $settings) {
 		$this->allSettings = $settings;
@@ -100,7 +97,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * Returns the context FLOW3 is running in.
 	 *
 	 * @return string The context, for example "Development" or "Production"
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
 		return $this->context;
@@ -111,7 +107,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param  string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function isRegistered($objectName) {
@@ -142,7 +137,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
 	 * @api
 	 */
@@ -182,7 +176,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @throws \InvalidArgumentException if the object name starts with a backslash or is otherwise invalid
 	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
 	 * @throws \TYPO3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @deprecated since 1.0.0beta1
 	 */
 	public function create($objectName) {
@@ -203,7 +196,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName Name of the object to create a skeleton for
 	 * @return object The recreated, uninitialized (ie. w/ uncalled constructor) object
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @deprecated since 1.0.0beta1
 	 */
 	public function recreate($objectName) {
@@ -222,7 +214,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The object name
 	 * @return integer One of the ObjectConfiguration::SCOPE_ constants
 	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getScope($objectName) {
@@ -245,7 +236,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
 	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
@@ -265,7 +255,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $className The class name
 	 * @return string The object name corresponding to the given class name or FALSE if no object is configured to use that class
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getObjectNameByClassName($className) {
@@ -290,7 +279,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName The object name
 	 * @return string The class name corresponding to the given object name or FALSE if no such object is registered
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getClassNameByObjectName($objectName) {
@@ -305,7 +293,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName The object name
 	 * @return string The package key or FALSE if no such object exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getPackageKeyByObjectName($objectName) {
@@ -321,7 +308,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The object name
 	 * @param object $instance A prebuilt instance
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setInstance($objectName, $instance) {
 		if (!isset($this->objects[$objectName])) {
@@ -346,7 +332,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param $objectName The object name
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forgetInstance($objectName) {
 		unset($this->objects[$objectName]['i']);
@@ -356,7 +341,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * Returns all instances of objects with scope session
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSessionInstances() {
 		$sessionObjects = array();
@@ -373,7 +357,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * object instances which were configured to be shut down.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdown() {
 		foreach ($this->shutdownObjects as $object) {
@@ -399,7 +382,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName Name of the object to build
 	 * @return object The built object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildObjectByFactory($objectName) {
 		$factory = $this->get($this->objects[$objectName]['f'][0]);
@@ -434,7 +416,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $className Name of the class to instantiate
 	 * @param array $arguments Arguments to pass to the constructor
 	 * @return object The object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function instantiateClass($className, array $arguments) {
 		if (isset ($this->classesBeingInstantiated[$className])) {

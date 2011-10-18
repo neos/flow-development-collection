@@ -32,7 +32,6 @@ class WebRedirect implements \TYPO3\FLOW3\Security\Authentication\EntryPointInte
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return ($request instanceof \TYPO3\FLOW3\MVC\Web\Request);
@@ -43,7 +42,6 @@ class WebRedirect implements \TYPO3\FLOW3\Security\Authentication\EntryPointInte
 	 *
 	 * @param array $options An array of configuration options
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setOptions(array $options) {
 		$this->options = $options;
@@ -53,7 +51,6 @@ class WebRedirect implements \TYPO3\FLOW3\Security\Authentication\EntryPointInte
 	 * Returns the options array
 	 *
 	 * @return array The configuration options of this entry point
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getOptions() {
 		return $this->options;

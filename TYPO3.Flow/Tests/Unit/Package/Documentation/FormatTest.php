@@ -20,7 +20,6 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function setUp() {
 		\vfsStreamWrapper::register();
@@ -29,7 +28,6 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function constructSetsNameAndPathToFormat() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
@@ -42,7 +40,6 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getLanguagesScansFormatDirectoryAndReturnsLanguagesAsStrings() {
 		$formatPath = \vfsStream::url('testDirectory') . '/';

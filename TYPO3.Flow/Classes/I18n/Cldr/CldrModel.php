@@ -69,7 +69,6 @@ class CldrModel {
 	 * of CLDR files is going to be represented by this model).
 	 *
 	 * @param array<string> $sourcePaths
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function __construct(array $sourcePaths) {
 		$this->sourcePaths = $sourcePaths;
@@ -82,7 +81,6 @@ class CldrModel {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -91,7 +89,6 @@ class CldrModel {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrParser $parser
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function injectParser(\TYPO3\FLOW3\I18n\Cldr\CldrParser $parser) {
 		$this->cldrParser = $parser;
@@ -101,7 +98,6 @@ class CldrModel {
 	 * When it's called, CLDR file is parsed or cache is loaded, if available.
 	 *
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function initializeObject() {
 		if ($this->cache->has($this->cacheKey)) {
@@ -116,7 +112,6 @@ class CldrModel {
 	 * Shutdowns the model. Parsed data is saved to the cache if needed.
 	 *
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function shutdownObject() {
 		$this->cache->set($this->cacheKey, $this->parsedData);
@@ -138,7 +133,6 @@ class CldrModel {
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array or string of matching data, or FALSE on failure
-	 * @author Karol Gusak <karol@gusak.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\CldrParser
 	 */
 	public function getRawData($path) {
@@ -168,7 +162,6 @@ class CldrModel {
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
-	 * @author Karol Gusak <karol@gusak.eu>
 	 * @see \TYPO3\FLOW3\I18n\Cldr\CldrParser
 	 * @see \TYPO3\FLOW3\I18n\Cldr\CldrModel::getRawData()
 	 */
@@ -189,7 +182,6 @@ class CldrModel {
 	 *
 	 * @param string $path A path to the element to get
 	 * @return mixed String with desired element, or FALSE on failure
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function getElement($path) {
 		$data = $this->getRawData($path);
@@ -207,7 +199,6 @@ class CldrModel {
 	 * @param string $path A path to search in
 	 * @param string $nodeName A name of the nodes to return
 	 * @return mixed String with desired element, or FALSE on failure
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function findNodesWithinPath($path, $nodeName) {
 		$data = $this->getRawArray($path);
@@ -235,7 +226,6 @@ class CldrModel {
 	 *
 	 * @param string $nodeString String with node name and optional attribute(s)
 	 * @return string Name of the node
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	static public function getNodeName($nodeString) {
 		$positionOfFirstAttribute = strpos($nodeString, '[@');
@@ -264,7 +254,6 @@ class CldrModel {
 	 * @param string $nodeString A node key to parse
 	 * @param string $attributeName Name of the attribute to find
 	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	static public function getAttributeValue($nodeString, $attributeName) {
 		$attributeName = '[@' . $attributeName . '="';
@@ -285,7 +274,6 @@ class CldrModel {
 	 *
 	 * @param array<string> $sourcePaths Absolute paths to CLDR files (can be one file)
 	 * @return array Parsed and merged data
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	protected function parseFiles(array $sourcePaths) {
 		$parsedFiles = array();
@@ -312,7 +300,6 @@ class CldrModel {
 	 * @param mixed $firstParsedData Part of data from first file (either array or string)
 	 * @param mixed $secondParsedData Part of data from second file (either array or string)
 	 * @return array Data merged from two files
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	protected function mergeTwoParsedFiles($firstParsedData, $secondParsedData) {
 		$mergedData = $firstParsedData;
@@ -343,7 +330,6 @@ class CldrModel {
 	 * @param string $currentPath Path to currently analyzed part of data
 	 * @return mixed Modified (or unchanged) $data
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function resolveAliases($data, $currentPath) {
 		if (!is_array($data)) {

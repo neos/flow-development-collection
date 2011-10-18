@@ -24,7 +24,6 @@ class PointcutClassNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the class filter fires on a concrete and simple class expression
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenClassName() {
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
@@ -48,7 +47,6 @@ class PointcutClassNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the class filter ignores classes declared "final"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesIgnoresFinalClasses() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -69,7 +67,6 @@ class PointcutClassNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the class filter ignores classes declared "final"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesIgnoresClassesWithFinalConstructors() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));

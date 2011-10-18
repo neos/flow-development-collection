@@ -50,7 +50,6 @@ class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterfac
 	 *
 	 * @param string $aspectClassName Name of the aspect class containing the pointcut
 	 * @param string $pointcutMethodName Name of the method which acts as an anchor for the pointcut name and expression
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($aspectClassName, $pointcutMethodName) {
 		$this->aspectClassName = $aspectClassName;
@@ -62,7 +61,6 @@ class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterfac
 	 *
 	 * @param \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectProxyClassBuilder(\TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder) {
 		$this->proxyClassBuilder = $proxyClassBuilder;
@@ -76,7 +74,6 @@ class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterfac
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcut === NULL) {
@@ -90,7 +87,6 @@ class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterfac
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return $this->pointcut->hasRuntimeEvaluationsDefinition();
@@ -100,7 +96,6 @@ class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterfac
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		if ($this->pointcut === NULL) {

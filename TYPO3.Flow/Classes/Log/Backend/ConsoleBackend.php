@@ -43,7 +43,6 @@ class ConsoleBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 * the log file or opening a database connection.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function open() {
@@ -72,7 +71,6 @@ class ConsoleBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function append($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {

@@ -84,7 +84,6 @@ class PropertyMapper {
 	 * Here, the typeConverter array gets initialized.
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeObject() {
 		foreach($this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Property\TypeConverterInterface') as $typeConverterClassName) {
@@ -105,7 +104,6 @@ class PropertyMapper {
 	 * @param string $targetType The type of the target; can be either a class name or a simple type.
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
 	 * @return mixed an instance of $targetType
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function convert($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
@@ -126,7 +124,6 @@ class PropertyMapper {
 	 * Get the messages of the last Property Mapping
 	 *
 	 * @return \TYPO3\FLOW3\Error\Result
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getMessages() {
@@ -141,7 +138,6 @@ class PropertyMapper {
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
 	 * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
 	 * @return mixed an instance of $targetType
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function doMapping($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
 		if ($source === NULL) {
@@ -187,7 +183,6 @@ class PropertyMapper {
 	 * @param string $targetType
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\FLOW3\Property\TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function findTypeConverter($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		if ($configuration->getTypeConverter() !== NULL) return $configuration->getTypeConverter();
@@ -309,7 +304,6 @@ class PropertyMapper {
 	 *
 	 * @param mixed $source
 	 * @return string the type of $source
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function determineSourceType($source) {
 		if (is_string($source)) {

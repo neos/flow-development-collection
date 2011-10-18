@@ -52,7 +52,6 @@ abstract class AbstractParty {
 	 * @param string $name
 	 * @param string $email
 	 * @param string $website
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($role, $name, $email = NULL, $website = NULL) {
 		$this->role = $role;
@@ -63,7 +62,6 @@ abstract class AbstractParty {
 
 	/**
 	 * @return string The role of the party
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getRole() {
 		return $this->role;
@@ -71,7 +69,6 @@ abstract class AbstractParty {
 
 	/**
 	 * @return string The name of the party
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getName() {
 		return $this->name;
@@ -79,7 +76,6 @@ abstract class AbstractParty {
 
 	/**
 	 * @return string The email of the party
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getEmail() {
 		return $this->email;
@@ -87,7 +83,6 @@ abstract class AbstractParty {
 
 	/**
 	 * @return string The website of the party
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getWebsite() {
 		return $this->website;
@@ -97,7 +92,6 @@ abstract class AbstractParty {
 	 * Get the party type (MetaData\PARTY_TYPE_PERSON, MetaData\PARTY_TYPE_COMPANY)
 	 *
 	 * @return string The type of the party (person, company)
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	abstract public function getPartyType();
 }

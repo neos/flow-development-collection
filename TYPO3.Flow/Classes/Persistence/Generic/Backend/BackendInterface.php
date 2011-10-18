@@ -58,7 +58,6 @@ interface BackendInterface {
 	 *
 	 * @param \SplObjectStorage $entities
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setChangedEntities(\SplObjectStorage $entities);
 

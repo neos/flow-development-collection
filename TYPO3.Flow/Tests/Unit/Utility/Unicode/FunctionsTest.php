@@ -21,7 +21,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if strtotitle() at least works with latin characters.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtotitleWorksWithLatinCharacters() {
 		$testString = 'this Is - my TestString.';
@@ -32,7 +31,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if strtotitle() works with unicode strings
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtotitleWorksWithUnicodeStrings() {
 		$testString = ' öl Ist nicht das GLEICHE wie øl.';
@@ -44,7 +42,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if substr() basically works with latin characters.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function substrWorksWithLatinCharacters() {
 		$testString = 'I say "hello world".';
@@ -55,7 +52,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if substr() can handle UTF8 strings
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function substrWorksWithUTF8Characters() {
 		$testString = 'Kasper Skårhøj implemented most versions of TYPO3.';
@@ -66,7 +62,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if substr() can handle UTF8 strings, specifying no length
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function substrWorksWithUTF8CharactersSpecifyingNoLength() {
 		$testString = 'Kasper Skårhøj implemented most versions of TYPO3.';
@@ -77,7 +72,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper basically works
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtoupperWorksWithLatinCharacters() {
 		$testString = 'typo3';
@@ -88,7 +82,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper can at least handle some common special chars
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtoupperWorksWithCertainSpecialChars() {
 		$testString = 'Here are some characters: äöüÄÖÜßéèêåÅøØæÆœŒ ...';
@@ -101,7 +94,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of strtolower basically works
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtolowerWorksWithLatinCharacters() {
 		$testString = 'TYPO3';
@@ -112,7 +104,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of strtolower can at least handle some common special chars
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtolowerWorksWithCertainSpecialChars() {
 		$testString = 'HERE ARE SOME CHARACTERS: ÄÖÜÄÖÜßÉÈÊÅÅØØÆÆŒŒ ...';
@@ -125,7 +116,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of strlen can handle some regular latin characters.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strlenWorksWithLatinCharacters() {
 		$testString = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
@@ -136,7 +126,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of strlen can handle some common special chars
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strlenWorksWithCertainSpecialChars() {
 		$testString = 'here are some characters: äöüäöüßéèêååøøææœœ“” ...';
@@ -147,7 +136,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of ucfirst can handle some regular latin characters.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ucfirstWorksWithLatinCharacters() {
 		$testString = 'feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
@@ -159,7 +147,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of ucfirst can handle some common special chars.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ucfirstWorksWithCertainSpecialChars() {
 		$testString = 'äeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
@@ -175,7 +162,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of lcfirst can handle some regular latin characters.
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function lcfirstWorksWithLatinCharacters() {
 		$testString = 'FEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
@@ -187,7 +173,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of lcfirst can handle some common special chars.
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function lcfirstWorksWithCertainSpecialChars() {
 		$testString = 'ÄEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
@@ -203,7 +188,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of strpos can handle some regular latin characters.
 	 *
 	 * @test
-	 * @author karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function strposWorksWithLatinCharacters() {
 		$testString = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
@@ -214,7 +198,6 @@ class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if our version of strpos can handle some common special characters
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function strposWorksWithCertainSpecialChars() {
 		$testString = 'Åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';

@@ -63,7 +63,6 @@ class Translator {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
@@ -72,7 +71,6 @@ class Translator {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectTranslationProvider(\TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider) {
 		$this->translationProvider = $translationProvider;
@@ -81,7 +79,6 @@ class Translator {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\FormatResolver $formatResolver
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectFormatResolver(\TYPO3\FLOW3\I18n\FormatResolver $formatResolver) {
 		$this->formatResolver = $formatResolver;
@@ -90,7 +87,6 @@ class Translator {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectPluralsReader(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
 		$this->pluralsReader = $pluralsReader;
@@ -118,7 +114,6 @@ class Translator {
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated $originalLabel or $originalLabel itself on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function translateByOriginalLabel($originalLabel, $sourceName, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
@@ -158,7 +153,6 @@ class Translator {
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated message or $labelId on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 * @see \TYPO3\FLOW3\I18n\Translator::translateByOriginalLabel()
 	 */

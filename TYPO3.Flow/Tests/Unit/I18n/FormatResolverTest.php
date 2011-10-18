@@ -24,7 +24,6 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
@@ -32,7 +31,6 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function placeholdersAreResolvedCorrectly() {
 		$mockNumberFormatter = $this->getMock('TYPO3\FLOW3\I18n\Formatter\NumberFormatter');
@@ -48,7 +46,6 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsStringCastedArgumentWhenFormatterNameIsNotSet() {
 		$formatResolver = new \TYPO3\FLOW3\I18n\FormatResolver();
@@ -59,7 +56,6 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenInvalidPlaceholderEncountered() {
 		$formatResolver = new \TYPO3\FLOW3\I18n\FormatResolver();
@@ -69,7 +65,6 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\I18n\Exception\IndexOutOfBoundsException
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided() {
 		$formatResolver = new \TYPO3\FLOW3\I18n\FormatResolver();
@@ -79,7 +74,6 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\I18n\Exception\UnknownFormatterException
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenFormatterDoesNotExist() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');

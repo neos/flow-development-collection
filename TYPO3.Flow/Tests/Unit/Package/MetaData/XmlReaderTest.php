@@ -22,8 +22,6 @@ class XmlReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * uses the TestPackage as a fixture
 	 *
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function readPackageMetaDataReadsPackageXml() {
 		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');

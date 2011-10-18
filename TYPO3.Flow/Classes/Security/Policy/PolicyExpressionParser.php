@@ -34,7 +34,6 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 	 * @param array $trace A trace of all visited pointcut expression, used for circular reference detection
 	 * @return \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseMethodResources($pointcutExpression, array $methodResourcesTree, array &$trace = array()) {
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
@@ -68,7 +67,6 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 	 * @param array $entityResourcesTree The tree of all available entity resources
 	 * @return array The constraints definition array for all entity resources
 	 * @throws \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseEntityResources(array $entityResourcesTree) {
 		$entityResourcesConstraints = array();
@@ -91,7 +89,6 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 	 * @param array &$trace
 	 * @return void
 	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, array &$trace = array()) {
 		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
@@ -107,7 +104,6 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 	 * @param array $entityResourcesTree The tree of all available resources for one entity
 	 * @return array The constraints definition array
 	 * @throws \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseSingleEntityResource($resourceName, array $entityResourcesTree) {
 		$expressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $entityResourcesTree[$resourceName], -1, PREG_SPLIT_DELIM_CAPTURE);

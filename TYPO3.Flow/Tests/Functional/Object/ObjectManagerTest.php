@@ -19,7 +19,6 @@ class ObjectManagerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifOnlyOneImplementationExistsGetReturnsTheImplementationByTheSpecifiedInterface() {
 		$objectByInterface = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA');
@@ -31,7 +30,6 @@ class ObjectManagerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function prototypeIsTheDefaultScopeIfNothingElseWasDefined() {
 		$instanceA = new \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassB();
@@ -42,7 +40,6 @@ class ObjectManagerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function interfaceObjectsHaveTheScopeDefinedInTheImplementationClassIfNothingElseWasSpecified() {
 		$objectByInterface = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA');

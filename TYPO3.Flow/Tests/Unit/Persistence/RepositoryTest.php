@@ -21,7 +21,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function abstractRepositoryImplementsRepositoryInterface() {
 		$repository = new \TYPO3\FLOW3\Persistence\Repository;
@@ -30,7 +29,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * dataProvider for constructSetsObjectTypeFromClassName
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function modelAndRepositoryClassNames() {
 		return array(
@@ -42,7 +40,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider modelAndRepositoryClassNames
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function constructSetsObjectTypeFromClassName($repositoryNamespace, $repositoryClassName, $modelClassName) {
 		$idSuffix = uniqid();
@@ -55,7 +52,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function constructSetsObjectTypeFromClassConstant() {
 		$repositoryNamespace = 'TYPO3\FLOW3\Tests\Persistence\Fixture\Repository';
@@ -69,7 +65,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createQueryCallsPersistenceManagerWithExpectedClassName() {
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\Generic\PersistenceManager');
@@ -84,7 +79,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createQuerySetsDefaultOrderingIfDefined() {
 		$orderings = array('foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING);
@@ -105,7 +99,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findAllCreatesQueryAndReturnsResultOfExecuteCall() {
 		$expectedResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
@@ -121,7 +114,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findByidentifierReturnsResultOfGetObjectByIdentifierCall() {
 		$identifier = '123-456';
@@ -139,7 +131,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addDelegatesToPersistenceManager() {
 		$object = new \stdClass();
@@ -153,7 +144,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeDelegatesToPersistenceManager() {
 		$object = new \stdClass();
@@ -167,7 +157,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateDelegatesToPersistenceManager() {
 		$object = new \stdClass();
@@ -181,8 +170,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function magicCallMethodAcceptsFindBySomethingCallsAndExecutesAQueryWithThatCriteria() {
 		$mockQueryResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
@@ -199,8 +186,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function magicCallMethodAcceptsFindOneBySomethingCallsAndExecutesAQueryWithThatCriteria() {
 		$object = new \stdClass();
@@ -219,8 +204,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function magicCallMethodAcceptsCountBySomethingCallsAndExecutesAQueryWithThatCriteria() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -237,7 +220,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException Exception
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled() {
 		$repository = $this->getMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
@@ -247,7 +229,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
@@ -259,7 +240,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
@@ -270,7 +250,6 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));

@@ -23,7 +23,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingAnArgumentManuallyWorks() {
 		$arguments = new Arguments();
@@ -35,7 +34,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingAnArgumentReplacesArgumentWithSameName() {
 		$arguments = new Arguments();
@@ -51,7 +49,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingArgumentThroughArrayAccessWorks() {
 		$arguments = new Arguments();
@@ -63,7 +60,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function retrievingArgumentThroughArrayAccessWorks() {
 		$arguments = new Arguments();
@@ -73,7 +69,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentWithNonExistingArgumentNameThrowsException() {
 		$arguments = new Arguments();
@@ -86,7 +81,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function issetReturnsCorrectResult() {
 		$arguments = new Arguments();
@@ -97,7 +91,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentNamesReturnsNamesOfAddedArguments() {
 		$arguments = new Arguments();
@@ -111,7 +104,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentShortNamesReturnsShortNamesOfAddedArguments() {
 		$arguments = new Arguments();
@@ -125,7 +117,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentCreatesAndAddsNewArgument() {
 		$arguments = new Arguments();
@@ -140,7 +131,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentAssumesTextDataTypeByDefault() {
 		$arguments = new Arguments();
@@ -149,7 +139,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addNewArgumentCanAddArgumentsMarkedAsRequired() {
 		$arguments = new Arguments();
@@ -159,7 +148,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function addNewArgumentCanAddArgumentsMarkedAsOptionalWithDefaultValues() {
 		$arguments = new Arguments();
@@ -171,7 +159,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \LogicException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingInvalidMethodThrowsException() {
 		$arguments = new Arguments();
@@ -180,7 +167,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function removeAllClearsAllArguments() {
 		$arguments = new Arguments();
@@ -193,7 +179,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getValidationResultsShouldFetchAllValidationResltsFromArguments() {
 		$error1 = new \TYPO3\FLOW3\Error\Error('Validation error', 1234);
@@ -219,7 +204,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function addingAnArgumentUsesStringAsDataTypeDefault() {
 		$arguments = new Arguments();

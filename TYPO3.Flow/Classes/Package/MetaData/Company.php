@@ -24,7 +24,6 @@ class Company extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 	 * Get the party type
 	 *
 	 * @return string Party type "company"
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyType() {
 		return \TYPO3\FLOW3\Package\MetaDataInterface::PARTY_TYPE_COMPANY;

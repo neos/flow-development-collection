@@ -36,7 +36,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * The constructor - initializes the class tag filter with the class tag filter expression
 	 *
 	 * @param string $classTagFilterExpression A regular expression which defines which class tags should match
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classTagFilterExpression) {
 		$this->classTagFilterExpression = $classTagFilterExpression;
@@ -47,7 +46,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -61,7 +59,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		foreach ($this->reflectionService->getClassTagsValues($className) as $tag => $values) {
@@ -78,7 +75,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return FALSE;
@@ -88,7 +84,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();

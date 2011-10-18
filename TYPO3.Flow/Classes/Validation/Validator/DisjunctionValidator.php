@@ -32,8 +32,6 @@ class DisjunctionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractCom
 	 * @param mixed $value The value that should be validated
 	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
 	 * @return \TYPO3\FLOW3\Error\Result
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function validate($value, $resetInstancesCurrentlyUnderValidation = TRUE) {

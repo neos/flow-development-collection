@@ -95,7 +95,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @return boolean
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function canConvertFrom($source, $targetType) {
 		$isValueObject = $this->reflectionService->isClassTaggedWith($targetType, 'valueobject');
@@ -108,7 +107,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 *
 	 * @param mixed $source
 	 * @return array
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getSourceChildPropertiesToBeConverted($source) {
 		if (is_string($source)) {
@@ -127,7 +125,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param string $propertyName
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
@@ -151,7 +148,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
@@ -187,7 +183,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (isset($source['__identity'])) {
@@ -212,8 +207,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param mixed $identity
 	 * @param string $targetType
 	 * @return object
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function fetchObjectFromPersistence($identity, $targetType) {
 		if (is_string($identity)) {
@@ -240,8 +233,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param string $objectType
 	 * @return object The created instance
 	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
 		$constructorSignature = $this->reflectionService->getMethodParameters($objectType, '__construct');
@@ -266,9 +257,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @param string $type The object type to look for
 	 * @return object Either the object matching the identity or NULL if no object was found
 	 * @throws \TYPO3\FLOW3\Property\Exception\DuplicateObjectException if more than one object was found
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
 		$query = $this->persistenceManager->createQueryForType($type);

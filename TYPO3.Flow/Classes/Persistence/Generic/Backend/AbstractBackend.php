@@ -86,7 +86,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	/**
 	 * Constructs the backend
 	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct() {
 		$this->aggregateRootObjects = new \SplObjectStorage();
@@ -99,7 +98,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -110,7 +108,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Session $persistenceSession
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
@@ -121,7 +118,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -132,7 +128,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectValidatorResolver(\TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
@@ -143,7 +138,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -154,7 +148,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param object $object The object that will be removed
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @FLOW3\Signal
 	 * @api
 	 */
@@ -166,7 +159,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param object $object The object that will be persisted
 	 * @param integer $objectState The state, see self::OBJECTSTATE_*
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @FLOW3\Signal
 	 * @api
 	 */
@@ -177,7 +169,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param array $options
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $options) {
 		foreach ($options as $optionName => $optionValue) {
@@ -193,7 +184,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \SplObjectStorage $objects
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setAggregateRootObjects(\SplObjectStorage $objects) {
 		$this->aggregateRootObjects = $objects;
@@ -204,7 +194,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \SplObjectStorage $entities
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setChangedEntities(\SplObjectStorage $entities) {
 		$this->changedEntities = $entities;
@@ -215,7 +204,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param \SplObjectStorage $entities
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setDeletedEntities(\SplObjectStorage $entities) {
 		$this->deletedEntities = $entities;
@@ -225,7 +213,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * Commits the current persistence session.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function commit() {
 		$this->persistObjects();
@@ -236,7 +223,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * First persist new objects, then check reconstituted entites.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function persistObjects() {
 		$this->visitedDuringPersistence = new \SplObjectStorage();
@@ -290,7 +276,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * Iterate over deleted entities and process them
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processDeletedObjects() {
 		foreach ($this->deletedEntities as $entity) {
@@ -324,7 +309,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param object $object
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	protected function validateObject($object) {
@@ -346,7 +330,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param mixed $value
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getType($value) {
 		if (is_object($value)) {
@@ -361,7 +344,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param string $type
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getTypeName($type) {
 		if (strstr($type, '\\')) {
@@ -377,7 +359,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param object $object The object to work on
 	 * @param array $properties The properties to collect (as per class schema)
 	 * @param boolean $dirty A dirty flag that is passed by reference and set to TRUE if a dirty property was found
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function collectProperties($identifier, $object, array $properties, &$dirty) {
 		$propertyData = array();
@@ -411,7 +392,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param array $propertyMetaData The property metadata
 	 * @param array $propertyData Reference to the property data array
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	protected function flattenValue($identifier, $object, $propertyName, array $propertyMetaData, array &$propertyData) {
@@ -467,7 +447,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param string $propertyName
 	 * @param array $propertyMetaData
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function removeDeletedReference($object, $propertyName, $propertyMetaData) {
 		$previousValue = $this->persistenceSession->getCleanStateOfProperty($object, $propertyName);
@@ -485,7 +464,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param object $object
 	 * @param string $parentIdentifier
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processObject($object, $parentIdentifier) {
 		if (isset($this->classSchemata[get_class($object)]) && $this->classSchemata[get_class($object)]->isAggregateRoot() && !$this->persistenceManager->isNewObject($object)) {
@@ -543,7 +521,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param string $parentIdentifier
 	 * @param array $previousArray the previously persisted state of the array
 	 * @return array An array with "flat" values representing the array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processArray(array $array = NULL, $parentIdentifier, array $previousArray = NULL) {
 		if ($previousArray !== NULL && is_array($previousArray['value'])) {
@@ -597,7 +574,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param array $nestedArray
 	 * @param \Closure $handler
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processNestedArray($parentIdentifier, array $nestedArray, \Closure $handler = NULL) {
 		$identifier = uniqid('a', TRUE);
@@ -617,7 +593,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param array $array
 	 * @param array $previousArray
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function removeDeletedArrayEntries(array $array = NULL, array $previousArray) {
 		foreach ($previousArray as $item) {
@@ -651,7 +626,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param object $object
 	 * @param string $identifier
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function arrayContainsObject(array $array, $object, $identifier) {
 		if (in_array($object, $array, TRUE) === TRUE) {
@@ -677,7 +651,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param string $parentIdentifier
 	 * @param array $previousObjectStorage the previously persisted state of the SplObjectStorage
 	 * @return array An array with "flat" values representing the SplObjectStorage
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, array $previousObjectStorage = NULL) {
 		if ($previousObjectStorage !== NULL && is_array($previousObjectStorage['value'])) {
@@ -719,7 +692,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param \SplObjectStorage $splObjectStorage
 	 * @param array $previousObjectStorage
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function removeDeletedSplObjectStorageEntries(\SplObjectStorage $splObjectStorage = NULL, array $previousObjectStorage) {
 			// remove objects detached since reconstitution

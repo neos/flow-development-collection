@@ -42,7 +42,6 @@ class BasicClass {
 	 *
 	 * @param  object $value An object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFirstDependency($value) {
 		$this->firstDependency = $value;
@@ -52,7 +51,6 @@ class BasicClass {
 	 * Getter method for $firstDependency
 	 *
 	 * @return mixed The value of $firstDependency
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFirstDependency() {
 		return $this->firstDependency;
@@ -65,7 +63,6 @@ class BasicClass {
 	 *
 	 * @param  object $value An object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSecondDependency($value) {
 		$this->secondDependency = $value;
@@ -77,7 +74,6 @@ class BasicClass {
 	 *
 	 * @param  mixed $value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectInjectOrSetMethod($value) {
 		$this->injectOrSetMethod = 'inject';
@@ -89,7 +85,6 @@ class BasicClass {
 	 *
 	 * @param  mixed $value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setInjectOrSetMethod($value) {
 		$this->injectOrSetMethod = 'set';
@@ -99,7 +94,6 @@ class BasicClass {
 	 * Getter method for $secondDependency
 	 *
 	 * @return mixed The value of $secondDependency
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSecondDependency() {
 		return $this->secondDependency;
@@ -110,7 +104,6 @@ class BasicClass {
 	 *
 	 * @param  mixed $value Some value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setSomeProperty($value) {
 		$this->someProperty = $value;
@@ -120,7 +113,6 @@ class BasicClass {
 	 * Getter method for $someProperty
 	 *
 	 * @return mixed The value of $someProperty
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSomeProperty() {
 		return $this->someProperty;
@@ -133,7 +125,6 @@ class BasicClass {
 	 * @param  mixed $parameter1 First parameter to pass to the exception constructor
 	 * @param  mixed $parameter2 Second parameter to pass to the exception constructor
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwAnException($exceptionType, $parameter1 = NULL, $parameter2 = NULL) {
 		throw new $exceptionType($parameter1, $parameter2);
@@ -144,7 +135,6 @@ class BasicClass {
 	 * been injected.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeAfterPropertiesSet() {
 		$this->hasBeenInitialized = ($this->firstDependency !== NULL) ? TRUE : 'yes, but no property was injected!';
@@ -154,7 +144,6 @@ class BasicClass {
 	 * Returns the hasBeenInitialized flag
 	 *
 	 * @return boolean Returns the hasBeenInitialized flag
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasBeenInitialized() {
 		return $this->hasBeenInitialized;
@@ -164,7 +153,6 @@ class BasicClass {
 	 * Some protected method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function someProtectedMethod() {
 
@@ -174,7 +162,6 @@ class BasicClass {
 	 * Some private method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	private function somePrivateMethod() {
 
@@ -185,7 +172,6 @@ class BasicClass {
 	 *
 	 * @param  array $someArray Some array
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see    \TYPO3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilderTest
 	 */
 	public function methodWhichExpectsAnArrayArgument(array $someArray) {

@@ -40,7 +40,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchIfRequestPathIsNullOrEmpty() {
 		$this->dynamicRoutPart->setName('foo');
@@ -55,7 +54,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchEmptyRequestPathEvenIfDefaultValueIsSet() {
 		$this->dynamicRoutPart->setName('foo');
@@ -67,7 +65,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchIfNameIsNotSet() {
 		$routePath = 'foo';
@@ -78,7 +75,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valueMatchesFirstRequestPathSegmentAfterSuccessfulMatch() {
 		$this->dynamicRoutPart->setName('foo');
@@ -93,7 +89,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {
 		$this->dynamicRoutPart->setName('foo');
@@ -109,7 +104,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routePathIsShortenedByOneSegmentAfterSuccessfulMatch() {
 		$this->dynamicRoutPart->setName('bar');
@@ -123,7 +117,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteDoesNotMatchRequestPathWithMoreThanOneSegmentIfSplitStringIsNotSet() {
 		$this->dynamicRoutPart->setName('foo');
@@ -135,7 +128,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteDoesNotMatchRequestPathWithMoreThanOneSegmentIfSplitStringIsNotFound() {
 		$this->dynamicRoutPart->setName('foo');
@@ -148,7 +140,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteMatchesRequestPathWithOnlyOneSegmentIfSplitStringIsNotSet() {
 		$this->dynamicRoutPart->setName('foo');
@@ -161,7 +152,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteMatchesRequestPathWithOnlyOneSegmentIfSplitStringIsNotFound() {
 		$this->dynamicRoutPart->setName('foo');
@@ -175,7 +165,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchIfSplitStringIsAtFirstPosition() {
 		$this->dynamicRoutPart->setName('foo');
@@ -188,7 +177,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartMatchesIfSplitStringContainsMultipleCharactersThatAreFoundInRequestPath() {
 		$this->dynamicRoutPart->setName('foo');
@@ -204,7 +192,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotResolveIfNameIsNotSet() {
 		$routeValues = array('foo' => 'bar');
@@ -214,7 +201,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartResolvesSimpleValueArray() {
 		$this->dynamicRoutPart->setName('foo');
@@ -226,7 +212,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotResolveEmptyArray() {
 		$this->dynamicRoutPart->setName('foo');
@@ -237,7 +222,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotResolveEmptyArrayEvenIfDefaultValueIsSet() {
 		$this->dynamicRoutPart->setName('foo');
@@ -249,7 +233,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartLowerCasesValueWhenCallingResolveByDefault() {
 		$this->dynamicRoutPart->setName('Foo');
@@ -261,7 +244,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotChangeCaseOfValueIfLowerCaseIsFale() {
 		$this->dynamicRoutPart->setName('Foo');
@@ -274,7 +256,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveReturnsFalseIfNoCorrespondingValueIsGiven() {
 		$this->dynamicRoutPart->setName('foo');
@@ -285,7 +266,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveUnsetsCurrentRouteValueOnSuccessfulResolve() {
 		$this->dynamicRoutPart->setName('foo');
@@ -297,7 +277,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveRecursivelyUnsetsCurrentRouteValueOnSuccessfulResolve() {
 		$this->dynamicRoutPart->setName('foo.bar.baz');
@@ -309,7 +288,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveDoesNotChangeRouteValuesOnUnsuccessfulResolve() {
 		$this->dynamicRoutPart->setName('foo');
@@ -321,7 +299,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueReturnsTrueAndSetTheValueToTheLowerCasedIdentifierIfTheValueToBeResolvedIsAnObject() {
 		$object = new \stdClass();
@@ -332,7 +309,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueReturnsTrueAndSetTheValueToTheCorrectylCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse() {
 		$object = new \stdClass();
@@ -347,8 +323,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Objects that are unknown to the persistence manager cannot be resolved by the standard DynamicRoutePart handler.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectThatIsUnknownToThePersistenceManager() {
 		$object = new \stdClass();
@@ -358,7 +332,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectWithAnIdentifierThatIsNoString() {
 		$object = new \stdClass();
@@ -368,7 +341,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routePartValueIsNullAfterUnsuccessfulResolve() {
 		$this->dynamicRoutPart->setName('foo');

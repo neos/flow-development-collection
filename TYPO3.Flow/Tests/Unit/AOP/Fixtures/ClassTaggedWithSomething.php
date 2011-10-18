@@ -25,7 +25,6 @@ class ClassTaggedWithSomething {
 	 * Some method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function someMethod() {
 

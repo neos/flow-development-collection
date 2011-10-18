@@ -56,7 +56,6 @@ class CsrfProtectionAspect {
 	 * @FLOW3\Before("method(TYPO3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addCsrfTokenToUri(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$uriBuilder = $joinPoint->getProxy();
@@ -88,7 +87,6 @@ class CsrfProtectionAspect {
 	 * @FLOW3\Around("method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function transferCsrfTokenToExtDirectRequests(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$arguments = $this->environment->getRequestUri()->getArguments();

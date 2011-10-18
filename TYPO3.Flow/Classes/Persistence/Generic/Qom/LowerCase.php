@@ -36,7 +36,6 @@ class LowerCase extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand {
 	 * Constructs this LowerCase instance
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {
 		$this->operand = $operand;
@@ -46,7 +45,6 @@ class LowerCase extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand {
 	 * Gets the operand whose value is converted to a lower-case string.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOperand() {

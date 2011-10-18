@@ -34,7 +34,6 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->sampleSourceName = 'foo';
@@ -46,7 +45,6 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsTranslatedLabelWhenOriginalLabelProvided() {
 		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
@@ -62,7 +60,6 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsTranslatedLabelWhenLabelIdProvided() {
 		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
@@ -79,7 +76,6 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenInvalidPluralFormProvided() {
 		$translationProvider = new \TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider();

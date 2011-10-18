@@ -21,7 +21,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider for testInferTableNameFromClassName
 	 *
 	 * @return array
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function classNameToTableNameMappings() {
 		return array(
@@ -36,7 +35,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider classNameToTableNameMappings
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function testInferTableNameFromClassName($className, $tableName) {
 		$driver = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver();
@@ -47,7 +45,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider for testInferJoinTableNameFromClassAndPropertyName
 	 *
 	 * @return array
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function classAndPropertyNameToJoinTableNameMappings() {
 		return array(
@@ -62,7 +59,6 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider classAndPropertyNameToJoinTableNameMappings
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function testInferJoinTableNameFromClassAndPropertyName($className, $propertyName, $tableName) {
 		$driver = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver', array('dummy'));

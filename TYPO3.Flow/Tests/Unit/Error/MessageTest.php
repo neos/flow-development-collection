@@ -19,7 +19,6 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function constructorSetsMessage() {
 		$someMessage = 'The message';
@@ -30,7 +29,6 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function constructorSetsArguments() {
 		$someArguments = array('Foo', 'Bar');
@@ -41,7 +39,6 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Müller <christian.mueller@typo3.org>
 	 */
 	public function constructorSetsCode() {
 		$someMessage = 'The message';
@@ -52,7 +49,6 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsTheMessageTextIfNoArgumentsAreSpecified() {
 		$someMessage = 'The message';
@@ -63,7 +59,6 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesArgumentsInTheMessageText() {
 		$someMessage = 'The message with %2$s and %1$s';
@@ -78,7 +73,6 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertingTheMessageToStringRendersIt() {
 		$someMessage = 'The message with %2$s and %1$s';

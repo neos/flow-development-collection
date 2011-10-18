@@ -23,7 +23,6 @@ class RawValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abst
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRawValidatorAlwaysReturnsNoErrors() {
 		$rawValidator = new \TYPO3\FLOW3\Validation\Validator\RawValidator(array());

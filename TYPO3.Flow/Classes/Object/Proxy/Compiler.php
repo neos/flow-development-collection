@@ -60,7 +60,6 @@ class Compiler {
 	 *
 	 * @param array $settings The settings
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -69,7 +68,6 @@ class Compiler {
 	/**
 	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
@@ -80,7 +78,6 @@ class Compiler {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Autowiring(false)
 	 */
 	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
@@ -90,7 +87,6 @@ class Compiler {
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -104,7 +100,6 @@ class Compiler {
 	 *
 	 * @param string $fullClassName Name of the original class
 	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyClass
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxyClass($fullClassName) {
 		if (interface_exists($fullClassName) || in_array('TYPO3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
@@ -139,7 +134,6 @@ class Compiler {
 	 *
 	 * @param string $fullClassName Name of the original class
 	 * @return boolean TRUE if a cache entry exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasCacheEntryForClass($fullClassName) {
 		if (isset($this->proxyClasses[$fullClassName])) {
@@ -153,7 +147,6 @@ class Compiler {
 	 * Also builds the static object container which acts as a registry for non-prototype objects during runtime.
 	 *
 	 * @return integer Number of classes which have been compiled
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function compile() {
 		$classCount = 0;
@@ -182,7 +175,6 @@ class Compiler {
 	 * @param string $className Short class name of the class to copy
 	 * @param string $pathAndFilename Full path and file name of the original class file
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function cacheOriginalClassFile($className, $pathAndFilename) {
 		$classCode = file_get_contents($pathAndFilename);

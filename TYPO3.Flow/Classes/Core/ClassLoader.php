@@ -38,7 +38,6 @@ class ClassLoader {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;
@@ -50,7 +49,6 @@ class ClassLoader {
 	 *
 	 * @param string $className Name of the class/interface to load
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadClass($className) {
 		if ($this->classesCache !== NULL) {
@@ -89,7 +87,6 @@ class ClassLoader {
 	 *
 	 * @param array $packages An array of \TYPO3\FLOW3\Package\Package objects
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPackages(array $packages) {
 		$this->packages = $packages;

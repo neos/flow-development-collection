@@ -19,7 +19,6 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allBasicOptionsAreSetCorrectly() {
 		$factoryObjectName = 'ConfigurationBuilderTest' . md5(uniqid(mt_rand(), TRUE));
@@ -50,7 +49,6 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function argumentsOfTypeObjectCanSpecifyAdditionalObjectConfigurationOptions() {
 		$configurationArray = array();
@@ -70,7 +68,6 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertiesOfTypeObjectCanSpecifyAdditionalObjectConfigurationOptions() {
 		$configurationArray = array();
@@ -90,7 +87,6 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function itIsPossibleToPassArraysAsStraightArgumentOrPropertyValues() {
 		$configurationArray = array();
@@ -108,7 +104,6 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function settingsCanBeInjectedAsArgumentOrProperty() {
 		$configurationArray = array();
@@ -127,7 +122,6 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidOptionResultsInException() {
 		$configurationArray = array('scoopy' => 'prototype');

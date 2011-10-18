@@ -29,7 +29,6 @@ class ArrayConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,7 +38,6 @@ class ArrayConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertFromDoesNotModifyTheSourceArray() {
 		$sourceArray = array('Foo' => 'Bar', 'Baz');

@@ -149,7 +149,6 @@ class Context {
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectAuthenticationManager(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
@@ -161,7 +160,6 @@ class Context {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['authentication']['authenticationStrategy'])) {
@@ -206,8 +204,6 @@ class Context {
 	 * Initializes the security context for the given request.
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize() {
 		$this->request = $this->requestHandlerResolver->resolveRequestHandler()->getRequest();
@@ -234,7 +230,6 @@ class Context {
 	 * Get the token authentication strategy
 	 *
 	 * @return int One of the AUTHENTICATE_* constants
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAuthenticationStrategy() {
 		if ($this->initialized === FALSE) {
@@ -250,7 +245,6 @@ class Context {
 	 * against the current request it is determined as not active.
 	 *
 	 * @return array Array of set \TYPO3\FLOW3\Authentication\Token objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
 		if ($this->initialized === FALSE) {
@@ -267,7 +261,6 @@ class Context {
 	 *
 	 * @param string $className The class name
 	 * @return array Array of set \TYPO3\FLOW3\Authentication\Token objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokensOfType($className) {
 		if ($this->initialized === FALSE) {
@@ -289,7 +282,6 @@ class Context {
 	 * If no authenticated roles could be found the "Everbody" role is returned
 	 *
 	 * @return array Array of TYPO3\FLOW3\Security\Policy\Role objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
 		if ($this->initialized === FALSE) {
@@ -318,7 +310,6 @@ class Context {
 	 *
 	 * @param string $role The string representation of the role to search for
 	 * @return boolean TRUE, if a role with the given string representation was found
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRole($role) {
 		if ($this->initialized === FALSE) {
@@ -347,7 +338,6 @@ class Context {
 	 * (@see getAuthenticationTokens())
 	 *
 	 * @return \TYPO3\Party\Domain\Model\AbstractParty The authenticated party
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getParty() {
 		if ($this->initialized === FALSE) {
@@ -365,8 +355,6 @@ class Context {
 	 *
 	 * @param string $className Class name of the party to find
 	 * @return \TYPO3\Party\Domain\Model\AbstractParty The authenticated party
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyByType($className) {
 		if ($this->initialized === FALSE) {
@@ -389,7 +377,6 @@ class Context {
 	 * (@see getAuthenticationTokens())
 	 *
 	 * @return \TYPO3\FLOW3\Security\Account The authenticated account
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAccount() {
 		if ($this->initialized === FALSE) {
@@ -409,8 +396,6 @@ class Context {
 	 *
 	 * @param string $authenticationProviderName Authentication provider name of the account to find
 	 * @return \TYPO3\FLOW3\Security\Account The authenticated account
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAccountByAuthenticationProviderName($authenticationProviderName) {
 		if ($this->initialized === FALSE) {
@@ -428,7 +413,6 @@ class Context {
 	 * protection strategy.
 	 *
 	 * @return string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCsrfProtectionToken() {
 		if ($this->initialized === FALSE) {
@@ -498,7 +482,6 @@ class Context {
 	 * Clears the security context.
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearContext() {
 		$this->tokens = array();
@@ -513,7 +496,6 @@ class Context {
 	 * Stores all active tokens in $this->activeTokens, all others in $this->inactiveTokens
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function separateActiveAndInactiveTokens() {
 		foreach ($this->tokens as $token) {
@@ -546,7 +528,6 @@ class Context {
 	 * @param array $managerTokens Array of tokens provided by the authentication manager
 	 * @param array $sessionTokens Array of tokens resotored from the session
 	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {
 		$resultTokens = array();
@@ -576,7 +557,6 @@ class Context {
 	 *
 	 * @param array $tokens Array of authentication tokens the credentials should be updated for
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
@@ -589,7 +569,6 @@ class Context {
 	 * This is useful when doing an explicit authentication inside a request.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function refreshTokens() {
 		if ($this->initialized === FALSE) {
@@ -603,7 +582,6 @@ class Context {
 	 * Shut the object down
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function shutdownObject() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);

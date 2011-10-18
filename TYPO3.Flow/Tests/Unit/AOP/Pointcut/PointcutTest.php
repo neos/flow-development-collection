@@ -19,7 +19,6 @@ class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesChecksIfTheGivenClassAndMethodMatchThePointcutFilterComposite() {
 		$pointcutExpression = 'ThePointcutExpression';
@@ -37,7 +36,6 @@ class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\AOP\Exception\CircularPointcutReferenceException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesDetectsCircularMatchesAndThrowsAndException() {
 		$pointcutExpression = 'ThePointcutExpression';
@@ -55,7 +53,6 @@ class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcutExpressionReturnsThePointcutExpression() {
 		$pointcutExpression = 'ThePointcutExpression';
@@ -71,7 +68,6 @@ class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAspectClassNameReturnsTheAspectClassName() {
 		$pointcutExpression = 'ThePointcutExpression';
@@ -87,7 +83,6 @@ class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcutMethodNameReturnsThePointcutMethodName() {
 		$pointcutExpression = 'ThePointcutExpression';
@@ -103,7 +98,6 @@ class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsReturnsTheRuntimeEvaluationsDefinitionOfTheContainedPointcutFilterComposite() {
 		$pointcutExpression = 'ThePointcutExpression';

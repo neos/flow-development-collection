@@ -66,7 +66,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsParentRequest() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -76,7 +75,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsArgumentNamespaceToAnEmptyStringByDefault() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -87,7 +85,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsSpecifiedArgumentNamespace() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -98,7 +95,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildDoesNotSetAnyArgumentsThatAreNotPrefix() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -113,7 +109,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildIgnoresNamespacedArgumentsOfTypeString() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -132,7 +127,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsNamespacedArgumentsFromParentRequest() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -157,7 +151,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsControllerKeysAndFormat() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
@@ -181,7 +174,6 @@ class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildCreatesSpecifiedObject() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\My\Custom\Subrequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));

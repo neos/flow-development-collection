@@ -53,8 +53,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match the pattern, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$this->runtimeEvaluationsDefinition = array();
@@ -114,7 +112,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param string $operator The operator for this filter
 	 * @param \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter A configured class filter
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addFilter($operator, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter) {
 		$this->filters[] = array($operator, $filter);
@@ -127,7 +124,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return count($this->globalRuntimeEvaluationsDefinition) > 0 || count($this->runtimeEvaluationsDefinition) > 0;
@@ -137,7 +133,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array_merge_recursive($this->globalRuntimeEvaluationsDefinition, $this->runtimeEvaluationsDefinition);
@@ -149,7 +144,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 *
 	 * @param array $runtimeEvaluations Runtime evaluations to be added
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations) {
 		$this->globalRuntimeEvaluationsDefinition = $runtimeEvaluations;
@@ -159,7 +153,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * Returns the PHP code (closure) that can evaluate the runtime evaluations
 	 *
 	 * @return string The closure code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCode() {
 		$useGlobalObjects = FALSE;
@@ -187,7 +180,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param array $conditions Condition array
 	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The condition code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, &$useGlobalObjects = FALSE) {
 		$conditionsCode = array();
@@ -255,7 +247,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param array $conditions Condition array
 	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The arguments condition code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, &$useGlobalObjects = FALSE) {
 		$argumentConstraintsConditionsCode = '';
@@ -296,7 +287,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param array $conditions Condition array
 	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The condition code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, &$useGlobalObjects = FALSE) {
 		$evaluateConditionsCode = '';
@@ -328,7 +318,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @param mixed $argumentAccess The unparsed argument access, might be string or array
 	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The condition code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildArgumentEvaluationAccessCode($argumentAccess, &$useGlobalObjects = FALSE) {
 		$argumentAccessCode = '';

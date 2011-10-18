@@ -34,8 +34,6 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function addedFlashMessageCanBeReadOutAgain() {
 		$messages = array (
@@ -56,7 +54,6 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function flushResetsFlashMessages() {
 		$message1 = new Message('This is a test message');
@@ -67,7 +64,6 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getMessagesAndFlushFetchesAllEntriesAndFlushesTheFlashMessages() {
 		$messages = array (
@@ -90,8 +86,6 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function messagesCanBeFilteredBySeverity() {
 		$messages = array (
@@ -112,8 +106,6 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getMessagesAndFlushCanAlsoFilterBySeverity() {
 		$messages = array (

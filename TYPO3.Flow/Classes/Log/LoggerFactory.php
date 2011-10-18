@@ -29,7 +29,6 @@ class LoggerFactory {
 	 * @param mixed $backendObjectNames Object name (or array of object names) of the log backend(s)
 	 * @param array $backendOptions (optional) Array of backend options. If more than one backend is specified, this is an array of array.
 	 * @return \TYPO3\FLOW3\Log\LoggerInterface The created logger frontend
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {

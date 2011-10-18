@@ -55,7 +55,6 @@ class FormatResolver {
 	/**
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -64,7 +63,6 @@ class FormatResolver {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
@@ -86,7 +84,6 @@ class FormatResolver {
 	 * @return string The $text with placeholders resolved
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
 	 * @throws \TYPO3\FLOW3\I18n\Exception\IndexOutOfBoundsException When trying to format nonexistent value
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function resolvePlaceholders($textWithPlaceholders, array $arguments, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
@@ -139,7 +136,6 @@ class FormatResolver {
 	 * @param string $formatterName Name of the formatter class (without Formatter suffix)
 	 * @return \TYPO3\FLOW3\I18n\Formatter\FormatterInterface The concrete formatter class
 	 * @throws \TYPO3\FLOW3\I18n\Exception\UnknownFormatterException When formatter for a name given does not exist
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function getFormatter($formatterName) {
 		$formatterName = ucfirst($formatterName);

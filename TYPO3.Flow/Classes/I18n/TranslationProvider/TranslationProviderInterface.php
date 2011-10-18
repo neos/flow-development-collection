@@ -17,7 +17,6 @@ namespace TYPO3\FLOW3\I18n\TranslationProvider;
  * Concrete implementation may throw an UnsupportedTranslationMethodException
  * if particular method is not available / implemented.
  *
- * @author Karol Gusak <firstname@lastname.eu>
  */
 interface TranslationProviderInterface {
 

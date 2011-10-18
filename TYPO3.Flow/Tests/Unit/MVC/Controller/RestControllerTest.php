@@ -18,7 +18,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveActionMethodNameOnlyResolvesRESTMethodNamesIfTheActionNameIsIndex() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -33,7 +32,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForGETRequestsWithoutProvidedResourceIsList() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -54,7 +52,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForGETRequestsWithProvidedResourceIsShow() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -75,7 +72,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForPOSTRequestsIsCreate() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -95,7 +91,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForPUTRequestsIsUpdate() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -117,7 +112,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPUTRequestWithoutProvidedResourceWillThrowAStatus400() {
 		$throwStopException = function() { throw new \TYPO3\FLOW3\MVC\Exception\StopActionException(); };
@@ -139,7 +133,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForDELETERequestsIsDelete() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -161,7 +154,6 @@ class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aDELETERequestWithoutResourceWillThrowAStatus400() {
 		$throwStopException = function() { throw new \TYPO3\FLOW3\MVC\Exception\StopActionException(); };

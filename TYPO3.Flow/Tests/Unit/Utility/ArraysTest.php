@@ -19,7 +19,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsFalseOnEmptyArray() {
 		$this->assertFalse(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array()), 'An empty array was seen as containing multiple types');
@@ -27,7 +26,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsFalseOnArrayWithIntegers() {
 		$this->assertFalse(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 2, 3)), 'An array with only integers was seen as containing multiple types');
@@ -35,7 +33,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsFalseOnArrayWithObjects() {
 		$this->assertFalse(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array(new \stdClass(), new \stdClass(), new \stdClass())), 'An array with only \stdClass was seen as containing multiple types');
@@ -43,7 +40,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsTrueOnMixedArray() {
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 'string', 1.25, new \stdClass())), 'An array with mixed contents was not seen as containing multiple types');
@@ -51,7 +47,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath() {
 		$array = array('Foo' => 'the value');
@@ -60,7 +55,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
@@ -69,7 +63,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsString() {
 		$path = 'Foo.Bar.Baz.2';
@@ -81,7 +74,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
@@ -91,7 +83,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
@@ -100,7 +91,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray() {
 		$array = array('Foo' => array('Bar' => array('Baz' => 'the value')));
@@ -109,8 +99,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function convertObjectToArrayConvertsNestedObjectsToArray() {
 		$object = new \stdClass();
@@ -138,7 +126,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setValueByPathSetsValueRecursivelyIfPathIsArray() {
 		$array = array();
@@ -150,7 +137,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setValueByPathSetsValueRecursivelyIfPathIsString() {
 		$array = array();
@@ -162,7 +148,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setValueByPathRecursivelyMergesAnArray() {
 		$array = array('foo' => array('bar' => 'should be overriden'), 'bar' => 'Baz');
@@ -174,7 +159,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
@@ -211,7 +195,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function unsetValueByPathDoesNotModifyAnArrayIfThePathWasNotFound() {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
@@ -223,7 +206,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function unsetValueByPathRemovesSpecifiedKey() {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
@@ -235,7 +217,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function unsetValueByPathRemovesSpecifiedKeyIfPathIsString() {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
@@ -247,7 +228,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function unsetValueByPathRemovesSpecifiedBranch() {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
@@ -259,7 +239,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
@@ -269,7 +248,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function removeEmptyElementsRecursivelyRemovesNullValues() {
 		$array = array('EmptyElement' => NULL, 'Foo' => array('Bar' => array('Baz' => array('NotNull' => '', 'AnotherEmptyElement' => NULL))));
@@ -280,7 +258,6 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function removeEmptyElementsRecursivelyRemovesEmptySubArrays() {
 		$array = array('EmptyElement' => array(), 'Foo' => array('Bar' => array('Baz' => array('AnotherEmptyElement' => NULL))), 'NotNull' => 123);

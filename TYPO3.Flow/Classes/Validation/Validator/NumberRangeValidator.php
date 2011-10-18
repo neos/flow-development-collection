@@ -29,8 +29,6 @@ class NumberRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVal
 	 * @param mixed $value The value that should be validated
 	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function isValid($value) {

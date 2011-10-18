@@ -21,7 +21,6 @@ class AuthenticationControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateActionCallsAuthenticateOfTheAuthenticationManager() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
@@ -37,7 +36,6 @@ class AuthenticationControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function logoutActionCallsLogoutOfTheAuthenticationManager() {
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');

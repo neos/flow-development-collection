@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Package;
 /**
  * Interface for a FLOW3 Package class
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface PackageInterface {

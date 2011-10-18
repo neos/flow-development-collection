@@ -67,7 +67,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 *
 	 * @param \TYPO3\FLOW3\Property\DataType\Uri $requestUri
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRequestUri(Uri $requestUri) {
 		$this->parentRequest->setRequestUri($requestUri);
@@ -77,7 +76,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 * Returns the parent request URI
 	 *
 	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of the parent web request
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getRequestUri() {
@@ -89,7 +87,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 *
 	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setBaseUri(Uri $baseUri) {
 		$this->parentRequest->setBaseUri($baseUri);
@@ -99,7 +96,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 * Returns the base URI of the parent request
 	 *
 	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of the parent web request
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getBaseUri() {
@@ -111,7 +107,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 *
 	 * @param string $method Name of the request method
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setMethod($method) {
 		$this->parentRequest->setMethod($method);
@@ -121,7 +116,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 * Returns the name of the parent request method
 	 *
 	 * @return string Name of the parent request method
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getMethod() {
@@ -132,7 +126,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 * Returns the the parent request path relative to the base URI
 	 *
 	 * @return string
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getRoutePath() {
@@ -143,7 +136,6 @@ class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 	 * Return the top most parent request
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Web\Request
-	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
 	 */
 	public function getRootRequest() {
 		if ($this->parentRequest instanceof SubRequest) {

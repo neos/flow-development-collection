@@ -19,7 +19,6 @@ class CldrParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsesCldrDataCorrectly() {
 		$sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';

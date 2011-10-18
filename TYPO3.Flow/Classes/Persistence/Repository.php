@@ -104,9 +104,6 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * Returns all objects of this repository
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 * @see \TYPO3\FLOW3\Persistence\QueryInterface::execute()
 	 */
@@ -205,8 +202,6 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @param string $methodName Name of the method
 	 * @param array $arguments The arguments
 	 * @return mixed The result of the find method
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function __call($methodName, array $arguments) {

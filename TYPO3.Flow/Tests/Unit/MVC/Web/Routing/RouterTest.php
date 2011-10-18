@@ -19,7 +19,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolveCallsCreateRoutesFromConfiguration() {
 		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -39,9 +38,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createRoutesFromConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
 		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
@@ -78,8 +74,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveIteratesOverTheRegisteredRoutesAndReturnsTheMatchingUriIfAny() {
 		$routeValues = array('foo' => 'bar');
@@ -107,7 +101,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\NoMatchingRouteException
 	 */
 	public function resolveThrowsExceptionIfNoMatchingRouteWasFound() {
@@ -129,7 +122,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function packageKeyCanBeSetByRoute() {
 		$router = $this->getRouter();
@@ -144,7 +136,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function subpackageKeyCanBeSetByRoute() {
 		$router = $this->getRouter();
@@ -159,7 +150,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerNameCanBeSetByRoute() {
 		$router = $this->getRouter();
@@ -191,7 +181,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function actionNameCanBeSetByRoute() {
 		$router = $this->getRouter();
@@ -207,7 +196,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function formatCanBeSetByRoute() {
 		$router = $this->getRouter();
@@ -222,7 +210,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function theDefaultPatternForBuildingTheControllerObjectNameIsPackageKeyControllerControllerNameController() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -237,8 +224,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -254,8 +239,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getControllerObjectNameReturnsNullIfTheResolvedControllerDoesNotExist() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -273,7 +256,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data Provider
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerObjectNameArguments() {
 		return array(
@@ -286,7 +268,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider getControllerObjectNameArguments
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerObjectNameReturnsCorrectObjectNamesBasedOnTheGivenArguments($packageKey, $subpackageKey, $controllerName, $expectedObjectName) {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');

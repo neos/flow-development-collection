@@ -36,7 +36,6 @@ class Role {
 	 *
 	 * @param string $identifier The string identifier of this role
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($identifier) {
 		if (!is_string($identifier)) {
@@ -49,7 +48,6 @@ class Role {
 	 * Returns the string representation of this role (the identifier)
 	 *
 	 * @return string the string representation of this role
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __toString() {
 		return $this->identifier;

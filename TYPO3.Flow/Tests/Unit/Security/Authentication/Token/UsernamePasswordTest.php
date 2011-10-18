@@ -20,7 +20,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function credentialsAreSetCorrectlyFromPostArguments() {
 		$postArguments = array();
@@ -43,7 +42,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theAuthenticationStatusIsCorrectlyInitialized() {
 		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
@@ -53,7 +51,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus() {
 		$token1 = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
@@ -74,7 +71,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
 		$postArguments = array();
@@ -97,7 +93,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus() {
 		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
@@ -107,7 +102,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsTheRolesOfTheAuthenticatedAccount() {
 		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
@@ -126,7 +120,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsAnEmptyArrayIfTheTokenIsNotAuthenticated() {
 		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
@@ -142,7 +135,6 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsAnEmptyArrayIfNoAccountHasBeenSet() {
 		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();

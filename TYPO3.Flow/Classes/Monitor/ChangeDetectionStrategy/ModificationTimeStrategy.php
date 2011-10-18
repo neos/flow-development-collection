@@ -19,7 +19,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A change detection strategy based on modification times
  *
- * @author Robert Lemke <robert@typo3.org>
  * @FLOW3\Scope("singleton")
  */
 class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface {
@@ -45,7 +44,6 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -55,7 +53,6 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 * Initializes this strategy
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
 		$this->filesAndModificationTimes = $this->cache->get('filesAndModificationTimes');
@@ -66,7 +63,6 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 *
 	 * @param string $pathAndFilename
 	 * @return integer One of the STATUS_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatus($pathAndFilename) {
 		if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
@@ -99,7 +95,6 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 * Caches the file modification times
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownObject() {
 		if ($this->modificationTimesChanged === TRUE) {

@@ -20,7 +20,6 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function credentialsAreSetCorrectlyFromRequestHeadersArguments() {
 		$requestHeaders = array(
@@ -44,7 +43,6 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
 		$requestHeaders = array(
@@ -67,7 +65,6 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived() {
 		$requestHeaders = array(

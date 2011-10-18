@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\Resource\Publishing;
  * Resource publishing targets provide methods to publish resources to a certain
  * channel, such as the local file system or a content delivery network.
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface ResourcePublishingTargetInterface {
 

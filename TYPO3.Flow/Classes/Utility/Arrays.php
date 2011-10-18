@@ -28,7 +28,6 @@ class Arrays {
 	 * @param string $delimiter Delimiter string to explode with
 	 * @param string $string The string to explode
 	 * @return array Exploded values, all converted to integers
-	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	static public function integerExplode($delimiter, $string) {
 		$chunksArr = explode($delimiter, $string);
@@ -47,7 +46,6 @@ class Arrays {
 	 * @param string $string The string to explode
 	 * @param boolean $onlyNonEmptyValues If disabled, even empty values (='') will be set in output
 	 * @return array Exploded values
-	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	static public function trimExplode($delimiter, $string, $onlyNonEmptyValues = TRUE) {
 		$chunksArr = explode($delimiter, $string);
@@ -70,7 +68,6 @@ class Arrays {
 	 * @param boolean $dontAddNewKeys If set, keys that are NOT found in $firstArray (first array) will not be set. Thus only existing value can/will be overruled from second array.
 	 * @param boolean $emptyValuesOverride If set (which is the default), values from $secondArray will overrule if they are empty (according to PHP's empty() function)
 	 * @return array Resulting array where $secondArray values has overruled $firstArray values
-	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	static public function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = FALSE, $emptyValuesOverride = TRUE) {
 		reset($secondArray);
@@ -102,7 +99,6 @@ class Arrays {
 	 *
 	 * @param array $array
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function containsMultipleTypes(array $array) {
 		if (count($array) > 0) {
@@ -126,8 +122,6 @@ class Arrays {
 	 * @param string $function the reduce function with the same order of parameters as in the native array_reduce (i.e. accumulator first, then current array element)
 	 * @param mixed $initial the initial accumulator value
 	 * @return mixed
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function array_reduce(array $array, $function, $initial = NULL) {
 		$accumlator = $initial;
@@ -143,9 +137,6 @@ class Arrays {
 	 * @param array &$array The array to traverse as a reference
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @return mixed The value found, NULL if the path didn't exist
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	static public function getValueByPath(array &$array, $path) {
 		if (is_string($path)) {
@@ -172,8 +163,6 @@ class Arrays {
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @param mixed $value The value to set
 	 * @return array The modified array or object
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	static public function setValueByPath($subject, $path, $value) {
 		if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
@@ -202,7 +191,6 @@ class Arrays {
 	 * @param array $array The array
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @return array The modified array
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	static public function unsetValueByPath(array $array, $path) {
 		if (is_string($path)) {
@@ -228,7 +216,6 @@ class Arrays {
 	 * @param array $array the array to sort
 	 * @param integer $sortFlags may be used to modify the sorting behavior using these values (see http://www.php.net/manual/en/function.sort.php)
 	 * @return boolean TRUE on success, FALSE on failure
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see asort()
 	 */
 	static public function sortKeysRecursively(array &$array, $sortFlags = NULL) {
@@ -247,8 +234,6 @@ class Arrays {
 	 *
 	 * @param mixed $subject An object or array of objects
 	 * @return array The subject represented as an array
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function convertObjectToArray($subject) {
 		if (!is_object($subject) && !is_array($subject)) {

@@ -53,7 +53,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up a request builder for testing
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUpRequestBuilder() {
 		if ($this->requestUri === NULL) {
@@ -80,7 +79,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildReturnsAWebRequestObject() {
 		$this->setUpRequestBuilder();
@@ -91,7 +89,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildInvokesTheRouteMethodOfTheRouter() {
 		$this->setUpRequestBuilder();
@@ -101,7 +98,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildDetectsTheRequestMethodAndSetsItInTheRequestObject() {
 		$this->setUpRequestBuilder();
@@ -113,7 +109,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsGETArgumentsFromRequest() {
 		$this->setUpRequestBuilder();
@@ -125,7 +120,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsPOSTArgumentsFromRequest() {
 		$this->setUpRequestBuilder();
@@ -139,7 +133,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentsFromRawRequestDataRecursivelyMergesGETAndPOSTArgumentsFromRequest() {
 		$getArguments = array(
@@ -218,7 +211,6 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgumentsFromRawRequestDataMergesUploadedFilesInformationIntoRequestArguments() {
 		$uploadedFiles = array (

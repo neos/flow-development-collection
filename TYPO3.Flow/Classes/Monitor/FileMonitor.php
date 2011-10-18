@@ -71,7 +71,6 @@ class FileMonitor {
 	 * Constructs this file monitor
 	 *
 	 * @param string $identifier Name of this specific file monitor - will be used in the signals emitted by this monitor.
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($identifier) {
@@ -83,7 +82,6 @@ class FileMonitor {
 	 *
 	 * @param \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectChangeDetectionStrategy(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
@@ -95,7 +93,6 @@ class FileMonitor {
 	 *
 	 * @param \TYPO3\FLOW3\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSignalDispatcher(\TYPO3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
 		$this->signalDispatcher = $signalDispatcher;
@@ -106,7 +103,6 @@ class FileMonitor {
 	 *
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -117,7 +113,6 @@ class FileMonitor {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -127,7 +122,6 @@ class FileMonitor {
 	 * Initializes this monitor
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
 		if ($this->cache->has('directoriesAndFiles')) {
@@ -141,7 +135,6 @@ class FileMonitor {
 	 *
 	 * @param string $pathAndFilename Absolute path and filename of the file to monitor
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function monitorFile($pathAndFilename) {
@@ -158,7 +151,6 @@ class FileMonitor {
 	 *
 	 * @param string $path Absolute path of the directory to monitor
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function monitorDirectory($path) {
@@ -173,7 +165,6 @@ class FileMonitor {
 	 * Returns a list of all monitored files
 	 *
 	 * @return array A list of paths and file names of monitored files
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getMonitoredFiles() {
@@ -184,7 +175,6 @@ class FileMonitor {
 	 * Returns a list of all monitored directories
 	 *
 	 * @return array A list of paths of monitored directories
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getMonitoredDirectories() {
@@ -196,7 +186,6 @@ class FileMonitor {
 	 * accordingly.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function detectChanges() {
@@ -239,7 +228,6 @@ class FileMonitor {
 	 *
 	 * @param array $pathAndFilenames A list of full path and filenames of files to check
 	 * @return array An array of changed files (key = path and filenmae) and their status (value)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function detectChangedFiles(array $pathAndFilenames) {
 		$changedFiles = array();
@@ -258,7 +246,6 @@ class FileMonitor {
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
 	 * @param array $changedFiles An array of changed files (key = path and filenmae) and their status (value)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Signal
 	 * @api
 	 */
@@ -272,7 +259,6 @@ class FileMonitor {
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
 	 * @param array $changedDirectories An array of changed directories (key = path) and their status (value)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Signal
 	 * @api
 	 */
@@ -284,7 +270,6 @@ class FileMonitor {
 	 * Caches the directories and their files
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownObject() {
 		if ($this->directoriesChanged === TRUE) {

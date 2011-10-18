@@ -41,7 +41,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * @param \TYPO3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
 	 * @param \TYPO3\FLOW3\MVC\Web\RequestBuilder $requestBuilder The request builder
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
 			\TYPO3\FLOW3\MVC\Dispatcher $dispatcher,
@@ -54,7 +53,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * Handles the web request. The response will automatically be sent to the client.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
@@ -81,7 +79,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * This request handler can handle any web request.
 	 *
 	 * @return boolean If the request is a web request, TRUE otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
 		return (FLOW3_SAPITYPE === 'Web');
@@ -92,7 +89,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * request.
 	 *
 	 * @return integer The priority of the request handler.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPriority() {
 		return 100;
@@ -109,7 +105,6 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	 * method for getting it.
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Web\Request The originally built web request
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequest() {
 		return $this->request;

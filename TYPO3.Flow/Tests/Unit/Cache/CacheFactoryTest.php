@@ -37,8 +37,6 @@ class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createReturnsInstanceOfTheSpecifiedCacheFrontend() {
 		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
@@ -51,7 +49,6 @@ class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createInjectsAnInstanceOfTheSpecifiedBackendIntoTheCacheFrontend() {
 		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
@@ -64,7 +61,6 @@ class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createRegistersTheCacheAtTheCacheManager() {
 		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array('registerCache'), array(), '', FALSE);

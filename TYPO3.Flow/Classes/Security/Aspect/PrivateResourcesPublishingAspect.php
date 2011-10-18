@@ -55,7 +55,6 @@ class PrivateResourcesPublishingAspect {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -67,7 +66,6 @@ class PrivateResourcesPublishingAspect {
 	 * @FLOW3\Around("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method, a rewritten private resource URI or FALSE on error
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo Rewrite of the resource title should be done by general string to uri rewrite function from somewhere else
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResources(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -100,7 +98,6 @@ class PrivateResourcesPublishingAspect {
 	 * @FLOW3\Around("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResources(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
@@ -153,7 +150,6 @@ class PrivateResourcesPublishingAspect {
 	 * @FLOW3\After("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method
 	 */
 	public function unpublishPrivateResource(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {

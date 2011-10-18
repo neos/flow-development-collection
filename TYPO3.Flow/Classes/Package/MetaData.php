@@ -67,7 +67,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 * Get all available constraint types
 	 *
 	 * @return array All constraint types
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraintTypes() {
 		return self::$CONSTRAINT_TYPES;
@@ -78,7 +77,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @param string $packageKey The package key
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($packageKey) {
 		$this->packageKey = $packageKey;
@@ -86,7 +84,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * @return string The package key
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
@@ -94,7 +91,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * @return string The package title
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getTitle() {
 		return $this->title;
@@ -103,7 +99,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @param string $title The package title
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
@@ -111,7 +106,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * @return string The package version
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getVersion() {
 		return $this->version;
@@ -120,7 +114,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @param string $version The package version to set
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setVersion($version) {
 		$this->version = $version;
@@ -128,7 +121,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * @return string The package description
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getDescription() {
 		return $this->description;
@@ -137,7 +129,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @param string $description The package description to set
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setDescription($description) {
 		$this->description = $description;
@@ -145,7 +136,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * @return Array of string The package categories
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getCategories() {
 		return $this->categories;
@@ -163,7 +153,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * @return Array of TYPO3\FLOW3\Package\MetaData\AbstractParty The package parties
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getParties() {
 		return $this->parties;
@@ -174,7 +163,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractParty $party
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function addParty(\TYPO3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$this->parties[] = $party;
@@ -184,7 +172,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 * Get all constraints
 	 *
 	 * @return array Package constraints
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraints() {
 		return $this->constraints;
@@ -195,7 +182,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @param string $constraintType Type of the constraints to get: CONSTRAINT_TYPE_*
 	 * @return array Package constraints
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraintsByType($constraintType) {
 		if (!isset($this->constraints[$constraintType])) return array();
@@ -207,7 +193,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to add
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function addConstraint(\TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$this->constraints[$constraint->getConstraintType()][] = $constraint;

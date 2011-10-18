@@ -20,7 +20,6 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSetIncerceptorIsCalledIfTheRequestPatternMatches() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -38,7 +37,6 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -56,7 +54,6 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSetIncerceptorIsNotCalledIfTheRequestPatternCannotMatchTheRequest() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -74,7 +71,6 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theFilterReturnsTrueIfThePatternMatched() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -91,7 +87,6 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theFilterReturnsFalseIfThePatternDidNotMatch() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');

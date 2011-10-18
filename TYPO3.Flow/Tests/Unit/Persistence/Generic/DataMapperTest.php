@@ -20,7 +20,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidObjectDataException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjectThrowsExceptionOnEmptyInput() {
 		$objectData = array();
@@ -31,7 +30,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjectsMapsArrayToObjectByCallingmapToObject() {
 		$objectData = array(array('identifier' => '1234'));
@@ -45,7 +43,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjectReturnsObjectFromIdentityMapIfAvailable() {
 		$objectData = array('identifier' => '1234');
@@ -65,7 +62,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * and memorizes it's clean state.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
 		$mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
@@ -90,7 +86,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesSetsPropertyValues() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -147,7 +142,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * property of the proxy class.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thawPropertiesAssignsTheUuidToTheProxy() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -174,7 +168,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesDelegatesHandlingOfArraysAndObjects() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -228,7 +221,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see http://forge.typo3.org/issues/9684
 	 * @todo check for correct order again, somehow...
 	 */
@@ -284,7 +276,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * must be skipped when reconstituting.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesSkipsPropertiesNoLongerInClassSchema() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -332,7 +323,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * as a special proxy property.
 	 *
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function thawPropertiesAssignsMetadataToTheProxyIfItExists() {
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -360,7 +350,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapSplObjectStorageCreatesSplObjectStorage() {
 		$objectData = array(
@@ -379,7 +368,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapDateTimeCreatesDateTimeFromTimestamp() {
 		$expected = new \DateTime();
@@ -389,7 +377,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapArrayCreatesExpectedArray() {
 		$array = array('foo' => 'bar');
@@ -455,7 +442,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapArrayMapsNestedArray() {
 		$arrayValues = array(

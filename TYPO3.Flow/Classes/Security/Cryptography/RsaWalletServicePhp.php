@@ -41,7 +41,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration'])
@@ -61,7 +60,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * Initializes the rsa wallet service by fetching the keys from the keystore file
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObject() {
 		if (file_exists($this->keystorePathAndFilename)) {
@@ -99,7 +97,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $privateKeyString The private key in its string representation
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
 	 * @return string The UUID used for storing
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = FALSE) {
 		$keyResource = openssl_pkey_get_private($privateKeyString);
@@ -120,7 +117,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param string $publicKeyString The public key in its string representation
 	 * @return string The UUID used for storing
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function registerPublicKeyFromString($publicKeyString) {
 		$keyResource = openssl_pkey_get_public($publicKeyString);
@@ -137,7 +133,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $uuid The UUID
 	 * @return \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey The public key
 	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPublicKey($uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438860);
@@ -151,7 +146,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $plaintext The plaintext to encrypt
 	 * @param string $uuid The UUID to identify to correct public key
 	 * @return string The ciphertext
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function encryptWithPublicKey($plaintext, $uuid) {
 		$cipher = '';
@@ -170,7 +164,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @return string The decrypted text
 	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 * @throws TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decrypt($cipher, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438861);
@@ -189,7 +182,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The signature of the given plaintext
 	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function sign($plaintext, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1299095799);
@@ -208,7 +200,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $signature The signature that should be verified
 	 * @param string $uuid The uuid to identify to correct public key
 	 * @return boolean TRUE if the signature is correct for the given plaintext and public key
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function verifySignature($plaintext, $signature, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1304959763);
@@ -228,7 +219,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return boolean TRUE if the password is correct
 	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1233655216);
@@ -244,7 +234,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $uuid The UUID
 	 * @return void
 	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function destroyKeypair($uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438863);
@@ -257,7 +246,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param resource $keyResource The key Resource
 	 * @return string The private key string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function getPrivateKeyString($keyResource) {
 		openssl_pkey_export($keyResource, $privateKeyString, NULL, $this->openSSLConfiguration);
@@ -269,7 +257,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param resource $keyResource The key Resource
 	 * @return string The public key string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function getPublicKeyString($keyResource) {
 		$keyDetails = openssl_pkey_get_details($keyResource);
@@ -282,7 +269,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param resource $keyResource The key Resource
 	 * @return string The HEX public modulus string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function getModulus($keyResource) {
 		$keyDetails = openssl_pkey_get_details($keyResource);
@@ -295,7 +281,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $cipher The ciphertext to decrypt
 	 * @param \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey The private key
 	 * @return string The decrypted plaintext
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function decryptWithPrivateKey($cipher, \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey) {
 		$decrypted = '';
@@ -312,7 +297,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey The private key
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
 	 * @return string The UUID used for storing
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function storeKeyPair($publicKey, $privateKey, $usedForPasswords) {
 		$keyPairUUID = str_replace('-', '_', \TYPO3\FLOW3\Utility\Algorithms::generateUUID());

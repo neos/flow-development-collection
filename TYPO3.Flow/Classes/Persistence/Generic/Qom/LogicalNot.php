@@ -31,7 +31,6 @@ class LogicalNot extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	/**
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint) {
 		$this->constraint = $constraint;
@@ -41,7 +40,6 @@ class LogicalNot extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 * Gets the constraint negated by this Not constraint.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getConstraint() {

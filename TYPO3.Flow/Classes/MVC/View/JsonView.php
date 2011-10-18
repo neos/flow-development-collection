@@ -97,7 +97,6 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * @param array $variablesToRender
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function setVariablesToRender(array $variablesToRender) {
@@ -107,7 +106,6 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	/**
 	 * @param array $configuration The rendering configuration for this JSON view
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConfiguration(array $configuration) {
 		$this->configuration = $configuration;
@@ -119,8 +117,6 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * the result.
 	 *
 	 * @return string The JSON encoded variables
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function render() {
@@ -134,7 +130,6 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * array.
 	 *
 	 * @return array An array containing the values, ready to be JSON encoded
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	protected function renderArray() {
@@ -159,7 +154,6 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * @param mixed $value The value to transform
 	 * @param mixed $configuration Configuration for transforming the value or NULL
 	 * @return array The transformed value
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function transformValue($value, $configuration) {
 		if (is_array($value) || $value instanceof \ArrayAccess) {
@@ -188,7 +182,6 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * @param object $object Object to traverse
 	 * @param mixed $configuration Configuration for transforming the given object or NULL
 	 * @return array Object structure as an aray
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function transformObject($object, $configuration) {
 		if ($object instanceof \DateTime) {

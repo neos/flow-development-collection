@@ -43,7 +43,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function runBare() {
 		\PHPUnit_Framework_Error_Warning::$enabled = FALSE;
@@ -62,7 +61,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 	 * @param boolean $callOriginalClone
 	 * @param boolean $callAutoload
 	 * @return \PHPUnit_Framework_MockObject_MockObject
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function getAccessibleMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE) {
@@ -80,7 +78,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 	 * @param boolean $callOriginalClone
 	 * @param boolean $callAutoload
 	 * @return \PHPUnit_Framework_MockObject_MockObject
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE) {
@@ -93,7 +90,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 	 *
 	 * @param string $className Full qualified name of the original class
 	 * @return string Full qualified name of the built class
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function buildAccessibleProxy($className) {

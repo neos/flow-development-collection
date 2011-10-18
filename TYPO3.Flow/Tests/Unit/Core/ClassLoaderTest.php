@@ -30,8 +30,6 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public static $testClassWasLoaded = FALSE;
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -50,7 +48,6 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the package autoloader loads classes from subdirectories.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromSubDirectoriesAreLoaded() {
 		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory', 0770, TRUE);
@@ -65,7 +62,6 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the class loader loads classes from the functional tests directory
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromFunctionalTestsDirectoriesAreLoaded() {
 		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Tests/Functional/Essentials', 0770, TRUE);
@@ -77,7 +73,6 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
 		$this->markTestSkipped('Currently, this test is unbelievably slow, and CPU is increasing radically... It seems something weird happens inside of vfsStream.');
@@ -95,7 +90,6 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * substring of another package (e.g. TYPO3CR vs TYPO3).
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function classesFromSubMatchingPackagesAreLoaded() {
 		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes', 0770, TRUE);

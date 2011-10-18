@@ -29,7 +29,6 @@ class FloatConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,7 +38,6 @@ class FloatConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFromShouldCastTheStringToFloat() {
 		$this->assertSame(1.5, $this->converter->convertFrom('1.5', 'float'));
@@ -47,7 +45,6 @@ class FloatConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function canConvertFromShouldReturnTrue() {
 		$this->assertTrue($this->converter->canConvertFrom('1.5', 'float'));
@@ -55,7 +52,6 @@ class FloatConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
 		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));

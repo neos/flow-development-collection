@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Security\Authorization\Resource;
 class Apache2AccessRestrictionPublisherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -27,7 +26,6 @@ class Apache2AccessRestrictionPublisherTest extends \TYPO3\FLOW3\Tests\UnitTestC
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function publishAccessRestrictionsForPathPublishesAHtaccessFileInTheGivenDirectory() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);

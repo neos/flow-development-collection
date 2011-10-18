@@ -106,7 +106,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
@@ -150,7 +149,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * Resolves and checks the current action method name
 	 *
 	 * @return string Method name of the current action
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
@@ -167,7 +165,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * Don't override this method - use initializeAction() instead.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initializeArguments()
 	 */
 	protected function initializeActionMethodArguments() {
@@ -194,7 +191,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * - Custom model validator classes
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function initializeActionMethodValidators() {
 		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
@@ -217,7 +213,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * common.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function initializeAction() {
@@ -232,7 +227,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 *
 	 * @param string $actionMethodName Name of the action method to call
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function callActionMethod() {
 		$preparedArguments = array();
@@ -283,7 +277,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * elswhere.
 	 *
 	 * @return string The detected format
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function detectFormat() {
 		if ($this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) {
@@ -317,9 +310,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * the current action.
 	 *
 	 * @return \TYPO3\FLOW3\MVC\View\ViewInterface the resolved view
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function resolveView() {
@@ -348,8 +338,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * Determines the fully qualified view object name.
 	 *
 	 * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function resolveViewObjectName() {
@@ -383,7 +371,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\View\ViewInterface $view The view to be initialized
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function initializeView(\TYPO3\FLOW3\MVC\View\ViewInterface $view) {
@@ -397,8 +384,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * to the originating action. This is suitable for most actions dealing with form input.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	protected function errorAction() {

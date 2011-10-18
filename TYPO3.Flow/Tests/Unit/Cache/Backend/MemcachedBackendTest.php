@@ -26,7 +26,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up this testcase
 	 *
 	 * @return void
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setUp() {
 		if (!extension_loaded('memcache')) {
@@ -46,7 +45,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
@@ -61,7 +59,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured() {
@@ -71,7 +68,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
@@ -83,7 +79,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
@@ -96,7 +91,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndGetEntry() {
 		$backend = $this->setUpBackend();
@@ -109,7 +103,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
@@ -123,7 +116,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
@@ -138,7 +130,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
 		$backend = $this->setUpBackend();
@@ -156,7 +147,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setRemovesTagsFromPreviousSet() {
 		$backend = $this->setUpBackend();
@@ -172,7 +162,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -183,7 +172,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -194,8 +182,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
 		$backend = $this->setUpBackend();
@@ -214,7 +200,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesAllCacheEntries() {
 		$backend = $this->setUpBackend();
@@ -233,7 +218,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesOnlyOwnEntries() {
 		$backendOptions = array('servers' => array('localhost:11211'));
@@ -265,7 +249,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * reflection data.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function largeDataIsStored() {
 		$backend = $this->setUpBackend();
@@ -282,8 +265,6 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @param array $backendOptions Options for the memcache backend
 	 * @return \TYPO3\FLOW3\Cache\Backend\MemcachedBackend
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);

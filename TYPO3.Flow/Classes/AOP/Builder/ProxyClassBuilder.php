@@ -85,7 +85,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Object\Proxy\Compiler $compiler
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCompiler(\TYPO3\FLOW3\Object\Proxy\Compiler $compiler) {
 		$this->compiler = $compiler;
@@ -96,7 +95,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -105,7 +103,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -116,7 +113,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPointcutExpressionParser(\TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser) {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
@@ -138,7 +134,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder $builder
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectAdvicedConstructorInterceptorBuilder(\TYPO3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['AdvicedConstructor'] = $builder;
@@ -149,7 +144,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder $builder
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectAdvicedMethodInterceptorBuilder(\TYPO3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['AdvicedMethod'] = $builder;
@@ -158,7 +152,6 @@ class ProxyClassBuilder {
 	/**
 	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
@@ -169,7 +162,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array $settings The settings
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -184,7 +176,6 @@ class ProxyClassBuilder {
 	 * Finally all advices are woven into their target classes by generating proxy classes.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
 		$allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
@@ -227,7 +218,6 @@ class ProxyClassBuilder {
 	 * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
 	 * @param string $pointcutMethodName Method name of the pointcut
 	 * @return mixed The \TYPO3\FLOW3\AOP\Pointcut\Pointcut or FALSE if none was found
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
 		if (!isset($this->aspectContainers[$aspectClassName])) return FALSE;
@@ -245,7 +235,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param string $targetClassName Name of the target class
 	 * @return mixed An array of method names and their advices as array of \TYPO3\FLOW3\AOP\Advice\AdviceInterface
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
 		throw new \TYPO3\FLOW3\AOP\Exception('This method is currently not supported.');
@@ -259,7 +248,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array $classNames Names of the classes to check
 	 * @return array Names of classes which can be proxied
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getProxyableClasses(array $classNamesByPackage) {
 		$proxyableClasses = array();
@@ -282,7 +270,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array &$classNames Classes to check for aspect tags.
 	 * @return array An array of \TYPO3\FLOW3\AOP\AspectContainer for all aspects which were found.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildAspectContainers(array &$classNames) {
 		$aspectContainers = array();
@@ -299,7 +286,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param  string $aspectClassName Name of the class which forms the aspect, contains advices etc.
 	 * @return mixed The aspect container containing one or more advisors or FALSE if no container could be built
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildAspectContainer($aspectClassName) {
 		$aspectContainer = new \TYPO3\FLOW3\AOP\AspectContainer($aspectClassName);
@@ -382,7 +368,6 @@ class ProxyClassBuilder {
 	 * @param string $targetClassName Name of the class to create a proxy class file for
 	 * @param array &$aspectContainers The array of aspect containers from the AOP Framework
 	 * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildProxyClass($targetClassName, array &$aspectContainers) {
 		$interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
@@ -438,7 +423,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param string $targetClassName Name of the target class
 	 * @return array Method information with declaring class and method name pairs
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getMethodsFromTargetClass($targetClassName) {
 		$methods = array();
@@ -473,8 +457,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array $methodsAndGroupedAdvices An array of method names and grouped advice objects
 	 * @return string PHP code for the content of an array of target method names and advice objects
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @see buildProxyClass()
 	 */
 	protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
@@ -508,7 +490,6 @@ class ProxyClassBuilder {
 	 * @param string $targetClassName The target class the pointcut should match with
 	 * @param array $interceptedMethods An array of method names which need to be intercepted
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildMethodsInterceptorCode($targetClassName, array $interceptedMethods) {
 		foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
@@ -529,7 +510,6 @@ class ProxyClassBuilder {
 	 * @param string $targetClassName Name of the class the pointcut should match with
 	 * @param array &$aspectContainers All aspects to take into consideration
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, $targetClassName, array &$aspectContainers) {
 		$pointcutQueryIdentifier = 0;
@@ -563,7 +543,6 @@ class ProxyClassBuilder {
 	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
 	 * @param array $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces) {
 		foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
@@ -582,7 +561,6 @@ class ProxyClassBuilder {
 	 * @param array &$aspectContainers All aspects to take into consideration
 	 * @param string $targetClassName Name of the class the pointcut should match with
 	 * @return array array of interface names
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getMatchingInterfaceIntroductions(array &$aspectContainers, $targetClassName) {
 		$introductions = array();
@@ -623,7 +601,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array $interfaceIntroductions An array of interface introductions
 	 * @return array Array of interface names
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getInterfaceNamesFromIntroductions(array $interfaceIntroductions) {
 		$interfaceNames = array();
@@ -638,7 +615,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param array $interfaceIntroductions An array of \TYPO3\FLOW3\AOP\InterfaceIntroduction
 	 * @return array An array of method information (interface, method name)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getIntroducedMethodsFromInterfaceIntroductions(array $interfaceIntroductions) {
 		$methods = array();
@@ -662,7 +638,6 @@ class ProxyClassBuilder {
 	 *
 	 * @param  $targetClassName
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildGetAdviceChainsMethodCode($targetClassName) {
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('FLOW3_AOP_Proxy_getAdviceChains');
@@ -693,7 +668,6 @@ EOT;
 	 *
 	 * @param  $targetClassName
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildInvokeJoinPointMethodCode($targetClassName) {
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('FLOW3_AOP_Proxy_invokeJoinPoint');

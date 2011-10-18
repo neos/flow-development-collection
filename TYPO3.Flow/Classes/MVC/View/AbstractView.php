@@ -40,8 +40,6 @@ abstract class AbstractView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 * @param string $key Key of variable
 	 * @param object $value Value of object
 	 * @return \TYPO3\FLOW3\MVC\View\AbstractView an instance of $this, to enable chaining
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function assign($key, $value) {
@@ -54,7 +52,6 @@ abstract class AbstractView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param array $values array in the format array(key1 => value1, key2 => value2)
 	 * @return \TYPO3\FLOW3\MVC\View\AbstractView an instance of $this, to enable chaining
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function assignMultiple(array $values) {
@@ -69,7 +66,6 @@ abstract class AbstractView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setControllerContext(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {

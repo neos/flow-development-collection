@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Tests\Functional\MVC;
 /**
  * A mock web request handler suitable for functional tests
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 class MockWebRequestHandler extends \TYPO3\FLOW3\MVC\Web\RequestHandler {
 
@@ -32,7 +31,6 @@ class MockWebRequestHandler extends \TYPO3\FLOW3\MVC\Web\RequestHandler {
 	 * Handles the web request.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
 		$response = new Response();

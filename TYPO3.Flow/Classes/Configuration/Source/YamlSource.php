@@ -28,7 +28,6 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the file extension (ie. ".yaml")
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
@@ -53,7 +52,6 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension (i.e. ".yaml")
 	 * @param array $configuration The configuration to save
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function save($pathAndFilename, array $configuration) {
 		$header = '';
@@ -70,7 +68,6 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 *
 	 * @param string $pathAndFilename
 	 * @return string The header of the given YAML file
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	protected function getHeaderFromFile($pathAndFilename) {

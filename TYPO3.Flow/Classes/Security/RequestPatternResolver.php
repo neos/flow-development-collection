@@ -30,7 +30,6 @@ class RequestPatternResolver {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -42,7 +41,6 @@ class RequestPatternResolver {
 	 * @param string $name The (short) name of the pattern
 	 * @return string The class name of the request pattern, NULL if no class was found.
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoRequestPatternFoundException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClass($name) {
 		$resolvedClassName = '';

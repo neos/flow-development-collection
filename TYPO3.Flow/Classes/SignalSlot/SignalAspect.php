@@ -33,7 +33,6 @@ class SignalAspect {
 	 * @FLOW3\AfterReturning("methodAnnotatedWith(TYPO3\FLOW3\Annotations\Signal)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardSignalToDispatcher(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$signalName = lcfirst(str_replace('emit', '', $joinPoint->getMethodName()));

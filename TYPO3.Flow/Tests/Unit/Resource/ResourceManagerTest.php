@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Resource;
 class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -35,8 +34,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * be careful...
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeRegistersFoundStreamWrappers() {
 		$wrapperClassName = 'MockWrapper' . md5(uniqid(mt_rand(), TRUE));
@@ -72,7 +69,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPublicPackageResourcesPublishesStaticResourcesOfActivePackages() {
 		$settings = array('resource' => array('publishing' => array('detectPackageResourceChanges' => TRUE)));
@@ -98,7 +94,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPublicPackageResourcesStoresThePublishingStatusInACacheDoesntPublishResourcesAgainIfSettingsSaySo() {
 		$settings = array('resource' => array('publishing' => array('detectPackageResourceChanges' => FALSE)));
@@ -122,7 +117,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPersistentResourcesStorageBaseUriProvidesTheUriAtAWellKnownPlace() {
 		$resourceManager = $this->getAccessibleMock('\TYPO3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
@@ -161,7 +155,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * This is a limitation of chmod() which does not work with stream wrappers.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function importResourceImportsTheGivenFileAndReturnsAResourceObject() {
 		$resourceManager = $this->setupResourceManager();
@@ -179,7 +172,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * This is a limitation of chmod() which does not work with stream wrappers.
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getImportedResourcesReturnsAListOfResourceObjectsAndSomeInformationAboutTheirImport() {
 		$resourceManager = $this->setupResourceManager();
@@ -193,7 +185,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function importResourceReturnsFalseForPhpFiles() {
 		$resourceManager = $this->setupResourceManager();
@@ -206,7 +197,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * This is a limitation of chmod() which does not work with stream wrappers.
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function importResourceWorksForFilesWithoutFileEnding() {
 		$resourceManager = $this->setupResourceManager();

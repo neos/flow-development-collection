@@ -45,7 +45,6 @@ class RequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -56,7 +55,6 @@ class RequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -67,7 +65,6 @@ class RequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager A reference to the configuration manager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -78,7 +75,6 @@ class RequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectRouter(\TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
@@ -88,8 +84,6 @@ class RequestBuilder {
 	 * Builds a web request object from the raw HTTP information
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Web\Request The web request as an object
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function build() {
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
@@ -114,7 +108,6 @@ class RequestBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setArgumentsFromRawRequestData(\TYPO3\FLOW3\MVC\Web\Request $request) {
 		$arguments = $request->getRequestUri()->getArguments();

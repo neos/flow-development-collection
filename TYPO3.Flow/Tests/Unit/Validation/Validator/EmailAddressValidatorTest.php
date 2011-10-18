@@ -25,7 +25,6 @@ class EmailAddressValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	 * Data provider with valid email addresses
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validAddresses() {
 		return array(
@@ -41,7 +40,6 @@ class EmailAddressValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @dataProvider validAddresses
 	 */
@@ -53,7 +51,6 @@ class EmailAddressValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	 * Data provider with invalid email addresses
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function invalidAddresses() {
 		return array(
@@ -70,7 +67,6 @@ class EmailAddressValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @dataProvider invalidAddresses
 	 */
@@ -80,7 +76,6 @@ class EmailAddressValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailValidatorCreatesTheCorrectErrorForAnInvalidEmailAddress() {
 		$this->assertEquals(1, count($this->validator->validate('notAValidMail@Address')->getErrors()));

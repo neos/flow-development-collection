@@ -120,7 +120,6 @@ class Bootstrap {
 	 *
 	 * @param string $context The application context
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($context) {
@@ -154,7 +153,6 @@ class Bootstrap {
 	 * Runs the the FLOW3 Framework by resolving an appropriate bootstrap sequence and passing control to it.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function run() {
 		$this->initializeClassLoader();
@@ -184,7 +182,6 @@ class Bootstrap {
 	 *
 	 * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "typo3.flow3:core:shell", wildcard for command name possible: "typo3.flow3:core:*"
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function registerCompiletimeCommand($commandIdentifier) {
@@ -196,7 +193,6 @@ class Bootstrap {
 	 *
 	 * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "typo3.flow3:cache:flush"
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isCompiletimeCommand($commandIdentifier) {
 		$commandIdentifierParts = explode(':', $commandIdentifier);
@@ -236,7 +232,6 @@ class Bootstrap {
 	 * Returns the object manager instance
 	 *
 	 * @return \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectManager() {
 		if ($this->objectManager === NULL) {
@@ -249,7 +244,6 @@ class Bootstrap {
 	 * Returns the signal slot dispatcher instance
 	 *
 	 * @return \TYPO3\FLOW3\SignalSlot\Dispatcher
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSignalSlotDispatcher() {
 		return $this->signalSlotDispatcher;
@@ -259,7 +253,6 @@ class Bootstrap {
 	 * Bootstrap sequence for a command line request
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function handleCommandLineRequest() {
 		$commandLine = $this->environment->getCommandLineArguments();
@@ -330,7 +323,6 @@ class Bootstrap {
 	 * on demand.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function handleCommandLineSlaveRequest() {
 		$this->initializeForRuntime();
@@ -366,7 +358,6 @@ class Bootstrap {
 	 * Bootstrap sequence for a web request
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function handleWebRequest() {
 		$this->initializeForRuntime();
@@ -384,7 +375,6 @@ class Bootstrap {
 	 * be initialized in "compiletime" initialization level.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeForCompileTime() {
 		$this->objectManager = new \TYPO3\FLOW3\Object\CompileTimeObjectManager($this->context);
@@ -410,8 +400,6 @@ class Bootstrap {
 	 * be initialized in the "runtime" initialization level.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function initializeForRuntime() {
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
@@ -496,7 +484,6 @@ class Bootstrap {
 	 * Also injects the Object Manager into early services which so far worked without it.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setInstancesOfEarlyServices() {
 		$this->objectManager->setInstance(__CLASS__, $this);
@@ -519,7 +506,6 @@ class Bootstrap {
 	 * Initializes the class loader
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeClassLoader() {
@@ -533,7 +519,6 @@ class Bootstrap {
 	 * provided by the packages.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializePackageManagement() {
@@ -546,7 +531,6 @@ class Bootstrap {
 	 * Initializes the configuration manager and the FLOW3 settings
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeConfiguration() {
@@ -567,7 +551,6 @@ class Bootstrap {
 	 * Initializes the system logger
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeSystemLogger() {
 		$this->systemLogger = \TYPO3\FLOW3\Log\LoggerFactory::create('SystemLogger', 'TYPO3\FLOW3\Log\Logger', $this->settings['log']['systemLogger']['backend'], $this->settings['log']['systemLogger']['backendOptions']);
@@ -577,7 +560,6 @@ class Bootstrap {
 	 * Initializes the error handling
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeErrorHandling() {
@@ -591,7 +573,6 @@ class Bootstrap {
 	 * Initializes the Lock Manager
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeLockManager() {
@@ -607,7 +588,6 @@ class Bootstrap {
 	 * Displays a message and exits if the site currently locked.
 	 *
 	 * @return
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function exitIfSiteIsLocked() {
 		if ($this->context !== 'Production' || $this->lockManager->isSiteLocked() === FALSE) {
@@ -628,7 +608,6 @@ class Bootstrap {
 	 * Initializes the cache framework
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeCacheManagement() {
@@ -647,7 +626,6 @@ class Bootstrap {
 	 * Initializes the Reflection Service
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeReflectionService() {
@@ -663,7 +641,6 @@ class Bootstrap {
 	 * Initializes the Signals and Slots mechanism
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see intialize()
 	 */
 	protected function initializeSignalsSlots() {
@@ -674,7 +651,6 @@ class Bootstrap {
 	 * Initializes the file monitoring
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeFileMonitor() {
@@ -689,7 +665,6 @@ class Bootstrap {
 	 * the related caches.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function monitorClassFiles() {
 		$changeDetectionStrategy = new \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
@@ -726,7 +701,6 @@ class Bootstrap {
 	 * related caches.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function monitorRoutesConfigurationFiles() {
 		$monitor = $this->objectManager->create('TYPO3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
@@ -753,7 +727,6 @@ class Bootstrap {
 	 * Initializes the Locale service
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see intialize()
 	 */
 	protected function initializeI18n() {
@@ -764,7 +737,6 @@ class Bootstrap {
 	 * Initializes the persistence framework
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializePersistence() {
@@ -776,7 +748,6 @@ class Bootstrap {
 	 * Initializes the session framework
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeSession() {
@@ -790,7 +761,6 @@ class Bootstrap {
 	 * publishing the public resources of all found packages, ...
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see initialize()
 	 */
 	protected function initializeResources() {
@@ -805,7 +775,6 @@ class Bootstrap {
 	 * Note that the Object Manager is not yet available at this point.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Signal
 	 */
 	protected function emitBootstrapReady() {
@@ -816,7 +785,6 @@ class Bootstrap {
 	 * Emits a signal that the compile run was finished.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Signal
 	 */
 	protected function emitFinishedCompiletimeRun() {
@@ -827,7 +795,6 @@ class Bootstrap {
 	 * Emits a signal that the runtime run was finished.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Signal
 	 */
 	protected function emitFinishedRuntimeRun() {
@@ -849,7 +816,6 @@ class Bootstrap {
 	 *
 	 * @param string $runLevel
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\Signal
 	 */
 	protected function emitBootstrapShuttingDown($runLevel) {
@@ -861,7 +827,6 @@ class Bootstrap {
 	 * specified by an environment variable, exits with a respective error message.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function defineConstants() {
 		if (defined('FLOW3_SAPITYPE')) {
@@ -928,7 +893,6 @@ class Bootstrap {
 	 * Checks PHP version and other parameters of the environment
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function ensureRequiredEnvironment() {
 		if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {

@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\AOP;
 /**
  * Contract for a join point
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface JoinPointInterface {
 

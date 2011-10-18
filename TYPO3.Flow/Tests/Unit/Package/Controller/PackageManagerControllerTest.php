@@ -19,7 +19,6 @@ class PackageManagerControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function indexActionReturnsHelperAction() {
 		$controller = $this->getMock('TYPO3\FLOW3\Package\Controller\PackageManagerController', array('helpAction'), array(), '', FALSE);
@@ -31,7 +30,6 @@ class PackageManagerControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createActionChecksIfPackageKeyIsValidAndDoesntCreatePackageIfPackageKeyIsInvalid() {
 		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
@@ -46,7 +44,6 @@ class PackageManagerControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createActionChecksIfPackageKeyIsAvailableAndDoesntCreatePackageIfPackageExists() {
 		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
@@ -62,7 +59,6 @@ class PackageManagerControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createActionCreatesPackageIfPackageKeyIsOkay() {
 		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE);

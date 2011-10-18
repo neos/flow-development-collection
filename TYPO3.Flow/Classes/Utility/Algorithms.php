@@ -25,7 +25,6 @@ class Algorithms {
 	 * The algorithm used here, might not be completely random.
 	 *
 	 * @return string The universally unique id
-	 * @author Unkown
 	 * @todo check for randomness, optionally generate type 1 and type 5 UUIDs, use php5-uuid extension if available
 	 */
 	static public function generateUUID() {
@@ -41,7 +40,6 @@ class Algorithms {
 	 *
 	 * @param integer $count Number of bytes to generate
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function generateRandomBytes($count) {
 		$bytes = '';

@@ -62,7 +62,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	/**
 	 * @param CommandManager $commandManager
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectCommandManager(CommandManager $commandManager) {
 		$this->commandManager = $commandManager;
@@ -242,7 +241,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @FLOW3\Internal
 	 * @param \TYPO3\FLOW3\MVC\Exception\CommandException $exception
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function errorCommand(\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
 		$this->outputLine($exception->getMessage());
@@ -262,8 +260,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * added to the commands array of this class.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function buildCommandsIndex() {
 		$availableCommands = $this->commandManager->getAvailableCommands();

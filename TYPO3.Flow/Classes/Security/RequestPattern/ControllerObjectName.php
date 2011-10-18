@@ -31,7 +31,6 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return TRUE;
@@ -41,7 +40,6 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	 * Returns the set pattern
 	 *
 	 * @return string The set pattern
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPattern() {
 		return $this->controllerObjectNamePattern;
@@ -52,7 +50,6 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	 *
 	 * @param string $controllerObjectNamePattern The preg_match() styled controller object name pattern
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setPattern($controllerObjectNamePattern) {
 		$this->controllerObjectNamePattern = $controllerObjectNamePattern;
@@ -64,7 +61,6 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->controllerObjectNamePattern) . '$/', $request->getControllerObjectName());

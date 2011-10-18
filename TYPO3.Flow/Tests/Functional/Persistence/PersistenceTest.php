@@ -32,7 +32,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -44,7 +43,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function entitiesArePersistedAndReconstituted() {
 		$this->removeExampleEntities();
@@ -56,7 +54,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function executingAQueryWillOnlyExecuteItLazily() {
 		$this->removeExampleEntities();
@@ -73,7 +70,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function serializingAQueryResultWillResetCachedResult() {
 		$this->removeExampleEntities();
@@ -87,7 +83,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function resultCanStillBeTraversedAfterSerialization() {
 		$this->removeExampleEntities();
@@ -103,7 +98,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getFirstShouldNotHaveSideEffects() {
 		$this->removeExampleEntities();
@@ -119,7 +113,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aClonedEntityWillGetANewIdentifier() {
 		$testEntity = new TestEntity();
@@ -132,7 +125,6 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function persistedEntitiesLyingInArraysAreNotSerializedButReferencedByTheirIdentifierAndReloadedFromPersistenceOnWakeup() {
 		$testEntityLyingInsideTheArray = new TestEntity();

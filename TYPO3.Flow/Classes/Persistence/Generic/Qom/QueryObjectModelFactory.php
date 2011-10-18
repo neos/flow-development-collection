@@ -31,7 +31,6 @@ class QueryObjectModelFactory {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -43,7 +42,6 @@ class QueryObjectModelFactory {
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1 the first constraint; non-null
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2 the second constraint; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalAnd the And constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function _and(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
@@ -56,7 +54,6 @@ class QueryObjectModelFactory {
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1 the first constraint; non-null
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2 the second constraint; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalOr the Or constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function _or(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
@@ -68,7 +65,6 @@ class QueryObjectModelFactory {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint the constraint to be negated; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalNot the Not constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function not(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint) {
@@ -82,7 +78,6 @@ class QueryObjectModelFactory {
 	 * @param string $operator the operator; one of QueryObjectModelConstants.JCR_OPERATOR_*
 	 * @param mixed $operand2 the second operand; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison the constraint; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function comparison(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
@@ -95,7 +90,6 @@ class QueryObjectModelFactory {
 	 * @param string $propertyName the property name; non-null
 	 * @param string $selectorName the selector name; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\PropertyValue the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function propertyValue($propertyName, $selectorName = '') {
@@ -107,7 +101,6 @@ class QueryObjectModelFactory {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand the operand whose value is converted to a lower-case string; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LowerCase the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function lowerCase(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {
@@ -119,7 +112,6 @@ class QueryObjectModelFactory {
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand the operand whose value is converted to a upper-case string; non-null
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\UpperCase the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function upperCase(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {

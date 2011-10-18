@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
 class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -27,7 +26,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setCacheThrowsExceptionOnNonWritableDirectory() {
@@ -44,7 +42,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCacheDirectoryReturnsTheCurrentCacheDirectory() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -66,7 +63,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aDedicatedCacheDirectoryIsUsedForCodeCaches() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
@@ -86,7 +82,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsExceptionIfDataIsNotAString() {
@@ -103,7 +98,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setReallySavesToTheSpecifiedDirectory() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -130,7 +124,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setOverwritesAnAlreadyExistingCacheEntryForTheSameIdentifier() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -159,7 +152,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAlsoSavesSpecifiedTags() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -187,7 +179,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength() {
 		$cacheIdentifier = 'UnitTestCache';
@@ -209,7 +200,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getReturnsContentOfTheCorrectCacheFile() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -237,7 +227,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getReturnsFalseForExpiredEntries() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -257,7 +246,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsTrueIfAnEntryExists() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
@@ -282,7 +270,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsFalseForExpiredEntries() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
@@ -294,7 +281,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 *
 	 */
 	public function removeReallyRemovesACacheEntry() {
@@ -321,7 +307,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function invalidEntryIdentifiers() {
 		return array(
@@ -344,7 +329,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidEntryIdentifiers
 	 * @expectedException InvalidArgumentException
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setThrowsExceptionForInvalidIdentifier($identifier) {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -365,7 +349,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidEntryIdentifiers
 	 * @expectedException InvalidArgumentException
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function getThrowsExceptionForInvalidIdentifier($identifier) {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -386,7 +369,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidEntryIdentifiers
 	 * @expectedException InvalidArgumentException
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function hasThrowsExceptionForInvalidIdentifier($identifier) {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
@@ -398,7 +380,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidEntryIdentifiers
 	 * @expectedException InvalidArgumentException
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function removeThrowsExceptionForInvalidIdentifier($identifier) {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -419,7 +400,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidEntryIdentifiers
 	 * @expectedException InvalidArgumentException
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function requireOnceThrowsExceptionForInvalidIdentifier($identifier) {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -438,7 +418,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -467,7 +446,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findIdentifiersByTagReturnsEmptyArrayForExpiredEntries() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -492,7 +470,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushRemovesAllCacheEntries() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
@@ -521,7 +498,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('findIdentifiersByTag', 'remove'), array(), '', FALSE);
@@ -536,7 +512,6 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function collectGarbageRemovesExpiredCacheEntries() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);

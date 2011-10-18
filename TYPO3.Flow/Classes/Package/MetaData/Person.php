@@ -43,7 +43,6 @@ class Person extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 	 * @param string $website
 	 * @param string $company
 	 * @param string $repositoryUserName
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($role, $name, $email = NULL, $website = NULL, $company = NULL, $repositoryUserName = NULL) {
 		parent::__construct($role, $name, $email, $website);
@@ -54,7 +53,6 @@ class Person extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 
 	/**
 	 * @return string The company of the person
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getCompany() {
 		return $this->company;
@@ -62,7 +60,6 @@ class Person extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 
 	/**
 	 * @return string The repository username
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getRepositoryUserName() {
 		return $this->repositoryUserName;
@@ -70,7 +67,6 @@ class Person extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 
 	/**
 	 * @return string Party type "person"
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyType() {
 		return \TYPO3\FLOW3\Package\MetaDataInterface::PARTY_TYPE_PERSON;

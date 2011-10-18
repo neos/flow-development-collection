@@ -35,7 +35,6 @@ class Arguments extends \ArrayObject {
 	 * @param mixed $value The argument.
 	 * @return void
 	 * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function offsetSet($offset, $value) {
@@ -52,7 +51,6 @@ class Arguments extends \ArrayObject {
 	 * @param mixed $value The value
 	 * @return void
 	 * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function append($value) {
@@ -65,8 +63,6 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @param mixed $offset Offset
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function offsetUnset($offset) {
@@ -84,7 +80,6 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @param mixed $offset Offset
 	 * @return boolean
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function offsetExists($offset) {
@@ -98,7 +93,6 @@ class Arguments extends \ArrayObject {
 	 * @param mixed $offset Offset
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument The requested argument object
 	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchArgumentException if the argument does not exist
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function offsetGet($offset) {
@@ -117,7 +111,6 @@ class Arguments extends \ArrayObject {
 	 * @param boolean $isRequired TRUE if this argument should be marked as required
 	 * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==FALSE
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument The new argument
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function addNewArgument($name, $dataType = 'string', $isRequired = TRUE, $defaultValue = NULL) {
@@ -138,7 +131,6 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Controller\Argument $argument The argument to add
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function addArgument(\TYPO3\FLOW3\MVC\Controller\Argument $argument) {
@@ -151,7 +143,6 @@ class Arguments extends \ArrayObject {
 	 * @param string $argumentName Name of the argument to retrieve
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument
 	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getArgument($argumentName) {
@@ -164,7 +155,6 @@ class Arguments extends \ArrayObject {
 	 * @param string $argumentName Name of the argument to check for
 	 * @return boolean TRUE if such an argument exists, otherwise FALSE
 	 * @see offsetExists()
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function hasArgument($argumentName) {
@@ -175,7 +165,6 @@ class Arguments extends \ArrayObject {
 	 * Returns the names of all arguments contained in this object
 	 *
 	 * @return array Argument names
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getArgumentNames() {
@@ -186,7 +175,6 @@ class Arguments extends \ArrayObject {
 	 * Returns the short names of all arguments contained in this object that have one.
 	 *
 	 * @return array Argument short names
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getArgumentShortNames() {
@@ -204,8 +192,6 @@ class Arguments extends \ArrayObject {
 	 * @param string $methodName Name of the method
 	 * @param array $arguments Method arguments
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) !== 'set') throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
@@ -230,7 +216,6 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @param string $argumentName argument name
 	 * @return string long argument name or empty string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function translateToLongArgumentName($argumentName) {
 		if (in_array($argumentName, $this->getArgumentNames())) return $argumentName;
@@ -244,7 +229,6 @@ class Arguments extends \ArrayObject {
 	 * Remove all arguments and resets this object
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function removeAll() {
 		foreach ($this->argumentNames as $argumentName => $booleanValue) {
@@ -257,7 +241,6 @@ class Arguments extends \ArrayObject {
 	 * Get all property mapping / validation errors
 	 *
 	 * @return \TYPO3\FLOW3\Error\Result
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getValidationResults() {
 		$results = new \TYPO3\FLOW3\Error\Result();

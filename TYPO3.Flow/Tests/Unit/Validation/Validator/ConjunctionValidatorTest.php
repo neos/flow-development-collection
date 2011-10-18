@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
 class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingValidatorsToAJunctionValidatorWorks() {
 		$proxyClassName = $this->buildAccessibleProxy('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator');
@@ -31,9 +30,6 @@ class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function allValidatorsInTheConjunctionAreCalledEvenIfOneReturnsError() {
 		$validatorConjunction = new \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator(array());
@@ -57,7 +53,6 @@ class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function validatorConjunctionReturnsNoErrorsIfAllJunctionedValidatorsReturnNoErrors() {
 		$validatorConjunction = new \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator(array());
@@ -75,8 +70,6 @@ class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validatorConjunctionReturnsErrorsIfOneValidatorReturnsErrors() {
 		$validatorConjunction = new \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator(array());
@@ -94,7 +87,6 @@ class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removingAValidatorOfTheValidatorConjunctionWorks() {
 		$validatorConjunction = $this->getAccessibleMock('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', array('dummy'), array(array()), '', TRUE);
@@ -113,7 +105,6 @@ class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException
 	 */
 	public function removingANotExistingValidatorIndexThrowsException() {
@@ -124,7 +115,6 @@ class ConjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function countReturnesTheNumberOfValidatorsContainedInTheConjunction() {
 		$validatorConjunction = new \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator(array());

@@ -71,7 +71,6 @@ class ValidatorResolver {
 	 * Constructs the validator resolver
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the compomenent manager
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -82,7 +81,6 @@ class ValidatorResolver {
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -96,8 +94,6 @@ class ValidatorResolver {
 	 * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
 	 * @param array $validatorOptions Options to be passed to the validator
 	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorResolver Validator Resolver or NULL if none found.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createValidator($validatorType, array $validatorOptions = array()) {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
@@ -127,7 +123,6 @@ class ValidatorResolver {
 	 *
 	 * @param string $targetClassName Fully qualified class name of the target class, ie. the class which should be validated
 	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
-	 * @author Robert Lemke <robert@typo3.org
 	 */
 	public function getBaseValidatorConjunction($targetClassName) {
 		$targetClassName = trim($targetClassName, ' \\');
@@ -145,9 +140,6 @@ class ValidatorResolver {
 	 * @param string $className
 	 * @param string $methodName
 	 * @return array An Array of ValidatorConjunctions for each method parameters.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
@@ -204,7 +196,6 @@ class ValidatorResolver {
 	 * @param array $objectPath The object path
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $propertyValidator The validator which should be added to the property specified by objectPath
 	 * @return \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildSubObjectValidator(array $objectPath, \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $propertyValidator) {
 		$rootObjectValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\GenericObjectValidator');
@@ -239,9 +230,6 @@ class ValidatorResolver {
 	 *
 	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildBaseValidatorConjunction($targetClassName) {
 		$conjunctionValidator = $this->objectManager->get('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator');
@@ -292,7 +280,6 @@ class ValidatorResolver {
 	 *
 	 * @param string $validatorType Either the fully qualified class name of the validator or the short name of a built-in validator
 	 * @return string Name of the validator object or FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValidatorObjectName($validatorType) {
 		$validatorType = ltrim($validatorType, '\\');
@@ -314,8 +301,6 @@ class ValidatorResolver {
 	 *
 	 * @param string $type Data type to unify
 	 * @return string unified data type
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getValidatorType($type) {
 		switch ($type) {

@@ -28,7 +28,6 @@ class Functions {
 	 *
 	 * @param  string $str The string to convert
 	 * @return string The converted string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function strtotitle($str) {
@@ -47,7 +46,6 @@ class Functions {
 	 * @param  integer $start Position of the left boundary
 	 * @param  integer $length (optional) Length of the returned string
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function substr($string, $start, $length = NULL) {
@@ -72,7 +70,6 @@ class Functions {
 	 *
 	 * @param  string $string The string to uppercase
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function strtoupper($string) {
@@ -84,7 +81,6 @@ class Functions {
 	 *
 	 * @param  string $string The string to lowercase
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function strtolower($string) {
@@ -96,7 +92,6 @@ class Functions {
 	 *
 	 * @param  string $string The string to count the characters of
 	 * @return string The number of characters
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function strlen($string) {
@@ -108,7 +103,6 @@ class Functions {
 	 *
 	 * @param  string $string The string whose first letter should be uppercased
 	 * @return string The same string, first character uppercased
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	static public function ucfirst($string) {
@@ -120,7 +114,6 @@ class Functions {
 	 *
 	 * @param  string $string The string whose first letter should be lowercased
 	 * @return string The same string, first character lowercased
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	static public function lcfirst($string) {
@@ -134,7 +127,6 @@ class Functions {
 	 * @param string $needle UTF-8 string to search for
 	 * @param integer $offset Positition to start the search
 	 * @return integer The character position
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	static public function strpos($haystack,$needle,$offset=0) {

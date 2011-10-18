@@ -63,7 +63,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
 	 * @param \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(AuthenticationProviderResolver $providerResolver, \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
 		$this->providerResolver = $providerResolver;
@@ -75,7 +74,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @param array $settings The settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
 		if (!isset($settings['security']['authentication']['providers'])) return;
@@ -89,7 +87,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The security context of the current request
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setSecurityContext(\TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
@@ -99,7 +96,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * Returns the security context
 	 *
 	 * @return \TYPO3\FLOW3\Security\Context $securityContext The security context of the current request
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSecurityContext() {
 		return $this->securityContext;
@@ -110,7 +106,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokens() {
 		return $this->tokens;
@@ -127,7 +122,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 * @FLOW3\Session(autoStart=true)
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate() {
 		$anyTokenAuthenticated = FALSE;
@@ -201,7 +195,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @param array $providerConfigurations The configured provider settings
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations) {
 		foreach ($providerConfigurations as $providerName => $providerConfiguration) {

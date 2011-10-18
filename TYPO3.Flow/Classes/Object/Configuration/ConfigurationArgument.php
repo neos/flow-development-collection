@@ -54,7 +54,6 @@ class ConfigurationArgument {
 	 * @param string $index Index of the argument
 	 * @param mixed $value Value of the argument
 	 * @param integer $type Type of the argument - one of the argument_TYPE_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
 		$this->set($index, $value, $type);
@@ -67,7 +66,6 @@ class ConfigurationArgument {
 	 * @param mixed $value Value of the argument
 	 * @param integer $type Type of the argument - one of the ARGUMENT_TYPE_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
 		$this->index = $index;
@@ -79,7 +77,6 @@ class ConfigurationArgument {
 	 * Returns the index (position) of the argument
 	 *
 	 * @return string Index of the argument
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndex() {
 		return $this->index;
@@ -89,7 +86,6 @@ class ConfigurationArgument {
 	 * Returns the value of the argument
 	 *
 	 * @return mixed Value of the argument
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValue() {
 		return $this->value;
@@ -99,7 +95,6 @@ class ConfigurationArgument {
 	 * Returns the type of the argument
 	 *
 	 * @return integer Type of the argument - one of the ARGUMENT_TYPES_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getType() {
 		return $this->type;
@@ -110,7 +105,6 @@ class ConfigurationArgument {
 	 *
 	 * @param integer $autowiring One of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAutowiring($autowiring) {
 		$this->autowiring = $autowiring;
@@ -120,7 +114,6 @@ class ConfigurationArgument {
 	 * Returns the autowiring mode for this argument
 	 *
 	 * @return integer Value of one of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;

@@ -42,7 +42,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
 		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -61,7 +60,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return object but only mocks
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function objectManagerCallBack() {
 		$arguments = func_get_args();
@@ -75,7 +73,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setNameCorrectlySetsRouteName() {
 		$this->route->setName('SomeName');
@@ -85,7 +82,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingUriPatternResetsRoute() {
 		$this->route->_set('isParsed', TRUE);
@@ -96,7 +92,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routePartHandlerIsInstantiated() {
 		$this->route->setUriPattern('{key1}/{key2}');
@@ -116,7 +111,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingInvalidRoutePartHandlerThrowsException() {
 		$this->route->setUriPattern('{key1}/{key2}');
@@ -135,7 +129,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function ifAnObjectTypeIsSpecifiedTheIdentityRoutePartHandlerIsInstantiated() {
 		$this->route->setUriPattern('{key1}');
@@ -155,7 +148,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parseSetsUriPatternOfIdentityRoutePartIfSpecified() {
 		$this->route->setUriPattern('{key1}');
@@ -176,7 +168,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithTrailingSlashThrowsException() {
 		$this->route->setUriPattern('some/uri/pattern/');
@@ -186,7 +177,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithLeadingSlashThrowsException() {
 		$this->route->setUriPattern('/some/uri/pattern');
@@ -196,7 +186,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithSuccessiveDynamicRoutepartsThrowsException() {
 		$this->route->setUriPattern('{key1}{key2}');
@@ -206,7 +195,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithSuccessiveOptionalSectionsThrowsException() {
 		$this->route->setUriPattern('(foo/bar)(/bar/foo)');
@@ -216,7 +204,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithUnterminatedOptionalSectionsThrowsException() {
 		$this->route->setUriPattern('foo/(bar');
@@ -226,7 +213,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithUnopenedOptionalSectionsThrowsException() {
 		$this->route->setUriPattern('foo)/bar');
@@ -239,7 +225,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRequestPathIsNull() {
 		$this->route->setUriPattern('');
@@ -249,7 +234,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchEmptyRequestPathIfUriPatternIsNotSet() {
 		$this->assertFalse($this->route->matches(''), 'Route should not match if no URI Pattern is set.');
@@ -257,7 +241,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRequestPathIsDifferentFromStaticUriPattern() {
 		$this->route->setUriPattern('foo/bar');
@@ -267,7 +250,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfOneSegmentOfRequestPathIsDifferentFromItsRespectiveStaticUriPatternSegment() {
 		$this->route->setUriPattern('foo/{bar}');
@@ -277,7 +259,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesEmptyRequestPathIfUriPatternIsEmpty() {
 		$this->route->setUriPattern('');
@@ -287,7 +268,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesIfRequestPathIsEqualToStaticUriPattern() {
 		$this->route->setUriPattern('foo/bar');
@@ -297,7 +277,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRequestPathIsEqualToStaticUriPatternWithoutSlashes() {
 		$this->route->setUriPattern('required1/required2');
@@ -307,7 +286,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesIfStaticSegmentsMatchAndASegmentExistsForAllDynamicUriPartSegments() {
 		$this->route->setUriPattern('foo/{bar}');
@@ -317,7 +295,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getMatchResultsReturnsCorrectResultsAfterSuccessfulMatch() {
 		$this->route->setUriPattern('foo/{bar}');
@@ -328,7 +305,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticAndDynamicRoutesCanBeMixedInAnyOrder() {
 		$this->route->setUriPattern('{key1}/foo/{key2}/bar');
@@ -340,7 +316,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternSegmentCanContainTwoDynamicRouteParts() {
 		$this->route->setUriPattern('user/{firstName}-{lastName}');
@@ -352,7 +327,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternSegmentsCanContainMultipleDynamicRouteParts() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
@@ -364,7 +338,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRoutePartDoesNotMatchAndDefaultValueIsSet() {
 		$this->route->setUriPattern('{foo}');
@@ -375,7 +348,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDefaultsAllowsToSetTheDefaultPackageControllerAndActionName() {
 		$this->route->setUriPattern('SomePackage');
@@ -396,7 +368,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function registeredRoutePartHandlerIsInvokedWhenCallingMatch() {
 		$this->route->setUriPattern('{key1}/{key2}');
@@ -419,7 +390,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider()
 	 * @param boolean $shouldThrowException
 	 * @param mixed $routePartValue
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchesThrowsExceptionIfRoutePartValueContainsObjects($shouldThrowException, $routePartValue) {
 		if ($shouldThrowException === TRUE) {
@@ -453,7 +423,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchesRecursivelyMergesMatchResults() {
 		$mockRoutePart1 = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RoutePartInterface');
@@ -487,7 +456,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesEmptyRequestPathIfUriPatternContainsOneOptionalStaticRoutePart() {
 		$this->route->setUriPattern('(optional)');
@@ -497,7 +465,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsOneOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('required(optional)');
@@ -507,7 +474,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsOneRequiredAndOneOptionalStaticRoutePart() {
 		$this->route->setUriPattern('required(optional)');
@@ -517,7 +483,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsOneOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('(optional)required');
@@ -527,7 +492,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsTwoOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('(optional)required(optional2)');
@@ -537,7 +501,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsTwoOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('(optional)required(optional2)');
@@ -547,7 +510,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchEmptyRequestPathIfUriPatternContainsOneOptionalDynamicRoutePartWithoutDefaultValue() {
 		$this->route->setUriPattern('({optional})');
@@ -557,7 +519,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesEmptyRequestPathIfUriPatternContainsOneOptionalDynamicRoutePartWithDefaultValue() {
 		$this->route->setUriPattern('({optional})');
@@ -568,7 +529,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchRequestPathContainingNoneOfTheOptionalRoutePartsIfNoDefaultsAreSet() {
 		$this->route->setUriPattern('page(.{@format})');
@@ -578,7 +538,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchRequestPathContainingOnlySomeOfTheOptionalRouteParts() {
 		$this->route->setUriPattern('page(.{@format})');
@@ -589,7 +548,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathContainingNoneOfTheOptionalRouteParts() {
 		$this->route->setUriPattern('page(.{@format})');
@@ -600,7 +558,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathContainingAllOfTheOptionalRouteParts() {
 		$this->route->setUriPattern('page(.{@format})');
@@ -611,7 +568,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required(/optional1/optional2)');
@@ -621,7 +577,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchRequestPathWithRequiredAndOnlyOneOptionalPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required(/optional1/optional2)');
@@ -631,7 +586,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchRequestPathWithAllPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required(/optional1/optional2)');
@@ -641,7 +595,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required1(/optional1/optional2)/required2');
@@ -651,7 +604,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchRequestPathWithOnlyOneOptionalPartIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required1/(optional1/optional2/)required2');
@@ -661,7 +613,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required1/(optional1/optional2/)required2');
@@ -671,7 +622,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('(optional1/optional2/)required1/required2');
@@ -681,7 +631,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchRequestPathWithOnlyOneOptionalPartIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('(optional1/optional2/)required1/required2');
@@ -691,7 +640,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('(optional1/optional2/)required1/required2');
@@ -701,7 +649,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRoutePartDoesNotMatchAndIsOptionalButHasNoDefault() {
 		$this->route->setUriPattern('({foo})');
@@ -711,7 +658,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeMatchesIfRoutePartDoesNotMatchButIsOptionalAndHasDefault() {
 		$this->route->setUriPattern('({foo})');
@@ -722,7 +668,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function defaultValuesAreSetForUriPatternSegmentsWithMultipleOptionalRouteParts() {
 		$this->route->setUriPattern('{key1}-({key2})/({key3}).({key4}.{@format})');
@@ -744,7 +689,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 
 	public function matchingRouteIsProperlyResolved() {
@@ -758,7 +702,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function byDefaultRouteDoesNotResolveIfUriPatternContainsLessValuesThanAreSpecified() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
@@ -770,7 +713,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeAlwaysAppendsExceedingInternalArguments() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
@@ -783,7 +725,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeAppendsAllAdditionalQueryParametersIfUriPatternContainsLessValuesThanAreSpecifiedIfAppendExceedingArgumentsIsTrue() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
@@ -797,7 +738,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeCanBeResolvedIfASpecifiedValueIsEqualToItsDefaultValue() {
 		$this->route->setUriPattern('');
@@ -809,7 +749,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesAppendsDefaultValuesOfOptionalUriPartsToMatchingUri() {
 		$this->route->setUriPattern('foo(/{bar}/{baz})');
@@ -824,7 +763,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesLowerCasesMatchingUriByDefault() {
 		$this->route->setUriPattern('CamelCase/{someKey}');
@@ -836,7 +774,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesKeepsCaseOfResolvedUriIfToLowerCaseIsFalse() {
 		$this->route->setUriPattern('CamelCase/{someKey}');
@@ -849,7 +786,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeCantBeResolvedIfASpecifiedValueIsNotEqualToItsDefaultValue() {
 		$this->route->setUriPattern('');
@@ -861,7 +797,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @todo mock object factory
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
@@ -880,7 +815,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function registeredRoutePartHandlerIsInvokedWhenCallingResolve() {
 		$this->route->setUriPattern('{key1}/{key2}');
@@ -901,7 +835,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesReturnsFalseIfNotAllRouteValuesCanBeResolved() {
 		$this->route->setUriPattern('foo');
@@ -912,7 +845,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesAppendsRemainingRouteValuesToMatchingUriIfAppendExceedingArgumentsIsTrue() {
 		$this->route->setUriPattern('foo');
@@ -930,7 +862,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesConvertsDomainObjectsToIdentityArrays() {
 		$object1 = new \stdClass();
@@ -960,7 +891,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesReturnsAnExceptionIfTargetControllerDoesNotExist() {
 		$this->route->setUriPattern('');
@@ -976,7 +906,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesReturnsTrueIfTargetControllerExists() {
 		$this->route->setUriPattern('{@package}/{@subpackage}/{@controller}');
@@ -993,7 +922,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartValueException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesThrowsExceptionIfRoutePartValueIsNoString() {
 		$mockRoutePart = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RoutePartInterface');
@@ -1010,7 +938,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartValueException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesThrowsExceptionIfRoutePartDefaultValueIsNoString() {
 		$mockRoutePart = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RoutePartInterface');
@@ -1026,7 +953,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesCallsCompareAndRemoveMatchingDefaultValues() {
 		$defaultValues = array('foo' => 'bar');
@@ -1058,7 +984,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param array $routeValues
 	 * @param array $expectedModifiedRouteValues
 	 * @param boolean $expectedResult
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function compareAndRemoveMatchingDefaultValuesTests(array $defaults, array $routeValues, $expectedModifiedRouteValues, $expectedResult) {
 		$actualResult = $this->route->_callRef('compareAndRemoveMatchingDefaultValues', $defaults, $routeValues);
@@ -1089,7 +1014,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parseSetsDefaultValueOfRouteParts() {
 		$this->route->setUriPattern('{key1}');
@@ -1114,7 +1038,6 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parseSetsDefaultValueOfRoutePartsRecursively() {
 		$this->route->setUriPattern('{foo.bar}');

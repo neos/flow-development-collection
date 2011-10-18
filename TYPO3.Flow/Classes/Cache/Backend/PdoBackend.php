@@ -51,7 +51,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $DSN The DSN to use for connecting to the DB
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setDataSourceName($DSN) {
@@ -63,7 +62,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $username The username to use for connecting to the DB
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setUsername($username) {
@@ -75,7 +73,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $password The password to use for connecting to the DB
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setPassword($password) {
@@ -85,7 +82,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Initialize the cache backend.
 	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @return void
 	 */
 	public function initializeObject() {
@@ -103,7 +99,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
 	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -132,7 +127,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -146,7 +140,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -162,7 +155,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -179,7 +171,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function flush() {
@@ -195,7 +186,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -212,7 +202,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
@@ -225,7 +214,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Does garbage collection
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function collectGarbage() {
@@ -240,7 +228,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Returns an SQL statement that evaluates to true if the entry is not expired.
 	 *
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getNotExpiredStatement() {
 		return ' AND ("lifetime" = 0 OR "created" + "lifetime" >= ' . time() . ')';
@@ -250,7 +237,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Connect to the database
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function connect() {
 		try {
@@ -276,7 +262,6 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Persistence\Exception if something goes wrong
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createCacheTables() {
 		try {

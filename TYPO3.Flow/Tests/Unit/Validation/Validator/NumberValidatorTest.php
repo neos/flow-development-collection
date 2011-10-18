@@ -30,7 +30,6 @@ class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -42,8 +41,6 @@ class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$sampleInvalidNumber = 'this is not a number';
@@ -58,7 +55,6 @@ class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsFalseForIncorrectValues() {
 		$sampleInvalidNumber = 'this is not a number';

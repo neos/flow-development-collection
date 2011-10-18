@@ -27,7 +27,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function adviceRecoversFromException() {
 		$targetClass = new Fixtures\TargetClass01();
@@ -39,7 +38,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function resultOfGreetMethodIsModifiedBySpecialNameAdvice() {
 		$targetClass = new Fixtures\TargetClass01();
@@ -49,7 +47,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function containWithSplObjectStorageInRuntimeEvaluation() {
 		$targetClass = new Fixtures\TargetClass01();
@@ -67,7 +64,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorAdvicesAreInvoked() {
 		$targetClass = new Fixtures\TargetClass01();
@@ -76,7 +72,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized() {
 		$className = 'TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01';
@@ -86,7 +81,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function afterReturningAdviceIsTakingEffect() {
 		$targetClass = new Fixtures\TargetClass02();
@@ -103,7 +97,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * Test for bugfix #25610
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function codeAfterTheAopCodeInTheProxyMethodIsOnlyCalledOnce() {
 		$targetClass = new Fixtures\TargetClass01();
@@ -117,7 +110,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * Test for bugfix #2581
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function protectedMethodsCanAlsoBeAdviced() {
 		$targetClass = new Fixtures\TargetClass02();
@@ -127,7 +119,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function resultOfGreetObjectMethodIsModifiedByAdvice() {
 		$targetClass = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
@@ -139,7 +130,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function thisIsSupportedInMethodRuntimeCondition() {
 		$targetClass = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
@@ -154,7 +144,6 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function globalObjectsAreSupportedInMethodRuntimeCondition() {
 		$targetClass = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');

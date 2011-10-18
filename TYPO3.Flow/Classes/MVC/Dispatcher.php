@@ -70,7 +70,6 @@ class Dispatcher {
 	 *
 	 * @param array $settings The FLOW3 settings
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -82,8 +81,6 @@ class Dispatcher {
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to dispatch
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, to be modified by the controller
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatch(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
 		$dispatchLoopCount = 0;
@@ -121,8 +118,6 @@ class Dispatcher {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to dispatch
 	 * @return \TYPO3\FLOW3\MVC\Controller\ControllerInterface
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveController(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$exception = NULL;

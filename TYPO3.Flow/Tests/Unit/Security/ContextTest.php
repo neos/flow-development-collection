@@ -21,7 +21,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function currentRequestIsSetInTheSecurityContext() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -71,7 +70,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeSeparatesActiveAndInactiveTokens() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -96,7 +94,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeUpdatesAndSeparatesActiveAndInactiveTokensCorrectly() {
 		$settings = array();
@@ -170,7 +167,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function securityContextCallsTheAuthenticationManagerToSetItsTokens() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -195,7 +191,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function tokenFromAnAuthenticationManagerIsReplacedIfThereIsOneOfTheSameTypeInTheSession() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -241,7 +236,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeCallsUpdateCredentialsOnAllActiveTokens() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -283,7 +277,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectAuthenticationManagerSetsAReferenceToTheSecurityContextInTheAuthenticationManager() {
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('dummy'));
@@ -297,7 +290,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider for authentication strategy settings
 	 *
 	 * @return array
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function authenticationStrategies() {
 		$data = array();
@@ -317,8 +309,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider authenticationStrategies()
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function authenticationStrategyIsSetCorrectlyFromConfiguration($settings, $expectedAuthenticationStrategy) {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -342,7 +332,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsTheCorrectRoles() {
 		$settings = array();
@@ -410,7 +399,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesTakesInheritanceOfRolesIntoAccount() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -473,7 +461,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsTheEverybodyRoleEvenIfNoTokenIsAuthenticated() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -507,7 +494,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesAddsTheEverybodyRoleToTheRolesFromTheAuthenticatedTokens() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -556,7 +542,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRoleWorks() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -588,7 +573,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRoleReturnsTrueForTheEverybodyRoleIfNoOtherRoleIsAuthenticated() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -617,7 +601,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRoleReturnsFalseForTheEverybodyRoleIfAtLeastOneOtherRoleIsAuthenticated() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -648,7 +631,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPartyAsksTheCorrectAuthenticationTokenAndReturnsItsParty() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -689,7 +671,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAccountReturnsTheAccountAttachedToTheFirstAuthenticatedToken() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -726,7 +707,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyByTypeReturnsTheFirstAuthenticatedPartyWithGivenType() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -769,7 +749,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAccountByAuthenticationProviderNameReturnsTheAuthenticatedAccountWithGivenProviderName() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -807,7 +786,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAccountByAuthenticationProviderNameReturnsNullIfNoAccountFound() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -831,7 +809,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCsrfProtectionTokenReturnsANewTokenIfNoneIsPresentInTheContext() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -855,7 +832,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCsrfProtectionTokenReturnsANewTokenIfTheCsrfStrategyIsOnePerUri() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -882,7 +858,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContext() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
@@ -909,7 +884,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContextAndUnsetsItIfTheCsrfStrategyIsOnePerUri() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');

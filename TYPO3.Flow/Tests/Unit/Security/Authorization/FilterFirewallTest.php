@@ -20,7 +20,6 @@ class FilterFirewallTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function configuredFiltersAreCreatedCorrectly() {
 		$resolveRequestPatternClassCallback = function() {
@@ -90,7 +89,6 @@ class FilterFirewallTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function allConfiguredFiltersAreCalled() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -111,7 +109,6 @@ class FilterFirewallTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 */
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {

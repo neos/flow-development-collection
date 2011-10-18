@@ -50,7 +50,6 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function entitiesWithinAggregateAreRemovedAutomaticallyWithItsRootEntity() {
 		$image = new Image();
@@ -74,7 +73,6 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function entitiesWithOwnRepositoryAreNotRemovedIfRelatedRootEntityIsRemoved() {
 		$comment = new Comment();

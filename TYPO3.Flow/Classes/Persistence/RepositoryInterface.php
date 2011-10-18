@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Persistence;
 /**
  * Contract for a repository
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface RepositoryInterface {

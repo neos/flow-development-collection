@@ -30,7 +30,6 @@ class MethodReflection extends \ReflectionMethod {
 	 * Returns the declaring class
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
 		return new ClassReflection(parent::getDeclaringClass()->getName());
@@ -42,7 +41,6 @@ class MethodReflection extends \ReflectionMethod {
 	 * orginal ReflectionParameter instances.
 	 *
 	 * @return array of \TYPO3\FLOW3\Reflection\ParameterReflection Parameter reflection objects of the parameters of this method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParameters() {
 		$extendedParameters = array();
@@ -67,7 +65,6 @@ class MethodReflection extends \ReflectionMethod {
 	 * Returns an array of tags and their values
 	 *
 	 * @return array Tags and values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
 		return $this->getDocCommentParser()->getTagsValues();
@@ -78,7 +75,6 @@ class MethodReflection extends \ReflectionMethod {
 	 *
 	 * @param string $tag Tag name to check for
 	 * @return array Values of the given tag
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {
 		return $this->getDocCommentParser()->getTagValues($tag);
@@ -88,7 +84,6 @@ class MethodReflection extends \ReflectionMethod {
 	 * Returns the description part of the doc comment
 	 *
 	 * @return string Doc comment description
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getDescription() {
 		return $this->getDocCommentParser()->getDescription();
@@ -99,7 +94,6 @@ class MethodReflection extends \ReflectionMethod {
 	 * runs the parse() method.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

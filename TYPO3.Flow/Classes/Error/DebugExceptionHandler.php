@@ -25,7 +25,6 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		set_exception_handler(array($this, 'handleException'));
@@ -36,7 +35,6 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 *
 	 * @param  \Exception $exception The exception object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		if (!headers_sent()) {
@@ -116,7 +114,6 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 *
 	 * @param \Exception $exception The exception object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function echoExceptionCli(\Exception $exception) {
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
@@ -178,7 +175,6 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 *
 	 * @param Exception $exception
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getCreateIssueLink(\Exception $exception) {
 		$filename = basename($exception->getFile());

@@ -21,7 +21,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestWillThrowAnExceptionIfTheGivenRequestIsNotSupported() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -34,7 +33,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestSetsTheDispatchedFlagOfTheRequestAndBuildsTheControllerContext() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -53,8 +51,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function forwardThrowsAStopActionException() {
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
@@ -74,8 +70,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
 		$arguments = array('foo' => 'bar');
@@ -99,9 +93,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function forwardResetsArguments() {
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
@@ -122,7 +113,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function forwardSetsSubpackageKeyIfNeeded() {
 		$arguments = array('foo' => 'bar');
@@ -148,7 +138,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function forwardResetsSubpackageKeyIfNeeded() {
 		$arguments = array('foo' => 'bar');
@@ -174,7 +163,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function forwardRemovesObjectsFromArgumentsBeforePassingThemToRequest() {
 		$originalArguments = array('foo' => 'bar', 'bar' => array('someObject' => new \stdClass()));
@@ -198,9 +186,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function redirectRedirectsToTheSpecifiedAction() {
 		$arguments = array('foo' => 'bar');
@@ -221,7 +206,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function redirectUsesRequestFormatAsDefault() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -239,7 +223,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function redirectUsesGivenFormat() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -257,7 +240,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function redirectToUriSetsStatus() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -276,7 +258,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function redirectToUriUsesLocationHeaderOnlyIfDelayIsZero() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -295,7 +276,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
@@ -313,7 +293,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeControllerArgumentsBaseValidatorsRegistersValidatorsDeclaredInTheArgumentModels() {
 		$mockValidators = array(
@@ -344,7 +323,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function mapRequestArgumentsToControllerArgumentsShouldPutRequestDataToArgumentObject() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -376,7 +354,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\MVC\Exception\RequiredArgumentMissingException
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function mapRequestArgumentsToControllerArgumentsShouldThrowExceptionIfRequiredArgumentWasNotSet() {
 		$argumentFoo = $this->getMock('TYPO3\FLOW3\MVC\Controller\Argument', array('setValue'), array('foo', 'string'));
@@ -398,7 +375,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function addFlashMessageCreatesMessageByDefaultAndAddsItToFlashMessageContainer() {
 		$expectedMessage = new \TYPO3\FLOW3\Error\Message('MessageBody');
@@ -412,7 +388,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function addFlashMessageDataProvider() {
 		return array(
@@ -442,7 +417,6 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider addFlashMessageDataProvider()
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = \TYPO3\FLOW3\Error\Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = NULL) {
 		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\FlashMessageContainer');

@@ -20,7 +20,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @expectedException \InvalidArgumentException
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setChecksIfTheIdentifierIsValid() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
@@ -30,7 +29,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPassesSerializedStringToBackend() {
 		$theString = 'Just some value';
@@ -43,7 +41,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPassesSerializedArrayToBackend() {
 		$theArray = array('Just some value', 'and another one.');
@@ -56,7 +53,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPassesLifetimeToBackend() {
 		$theString = 'Just some value';
@@ -70,7 +66,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUsesIgBinarySerializeIfAvailable() {
 		if (!extension_loaded('igbinary')) {
@@ -88,7 +83,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFetchesStringValueFromBackend() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
@@ -100,7 +94,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFetchesArrayValueFromBackend() {
 		$theArray = array('Just some value', 'and another one.');
@@ -113,7 +106,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFetchesFalseBooleanValueFromBackend() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
@@ -125,7 +117,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getUsesIgBinaryIfAvailable() {
 		if (!extension_loaded('igbinary')) {
@@ -144,7 +135,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsResultFromBackend() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
@@ -156,7 +146,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function removeCallsBackend() {
 		$cacheIdentifier = 'someCacheIdentifier';
@@ -171,7 +160,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException InvalidArgumentException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTagRejectsInvalidTags() {
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
@@ -183,7 +171,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTagCallsBackend() {
 		$tag = 'sometag';
@@ -200,7 +187,6 @@ class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getByTagUsesIgBinaryIfAvailable() {
 		if (!extension_loaded('igbinary')) {

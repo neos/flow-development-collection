@@ -54,7 +54,6 @@ class Service {
 	/**
 	 * @param array $settings
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -63,7 +62,6 @@ class Service {
 	/**
 	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -72,7 +70,6 @@ class Service {
 	/**
 	 * @param \TYPO3\FLOW3\I18n\LocaleCollection $localeCollection
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectLocaleCollection(\TYPO3\FLOW3\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
@@ -83,7 +80,6 @@ class Service {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -93,8 +89,6 @@ class Service {
 	 * Initializes this locale service
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initialize() {
 		try {
@@ -115,7 +109,6 @@ class Service {
 	 * Returns the default Locale object for this FLOW3 installation.
 	 *
 	 * @return \TYPO3\FLOW3\I18n\Locale The default Locale instance
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function getDefaultLocale() {
@@ -139,7 +132,6 @@ class Service {
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of localized file
 	 * @param bool $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
 	 * @return string Path to the localized file, or $filename when no localized file was found
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function getLocalizedFilename($filename, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $strict = FALSE) {
@@ -185,7 +177,6 @@ class Service {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
 	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
@@ -199,7 +190,6 @@ class Service {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
 	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance on success, NULL on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function findBestMatchingLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
@@ -221,7 +211,6 @@ class Service {
 	 * Note: result of this method invocation is cached
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function generateAvailableLocalesCollectionByScanningFilesystem() {
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {

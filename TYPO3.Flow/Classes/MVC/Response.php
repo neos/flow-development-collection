@@ -31,7 +31,6 @@ class Response implements \TYPO3\FLOW3\MVC\ResponseInterface {
 	 *
 	 * @param string $content The response content
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setContent($content) {
@@ -43,7 +42,6 @@ class Response implements \TYPO3\FLOW3\MVC\ResponseInterface {
 	 *
 	 * @param string $content More response content
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function appendContent($content) {
@@ -54,7 +52,6 @@ class Response implements \TYPO3\FLOW3\MVC\ResponseInterface {
 	 * Returns the response content without sending it.
 	 *
 	 * @return string The response content
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getContent() {
@@ -65,7 +62,6 @@ class Response implements \TYPO3\FLOW3\MVC\ResponseInterface {
 	 * Sends the response
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function send() {
@@ -78,7 +74,6 @@ class Response implements \TYPO3\FLOW3\MVC\ResponseInterface {
 	 * Returns the content of the response.
 	 *
 	 * @return string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function __toString() {

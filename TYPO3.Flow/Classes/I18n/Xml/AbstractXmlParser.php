@@ -34,7 +34,6 @@ abstract class AbstractXmlParser {
 	 *
 	 * @param string $sourcePath An absolute path to XML file
 	 * @return array Parsed XML file
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getParsedData($sourcePath) {
 		if (!isset($this->parsedFiles[$sourcePath])) {
@@ -49,7 +48,6 @@ abstract class AbstractXmlParser {
 	 * @param string $sourcePath An absolute path to XML file
 	 * @return array Parsed XML file
 	 * @throws \TYPO3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseXmlFile($sourcePath) {
 		if (file_exists($sourcePath)) {
@@ -68,7 +66,6 @@ abstract class AbstractXmlParser {
 	 *
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed XML file (structure depends on concrete parser)
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	abstract protected function doParsingFromRoot(\SimpleXMLElement $root);
 }

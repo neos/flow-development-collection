@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
 /**
  * Interface for controllers
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface ControllerInterface {

@@ -19,7 +19,6 @@ class ErrorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theConstructorSetsTheErrorMessageCorrectly() {
 		$errorMessage = 'The message';
@@ -30,7 +29,6 @@ class ErrorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theConstructorSetsTheErrorCodeCorrectly() {
 		$errorCode = 123456789;

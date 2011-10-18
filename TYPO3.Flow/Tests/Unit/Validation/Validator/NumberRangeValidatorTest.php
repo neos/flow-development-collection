@@ -23,7 +23,6 @@ class NumberRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valida
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsNoErrorForASimpleIntegerInRange() {
 		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
@@ -33,7 +32,6 @@ class NumberRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valida
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsErrorForANumberOutOfRange() {
 		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
@@ -42,7 +40,6 @@ class NumberRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valida
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsNoErrorForANumberInReversedRange() {
 		$this->validatorOptions(array('minimum' => 1000, 'maximum' => 0));
@@ -51,7 +48,6 @@ class NumberRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valida
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsErrorForAString() {
 		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));

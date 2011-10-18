@@ -25,7 +25,6 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -34,7 +33,6 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function domainObjectWithSimplePropertiesCanBeCreated() {
 		$source = array(
@@ -51,7 +49,6 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function simpleObjectWithSimplePropertiesCanBeCreated() {
 		$source = array(
@@ -68,7 +65,6 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function valueobjectCanBeMapped() {
 		$source = array(
@@ -84,7 +80,6 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function integerCanBeMappedToString() {
 		$source = array(

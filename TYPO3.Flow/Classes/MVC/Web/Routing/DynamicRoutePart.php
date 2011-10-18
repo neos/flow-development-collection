@@ -40,7 +40,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param string $splitString
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function setSplitString($splitString) {
@@ -55,7 +54,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param string $routePath The request path to be matched - without query parameters, host and fragment.
 	 * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	final public function match(&$routePath) {
 		$this->value = NULL;
@@ -79,7 +77,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param string $routePath The request path to be matched
 	 * @return string value to match, or an empty string if $routePath is empty or split string was not found
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function findValueToMatch($routePath) {
@@ -106,7 +103,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param string $value value to match
 	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function matchValue($value) {
@@ -124,7 +120,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 * @param string $routePath The request path to be matched
 	 * @param string $valueToMatch The matching value
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function removeMatchingPortionFromRequestPath(&$routePath, $valueToMatch) {
@@ -139,7 +134,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
 	 * @return boolean TRUE if current Route Part could be resolved, otherwise FALSE
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	final public function resolve(array &$routeValues) {
 		$this->value = NULL;
@@ -163,7 +157,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
 	 * @return string|array value to resolve.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function findValueToResolve(array $routeValues) {
@@ -177,7 +170,6 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 *
 	 * @param string $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function resolveValue($value) {

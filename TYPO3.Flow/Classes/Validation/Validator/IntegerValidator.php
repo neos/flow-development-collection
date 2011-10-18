@@ -29,7 +29,6 @@ class IntegerValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidat
 	 * @param mixed $value The value that should be validated
 	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	protected function isValid($value) {

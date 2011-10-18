@@ -30,7 +30,6 @@ class ParameterReflection extends \ReflectionParameter {
 	 * Returns the declaring class
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
 		return new ClassReflection(parent::getDeclaringClass()->getName());
@@ -40,8 +39,6 @@ class ParameterReflection extends \ReflectionParameter {
 	 * Returns the parameter class
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The parameter class
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getClass() {
 		try {

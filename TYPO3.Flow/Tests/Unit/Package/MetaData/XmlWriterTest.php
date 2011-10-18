@@ -18,7 +18,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Package\MetaData;
 class XmlWriterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -27,8 +26,6 @@ class XmlWriterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function testWritePackageMetaDataCreatesXml() {
 		$packageMetaDataPath = \vfsStream::url('testDirectory') . '/';

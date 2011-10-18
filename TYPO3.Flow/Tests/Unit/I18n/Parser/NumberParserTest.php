@@ -64,7 +64,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
@@ -78,7 +77,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * not every element is used by every method.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleNumbersEasyToParse() {
 		return array(
@@ -99,7 +97,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * parse them.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function sampleNumbersHardToParse() {
 		return array(
@@ -113,7 +110,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersEasyToParse
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function strictParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
@@ -124,7 +120,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersHardToParse
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function strictParsingReturnsFalseForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
@@ -135,7 +130,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersEasyToParse
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function lenientParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
@@ -146,7 +140,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersHardToParse
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function lenientParsingWorksCorrectlyForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
@@ -157,7 +150,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersEasyToParse
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$mockNumbersReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader');
@@ -174,7 +166,6 @@ class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider sampleNumbersEasyToParse
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$mockNumbersReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader');

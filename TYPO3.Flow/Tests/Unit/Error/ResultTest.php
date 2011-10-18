@@ -42,7 +42,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function addedMessagesShouldBeRetrievableAgain($dataTypeInSingular, $dataTypeInPlural) {
 		$message = $this->getMockMessage($dataTypeInSingular);
@@ -56,7 +55,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getMessageShouldNotBeRecursive($dataTypeInSingular, $dataTypeInPlural) {
 		$message = $this->getMockMessage($dataTypeInSingular);
@@ -70,7 +68,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getFirstMessageShouldReturnFirstMessage($dataTypeInSingular, $dataTypeInPlural) {
 		$message1 = $this->getMockMessage($dataTypeInSingular);
@@ -85,7 +82,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function forPropertyShouldReturnSubResult() {
 		$container2 = $this->result->forProperty('foo.bar');
@@ -95,7 +91,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function forPropertyWithEmptyStringShouldReturnSelf() {
 		$container2 = $this->result->forProperty('');
@@ -104,7 +99,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function forPropertyWithNullShouldReturnSelf() {
 		$container2 = $this->result->forProperty(NULL);
@@ -114,7 +108,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function hasMessagesShouldReturnTrueIfTopLevelObjectHasMessages($dataTypeInSingular, $dataTypeInPlural) {
 		$message = $this->getMockMessage($dataTypeInSingular);
@@ -128,7 +121,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function hasMessageshouldReturnTrueIfSubObjectHasErrors($dataTypeInSingular, $dataTypeInPlural) {
 		$addMethodName = 'add' . $dataTypeInSingular;
@@ -142,7 +134,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function hasMessagesShouldReturnFalseIfSubObjectHasNoErrors($dataTypeInSingular, $dataTypeInPlural) {
 		$methodName = 'has' . $dataTypeInPlural;
@@ -155,7 +146,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getFlattenedMessagesShouldReturnAllSubMessages($dataTypeInSingular, $dataTypeInPlural) {
 		$message1 = $this->getMockMessage($dataTypeInSingular);
@@ -185,7 +175,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider dataTypes
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getFlattenedMessagesShouldNotContainEmptyResults($dataTypeInSingular, $dataTypeInPlural) {
 		$message1 = $this->getMockMessage($dataTypeInSingular);
@@ -206,7 +195,6 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function mergeShouldMergeTwoResults() {
 		$notice1 = $this->getMockMessage('Notice');

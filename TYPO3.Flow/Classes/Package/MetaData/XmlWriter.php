@@ -26,8 +26,6 @@ class XmlWriter {
 	 * @param \TYPO3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
 	 * @param \TYPO3\FLOW3\Package\MetaDataInterface $meta The MetaData object containing the information to write
 	 * @return boolean If writing the XML file was successful returns TRUE, otherwise FALSE
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function writePackageMetaData(\TYPO3\FLOW3\Package\PackageInterface $package, \TYPO3\FLOW3\Package\MetaDataInterface $meta) {
 		$xml = new \XMLWriter();
@@ -90,7 +88,6 @@ class XmlWriter {
 	 * @param \XMLWriter $xml The XMLWriter to write to
 	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractParty $party The party to write
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function writeParty(\XMLWriter $xml, \TYPO3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$xml->startElement($party->getPartyType());
@@ -118,7 +115,6 @@ class XmlWriter {
 	 * @param \XMLWriter $xml The XMLWriter to write to
 	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to write
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	static protected function writeConstraint(\XMLWriter $xml, \TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$xml->startElement($constraint->getConstraintScope());

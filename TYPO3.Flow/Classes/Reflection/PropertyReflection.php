@@ -42,7 +42,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * Returns the declaring class
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
 		return new ClassReflection(parent::getDeclaringClass()->getName());
@@ -52,7 +51,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * Returns an array of tags and their values
 	 *
 	 * @return array Tags and values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
 		return $this->getDocCommentParser()->getTagsValues();
@@ -62,7 +60,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * Returns the values of the specified tag
 	 *
 	 * @return array Values of the given tag
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {
 		return $this->getDocCommentParser()->getTagValues($tag);
@@ -72,7 +69,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * Returns the description part of the doc comment
 	 *
 	 * @return string Doc comment description
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getDescription() {
 		return $this->getDocCommentParser()->getDescription();
@@ -84,8 +80,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @param object $object Instance of the declaring class to read the value from
 	 * @return mixed Value of the property
 	 * @throws \TYPO3\FLOW3\Reflection\Exception
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValue($object = NULL) {
 		if (!is_object($object)) throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
@@ -102,7 +96,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @param mixed $value The value to set on the property
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Reflection\Exception
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValue($object = NULL, $value = NULL) {
 		if (!is_object($object)) throw new \TYPO3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
@@ -120,7 +113,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * runs the parse() method.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

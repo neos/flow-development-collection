@@ -86,7 +86,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the type this query cares for.
 	 *
 	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getType() {
@@ -167,7 +166,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * )
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOrderings() {
@@ -192,7 +190,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the maximum size of the result set to limit.
 	 *
 	 * @return integer
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getLimit() {
@@ -217,7 +214,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the start offset of the result set.
 	 *
 	 * @return integer
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getOffset() {
@@ -242,7 +238,6 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Gets the constraint for this query.
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint, or null if none
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	*/
 	public function getConstraint() {

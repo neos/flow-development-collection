@@ -40,7 +40,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseThrowsExceptionIfPointcutExpressionIsNotAString() {
 		$parser = new \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser();
@@ -50,7 +49,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseThrowsExceptionIfThePointcutExpressionContainsNoDesignator() {
 		$parser = new \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser();
@@ -60,7 +58,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseCallsSpecializedMethodsToParseEachDesignator() {
 		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClassTaggedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations');
@@ -93,7 +90,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
         /**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseCallsParseDesignatorMethodWithTheCorrectSignaturePatternStringIfTheExpressionContainsArgumentPatterns() {
 		$mockMethods = array('parseDesignatorMethod');
@@ -107,7 +103,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseSplitsUpTheExpressionIntoDesignatorsAndPassesTheOperatorsToTheDesginatorParseMethod() {
 		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassTaggedWith', 'parseDesignatorClass', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
@@ -137,7 +132,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorClassTaggedWithAddsAFilterToTheGivenFilterComposite() {
 		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
@@ -151,7 +145,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorClassAddsAFilterToTheGivenFilterComposite() {
 		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
@@ -178,7 +171,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorMethodTaggedWithAddsAFilterToTheGivenFilterComposite() {
 		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
@@ -193,7 +185,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorMethodThrowsAnExceptionIfTheExpressionLacksTheClassMethodArrow() {
 		$mockComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
@@ -203,7 +194,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function parseDesignatorMethodParsesVisibilityForPointcutMethodNameFilter() {
 		$composite = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array('dummy'));
@@ -229,7 +219,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getArgumentConstraintsFromMethodArgumentsPatternWorks() {
 		$methodArgumentsPattern = 'arg1 == "blub,ber",   arg2 != FALSE  ,arg3 in   (TRUE, some.object.access, "fa,sel", \'blub\'), arg4 contains FALSE,arg2==TRUE,arg5 matches (1,2,3), arg6 matches current.party.accounts';
@@ -279,7 +268,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorPointcutThrowsAnExceptionIfTheExpressionLacksTheAspectClassMethodArrow() {
 		$mockComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
@@ -289,7 +277,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorFilterAddsACustomFilterToTheGivenFilterComposite() {
 		$mockFilter = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilter', array(), array(), '', FALSE);
@@ -307,7 +294,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorFilterThrowsAnExceptionIfACustomFilterDoesNotImplementThePointcutFilterInterface() {
 		$mockFilter = new \ArrayObject();
@@ -323,7 +309,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseRuntimeEvaluationsBasicallyWorks() {
 		$expectedRuntimeEvaluationsDefinition = array(
@@ -345,7 +330,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationConditionsFromEvaluateStringReturnsTheCorrectArrayForAnEvaluateString() {
 		$expectedRuntimeEvaluationsDefinition = array(

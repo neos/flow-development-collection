@@ -28,7 +28,6 @@ class FloatValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	protected function isValid($value) {

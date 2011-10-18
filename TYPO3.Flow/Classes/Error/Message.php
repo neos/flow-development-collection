@@ -66,8 +66,6 @@ class Message {
 	 * @param integer $code A unique error code
 	 * @param array $arguments Array of arguments to be replaced in message
 	 * @param string $title optional title for the message
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
 	 * @api
 	 */
 	public function __construct($message, $code = NULL, array $arguments = array(), $title = '') {
@@ -80,7 +78,6 @@ class Message {
 	/**
 	 * Returns the error message
 	 * @return string The error message
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function getMessage() {
@@ -90,7 +87,6 @@ class Message {
 	/**
 	 * Returns the error code
 	 * @return integer The error code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function getCode() {
@@ -99,7 +95,6 @@ class Message {
 
 	/**
 	 * @return array
-	 * @author Christian Müller <christian.mueller@typo3.org>
 	 * @api
 	 */
 	public function getArguments() {
@@ -137,7 +132,6 @@ class Message {
 	 * Converts this error into a string
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __toString() {

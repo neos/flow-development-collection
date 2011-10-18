@@ -97,7 +97,6 @@ class Argument {
 	 * @param string $name Name of this argument
 	 * @param string $dataType The data type of this argument
 	 * @throws \InvalidArgumentException if $name is not a string or empty
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($name, $dataType) {
@@ -136,7 +135,6 @@ class Argument {
 	 * Returns the name of this argument
 	 *
 	 * @return string This argument's name
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getName() {
@@ -149,7 +147,6 @@ class Argument {
 	 * @param string $shortName A "short name" - a single character
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
 	 * @throws \InvalidArgumentException if $shortName is not a character
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setShortName($shortName) {
@@ -164,7 +161,6 @@ class Argument {
 	 * Returns the short name of this argument
 	 *
 	 * @return string This argument's short name
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function getShortName() {
@@ -175,7 +171,6 @@ class Argument {
 	 * Returns the data type of this argument's value
 	 *
 	 * @return string The data type
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getDataType() {
@@ -187,7 +182,6 @@ class Argument {
 	 *
 	 * @param boolean $required TRUE if this argument should be required
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function setRequired($required) {
@@ -199,7 +193,6 @@ class Argument {
 	 * Returns TRUE if this argument is required
 	 *
 	 * @return boolean TRUE if this argument is required
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function isRequired() {
@@ -212,7 +205,6 @@ class Argument {
 	 *
 	 * @param string $message A short help message
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setShortHelpMessage($message) {
@@ -227,7 +219,6 @@ class Argument {
 	 * Returns the short help message
 	 *
 	 * @return string The short help message
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getShortHelpMessage() {
@@ -239,7 +230,6 @@ class Argument {
 	 *
 	 * @param mixed $defaultValue Default value
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function setDefaultValue($defaultValue) {
@@ -251,7 +241,6 @@ class Argument {
 	 * Returns the default value of this argument
 	 *
 	 * @return mixed The default value
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getDefaultValue() {
@@ -263,7 +252,6 @@ class Argument {
 	 *
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The actual validator object
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
@@ -275,7 +263,6 @@ class Argument {
 	 * Returns the set validator
 	 *
 	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorInterface The set validator, NULL if none was set
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function getValidator() {
@@ -287,7 +274,6 @@ class Argument {
 	 *
 	 * @param mixed $value The value of this argument
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValue($rawValue) {
 		if ($rawValue === NULL) {
@@ -312,7 +298,6 @@ class Argument {
 	 * Returns the value of this argument. If the value is NULL, we use the defaultValue.
 	 *
 	 * @return object The value of this argument - if none was set, the default value is returned
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getValue() {
@@ -323,7 +308,6 @@ class Argument {
 	 * Return the Property Mapping Configuration used for this argument; can be used by the initialize*action to modify the Property Mapping.
 	 *
 	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getPropertyMappingConfiguration() {
@@ -332,7 +316,6 @@ class Argument {
 
 	/**
 	 * @return boolean TRUE if the argument is valid, FALSE otherwise
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function isValid() {
@@ -341,7 +324,6 @@ class Argument {
 
 	/**
 	 * @return array<TYPO3\FLOW3\Error\Result> Validation errors which have occured.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function getValidationResults() {

@@ -19,7 +19,6 @@ class SubResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function constructorSetsParentResponse() {
 		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
@@ -29,7 +28,6 @@ class SubResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setStatusSetsStatusOfParentResponse() {
 		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
@@ -40,7 +38,6 @@ class SubResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setHeaderSetsHeaderOfParentResponse() {
 		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');

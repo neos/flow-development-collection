@@ -20,7 +20,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfOneVoterReturnsADenyVote() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -43,7 +42,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -66,7 +64,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnJoinPointGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -89,7 +86,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnJoinPointGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -112,7 +108,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnResourceThrowsAnExceptionIfOneVoterReturnsADenyVote() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -134,7 +129,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Security\Exception\AccessDeniedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnResourceThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -156,7 +150,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnResourceGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -178,7 +171,6 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnResourceGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);

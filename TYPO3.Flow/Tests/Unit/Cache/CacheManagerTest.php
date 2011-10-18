@@ -19,7 +19,6 @@ class CacheManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception\DuplicateIdentifierException
 	 */
 	public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier() {
@@ -37,7 +36,6 @@ class CacheManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function managerReturnsThePreviouslyRegisteredCached() {
 		$manager = new \TYPO3\FLOW3\Cache\CacheManager();
@@ -56,7 +54,6 @@ class CacheManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception\NoSuchCacheException
 	 */
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
@@ -72,7 +69,6 @@ class CacheManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasCacheReturnsCorrectResult() {
 		$manager = new \TYPO3\FLOW3\Cache\CacheManager();
@@ -86,7 +82,6 @@ class CacheManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
 		$manager = new \TYPO3\FLOW3\Cache\CacheManager();
@@ -105,7 +100,6 @@ class CacheManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches() {
 		$manager = new \TYPO3\FLOW3\Cache\CacheManager();

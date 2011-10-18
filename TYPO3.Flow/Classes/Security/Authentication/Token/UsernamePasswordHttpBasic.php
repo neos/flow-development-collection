@@ -27,7 +27,6 @@ class UsernamePasswordHttpBasic extends \TYPO3\FLOW3\Security\Authentication\Tok
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$requestHeaders = $this->environment->getRequestHeaders();

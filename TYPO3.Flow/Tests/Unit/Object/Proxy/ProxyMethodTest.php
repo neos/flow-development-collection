@@ -18,7 +18,6 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildMethodDocumentationAddsAllExpectedAnnotations() {
 		$validateFoo1 = new \TYPO3\FLOW3\Annotations\Validate(array('value' => 'foo1', 'type' => 'bar1'));
@@ -54,8 +53,6 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintsAndDefaultValues() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -135,7 +132,6 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodParametersCodeOmitsTypeHintsAndDefaultValuesIfToldSo() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -165,7 +161,6 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
 		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);

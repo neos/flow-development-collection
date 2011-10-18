@@ -26,7 +26,6 @@ class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
 	 *
 	 * @param string $identifier A identifier which describes this cache
 	 * @param \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend Backend to be used for this cache
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend) {
 		parent::__construct($identifier, $backend);
@@ -40,7 +39,6 @@ class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {
@@ -58,7 +56,6 @@ class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed Potential return value from the include operation
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function requireOnce($entryIdentifier) {

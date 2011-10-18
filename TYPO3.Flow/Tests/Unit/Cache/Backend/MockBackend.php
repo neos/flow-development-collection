@@ -33,7 +33,6 @@ class MockBackend extends \TYPO3\FLOW3\Cache\Backend\NullBackend {
 	 *
 	 * @param mixed $value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setSomeOption($value) {
 		$this->someOption = $value;
@@ -43,7 +42,6 @@ class MockBackend extends \TYPO3\FLOW3\Cache\Backend\NullBackend {
 	 * Returns the option value
 	 *
 	 * @return mixed
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSomeOption() {
 		return $this->someOption;

@@ -20,7 +20,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation() {
 		$request = new Request();
@@ -33,7 +32,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject() {
 		$request = new Request();

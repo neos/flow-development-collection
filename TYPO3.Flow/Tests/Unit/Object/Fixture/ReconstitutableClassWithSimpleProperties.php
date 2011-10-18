@@ -31,7 +31,6 @@ class ReconstitutableClassWithSimpleProperties implements \TYPO3\FLOW3\Persisten
 	/**
 	 * The constructor - similar to what you would find in a AOP proxy class.
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($someArgument, \TYPO3\FLOW3\Object\ObjectManagerInterface $FLOW3_AOP_Proxy_objectManager) {
 		$this->constructorHasBeenCalled = TRUE;

@@ -22,8 +22,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * In this case this only marks the test to be skipped if openssl extension is not installed
 	 *
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
 		if (!function_exists('openssl_pkey_new')) {
@@ -57,7 +55,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function encryptingAndDecryptingBasicallyWorks() {
 		$plaintext = 'some very sensitive data!';
@@ -70,7 +67,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPasswordReturnsTrueForACorrectPassword() {
 		$encryptedPassword = $this->rsaWalletService->encryptWithPublicKey('password', $this->keyPairUuid);
@@ -84,7 +80,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPasswordReturnsFalseForAnIncorrectPassword() {
 		$encryptedPassword = $this->rsaWalletService->encryptWithPublicKey('wrong password', $this->keyPairUuid);
@@ -99,7 +94,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException() {
 		$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair(TRUE);

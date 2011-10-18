@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
 /**
  * Interface for command controllers
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface CommandControllerInterface extends ControllerInterface {
 

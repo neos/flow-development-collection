@@ -70,7 +70,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the name of the authentication provider responsible for this token
 	 *
 	 * @return string The authentication provider name
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationProviderName() {
 		return $this->authenticationProviderName;
@@ -81,7 +80,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 *
 	 * @param string $authenticationProviderName The authentication provider name
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationProviderName($authenticationProviderName) {
 		$this->authenticationProviderName = $authenticationProviderName;
@@ -91,7 +89,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns TRUE if this token is currently authenticated
 	 *
 	 * @return boolean TRUE if this this token is currently authenticated
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticated() {
 		return ($this->authenticationStatus === self::AUTHENTICATION_SUCCESSFUL);
@@ -102,7 +99,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationEntryPoint(\TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
 		$this->entryPoint = $entryPoint;
@@ -112,7 +108,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
 	 * @return \TYPO3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationEntryPoint() {
 		return $this->entryPoint;
@@ -122,7 +117,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns TRUE if \TYPO3\FLOW3\Security\RequestPattern were set
 	 *
 	 * @return boolean True if a \TYPO3\FLOW3\Security\RequestPatternInterface was set
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRequestPatterns() {
 		if ($this->requestPatterns != NULL) return TRUE;
@@ -160,8 +154,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$postArguments = $this->environment->getRawPostArguments();
@@ -180,7 +172,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the credentials (username and password) of this token.
 	 *
 	 * @return object $credentials The needed credentials to authenticate this token
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCredentials() {
 		return $this->credentials;
@@ -190,7 +181,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
 	 * @return \TYPO3\FLOW3\Security\Account An account object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccount() {
 		return $this->account;
@@ -201,7 +191,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 *
 	 * @param \TYPO3\FLOW3\Security\Account $account An account object
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAccount(\TYPO3\FLOW3\Security\Account $account = NULL) {
 		$this->account = $account;
@@ -211,7 +200,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the currently valid roles.
 	 *
 	 * @return array Array of TYPO3\FLOW3\Security\Authentication\Role objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
 		$account = $this->getAccount();
@@ -223,7 +211,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @throws TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
@@ -237,7 +224,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the current authentication status
 	 *
 	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationStatus() {
 		return $this->authenticationStatus;
@@ -247,7 +233,6 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * Returns a string representation of the token for logging purposes.
 	 *
 	 * @return string The username credential
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function  __toString() {
 		return 'Username: "' . $this->credentials['username'] . '"';

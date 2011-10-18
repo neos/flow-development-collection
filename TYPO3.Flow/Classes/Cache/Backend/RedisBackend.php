@@ -147,8 +147,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options
 	 * @throws \TYPO3\FLOW3\Cache\Exception if php redis module is not loaded
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function __construct($context, array $options = array()) {
 		if (!extension_loaded('redis')) {
@@ -163,7 +161,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @throws \TYPO3\FLOW3\Cache\Exception if access to redis with password is denied or if database selection fails
 	 * @return void
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function initializeObject() {
 		$this->redis = new \Redis();
@@ -196,8 +193,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $hostname Hostname
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function setHostname($hostname) {
 		$this->hostname = $hostname;
@@ -208,8 +203,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param integer $port Port
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function setPort($port) {
@@ -222,7 +215,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param integer $database Database
 	 * @return void
 	 * @throws \InvalidArgumentException if database number is not valid
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function setDatabase($database) {
@@ -241,7 +233,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $password Password
 	 * @return void
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function setPassword($password) {
@@ -253,7 +244,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param boolean $compression TRUE to enable compression
 	 * @return void
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function setCompression($compression) {
@@ -296,8 +286,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return void
 	 * @throws \InvalidArgumentException if identifier is not valid
 	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if data is not a string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -360,8 +348,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @throws \InvalidArgumentException if identifier is not a string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -389,8 +375,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier Identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @throws \InvalidArgumentException if identifier is not a string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -409,8 +393,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
 	 * @throws \InvalidArgumentException if identifier is not a string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -446,8 +428,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag The tag to search for
 	 * @return array An array of entries with all matching entries. An empty array if no entries matched
 	 * @throws \InvalidArgumentException if tag is not a string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
@@ -469,8 +449,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(1) with number of cache entries
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function flush() {
@@ -488,8 +466,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag Tag the entries must have
 	 * @return void
 	 * @throws \InvalidArgumentException if identifier is not a string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -515,8 +491,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(n*m) with number of cache entries (n) and number of tags (m)
 	 *
 	 * @return void
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function collectGarbage() {
@@ -546,8 +520,6 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $identifiers List of identifiers to remove
 	 * @param array $tags List of tags to be handled
 	 * @return void
-	 * @author Christian Kuhn <lolli@schwarzbu.ch>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function removeIdentifierEntriesAndRelations(array $identifiers, array $tags) {
 			// Set an temporary entry which holds all identifiers that need to be removed from

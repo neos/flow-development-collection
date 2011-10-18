@@ -43,7 +43,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
@@ -56,7 +55,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
@@ -68,7 +66,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndGetEntry() {
 		$backend = $this->setUpBackend();
@@ -81,7 +78,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
@@ -94,7 +90,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
@@ -109,7 +104,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findIdentifiersByTagFindsSetEntries() {
 		$backend = $this->setUpBackend();
@@ -127,7 +121,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setRemovesTagsFromPreviousSet() {
 		$backend = $this->setUpBackend();
@@ -143,7 +136,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -153,7 +145,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -163,8 +154,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
 		$backend = $this->setUpBackend();
@@ -183,7 +172,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesAllCacheEntries() {
 		$backend = $this->setUpBackend();
@@ -202,7 +190,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesOnlyOwnEntries() {
 		$thisCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
@@ -227,7 +214,6 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up the APC backend used for testing
 	 *
 	 * @return \TYPO3\FLOW3\Cache\Backend\PdoBackend
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);

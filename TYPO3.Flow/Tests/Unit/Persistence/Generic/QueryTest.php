@@ -35,7 +35,6 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
 		$this->reflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
@@ -46,7 +45,6 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function executeReturnsQueryResultInstance() {
 		$result = $this->query->execute();
@@ -56,7 +54,6 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setLimitAcceptsOnlyIntegers() {
 		$this->query->setLimit(1.5);
@@ -65,7 +62,6 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setLimitRejectsIntegersLessThanOne() {
 		$this->query->setLimit(0);
@@ -74,7 +70,6 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setOffsetAcceptsOnlyIntegers() {
 		$this->query->setOffset(1.5);
@@ -83,7 +78,6 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setOffsetRejectsIntegersLessThanZero() {
 		$this->query->setOffset(-1);

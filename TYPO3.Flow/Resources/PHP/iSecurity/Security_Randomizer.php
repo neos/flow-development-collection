@@ -6,7 +6,6 @@
  * This file is part of the Improved Security project.
  * <a href="http://www.improved-security.com/">http://www.improved-security.com/</a>
  *
- * @author Kai Sellgren
  * @copyright Copyright (C) Kai Sellgren 2010
  * @package Improved Security
  * @since Version 1.00
@@ -16,7 +15,6 @@
 /**
  * A class to generate strong random data and provide useful methods.
  *
- * @author Kai Sellgren
  * @since 1.00
  */
 class Security_Randomizer

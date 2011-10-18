@@ -20,7 +20,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewriteQomQueryAddsTheConstraintsGivenByThePolicyServiceCorrectlyToTheQueryObject() {
 		$entityType = 'MyClass';
@@ -55,8 +54,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function rewriteQomQueryUsesTheConstraintsGivenByThePolicyServiceInTheQueryObject() {
 		$entityType = 'MyClass';
@@ -91,7 +88,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewriteQomQueryDoesNotChangeTheOriginalQueryConstraintsIfThereIsAPolicyEntryButNoAdditionalConstraintsAreNeededInTheCurrentSituation() {
 		$entityType = 'MyClass';
@@ -138,7 +134,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function aQomQueryIsNotRewrittenIfThereIsNoPolicyEntryForItsEntityType() {
 		$entityType = 'MyClass';
@@ -165,7 +160,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForConstraintDefinitionsWorks() {
 		$parsedConstraints = array(
@@ -215,7 +209,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
@@ -233,7 +226,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintFoSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorComparingASimpleValue() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -253,7 +245,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorAccessingAGlobalObject() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -274,7 +265,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheInOperator() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -295,7 +285,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheContainsOperator() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -316,7 +305,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheMatchesOperator() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -341,7 +329,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueForOperandReturnsTheCorrectValueForSimpleValues() {
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
@@ -363,7 +350,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueForOperandReturnsTheCorrectValueFromGlobalObjects() {
 		$className = 'dummyParty' . md5(uniqid(mt_rand(), TRUE));
@@ -394,7 +380,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueForOperandReturnsTheCorrectValueForArrayOperands() {
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
@@ -410,7 +395,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifierChecksTheConstraintsGivenByThePolicyServiceForTheReturnedObject() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
@@ -449,7 +433,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifierFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
@@ -499,7 +482,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkConstraintDefinitionsOnResultObjectBasicallyWorks() {
 		$parsedConstraints = array(
@@ -538,7 +520,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectCallsGetObjectValueByPathForAllExpressionsStartingWithThis() {
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
@@ -572,7 +553,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectCallsGetValueForOperandForAllExpressionsNotStartingWithThis() {
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
@@ -605,7 +585,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
@@ -622,7 +601,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForEqualityOperators() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
@@ -655,7 +633,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheInOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
@@ -683,7 +660,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheContainsOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
@@ -711,7 +687,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheMatchesOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
@@ -739,7 +714,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectComparesTheIdentifierWhenComparingPersistedObjects() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));

@@ -51,7 +51,6 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
@@ -59,7 +58,6 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
 		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array(), array(array()));
@@ -95,7 +93,6 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Data provider with valid format strings and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatStringsAndParsedFormats() {
 		return array(
@@ -109,7 +106,6 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider formatStringsAndParsedFormats
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatStringsAreParsedCorrectly($format, array $expectedResult) {
 		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
@@ -123,7 +119,6 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * NumbersReader.
 	 *
 	 * @return array
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function unsupportedFormats() {
 		return array(
@@ -138,7 +133,6 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider unsupportedFormats
 	 * @expectedException \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException
-	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function throwsExceptionWhenUnsupportedFormatsEncountered($format) {
 		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
