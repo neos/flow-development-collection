@@ -60,14 +60,12 @@ class Service {
 	 * @return array
 	 */
 	public function validateMapping() {
-		$result = array();
 		try {
 			$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
-			$result = $validator->validateMapping();
+			return $validator->validateMapping();
 		} catch (\Exception $exception) {
-			$result[] = $exception->getMessage();
+			return array(array($exception->getMessage()));
 		}
-		return $result;
 	}
 
 	/**
