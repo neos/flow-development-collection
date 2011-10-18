@@ -126,22 +126,6 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	}
 
 	/**
-	 * Renders a tag which can be used to mark a cache entry as "depends on this class".
-	 * Whenever the specified class is modified, all cache entries tagged with the
-	 * class are flushed.
-	 *
-	 * If an empty string is specified as class name, the returned tag means "depends on any class".
-	 *
-	 * @param string $className The class name
-	 * @return string Class Tag
-	 * @api
-	 * @deprecated since 1.0.0beta1 – Use CacheManager::getClassTag() instead
-	 */
-	public function getClassTag($className = '') {
-		return CacheManager::getClassTag($className);
-	}
-
-	/**
 	 * Checks the validity of an entry identifier. Returns true if it's valid.
 	 *
 	 * @param string $identifier An identifier to be checked for validity

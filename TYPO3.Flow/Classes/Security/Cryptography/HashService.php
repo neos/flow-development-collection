@@ -91,6 +91,7 @@ class HashService {
 		return ($this->generateHmac($string) === $hmac);
 	}
 
+
 	/**
 	 * Tests if the last 40 characters of a given string $string
 	 * matches the HMAC of the rest of the string and, if true,
@@ -117,33 +118,8 @@ class HashService {
 		}
 		return $stringWithoutHmac;
 	}
-
 	/**
-	 * Generates a salted md5 hash over the given string.
-	 *
-	 * @param string $clearString The unencrypted string which is the subject to be hashed
-	 * @return string Salted hash and the salt, separated by a comma ","
-	 * @deprecated Use hashPassword(...) instead
-	 */
-	public function generateSaltedMd5($clearString) {
-		return \TYPO3\FLOW3\Security\Cryptography\SaltedMd5HashingStrategy::generateSaltedMd5($clearString);
-	}
-
-	/**
-	 * Tests if the given string would produce the same hash given the specified salt.
-	 * Use this method to validate hashes generated with generateSlatedMd5().
-	 *
-	 * @param string $clearString
-	 * @param string $hashedStringAndSalt
-	 * @return boolean TRUE if the clear string matches, otherwise FALSE
-	 * @deprecated Use validatePassword(...) instead
-	 */
-	public function validateSaltedMd5($clearString, $hashedStringAndSalt) {
-		return \TYPO3\FLOW3\Security\Cryptography\SaltedMd5HashingStrategy::validateSaltedMd5($clearString, $hashedStringAndSalt);
-	}
-
-	/**
-	 * Hash a password using the a password hashing strategy
+	 * Hash a password using the configured password hashing strategy
 	 *
 	 * @param string $password The cleartext password
 	 * @param string $strategyIdentifier An identifier for a configured strategy, uses default strategy if not specified

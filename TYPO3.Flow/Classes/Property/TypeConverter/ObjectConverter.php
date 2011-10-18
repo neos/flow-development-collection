@@ -177,19 +177,25 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
 	 */
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
-		$constructorSignature = $this->reflectionService->getMethodParameters($objectType, '__construct');
-		$constructorArguments = array();
-		foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
-			if (array_key_exists($constructorArgumentName, $possibleConstructorArgumentValues)) {
-				$constructorArguments[] = $possibleConstructorArgumentValues[$constructorArgumentName];
-				unset($possibleConstructorArgumentValues[$constructorArgumentName]);
-			} elseif ($constructorArgumentInformation['optional'] === TRUE) {
-				$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
-			} else {
-				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1304538168);
+		$className = $this->objectManager->getClassNameByObjectName($objectType);
+		if ($this->reflectionService->hasMethod($className, '__construct')) {
+			$constructorSignature = $this->reflectionService->getMethodParameters($className, '__construct');
+			$constructorArguments = array();
+			foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
+				if (array_key_exists($constructorArgumentName, $possibleConstructorArgumentValues)) {
+					$constructorArguments[] = $possibleConstructorArgumentValues[$constructorArgumentName];
+					unset($possibleConstructorArgumentValues[$constructorArgumentName]);
+				} elseif ($constructorArgumentInformation['optional'] === TRUE) {
+					$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
+				} else {
+					throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1268734872);
+				}
 			}
+			$classReflection = new \ReflectionClass($className);
+			return $classReflection->newInstanceArgs($constructorArguments);
+		} else {
+			return new $className();
 		}
-		return call_user_func_array(array($this->objectManager, 'create'), array_merge(array($objectType), $constructorArguments));
 	}
 
 }

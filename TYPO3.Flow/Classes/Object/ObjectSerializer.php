@@ -252,7 +252,8 @@ class ObjectSerializer {
 			return $this->reconstitutedObjects[$objectHash];
 		}
 
-		$object = $this->objectManager->recreate($objectData[self::CLASSNAME]);
+		$className = $this->objectManager->getClassNameByObjectName($objectData[self::CLASSNAME]);
+		$object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 		$this->reconstitutedObjects[$objectHash] = $object;
 
 		foreach ($objectData[self::PROPERTIES] as $propertyName => $propertyData) {

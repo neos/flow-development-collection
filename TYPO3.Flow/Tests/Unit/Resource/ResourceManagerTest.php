@@ -41,18 +41,10 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		eval('class ' . $wrapperClassName . ' extends \TYPO3\FLOW3\Resource\Streams\ResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
 		$mockStreamWrapperAdapter = new $wrapperClassName();
 
-		$streamWrapperAdapterReflection = new \ReflectionClass('TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter');
-		$property = $streamWrapperAdapterReflection->getProperty('objectManager');
-		$property->setAccessible(TRUE);
-		$originalObjectManager = $property->getValue();
-
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
 		$resourceManager = new \TYPO3\FLOW3\Resource\ResourceManager();
-		$resourceManager->injectObjectManager($mockObjectManager);
 		$resourceManager->injectReflectionService($mockReflectionService);
 		$resourceManager->initialize();
 
@@ -60,11 +52,6 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertArrayHasKey($wrapperSchemeName, \TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());
 		$this->assertContains($wrapperSchemeName, stream_get_wrappers());
 		stream_wrapper_unregister($wrapperSchemeName);
-
-			// set the real object factory again...
-		if ($originalObjectManager !== NULL) {
-			\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($originalObjectManager);
-		}
 	}
 
 	/**

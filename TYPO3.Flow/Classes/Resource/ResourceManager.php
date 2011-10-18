@@ -143,7 +143,6 @@ class ResourceManager {
 	 * @return void
 	 */
 	public function initialize() {
-		\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($this->objectManager);
 		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface');
 		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
 			$scheme = $streamWrapperClassName::getScheme();

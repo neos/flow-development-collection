@@ -39,7 +39,7 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 		if (count($methodResourcesTree) > 0) $this->methodResourcesTree = $methodResourcesTree;
 
-		$pointcutFilterComposite = $this->objectManager->create('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
+		$pointcutFilterComposite = new \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		for ($partIndex = 0; $partIndex < count($pointcutExpressionParts); $partIndex += 2) {

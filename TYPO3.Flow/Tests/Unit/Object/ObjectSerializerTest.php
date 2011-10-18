@@ -696,7 +696,6 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function reconstituteObjectCallsTheCorrectReconstitutePropertyTypeFunctionsAndSetsTheValuesInTheObject() {
 		$emptyClassName = 'emptyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $emptyClassName . ' {}');
-		$emptyObject = new $emptyClassName();
 
 		$className = 'someClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
@@ -746,8 +745,7 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('recreate')->with($className)->will($this->returnValue(new $className()));
-		$mockObjectManager->expects($this->at(1))->method('recreate')->with('emptyClass')->will($this->returnValue($emptyObject));
+		$mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnArgument(0));
 
 		$objectSerializer = $this->getAccessibleMock('TYPO3\FLOW3\Object\ObjectSerializer', array('reconstituteArray', 'reconstituteSplObjectStorage', 'reconstitutePersistenceObject'), array(), '', FALSE);
 		$objectSerializer->injectObjectManager($mockObjectManager);
@@ -758,7 +756,7 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$objectsAsArray = array(
 			'emptyClass' => array(
-				\TYPO3\FLOW3\Object\ObjectSerializer::CLASSNAME => 'emptyClass',
+				\TYPO3\FLOW3\Object\ObjectSerializer::CLASSNAME => $emptyClassName,
 				\TYPO3\FLOW3\Object\ObjectSerializer::PROPERTIES => array(),
 			)
 		);
@@ -769,7 +767,7 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals('simplePropertyValue', $object->getSimpleProperty(), 'Simple property was not set as expected.');
 		$this->assertEquals('arrayPropertyValue', $object->getArrayProperty(), 'Array property was not set as expected.');
 		$this->assertEquals(new \ArrayObject(array('arrayObjectPropertyValue')), $object->getArrayObjectProperty(), 'ArrayObject property was not set as expected.');
-		$this->assertEquals($emptyObject, $object->getObjectProperty(), 'Object property was not set as expected.');
+		$this->assertEquals(new $emptyClassName(), $object->getObjectProperty(), 'Object property was not set as expected.');
 		$this->assertEquals('splObjectStoragePropertyValue', $object->getSplObjectStorageProperty(), 'SplObjectStorage property was not set as expected.');
 		$this->assertEquals('persistenceObjectPropertyValue', $object->getPersistenceObjectProperty(), 'Persistence object property was not set as expected.');
 	}

@@ -27,13 +27,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'theOneAndOnlyResource' => 'method(TYPO3\Foo\BasicClass->setSomeProperty()) || notExistingResource',
 		);
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
-
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
-
 		$parser =new \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser();
-		$parser->injectObjectManager($mockObjectManager);
 
 		$parser->parseMethodResources('theOneAndOnlyResource', $resourcesTree);
 	}
@@ -51,13 +45,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		);
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
-
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
-
 		$parser =new \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser();
-		$parser->injectObjectManager($mockObjectManager);
 
 		$parser->parseMethodResources('theIntegrativeResource', $resourcesTree);
 	}

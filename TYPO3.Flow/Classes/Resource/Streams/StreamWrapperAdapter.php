@@ -27,11 +27,6 @@ namespace TYPO3\FLOW3\Resource\Streams;
 class StreamWrapperAdapter {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 */
-	static protected $objectManager;
-
-	/**
 	 * @var array
 	 */
 	static protected $registeredStreamWrappers = array();
@@ -45,16 +40,6 @@ class StreamWrapperAdapter {
 	 * @var \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface
 	 */
 	protected $streamWrapper;
-
-	/**
-	 * Injects the Object Manager.
-	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	static public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		self::$objectManager = $objectManager;
-	}
 
 	/**
 	 * Register a stream wrapper. Later registrations for a scheme will override
@@ -87,7 +72,7 @@ class StreamWrapperAdapter {
 		if ($this->streamWrapper === NULL) {
 			$explodedPath = explode(':', $path, 2);
 			$scheme = array_shift($explodedPath);
-			$this->streamWrapper = self::$objectManager->create(self::$registeredStreamWrappers[$scheme]);
+			$this->streamWrapper = new self::$registeredStreamWrappers[$scheme]();
 		}
 	}
 

@@ -43,7 +43,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function _and(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\LogicalAnd', $constraint1, $constraint2);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalAnd($constraint1, $constraint2);
 	}
 
 	/**
@@ -55,7 +55,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function _or(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\LogicalOr', $constraint1, $constraint2);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalOr($constraint1, $constraint2);
 	}
 
 	/**
@@ -66,7 +66,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function not(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint) {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\LogicalNot', $constraint);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalNot($constraint);
 	}
 
 	/**
@@ -79,7 +79,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function comparison(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\Comparison', $operand1, $operator, $operand2);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison($operand1, $operator, $operand2);
 	}
 
 	/**
@@ -91,7 +91,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function propertyValue($propertyName, $selectorName = '') {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\PropertyValue', $propertyName, $selectorName);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\PropertyValue($propertyName, $selectorName);
 	}
 
 	/**
@@ -102,7 +102,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function lowerCase(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\LowerCase', $operand);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\LowerCase($operand);
 	}
 
 	/**
@@ -113,7 +113,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function upperCase(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {
-		return $this->objectManager->create('TYPO3\FLOW3\Persistence\Generic\Qom\UpperCase', $operand);
+		return new \TYPO3\FLOW3\Persistence\Generic\Qom\UpperCase($operand);
 	}
 
 }

@@ -35,51 +35,14 @@ interface ObjectManagerInterface {
 	 * Important:
 	 *
 	 * If possible, instances of Prototype objects should always be created with the
-	 * Object Manager's create() method and Singleton objects should rather be
-	 * injected by some type of Dependency Injection.
+	 * new keyword and Singleton objects should rather be injected by some type of
+	 * Dependency Injection.
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
 	 * @api
 	 */
 	public function get($objectName);
-
-	/**
-	 * Creates a fresh instance of the object specified by $objectName.
-	 *
-	 * This factory method can only create objects of the scope prototype.
-	 * Singleton objects must be either injected by some type of Dependency Injection or
-	 * if that is not possible, be retrieved by the get() method of the
-	 * Object Manager
-	 *
-	 * You must use either Dependency Injection or this factory method for instantiation
-	 * of your objects if you need FLOW3's object management capabilities (including
-	 * AOP, Security and Persistence). It is absolutely okay and often advisable to
-	 * use the "new" operator for instantiation in your automated tests.
-	 *
-	 * @param string $objectName The name of the object to create
-	 * @return object The new object instance
-	 * @throws \InvalidArgumentException if the object name starts with a backslash
-	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
-	 * @throws \TYPO3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
-	 * @since 1.0.0 alpha 8
-	 * @api
-	 */
-	public function create($objectName);
-
-	/**
-	 * Creates an instance of the specified object without calling its constructor.
-	 * Subsequently reinjects the object's dependencies.
-	 *
-	 * This method is mainly used by the persistence and the session sub package.
-	 *
-	 * Note: The object must be of scope prototype or session which means that
-	 *       the object container won't store an instance of the recreated object.
-	 *
-	 * @param string $objectName Name of the object to create a skeleton for
-	 * @return object The recreated, uninitialized (ie. w/ uncalled constructor) object
-	 */
-	public function recreate($objectName);
 
 	/**
 	 * Returns TRUE if an object with the given name has already

@@ -28,13 +28,22 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\ObjectConverter {
 
+	/**
+	 * @var string
+	 */
 	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+
+	/**
+	 * @var integer
+	 */
 	const CONFIGURATION_MODIFICATION_ALLOWED = 1;
+
+	/**
+	 * @var integer
+	 */
 	const CONFIGURATION_CREATION_ALLOWED = 2;
-	const CONFIGURATION_TARGET_TYPE = 3;
-	const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
 
 	/**
 	 * @var array
@@ -42,19 +51,9 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	protected $sourceTypes = array('string', 'array');
 
 	/**
-	 * @var string
-	 */
-	protected $targetType = 'object';
-
-	/**
 	 * @var integer
 	 */
 	protected $priority = 1;
-
-	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
@@ -62,32 +61,11 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
 	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
 	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -118,10 +96,7 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 		if (isset($source['__identity'])) {
 			unset($source['__identity']);
 		}
-		if (isset($source['__type'])) {
-			unset($source['__type']);
-		}
-		return $source;
+		return parent::getSourceChildPropertiesToBeConverted($source);
 	}
 
 	/**
@@ -237,32 +212,6 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 		}
 
 		return $object;
-	}
-
-	/**
-	 * Builds a new instance of $objectType with the given $possibleConstructorArgumentValues. If
-	 * constructor argument values are missing from the given array the method
-	 * looks for a default value in the constructor signature. Furthermore, the constructor arguments are removed from $possibleConstructorArgumentValues
-	 *
-	 * @param array &$possibleConstructorArgumentValues
-	 * @param string $objectType
-	 * @return object The created instance
-	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
-	 */
-	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
-		$constructorSignature = $this->reflectionService->getMethodParameters($objectType, '__construct');
-		$constructorArguments = array();
-		foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
-			if (array_key_exists($constructorArgumentName, $possibleConstructorArgumentValues)) {
-				$constructorArguments[] = $possibleConstructorArgumentValues[$constructorArgumentName];
-				unset($possibleConstructorArgumentValues[$constructorArgumentName]);
-			} elseif ($constructorArgumentInformation['optional'] === TRUE) {
-				$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
-			} else {
-				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1268734872);
-			}
-		}
-		return call_user_func_array(array($this->objectManager, 'create'), array_merge(array($objectType), $constructorArguments));
 	}
 
 	/**

@@ -179,46 +179,6 @@ class ObjectManager implements ObjectManagerInterface {
 	}
 
 	/**
-	 * Creates a fresh instance of the object specified by $objectName.
-	 *
-	 * @param string $objectName The name of the object to create
-	 * @return object The new object instance
-	 * @throws \InvalidArgumentException if the object name starts with a backslash or is otherwise invalid
-	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
-	 * @throws \TYPO3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
-	 * @deprecated since 1.0.0beta1
-	 */
-	public function create($objectName) {
-		$className = $this->getClassNameByObjectName($objectName);
-		if ($className === FALSE) {
-			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			$hint .= (interface_exists($objectName[0])) ? sprintf('%s is an interface, but no default implementation was defined or could be determined automatically.', $objectName[0]) : '';
-			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Tried to create unknown object "' . $objectName . '".' . $hint, 1264584588);
-		}
-		if (isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
-			throw new \TYPO3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of not of scope prototype, but only prototype is supported by create()', 1264584592);
-		}
-		return $this->instantiateClass($className, array_slice(func_get_args(), 1));
-	}
-
-	/**
-	 * Creates an instance of the specified object without calling its constructor.
-	 *
-	 * @param string $objectName Name of the object to create a skeleton for
-	 * @return object The recreated, uninitialized (ie. w/ uncalled constructor) object
-	 * @deprecated since 1.0.0beta1
-	 */
-	public function recreate($objectName) {
-		$className = $this->getClassNameByObjectName($objectName);
-		if ($className === FALSE) {
-			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Cannot recreate unknown object "' . $objectName . '".' . $hint, 1265297672);
-		}
-
-		return unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
-	}
-
-	/**
 	 * Returns the scope of the specified object.
 	 *
 	 * @param string $objectName The object name

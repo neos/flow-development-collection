@@ -60,7 +60,7 @@ class SubRequestBuilder {
 	 * @return \TYPO3\FLOW3\MVC\Web\SubRequest The sub request as an object
 	 */
 	public function build(\TYPO3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '', $subRequestClassName = 'TYPO3\FLOW3\MVC\Web\SubRequest') {
-		$subRequest = $this->objectManager->create($subRequestClassName, $parentRequest);
+		$subRequest = new $subRequestClassName($parentRequest);
 		$subRequest->setArgumentNamespace($argumentNamespace);
 
 		$this->setArgumentsFromRawRequestData($subRequest);
