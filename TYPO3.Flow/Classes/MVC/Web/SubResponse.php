@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\MVC\Web;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A web specific sub response implementation
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class SubResponse extends \TYPO3\FLOW3\MVC\Web\Response {
 

@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A stream wrapper for package resources.
  *
- * @FLOW3\Scope("prototype")
  */
 class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface {
 

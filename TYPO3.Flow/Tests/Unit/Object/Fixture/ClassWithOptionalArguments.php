@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Tests\Object\Fixture;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Fixture class for various unit tests (mainly the package- and object
  * manager)
  *
- * @FLOW3\Scope("prototype")
  */
 class ClassWithOptionalArguments {
 

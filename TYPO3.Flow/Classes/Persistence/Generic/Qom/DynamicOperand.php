@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * An operand whose value can only be determined in evaluating the query.
  *
- * @FLOW3\Scope("prototype")
  */
 class DynamicOperand extends \TYPO3\FLOW3\Persistence\Generic\Qom\Operand {
 

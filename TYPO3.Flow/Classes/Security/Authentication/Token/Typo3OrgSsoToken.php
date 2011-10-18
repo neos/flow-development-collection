@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * An authentication token used for sso credentials coming from typo3.org
  *
- * @FLOW3\Scope("prototype")
  */
 class Typo3OrgSsoToken implements \TYPO3\FLOW3\Security\Authentication\TokenInterface {
 

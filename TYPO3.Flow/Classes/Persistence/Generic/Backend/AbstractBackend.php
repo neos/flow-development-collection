@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * An abstract storage backend for the FLOW3 persistence
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface {
 

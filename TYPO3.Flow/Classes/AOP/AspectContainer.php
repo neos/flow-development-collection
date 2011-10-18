@@ -32,7 +32,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * If used on a property an introduction contains a pointcut expression and is
  * used to introduce the annotated property into the target class.
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class AspectContainer {

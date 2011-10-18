@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A caching backend which stores cache entries by using Redis with phpredis
@@ -56,7 +55,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * The unit tests use and flush database numbers 0 and 1, production use should start from 2.
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 

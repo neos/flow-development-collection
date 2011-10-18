@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A method filter which fires on methods annotated with a certain annotation
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

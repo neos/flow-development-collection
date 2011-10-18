@@ -20,7 +20,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A walker to transform a select query into a count query.
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {

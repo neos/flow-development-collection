@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * The controller context holds information about the request, response, arguments
@@ -20,7 +19,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * views being views or view helpers.
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class ControllerContext {
 

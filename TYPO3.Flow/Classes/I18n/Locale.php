@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Represents a locale
@@ -30,7 +29,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * \TYPO3\FLOW3\I18n\Service class can be used.
  *
  * @api
- * @FLOW3\Scope("prototype")
  * @see http://www.unicode.org/reports/tr35/
  * @see \TYPO3\FLOW3\I18n\Service
  */

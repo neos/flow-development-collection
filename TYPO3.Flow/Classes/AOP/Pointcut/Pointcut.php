@@ -19,7 +19,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * join points is defined by a poincut expression which is matched against class
  * and method signatures.
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class Pointcut {

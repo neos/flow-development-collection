@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A sub class of the abstract class
  *
- * @FLOW3\Scope("prototype")
  */
 class SubClassOfAbstractClass extends AbstractClass {
 

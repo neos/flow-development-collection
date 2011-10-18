@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A Query class for Doctrine 2
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 

@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Log\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A backend which just ignores everything
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class NullBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 

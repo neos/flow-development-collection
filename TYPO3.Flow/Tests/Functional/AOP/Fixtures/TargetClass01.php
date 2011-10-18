@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A target class for testing the AOP framework
  *
- * @FLOW3\Scope("prototype")
  */
 class TargetClass01 implements SayHelloInterface {
 

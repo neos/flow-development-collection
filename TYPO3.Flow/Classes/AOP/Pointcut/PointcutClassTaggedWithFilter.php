@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A class filter which fires on classes tagged with a certain annotation
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  * @deprecated since 1.0
  */

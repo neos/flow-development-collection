@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Evaluates to the value (or values, if multi-valued) of a property.
@@ -25,7 +24,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * property is not a syntactically valid property name.
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class PropertyValue extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand {
 

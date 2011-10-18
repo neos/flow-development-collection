@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Dynamic Route Part
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface {
 

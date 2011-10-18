@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * FLOW3 Object Configuration
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class Configuration {

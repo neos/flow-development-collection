@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A lazy result list that is returned by Query::execute()
  *
- * @FLOW3\Scope("prototype")
  * @api
  */
 class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {

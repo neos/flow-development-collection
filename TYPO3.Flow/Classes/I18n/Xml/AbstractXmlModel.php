@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\I18n\Xml;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * An abstract model representing data from one XML file.
@@ -25,7 +24,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * Parsed data is cached under the key being absolute file path.
  *
- * @FLOW3\Scope("prototype")
  */
 abstract class AbstractXmlModel {
 

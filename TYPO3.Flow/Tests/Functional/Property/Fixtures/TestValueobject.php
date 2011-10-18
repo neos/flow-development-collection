@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A simple valueobject for PropertyMapper test
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\ValueObject
  */
 class TestValueobject {

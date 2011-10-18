@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A role for the PolicyService. These roles can be structured in a tree.
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Entity
  */
 class Role {

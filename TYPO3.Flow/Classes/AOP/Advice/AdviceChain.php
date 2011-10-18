@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\AOP\Advice;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * The advice chain holds a number of subsequent advices that
  * match a given join point and calls the advices in the right order.
  *
- * @FLOW3\Scope("prototype")
  */
 class AdviceChain {
 

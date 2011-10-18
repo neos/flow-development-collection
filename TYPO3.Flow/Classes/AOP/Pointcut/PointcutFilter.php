@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A filter which refers to another pointcut.
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

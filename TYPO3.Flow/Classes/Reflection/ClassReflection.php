@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Extended version of the ReflectionClass
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class ClassReflection extends \ReflectionClass {

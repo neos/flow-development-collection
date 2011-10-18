@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Implementation of a standard route
  *
  * @copyright Copyright belongs to the respective authors
- * @FLOW3\Scope("prototype")
  */
 class Route {
 

@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * An authentication token used for simple username and password authentication via HTTP Basic Auth.
  *
- * @FLOW3\Scope("prototype")
  */
 class UsernamePasswordHttpBasic extends \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword {
 

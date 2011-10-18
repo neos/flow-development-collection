@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * An authentication provider that authenticates SSO requests from typo3.org
  *
- * @FLOW3\Scope("prototype")
  */
 class Typo3OrgSsoProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 

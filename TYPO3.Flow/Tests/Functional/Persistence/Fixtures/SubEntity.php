@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A sample entity for tests
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Entity
  */
 class SubEntity extends SuperEntity {

@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Injection (constructor-) argument as used in a Object Configuration
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class ConfigurationArgument {

@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A simple class filter which fires on class names defined by a regular expression
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

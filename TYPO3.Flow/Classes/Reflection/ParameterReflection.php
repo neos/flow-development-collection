@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Extended version of the ReflectionParameter
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class ParameterReflection extends \ReflectionParameter {

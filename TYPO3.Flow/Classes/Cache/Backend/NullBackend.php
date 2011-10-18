@@ -13,13 +13,11 @@ namespace TYPO3\FLOW3\Cache\Backend;
 
 // @codeCoverageIgnoreStart
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A caching backend which forgets everything immediately
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface {
 

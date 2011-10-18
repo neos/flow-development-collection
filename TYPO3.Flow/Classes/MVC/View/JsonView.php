@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A JSON view
  *
- * @FLOW3\Scope("prototype")
  * @api
  */
 class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {

@@ -19,7 +19,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * doesn't match, the overall result is "no".
  *
  * @see \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodFilter
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

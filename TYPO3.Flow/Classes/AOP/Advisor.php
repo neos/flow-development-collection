@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\AOP;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * An advisor is the combination of a single advice and the pointcut where the
  * advice will become active.
  *
- * @FLOW3\Scope("prototype")
  */
 class Advisor {
 

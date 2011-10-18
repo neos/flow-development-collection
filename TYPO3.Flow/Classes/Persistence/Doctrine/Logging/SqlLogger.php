@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Logging;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A SQL logger that logs to a FLOW3 logger.
  *
- * @FLOW3\Scope("prototype")
  */
 class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 

@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A simple entity for PropertyMapper test
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Entity
  * @ORM\Table(name="Property_TestEntity")
  */

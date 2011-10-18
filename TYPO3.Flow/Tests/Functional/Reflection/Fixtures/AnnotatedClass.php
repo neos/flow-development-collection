@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * @FLOW3\Scope("prototype")
  * @ORM\Entity
  * @FLOW3\Introduce("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface")
  */

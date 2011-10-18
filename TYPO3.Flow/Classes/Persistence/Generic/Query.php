@@ -11,14 +11,12 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * The Query classs used to run queries like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 

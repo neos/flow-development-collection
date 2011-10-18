@@ -12,12 +12,10 @@ namespace TYPO3\FLOW3\Tests\Functional\Property\Fixtures;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A simple class for PropertyMapper test
  *
- * @FLOW3\Scope("prototype")
  */
 class TestClass {
 

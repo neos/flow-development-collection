@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Base class for constraints in the QOM.
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class Constraint {}
 

@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Abstract validator
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 

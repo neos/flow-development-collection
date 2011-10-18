@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * This class holds a request pattern that decides, if csrf protection was enabled for the current request and searches
  * for invalid csrf protection tokens.
  *
- * @FLOW3\Scope("prototype")
  */
 class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 

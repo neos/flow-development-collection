@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A little filter which filters for method names
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

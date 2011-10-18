@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A monitor which detects changes in directories or files
  *
- * @FLOW3\Scope("prototype")
  * @api
  */
 class FileMonitor {

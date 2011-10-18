@@ -18,7 +18,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
  *
- * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
  */
 class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

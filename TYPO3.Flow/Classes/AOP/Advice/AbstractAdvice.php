@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\AOP\Advice;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Base class for Advices.
  *
- * @FLOW3\Scope("prototype")
  */
 class AbstractAdvice implements \TYPO3\FLOW3\AOP\Advice\AdviceInterface {
 

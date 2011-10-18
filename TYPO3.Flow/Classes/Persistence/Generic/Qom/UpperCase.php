@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Evaluates to the upper-case string value (or values, if multi-valued) of
@@ -23,7 +22,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * If operand evaluates to null, the UpperCase operand also evaluates to null.
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class UpperCase {
 

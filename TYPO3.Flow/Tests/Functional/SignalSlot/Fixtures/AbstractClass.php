@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * An abstract class with a signal
  *
- * @FLOW3\Scope("prototype")
  */
 abstract class AbstractClass {
 

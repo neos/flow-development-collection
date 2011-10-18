@@ -13,13 +13,11 @@ namespace TYPO3\FLOW3\Cache\Frontend;
 
 use \TYPO3\FLOW3\Cache\CacheManager;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * An abstract cache
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendInterface {
 

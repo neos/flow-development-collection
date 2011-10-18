@@ -18,7 +18,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
  * The accounts are stored in the Content Repository.
  *
- * @FLOW3\Scope("prototype")
  */
 class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 

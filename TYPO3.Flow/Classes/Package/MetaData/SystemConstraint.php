@@ -11,12 +11,10 @@ namespace TYPO3\FLOW3\Package\MetaData;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * System constraint meta model
  *
- * @FLOW3\Scope("prototype")
  */
 class SystemConstraint extends \TYPO3\FLOW3\Package\MetaData\AbstractConstraint {
 

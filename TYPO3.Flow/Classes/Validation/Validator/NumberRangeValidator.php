@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Validator for general numbers
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class NumberRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 

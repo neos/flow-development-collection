@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A fixture for testing that doctrine proxies can never be reflected.
@@ -31,7 +30,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Proxies;
  * as all the other doctrine proxies. Trying to reflect this class should
  * result in an exception.
  *
- * @FLOW3\Scope("prototype")
  */
 class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy {
 

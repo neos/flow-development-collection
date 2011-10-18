@@ -11,13 +11,11 @@ namespace TYPO3\FLOW3\Property;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Concrete configuration object for the PropertyMapper.
  *
  * @api
- * @FLOW3\Scope("prototype")
  */
 class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface {
 
