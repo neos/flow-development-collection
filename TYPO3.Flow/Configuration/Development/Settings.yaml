@@ -24,10 +24,6 @@ TYPO3:
     monitor:
       detectClassChanges: y
 
-    persistence:
-      doctrine:
-        sqlLogger: 'TYPO3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
-
     resource:
       publishing:
         detectPackageResourceChanges: y
