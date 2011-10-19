@@ -205,6 +205,8 @@ class Compiler {
 				$optionValueAsString = self::renderAnnotation($optionValue);
 			} elseif (is_scalar($optionValue) && is_string($optionValue)) {
 				$optionValueAsString = '"' . $optionValue . '"';
+			} elseif (is_bool($optionValue)) {
+				$optionValueAsString = $optionValue ? 'true' : 'false';
 			} elseif (is_array($optionValue)) {
 				$values = array();
 				foreach ($optionValue as $k => $v) {
@@ -216,6 +218,8 @@ class Compiler {
 						$value .= self::renderAnnotation($v);
 					} elseif (is_scalar($v) && is_string($v)) {
 						$value .= '"' . $v . '"';
+					} elseif (is_bool($v)) {
+						$value .= $v ? 'true' : 'false';
 					} elseif (is_scalar($v)) {
 						$value .= $v;
 					}

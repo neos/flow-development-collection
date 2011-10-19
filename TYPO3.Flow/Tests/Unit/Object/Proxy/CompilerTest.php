@@ -20,6 +20,8 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return array
 	 */
 	public function annotationsAndStrings() {
+		$sessionWithAutoStart = new \TYPO3\FLOW3\Annotations\Session();
+		$sessionWithAutoStart->autoStart = TRUE;
 		return array(
 			array(
 				new \TYPO3\FLOW3\Annotations\Signal(array()),
@@ -30,6 +32,14 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'@TYPO3\FLOW3\Annotations\Scope("singleton")'
 			),
 			array(
+				$sessionWithAutoStart,
+				'@TYPO3\FLOW3\Annotations\Session(autoStart=true)'
+			),
+			array(
+				new \TYPO3\FLOW3\Annotations\Session(),
+				'@TYPO3\FLOW3\Annotations\Session'
+			),
+			array(
 				new \TYPO3\FLOW3\Annotations\Validate(array('value' => 'foo1', 'type' => 'bar1')),
 				'@TYPO3\FLOW3\Annotations\Validate(type="bar1", argumentName="foo1")'
 			),
@@ -38,8 +48,8 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'@TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "minimum"=2 })'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba'))),
-				'@TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba" })'
+				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba', 'bar' => TRUE))),
+				'@TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba", "bar"=true })'
 			),
 			array(
 				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array(new \TYPO3\FLOW3\Annotations\Inject(array())))),
