@@ -3,7 +3,7 @@
 	<key>TYPO3.FLOW3</key>
 	<title>FLOW3</title>
 	<description>FLOW3 is an enterprise PHP application framework making extensive use of software development paradigms that had not been brought to PHP programming yet.</description>
-	<version>1.0.0-beta2</version>
+	<version>1.0.0</version>
 	<categories/>
 	<parties>
 		<person role="LeadDeveloper">
@@ -21,7 +21,7 @@
 			<system type="PHPExtension">SPL</system>
 			<system minVersion="1.2.0" type="PHPExtension">json</system>
 			<system type="PHPExtension">session</system>
-			<package>Fluid</package>
+			<package>TYPO3.Fluid</package>
 			<package>Symfony.Component.Yaml</package>
 		</depends>
 		<conflicts>
@@ -29,6 +29,7 @@
 		</conflicts>
 		<suggests>
 			<system minVersion="0.9.5" type="PHPExtension">eAccelerator</system>
+			<system type="PHPExtension">APC</system>
 			<system type="PHPExtension">igbinary</system>
 		</suggests>
 	</constraints>
