@@ -294,7 +294,6 @@ class Bootstrap {
 				$response->send();
 			} catch (\Exception $exception) {
 				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
-				$response->setExitCode(1);
 
 				$exceptionMessage = '';
 				$exceptionReference = "\n<b>More Information</b>\n";
@@ -307,6 +306,7 @@ class Bootstrap {
 
 				$response->setContent(sprintf("<b>Uncaught Exception</b>\n%s%s\n", $exceptionMessage, $exceptionReference));
 				$response->send();
+				exit(1);
 			}
 		}
 		$this->emitBootstrapShuttingDown($runLevel);
