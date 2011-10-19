@@ -68,7 +68,7 @@ foreach ($pathsAndFilenames as $pathAndFilename) {
 	$file = str_replace('@FLOW3\Session("autoStart=true")', '@FLOW3\Session(autoStart=true)', $file);
 
 		// validation annotations
-	$file = preg_replace('/	 \* @validate\s+(.+)$/ume', 'convertValidateAnnotation(\'$1\')', $file);
+	$file = preg_replace('/\* @validate\s+(.+)$/ume', 'convertValidateAnnotation(\'$1\')', $file);
 
 		// convert "introduce" annotation options
 	$file = preg_replace('/\* @introduce\s+([A-Za-z0-9\\\\]+)[\s,]+(.+)$/um', '* @FLOW3\\\\Introduce("$2", interfaceName="$1")', $file);
