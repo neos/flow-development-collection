@@ -170,6 +170,7 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	protected function initializeActionMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
 
+		$this->arguments->removeAll();
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = NULL;
 			if (isset($parameterInfo['type'])) {
