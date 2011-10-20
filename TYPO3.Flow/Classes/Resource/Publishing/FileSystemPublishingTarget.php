@@ -210,14 +210,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * @return void
 	 */
 	protected function detectResourcesBaseUri() {
-		$uri = $this->environment->getRequestUri();
-		if ($uri === FALSE){
-			return;
-		}
-		$uri->setQuery(NULL);
-		$uri->setFragment(NULL);
-		$uri->setPath($this->environment->getScriptRequestPath());
-
+		$uri = $this->environment->getBaseUri();
 		$this->resourcesBaseUri = $uri . substr($this->resourcesPublishingPath, strlen(FLOW3_PATH_WEB));
 	}
 

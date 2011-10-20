@@ -302,3 +302,11 @@ TYPO3:
         # The directory must be writable and FLOW3 will automatically create a sub
         # directory named with a hash which will contain the actual temporary files.
         temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/
+
+        # Defines an explicit base URI that should be used in the environment. This
+        # affects resource management, routing and all other parts accessing
+        # "Environment->getBaseUri()".
+        #
+        # If this setting is null, the base URI will be detected from the current
+        # request (default).
+        baseUri: null

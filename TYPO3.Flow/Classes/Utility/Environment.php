@@ -108,6 +108,16 @@ class Environment {
 	}
 
 	/**
+	 * Set the base URI
+	 *
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri The base URI or NULL if the base URI should be detected automatically
+	 * @return void
+	 */
+	public function setBaseUri(\TYPO3\FLOW3\Property\DataType\Uri $baseUri = NULL) {
+		$this->baseUri = $baseUri;
+	}
+
+	/**
 	 * Returns the HTTP Host
 	 *
 	 * @return string The HTTP Host as found in _SERVER[HTTP_HOST]
@@ -467,10 +477,13 @@ class Environment {
 	 * @return void
 	 */
 	protected function detectBaseUri() {
-		$this->baseUri = $this->getRequestUri();
-		$this->baseUri->setQuery(NULL);
-		$this->baseUri->setFragment(NULL);
-		$this->baseUri->setPath($this->getScriptRequestPath());
+		$requestUri = $this->getRequestUri();
+		if ($requestUri !== FALSE) {
+			$this->baseUri = $requestUri;
+			$this->baseUri->setQuery(NULL);
+			$this->baseUri->setFragment(NULL);
+			$this->baseUri->setPath($this->getScriptRequestPath());
+		}
 	}
 
 	/**

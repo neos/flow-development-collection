@@ -544,6 +544,9 @@ class Bootstrap {
 
 		$this->environment = new \TYPO3\FLOW3\Utility\Environment($this->context);
 		$this->environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
+		if (isset($this->settings['utility']['environment']['baseUri']) && $this->settings['utility']['environment']['baseUri'] !== NULL) {
+			$this->environment->setBaseUri(new \TYPO3\FLOW3\Property\DataType\Uri($this->settings['utility']['environment']['baseUri']));
+		}
 
 		$this->configurationManager->injectEnvironment($this->environment);
 		$this->packageManager->injectSettings($this->settings);
