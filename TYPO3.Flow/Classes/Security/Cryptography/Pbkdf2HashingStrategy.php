@@ -11,8 +11,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once(FLOW3_PATH_FLOW3 . 'Resources/PHP/iSecurity/Security_Randomizer.php');
-
 /**
  * A PBKDF2 based password hashing strategy
  *
@@ -67,7 +65,7 @@ class Pbkdf2HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 	 * @return string A Base64 encoded string with the derived key (hashed password) and dynamic salt
 	 */
 	public function hashPassword($password, $staticSalt = NULL) {
-		$dynamicSalt = \Security_Randomizer::getRandomBytes($this->dynamicSaltLength);
+		$dynamicSalt = \TYPO3\FLOW3\Utility\Algorithms::generateRandomBytes($this->dynamicSaltLength);
 		$result = \TYPO3\FLOW3\Security\Cryptography\Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
 		return base64_encode($dynamicSalt) . ',' . base64_encode($result);
 	}

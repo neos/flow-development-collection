@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once(FLOW3_PATH_FLOW3 . 'Resources/PHP/iSecurity/Security_Randomizer.php');
+
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
@@ -42,22 +44,17 @@ class Algorithms {
 	 * @return string
 	 */
 	static public function generateRandomBytes($count) {
-		$bytes = '';
+		return \Security_Randomizer::getRandomBytes($count);
+	}
 
-		if (file_exists('/dev/urandom')) {
-			$bytes = file_get_contents('/dev/urandom', NULL, NULL, NULL, $count);
-		}
-
-			// urandom did not deliver (enough) data
-		if (strlen($bytes) < $count) {
-			$randomState = microtime() . getmypid();
-			while (strlen($bytes) < $count) {
-				$randomState = md5(microtime() . mt_rand() . $randomState);
-				$bytes .= md5(mt_rand() . $randomState, TRUE);
-			}
-			$bytes = substr($bytes, -$count, $count);
-		}
-		return $bytes;
+	/**
+	 * Returns a random token in hex format.
+	 *
+	 * @param integer $count Token length
+	 * @return string
+	 */
+	static public function generateRandomToken($count) {
+		return \Security_Randomizer::getRandomToken($count);
 	}
 
 }

@@ -11,8 +11,6 @@ namespace TYPO3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once(FLOW3_PATH_FLOW3 . 'Resources/PHP/iSecurity/Security_Randomizer.php');
-
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 use TYPO3\FLOW3\Security\Policy\Role;
@@ -423,7 +421,7 @@ class Context {
 			reset($this->csrfTokens);
 			return key($this->csrfTokens);
 		}
-		$newToken = \Security_Randomizer::getRandomToken(16);
+		$newToken = \TYPO3\FLOW3\Utility\Algorithms::generateRandomToken(16);
 		$this->csrfTokens[$newToken] = TRUE;
 
 		return $newToken;
