@@ -40,14 +40,14 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
+	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
 	 */
 	public function getSingletonA() {
 		return $this->singletonA;
 	}
 
 	/**
-	 * @param string $someProperty
+	 * @param string $someProperty The property value
 	 * @return void
 	 * @FLOW3\Session(autoStart=true)
 	 */
