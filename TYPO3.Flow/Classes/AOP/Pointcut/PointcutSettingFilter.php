@@ -44,6 +44,11 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	protected $condition;
 
 	/**
+	 * @var boolean
+	 */
+	protected $cachedResult;
+
+	/**
 	 * The constructor - initializes the configuration filter with the path to a configuration option
 	 *
 	 * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
@@ -74,11 +79,10 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if (is_bool($this->actualSettingValue)) {
-			return $this->actualSettingValue;
-		} else {
-			return ($this->condition === $this->actualSettingValue);
+		if ($this->cachedResult === NULL) {
+			$this->cachedResult = (is_bool($this->actualSettingValue)) ? $this->actualSettingValue : ($this->condition === $this->actualSettingValue);
 		}
+		return $this->cachedResult;
 	}
 
 	/**

@@ -34,12 +34,7 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestC
 		$methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($methodAnnotatedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
 
-		$methodAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('.*Session|.*Internal');
-		$methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($methodAnnotatedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
-		$this->assertTrue($methodAnnotatedWithFilter->matches(__CLASS__, 'someOtherMethod', $className, 2));
-
-		$methodAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('ext.*');
+		$methodAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Annotation\Does\Not\Exist');
 		$methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertFalse($methodAnnotatedWithFilter->matches(__CLASS__, 'somethingCompletelyDifferent', $className, 1));
 	}

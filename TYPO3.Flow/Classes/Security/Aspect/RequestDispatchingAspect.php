@@ -53,7 +53,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that illegal requests are blocked before invoking
 	 * any controller.
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)")
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\MVC\Dispatcher->dispatch())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 */
@@ -95,7 +95,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that access denied exceptions are transformed into the correct
 	 * response status.
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)")
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\MVC\Dispatcher->dispatch())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 */

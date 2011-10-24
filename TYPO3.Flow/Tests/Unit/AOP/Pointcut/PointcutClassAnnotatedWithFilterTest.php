@@ -33,11 +33,11 @@ class PointcutClassAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($classAnnotatedWithFilter->matches($className, '', '', 1));
 
-		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('.*Aspect');
+		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('TYPO3\FLOW3\Annotations\Scope');
 		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($classAnnotatedWithFilter->matches($className, '', '', 1));
 
-		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('any.*');
+		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('Acme\No\Such\Annotation');
 		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertFalse($classAnnotatedWithFilter->matches($className, '', '', 1));
 	}

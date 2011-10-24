@@ -53,7 +53,7 @@ class CsrfProtectionAspect {
 	/**
 	 * Adds a CSRF token as argument in the URI builder
 	 *
-	 * @FLOW3\Before("method(TYPO3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)")
+	 * @FLOW3\Before("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\MVC\Web\Routing\UriBuilder->build())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 */
