@@ -73,6 +73,16 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function withinPointcutsAlsoAcceptClassNames() {
+		$targetClass = new Fixtures\TargetClass01();
+		$this->assertSame('FLOW3 is Rocket Science', $targetClass->sayWhatFlow3Is(), 'TargetClass01');
+		$childClass = new Fixtures\ChildClassOfTargetClass01();
+		$this->assertSame('FLOW3 is not Rocket Science', $childClass->sayWhatFlow3Is(), 'Child class of TargetClass01');
+	}
+
+	/**
+	 * @test
+	 */
 	public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized() {
 		$className = 'TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01';
 		$targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
