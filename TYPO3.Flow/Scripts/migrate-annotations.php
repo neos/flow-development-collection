@@ -19,8 +19,6 @@ define('FLOW3_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
 
 if (FLOW3_SAPITYPE !== 'CLI') exit ('This script can only be executed from the command line.');
 
-define('FLOW3_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../') . '/'))));
-
 if (!isset($argv[1]) || ($argv[1] !== '--migrate' && $argv[1] !== '--dryrun')) {
 	echo "
 FLOW3 1.0.0 RC 1 annotation migration script.
@@ -32,19 +30,13 @@ MAKE SURE TO BACKUP YOUR CODE BEFORE RUNNING THIS SCRIPT!
 
 Call this script with the --dryrun to see what would be changed.
 Call this script with the --migrate to actually do the changes.
-
-The parameter --packages-path allows you to overwrite the default
-path " . FLOW3_PATH_ROOT . "Packages/. It has to be the second parameter!
 ";
 
 	exit;
 }
 
-if(isset($argv[2]) && strpos($argv[2], '--packages-path')===0){
-    define('FLOW3_PATH_PACKAGES', ltrim(substr($argv[2], 15), '='));
-} else {
-    define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
-}
+define('FLOW3_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../') . '/'))));
+define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
 
 $ormAnnotations = array('MappedSuperclass', 'InheritanceType', 'DiscriminatorColumn', 'DiscriminatorMap', 'Id', 'GeneratedValue', 'Version', 'JoinColumns', 'JoinColumn', 'Column', 'OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany', 'ElementCollection', 'JoinTable', 'Table', 'UniqueConstraint', 'Index', 'SequenceGenerator', 'ChangeTrackingPolicy', 'OrderBy', 'NamedQueries', 'NamedQuery', 'HasLifecycleCallbacks', 'PrePersist', 'PostPersist', 'PreUpdate', 'PostUpdate', 'PreRemove', 'PostRemove', 'PostLoad');
 
