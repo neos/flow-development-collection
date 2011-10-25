@@ -298,7 +298,7 @@ class Bootstrap {
 				$exceptionMessage = '';
 				$exceptionReference = "\n<b>More Information</b>\n";
 				$exceptionReference .= "  Exception code      #" . $exception->getCode() . "\n";
-				$exceptionReference .= "  File                " . $exception->getFile() . "\n";
+				$exceptionReference .= "  File                " . $exception->getFile() . ($exception->getLine() ? ' line ' . $exception->getLine() : '') . "\n";
 				$exceptionReference .= ($exception instanceof \TYPO3\FLOW3\Exception ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
 				foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
 					$exceptionMessage .= "  $messageLine\n";
