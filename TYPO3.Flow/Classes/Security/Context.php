@@ -104,7 +104,7 @@ class Context {
 	protected $request;
 
 	/**
-	 * @var TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
