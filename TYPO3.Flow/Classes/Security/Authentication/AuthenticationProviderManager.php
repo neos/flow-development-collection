@@ -165,6 +165,9 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * @return void
 	 */
 	public function logout() {
+		if (!$this->securityContext->isInitialized()) {
+			return;
+		}
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			$token->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}

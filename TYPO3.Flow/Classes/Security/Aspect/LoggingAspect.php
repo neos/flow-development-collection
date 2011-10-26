@@ -62,8 +62,12 @@ class LoggingAspect {
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
 	public function logManagerLogout(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$securityContext = $joinPoint->getProxy()->getSecurityContext();
+		if (!$securityContext->isInitialized()) {
+			return;
+		}
 		$accountIdentifiers = array();
-		foreach ($joinPoint->getProxy()->getSecurityContext()->getAuthenticationTokens() as $token) {
+		foreach ($securityContext->getAuthenticationTokens() as $token) {
 			$account = $token->getAccount();
 			if ($account !== NULL) {
 				$accountIdentifiers[] = $account->getAccountIdentifier();
