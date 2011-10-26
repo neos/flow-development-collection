@@ -321,6 +321,20 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 	/**
 	 * @test
 	 */
+	public function logoutReturnsIfSecurityContextIsNotInitialized() {
+		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+		$mockContext->expects($this->never())->method('getAuthenticationTokens');
+
+		$mockProviderManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
+		$mockProviderManager->setSecurityContext($mockContext);
+
+		$mockProviderManager->logout();
+	}
+
+	/**
+	 * @test
+	 */
 	public function logoutSetsTheAuthenticationStatusOfAllActiveAuthenticationTokensToNoCredentialsGiven() {
 		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$token1->expects($this->once())->method('setAuthenticationStatus')->with(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
@@ -330,6 +344,7 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 		$authenticationTokens = array($token1, $token2);
 
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->once())->method('isInitialized')->will($this->returnValue(TRUE));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
 
 		$mockProviderManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
