@@ -63,7 +63,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the web URI to be used to publish the specified persistent resource
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)")
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method, a rewritten private resource URI or FALSE on error
 	 * @todo Rewrite of the resource title should be done by general string to uri rewrite function from somewhere else

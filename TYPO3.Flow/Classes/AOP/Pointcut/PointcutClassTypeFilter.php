@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A class type filter which fires on class types defined by a regular expression
+ * A class type filter which fires on class or interface names
  *
  * @FLOW3\Proxy(false)
  */
@@ -26,17 +26,30 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	protected $reflectionService;
 
 	/**
-	 * @var string A regular expression to match class types
+	 * An interface name to match class types
+	 * @var string
 	 */
-	protected $classTypeFilterExpression;
+	protected $interfaceOrClassName;
 
 	/**
-	 * The constructor - initializes the class type filter with the class type filter expression
-	 *
-	 * @param string $classTypeFilterExpression A regular expression which defines which class types should match
+	 * If the type specified by the expression is an interface (or class)
+	 * @var boolean
 	 */
-	public function __construct($classTypeFilterExpression) {
-		$this->classTypeFilterExpression = str_replace('\\', '\\\\', $classTypeFilterExpression);
+	protected $isInterface = TRUE;
+
+	/**
+	 * The constructor - initializes the class type filter with the class or interface name
+	 *
+	 * @param string $interfaceOrClassName Interface or a class name to match agagins
+	 */
+	public function __construct($interfaceOrClassName) {
+		$this->interfaceOrClassName = $interfaceOrClassName;
+		if (!interface_exists($this->interfaceOrClassName)) {
+			if (!class_exists($this->interfaceOrClassName)) {
+				throw new \TYPO3\FLOW3\AOP\Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
+			}
+			$this->isInterface = FALSE;
+		}
 	}
 
 	/**
@@ -50,7 +63,7 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	}
 
 	/**
-	 * Checks if the specified class matches with the class type filter pattern
+	 * Checks if the specified class matches with the class type filter
 	 *
 	 * @param string $className Name of the class to check against
 	 * @param string $methodName Name of the method - not used here
@@ -59,13 +72,11 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		$matches = FALSE;
-		foreach ($this->reflectionService->getInterfaceNamesImplementedByClass($className) as $interfaceName) {
-			$matchResult =  @preg_match('/^' . $this->classTypeFilterExpression . '$/', $interfaceName);
-			if ($matchResult === FALSE) throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classTypeFilterExpression . '" in pointcut class type filter', 1172483343);
-			if ($matchResult === 1) $matches = TRUE;
+		if ($this->isInterface === TRUE) {
+			return (array_search($this->interfaceOrClassName, class_implements($className)) !== FALSE);
+		} else {
+			return ($className === $this->interfaceOrClassName || is_subclass_of($className, $this->interfaceOrClassName));
 		}
-		return ($matches);
 	}
 
 	/**
