@@ -227,15 +227,11 @@ TYPO3:
 
       cryptography:
 
-        RSAWalletServicePHP:
+        hashingStrategies:
+          default: pbkdf2
 
-          # Path to the file where RSA keys shall be stored
-          # Note: This file must not be accessible by the public!
-          keystorePath: %FLOW3_PATH_DATA%Persistent/RsaWalletData
-
-          # Defines the openSSL configuration used for key handling.
-          # See the PHP openSSL documentation for possible settings.
-          openSSLConfiguration: []
+          pbkdf2: TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy
+          bcrypt: TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy
 
         Pbkdf2HashingStrategy:
 
@@ -253,6 +249,16 @@ TYPO3:
           # Cost of a BCrypt operation, can be between 4 and 31
           # The faster your machine is, the higher this number should be
           cost: 14
+
+        RSAWalletServicePHP:
+
+          # Path to the file where RSA keys shall be stored
+          # Note: This file must not be accessible by the public!
+          keystorePath: %FLOW3_PATH_DATA%Persistent/RsaWalletData
+
+          # Defines the openSSL configuration used for key handling.
+          # See the PHP openSSL documentation for possible settings.
+          openSSLConfiguration: []
 
     session:
       PHPSession:

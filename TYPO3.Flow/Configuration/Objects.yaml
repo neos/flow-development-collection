@@ -245,10 +245,6 @@ TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
 TYPO3\FLOW3\Security\Authorization\FirewallInterface:
   className: TYPO3\FLOW3\Security\Authorization\FilterFirewall
 
-TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface:
-  className: TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy
-  scope: singleton
-
 TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy:
   scope: singleton
   arguments:

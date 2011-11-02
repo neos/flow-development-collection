@@ -21,28 +21,35 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class HashService {
 
 	/**
-	 * A private, unique key used for encryption tasks.
+	 * A private, unique key used for encryption tasks
 	 * @var string
 	 */
-	protected $encryptionKey;
+	protected $encryptionKey = NULL;
 
 	/**
+	 * @var array
+	 */
+	protected $passwordHashingStrategies = array();
+
+	/**
+	 * @var array
+	 */
+	protected $strategySettings;
+
+	/**
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface
 	 */
-	protected $passwordHashingStrategy;
+	protected $objectManager;
 
 	/**
+	 * Injects the settings of the package this controller belongs to.
+	 *
+	 * @param array $settings Settings container of the current package
+	 * @return void
 	 */
-	public function __construct() {
-		if (!file_exists(FLOW3_PATH_DATA . 'Persistent/EncryptionKey')) {
-			file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\TYPO3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
-		}
-		$this->encryptionKey = file_get_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey');
-
-		if (empty($this->encryptionKey)) {
-			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
-		}
+	public function injectSettings(array $settings) {
+		$this->strategySettings = $settings['security']['cryptography']['hashingStrategies'];
 	}
 
 	/**
@@ -136,36 +143,79 @@ class HashService {
 	}
 
 	/**
-	 * Hash a password using the configured password hashing strategy
+	 * Hash a password using the a password hashing strategy
 	 *
 	 * @param string $password The cleartext password
+	 * @param string $strategyIdentifier An identifier for a configured strategy, uses default strategy if not specified
 	 * @return string A hashed password with salt (if used)
 	 * @api
 	 */
-	public function hashPassword($password) {
-		return $this->passwordHashingStrategy->hashPassword($password, $this->encryptionKey);
+	public function hashPassword($password, $strategyIdentifier = 'default') {
+		list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
+		$hashedPasswordAndSalt = $passwordHashingStrategy->hashPassword($password, $this->getEncryptionKey());
+		return $strategyIdentifier . '=>' . $hashedPasswordAndSalt;
 	}
 
 	/**
 	 * Validate a hashed password using the configured password hashing strategy
 	 *
 	 * @param string $password The cleartext password
-	 * @param string $hashedPasswordAndSalt The hashed password with salt (if used)
+	 * @param string $hashedPasswordAndSalt The hashed password with salt (if used) and an optional strategy identifier
 	 * @return boolean TRUE if the given password matches the hashed password
 	 * @api
 	 */
 	public function validatePassword($password, $hashedPasswordAndSalt) {
-		return $this->passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->encryptionKey);
+		$strategyIdentifier = 'default';
+		if (strpos($hashedPasswordAndSalt, '=>') !== FALSE) {
+			list($strategyIdentifier, $hashedPasswordAndSalt) = explode('=>', $hashedPasswordAndSalt, 2);
+		}
+
+		list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
+		return $passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->getEncryptionKey());
 	}
 
 	/**
-	 * Inject the password hashing strategy
+	 * Get a password hashing strategy
 	 *
-	 * @param \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface $passwordHashingStrategy
-	 * @return void
+	 * @param string $strategyIdentifier
+	 * @return array Array of \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface and string
 	 */
-	public function setPasswordHashingStrategy(\TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface $passwordHashingStrategy) {
-		$this->passwordHashingStrategy = $passwordHashingStrategy;
+	protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default') {
+		if (isset($this->passwordHashingStrategies[$strategyIdentifier])) {
+			return $this->passwordHashingStrategies[$strategyIdentifier];
+		}
+
+		if ($strategyIdentifier === 'default') {
+			if (!isset($this->strategySettings['default'])) {
+				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No default hashing strategy configured', 1320758427);
+			}
+			$strategyIdentifier = $this->strategySettings['default'];
+		}
+
+		if (!isset($this->strategySettings[$strategyIdentifier])) {
+			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No hashing strategy with identifier "' . $strategyIdentifier . '" configured', 1320758776);
+		}
+		$strategyObjectName = $this->strategySettings[$strategyIdentifier];
+		$this->passwordHashingStrategies[$strategyIdentifier] = $this->objectManager->get($strategyObjectName);
+		return array($this->passwordHashingStrategies[$strategyIdentifier], $strategyIdentifier);
+	}
+
+	/**
+	 * @return string The configured encryption key stored in Data/Persistent/EncryptionKey
+	 */
+	protected function getEncryptionKey() {
+		if ($this->encryptionKey === NULL) {
+			if (!file_exists(FLOW3_PATH_DATA . 'Persistent/EncryptionKey')) {
+				file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\TYPO3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
+			}
+			$this->encryptionKey = file_get_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey');
+
+			if ($this->encryptionKey === FALSE || $this->encryptionKey === '') {
+				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
+			}
+		}
+
+		return $this->encryptionKey;
 	}
 
 }

@@ -32,10 +32,11 @@ class AccountFactory {
 	 * @param string $identifier Identifier of the account, must be unique
 	 * @param string $password The clear text password
 	 * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
-	 * @param string $authenticationProviderName Optinally the name of the authentication provider the account is affiliated with
+	 * @param string $authenticationProviderName Optional name of the authentication provider the account is affiliated with
+	 * @param string $passwordHashingStrategy Optional password hashing strategy to use for the password
 	 * @return \TYPO3\FLOW3\Security\Account A new account, not yet added to the account repository
 	 */
-	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider') {
+	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider', $passwordHashingStrategy = 'default') {
 		$roles = array();
 		foreach ($roleIdentifiers as $roleIdentifier) {
 			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
@@ -43,7 +44,7 @@ class AccountFactory {
 
 		$account = new \TYPO3\FLOW3\Security\Account();
 		$account->setAccountIdentifier($identifier);
-		$account->setCredentialsSource($this->hashService->hashPassword($password));
+		$account->setCredentialsSource($this->hashService->hashPassword($password, $passwordHashingStrategy));
 		$account->setAuthenticationProviderName($authenticationProviderName);
 		$account->setRoles($roles);
 
