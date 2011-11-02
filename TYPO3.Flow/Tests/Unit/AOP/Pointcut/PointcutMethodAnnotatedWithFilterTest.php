@@ -11,8 +11,6 @@ namespace TYPO3\FLOW3\Tests\Unit\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixtures/MethodsTaggedWithSomething.php');
-
 /**
  * Testcase for the Pointcut Method-Annotated-With Filter
  *
@@ -23,20 +21,27 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	 * @test
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation() {
-		$className = 'TYPO3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('getMethodAnnotations'), array(), '', FALSE, TRUE);
+		$mockReflectionService->expects($this->any())->method('getMethodAnnotations')->with(__CLASS__, __FUNCTION__, 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(array('SomeAnnotation'), array()));
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache', 'hasMethod'));
-		$mockReflectionService->injectClassLoader(new \TYPO3\FLOW3\Core\ClassLoader());
-		$mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(TRUE));
-		$mockReflectionService->initializeObject();
+		$filter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
+		$filter->injectReflectionService($mockReflectionService);
 
-		$methodAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('TYPO3\FLOW3\Annotations\Session');
-		$methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($methodAnnotatedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
+		$this->assertTrue($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
+		$this->assertFalse($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
+	}
 
-		$methodAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Annotation\Does\Not\Exist');
-		$methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertFalse($methodAnnotatedWithFilter->matches(__CLASS__, 'somethingCompletelyDifferent', $className, 1));
+	/**
+	 * @test
+	 */
+	public function matchesReturnsFalseIfMethodDoesNotExistOrDeclardingClassHasNotBeenSpecified() {
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE, TRUE);
+
+		$filter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
+		$filter->injectReflectionService($mockReflectionService);
+
+		$this->assertFalse($filter->matches(__CLASS__, __FUNCTION__, NULL, 1234));
+		$this->assertFalse($filter->matches(__CLASS__, 'foo', __CLASS__, 1234));
 	}
 }
 ?>

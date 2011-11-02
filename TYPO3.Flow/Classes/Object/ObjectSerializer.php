@@ -150,8 +150,11 @@ class ObjectSerializer {
 
 			} elseif (is_object($propertyValue)
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
-						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
-						|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
+						&& (
+							$this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\FLOW3\Annotations\Entity')
+							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\FLOW3\Annotations\ValueObject')
+							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
+						)) {
 
 				$propertyArray[$propertyName][self::TYPE] = 'persistenceObject';
 				$propertyArray[$propertyName][self::VALUE] = get_class($propertyValue) . ':' . $this->persistenceManager->getIdentifierByObject($propertyValue);

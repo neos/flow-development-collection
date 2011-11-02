@@ -25,7 +25,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|classTaggedWith|class|methodAnnotatedWith|methodTaggedWith|method|within|filter|setting|evaluate)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|methodTaggedWith|method|within|filter|setting|evaluate)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
 	const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
 														(?:
@@ -138,7 +138,6 @@ class PointcutExpressionParser {
 				$signaturePattern = $this->getSubstringBetweenParentheses($expression);
 				switch ($pointcutDesignator) {
 					case 'classAnnotatedWith':
-					case 'classTaggedWith' :
 					case 'class' :
 					case 'methodAnnotatedWith':
 					case 'methodTaggedWith' :
@@ -171,22 +170,6 @@ class PointcutExpressionParser {
 	 */
 	protected function parseDesignatorClassAnnotatedWith($operator, $classAnnotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutClassAnnotatedWithFilter($classAnnotationPattern);
-		$filter->injectReflectionService($this->reflectionService);
-		$pointcutFilterComposite->addFilter($operator, $filter);
-	}
-
-	/**
-	 * Takes a class tag filter pattern and adds a so configured class tag filter to the
-	 * filter composite object.
-	 *
-	 * @param string $operator The operator
-	 * @param string $classTagPattern The pattern expression as configuration for the class tag filter
-	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class tag filter) will be added to this composite object.
-	 * @return void
-	 * @deprecated since 1.0
-	 */
-	protected function parseDesignatorClassTaggedWith($operator, $classTagPattern, PointcutFilterComposite $pointcutFilterComposite) {
-		$filter = new PointcutClassTaggedWithFilter($classTagPattern);
 		$filter->injectReflectionService($this->reflectionService);
 		$pointcutFilterComposite->addFilter($operator, $filter);
 	}

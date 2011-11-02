@@ -275,16 +275,18 @@ class Scripts {
 	 * @return void
 	 */
 	static public function initializeReflectionService(Bootstrap $bootstrap) {
-		$classLoader = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader');
 		$cacheManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager');
-		$systemLogger = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
 		$reflectionService = new \TYPO3\FLOW3\Reflection\ReflectionService();
-		$reflectionService->injectSystemLogger($systemLogger);
-		$reflectionService->injectClassLoader($classLoader);
+
+		$reflectionService->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface'));
+		$reflectionService->injectClassLoader($bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader'));
 		$reflectionService->setStatusCache($cacheManager->getCache('FLOW3_ReflectionStatus'));
-		$reflectionService->setDataCache($cacheManager->getCache('FLOW3_ReflectionData'));
-		$reflectionService->initializeObject();
+		$reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('FLOW3_ReflectionData'));
+		$reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ReflectionDataRuntimeCache'));
+		$reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ClassSchemataRuntimeCache'));
+
+		$reflectionService->initialize($bootstrap);
 
 		$bootstrap->setEarlyInstance('TYPO3\FLOW3\Reflection\ReflectionService', $reflectionService);
 	}

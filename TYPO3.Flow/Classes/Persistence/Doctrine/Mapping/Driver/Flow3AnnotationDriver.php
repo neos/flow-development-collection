@@ -659,9 +659,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		}
 
 		$this->classNames = array_merge(
-			$this->reflectionService->getClassNamesByTag('valueobject'),
-			$this->reflectionService->getClassNamesByTag('entity'),
-			$this->reflectionService->getClassNamesByTag('mappedsuperclass')
+			$this->reflectionService->getClassNamesByAnnotation('TYPO3\FLOW3\Annotations\ValueObject'),
+			$this->reflectionService->getClassNamesByAnnotation('TYPO3\FLOW3\Annotations\Entity'),
+			$this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\Entity'),
+			$this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\MappedSuperclass')
 		);
 		$this->classNames = array_filter($this->classNames,
 			function ($className) {
@@ -684,8 +685,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	public function isTransient($className) {
 		return strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
 				(
-					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject') &&
 					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject') &&
 					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
 					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
 				);

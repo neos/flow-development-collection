@@ -407,7 +407,7 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
-		$mockReflectionService->expects($this->at(2))->method('isClassTaggedWith')->with($entityClassName, 'entity')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->at(2))->method('isClassAnnotatedWith')->with($entityClassName, 'TYPO3\FLOW3\Annotations\Entity')->will($this->returnValue(TRUE));
 
 		$objectSerializer = $this->getMock('TYPO3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectReflectionService($mockReflectionService);
@@ -454,8 +454,8 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
-		$mockReflectionService->expects($this->at(2))->method('isClassTaggedWith')->with($entityClassName, 'entity')->will($this->returnValue(FALSE));
-		$mockReflectionService->expects($this->at(3))->method('isClassTaggedWith')->with($entityClassName, 'valueobject')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->at(2))->method('isClassAnnotatedWith')->with($entityClassName, 'TYPO3\FLOW3\Annotations\Entity')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(3))->method('isClassAnnotatedWith')->with($entityClassName, 'TYPO3\FLOW3\Annotations\ValueObject')->will($this->returnValue(TRUE));
 
 		$objectSerializer = $this->getMock('TYPO3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectReflectionService($mockReflectionService);

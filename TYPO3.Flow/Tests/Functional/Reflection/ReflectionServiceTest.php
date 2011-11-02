@@ -52,19 +52,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * This test case checks for http://forge.typo3.org/issues/29449
-	 *
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\InvalidClassException
-	 */
-	public function theReflectionServiceThrowsExceptionIfDoctrineProxyIsReflected() {
-		require_once(__DIR__ . '/Fixtures/BrokenClassImplementingDoctrineProxy.php');
-
-		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
-		$reflectionService->getClassTagsValues('\TYPO3\FLOW3\Persistence\Doctrine\Proxies\FakePackageDomainModelBrokenClassProxy'); // TODO
-	}
-
-	/**
 	 * @test
 	 */
 	public function aggregateRootAssignmentsInHierarchiesAreCorrect() {

@@ -74,7 +74,7 @@ class CsrfProtectionAspect {
 
 		$className = $this->objectManager->getClassNameByObjectName($this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName));
 		if ($this->policyService->hasPolicyEntryForMethod($className, $actionName)
-			&& !$this->reflectionService->isMethodTaggedWith($className, $actionName, 'skipcsrfprotection')) {
+			&& !$this->reflectionService->isMethodAnnotatedWith($className, $actionName, 'TYPO3\FLOW3\Annotations\SkipCsrfProtection')) {
 			$internalArguments = $uriBuilder->getArguments();
 			$internalArguments['__csrfToken'] = $this->securityContext->getCsrfProtectionToken();
 			$uriBuilder->setArguments($internalArguments);

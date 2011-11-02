@@ -60,12 +60,11 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function parseCallsSpecializedMethodsToParseEachDesignator() {
-		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClassTaggedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations');
+		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations');
 		$parser = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser', $mockMethods, array(), '', FALSE);
 
 		$parser->expects($this->once())->method('parseDesignatorPointcut')->with('&&', '\Foo\Bar->baz');
 		$parser->expects($this->once())->method('parseDesignatorClassAnnotatedWith')->with('&&', 'TYPO3\FLOW3\Annotations\Aspect');
-		$parser->expects($this->once())->method('parseDesignatorClassTaggedWith')->with('&&', 'foo');
 		$parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo');
 		$parser->expects($this->once())->method('parseDesignatorMethodAnnotatedWith')->with('&&', 'TYPO3\FLOW3\Annotations\Session');
 		$parser->expects($this->once())->method('parseDesignatorMethodTaggedWith')->with('&&', 'foo');
@@ -77,7 +76,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$parser->parse('\Foo\Bar->baz', 'Unit Test');
 		$parser->parse('classAnnotatedWith(TYPO3\FLOW3\Annotations\Aspect)', 'Unit Test');
-		$parser->parse('classTaggedWith(foo)', 'Unit Test');
 		$parser->parse('class(Foo)', 'Unit Test');
 		$parser->parse('methodAnnotatedWith(TYPO3\FLOW3\Annotations\Session)', 'Unit Test');
 		$parser->parse('methodTaggedWith(foo)', 'Unit Test');
@@ -105,16 +103,15 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function parseSplitsUpTheExpressionIntoDesignatorsAndPassesTheOperatorsToTheDesginatorParseMethod() {
-		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassTaggedWith', 'parseDesignatorClass', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
+		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClass', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
 		$parser = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser', $mockMethods, array(), '', FALSE);
 		$parser->injectObjectManager($this->mockObjectManager);
 
-		$parser->expects($this->once())->method('parseDesignatorClassTaggedWith')->with('&&', 'foo');
 		$parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo');
 		$parser->expects($this->once())->method('parseDesignatorMethod')->with('||', 'Foo->Bar()');
 		$parser->expects($this->once())->method('parseDesignatorWithin')->with('&&!', 'Bar');
 
-		$parser->parse('classTaggedWith(foo) && class(Foo) || method(Foo->Bar()) && !within(Bar)', 'Unit Test');
+		$parser->parse('class(Foo) || method(Foo->Bar()) && !within(Bar)', 'Unit Test');
 	}
 
 	/**
@@ -128,19 +125,6 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$parser->injectReflectionService($this->mockReflectionService);
 
 		$parser->_call('parseDesignatorClassAnnotatedWith', '&&', 'foo', $mockPointcutFilterComposite);
-	}
-
-	/**
-	 * @test
-	 */
-	public function parseDesignatorClassTaggedWithAddsAFilterToTheGivenFilterComposite() {
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
-		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&');
-
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser', array('dummy'), array(), '', FALSE);
-		$parser->injectReflectionService($this->mockReflectionService);
-
-		$parser->_call('parseDesignatorClassTaggedWith', '&&', 'foo', $mockPointcutFilterComposite);
 	}
 
 	/**

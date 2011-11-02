@@ -80,9 +80,11 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @return boolean
 	 */
 	public function canConvertFrom($source, $targetType) {
-		$isValueObject = $this->reflectionService->isClassTaggedWith($targetType, 'valueobject');
-		$isEntity = $this->reflectionService->isClassTaggedWith($targetType, 'entity');
-		return !($isEntity || $isValueObject);
+		return !(
+			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\FLOW3\Annotations\Entity') ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\FLOW3\Annotations\ValueObject') ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, 'Doctrine\ORM\Mapping\Entity')
+		);
 	}
 
 	/**

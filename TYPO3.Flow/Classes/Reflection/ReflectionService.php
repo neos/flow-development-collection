@@ -22,6 +22,39 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class ReflectionService {
 
+	const
+		VISIBILITY_PRIVATE = 1,
+		VISIBILITY_PROTECTED = 2,
+		VISIBILITY_PUBLIC = 3,
+			// Implementations of an interface
+		DATA_INTERFACE_IMPLEMENTATIONS = 1,
+			// Implemented interfaces of a class
+		DATA_CLASS_INTERFACES = 2,
+			// Subclasses of a class
+		DATA_CLASS_SUBCLASSES = 3,
+			// Class tag values
+		DATA_CLASS_TAGS_VALUES = 4,
+			// Class annotations
+		DATA_CLASS_ANNOTATIONS = 5,
+		DATA_CLASS_ABSTRACT = 6,
+		DATA_CLASS_FINAL = 7,
+		DATA_CLASS_METHODS = 8,
+		DATA_CLASS_PROPERTIES = 9,
+		DATA_METHOD_FINAL = 10,
+		DATA_METHOD_STATIC = 11,
+		DATA_METHOD_VISIBILITY = 12,
+		DATA_METHOD_PARAMETERS = 13,
+		DATA_PROPERTY_TAGS_VALUES = 14,
+		DATA_PROPERTY_ANNOTATIONS = 15,
+		DATA_PARAMETER_POSITION = 16,
+		DATA_PARAMETER_OPTIONAL = 17,
+		DATA_PARAMETER_TYPE = 18,
+		DATA_PARAMETER_ARRAY = 19,
+		DATA_PARAMETER_CLASS = 20,
+		DATA_PARAMETER_ALLOWS_NULL = 21,
+		DATA_PARAMETER_DEFAULT_VALUE = 22,
+		DATA_PARAMETER_BY_REFERENCE = 23;
+
 	/**
 	 * @var \Doctrine\Common\Annotations\Reader
 	 */
@@ -45,7 +78,17 @@ class ReflectionService {
 	/**
 	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
-	protected $dataCache;
+	protected $reflectionDataCompiletimeCache;
+
+	/**
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $reflectionDataRuntimeCache;
+
+	/**
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $classSchemataRuntimeCache;
 
 	/**
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
@@ -53,158 +96,55 @@ class ReflectionService {
 	protected $systemLogger;
 
 	/**
-	 * Settings of the FLOW3 package
-	 *
+	 * @var boolean
+	 */
+	protected $runsInProductionContext;
+
+	/**
+	 * @var boolean
+	 */
+	protected $loadFromClassSchemaRuntimeCache = FALSE;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;
 
 	/**
-	 * All available class names to consider. Class name = key, value is always TRUE
-	 *
-	 * @var array
-	 */
-	protected $reflectedClassNames = array();
-
-	/**
-	 * Class names of all reflections which have been loaded from the cache.
-	 *
-	 * @var array
-	 */
-	protected $cachedClassNames = array();
-
-	/**
-	 * Names of interfaces and an array of class names implementing these
-	 *
-	 * @var array
-	 */
-	protected $interfaceImplementations = array();
-
-	/**
-	 * Names of classes and an array of interfaces implemented by them
-	 *
-	 * @var array
-	 */
-	protected $interfacesImplementedByClass = array();
-
-	/**
-	 * Names of classes which are abstract
-	 *
-	 * @var array
-	 */
-	protected $abstractClasses = array();
-
-	/**
-	 * Names of classes which are final
-	 *
-	 * @var array
-	 */
-	protected $finalClasses = array();
-
-	/**
-	 * Names of methods (in the form classname::methodname) which are final
-	 *
-	 * @var array
-	 */
-	protected $finalMethods = array();
-
-	/**
-	 * Names of methods (in the form classname::methodname) which are static
-	 *
-	 * @var array
-	 */
-	protected $staticMethods = array();
-
-	/**
-	 * Array of class names and names of their sub classes as $className => TRUE
-	 *
-	 * @var array
-	 */
-	protected $subClasses = array();
-
-	/**
-	 * Array of tags and the names of classes which are tagged with them
-	 *
-	 * @var array
-	 */
-	protected $taggedClasses = array();
-
-	/**
 	 * Array of annotations classnames and the names of classes which are annotated with them
-	 *
 	 * @var array
 	 */
 	protected $annotatedClasses = array();
 
 	/**
-	 * Array of class names and their tags and values
-	 *
+	 * List of tags which are ignored while reflecting class and method tags and annotations
 	 * @var array
 	 */
-	protected $classTagsValues = array();
+	protected $ignoredTags = array('api', 'package', 'subpackage', 'license', 'copyright', 'author', 'const', 'see', 'todo', 'scope', 'fixme', 'test', 'expectedException', 'dataProvider');
 
 	/**
-	 * Array of class names and their annotations
-	 *
-	 * @var array
-	 */
-	protected $classAnnotations = array();
-
-	/**
-	 * Array of class names, method names, their parameters and additional information about the parameters
-	 *
-	 * @var array
-	 */
-	protected $methodParameters = array();
-
-	/**
-	 * Array of class names, method names and their visibility (' ' = public, '*' = protected, '-' = private)
-	 *
-	 * @var array
-	 */
-	protected $methodVisibilities = array();
-
-	/**
-	 * Array of class names and names of their properties
-	 *
-	 * @var array
-	 */
-	protected $classPropertyNames = array();
-
-	/**
-	 * Array of class names, property names and their tags and values
-	 *
-	 * @var array
-	 */
-	protected $propertyTagsValues = array();
-
-	/**
-	 * Array of class names, property names and their annotations
-	 *
-	 * @var array
-	 */
-	protected $propertyAnnotations = array();
-
-	/**
-	 * List of tags which are ignored while reflecting class and method annotations
-	 *
-	 * @var array
-	 */
-	protected $ignoredTags = array('api', 'package', 'subpackage', 'license', 'copyright', 'author', 'const', 'see', 'todo');
-
-	/**
-	 * Schemata of all classes which need to be persisted
-	 *
+	 * Schemata of all classes which can be persisted
 	 * @var array<\TYPO3\FLOW3\Reflection\ClassSchema>
 	 */
 	protected $classSchemata = array();
 
 	/**
 	 * An array of class names which are currently being forgotten by forgetClass(). Acts as a safeguard against infinite loops.
-	 *
 	 * @var array
 	 */
 	protected $classesCurrentlyBeingForgotten = array();
+
+	/**
+	 * Array with reflection information indexed by class name
+	 * @var array
+	 */
+	protected $classReflectionData = array();
+
+	/**
+	 * Array with updated reflection information (e.g. in Development context after classes have changed)
+	 * @var array
+	 */
+	protected $updatedReflectionData = array();
 
 	/**
 	 * Sets the status cache
@@ -219,15 +159,33 @@ class ReflectionService {
 	}
 
 	/**
-	 * Sets the data cache
-	 *
-	 * The cache must be set before initializing the Reflection Service
+	 * Sets the compiletime data cache
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
 	 * @return void
 	 */
-	public function setDataCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->dataCache = $cache;
+	public function setReflectionDataCompiletimeCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->reflectionDataCompiletimeCache = $cache;
+	}
+
+	/**
+	 * Sets the runtime data cache
+	 *
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
+	 * @return void
+	 */
+	public function setReflectionDataRuntimeCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->reflectionDataRuntimeCache = $cache;
+	}
+
+	/**
+	 * Sets the dedicated class schema cache for runtime purposes
+	 *
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 */
+	public function setClassSchemataRuntimeCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->classSchemataRuntimeCache = $cache;
 	}
 
 	/**
@@ -257,15 +215,24 @@ class ReflectionService {
 	/**
 	 * Initializes this service after dependencies have been injected.
 	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function initializeObject() {
-		$this->loadFromCache();
+	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		$this->runsInProductionContext = $bootstrap->getContext() === 'Production';
+
+		if ($this->runsInProductionContext && $this->reflectionDataRuntimeCache->getBackend()->isFrozen()) {
+			$this->classReflectionData = $this->reflectionDataRuntimeCache->get('__classNames');
+			$this->annotatedClasses = $this->reflectionDataRuntimeCache->get('__annotatedClasses');
+			$this->loadFromClassSchemaRuntimeCache = TRUE;
+		} else {
+			$this->loadClassReflectionCompiletimeCache();
+		}
+
 		$this->annotationReader = new \Doctrine\Common\Annotations\AnnotationReader();
-		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('fixme');
-		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('test');
-		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('expectedException');
-		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('dataProvider');
+		foreach ($this->ignoredTags as $tag) {
+			\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName($tag);
+		}
 		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($this->classLoader, 'loadClass'));
 	}
 
@@ -277,30 +244,8 @@ class ReflectionService {
 	 */
 	public function buildReflectionData(array $availableClassNames) {
 		$this->availableClassNames = $availableClassNames;
-
 		$this->forgetChangedClasses();
 		$this->reflectEmergedClasses();
-	}
-
-	/**
-	 * Returns an array with annotations that are ignored while reflecting class
-	 * and method annotations.
-	 *
-	 * @return array
-	 * @deprecated since 1.0.0
-	 */
-	public function getIgnoredTags() {
-		return $this->ignoredTags;
-	}
-
-	/**
-	 * Returns an array with annotations that are ignored while reflecting class
-	 * and method annotations.
-	 *
-	 * @return array
-	 */
-	public function getIgnoredAnnotations() {
-		return $this->ignoredTags;
 	}
 
 	/**
@@ -312,7 +257,10 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassReflected($className) {
-		return isset($this->reflectedClassNames[trim($className, '\\')]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		return isset($this->classReflectionData[$className]);
 	}
 
 	/**
@@ -322,7 +270,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getAllClassNames() {
-		return array_keys($this->reflectedClassNames);
+		return array_keys($this->classReflectionData);
 	}
 
 	/**
@@ -336,15 +284,23 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
-		$interfaceName = trim($interfaceName, '\\');
+		if ($interfaceName[0] === '\\') {
+			$interfaceName = substr($interfaceName, 1);
+		}
 		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
+		$this->loadOrReflectClassIfNecessary($interfaceName);
 
-		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
-		if (count($classNamesFound) === 1) return current($classNamesFound);
-		if (count($classNamesFound) === 2 && isset($this->interfaceImplementations['TYPO3\FLOW3\Object\Proxy\ProxyInterface'])) {
-			if (array_search(current($classNamesFound), $this->interfaceImplementations['TYPO3\FLOW3\Object\Proxy\ProxyInterface']) !== FALSE) return current($classNamesFound);
-			next($classNamesFound);
-			if (array_search(current($classNamesFound), $this->interfaceImplementations['TYPO3\FLOW3\Object\Proxy\ProxyInterface']) !== FALSE) return current($classNamesFound);
+		$classNamesFound = isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]) ? array_keys($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]) : array();
+		if (count($classNamesFound) === 1) {
+			return $classNamesFound[0];
+		}
+		if (count($classNamesFound) === 2 && isset($this->classReflectionData['TYPO3\FLOW3\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
+			if (isset($this->classReflectionData['TYPO3\FLOW3\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
+				return $classNamesFound[0];
+			}
+			if (isset($this->classReflectionData['TYPO3\FLOW3\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
+				return $classNamesFound[1];
+			}
 		}
 		return FALSE;
 	}
@@ -359,25 +315,13 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
-		$interfaceName = trim($interfaceName, '\\');
-		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
-		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
-	}
-
-	/**
-	 * Returns the names of all interfaces implemented by the specified class
-	 *
-	 * @param string $className Name of the class
-	 * @return array An array of interface names
-	 * @deprecated since 1.0.0beta1 – use the PHP function class_implements() instead
-	 */
-	public function getInterfaceNamesImplementedByClass($className) {
-		$className = trim($className, '\\');
-		if (!isset($this->interfacesImplementedByClass[$className])) {
-			$class = new \TYPO3\FLOW3\Reflection\ClassReflection($className);
-			$this->interfacesImplementedByClass[$className] = $class->getInterfaceNames();
+		if ($interfaceName[0] === '\\') {
+			$interfaceName = substr($interfaceName, 1);
 		}
-		return $this->interfacesImplementedByClass[$className];
+		$this->loadOrReflectClassIfNecessary($interfaceName);
+
+		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
+		return (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS])) ? array_keys($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]) : array();
 	}
 
 	/**
@@ -390,107 +334,70 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getAllSubClassNamesForClass($className) {
-		$className = trim($className, '\\');
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
 		if (class_exists($className) === FALSE) throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
-		return (isset($this->subClasses[$className])) ? array_keys($this->subClasses[$className]) : array();
+		$this->loadOrReflectClassIfNecessary($className);
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES])) ? array_keys($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES]) : array();
 	}
 
 	/**
-	 * Searches for and returns all names of classes which are tagged by the specified tag.
-	 * If no classes were found, an empty array is returned.
+	 * Searches for and returns all names of classes which are tagged by the specified
+	 * annotation. If no classes were found, an empty array is returned.
 	 *
-	 * @param string $tag Tag to search for
-	 * @return array An array of class names tagged by the tag
-	 * @api
-	 * @deprecated since 1.0.0
+	 * @param string $annotationClassName Name of the annotation class, for example "TYPO3\FLOW3\Annotations\Aspect"
+	 * @return void
 	 */
-	public function getClassNamesByTag($tag) {
-		return (isset($this->taggedClasses[$tag])) ? $this->taggedClasses[$tag] : array();
-	}
-
-	/**
-	 * Returns all tags and their values the specified class is tagged with
-	 *
-	 * @param string $className The class name to reflect
-	 * @return array An array of tags and their values or an empty array if no tags were found
-	 * @api
-	 * @deprecated since 1.0.0
-	 */
-	public function getClassTagsValues($className) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return (isset($this->classTagsValues[$className])) ? $this->classTagsValues[$className] : array();
-	}
-
-	/**
-	 * Returns values of the specified class tag.
-	 *
-	 * @param string $className The class name to reflect
-	 * @param string $tag The tag to return values of
-	 * @return array An array of values or an empty array of the class is not tagged with the tag or the tag has no values
-	 * @api
-	 * @deprecated since 1.0.0
-	 */
-	public function getClassTagValues($className, $tag) {
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->classTagsValues[$className])) return array();
-		return (isset($this->classTagsValues[$className][$tag])) ? $this->classTagsValues[$className][$tag] : array();
-	}
-
-	/**
-	 * Tells if the specified class is tagged with the given tag
-	 *
-	 * @param string $className Name of the class
-	 * @param string $tag Tag to check for
-	 * @return boolean TRUE if the class is tagged with $tag, otherwise FALSE
-	 * @api
-	 * @deprecated since 1.0.0
-	 */
-	public function isClassTaggedWith($className, $tag) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->classTagsValues[$className])) return FALSE;
-		return isset($this->classTagsValues[$className][$tag]);
+	public function getClassNamesByAnnotation($annotationClassName) {
+		if ($annotationClassName[0] === '\\') {
+			$annotationClassName = substr($annotationClassName, 1);
+		}
+		return (isset($this->annotatedClasses[$annotationClassName]) ? array_keys($this->annotatedClasses[$annotationClassName]) : array());
 	}
 
 	/**
 	 * Tells if the specified class has the given annotation
 	 *
 	 * @param string $className Name of the class
-	 * @param string $annotationName Annotation to check for
+	 * @param string $annotationClassName Annotation to check for
 	 * @return boolean
 	 * @api
 	 */
-	public function isClassAnnotatedWith($className, $annotationName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->classAnnotations[$className])) return FALSE;
-		foreach ($this->classAnnotations[$className] as $annotation) {
-			if ($annotation instanceof $annotationName) {
-				return TRUE;
-			}
+	public function isClassAnnotatedWith($className, $annotationClassName) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
 		}
-		return FALSE;
+		if ($annotationClassName[0] === '\\') {
+			$annotationClassName = substr($annotationClassName, 1);
+		}
+		return (isset($this->annotatedClasses[$annotationClassName][$className]));
 	}
 
 	/**
 	 * Returns the specified class annotations or an empty array
 	 *
 	 * @param string $className Name of the class
-	 * @param string $annotationName Annotation to filter for
+	 * @param string $annotationClassName Annotation to filter for
 	 * @return array<object>
 	 */
-	public function getClassAnnotations($className, $annotationName = NULL) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->classAnnotations[$className])) return array();
-
-		if ($annotationName === NULL) {
-			return $this->classAnnotations[$className];
+	public function getClassAnnotations($className, $annotationClassName = NULL) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		if ($annotationClassName !== NULL && $annotationClassName[0] === '\\') {
+			$annotationClassName = substr($annotationClassName, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS])) {
+			return array();
+		}
+		if ($annotationClassName === NULL) {
+			return $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS];
 		} else {
 			$annotations = array();
-			foreach ($this->classAnnotations[$className] as $annotation) {
-				if ($annotation instanceof $annotationName) {
+			foreach ($this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS] as $annotation) {
+				if ($annotation instanceof $annotationClassName) {
 					$annotations[] = $annotation;
 				}
 			}
@@ -505,11 +412,11 @@ class ReflectionService {
 	 * get one (random) instance of them.
 	 *
 	 * @param string $className Name of the class
-	 * @param string $annotationName Annotation to filter for
+	 * @param string $annotationClassName Annotation to filter for
 	 * @return object
 	 */
-	public function getClassAnnotation($className, $annotationName) {
-		$annotations = $this->getClassAnnotations($className, $annotationName);
+	public function getClassAnnotation($className, $annotationClassName) {
+		$annotations = $this->getClassAnnotations($className, $annotationClassName);
 		return $annotations === array() ? NULL : current($annotations);
 	}
 
@@ -522,10 +429,17 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassImplementationOf($className, $interfaceName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->interfaceImplementations[$interfaceName])) return FALSE;
-		return (array_search($className, $this->interfaceImplementations[$interfaceName]) !== FALSE);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		if ($interfaceName[0] === '\\') {
+			$interfaceName = substr($interfaceName, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		if (!isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
+			return FALSE;
+		}
+		return (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className]));
 	}
 
 	/**
@@ -536,9 +450,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassAbstract($className) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return isset($this->abstractClasses[$className]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT]);
 	}
 
 	/**
@@ -549,9 +465,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassFinal($className) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return isset($this->finalClasses[$className]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_FINAL]);
 	}
 
 	/**
@@ -563,9 +481,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodFinal($className, $methodName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return isset($this->finalMethods[$className . '::' . $methodName]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_FINAL]);
 	}
 
 	/**
@@ -577,9 +497,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodStatic($className, $methodName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return isset($this->staticMethods[$className . '::' . $methodName]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_STATIC]);
 	}
 
 	/**
@@ -591,9 +513,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodPublic($className, $methodName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === ' ');
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY]) && $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] === self::VISIBILITY_PUBLIC);
 	}
 
 	/**
@@ -605,9 +529,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodProtected($className, $methodName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === '*');
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY]) && $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] === self::VISIBILITY_PROTECTED);
 	}
 
 	/**
@@ -619,9 +545,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodPrivate($className, $methodName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === '-');
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY]) && $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] === self::VISIBILITY_PRIVATE);
 	}
 
 	/**
@@ -632,7 +560,6 @@ class ReflectionService {
 	 * @param string $tag Tag to check for
 	 * @return boolean TRUE if the method is tagged with $tag, otherwise FALSE
 	 * @api
-	 * @deprecated since 1.0.0
 	 */
 	public function isMethodTaggedWith($className, $methodName, $tag) {
 		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(trim($className, '\\'), $methodName);
@@ -645,12 +572,12 @@ class ReflectionService {
 	 *
 	 * @param string $className Name of the class
 	 * @param string $methodName Name of the method
-	 * @param string $annotationName Annotation to check for
+	 * @param string $annotationClassName Annotation to check for
 	 * @return boolean
 	 * @api
 	 */
-	public function isMethodAnnotatedWith($className, $methodName, $annotationName) {
-		return $this->getMethodAnnotations($className, $methodName, $annotationName) !== array();
+	public function isMethodAnnotatedWith($className, $methodName, $annotationClassName) {
+		return $this->getMethodAnnotations($className, $methodName, $annotationClassName) !== array();
 	}
 
 	/**
@@ -658,19 +585,24 @@ class ReflectionService {
 	 *
 	 * @param string $className Name of the class
 	 * @param string $methodName Name of the method
-	 * @param string $annotationName Annotation to filter for
+	 * @param string $annotationClassName Annotation to filter for
 	 * @return array<object>
 	 * @api
 	 */
-	public function getMethodAnnotations($className, $methodName, $annotationName = NULL) {
-		$className = trim($className, '\\');
+	public function getMethodAnnotations($className, $methodName, $annotationClassName = NULL) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		if ($annotationClassName[0] === '\\') {
+			$annotationClassName = substr($annotationClassName, 1);
+		}
 		$annotations = array();
 		$methodAnnotations = $this->annotationReader->getMethodAnnotations(new MethodReflection($className, $methodName));
-		if ($annotationName === NULL) {
+		if ($annotationClassName === NULL) {
 			return $methodAnnotations;
 		} else {
 			foreach ($methodAnnotations as $annotation) {
-				if ($annotation instanceof $annotationName) {
+				if ($annotation instanceof $annotationClassName) {
 					$annotations[] = $annotation;
 				}
 			}
@@ -686,11 +618,11 @@ class ReflectionService {
 	 *
 	 * @param string $className Name of the class
 	 * @param string $methodName Name of the method
-	 * @param string $annotationName Annotation to filter for
+	 * @param string $annotationClassName Annotation to filter for
 	 * @return object
 	 */
-	public function getMethodAnnotation($className, $methodName, $annotationName) {
-		$annotations = $this->getMethodAnnotations($className, $methodName, $annotationName);
+	public function getMethodAnnotation($className, $methodName, $annotationClassName) {
+		$annotations = $this->getMethodAnnotations($className, $methodName, $annotationClassName);
 		return $annotations === array() ? NULL : current($annotations);
 	}
 
@@ -702,9 +634,12 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getClassPropertyNames($className) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
 		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		return (isset($this->classPropertyNames[$className])) ? $this->classPropertyNames[$className] : array();
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES]) ? array_keys($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES]) : array();
 	}
 
 	/**
@@ -716,7 +651,11 @@ class ReflectionService {
 	 * @api
 	 */
 	public function hasMethod($className, $methodName) {
-		return isset($this->methodVisibilities[$className][$methodName]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName]);
 	}
 
 	/**
@@ -726,10 +665,12 @@ class ReflectionService {
 	 * @param string $methodName Name of the method to return the tags and values of
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @api
-	 * @deprecated since 1.0.0
 	 */
 	public function getMethodTagsValues($className, $methodName) {
-		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(trim($className, '\\'), $methodName);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$method = new \TYPO3\FLOW3\Reflection\MethodReflection($className, $methodName);
 		return $method->getTagsValues();
 	}
 
@@ -743,23 +684,15 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getMethodParameters($className, $methodName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) {
-			$this->reflectClass($className);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
 		}
-		if (isset($this->reflectedClassNames[$className])) {
-			if (!isset($this->methodParameters[$className])) {
-				return array();
-			}
-			$parametersInformation = (isset($this->methodParameters[$className][$methodName])) ? $this->methodParameters[$className][$methodName] : array();
-		} else {
-			$method = new \TYPO3\FLOW3\Reflection\MethodReflection($className, $methodName);
-			$parametersInformation = array();
-			foreach($method->getParameters() as $parameter) {
-				$parametersInformation[$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
-			}
+		$this->loadOrReflectClassIfNecessary($className);
+
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS])) {
+			return array();
 		}
-		return $parametersInformation;
+		return $this->convertParameterDataToArray($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS]);
 	}
 
 	/**
@@ -770,15 +703,21 @@ class ReflectionService {
 	 * @param string $tag Tag to search for
 	 * @return array An array of property names tagged by the tag
 	 * @api
-	 * @deprecated since 1.0.0
 	 */
 	public function getPropertyNamesByTag($className, $tag) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->propertyTagsValues[$className])) return array();
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES])) {
+			return array();
+		}
+
 		$propertyNames = array();
-		foreach ($this->propertyTagsValues[$className] as $propertyName => $tagsValues) {
-			if (isset($tagsValues[$tag])) $propertyNames[$propertyName] = TRUE;
+		foreach ($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES] as $propertyName => $propertyData) {
+			if (isset($propertyData[self::DATA_PROPERTY_TAGS_VALUES][$tag])) {
+				$propertyNames[$propertyName] = TRUE;
+			}
 		}
 		return array_keys($propertyNames);
 	}
@@ -790,13 +729,17 @@ class ReflectionService {
 	 * @param string $propertyName Name of the property to return the tags and values of
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @api
-	 * @deprecated since 1.0.0
 	 */
 	public function getPropertyTagsValues($className, $propertyName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->propertyTagsValues[$className])) return array();
-		return (isset($this->propertyTagsValues[$className][$propertyName])) ? $this->propertyTagsValues[$className][$propertyName] : array();
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName])) {
+			return array();
+		}
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES])) ? $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES] : array();
 	}
 
 	/**
@@ -807,14 +750,17 @@ class ReflectionService {
 	 * @param string $tag Tag to return the values of
 	 * @return array An array of values or an empty array if the tag was not found
 	 * @api
-	 * @deprecated since 1.0.0
 	 */
 	public function getPropertyTagValues($className, $propertyName, $tag) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->propertyTagsValues[$className])) return array();
-		if (!isset($this->propertyTagsValues[$className][$propertyName])) return array();
-		return (isset($this->propertyTagsValues[$className][$propertyName][$tag])) ? $this->propertyTagsValues[$className][$propertyName][$tag] : array();
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName])) {
+			return array();
+		}
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag])) ? $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] : array();
 	}
 
 	/**
@@ -825,14 +771,13 @@ class ReflectionService {
 	 * @param string $tag Tag to check for
 	 * @return boolean TRUE if the class property is tagged with $tag, otherwise FALSE
 	 * @api
-	 * @deprecated since 1.0.0
 	 */
 	public function isPropertyTaggedWith($className, $propertyName, $tag) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->propertyTagsValues[$className])) return FALSE;
-		if (!isset($this->propertyTagsValues[$className][$propertyName])) return FALSE;
-		return isset($this->propertyTagsValues[$className][$propertyName][$tag]);
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag]);
 	}
 
 	/**
@@ -840,17 +785,44 @@ class ReflectionService {
 	 *
 	 * @param string $className Name of the class
 	 * @param string $propertyName Name of the method
-	 * @param string $annotationName Annotation to check for
+	 * @param string $annotationClassName Annotation to check for
 	 * @return boolean
 	 * @api
 	 */
-	public function isPropertyAnnotatedWith($className, $propertyName, $annotationName) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
+	public function isPropertyAnnotatedWith($className, $propertyName, $annotationClassName) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$annotationClassName]);
+	}
 
-		if (!isset($this->propertyAnnotations[$className])) return FALSE;
-		if (!isset($this->propertyAnnotations[$className][$propertyName])) return FALSE;
-		return isset($this->propertyAnnotations[$className][$propertyName][$annotationName]);
+	/**
+	 * Searches for and returns all names of class properties which are marked by the
+	 * specified annotation. If no properties were found, an empty array is returned.
+	 *
+	 * @param string $className Name of the class containing the properties
+	 * @param string $annotationClassName Class name of the annotation to search for
+	 * @return array An array of property names carrying the annotation
+	 * @api
+	 */
+	public function getPropertyNamesByAnnotation($className, $annotationClassName) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES])) {
+			return array();
+		}
+
+		$propertyNames = array();
+		foreach ($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES] as $propertyName => $propertyData) {
+			if (isset($propertyData[self::DATA_PROPERTY_ANNOTATIONS][$annotationClassName])) {
+				$propertyNames[$propertyName] = TRUE;
+			}
+		}
+		return array_keys($propertyNames);
 	}
 
 	/**
@@ -858,20 +830,24 @@ class ReflectionService {
 	 *
 	 * @param string $className Name of the class
 	 * @param string $propertyName Name of the property
-	 * @param string $annotationName Annotation to filter for
+	 * @param string $annotationClassName Annotation to filter for
 	 * @return array<object>
 	 * @api
 	 */
-	public function getPropertyAnnotations($className, $propertyName, $annotationName = NULL) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->propertyAnnotations[$className])) return array();
-		if (!isset($this->propertyAnnotations[$className][$propertyName])) return array();
+	public function getPropertyAnnotations($className, $propertyName, $annotationClassName = NULL) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
 
-		if ($annotationName === NULL) {
-			return $this->propertyAnnotations[$className][$propertyName];
-		} elseif (isset($this->propertyAnnotations[$className][$propertyName][$annotationName])) {
-			return $this->propertyAnnotations[$className][$propertyName][$annotationName];
+		if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS])) {
+			return array();
+		}
+
+		if ($annotationClassName === NULL) {
+			return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS];
+		} elseif (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$annotationClassName])) {
+			return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$annotationClassName];
 		} else {
 			return array();
 		}
@@ -885,21 +861,12 @@ class ReflectionService {
 	 *
 	 * @param string $className Name of the class
 	 * @param string $propertyName Name of the property
-	 * @param string $annotationName Annotation to filter for
+	 * @param string $annotationClassName Annotation to filter for
 	 * @return object
 	 */
-	public function getPropertyAnnotation($className, $propertyName, $annotationName) {
-		$annotations = $this->getPropertyAnnotations($className, $propertyName, $annotationName);
+	public function getPropertyAnnotation($className, $propertyName, $annotationClassName) {
+		$annotations = $this->getPropertyAnnotations($className, $propertyName, $annotationClassName);
 		return $annotations === array() ? NULL : current($annotations);
-	}
-
-	/**
-	 * Returns the available class schemata.
-	 *
-	 * @return array<\TYPO3\FLOW3\Reflection\ClassSchema>
-	 */
-	public function getClassSchemata() {
-		return $this->classSchemata;
 	}
 
 	/**
@@ -909,8 +876,15 @@ class ReflectionService {
 	 * @return \TYPO3\FLOW3\Reflection\ClassSchema
 	 */
 	public function getClassSchema($classNameOrObject) {
-		$className = trim(is_object($classNameOrObject) ? get_class($classNameOrObject) : $classNameOrObject, '\\');
-		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
+		if (is_object($classNameOrObject)) {
+			$className = get_class($classNameOrObject);
+		} else {
+			$className = ($classNameOrObject[0] === '\\' ? substr($classNameOrObject, 1) : $classNameOrObject);
+		}
+		if (!isset($this->classSchemata[$className])) {
+			$this->classSchemata[$className] = $this->classSchemataRuntimeCache->get(str_replace('\\', '_', $className));
+		}
+		return is_object($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
 	}
 
 	/**
@@ -918,7 +892,6 @@ class ReflectionService {
 	 * reflected. If the given array contains class names not yet known to
 	 * this service, these classes will be reflected.
 	 *
-	 * @param array $classNamesToReflect Names of all classes which should be known by this service. Class names = values of the array
 	 * @return void
 	 */
 	protected function reflectEmergedClasses() {
@@ -926,13 +899,15 @@ class ReflectionService {
 		foreach ($this->availableClassNames as $classNamesInOnePackage) {
 			$classNamesToReflect = array_merge($classNamesToReflect, $classNamesInOnePackage);
 		}
-		$reflectedClassNames = array_keys($this->reflectedClassNames);
+		$reflectedClassNames = array_keys($this->classReflectionData);
 		sort($classNamesToReflect);
 		sort($reflectedClassNames);
-		if ($this->reflectedClassNames != $classNamesToReflect) {
+		$newClassNames = array_diff($classNamesToReflect, $reflectedClassNames);
+		if ($newClassNames !== array()) {
+			$this->systemLogger->log('Reflected class names did not match class names to reflect', LOG_DEBUG);
 			$classNamesToBuildSchemaFor = array();
 			$count = 0;
-			foreach (array_diff($classNamesToReflect, $reflectedClassNames) as $className) {
+			foreach ($newClassNames as $className) {
 				$count ++;
 				$this->reflectClass($className);
 				if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
@@ -969,64 +944,72 @@ class ReflectionService {
 
 		$class = new ClassReflection($className);
 
-		$this->reflectedClassNames[$className] = $_SERVER['REQUEST_TIME'];
+		if (!isset($this->classReflectionData[$className])) {
+			$this->classReflectionData[$className] = array();
+		}
 
-		if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
-		if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
+		if ($class->isAbstract()) $this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT] = TRUE;
+		if ($class->isFinal()) $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = TRUE;
 
 		foreach($this->getParentClasses($class) as $parentClass) {
-			$this->subClasses[$parentClass->getName()][$className] = TRUE;
+			$parentClassName = $parentClass->getName();
+			if (!isset($this->classReflectionData[$parentClassName])) {
+				$this->reflectClass($parentClassName);
+			}
+			$this->classReflectionData[$parentClassName][self::DATA_CLASS_SUBCLASSES][$className] = TRUE;
 		}
 
 		foreach ($class->getInterfaces() as $interface) {
-			if (!isset($this->abstractClasses[$className])) {
-				$this->interfaceImplementations[$interface->getName()][] = $className;
-			}
-		}
-		foreach ($class->getTagsValues() as $tag => $values) {
-			if (array_search($tag, $this->ignoredTags) === FALSE) {
-				$this->taggedClasses[$tag][] = $className;
-				$this->classTagsValues[$className][$tag] = $values;
+			if (!isset($this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT])) {
+				$interfaceName = $interface->getName();
+				if (!isset($this->classReflectionData[$interfaceName])) {
+					$this->reflectClass($interfaceName);
+				}
+				$this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className] = TRUE;
 			}
 		}
 
 		foreach ($this->annotationReader->getClassAnnotations($class) as $annotation) {
-			$this->annotatedClasses[get_class($annotation)][] = $className;
-			$this->classAnnotations[$className][] = $annotation;
+			$annotationClassName = get_class($annotation);
+			$this->annotatedClasses[$annotationClassName][$className] = TRUE;
+			$this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
 		}
 
 		foreach ($class->getProperties() as $property) {
 			$propertyName = $property->getName();
-			$this->classPropertyNames[$className][] = $propertyName;
+			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = array();
 
 			foreach ($property->getTagsValues() as $tag => $values) {
 				if (array_search($tag, $this->ignoredTags) === FALSE) {
-					$this->propertyTagsValues[$className][$propertyName][$tag] = $values;
+					$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] = $values;
 				}
 			}
 			foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
-				$this->propertyAnnotations[$className][$propertyName][get_class($annotation)][] = $annotation;
+				$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
 			}
 		}
 
 		foreach ($class->getMethods() as $method) {
 			$methodName = $method->getName();
-			if ($method->isFinal()) $this->finalMethods[$className . '::' . $methodName] = TRUE;
-			if ($method->isStatic()) $this->staticMethods[$className . '::' . $methodName] = TRUE;
-			if ($method->isPublic()) $this->methodVisibilities[$className][$methodName] = ' ';
-			if ($method->isProtected()) $this->methodVisibilities[$className][$methodName] = '*';
-			if ($method->isPrivate()) $this->methodVisibilities[$className][$methodName] = '-';
+			if ($method->isFinal()) {
+				$this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_FINAL] = TRUE;
+			}
+			if ($method->isStatic()) {
+				$this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_STATIC] = TRUE;
+			}
+			$visibility = $method->isPublic() ? self::VISIBILITY_PUBLIC : ($method->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
+			$this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] = $visibility;
 
 			$paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : array();
 			foreach ($method->getParameters() as $parameter) {
-				$this->methodParameters[$className][$methodName][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
+				$this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
 				if ($this->settings['reflection']['logIncorrectDocCommentHints'] === TRUE) {
 					if (isset($paramAnnotations[$parameter->getPosition()])) {
 						$parameterAnnotation = explode(' ', $paramAnnotations[$parameter->getPosition()], 3);
 						if (count($parameterAnnotation) < 2) {
 							$this->log('  Wrong @param use for "' . $method->getName() . '::' . $parameter->getName() . '": "' . implode(' ', $parameterAnnotation) . '"', LOG_DEBUG);
 						} else {
-							if (isset($this->methodParameters[$className][$methodName][$parameter->getName()]['type']) && ($this->methodParameters[$className][$methodName][$parameter->getName()]['type'] !== ltrim($parameterAnnotation[0], '\\'))) {
+							if (isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) && ($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][self::DATA_PARAMETER_TYPE] !== ltrim($parameterAnnotation[0], '\\'))) {
 								$this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LOG_DEBUG);
 							}
 							if ($parameter->getName() !== ltrim($parameterAnnotation[1], '$&')) {
@@ -1039,13 +1022,18 @@ class ReflectionService {
 				}
 			}
 		}
-		ksort($this->reflectedClassNames);
+			// Sort reflection data so that the cache data is deterministic. This is
+			// important for comparisons when checking if classes have changed in a
+			// Development context.
+		ksort($this->classReflectionData);
+
+		$this->updatedReflectionData[$className] = TRUE;
 	}
 
 	/**
 	 * Finds all parent classes of the given class
 	 *
-	 * @param \ReflectionClass $class The class to reflect
+	 * @param \TYPO3\FLOW3\Reflection\ClassReflection $class The class to reflect
 	 * @param array $parentClasses Array of parent classes
 	 * @return array<\TYPO3\FLOW3\Reflection\ClassReflection>
 	 */
@@ -1161,13 +1149,13 @@ class ReflectionService {
 	 * @return void
 	 */
 	protected function completeRepositoryAssignments() {
-		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassname) {
+		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassName) {
 				// need to be extra careful because this code could be called
 				// during a cache:flush run with corrupted reflection cache
-			if (class_exists($repositoryClassname)) {
-				$claimedObjectType = $repositoryClassname::ENTITY_CLASSNAME;
+			if (class_exists($repositoryClassName)) {
+				$claimedObjectType = $repositoryClassName::ENTITY_CLASSNAME;
 				if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
-					$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassname);
+					$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassName);
 				}
 			}
 		}
@@ -1239,6 +1227,30 @@ class ReflectionService {
 	}
 
 	/**
+	 * Converts the internal, optimized data structure of parameter information into
+	 * a human-friendly array with speaking indexes.
+	 *
+	 * @param array $parametersInformation Raw, internal parameter information
+	 * @return array Developer friendly version
+	 */
+	protected function convertParameterDataToArray(array $parametersInformation) {
+		$parameters = array();
+		foreach ($parametersInformation as $parameterName => $parameterData) {
+			$parameters[$parameterName] = array(
+				'position' => $parameterData[self::DATA_PARAMETER_POSITION],
+				'optional' => isset($parameterData[self::DATA_PARAMETER_OPTIONAL]),
+				'type' => $parameterData[self::DATA_PARAMETER_TYPE],
+				'class' => isset($parameterData[self::DATA_PARAMETER_CLASS]) ? $parameterData[self::DATA_PARAMETER_CLASS] : NULL,
+				'array' => isset($parameterData[self::DATA_PARAMETER_ARRAY]),
+				'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
+				'allowsNull' => isset($parameterData[self::DATA_PARAMETER_ALLOWS_NULL]),
+				'defaultValue' => isset($parameterData[self::DATA_PARAMETER_DEFAULT_VALUE]) ? $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] : NULL
+			);
+		}
+		return $parameters;
+	}
+
+	/**
 	 * Converts the given parameter reflection into an information array
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ParameterReflection $parameter The parameter to reflect
@@ -1247,31 +1259,32 @@ class ReflectionService {
 	 */
 	protected function convertParameterReflectionToArray(\TYPO3\FLOW3\Reflection\ParameterReflection $parameter, \TYPO3\FLOW3\Reflection\MethodReflection $method = NULL) {
 		$parameterInformation = array(
-			'position' => $parameter->getPosition(),
-			'byReference' => $parameter->isPassedByReference() ? TRUE : FALSE,
-			'array' => $parameter->isArray() ? TRUE : FALSE,
-			'optional' => $parameter->isOptional() ? TRUE : FALSE,
-			'allowsNull' => $parameter->allowsNull() ? TRUE : FALSE
+			self::DATA_PARAMETER_POSITION => $parameter->getPosition()
 		);
+		if ($parameter->isPassedByReference()) $parameterInformation[self::DATA_PARAMETER_BY_REFERENCE] = TRUE;
+		if ($parameter->isArray()) $parameterInformation[self::DATA_PARAMETER_ARRAY] = TRUE;
+		if ($parameter->isOptional()) $parameterInformation[self::DATA_PARAMETER_OPTIONAL] = TRUE;
+		if ($parameter->allowsNull()) $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = TRUE;
+
 
 		$parameterClass = $parameter->getClass();
-		$parameterInformation['class'] = ($parameterClass !== NULL) ? $parameterClass->getName() : NULL;
+		if ($parameterClass !== NULL) $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterClass->getName();
 		if ($parameter->isDefaultValueAvailable()) {
-			$parameterInformation['defaultValue'] = $parameter->getDefaultValue();
+			$parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
 		}
 		if ($method !== NULL) {
 			$paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : array();
 			if (isset($paramAnnotations[$parameter->getPosition()])) {
 				$explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
 				if (count($explodedParameters) >= 2) {
-					$parameterInformation['type'] = ltrim($explodedParameters[0], '\\');
+					$parameterInformation[self::DATA_PARAMETER_TYPE] = ltrim($explodedParameters[0], '\\');
 				}
 			}
 		}
-		if (!isset($parameterInformation['type']) && $parameterClass !== NULL) {
-			$parameterInformation['type'] = ltrim($parameterClass->getName(), '\\');
-		} elseif (!isset($parameterInformation['type'])) {
-			$parameterInformation['type'] = 'mixed';
+		if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterClass !== NULL) {
+			$parameterInformation[self::DATA_PARAMETER_TYPE] = ltrim($parameterClass->getName(), '\\');
+		} elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
+			$parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
 		}
 		return $parameterInformation;
 	}
@@ -1283,7 +1296,7 @@ class ReflectionService {
 	 * @return void
 	 */
 	protected function forgetChangedClasses() {
-		foreach (array_keys($this->reflectedClassNames) as $className) {
+		foreach (array_keys($this->classReflectionData) as $className) {
 			if (!$this->statusCache->has(str_replace('\\', '_', $className))) {
 				$this->forgetClass($className);
 			}
@@ -1297,48 +1310,39 @@ class ReflectionService {
 	 * @return void
 	 */
 	protected function forgetClass($className) {
+		$this->systemLogger->log('Forget class ' . $className, LOG_DEBUG);
 		if (isset($this->classesCurrentlyBeingForgotten[$className])) {
 			$this->systemLogger->log('Detected recursion while forgetting class ' . $className, LOG_WARNING);
 			return;
 		}
 		$this->classesCurrentlyBeingForgotten[$className] = TRUE;
 
-		foreach ($this->interfaceImplementations as $interfaceName => $interfaceImplementations) {
-			$index = array_search($className, $interfaceImplementations);
-			if ($index !== FALSE) unset($this->interfaceImplementations[$interfaceName][$index]);
+		if (class_exists($className)) {
+			$interfaceNames = class_implements($className);
+			foreach ($interfaceNames as $interfaceName) {
+				if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
+					unset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className]);
+				}
+			}
+		} else {
+			foreach ($this->availableClassNames as $interfaceNames) {
+				foreach ($interfaceNames as $interfaceName) {
+					if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
+						unset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className]);
+					}
+				}
+			}
 		}
-		if (isset($this->subClasses[$className])) {
-			foreach (array_keys($this->subClasses[$className]) as $subClassName) {
+
+		if (isset($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES])) {
+			foreach (array_keys($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES]) as $subClassName) {
 				$this->forgetClass($subClassName);
 			}
 		}
 
-		foreach ($this->taggedClasses as $tag => $classNames) {
-			$index = array_search($className, $classNames);
-			if ($index !== FALSE) unset($this->taggedClasses[$tag][$index]);
-		}
-		foreach ($this->annotatedClasses as $annotationClassName => $classNames) {
-			$index = array_search($className, $classNames);
-			if ($index !== FALSE) unset($this->taggedClasses[$annotationClassName][$index]);
-		}
-
-		$propertyNames = array(
-			'abstractClasses',
-			'classPropertyNames',
-			'classTagsValues',
-			'classAnnotations',
-			'subClasses',
-			'finalClasses',
-			'finalMethods',
-			'staticMethods',
-			'methodParameters',
-			'methodVisibilities',
-			'propertyTagsValues',
-			'propertyAnnotations'
-		);
-		foreach ($propertyNames as $propertyName) {
-			if (isset($this->{$propertyName}[$className])) {
-				unset($this->{$propertyName}[$className]);
+		foreach (array_keys($this->annotatedClasses) as $annotationClassName) {
+			if (isset($this->annotatedClasses[$annotationClassName][$className])) {
+				unset($this->annotatedClasses[$annotationClassName][$className]);
 			}
 		}
 
@@ -1346,7 +1350,7 @@ class ReflectionService {
 			unset($this->classSchemata[$className]);
 		}
 
-		unset($this->reflectedClassNames[$className]);
+		unset($this->classReflectionData[$className]);
 		unset($this->classesCurrentlyBeingForgotten[$className]);
 	}
 
@@ -1355,8 +1359,8 @@ class ReflectionService {
 	 *
 	 * @return boolean TRUE if reflection data could be loaded, otherwise FALSE
 	 */
-	protected function loadFromCache() {
-		$data = $this->dataCache->get('ReflectionData');
+	protected function loadClassReflectionCompiletimeCache() {
+		$data = $this->reflectionDataCompiletimeCache->get('ReflectionData');
 		if ($data === FALSE) {
 			return FALSE;
 		}
@@ -1364,53 +1368,87 @@ class ReflectionService {
 		foreach ($data as $propertyName => $propertyValue) {
 			$this->$propertyName = $propertyValue;
 		}
-		$this->cachedClassNames = $this->reflectedClassNames;
+
 		return TRUE;
+	}
+
+	/**
+	 * Loads reflection data from the cache or reflects the class if needed.
+	 *
+	 * @param $className
+	 * @return void
+	 */
+	protected function loadOrReflectClassIfNecessary($className) {
+		if (!isset($this->classReflectionData[$className])) {
+			return;
+		}
+
+		if (is_array($this->classReflectionData[$className])) {
+			return;
+		}
+
+		if ($this->loadFromClassSchemaRuntimeCache === TRUE) {
+			$this->classReflectionData[$className] = $this->reflectionDataRuntimeCache->get(str_replace('\\', '_', $className));
+		} else {
+			$this->reflectClass($className);
+		}
 	}
 
 	/**
 	 * Exports the internal reflection data into the ReflectionData cache
 	 *
+	 * This method is triggered by a signal which is connected to the bootstrap's
+	 * shutdown sequence.
+	 *
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Reflection\Exception if no cache has been injected
 	 */
 	public function saveToCache() {
-		if (!is_object($this->dataCache)) throw new \TYPO3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
+		if ($this->loadFromClassSchemaRuntimeCache === TRUE) {
+			return;
+		}
 
-		$nonCachedClassNames = array_diff_assoc($this->reflectedClassNames, $this->cachedClassNames);
-		$emergedClassesCount = count($nonCachedClassNames);
-		if ($emergedClassesCount > 0) {
-			$this->log(sprintf('Found %s classes whose reflection data was not cached previously.', $emergedClassesCount), LOG_DEBUG);
+		if (!is_object($this->reflectionDataCompiletimeCache)) {
+			throw new \TYPO3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
+		}
 
-			foreach (array_keys($nonCachedClassNames) as $className) {
+		if (count($this->updatedReflectionData) > 0) {
+			$this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LOG_DEBUG);
+
+			foreach (array_keys($this->updatedReflectionData) as $className) {
 				$this->statusCache->set(str_replace('\\', '_', $className), '', array(\TYPO3\FLOW3\Cache\CacheManager::getClassTag($className)));
 			}
 
 			$data = array();
 			$propertyNames = array(
-				'reflectedClassNames',
-				'abstractClasses',
-				'classPropertyNames',
+				'classReflectionData',
 				'classSchemata',
-				'classTagsValues',
-				'classAnnotations',
-				'subClasses',
-				'finalClasses',
-				'finalMethods',
-				'staticMethods',
-				'interfaceImplementations',
-				'methodParameters',
-				'methodVisibilities',
-				'propertyTagsValues',
-				'propertyAnnotations',
-				'taggedClasses',
 				'annotatedClasses'
 			);
 			foreach ($propertyNames as $propertyName) {
 				$data[$propertyName] = $this->$propertyName;
 			}
-			$this->dataCache->set('ReflectionData', $data);
-			$this->cachedClassNames = $this->reflectedClassNames;
+			$this->reflectionDataCompiletimeCache->set('ReflectionData', $data);
+		}
+
+		if ($this->runsInProductionContext) {
+			$this->reflectionDataRuntimeCache->flush();
+
+			$classNames = array();
+			foreach ($this->classReflectionData as $className => $reflectionData) {
+				$classNames[$className] = TRUE;
+				$this->reflectionDataRuntimeCache->set(str_replace('\\', '_', $className), $reflectionData);
+				if (isset($this->classSchemata[$className])) {
+					$this->classSchemataRuntimeCache->set(str_replace('\\', '_', $className), $this->classSchemata[$className]);
+				}
+			}
+			$this->reflectionDataRuntimeCache->set('__classNames', $classNames);
+			$this->reflectionDataRuntimeCache->set('__annotatedClasses', $this->annotatedClasses);
+
+			$this->reflectionDataRuntimeCache->getBackend()->freeze();
+			$this->classSchemataRuntimeCache->getBackend()->freeze();
+
+			$this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LOG_INFO);
 		}
 	}
 
@@ -1418,14 +1456,15 @@ class ReflectionService {
 	 * Writes the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value, one of the SEVERITY_* constants
+	 * @param integer $severity An integer value, one of the LOG_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @return void
 	 */
-	protected function log($message, $severity = 6, $additionalData = NULL) {
+	protected function log($message, $severity = LOG_INFO, $additionalData = NULL) {
 		if (is_object($this->systemLogger)) {
 			$this->systemLogger->log($message, $severity, $additionalData);
 		}
 	}
+
 }
 ?>
