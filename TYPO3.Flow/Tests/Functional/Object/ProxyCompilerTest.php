@@ -34,6 +34,36 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function proxiedMethodsStillContainReturnAnnotationFromOriginalClass() {
+		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
+		$method = $class->getMethod('getSingletonA');
+
+		$this->assertEquals(array('\TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A'), $method->getTagValues('return'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function proxiedMethodsStillContainParamDocumentationFromOriginalClass() {
+		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
+		$method = $class->getMethod('setSomeProperty');
+
+		$this->assertEquals(array('string $someProperty The property value'), $method->getTagValues('param'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function proxiedMethodsDoContainAnnotationsOnlyOnce() {
+		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
+		$method = $class->getMethod('setSomeProperty');
+
+		$this->assertEquals(array('autoStart=true'), $method->getTagValues('session'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function classesAnnotatedWithProxyDisableAreNotProxied() {
 		$singletonB = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB');
 		$this->assertNotInstanceOf('TYPO3\FLOW3\Object\Proxy\ProxyInterface', $singletonB);
