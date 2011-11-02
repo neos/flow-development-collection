@@ -239,11 +239,8 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 		if (!$validationResult->hasErrors()) {
 			$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
 		} else {
-			$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
-			$ignoreValidationAnnotations = array();
-			if (isset($methodTagsValues['ignorevalidation'])) {
-				$ignoreValidationAnnotations = $methodTagsValues['ignorevalidation'];
-			}
+			$ignoreValidationAnnotations = $this->reflectionService->getMethodAnnotations(get_class($this), $this->actionMethodName, 'TYPO3\FLOW3\Annotations\IgnoreValidation');
+			$ignoredArguments = array_map(function($annotation) { return $annotation->argumentName; }, $ignoreValidationAnnotations);
 
 				// if there exists more errors than in ignoreValidationAnnotations_=> call error method
 				// else => call action method
@@ -251,7 +248,7 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
 				if (!$subValidationResult->hasErrors()) continue;
 
-				if (array_search('$' . $argumentName, $ignoreValidationAnnotations) !== FALSE) continue;
+				if (array_search('$' . $argumentName, $ignoredArguments) !== FALSE) continue;
 
 				$shouldCallActionMethod = FALSE;
 			}
