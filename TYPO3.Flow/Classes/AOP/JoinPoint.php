@@ -139,6 +139,19 @@ class JoinPoint implements \TYPO3\FLOW3\AOP\JoinPointInterface {
 	}
 
 	/**
+	 * Sets the value of the specified method argument
+	 *
+	 * @param string $argumentName Name of the argument
+	 * @param mixed $argumentValue Value of the argument
+	 * @return void
+	 * @api
+	 */
+	public function setMethodArgument($argumentName, $argumentValue) {
+		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \TYPO3\FLOW3\AOP\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1309260269);
+		$this->methodArguments[$argumentName] = $argumentValue;
+	}
+
+	/**
 	 * Returns TRUE if the argument with the specified name exists in the
 	 * method call this joinpoint refers to.
 	 *
