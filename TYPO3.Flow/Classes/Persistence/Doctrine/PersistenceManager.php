@@ -131,6 +131,9 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		if ($objectType === NULL) {
 			throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
 		}
+		if (isset($this->newObjects[$identifier])) {
+			return $this->newObjects[$identifier];
+		}
 		if ($useLazyLoading === TRUE) {
 			return $this->entityManager->getReference($objectType, $identifier);
 		} else {

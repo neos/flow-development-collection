@@ -67,8 +67,7 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->postRepository->remove($post);
 		$this->persistenceManager->persistAll();
 
-		$retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image');
-		$this->assertNull($retrievedImage);
+		$this->assertTrue($this->persistenceManager->isNewObject($retrievedImage));
 	}
 
 	/**

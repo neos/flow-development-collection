@@ -35,19 +35,22 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @return void
 	 */
-	public function cloneEntityCreatesNewUuid() {
-		$object = new \stdClass();
+	public function generateUuidGeneratesUuidAndRegistersProxyAsNewObject() {
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $className . ' implements \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface { public $FLOW3_Persistence_Identifier = NULL; }');
+		$object = new $className();
+
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
+		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
 
-		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
-		$aspect->generateUUID($mockJoinPoint);
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->atLeastOnce())->method('registerNewObject')->with($object);
 
-		$originalUuid = $object->FLOW3_Persistence_Identifier;
-		$aspect->generateNewUuidForClone($mockJoinPoint);
+		$aspect = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect', array('dummy'), array());
+		$aspect->_set('persistenceManager', $mockPersistenceManager);
+		$aspect->generateUuid($mockJoinPoint);
 
-		$uuidIsDifferent = ($object->FLOW3_Persistence_Identifier !== $originalUuid);
-		$this->assertTrue($uuidIsDifferent);
+		$this->assertEquals(36, strlen($object->FLOW3_Persistence_Identifier));
 	}
 
 

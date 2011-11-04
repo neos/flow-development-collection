@@ -159,6 +159,17 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier() {
+		$expectedEntity = new TestEntity();
+		$uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
+		$actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$this->assertSame($expectedEntity, $actualEntity);
+	}
+
+
+	/**
 	 * Helper which inserts example data into the database.
 	 *
 	 * @param string $name
