@@ -432,10 +432,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function initializeActionMethodArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('addNewArgument', 'removeAll'), array(), '', FALSE);
-		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'TYPO3\Foo\Bar', TRUE);
+		$arguments = new \TYPO3\FLOW3\MVC\Controller\Arguments();
 
 		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
@@ -471,9 +468,26 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockController->_set('reflectionService', $mockReflectionService);
 		$mockController->_set('request', $this->mockRequest);
-		$mockController->_set('arguments', $mockArguments);
+		$mockController->_set('arguments', $arguments);
 		$mockController->_set('actionMethodName', 'fooAction');
 		$mockController->_call('initializeActionMethodArguments');
+
+		$this->assertEquals(array('stringArgument', 'integerArgument', 'objectArgument'), $arguments->getArgumentNames());
+
+		$argument = $arguments->getArgument('stringArgument');
+		$this->assertEquals('stringArgument', $argument->getName());
+		$this->assertEquals('string', $argument->getDataType());
+		$this->assertEquals(TRUE, $argument->isRequired());
+
+		$argument = $arguments->getArgument('integerArgument');
+		$this->assertEquals('integerArgument', $argument->getName());
+		$this->assertEquals('integer', $argument->getDataType());
+		$this->assertEquals(TRUE, $argument->isRequired());
+
+		$argument = $arguments->getArgument('objectArgument');
+		$this->assertEquals('objectArgument', $argument->getName());
+		$this->assertEquals('TYPO3\Foo\Bar', $argument->getDataType());
+		$this->assertEquals(TRUE, $argument->isRequired());
 	}
 
 	/**
@@ -482,10 +496,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function initializeActionMethodArgumentsRegistersOptionalArgumentsAsSuch() {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('arg1', 'string', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'string', FALSE, 42);
+		$arguments = new \TYPO3\FLOW3\MVC\Controller\Arguments();
 
 		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
@@ -522,9 +533,28 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockController->_set('reflectionService', $mockReflectionService);
 		$mockController->_set('request', $this->mockRequest);
-		$mockController->_set('arguments', $mockArguments);
+		$mockController->_set('arguments', $arguments);
 		$mockController->_set('actionMethodName', 'fooAction');
 		$mockController->_call('initializeActionMethodArguments');
+
+		$this->assertEquals(array('arg1', 'arg2', 'arg3'), $arguments->getArgumentNames());
+
+		$argument = $arguments->getArgument('arg1');
+		$this->assertEquals('arg1', $argument->getName());
+		$this->assertEquals('string', $argument->getDataType());
+		$this->assertEquals(TRUE, $argument->isRequired());
+
+		$argument = $arguments->getArgument('arg2');
+		$this->assertEquals('arg2', $argument->getName());
+		$this->assertEquals('array', $argument->getDataType());
+		$this->assertEquals(array(21), $argument->getDefaultValue());
+		$this->assertEquals(FALSE, $argument->isRequired());
+
+		$argument = $arguments->getArgument('arg3');
+		$this->assertEquals('arg3', $argument->getName());
+		$this->assertEquals('string', $argument->getDataType());
+		$this->assertEquals(42, $argument->getDefaultValue());
+		$this->assertEquals(FALSE, $argument->isRequired());
 	}
 
 	/**
