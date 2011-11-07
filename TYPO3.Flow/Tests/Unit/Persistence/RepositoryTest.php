@@ -31,9 +31,11 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * dataProvider for constructSetsObjectTypeFromClassName
 	 */
 	public function modelAndRepositoryClassNames() {
+		$idSuffix = uniqid();
 		return array(
-			array('TYPO3\Blog\Domain\Repository', 'BlogRepository', 'TYPO3\Blog\Domain\Model\Blog'),
-			array('Domain\Repository\Content', 'PageRepository', 'Domain\Model\Content\Page')
+			array('TYPO3\Blog\Domain\Repository', 'C' . $idSuffix . 'BlogRepository', 'TYPO3\Blog\Domain\Model\\' . 'C' . $idSuffix . 'Blog'),
+			array('Domain\Repository\Content', 'C' . $idSuffix . 'PageRepository', 'Domain\Model\\Content\\' . 'C' . $idSuffix . 'Page'),
+			array('Domain\Repository', 'C' . $idSuffix . 'RepositoryRepository', 'Domain\Model\\' . 'C' . $idSuffix . 'Repository')
 		);
 	}
 
@@ -42,12 +44,11 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider modelAndRepositoryClassNames
 	 */
 	public function constructSetsObjectTypeFromClassName($repositoryNamespace, $repositoryClassName, $modelClassName) {
-		$idSuffix = uniqid();
-		$mockClassName = $repositoryNamespace . '\\' . $repositoryClassName . $idSuffix;
-		eval('namespace ' . $repositoryNamespace . '; class ' . $repositoryClassName . $idSuffix . ' extends \TYPO3\FLOW3\Persistence\Repository {}');
+		$mockClassName = $repositoryNamespace . '\\' . $repositoryClassName;
+		eval('namespace ' . $repositoryNamespace . '; class ' . $repositoryClassName . ' extends \TYPO3\FLOW3\Persistence\Repository {}');
 
 		$repository = new $mockClassName();
-		$this->assertEquals($modelClassName . $idSuffix, $repository->getEntityClassName());
+		$this->assertEquals($modelClassName, $repository->getEntityClassName());
 	}
 
 	/**

@@ -41,7 +41,7 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function __construct() {
 		if (static::ENTITY_CLASSNAME === NULL) {
-			$this->entityClassName = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
+			$this->entityClassName = preg_replace(array('/\\\Repository\\\/', '/Repository$/'), array('\\Model\\', ''), get_class($this));
 		} else {
 			$this->entityClassName = static::ENTITY_CLASSNAME;
 		}
