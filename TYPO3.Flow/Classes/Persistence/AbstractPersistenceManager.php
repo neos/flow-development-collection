@@ -19,35 +19,12 @@ namespace TYPO3\FLOW3\Persistence;
 abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\PersistenceManagerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
 	 * @var array
 	 */
 	protected $settings = array();
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
 
 	/**
 	 * Injects the FLOW3 settings, the persistence part is kept

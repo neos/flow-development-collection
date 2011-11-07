@@ -22,6 +22,11 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceManager {
 
 	/**
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
@@ -32,6 +37,14 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 */
 	public function injectEntityManager(\Doctrine\Common\Persistence\ObjectManager $entityManager) {
 		$this->entityManager = $entityManager;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 */
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
 	}
 
 	/**
