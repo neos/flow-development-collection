@@ -64,6 +64,21 @@ interface PersistenceManagerInterface {
 	public function isNewObject($object);
 
 	/**
+	 * Registers an object which has been created or cloned during this request.
+	 *
+	 * The given object must contain the FLOW3_Persistence_Identifier property, thus
+	 * the PersistenceMagicInterface type hint. A "new" object does not necessarily
+	 * have to be known by any repository or be persisted in the end.
+	 *
+	 * Objects registered with this method must be known to the getObjectByIdentifier()
+	 * method.
+	 *
+	 * @param \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object The new object to register
+	 * @return void
+	 */
+	public function registerNewObject(\TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object);
+
+	/**
 	 * Returns the (internal) identifier for the object, if it is known to the
 	 * backend. Otherwise NULL is returned.
 	 *

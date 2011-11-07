@@ -24,7 +24,9 @@ abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\Pe
 	protected $settings = array();
 
 	/**
+	 * @var array
 	 */
+	protected $newObjects = array();
 
 	/**
 	 * Injects the FLOW3 settings, the persistence part is kept
@@ -35,6 +37,24 @@ abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\Pe
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings['persistence'];
+	}
+
+	/**
+	 * Registers an object which has been created or cloned during this request.
+	 *
+	 * The given object must contain the FLOW3_Persistence_Identifier property, thus
+	 * the PersistenceMagicInterface type hint. A "new" object does not necessarily
+	 * have to be known by any repository or be persisted in the end.
+	 *
+	 * Objects registered with this method must be known to the getObjectByIdentifier()
+	 * method.
+	 *
+	 * @param \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object The new object to register
+	 * @return void
+	 */
+	public function registerNewObject(\TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object) {
+		$identifier = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+		$this->newObjects[$identifier] = $object;
 	}
 
 	/**

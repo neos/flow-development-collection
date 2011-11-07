@@ -30,6 +30,12 @@ class PersistenceMagicAspect {
 	protected $useIgBinary;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @FLOW3\Pointcut("classAnnotatedWith(TYPO3\FLOW3\Annotations\Entity) || classAnnotatedWith(Doctrine\ORM\Mapping\Entity)")
 	 */
 	public function isEntity() {}
@@ -61,11 +67,12 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->__construct())")
+	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)())")
 	 */
-	public function generateUUID(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function generateUuid(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', \TYPO3\FLOW3\Utility\Algorithms::generateUUID(), TRUE);
+		$this->persistenceManager->registerNewObject($proxy);
 	}
 
 	/**
@@ -105,18 +112,6 @@ class PersistenceMagicAspect {
 	 */
 	public function cloneObject(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->FLOW3_Persistence_clone = TRUE;
-	}
-
-	/**
-	 * Generate new UUID for cloned entity
-	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
-	 * @return void
-	 * @FLOW3\AfterReturning("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->__clone())")
-	 */
-	public function generateNewUuidForClone(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$proxy = $joinPoint->getProxy();
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', \TYPO3\FLOW3\Utility\Algorithms::generateUUID(), TRUE);
 	}
 
 }
