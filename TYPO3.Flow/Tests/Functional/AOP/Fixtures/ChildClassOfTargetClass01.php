@@ -30,5 +30,12 @@ class ChildClassOfTargetClass01 extends TargetClass01 {
 		return parent::saySomethingSmart() . ' That was smart, eh?';
 	}
 
+	/**
+	 * @return string
+	 */
+	public function sayWhatFlow3Is() {
+		return 'FLOW3 is not';
+	}
+
 }
 ?>

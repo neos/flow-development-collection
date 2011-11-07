@@ -26,17 +26,17 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Poi
 	protected $reflectionService;
 
 	/**
-	 * @var string A regular expression to match annotations
+	 * @var string The tag of an annotation to match against
 	 */
-	protected $methodAnnotationFilterExpression;
+	protected $annotation;
 
 	/**
-	 * The constructor - initializes the method annotation filter with the method annotation filter expression
+	 * The constructor - initializes the method annotation filter with the expected annotation class
 	 *
-	 * @param string $methodAnnotationFilterExpression A regular expression which defines which method annotations should match
+	 * @param string $annotation An annotation class (for example "TYPO3\FLOW3\Annotations\Lazy") which defines which method annotations should match
 	 */
-	public function __construct($methodAnnotationFilterExpression) {
-		$this->methodAnnotationFilterExpression = $methodAnnotationFilterExpression;
+	public function __construct($annotation) {
+		$this->annotation = $annotation;
 	}
 
 	/**
@@ -59,19 +59,10 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Poi
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if ($methodDeclaringClassName === NULL || !$this->reflectionService->hasMethod($methodDeclaringClassName, $methodName)) {
+		if ($methodDeclaringClassName === NULL || !method_exists($methodDeclaringClassName, $methodName)) {
 			return FALSE;
 		}
-		foreach ($this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName) as $annotation) {
-			$matchResult = preg_match('/^' . str_replace('\\', '\\\\', $this->methodAnnotationFilterExpression) . '$/', get_class($annotation));
-			if ($matchResult === FALSE) {
-				throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->methodAnnotationFilterExpression . '" in pointcut method annotation filter', 1318619513);
-			}
-			if ($matchResult === 1) {
-				return TRUE;
-			}
-		}
-		return FALSE;
+		return ($this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName, $this->annotation) !== array());
 	}
 
 	/**

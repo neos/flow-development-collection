@@ -53,6 +53,15 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
+	 * @FLOW3\Around("within(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01) && method(.*->sayWhatFlow3Is())")
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function rocketScienceAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' Rocket Science';
+	}
+
+	/**
 	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->saySomethingSmart())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string

@@ -57,6 +57,13 @@ class TargetClass01 implements SayHelloInterface {
 	/**
 	 * @return string
 	 */
+	public function sayWhatFlow3Is() {
+		return 'FLOW3 is';
+	}
+
+	/**
+	 * @return string
+	 */
 	public function saySomethingSmart() {
 		return 'Two plus two makes five!';
 	}

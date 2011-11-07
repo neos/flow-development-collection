@@ -28,15 +28,15 @@ class PointcutClassAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Poin
 	/**
 	 * @var string A regular expression to match annotations
 	 */
-	protected $classAnnotationFilterExpression;
+	protected $annotation;
 
 	/**
-	 * The constructor - initializes the class annotation filter with the class annotation filter expression
+	 * The constructor - initializes the class annotation filter with the expected annotation class
 	 *
-	 * @param string $classAnnotationFilterExpression A regular expression which defines which class annotations should match
+	 * @param string $annotation An annotation class (for example "@TYPO3\FLOW3\Annotations\Aspect") which defines which class annotations should match
 	 */
-	public function __construct($classAnnotationFilterExpression) {
-		$this->classAnnotationFilterExpression = $classAnnotationFilterExpression;
+	public function __construct($annotation) {
+		$this->annotation = $annotation;
 	}
 
 	/**
@@ -59,14 +59,7 @@ class PointcutClassAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Poin
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		foreach ($this->reflectionService->getClassAnnotations($className) as $annotation) {
-			$matchResult = preg_match('/^' . str_replace('\\', '\\\\', $this->classAnnotationFilterExpression) . '$/', get_class($annotation));
-			if ($matchResult === FALSE) {
-				throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classAnnotationFilterExpression . '" in pointcut class annotation filter', 1318619503);
-			}
-			if ($matchResult === 1) return TRUE;
-		}
-		return FALSE;
+		 return ($this->reflectionService->getClassAnnotations($className, $this->annotation) !== array());
 	}
 
 	/**
