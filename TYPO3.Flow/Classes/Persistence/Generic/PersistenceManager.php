@@ -168,10 +168,12 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * Managed instances become detached, any fetches will
 	 * return data directly from the persistence "backend".
+	 * It will also forget about new objects.
 	 *
 	 * @return void
 	 */
 	public function clearState() {
+		parent::clearState();
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
 		$this->changedObjects = new \SplObjectStorage();

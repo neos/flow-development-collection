@@ -40,6 +40,15 @@ abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\Pe
 	}
 
 	/**
+	 * Clears the in-memory state of the persistence.
+	 *
+	 * @return void
+	 */
+	public function clearState() {
+		$this->newObjects = array();
+	}
+
+	/**
 	 * Registers an object which has been created or cloned during this request.
 	 *
 	 * The given object must contain the FLOW3_Persistence_Identifier property, thus

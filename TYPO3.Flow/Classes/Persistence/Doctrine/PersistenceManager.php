@@ -75,6 +75,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @return void
 	 */
 	public function clearState() {
+		parent::clearState();
 		$this->entityManager->clear();
 	}
 
