@@ -354,21 +354,32 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function getValueForOperandReturnsTheCorrectValueFromGlobalObjects() {
 		$className = 'dummyParty' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
+				protected $name = "Andi";
 				public function getName() {
-					return "Andi";
+					return $this->name;
 				}
 			}
 		');
 
+		$globalObject = new $className();
+
 		$settings = array(
 			'aop' => array(
 				'globalObjects' => array(
-					'party' => 'new ' . $className . '();'
+					'party' => $className
 				)
 			)
 		);
 
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('get')->with($className)->will($this->returnValue($globalObject));
+
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
+		$mockPersistenceManager->expects($this->any())->method('isNewObject')->will($this->returnValue(FALSE));
+
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('persistenceManager', $mockPersistenceManager);
+		$rewritingAspect->_set('objectManager', $mockObjectManager);
 		$rewritingAspect->injectSettings($settings);
 
 		$operand = 'current.party.name';
@@ -730,7 +741,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($mockParty)->will($this->returnValue('uuid'));
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
-		$mockReflectionService->expects($this->any())->method('isClassAnnotatedWith')->with($mockParty, 'TYPO3\FLOW3\Annotations\Entity')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->any())->method('getClassNameByObject')->with($mockParty)->will($this->returnValue(get_class($mockParty)));
+		$mockReflectionService->expects($this->any())->method('isClassAnnotatedWith')->with(get_class($mockParty), 'TYPO3\FLOW3\Annotations\Entity')->will($this->returnValue(TRUE));
 
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockParty));
