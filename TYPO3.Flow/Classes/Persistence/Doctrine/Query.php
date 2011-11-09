@@ -65,6 +65,11 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	protected $parameters;
 
 	/**
+	 * @var array
+	 */
+	protected $joins;
+
+	/**
 	 * @param string $entityClassName
 	 */
 	public function __construct($entityClassName) {
@@ -456,6 +461,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		for ($i = 0; $i < $conditionPartsCount - 1; $i++) {
 			$joinAlias = uniqid($propertyPathParts[$i]);
 			$this->queryBuilder->leftJoin($previousJoinAlias . '.' . $propertyPathParts[$i], $joinAlias);
+			$this->joins[$joinAlias] = $previousJoinAlias . '.' . $propertyPathParts[$i];
 			$previousJoinAlias = $joinAlias;
 		}
 
@@ -469,7 +475,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function __sleep() {
 		$this->parameters = $this->queryBuilder->getParameters();
-		return array('entityClassName', 'constraint', 'orderings', 'parameterIndex', 'limit', 'offset', 'parameters');
+		return array('entityClassName', 'constraint', 'orderings', 'parameterIndex', 'limit', 'offset', 'parameters', 'joins');
 	}
 
 	/**
@@ -481,9 +487,15 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		if ($this->constraint !== NULL) {
 			$this->queryBuilder->where($this->constraint);
 		}
+
 		if (is_array($this->orderings)) {
 			foreach ($this->orderings AS $propertyName => $order) {
 				$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
+			}
+		}
+		if (is_array($this->joins)) {
+			foreach($this->joins as $joinAlias => $join) {
+				$this->queryBuilder->leftJoin($join, $joinAlias);
 			}
 		}
 		$this->queryBuilder->setFirstResult($this->offset);

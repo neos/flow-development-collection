@@ -105,6 +105,39 @@ class QueryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals(array($testEntity1), $unserializedQuery->execute()->toArray());
 	}
 
+	/**
+	 * @test
+	 */
+	public function comlexQueryWithJoinsCanBeExecutedAfterDeserialization() {
+		$postEntityRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository;
+		$postEntityRepository->removeAll();
+
+		$commentRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\CommentRepository;
+		$commentRepository->removeAll();
+
+		$testEntity1 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post;
+		$testEntity1->setTitle('FLOW3');
+		$postEntityRepository->add($testEntity1);
+
+		$testEntity2 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post;
+		$testEntity2->setTitle('FLOW3 with comment');
+		$comment = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment;
+		$comment->setContent('FLOW3');
+		$testEntity2->setComment($comment);
+		$postEntityRepository->add($testEntity2);
+		$commentRepository->add($comment);
+
+		$this->persistenceManager->persistAll();
+
+		$query = new Query('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
+		$query->matching($query->equals('comment.content', 'FLOW3'));
+
+		$serializedQuery = serialize($query);
+		$unserializedQuery = unserialize($serializedQuery);
+		$this->assertEquals(1, $unserializedQuery->execute()->count());
+		$this->assertEquals(array($testEntity2), $unserializedQuery->execute()->toArray());
+	}
+
 	protected function assertQueryEquals(Query $expected, Query $actual) {
 		$this->assertEquals($expected->getConstraint(), $actual->getConstraint());
 		$this->assertEquals($expected->getOrderings(), $actual->getOrderings());
