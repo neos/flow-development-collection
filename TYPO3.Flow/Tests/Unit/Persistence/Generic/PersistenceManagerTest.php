@@ -221,6 +221,28 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->markTestIncomplete('Needs to be tested and coded');
 	}
 
-}
+	/**
+	 * @test
+	 */
+	public function clearStateForgetsAboutNewObjects() {
+		$mockObject = $this->getMock('TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface');
+		$mockObject->FLOW3_Persistence_Identifier = 'abcdefg';
 
+		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(FALSE));
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend->expects($this->any())->method('getObjectDataByIdentifier')->will($this->returnValue(FALSE));
+
+		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager->injectPersistenceSession($mockSession);
+		$persistenceManager->injectBackend($mockBackend);
+
+		$persistenceManager->registerNewObject($mockObject);
+		$persistenceManager->clearState();
+
+		$object = $persistenceManager->getObjectByIdentifier('abcdefg');
+		$this->assertNull($object);
+	}
+
+}
 ?>
