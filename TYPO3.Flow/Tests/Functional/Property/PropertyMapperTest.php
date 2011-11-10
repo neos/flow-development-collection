@@ -92,5 +92,70 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame(23, $result->getSize());
 	}
 
+	/**
+	 * @test
+	 */
+	public function targetTypeForEntityCanBeOverridenIfConfigured() {
+		$source = array(
+			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntitySubclass',
+			'name' => 'Arthur',
+			'age' => '42'
+		);
+
+		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+		$this->assertInstanceOf('\TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntitySubclass', $result);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Property\Exception
+	 */
+	public function overridenTargetTypeForEntityMustBeASubclass() {
+		$source = array(
+			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass',
+			'name' => 'A horse'
+		);
+
+		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+
+		$this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+	}
+
+	/**
+	 * @test
+	 */
+	public function targetTypeForSimpleObjectCanBeOverridenIfConfigured() {
+		$source = array(
+			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestSubclass',
+			'name' => 'Tower of Pisa'
+		);
+
+		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass', $configuration);
+		$this->assertInstanceOf('TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestSubclass', $result);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Property\Exception
+	 */
+	public function overridenTargetTypeForSimpleObjectMustBeASubclass() {
+		$source = array(
+			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity',
+			'name' => 'A horse'
+		);
+
+		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+
+		$this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass', $configuration);
+	}
+
 }
 ?>
