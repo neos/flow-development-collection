@@ -41,7 +41,7 @@ class Algorithms {
 	 * Returns a string of random bytes.
 	 *
 	 * @param integer $count Number of bytes to generate
-	 * @return string
+	 * @return string Random bytes
 	 */
 	static public function generateRandomBytes($count) {
 		return \Security_Randomizer::getRandomBytes($count);
@@ -51,10 +51,21 @@ class Algorithms {
 	 * Returns a random token in hex format.
 	 *
 	 * @param integer $count Token length
-	 * @return string
+	 * @return string A random token
 	 */
 	static public function generateRandomToken($count) {
 		return \Security_Randomizer::getRandomToken($count);
+	}
+
+	/**
+	 * Returns a random string with alpha-numeric characters.
+	 *
+	 * @param integer $count Number of characters to generate
+	 * @param string $characters Allowed characters, defaults to alpha-numeric (a-zA-Z0-9)
+	 * @return string A random string
+	 */
+	static public function generateRandomString($count, $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') {
+		return \Security_Randomizer::getRandomString($count, $characters);
 	}
 
 }
