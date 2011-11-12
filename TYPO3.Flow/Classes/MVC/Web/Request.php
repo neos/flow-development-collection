@@ -359,7 +359,7 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || strlen($argumentName) === 0) throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
 
-		if ($argumentName[0] === '_' && $argumentName[1] === '_') {
+		if (substr($argumentName, 0, 2) === '__') {
 			$this->internalArguments[$argumentName] = $value;
 			return;
 		}
