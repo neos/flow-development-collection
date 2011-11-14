@@ -413,7 +413,8 @@ class Bootstrap {
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
-			$command = escapeshellcmd($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
+			$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']));
+			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
 			system($command, $result);
 			if ($result !== 0) {
 				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $this->settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
@@ -468,10 +469,11 @@ class Bootstrap {
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 */
 	public function executeCommand($commandIdentifier) {
+		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']));
 		if (DIRECTORY_SEPARATOR === '/') {
-			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . \escapeshellarg(FLOW3_PATH_ROOT) . ' ' . 'FLOW3_CONTEXT=' . \escapeshellarg($this->context) . ' ' . \escapeshellcmd($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \escapeshellarg(php_ini_loaded_file()) . ' ' . \escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
+			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . escapeshellarg(FLOW3_PATH_ROOT) . ' ' . 'FLOW3_CONTEXT=' . escapeshellarg($this->context) . ' "' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
 		} else {
-			$command = 'SET FLOW3_ROOTPATH=' . \escapeshellarg(FLOW3_PATH_ROOT) . '&' . 'SET FLOW3_CONTEXT=' . \escapeshellarg($this->context) . '&' . \escapeshellcmd($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \escapeshellarg(php_ini_loaded_file()) . ' ' . \escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . \escapeshellarg($commandIdentifier);
+			$command = 'SET FLOW3_ROOTPATH=' . escapeshellarg(FLOW3_PATH_ROOT) . '&' . 'SET FLOW3_CONTEXT=' . escapeshellarg($this->context) . '&"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
 		}
 		system($command, $result);
 		return $result === 0;
