@@ -178,7 +178,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 */
 	protected function getCreateIssueLink(\Exception $exception) {
 		$filename = basename($exception->getFile());
-		return 'http://forge.typo3.org/projects/package-flow3/issues/new?issue[subject]='
+		return 'http://forge.typo3.org/projects/package-typo3-flow3/issues/new?issue[subject]='
 			. urlencode(get_class($exception) . ' thrown in file ' . $filename)
 			. '&issue[description]='
 			. urlencode(
