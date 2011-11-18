@@ -75,11 +75,11 @@ class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	 * display no flash message at all on errors. Override this to customize
 	 * the flash message in your action controller.
 	 *
-	 * @return string|boolean The flash message or FALSE if no flash message should be set
+	 * @return \TYPO3\FLOW3\Error\Error The flash message
 	 * @api
 	 */
 	protected function getErrorFlashMessage() {
-		return 'Wrong credentials.';
+		return new \TYPO3\FLOW3\Error\Error('Wrong credentials.', NULL, NULL, $this->actionMethodName);
 	}
 }
 ?>
