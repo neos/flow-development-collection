@@ -69,7 +69,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateUrl, 'error message: ###ERROR_MESSAGE###');
+		file_put_contents($templateUrl, 'error message: {ERROR_MESSAGE}');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->view->assign('errorMessage', 'some error message');
@@ -85,7 +85,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateUrl, 'error message: ###ERROR_MESSAGE###');
+		file_put_contents($templateUrl, 'error message: {ERROR_MESSAGE}');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->assertSame('error message: ', $this->view->render());
@@ -100,7 +100,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateUrl, 'base URI: ###BASEURI###');
+		file_put_contents($templateUrl, 'base URI: {BASEURI}');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->assertSame('base URI: someBaseUri', $this->view->render());
@@ -115,10 +115,10 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateUrl, 'base URI: ###BASEURI###');
+		file_put_contents($templateUrl, 'base URI: {BASEURI}');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
-		$this->assertSame('base URI: ###BASEURI###', $this->view->render());
+		$this->assertSame('base URI: {BASEURI}', $this->view->render());
 	}
 
 	/**
