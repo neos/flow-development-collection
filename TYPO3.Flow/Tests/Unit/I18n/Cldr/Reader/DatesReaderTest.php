@@ -53,8 +53,8 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
-		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('findNodesWithinPath', 'getElement'), array(array()));
-		$mockModel->expects($this->once())->method('findNodesWithinPath')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats', 'default')->will($this->returnValue(array('default[@choice="medium"]' => '')));
+		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray', 'getElement'), array(array()));
+		$mockModel->expects($this->once())->method('getRawArray')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats')->will($this->returnValue(array('default[@choice="medium"]' => '')));
 		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->will($this->returnValue('mockFormatString'));
 
 		$mockRepository = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository');

@@ -185,7 +185,7 @@ class DatesReader {
 
 	/**
 	 * Shutdowns the object, saving parsed format strings to the cache.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function shutdownObject() {
@@ -206,6 +206,7 @@ class DatesReader {
 	 * @param string $formatLength A length of format (one of constant values)
 	 * @return array An array representing parsed format
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
+	 * @todo make default format reading nicer
 	 */
 	public function parseFormatFromCldr(\TYPO3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
 		self::validateFormatType($formatType);
@@ -218,9 +219,14 @@ class DatesReader {
 		$model = $this->cldrRepository->getModelForLocale($locale);
 
 		if ($formatLength === 'default') {
-			$defaultChoice = $model->findNodesWithinPath('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats', 'default');
-			$defaultChoice = array_keys($defaultChoice);
-			$realFormatLength = $model->getAttributeValue($defaultChoice[0], 'choice');
+				// the default thing only has an attribute. ugly fetch code. was a nice three-liner before 2011-11-21
+			$formats = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats');
+			foreach (array_keys($formats) as $k) {
+				$realFormatLength = \TYPO3\FLOW3\I18n\Cldr\CldrModel::getAttributeValue($k, 'choice');
+				if ($realFormatLength !== FALSE) {
+					break;
+				}
+			}
 		} else {
 			$realFormatLength = $formatLength;
 		}
@@ -384,6 +390,7 @@ class DatesReader {
 	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrModel $model CldrModel to read data from
 	 * @param string $literalType One of: month, day, quarter, dayPeriod
 	 * @return array An array with localized literals for given type
+	 * @todo the two array checks should go away - but that needs clean input data
 	 */
 	protected function parseLocalizedLiterals(\TYPO3\FLOW3\I18n\Cldr\CldrModel $model, $literalType) {
 		$data = array();
@@ -391,10 +398,14 @@ class DatesReader {
 
 		foreach ($context as $contextNodeString => $literalsWidths) {
 			$contextType = $model->getAttributeValue($contextNodeString, 'type');
-
+			if (!is_array($literalsWidths)) {
+				continue;
+			}
 			foreach ($literalsWidths as $widthNodeString => $literals) {
 				$widthType = $model->getAttributeValue($widthNodeString, 'type');
-
+				if (!is_array($literals)) {
+					continue;
+				}
 				foreach ($literals as $literalNodeString => $literalValue) {
 					$literalName = $model->getAttributeValue($literalNodeString, 'type');
 
@@ -428,7 +439,7 @@ class DatesReader {
 	/**
 	 * Creates one parsed datetime format from date and time formats merged
 	 * together.
-	 * 
+	 *
 	 * The dateTime format from CLDR looks like "{0} {1}" and denotes where to
 	 * place time and date, and what literals should be placed before, between
 	 * and / or after them.

@@ -125,6 +125,9 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 		$distinguishingAttributes[] = 'locales';
 		$distinguishingAttributes[] = 'count';
 
+			// we need this one for datetime parsing (default[@choice] nodes)
+		$distinguishingAttributes[] = 'choice';
+
 		return in_array($attributeName, $distinguishingAttributes);
 	}
 }
