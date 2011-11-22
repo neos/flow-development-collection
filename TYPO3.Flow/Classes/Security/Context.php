@@ -304,27 +304,19 @@ class Context {
 
 	/**
 	 * Returns TRUE, if at least one of the currently authenticated tokens holds
-	 * a role with the given string representation
+	 * a role with the given string representation, also recursively.
 	 *
-	 * @param string $role The string representation of the role to search for
+	 * @param string $roleName The string representation of the role to search for
 	 * @return boolean TRUE, if a role with the given string representation was found
 	 */
-	public function hasRole($role) {
-		if (!$this->authenticationManager->isAuthenticated()) {
-			return FALSE;
-		}
-
-		if ((string) $role === 'Everybody') {
+	public function hasRole($roleName) {
+		if ($roleName === 'Everybody') {
 			return TRUE;
 		}
 
-		if ($this->isInitialized() === FALSE) {
-			$this->initialize();
-		}
-
-		foreach ($this->getAuthenticationTokens() as $token) {
-			$tokenRoles = $token->getRoles();
-			if ($token->isAuthenticated() && in_array($role, $tokenRoles)) {
+		$roles = $this->getRoles();
+		foreach ($roles as $role) {
+			if ((string)$role === $roleName) {
 				return TRUE;
 			}
 		}
