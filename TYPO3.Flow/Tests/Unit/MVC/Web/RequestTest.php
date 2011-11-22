@@ -146,6 +146,16 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Test for Bug #31773 http://forge.typo3.org/issues/31773
+	 * @test
+	 */
+	public function setArgumentWorksWithASingleUndercoreToo() {
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
+		$request->setArgument('_', 'theValue');
+		$this->assertEquals('theValue', $request->getArgument('_'));
+	}
+
+	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException
 	 */
