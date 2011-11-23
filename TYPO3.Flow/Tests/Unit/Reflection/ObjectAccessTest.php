@@ -248,7 +248,7 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$allProperties = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
-			'booleanProperty' => TRUE,
+			'booleanProperty' => 'method called 1',
 			'property' => 'string1',
 			'property2' => NULL,
 			'publicProperty' => NULL,
