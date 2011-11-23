@@ -92,8 +92,6 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function classesFromSubMatchingPackagesAreLoaded() {
-		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes', 0770, TRUE);
-		mkdir('vfs://Test/Packages/Application/Acme/MyAppAddon/Classes', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme/MyAppAddon/Classes/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
 		self::$testClassWasLoaded = FALSE;

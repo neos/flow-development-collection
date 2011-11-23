@@ -155,6 +155,8 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * This is a limitation of chmod() which does not work with stream wrappers.
 	 *
 	 * @test
+	 * @outputBuffering enabled
+	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
 	 */
 	public function importResourceImportsTheGivenFileAndReturnsAResourceObject() {
 		$resourceManager = $this->setupResourceManager();
@@ -172,6 +174,8 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * This is a limitation of chmod() which does not work with stream wrappers.
 	 *
 	 * @test
+	 * @outputBuffering enabled
+	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
 	 */
 	public function getImportedResourcesReturnsAListOfResourceObjectsAndSomeInformationAboutTheirImport() {
 		$resourceManager = $this->setupResourceManager();
@@ -197,6 +201,8 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * This is a limitation of chmod() which does not work with stream wrappers.
 	 *
 	 * @test
+	 * @outputBuffering enabled
+	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
 	 */
 	public function importResourceWorksForFilesWithoutFileEnding() {
 		$resourceManager = $this->setupResourceManager();

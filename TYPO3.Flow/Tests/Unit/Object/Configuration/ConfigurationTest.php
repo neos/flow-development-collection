@@ -34,7 +34,7 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if setProperties accepts only valid values
 	 *
 	 * @test
-	 * @expectedException \Exception
+	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function setPropertiesOnlyAcceptsValidValues() {
 		$invalidProperties = array (
@@ -64,7 +64,7 @@ class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if setArguments accepts only valid values
 	 *
 	 * @test
-	 * @expectedException \Exception
+	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function setArgumentsOnlyAcceptsValidValues() {
 		$invalidArguments = array (
