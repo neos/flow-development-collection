@@ -524,9 +524,15 @@ class Bootstrap {
 			exit(1);
 		}
 
-		if (!extension_loaded('Reflection')) throw new \TYPO3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
+		if (!extension_loaded('Reflection')) {
+			echo('The PHP extension "Reflection" is required by FLOW3.' . PHP_EOL);
+			exit(1);
+		}
 		$method = new \ReflectionMethod(__CLASS__, __FUNCTION__);
-		if ($method->getDocComment() === '') throw new \TYPO3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
+		if ($method->getDocComment() === FALSE || $method->getDocComment() === '') {
+			echo('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.' . PHP_EOL);
+			exit(1);
+		}
 
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');
@@ -536,7 +542,7 @@ class Bootstrap {
 		if (ini_get('date.timezone') === '') {
 			date_default_timezone_set('Europe/Copenhagen');
 		}
-		if (ini_get('magic_quotes_gpc') === '1' || ini_get('magic_quotes_gpc') === 'On') {
+		if (version_compare(PHP_VERSION, '5.4', '<') && get_magic_quotes_gpc() === 1) {
 			echo('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 			exit(1);
 		}
