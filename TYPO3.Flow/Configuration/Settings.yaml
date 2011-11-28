@@ -92,14 +92,6 @@ TYPO3:
       # about the locale use the locale object stored in this setting.
       defaultLocale:
 
-    monitor:
-
-      # The File Monitoring detects changes in class and resource files and
-      # automatically flushes the dependent caches (such as the reflection cache).
-      # This mechanism comes with a speed penalty and should therefore be disabled in
-      # production context.
-      detectClassChanges: no
-
     mvc:
 
       # Object name of the controller to use if no other controller could be resolved
@@ -112,7 +104,7 @@ TYPO3:
       # in the "Classes" directory - also register class files found in the directory
       # "Tests/Functional/". Enabling this feature obviously only makes sense in a
       # testing context.
-      registerFunctionalTestClasses: n
+      registerFunctionalTestClasses: no
 
     package:
 

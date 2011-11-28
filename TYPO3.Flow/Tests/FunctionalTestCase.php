@@ -117,11 +117,8 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->mockWebRequestHandler = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler');
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
-		$this->mockWebRequestHandler->setRequest($mockRequest);
-
-		self::$flow3->getObjectManager()->get('TYPO3\FLOW3\MVC\RequestHandlerResolver')->setPreselectedRequestHandler($this->mockWebRequestHandler);
+		$requestHandler = self::$flow3->getActiveRequestHandler();
+		$requestHandler->setRequest($this->getMock('TYPO3\FLOW3\MVC\Web\Request'));
 
 		if (static::$testablePersistenceEnabled === TRUE) {
 			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();

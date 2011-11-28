@@ -26,12 +26,17 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\CLI\SlaveRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\CLI\CommandRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\Web\RequestHandler($bootstrap));
+
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:core:*');
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:cache:flush');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
-		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\FLOW3\MVC\CLI\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Reflection\ReflectionService', 'saveToCache');
@@ -40,6 +45,8 @@ class Package extends BasePackage {
 
 		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', 'TYPO3\FLOW3\Session\SessionInterface', 'renewId');
 		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'loggedOut', 'TYPO3\FLOW3\Session\SessionInterface', 'destroy');
+
+		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'flushClassFileCachesByChangedFiles');
 	}
 }
 

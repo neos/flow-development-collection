@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\Tests;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -13,14 +13,15 @@ namespace TYPO3\FLOW3\MVC\Web;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\MVC\Web\Response;
 
 /**
- * A request handler which can handle HTTP requests.
+ * A request handler which boots up FLOW3 into a basic runtime level and then returns
+ * without actually further handling command line commands.
  *
+ * @FLOW3\Proxy(false)
  * @FLOW3\Scope("singleton")
  */
-class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
@@ -28,16 +29,9 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\Cli\Request
 	 */
 	protected $request;
-
-	/**
-	 * Make exit() a closure so it can be manipulated during tests
-	 *
-	 * @var Closure
-	 */
-	public $exit;
 
 	/**
 	 * Constructor
@@ -47,66 +41,59 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
-		$this->exit = function() { exit(); };
 	}
 
 	/**
-	 * This request handler can handle any web request.
+	 * This request handler can handle CLI requests.
 	 *
-	 * @return boolean If the request is a web request, TRUE otherwise FALSE
+	 * @return boolean If the request is a CLI request, TRUE otherwise FALSE
 	 */
 	public function canHandleRequest() {
-		return (PHP_SAPI !== 'cli');
+		return (PHP_SAPI === 'cli' && $this->bootstrap->getContext() === 'Testing');
 	}
 
 	/**
 	 * Returns the priority - how eager the handler is to actually handle the
 	 * request.
 	 *
+	 * As this request handler can only be used as a preselected request handler,
+	 * the priority for all other cases is 0.
+	 *
 	 * @return integer The priority of the request handler.
 	 */
 	public function getPriority() {
-		return 100;
+		return 0;
 	}
 
 	/**
-	 * Handles a HTTP request
+	 * Handles a command line request
 	 *
 	 * @return void
 	 */
 	public function handleRequest() {
+		echo ("FLOW3 functional test run\n\n");
 		$sequence = $this->bootstrap->buildRuntimeSequence();
 		$sequence->invoke($this->bootstrap);
-
-		$objectManager = $this->bootstrap->getObjectManager();
-
-		$this->request = $objectManager->get('TYPO3\FLOW3\MVC\Web\RequestBuilder')->build();
-		$response = new Response();
-
-		$dispatcher = $objectManager->get('TYPO3\FLOW3\MVC\Dispatcher');
-		$dispatcher->dispatch($this->request, $response);
-
-		$response->send();
-		$this->bootstrap->shutdown('Runtime');
-		$this->exit->__invoke();
 	}
 
 	/**
-	 * Returns the top level request built by the request handler.
-	 *
-	 * In most cases the dispatcher or other parts of the request-response chain
-	 * should be preferred for retrieving the current request, because sub requests
-	 * or simulated requests are built later in the process.
-	 *
-	 * If, however, the original top level request is wanted, this is the right
-	 * method for getting it.
+	 * Returns the request which has previously been set with setRequest()
 	 *
 	 * @return \TYPO3\FLOW3\MVC\RequestInterface The originally built web request
-	 * @api
 	 */
 	public function getRequest() {
 		return $this->request;
 	}
 
+	/**
+	 * Sets the request – used by the base functional test case
+	 *
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
+	 * @return void
+	 */
+	public function setRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+		$this->request = $request;
+	}
 }
+
 ?>

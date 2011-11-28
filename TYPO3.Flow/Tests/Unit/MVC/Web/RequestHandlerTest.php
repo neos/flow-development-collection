@@ -21,47 +21,30 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function handleRequestBuildsARequestAndResponseDispatchesThemByTheDispatcherAndSendsTheResponse() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
+
+		$sequence = new \TYPO3\FLOW3\Core\Booting\Sequence();
+		$mockBootstrap->expects($this->once())->method('buildRuntimeSequence')->will($this->returnValue($sequence));
+		$mockBootstrap->expects($this->once())->method('shutdown');
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockBootstrap->expects($this->once())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
+
+			// For we don't have to mock the Dispatcher, the request is set to "dispatched"
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
+		$request->setDispatched(TRUE);
 
 		$mockRequestBuilder = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestBuilder', array(), array(), '', FALSE);
-		$mockRequestBuilder->expects($this->once())->method('build')->will($this->returnValue($mockRequest));
+		$mockRequestBuilder->expects($this->atLeastOnce())->method('build')->will($this->returnValue($request));
 
-		$mockDispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
-		$mockDispatcher->expects($this->once())->method('dispatch')->with($mockRequest);
+		$mockObjectManager->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls($mockRequestBuilder, new \TYPO3\FLOW3\MVC\Dispatcher()));
 
-		$requestHandler = new \TYPO3\FLOW3\MVC\Web\RequestHandler($mockDispatcher, $mockRequestBuilder);
+		$requestHandler = new \TYPO3\FLOW3\MVC\Web\RequestHandler($mockBootstrap);
+		$requestHandler->exit = function() {};
 		$requestHandler->handleRequest();
+
+		$this->assertSame($request, $requestHandler->getRequest());
 	}
 
-	/**
-	 * @test
-	 */
-	public function handleRequestSetsAContentTypeHeaderAccordingToCertainFormats() {
-		$this->markTestIncomplete('Needs to mock a newable!');
-
-			// these calls need to checked but
-#		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-#		$mockResponse->expects($this->at(0))->method('setHeader')->with('Content-Type', 'application/rss+xml');
-#		$mockResponse->expects($this->at(2))->method('setHeader')->with('Content-Type', 'application/rss+xml');
-#		$mockResponse->expects($this->at(4))->method('setHeader')->with('Content-Type', 'application/atom+xml');
-#		$mockResponse->expects($this->at(6))->method('setHeader')->with('Content-Type', 'application/atom+xml');
-
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->at(0))->method('getFormat')->will($this->returnValue('rss.xml'));
-		$mockRequest->expects($this->at(1))->method('getFormat')->will($this->returnValue('rss'));
-		$mockRequest->expects($this->at(2))->method('getFormat')->will($this->returnValue('atom.xml'));
-		$mockRequest->expects($this->at(3))->method('getFormat')->will($this->returnValue('atom'));
-
-		$mockRequestBuilder = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestBuilder', array(), array(), '', FALSE);
-		$mockRequestBuilder->expects($this->exactly(4))->method('build')->will($this->returnValue($mockRequest));
-
-		$mockDispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
-
-		$requestHandler = new \TYPO3\FLOW3\MVC\Web\RequestHandler($mockDispatcher, $mockRequestBuilder);
-		$requestHandler->handleRequest();
-		$requestHandler->handleRequest();
-		$requestHandler->handleRequest();
-		$requestHandler->handleRequest();
-	}
 }
 ?>

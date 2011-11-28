@@ -121,10 +121,10 @@ class Context {
 	protected $hashService;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\RequestHandlerResolver
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 * @FLOW3\Inject
 	 */
-	protected $requestHandlerResolver;
+	protected $bootstrap;
 
 	/**
 	 * One of the CSRF_* constants to set the csrf strategy
@@ -204,7 +204,7 @@ class Context {
 	 * @return void
 	 */
 	public function initialize() {
-		$this->request = $this->requestHandlerResolver->resolveRequestHandler()->getRequest();
+		$this->request = $this->bootstrap->getActiveRequestHandler()->getRequest();
 
 		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) {
 			$this->csrfTokens = array();

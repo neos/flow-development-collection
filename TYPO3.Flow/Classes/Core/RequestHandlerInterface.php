@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\MVC;
+namespace TYPO3\FLOW3\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,52 +12,27 @@ namespace TYPO3\FLOW3\Tests\Functional\MVC;
  *                                                                        */
 
 /**
- * A mock web request handler suitable for functional tests
+ * The interface for a request handler
  *
+ * @api
  */
-class MockWebRequestHandler extends \TYPO3\FLOW3\MVC\Web\RequestHandler {
+interface RequestHandlerInterface {
 
 	/**
-	 * Explicitly sets the request
-	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
-	 * @return void
-	 */
-	public function setRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
-		$this->request = $request;
-	}
-
-	/**
-	 * Handles the web request.
+	 * Handles a raw request
 	 *
 	 * @return void
+	 * @api
 	 */
-	public function handleRequest() {
-		$response = new Response();
-
-		switch ($this->request->getFormat()) {
-			case 'rss.xml' :
-			case 'rss' :
-				$response->setHeader('Content-Type', 'application/rss+xml');
-				break;
-			case 'atom.xml' :
-			case 'atom' :
-				$response->setHeader('Content-Type', 'application/atom+xml');
-				break;
-		}
-
-		$this->dispatcher->dispatch($this->request, $response);
-		$response->send();
-	}
+	public function handleRequest();
 
 	/**
 	 * Checks if the request handler can handle the current request.
 	 *
 	 * @return mixed TRUE or an integer > 0 if it can handle the request, otherwise FALSE or an integer < 0
+	 * @api
 	 */
-	public function canHandleRequest() {
-		return TRUE;
-	}
+	public function canHandleRequest();
 
 	/**
 	 * Returns the priority - how eager the handler is to actually handle the
@@ -65,10 +40,24 @@ class MockWebRequestHandler extends \TYPO3\FLOW3\MVC\Web\RequestHandler {
 	 * "100" is default. "0" means "I am a fallback solution".
 	 *
 	 * @return integer The priority of the request handler
+	 * @api
 	 */
-	public function getPriority() {
-		return 200;
-	}
+	public function getPriority();
+
+	/**
+	 * Returns the top level request built by the request handler.
+	 *
+	 * In most cases the dispatcher or other parts of the request-response chain
+	 * should be preferred for retrieving the current request, because sub requests
+	 * or simulated requests are built later in the process.
+	 *
+	 * If, however, the original top level request is wanted, this is the right
+	 * method for getting it.
+	 *
+	 * @return \TYPO3\FLOW3\MVC\RequestInterface The originally built web request
+	 * @api
+	 */
+	public function getRequest();
 
 }
 

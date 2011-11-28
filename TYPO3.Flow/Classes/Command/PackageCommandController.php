@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Command;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Core\Booting\Scripts;
 
 /**
  * Package command controller to handle packages from CLI (create/activate/deactivate packages)
@@ -27,10 +28,17 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	protected $packageManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var array
 	 */
-	protected $bootstrap;
+	protected $settings;
+
+	/**
+	 * @param array $settings The FLOW3 settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
 
 	/**
 	 * Create a new package
@@ -53,7 +61,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			$this->quit(1);
 		}
 		$package = $this->packageManager->createPackage($packageKey);
-		$this->outputLine('New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".');
+		$this->outputLine('Created new package "' . $packageKey . '" at "' . $package->getPackagePath() . '".');
 	}
 
 	/**
@@ -71,8 +79,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			$this->quit(1);
 		}
 		$this->packageManager->deletePackage($packageKey);
-		$this->outputLine('Package "%s" has been deleted.', array($packageKey));
-		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->outputLine('Deleted package "%s".', array($packageKey));
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
 		$this->sendAndExit(0);
 	}
 
@@ -93,8 +101,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 
 		$this->packageManager->activatePackage($packageKey);
-		$this->outputLine('Package "%s" activated.', array($packageKey));
-		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->outputLine('Activated package "%s".', array($packageKey));
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
 		$this->sendAndExit(0);
 	}
 
@@ -115,8 +123,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 
 		$this->packageManager->deactivatePackage($packageKey);
-		$this->outputLine('Package "%s" deactivated.', array($packageKey));
-		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->outputLine('Deactivated package "%s".', array($packageKey));
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
 		$this->sendAndExit(0);
 	}
 
@@ -182,7 +190,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		try {
 			$this->packageManager->importPackage($packageKey);
 			$this->outputLine('Imported package %s.', array($packageKey));
-			$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+			Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
 			$this->sendAndExit(0);
 		} catch (\TYPO3\FLOW3\Package\Exception $exception) {
 			$this->outputLine($exception->getMessage());

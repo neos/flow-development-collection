@@ -122,7 +122,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->loadPackageStates();
 
 		foreach ($this->packages as $packageKey => $package) {
-			if ($package->isProtected() || (isset($this->packageStatesConfiguration[$packageKey]['state']) && $this->packageStatesConfiguration[$packageKey]['state'] === 'active')) {
+			if ($package->isProtected() || (isset($this->packageStatesConfiguration['packages'][$packageKey]['state']) && $this->packageStatesConfiguration['packages'][$packageKey]['state'] === 'active')) {
 				$this->activePackages[$packageKey] = $package;
 			}
 		}
@@ -324,11 +324,11 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$package = $this->getPackage($packageKey);
 		if ($package->isProtected()) {
-			throw new \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1308662891);
+			throw new \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be deactivated.', 1308662891);
 		}
 
 		unset($this->activePackages[$packageKey]);
-		$this->packageStatesConfiguration[$packageKey]['state'] = 'inactive';
+		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'inactive';
 		$this->savePackageStates();
 	}
 
@@ -346,7 +346,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$package = $this->getPackage($packageKey);
 		$this->activePackages[$packageKey] = $package;
-		$this->packageStatesConfiguration[$packageKey]['state'] = 'active';
+		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'active';
 		$this->savePackageStates();
 	}
 

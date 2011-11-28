@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\MVC;
+namespace TYPO3\FLOW3\Core\Booting;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -11,12 +11,50 @@ namespace TYPO3\FLOW3\MVC;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
- * Interface moved to the \TYPO3\FLOW3\Core namespace.
+ * A Step within a Sequence
  *
- * @deprecated since 1.1
+ * @api
  */
-interface RequestHandlerInterface extends \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class Step {
+
+	/**
+	 * @var string
+	 */
+	protected $identifier;
+
+	/**
+	 * @var mixed
+	 */
+	protected $callback;
+
+	/**
+	 * @param $identifier
+	 * @param $callback
+	 */
+	public function __construct($identifier, $callback) {
+		$this->identifier = $identifier;
+		$this->callback = $callback;
+	}
+
+	/**
+	 * Invokes / executes this step
+	 *
+	 * @return void
+	 */
+	public function __invoke(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		call_user_func($this->callback, $bootstrap);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
+	}
+
 }
 
 ?>

@@ -90,12 +90,31 @@ class LockManager {
 	}
 
 	/**
+	 * Exits if the site is currently locked
+	 *
+	 * @return void
+	 */
+	public function exitIfSiteLocked() {
+		if ($this->isSiteLocked() === TRUE) {
+			if (FLOW3_SAPITYPE === 'Web') {
+				header('HTTP/1.1 503 Service Temporarily Unavailable');
+				readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');
+			} else {
+				echo "Site is currently locked, exiting.\n";
+			}
+			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
+			exit(1);
+		}
+	}
+
+	/**
 	 * Locks the site for further requests.
 	 *
 	 * @return void
 	 * @api
 	 */
-	public function lockSite() {
+	public function lockSiteOrExit() {
+		$this->exitIfSiteLocked();
 		$this->systemLogger->log('Locking site. Lock file: ' . $this->lockPathAndFilename, LOG_NOTICE);
 		$this->siteLocked = TRUE;
 		file_put_contents($this->lockPathAndFilename, '');

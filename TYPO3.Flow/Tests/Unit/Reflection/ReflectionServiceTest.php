@@ -669,25 +669,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function reflectClassStoresATimeStampWithEachReflectedClassIfClassChangeDetectionIsEnabled() {
-		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
-
-		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $className . ' {}');
-
-		$startTime = time();
-		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('log', 'convertParameterReflectionToArray'), array(), '', FALSE);
-		$reflectionService->injectSettings(array('monitor' => array('detectClassChanges' => TRUE)));
-		$reflectionService->_call('reflectClass', $className);
-		$endTime = time();
-
-		$reflectedClassNames = $reflectionService->_get('reflectedClassNames');
-		$this->assertTrue($reflectedClassNames[$className] >= $startTime && $reflectedClassNames[$className] <= $endTime);
-	}
-
-	/**
-	 * @test
-	 */
 	public function classSchemaOnlyContainsNonTransientProperties() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
 
