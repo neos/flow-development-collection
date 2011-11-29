@@ -139,6 +139,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		);
 
 		$testEntityWithArrayProperty = new TestEntity();
+		$testEntityWithArrayProperty->setName('dummy');
 		$testEntityWithArrayProperty->setArrayProperty($arrayProperty);
 
 		$this->testEntityRepository->add($testEntityLyingInsideTheArray);
@@ -159,12 +160,39 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 */
+	public function validationIsDoneForNewEntities() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity('A');
+
+		$this->persistenceManager->persistAll();
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 */
+	public function validationIsDoneForReconstitutedEntities() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+
+		$firstResult = $this->testEntityRepository->findAll()->getFirst();
+		$firstResult->setName('A');
+		$this->testEntityRepository->update($firstResult);
+		$this->persistenceManager->persistAll();
+	}
+
+
+	/**
 	 * Helper which inserts example data into the database.
 	 *
 	 * @param string $name
 	 */
 	protected function insertExampleEntity($name = 'FLOW3') {
-		$testEntity = new TestEntity;
+		$testEntity = new TestEntity();
 		$testEntity->setName($name);
 		$this->testEntityRepository->add($testEntity);
 

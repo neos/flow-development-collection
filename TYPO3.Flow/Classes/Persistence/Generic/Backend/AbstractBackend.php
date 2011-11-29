@@ -317,10 +317,14 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 		$validationResult = $validator->validate($object);
 		if ($validationResult->hasErrors()) {
 			$errorMessages = '';
-			foreach ($validationResult->getErrors() as $error) {
-				$errorMessages .= (string)$error . PHP_EOL;
+			$allErrors = $validationResult->getFlattenedErrors();
+			foreach ($allErrors as $path => $errors) {
+				$errorMessages .= $path . ':' . PHP_EOL;
+				foreach ($errors as $error) {
+					$errorMessages .= (string)$error . PHP_EOL;
+				}
 			}
-			throw new \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($validationResult->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585162);
+			throw new \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585162);
 		}
 	}
 
