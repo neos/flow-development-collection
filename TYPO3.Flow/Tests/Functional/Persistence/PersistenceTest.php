@@ -139,6 +139,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		);
 
 		$testEntityWithArrayProperty = new TestEntity();
+		$testEntityWithArrayProperty->setName('dummy');
 		$testEntityWithArrayProperty->setArrayProperty($arrayProperty);
 
 		$this->testEntityRepository->add($testEntityLyingInsideTheArray);
@@ -168,6 +169,32 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame($expectedEntity, $actualEntity);
 	}
 
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 */
+	public function validationIsDoneForNewEntities() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity('A');
+
+		$this->persistenceManager->persistAll();
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 */
+	public function validationIsDoneForReconstitutedEntities() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+
+		$firstResult = $this->testEntityRepository->findAll()->getFirst();
+		$firstResult->setName('A');
+		$this->testEntityRepository->update($firstResult);
+		$this->persistenceManager->persistAll();
+	}
+
 
 	/**
 	 * Helper which inserts example data into the database.
@@ -175,12 +202,12 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @param string $name
 	 */
 	protected function insertExampleEntity($name = 'FLOW3') {
-		$testEntity = new TestEntity;
+		$testEntity = new TestEntity();
 		$testEntity->setName($name);
 		$this->testEntityRepository->add($testEntity);
 
-		// FIXME this was tearDownPersistence(), which would reset objects in memory to a pristine state as well
 		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
 	}
 
 	/**
@@ -189,6 +216,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected function removeExampleEntities() {
 		$this->testEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
 	}
 }
 ?>

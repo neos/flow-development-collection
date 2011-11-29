@@ -24,6 +24,7 @@ class TestEntity {
 
 	/**
 	 * @var string
+	 * @FLOW3\Validate(type="StringLength", options={"minimum"=3})
 	 */
 	protected $name;
 
