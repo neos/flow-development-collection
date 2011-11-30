@@ -537,8 +537,12 @@ class Bootstrap {
 	 */
 	protected function initializeConfiguration() {
 		$this->configurationManager = new \TYPO3\FLOW3\Configuration\ConfigurationManager($this->context);
-		$this->configurationManager->injectConfigurationSource(new \TYPO3\FLOW3\Configuration\Source\YamlSource());
+		$loadedFromCache = $this->configurationManager->loadConfigurationCache();
 		$this->configurationManager->setPackages($this->packageManager->getActivePackages());
+
+		if ($loadedFromCache === FALSE) {
+			$this->configurationManager->injectConfigurationSource(new \TYPO3\FLOW3\Configuration\Source\YamlSource());
+		}
 
 		$this->settings = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
 

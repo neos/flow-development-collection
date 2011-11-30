@@ -20,19 +20,6 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function constructLoadsPotentiallyExistingCachedConfiguration() {
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfigurationCache'), array(), '', FALSE);
-		$configurationManager->expects($this->once())->method('loadConfigurationCache');
-
-		$configurationManager->__construct('Testing');
-		$expectedFilename = FLOW3_PATH_CONFIGURATION . 'Testing/IncludeCachedConfigurations.php';
-		$actualFilename = $configurationManager->_get('includeCachedConfigurationsPathAndFilename');
-		$this->assertSame($expectedFilename, $actualFilename);
-	}
-
-	/**
-	 * @test
-	 */
 	public function getConfigurationForSettingsLoadsConfigurationIfNecessary() {
 		$initialConfigurations = array(
 			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(),

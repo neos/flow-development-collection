@@ -81,7 +81,6 @@ class ConfigurationManager {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(FLOW3_PATH_CONFIGURATION . $context);
 		}
 		$this->includeCachedConfigurationsPathAndFilename = FLOW3_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php';
-		$this->loadConfigurationCache();
 	}
 
 	/**
@@ -328,12 +327,14 @@ class ConfigurationManager {
 	/**
 	 * If a cache file with previously saved configuration exists, it is loaded.
 	 *
-	 * @return void
+	 * @return boolean If cached configuration was loaded or not
 	 */
-	protected function loadConfigurationCache() {
+	public function loadConfigurationCache() {
 		if (file_exists($this->includeCachedConfigurationsPathAndFilename)) {
 			$this->configurations = require($this->includeCachedConfigurationsPathAndFilename);
+			return TRUE;
 		}
+		return FALSE;
 	}
 
 	/**

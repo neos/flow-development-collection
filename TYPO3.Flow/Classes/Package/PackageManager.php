@@ -32,6 +32,11 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected $classLoader;
 
 	/**
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 */
+	protected $bootstrap;
+
+	/**
 	 * Array of available packages, indexed by package key
 	 * @var array
 	 */
@@ -110,8 +115,8 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @return void
 	 */
 	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap, $packagesBasePath = FLOW3_PATH_PACKAGES, $packageStatesPathAndFilename = '') {
+		$this->bootstrap = $bootstrap;
 		$this->packagesBasePath = $packagesBasePath;
-		$this->scanAvailablePackages();
 		$this->packageStatesPathAndFilename = ($packageStatesPathAndFilename === '') ? FLOW3_PATH_CONFIGURATION . 'PackageStates.php' : $packageStatesPathAndFilename;
 
 		$this->loadPackageStates();
@@ -379,12 +384,43 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * Loads the states of available packages from the PackageStates.php file.
+	 * The result is stored in $this->packageStatesConfiguration.
+	 *
+	 * @return void
+	 */
+	protected function loadPackageStates() {
+		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
+		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 1) {
+			$this->packageStatesConfiguration = array();
+		}
+		if ($this->packageStatesConfiguration === array() || $this->bootstrap->getContext() !== 'Production') {
+			$this->scanAvailablePackages();
+		} else {
+			foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
+				$this->packageKeys[strtolower($packageKey)] = $packageKey;
+			}
+		}
+		$this->registerPackages();
+	}
+
+	/**
 	 * Scans all directories in the packages directories for available packages.
 	 * For each package a Package object is created and stored in $this->packages.
 	 *
 	 * @return void
 	 */
 	protected function scanAvailablePackages() {
+		if (isset($this->packageStatesConfiguration['packages'])) {
+			foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $configuration) {
+				if (!file_exists($configuration['packagePath'])) {
+					unset($this->packageStatesConfiguration['packages'][$packageKey]);
+				}
+			}
+		} else {
+			$this->packageStatesConfiguration['packages'] = array();
+		}
+
 		$packagePaths = array();
 		foreach (new \DirectoryIterator($this->packagesBasePath) as $parentFileInfo) {
 			$parentFilename = $parentFileInfo->getFilename();
@@ -400,22 +436,15 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			if (isset($this->packages[$packageKey])) {
 				throw new \TYPO3\FLOW3\Package\Exception\DuplicatePackageException('Detected a duplicate package, remove either "' . $this->packages[$packageKey]->getPackagePath() . '" or "' . $packagePath . '".', 1253716811);
 			}
-
-			$packageClassPathAndFilename = $packagePath . 'Classes/Package.php';
-			if (!file_exists($packageClassPathAndFilename)) {
-				$shortFilename = substr($packagePath, strlen($this->packagesBasePath)) . 'Classes/Package.php';
-				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('Missing package class in package "%s". Please create a file "%s" and extend Package.', $packageKey, $shortFilename), 1300782486);
-			}
-
-			require_once($packageClassPathAndFilename);
-			$packageClassName = str_replace('.', '\\', $packageKey) . '\Package';
-			$this->packages[$packageKey] = new $packageClassName($packageKey, $packagePath);
-			if (!$this->packages[$packageKey] instanceof PackageInterface) {
-				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package class %s in package "%s" does not implement PackageInterface.', $packageClassName, $packageKey), 1300782487);
-			}
-
 			$this->packageKeys[strtolower($packageKey)] = $packageKey;
+			if (!isset($this->packageStatesConfiguration['packages'][$packageKey])) {
+				$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'active';
+			}
+			$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $packagePath;
 		}
+
+		$this->packageStatesConfiguration['version'] = 1;
+		$this->savePackageStates();
 	}
 
 	/**
@@ -442,19 +471,29 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
-	 * Loads the states of available packages from the PackageStates.php file.
-	 * The result is stored in $this->packageStatesConfiguration.
+	 * Requires and registers all packages which were defined in packageStatesConfiguration
 	 *
 	 * @return void
 	 */
-	protected function loadPackageStates() {
-		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
-		if ($this->packageStatesConfiguration === array()) {
-			foreach ($this->packageKeys as $packageKey) {
-				$this->activePackages[$packageKey] = $this->packages[$packageKey];
-				$this->packageStatesConfiguration[$packageKey]['state'] = 'active';
+	protected function registerPackages() {
+		foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
+			$packageClassPathAndFilename = $stateConfiguration['packagePath'] . 'Classes/Package.php';
+			if (!file_exists($packageClassPathAndFilename)) {
+				$shortFilename = substr($stateConfiguration['packagePath'], strlen($this->packagesBasePath)) . 'Classes/Package.php';
+				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('Missing package class in package "%s". Please create a file "%s" and extend Package.', $packageKey, $shortFilename), 1300782486);
 			}
-			$this->savePackageStates();
+
+			require_once($packageClassPathAndFilename);
+			$packageClassName = str_replace('.', '\\', $packageKey) . '\Package';
+			$this->packages[$packageKey] = new $packageClassName($packageKey, $stateConfiguration['packagePath']);
+
+			if (!$this->packages[$packageKey] instanceof PackageInterface) {
+				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package class %s in package "%s" does not implement PackageInterface.', $packageClassName, $packageKey), 1300782487);
+			}
+
+			if ($stateConfiguration['state'] === 'active') {
+				$this->activePackages[$packageKey] = $this->packages[$packageKey];
+			}
 		}
 	}
 
