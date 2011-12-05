@@ -13,7 +13,7 @@ TYPO3:
   FLOW3:
 
     configuration:
-      compileConfigurationFiles: n
+      compileConfigurationFiles: no
 
     error:
       exceptionHandler:
@@ -28,7 +28,7 @@ TYPO3:
         backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
 
     object:
-      registerFunctionalTestClasses: y
+      registerFunctionalTestClasses: yes
 
     persistence:
       backendOptions:
@@ -54,7 +54,7 @@ TYPO3:
     tests:
       functional:
         aop:
-          pointcutExpressionSettingFilterOptionA: y
+          pointcutExpressionSettingFilterOptionA: yes
         dependencyInjection:
           singletonConstructorArgument: 'setting injected singleton value'
           prototypeConstructorArgument: 'setting injected property value'

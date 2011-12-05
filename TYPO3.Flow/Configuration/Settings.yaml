@@ -23,7 +23,7 @@ TYPO3:
       # much faster to load PHP files.
       #
       # NOTE: You must clear all caches right after switching this option OFF
-      compileConfigurationFiles: y
+      compileConfigurationFiles: yes
 
     core:
 
@@ -57,7 +57,7 @@ TYPO3:
         backend: TYPO3\FLOW3\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW3_PATH_DATA%Logs/System.log
-           createParentDirectories: y
+           createParentDirectories: yes
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
@@ -66,11 +66,11 @@ TYPO3:
         backend: TYPO3\FLOW3\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
-           createParentDirectories: y
+           createParentDirectories: yes
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
-           logIpAddress: y
+           logIpAddress: yes
 
     locale:
 
@@ -98,7 +98,7 @@ TYPO3:
       # automatically flushes the dependent caches (such as the reflection cache).
       # This mechanism comes with a speed penalty and should therefore be disabled in
       # production context.
-      detectClassChanges: n
+      detectClassChanges: no
 
     mvc:
 
@@ -135,13 +135,13 @@ TYPO3:
         cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
         sqlLogger: null
         # By default Doctrine proxy compilation is done in the FLOW3 bootstrap
-        enable: y
+        enable: yes
 
     reflection:
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.
-      logIncorrectDocCommentHints: n
+      logIncorrectDocCommentHints: no
 
     resource:
       publishing:
@@ -149,7 +149,7 @@ TYPO3:
         # If enabled, the publisher will check if the static resources of active packages
         # have changed and if so publishes them again. If disabled, static package resources
         # are only published once and changes are unnoticed until the related cache is flushed.
-        detectPackageResourceChanges: n
+        detectPackageResourceChanges: no
 
         # Options for the File System publishing target
         fileSystem:
@@ -159,13 +159,13 @@ TYPO3:
 
     security:
 
-      enable: y
+      enable: yes
 
       firewall:
 
         # If set to yes, the firewall will reject any request that is not
         # explicitly allowed by a configured request filter.
-        rejectAll: n
+        rejectAll: no
 
         # The filter configuration for the firewall. Here is an example configuration array:
         #
