@@ -125,7 +125,7 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	}
 
 	/**
-	 * Returns a XliffModel instance representing desired CLDR file.
+	 * Returns a XliffModel instance representing desired XLIFF file.
 	 *
 	 * Will return existing instance if a model for given $sourceName was already
 	 * requested before. Returns FALSE when $sourceName doesn't point to existing
@@ -143,7 +143,7 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 		if (isset($this->models[$sourceName])) {
 			return $this->models[$sourceName];
 		}
-		return $this->models[$sourceName] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourceName);
+		return $this->models[$sourceName] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourceName, $locale);
 	}
 }
 

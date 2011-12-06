@@ -39,7 +39,7 @@ class XliffModel {
 	 * Concrete XML parser which is set by more specific model extending this
 	 * class.
 	 *
-	 * @var \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser
+	 * @var \TYPO3\FLOW3\I18n\Xliff\XliffParser
 	 */
 	protected $xmlParser;
 
@@ -48,7 +48,12 @@ class XliffModel {
 	 *
 	 * @var string
 	 */
-	protected $xmlSourcePath;
+	protected $sourcePath;
+
+	/**
+	 * @var \TYPO3\FLOW3\I18n\Locale
+	 */
+	protected $locale;
 
 	/**
 	 * Parsed data (structure depends on concrete model).
@@ -59,9 +64,11 @@ class XliffModel {
 
 	/**
 	 * @param string $sourcePath
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The locale represented by the file
 	 */
-	public function __construct($sourcePath) {
-		$this->xmlSourcePath = $sourcePath;
+	public function __construct($sourcePath, $locale) {
+		$this->sourcePath = $sourcePath;
+		$this->locale = $locale;
 	}
 
 	/**
@@ -89,11 +96,11 @@ class XliffModel {
 	 * @return void
 	 */
 	public function initializeObject() {
-		if ($this->cache->has(md5($this->xmlSourcePath))) {
-			$this->xmlParsedData = $this->cache->get(md5($this->xmlSourcePath));
+		if ($this->cache->has(md5($this->sourcePath))) {
+			$this->xmlParsedData = $this->cache->get(md5($this->sourcePath));
 		} else {
-			$this->xmlParsedData = $this->xmlParser->getParsedData($this->xmlSourcePath);
-			$this->cache->set(md5($this->xmlSourcePath), $this->xmlParsedData);
+			$this->xmlParsedData = $this->xmlParser->getParsedData($this->sourcePath);
+			$this->cache->set(md5($this->sourcePath), $this->xmlParsedData);
 		}
 	}
 
@@ -106,7 +113,7 @@ class XliffModel {
 	 * @return mixed Translated label or FALSE on failure
 	 */
 	public function getTargetBySource($source, $pluralFormIndex = 0) {
-		foreach ($this->xmlParsedData as $translationUnit) {
+		foreach ($this->xmlParsedData['translationUnits'] as $translationUnit) {
 				// $source is always singular (or only) form, so compare with index 0
 			if ($translationUnit[0]['source'] !== $source) {
 				continue;
@@ -116,7 +123,7 @@ class XliffModel {
 				return FALSE;
 			}
 
-			return $translationUnit[$pluralFormIndex]['target'];
+			return $translationUnit[$pluralFormIndex]['target'] ?: FALSE;
 		}
 
 		return FALSE;
@@ -124,25 +131,29 @@ class XliffModel {
 
 	/**
 	 * Returns translated label ("target" tag in XLIFF) for the id given.
-	 *
 	 * Id is compared with "id" attribute of "trans-unit" tag (see XLIFF
 	 * specification for details).
 	 *
 	 * @param string $transUnitId The "id" attribute of "trans-unit" tag in XLIFF
-	 * @param string $pluralFormIndex Index of plural form to use (starts with 0)
+	 * @param integer $pluralFormIndex Index of plural form to use (starts with 0)
 	 * @return mixed Translated label or FALSE on failure
 	 */
 	public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0) {
-		if (!isset($this->xmlParsedData[$transUnitId])) {
+		if (!isset($this->xmlParsedData['translationUnits'][$transUnitId])) {
 			return FALSE;
 		}
 
-		$translationUnit = $this->xmlParsedData[$transUnitId];
-		if (count($translationUnit) <= $pluralFormIndex) {
+		if (count($this->xmlParsedData['translationUnits'][$transUnitId]) <= $pluralFormIndex) {
 			return FALSE;
 		}
 
-		return $translationUnit[$pluralFormIndex]['target'];
+		if ($this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['target']) {
+			return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
+		} elseif ($this->locale->getLanguage() === $this->xmlParsedData['sourceLocale']->getLanguage()) {
+			return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['source'] ?: FALSE;
+		} else {
+			return FALSE;
+		}
 	}
 }
 

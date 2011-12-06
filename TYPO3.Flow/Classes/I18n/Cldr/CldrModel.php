@@ -103,16 +103,8 @@ class CldrModel {
 		} else {
 			$this->parsedData = $this->parseFiles($this->sourcePaths);
 			$this->parsedData = $this->resolveAliases($this->parsedData, '');
+			$this->cache->set($this->cacheKey, $this->parsedData);
 		}
-	}
-
-	/**
-	 * Shutdowns the model. Parsed data is saved to the cache if needed.
-	 *
-	 * @return void
-	 */
-	public function shutdownObject() {
-		$this->cache->set($this->cacheKey, $this->parsedData);
 	}
 
 	/**

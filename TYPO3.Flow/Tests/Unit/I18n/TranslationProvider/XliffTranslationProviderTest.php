@@ -53,7 +53,7 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function returnsTranslatedLabelWhenOriginalLabelProvided() {
-		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
+		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo', NULL));
 		$mockModel->expects($this->once())->method('getTargetBySource')->with('bar', 0)->will($this->returnValue('baz'));
 
 		$this->mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER)));
@@ -70,7 +70,7 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function returnsTranslatedLabelWhenLabelIdProvided() {
-		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
+		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo', NULL));
 		$mockModel->expects($this->once())->method('getTargetByTransUnitId')->with('bar', 1)->will($this->returnValue('baz'));
 
 		$translationProvider = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider', array('getModel'));
