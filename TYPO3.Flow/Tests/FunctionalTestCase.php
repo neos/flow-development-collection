@@ -95,14 +95,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * @return void
-	 */
-	public function runBare() {
-		$this->objectManager = self::$flow3->getObjectManager();
-		parent::runBare();
-	}
-
-	/**
 	 * Enables security tests for this testcase
 	 *
 	 * @return void
@@ -117,6 +109,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	public function setUp() {
+		$this->objectManager = self::$flow3->getObjectManager();
 		$requestHandler = self::$flow3->getActiveRequestHandler();
 		$requestHandler->setRequest($this->getMock('TYPO3\FLOW3\MVC\Web\Request'));
 
@@ -168,6 +161,15 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		}
 
 		$persistenceManager = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+
+			// Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
+			// has not been called during a test. This makes sure that for example certain repositories can clear
+			// their internal registry in order to avoid side effects in the following test run.
+			// Wrap in try/catch to suppress errors after the actual test is run (e.g. validation)
+		try {
+			$persistenceManager->persistAll();
+		} catch (\Exception $exception) {}
+
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
 		}
