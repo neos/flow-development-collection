@@ -49,7 +49,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @FLOW3\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
-class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
+class CldrParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XML data, starting from a root node.
