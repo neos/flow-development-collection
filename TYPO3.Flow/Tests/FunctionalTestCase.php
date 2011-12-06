@@ -95,14 +95,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * @return void
-	 */
-	public function runBare() {
-		$this->objectManager = self::$flow3->getObjectManager();
-		parent::runBare();
-	}
-
-	/**
 	 * Enables security tests for this testcase
 	 *
 	 * @return void
@@ -117,16 +109,17 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->mockWebRequestHandler = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler');
+		$this->objectManager = self::$flow3->getObjectManager();
+		$this->mockWebRequestHandler = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler');
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 		$this->mockWebRequestHandler->setRequest($mockRequest);
 
-		self::$flow3->getObjectManager()->get('TYPO3\FLOW3\MVC\RequestHandlerResolver')->setPreselectedRequestHandler($this->mockWebRequestHandler);
+		$this->objectManager->get('TYPO3\FLOW3\MVC\RequestHandlerResolver')->setPreselectedRequestHandler($this->mockWebRequestHandler);
 
 		if (static::$testablePersistenceEnabled === TRUE) {
-			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
-			if (is_callable(array(self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
-				$result = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
+			$this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
+			if (is_callable(array($this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
+				$result = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
 				if ($result === FALSE) {
 					self::markTestSkipped('Test skipped because setting up the persistence failed.');
 				}
@@ -171,6 +164,15 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		}
 
 		$persistenceManager = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+
+			// Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
+			// has not been called during a test. This makes sure that for example certain repositories can clear
+			// their internal registry in order to avoid side effects in the following test run.
+			// Wrap in try/catch to suppress errors after the actual test is run (e.g. validation)
+		try {
+			$persistenceManager->persistAll();
+		} catch (\Exception $exception) {}
+
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
 		}
