@@ -22,13 +22,57 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  *
  * There are very few XLIFF editors, but they are nice Gettext's .po editors
  * available. Gettext supports plural forms, but it indexes them using integer
- * numbers. Leaving it this way in .xlf files, makes possible to easly convert
+ * numbers. Leaving it this way in .xlf files, makes it possible to easily convert
  * them to .po (e.g. using xliff2po from Translation Toolkit), edit with Poedit,
  * and convert back to .xlf without any information loss (using po2xliff).
  *
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu
  */
-class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
+class XliffModel {
+
+	/**
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $cache;
+
+	/**
+	 * Concrete XML parser which is set by more specific model extending this
+	 * class.
+	 *
+	 * @var \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser
+	 */
+	protected $xmlParser;
+
+	/**
+	 * Absolute path to the file which is represented by this class instance.
+	 *
+	 * @var string
+	 */
+	protected $xmlSourcePath;
+
+	/**
+	 * Parsed data (structure depends on concrete model).
+	 *
+	 * @var array
+	 */
+	protected $xmlParsedData;
+
+	/**
+	 * @param string $sourcePath
+	 */
+	public function __construct($sourcePath) {
+		$this->xmlSourcePath = $sourcePath;
+	}
+
+	/**
+	 * Injects the FLOW3_I18n_XmlModelCache cache
+	 *
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 */
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->cache = $cache;
+	}
 
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Xliff\XliffParser $parser
@@ -36,6 +80,21 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 */
 	public function injectParser(\TYPO3\FLOW3\I18n\Xliff\XliffParser $parser) {
 		$this->xmlParser = $parser;
+	}
+
+	/**
+	 * When it's called, XML file is parsed (using parser set in $xmlParser)
+	 * or cache is loaded, if available.
+	 *
+	 * @return void
+	 */
+	public function initializeObject() {
+		if ($this->cache->has(md5($this->xmlSourcePath))) {
+			$this->xmlParsedData = $this->cache->get(md5($this->xmlSourcePath));
+		} else {
+			$this->xmlParsedData = $this->xmlParser->getParsedData($this->xmlSourcePath);
+			$this->cache->set(md5($this->xmlSourcePath), $this->xmlParsedData);
+		}
 	}
 
 	/**
