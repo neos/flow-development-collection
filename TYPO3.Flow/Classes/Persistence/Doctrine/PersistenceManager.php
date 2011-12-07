@@ -32,6 +32,16 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	protected $entityManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
+	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
+	 */
+	protected $validatorResolver;
+
+	/**
 	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
 	 * @return void
 	 */
@@ -48,11 +58,72 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 */
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @return void
+	 */
+	public function injectValidatorResolver(\TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+		$this->validatorResolver = $validatorResolver;
+	}
+
+	/**
 	 * Initializes the persistence manager, called by FLOW3.
 	 *
 	 * @return void
 	 */
-	public function initialize() {}
+	public function initialize() {
+		$this->entityManager->getEventManager()->addEventListener(array(\Doctrine\ORM\Events::onFlush), $this);
+	}
+
+	/**
+	 * An onFlush event listener used to validate entities upon persistence.
+	 *
+	 * @param \Doctrine\ORM\Event\OnFlushEventArgs $eventArgs
+	 * @return void
+	 */
+	public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $eventArgs) {
+		$unitOfWork = $this->entityManager->getUnitOfWork();
+
+		foreach ($unitOfWork->getScheduledEntityInsertions() AS $entity) {
+			$this->validateObject($entity);
+		}
+
+		foreach ($unitOfWork->getScheduledEntityUpdates() AS $entity) {
+			$this->validateObject($entity);
+		}
+	}
+
+	/**
+	 * Validates the given object and throws an exception if validation fails.
+	 *
+	 * @param object $object
+	 * @return void
+	 */
+	protected function validateObject($object) {
+		$classSchema = $this->reflectionService->getClassSchema($object);
+		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
+		if ($validator === NULL) return;
+
+		$validationResult = $validator->validate($object);
+		if ($validationResult->hasErrors()) {
+			$errorMessages = '';
+			$allErrors = $validationResult->getFlattenedErrors();
+			foreach ($allErrors as $path => $errors) {
+				$errorMessages .= $path . ':' . PHP_EOL;
+				foreach ($errors as $error) {
+					$errorMessages .= (string)$error . PHP_EOL;
+				}
+			}
+			throw new \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
+		}
+	}
 
 	/**
 	 * Commits new objects and changes to objects in the current persistence
