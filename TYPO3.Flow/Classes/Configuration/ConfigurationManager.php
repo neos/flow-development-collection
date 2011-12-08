@@ -360,6 +360,9 @@ return require '$cachePathAndFilename';
 EOD;
 		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . '?>');
 		file_put_contents($this->includeCachedConfigurationsPathAndFilename, $includeCachedConfigurationsCode);
+		if (!file_exists($this->includeCachedConfigurationsPathAndFilename)) {
+			throw new \TYPO3\FLOW3\Configuration\Exception(sprintf('Could not write configuration cache file "%s". Check file permissions for the parent directory.', $this->includeCachedConfigurationsPathAndFilename), 1323339284);
+		}
 	}
 
 	/**
