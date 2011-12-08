@@ -90,6 +90,7 @@ class Dispatcher {
 			}
 			$controller = $this->resolveController($request);
 			try {
+				$this->emitBeforeControllerInvocation($request, $controller);
 				$controller->processRequest($request, $response);
 				$this->emitAfterControllerInvocation($controller);
 			} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
@@ -99,6 +100,18 @@ class Dispatcher {
 				}
 			}
 		}
+	}
+
+	/**
+	 * This signal is emitted directly before the request is been dispatched to a controller.
+	 * It is mainly useful for collecting performance metrics.
+	 *
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
+	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller
+	 * @return void
+	 * @FLOW3\Signal
+	 */
+	protected function emitBeforeControllerInvocation(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller) {
 	}
 
 	/**

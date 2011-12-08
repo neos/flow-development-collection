@@ -86,6 +86,7 @@ class RequestBuilder {
 	 * @return \TYPO3\FLOW3\MVC\Web\Request The web request as an object
 	 */
 	public function build() {
+		$this->emitBeforeBuild();
 		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 		$request->setRequestUri($this->environment->getRequestUri());
 		$request->setBaseUri($this->environment->getBaseUri());
@@ -97,8 +98,27 @@ class RequestBuilder {
 		$this->router->setRoutesConfiguration($routesConfiguration);
 		$this->router->route($request);
 
+		$this->emitAfterBuild();
 		return $request;
 	}
+
+	/**
+	 * This signal is triggered before building a web request. It is mainly useful
+	 * for collecting profiling information.
+	 *
+	 * @return void
+	 * @FLOW3\Signal
+	 */
+	public function emitBeforeBuild() {}
+
+	/**
+	 * This signal is triggered after building a web request. It is mainly useful
+	 * for collecting profiling information.
+	 *
+	 * @return void
+	 * @FLOW3\Signal
+	 */
+	public function emitAfterBuild() {}
 
 	/**
 	 * Takes the raw request data and - depending on the request method
