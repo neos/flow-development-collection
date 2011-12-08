@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Command;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Cache\Backend\FreezableBackendInterface;
 
 /**
  * Command controller for core commands
@@ -146,15 +147,21 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			}
 		}
 
-		$this->proxyClassCompiler->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
+		$classesCache = $this->cacheManager->getCache('FLOW3_Object_Classes');
+		$this->proxyClassCompiler->injectClassesCache($classesCache);
 
-		$this->aopProxyClassBuilder->injectObjectConfigurationCache($this->cacheManager->getCache('FLOW3_Object_Configuration'));
+		$this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
 		$this->aopProxyClassBuilder->build();
 		$this->dependencyInjectionProxyClassBuilder->build();
 
 		$classCount = $this->proxyClassCompiler->compile();
 
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array(\TYPO3\FLOW3\Cache\CacheManager::getClassTag()));
+
+		$classesCacheBackend = $classesCache->getBackend();
+		if ($this->bootstrap->getContext() === 'Production' && $classesCacheBackend instanceof FreezableBackendInterface) {
+			$classesCache->getBackend()->freeze();
+		}
 
 		$this->emitFinishedCompilationRun($classCount);
 	}

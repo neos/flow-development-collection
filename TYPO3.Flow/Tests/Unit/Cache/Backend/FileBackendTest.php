@@ -201,6 +201,38 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setCacheDetectsAndLoadsAFrozenCache() {
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileTest';
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->set($entryIdentifier, $data);
+
+		$backend->freeze();
+
+		unset($backend);
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$this->assertTrue($backend->isFrozen());
+		$this->assertEquals($data, $backend->get($entryIdentifier));
+	}
+
+	/**
+	 * @test
+	 */
 	public function getReturnsContentOfTheCorrectCacheFile() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
@@ -247,6 +279,29 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getDoesNotCheckIfAnEntryIsExpiredIfTheCacheIsFrozen() {
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->expects($this->once())->method('isCacheFileExpired');
+
+		$backend->set('foo', 'some data');
+		$backend->freeze();
+		$this->assertEquals('some data', $backend->get('foo'));
+		$this->assertFalse($backend->get('bar'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function hasReturnsTrueIfAnEntryExists() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
@@ -277,6 +332,29 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertFalse($backend->has('foo'));
 		$this->assertTrue($backend->has('bar'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasDoesNotCheckIfAnEntryIsExpiredIfTheCacheIsFrozen() {
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->expects($this->once())->method('isCacheFileExpired'); // Indirectly called by freeze() -> get()
+
+		$backend->set('foo', 'some data');
+		$backend->freeze();
+		$this->assertTrue($backend->has('foo'));
+		$this->assertFalse($backend->has('bar'));
 	}
 
 	/**
@@ -419,6 +497,56 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function requireOnceIncludesAndReturnsResultOfIncludedPhpFile() {
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$entryIdentifier = 'SomePhpEntry';
+
+		$data = '<?php return "foo"; ?>';
+		$backend->set($entryIdentifier, $data);
+
+		$loadedData = $backend->requireOnce($entryIdentifier);
+		$this->assertEquals('foo', $loadedData);
+	}
+
+	/**
+	 * @test
+	 */
+	public function requireOnceDoesNotCheckExpiryTimeIfBackendIsFrozen() {
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->expects($this->once())->method('isCacheFileExpired'); // Indirectly called by freeze() -> get()
+
+		$data = '<?php return "foo"; ?>';
+		$backend->set('FooEntry', $data);
+
+		$backend->freeze();
+
+		$loadedData = $backend->requireOnce('FooEntry');
+		$this->assertEquals('foo', $loadedData);
+	}
+
+	/**
+	 * @test
+	 */
 	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
@@ -536,6 +664,27 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$backend->collectGarbage();
 		$this->assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
 		$this->assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushUnfreezesTheCache() {
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+		$backend->freeze();
+
+		$this->assertTrue($backend->isFrozen());
+		$backend->flush();
+		$this->assertFalse($backend->isFrozen());
 	}
 }
 ?>
