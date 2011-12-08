@@ -315,11 +315,12 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package to deactivate
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException if a package is protected and cannot be deactivated
 	 * @api
 	 */
 	public function deactivatePackage($packageKey) {
 		if (!$this->isPackageActive($packageKey)) {
-			return FALSE;
+			return;
 		}
 
 		$package = $this->getPackage($packageKey);
@@ -341,7 +342,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	public function activatePackage($packageKey) {
 		if ($this->isPackageActive($packageKey)) {
-			return FALSE;
+			return;
 		}
 
 		$package = $this->getPackage($packageKey);
@@ -356,6 +357,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param string $packageKey package to remove
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException if the specified package is not known
+	 * @throws \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
 	 * @api
 	 */
 	public function deletePackage($packageKey) {
@@ -449,10 +451,12 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 	/**
 	 * Scans the all sub directories of the specified directory and collects the package keys of packages it finds.
-	 * If this method finds a corrupt package, an exception is thrown.
+	 *
+	 * The return of the array is to make this method usable in array_merge.
 	 *
 	 * @param string $startPath
-	 * @return void
+	 * @param array $collectedPackagePaths
+	 * @return array
 	 */
 	protected function scanPackagesInPath($startPath, &$collectedPackagePaths = array()) {
 		foreach (new \DirectoryIterator($startPath) as $fileInfo) {
@@ -505,6 +509,28 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected function savePackageStates() {
 		$packageStatesCode = "<?php\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
 		file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
+
+		$shortcutsPath = FLOW3_PATH_PACKAGES . '.Shortcuts/';
+		if (file_exists($shortcutsPath)) {
+			Files::removeDirectoryRecursively($shortcutsPath);
+		}
+		Files::createDirectoryRecursively($shortcutsPath);
+		foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
+			$basePath = $shortcutsPath;
+			$packageKeyParts = explode('.', $packageKey);
+			if (count($packageKeyParts) > 1) {
+				for($i = 0; $i < count($packageKeyParts) - 1; $i++) {
+					$basePath .= $packageKeyParts[$i] . '/';
+					if (!file_exists($basePath)) {
+						mkdir($basePath);
+					}
+				}
+			}
+			$symlinkPathAndName = $basePath . $packageKeyParts[count($packageKeyParts) - 1];
+			if (!file_exists($symlinkPathAndName)) {
+				symlink($stateConfiguration['packagePath'] . 'Classes/', $symlinkPathAndName);
+			}
+		}
 	}
 }
 

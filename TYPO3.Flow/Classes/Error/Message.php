@@ -13,9 +13,6 @@ namespace TYPO3\FLOW3\Error;
 
 
 /**
- */
-
-/**
  * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
  *
  * @api

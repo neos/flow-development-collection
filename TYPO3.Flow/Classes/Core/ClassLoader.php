@@ -34,6 +34,40 @@ class ClassLoader {
 	protected $packages = array();
 
 	/**
+	 * @var string
+	 */
+	protected $packagesPath = FLOW3_PATH_PACKAGES;
+
+	/**
+	 * A list of namespaces this class loader is definitely responsible for
+	 * @var array
+	 */
+	protected $packageNamespaces = array(
+		'TYPO3\FLOW3' => 11
+	);
+
+	/**
+	 * @var boolean
+	 */
+	protected $considerTestsNamespace = FALSE;
+
+	/**
+	 * @var array
+	 */
+	protected $ignoredClassNames = array(
+		'integer' => TRUE,
+		'string' => TRUE,
+		'param' => TRUE,
+		'return' => TRUE,
+		'var' => TRUE,
+		'throws' => TRUE,
+		'api' => TRUE,
+		'todo' => TRUE,
+		'fixme' => TRUE,
+		'see' => TRUE,
+	);
+
+	/**
 	 * Injects the cache for storing the renamed original classes
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
@@ -51,35 +85,49 @@ class ClassLoader {
 	 * @return void
 	 */
 	public function loadClass($className) {
-		if ($this->classesCache !== NULL) {
-			$this->classesCache->requireOnce(str_replace('\\', '_', $className));
-			if (class_exists($className, FALSE)) {
-				return TRUE;
-			}
+
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
 		}
 
-		foreach ($this->packages as $packageKey => $package) {
-			$packageNamespace = str_replace('.', '\\', $packageKey);
-			$packageNamespaceLength = strlen($packageNamespace);
-			if (substr($className, 0, $packageNamespaceLength) === $packageNamespace && $className[$packageNamespaceLength] === '\\') {
-				if (substr($className, $packageNamespaceLength + 1, 16) === 'Tests\Functional') {
-					$classFilePathAndName = $this->packages[$packageKey]->getPackagePath();
-				} else {
-					$classFilePathAndName = $this->packages[$packageKey]->getClassesPath();
-				}
-				$classFilePathAndName .= str_replace('\\', '/', substr($className, $packageNamespaceLength + 1)) . '.php';
-				break;
-			}
-		}
-
-		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
-			$classFilePathAndName = FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php';
-		}
-
-		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) {
-			require($classFilePathAndName);
+			// Loads any known proxied class:
+		if ($this->classesCache !== NULL && $this->classesCache->requireOnce(str_replace('\\', '_', $className)) !== FALSE) {
 			return TRUE;
 		}
+
+			// Load classes from the FLOW3 package at a very early stage where the
+			// no packages have been registered and the .Shortcuts directory might not exist:
+		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
+			require(FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php');
+			return TRUE;
+		}
+
+			// Workaround for Doctrine's annotation parser which does a class_exists() for annotations like "@param" and so on:
+		if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[substr($className, strrpos($className, '\\') + 1)])) {
+			return FALSE;
+		}
+
+			// Loads any non-proxied class of registered packages:
+		foreach ($this->packageNamespaces as $packageNamespace => $packageNamespaceLength) {
+			if (substr($className, 0, $packageNamespaceLength) === $packageNamespace) {
+				if ($this->considerTestsNamespace === TRUE && substr($className, $packageNamespaceLength + 1, 16) === 'Tests\Functional') {
+					require($this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageNamespaceLength + 1)) . '.php');
+					return TRUE;
+				} else {
+
+						// The only reason using file_exists here is that Doctrine tries
+						// out several combinations of annotation namespaces and thus also triggers
+						// autoloading for non-existant classes in a valid package namespace
+					$classPathAndFilename = $this->packagesPath . '.Shortcuts/' . str_replace('\\', '/', $className) . '.php';
+					if (file_exists($classPathAndFilename)) {
+						require ($classPathAndFilename);
+						return TRUE;
+					}
+				}
+			}
+		}
+
+		return FALSE;
 	}
 
 	/**
@@ -90,8 +138,21 @@ class ClassLoader {
 	 */
 	public function setPackages(array $packages) {
 		$this->packages = $packages;
+		foreach ($packages as $package) {
+			$this->packageNamespaces[$package->getPackageNamespace()] = strlen($package->getPackageNamespace());
+		}
 	}
 
+	/**
+	 * Sets the flag which enables or disables autoloading support for functional
+	 * test files.
+	 *
+	 * @param boolean $flag
+	 * @return void
+	 */
+	public function setConsiderTestsNamespace($flag) {
+		$this->considerTestsNamespace = $flag;
+	}
 }
 
 ?>

@@ -28,8 +28,11 @@ class Package extends BasePackage {
 	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\CLI\SlaveRequestHandler($bootstrap));
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\CLI\CommandRequestHandler($bootstrap));
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler($bootstrap));
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\Web\RequestHandler($bootstrap));
+
+		if ($bootstrap->getContext() === 'Testing') {
+			$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler($bootstrap));
+		}
 
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:core:*');
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:cache:flush');

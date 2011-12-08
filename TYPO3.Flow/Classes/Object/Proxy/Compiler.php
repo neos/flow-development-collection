@@ -56,6 +56,12 @@ class Compiler {
 	protected $proxyClasses = array();
 
 	/**
+	 * Hardcoded list of FLOW3 sub packages (first 15 characters) which must be immune proxying for security, technical or conceptual reasons.
+	 * @var array
+	 */
+	protected $blacklistedSubPackages = array('TYPO3\FLOW3\AOP', 'TYPO3\FLOW3\Con', 'TYPO3\FLOW3\Cor', 'TYPO3\FLOW3\Obj', 'TYPO3\FLOW3\Pac', 'TYPO3\FLOW3\Ref', 'TYPO3\FLOW3\Uti');
+
+	/**
 	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings The settings
@@ -117,6 +123,10 @@ class Compiler {
 
 		$proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, 'TYPO3\FLOW3\Annotations\Proxy');
 		if ($proxyAnnotation !== NULL && $proxyAnnotation->enabled === FALSE) {
+			return FALSE;
+		}
+
+		if (in_array(substr($fullClassName, 0, 15), $this->blacklistedSubPackages)) {
 			return FALSE;
 		}
 

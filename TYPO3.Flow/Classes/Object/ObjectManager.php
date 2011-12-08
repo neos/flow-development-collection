@@ -53,6 +53,11 @@ class ObjectManager implements ObjectManagerInterface {
 	protected $classesBeingInstantiated = array();
 
 	/**
+	 * @var array
+	 */
+	protected $cachedLowerCasedObjectNames = array();
+
+	/**
 	 * A SplObjectStorage containing those objects which need to be shutdown when the container
 	 * shuts down. Each value of each entry is the respective shutdown method name.
 	 *
@@ -240,9 +245,13 @@ class ObjectManager implements ObjectManagerInterface {
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
 		$lowerCasedObjectName = ltrim(strtolower($caseInsensitiveObjectName), '\\');
+		if (isset($this->cachedLowerCasedObjectNames[$lowerCasedObjectName])) {
+			return $this->cachedLowerCasedObjectNames[$lowerCasedObjectName];
+		}
 
 		foreach ($this->objects as $objectName => $information) {
 			if (isset($information['l']) && $information['l'] === $lowerCasedObjectName) {
+				$this->cachedLowerCasedObjectNames[$lowerCasedObjectName] = $objectName;
 				return $objectName;
 			}
 		}
