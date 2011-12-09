@@ -52,11 +52,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler
-	 */
-	protected $mockRequestHandler;
-
-	/**
 	 * @var boolean
 	 */
 	static protected $testablePersistenceEnabled = FALSE;
@@ -75,6 +70,11 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @var \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
 	 */
 	protected $testingProvider;
+
+	/**
+	 * @var \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler
+	 */
+	protected $functionalTestRequestHandler;
 
 	/**
 	 * Initialize FLOW3
@@ -110,8 +110,8 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->objectManager = self::$flow3->getObjectManager();
-		$requestHandler = self::$flow3->getActiveRequestHandler();
-		$requestHandler->setRequest($this->getMock('TYPO3\FLOW3\MVC\Web\Request'));
+		$this->functionalTestRequestHandler = self::$flow3->getActiveRequestHandler();
+		$this->functionalTestRequestHandler->setRequest($this->getMock('TYPO3\FLOW3\MVC\Web\Request'));
 
 		if (static::$testablePersistenceEnabled === TRUE) {
 			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
@@ -211,6 +211,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$controller = $this->objectManager->get(str_replace('.', '\\', $controllerPackageKey) . '\\Controller\\' . $controllerName . 'Controller');
 
 		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$this->functionalTestRequestHandler->setRequest($mockRequest);
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($controllerPackageKey));
 		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
