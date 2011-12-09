@@ -71,7 +71,6 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerIn
 	 * @return void
 	 */
 	public function handleRequest() {
-		echo ("FLOW3 functional test run\n\n");
 		$sequence = $this->bootstrap->buildRuntimeSequence();
 		$sequence->invoke($this->bootstrap);
 	}
