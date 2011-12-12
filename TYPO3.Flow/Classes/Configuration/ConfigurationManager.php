@@ -112,6 +112,22 @@ class ConfigurationManager {
 	}
 
 	/**
+	 * Get the available configuration-types
+	 *
+	 * @return array<string> array of configuration-type identifier strings
+	 */
+	public function getAvailableConfigurationTypes(){
+		return array(
+			self::CONFIGURATION_TYPE_CACHES,
+			self::CONFIGURATION_TYPE_OBJECTS,
+			self::CONFIGURATION_TYPE_ROUTES,
+			self::CONFIGURATION_TYPE_POLICY,
+			self::CONFIGURATION_TYPE_SETTINGS,
+			self::CONFIGURATION_TYPE_SIGNALSSLOTS
+		);
+	}
+
+	/**
 	 * Returns the specified raw configuration.
 	 * The actual configuration will be merged from different sources in a defined order.
 	 *
