@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests;
+namespace TYPO3\FLOW3\Tests\Functional;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

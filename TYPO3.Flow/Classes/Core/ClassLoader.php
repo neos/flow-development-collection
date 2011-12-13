@@ -65,6 +65,9 @@ class ClassLoader {
 		'todo' => TRUE,
 		'fixme' => TRUE,
 		'see' => TRUE,
+		'license' => TRUE,
+		'author' => TRUE,
+		'test' => TRUE,
 	);
 
 	/**
@@ -85,7 +88,6 @@ class ClassLoader {
 	 * @return void
 	 */
 	public function loadClass($className) {
-
 		if ($className[0] === '\\') {
 			$className = substr($className, 1);
 		}
@@ -111,8 +113,11 @@ class ClassLoader {
 		foreach ($this->packageNamespaces as $packageNamespace => $packageNamespaceLength) {
 			if (substr($className, 0, $packageNamespaceLength) === $packageNamespace) {
 				if ($this->considerTestsNamespace === TRUE && substr($className, $packageNamespaceLength + 1, 16) === 'Tests\Functional') {
-					require($this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageNamespaceLength + 1)) . '.php');
-					return TRUE;
+					$classPathAndFilename = $this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageNamespaceLength + 1)) . '.php';
+					if (file_exists($classPathAndFilename)) {
+						require($classPathAndFilename);
+						return TRUE;
+					}
 				} else {
 
 						// The only reason using file_exists here is that Doctrine tries

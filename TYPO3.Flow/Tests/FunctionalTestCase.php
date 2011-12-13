@@ -72,7 +72,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	protected $testingProvider;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler
+	 * @var \TYPO3\FLOW3\Tests\Functional\FunctionalTestRequestHandler
 	 */
 	protected $functionalTestRequestHandler;
 

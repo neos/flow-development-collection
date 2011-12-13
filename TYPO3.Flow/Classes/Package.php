@@ -31,7 +31,8 @@ class Package extends BasePackage {
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\Web\RequestHandler($bootstrap));
 
 		if ($bootstrap->getContext() === 'Testing') {
-			$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler($bootstrap));
+			$bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
+			$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\Functional\FunctionalTestRequestHandler($bootstrap));
 		}
 
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:core:*');
