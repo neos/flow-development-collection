@@ -105,17 +105,16 @@ class TypeHandling {
 	/**
 	 * Converts a hex encoded string into binary data
 	 *
-	 * @static
-	 * @param string $data A hex encoded string of data
+	 * @param string $hexadecimalData A hex encoded string of data
 	 * @return binary
 	 */
-	static public function hex2bin($data) {
-		$len = strlen($data);
-		$newdata='';
-		for($i=0;$i<$len;$i+=2) {
-			$newdata .=  pack("C",hexdec(substr($data,$i,2)));
+	static public function hex2bin($hexadecimalData) {
+		$binaryData = '';
+		$length = strlen($hexadecimalData);
+		for ($i = 0; $i < $length; $i += 2) {
+			$binaryData .=  pack('C', hexdec(substr($hexadecimalData, $i, 2)));
 		}
-		return $newdata;
+		return $binaryData;
 	}
 }
 ?>

@@ -97,25 +97,32 @@ class Files {
 	static public function emptyDirectoryRecursively($path) {
 		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
 
-		$directoryIterator = new \RecursiveDirectoryIterator($path);
-		$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
-		foreach($recursiveIterator as $fileInfo) {
+		if (self::is_link($path)) {
 			try {
-				if (self::is_link($path)) {
-					unlink($path);
-				} elseif (!$recursiveIterator->isDot() && unlink($fileInfo->getPathname()) === FALSE) {
-					throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
-				}
+				unlink($path);
 			} catch (\Exception $exception) {
-				throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
+				throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink symbolic link "' . $path . '".', 1323697654);
 			}
-		}
-		foreach ($directoryIterator as $fileInfo) {
-			if ($fileInfo->isDir() && !$directoryIterator->isDot()) {
-				self::removeDirectoryRecursively($fileInfo->getPathname());
+		} else {
+			$directoryIterator = new \RecursiveDirectoryIterator($path);
+			$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
+			foreach($recursiveIterator as $fileInfo) {
+				try {
+					if (!$recursiveIterator->isDot() && unlink($fileInfo->getPathname()) === FALSE) {
+						throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+					}
+				} catch (\Exception $exception) {
+					throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
+				}
+			}
+			foreach ($directoryIterator as $fileInfo) {
+				if ($fileInfo->isDir() && !$directoryIterator->isDot()) {
+					self::removeDirectoryRecursively($fileInfo->getPathname());
+				}
 			}
 		}
 	}
+
 	/**
 	 * Deletes all files, directories and subdirectories from the specified
 	 * directory. Contrary to emptyDirectoryRecursively() this function will
