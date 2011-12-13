@@ -97,16 +97,16 @@ class ClassLoader {
 			return TRUE;
 		}
 
+			// Workaround for Doctrine's annotation parser which does a class_exists() for annotations like "@param" and so on:
+		if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[substr($className, strrpos($className, '\\') + 1)])) {
+			return FALSE;
+		}
+
 			// Load classes from the FLOW3 package at a very early stage where the
 			// no packages have been registered and the .Shortcuts directory might not exist:
 		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
 			require(FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php');
 			return TRUE;
-		}
-
-			// Workaround for Doctrine's annotation parser which does a class_exists() for annotations like "@param" and so on:
-		if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[substr($className, strrpos($className, '\\') + 1)])) {
-			return FALSE;
 		}
 
 			// Loads any non-proxied class of registered packages:
