@@ -187,5 +187,64 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		symlink($targetPath, $linkPath);
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPath));
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Utility\Exception
+	 */
+	public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
+		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively('NonExistingPath');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Utility\Exception
+	 */
+	public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively('NonExistingPath');
+	}
+
+	/**
+	 * @test
+	 */
+	public function unlinkProperlyRemovesSymlinksPointingToFiles() {
+		$targetPathAndFilename = tempnam('FLOW3FilesTestFile', '');
+		file_put_contents($targetPathAndFilename, 'some data');
+		$linkPathAndFilename = tempnam('FLOW3FilesTestLink', '');
+		if (file_exists($linkPathAndFilename)) {
+			@unlink($linkPathAndFilename);
+		}
+		symlink($targetPathAndFilename, $linkPathAndFilename);
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::unlink($linkPathAndFilename));
+		$this->assertTrue(file_exists($targetPathAndFilename));
+		$this->assertFalse(file_exists($linkPathAndFilename));
+	}
+
+	/**
+	 * @test
+	 */
+	public function unlinkProperlyRemovesSymlinksPointingToDirectories() {
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory'));
+		if (!is_dir($targetPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		}
+		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectoryLink'));
+		if (is_dir($linkPath)) {
+			\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($linkPath);
+		}
+		symlink($targetPath, $linkPath);
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::unlink($linkPath));
+		$this->assertTrue(file_exists($targetPath));
+		$this->assertFalse(file_exists($linkPath));
+	}
+
+	/**
+	 * @test
+	 * @outputBuffering enabled
+	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
+	 */
+	public function unlinkReturnsFalseIfSpecifiedPathDoesNotExist() {
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::unlink('NonExistingPath'));
+	}
 }
 ?>

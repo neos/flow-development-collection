@@ -95,29 +95,26 @@ class Files {
 	 * @see removeDirectoryRecursively()
 	 */
 	static public function emptyDirectoryRecursively($path) {
-		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
+		if (!is_dir($path)) {
+			throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
+		}
 
 		if (self::is_link($path)) {
-			try {
-				unlink($path);
-			} catch (\Exception $exception) {
+			if (self::unlink($path) !== TRUE) {
 				throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink symbolic link "' . $path . '".', 1323697654);
 			}
 		} else {
 			$directoryIterator = new \RecursiveDirectoryIterator($path);
-			$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
-			foreach($recursiveIterator as $fileInfo) {
-				try {
-					if (!$recursiveIterator->isDot() && unlink($fileInfo->getPathname()) === FALSE) {
-						throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
-					}
-				} catch (\Exception $exception) {
-					throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
-				}
-			}
 			foreach ($directoryIterator as $fileInfo) {
 				if ($fileInfo->isDir() && !$directoryIterator->isDot()) {
 					self::removeDirectoryRecursively($fileInfo->getPathname());
+				}
+			}
+			$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
+			foreach($recursiveIterator as $fileInfo) {
+				$filePath = self::getUnixStylePath($fileInfo->getPathname());
+				if (!$recursiveIterator->isDot() && self::unlink($filePath) !== TRUE) {
+					throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 				}
 			}
 		}
@@ -134,17 +131,17 @@ class Files {
 	 */
 	static public function removeDirectoryRecursively($path) {
 		if (self::is_link($path)) {
-			try {
-				unlink($path);
-			} catch (\Exception $exception) {
+			if (self::unlink($path) !== TRUE) {
 				throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink symbolic link "' . $path . '".', 1316000297);
 			}
 		} else {
 			self::emptyDirectoryRecursively($path);
 			try {
-				rmdir($path);
+				if (rmdir($path) !== TRUE) {
+					throw new \TYPO3\FLOW3\Utility\Exception('Could not remove directory "' . $path . '".', 1316000298);
+				}
 			} catch (\Exception $exception) {
-				throw new \TYPO3\FLOW3\Utility\Exception('Could not remove directory "' . $path . '".', 1316000298);
+				throw new \TYPO3\FLOW3\Utility\Exception('Could not remove directory "' . $path . '".', 1323961907);
 			}
 		}
 	}
@@ -264,6 +261,24 @@ class Files {
 		$normalizedPathAndFilename = strtolower(rtrim(self::getUnixStylePath($pathAndFilename), '/'));
 		$normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(realpath($pathAndFilename)));
 		return $normalizedPathAndFilename !== $normalizedTargetPathAndFilename;
+	}
+
+	/**
+	 * A version of unlink() that works on Windows regardless on the symlink type (file/directory)
+	 *
+	 * @param string $pathAndFilename Path and name of the file or directory
+	 * @return boolean TRUE if file/directory was removed successfully
+	 */
+	static public function unlink($pathAndFilename) {
+		try {
+				// if not on Windows, call PHPs own unlink() function
+			if (DIRECTORY_SEPARATOR === '/' || is_file($pathAndFilename)) {
+				return \unlink($pathAndFilename);
+			}
+			return rmdir($pathAndFilename);
+		} catch (\Exception $exception) {
+			return FALSE;
+		}
 	}
 }
 ?>
