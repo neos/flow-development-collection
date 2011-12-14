@@ -52,6 +52,13 @@ interface AuthenticationManagerInterface {
 	public function authenticate();
 
 	/**
+	 * Checks if at least one token is authenticated
+	 *
+	 * @return boolean
+	 */
+	public function isAuthenticated();
+
+	/**
 	 * Logs all active authentication tokens out
 	 *
 	 * @return void

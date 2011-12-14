@@ -28,6 +28,12 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	protected $securityLogger;
 
 	/**
+	 * @var \TYPO3\FLOW3\Session\SessionInterface
+	 * @FLOW3\Inject
+	 */
+	protected $session;
+
+	/**
 	 * The provider resolver
 	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver
 	 */
@@ -160,12 +166,31 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	}
 
 	/**
+	 * Checks if there exists a user session and if at least one token is authenticated
+	 *
+	 * @return boolean
+	 */
+	public function isAuthenticated() {
+		if (!$this->session->canBeResumed()) {
+			return FALSE;
+		}
+		$atLeastOneTokenIsAuthenticated = FALSE;
+		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated()) {
+				$atLeastOneTokenIsAuthenticated = TRUE;
+				continue;
+			}
+		}
+		return $atLeastOneTokenIsAuthenticated;
+	}
+
+	/**
 	 * Logout all active authentication tokens
 	 *
 	 * @return void
 	 */
 	public function logout() {
-		if (!$this->securityContext->isInitialized()) {
+		if ($this->isAuthenticated() !== TRUE) {
 			return;
 		}
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
