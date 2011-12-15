@@ -19,6 +19,11 @@ use \TYPO3\FLOW3\Package\Package as BasePackage;
  */
 class Package extends BasePackage {
 
+	/**
+	 * @var boolean
+	 */
+	protected $protected = TRUE;
+
 }
 
 ?>
