@@ -116,7 +116,7 @@ class PropertyMapper {
 		try {
 			return $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
 		} catch (\Exception $e) {
-			throw new \TYPO3\FLOW3\Property\Exception('Exception while property mapping at property path "' . implode('.', $currentPropertyPath) . '":' . $e->getMessage(), 1297759968, $e);
+			throw new \TYPO3\FLOW3\Property\Exception('Exception while property mapping at property path "' . implode('.', $currentPropertyPath) . '": ' . $e->getMessage(), 1297759968, $e);
 		}
 	}
 

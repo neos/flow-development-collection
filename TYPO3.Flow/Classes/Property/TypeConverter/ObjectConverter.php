@@ -155,7 +155,7 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			$result = \TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
-				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1304538165);
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" having a value of type "' . (is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)) . '" could not be set in target object of type "' . $targetType . '".', 1304538165);
 			}
 		}
 
