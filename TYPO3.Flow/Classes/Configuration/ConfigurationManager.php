@@ -23,8 +23,6 @@ class ConfigurationManager {
 
 	const CONFIGURATION_TYPE_CACHES = 'Caches';
 	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
-	const CONFIGURATION_TYPE_PACKAGE = 'Package';
-	const CONFIGURATION_TYPE_PACKAGESTATES = 'PackageStates';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
 	const CONFIGURATION_TYPE_POLICY = 'Policy';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
@@ -120,7 +118,7 @@ class ConfigurationManager {
 	 * Note that this is a low level method and only makes sense to be used by FLOW3 internally.
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param string $packageKey Key of the package to return the configuration for, e.g. 'TYPO3.FLOW3'
+	 * @param string $packageKey The package key to fetch configuration for.
 	 * @return array The configuration
 	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 */
@@ -130,7 +128,6 @@ class ConfigurationManager {
 			case self::CONFIGURATION_TYPE_ROUTES :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 			case self::CONFIGURATION_TYPE_CACHES :
-			case self::CONFIGURATION_TYPE_PACKAGESTATES :
 			case self::CONFIGURATION_TYPE_POLICY :
 				if (!isset($this->configurations[$configurationType])) {
 					$this->loadConfiguration($configurationType, $this->packages);
@@ -145,68 +142,24 @@ class ConfigurationManager {
 					$this->configurations[$configurationType] = array();
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
-				if ($packageKey === NULL) {
+				if (isset($this->configurations[$configurationType])) {
 					$configuration = &$this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
-				} else {
-					$configuration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $packageKey);
 				}
 			break;
 
-				// @TODO Check if CONFIGURATION_TYPE_PACKAGE can be implemented like OBJECTS (see below), ie. omit $packageKey
-			case self::CONFIGURATION_TYPE_PACKAGE :
-				if ($packageKey === NULL) throw new \InvalidArgumentException('No package specified.', 1233336279);
-				if (!isset($this->configurations[$configurationType][$packageKey])) {
-					$this->loadConfiguration($configurationType, $this->packages);
-				}
-				if (isset($this->configurations[$configurationType][$packageKey])) {
-					$configuration = &$this->configurations[$configurationType][$packageKey];
-				}
-			break;
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				$this->loadConfiguration($configurationType, $this->packages);
-				return $this->configurations[$configurationType];
+				$configuration = &$this->configurations[$configurationType];
 			break;
 
 			default :
 				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
-		return $configuration;
-	}
 
-	/**
-	 * Sets the specified raw configuration.
-	 * Note that this is a low level method and only makes sense to be used by FLOW3 internally.
-	 *
-	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param array $configuration The new configuration
-	 * @return void
-	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
-	 */
-	public function setConfiguration($configurationType, array $configuration) {
-		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_PACKAGESTATES :
-				$this->configurations[$configurationType] = $configuration;
-				$this->cacheNeedsUpdate = TRUE;
-			break;
-			default :
-				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1251127738);
-		}
-	}
-
-	/**
-	 * Saves configuration of the given configuration type back to the configuration file
-	 * (if supported)
-	 *
-	 * @param string $configurationType The kind of configuration to save - must be one of the supported CONFIGURATION_TYPE_* constants
-	 * @return void
-	 */
-	public function saveConfiguration($configurationType) {
-		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_PACKAGESTATES :
-				$this->configurationSource->save(FLOW3_PATH_CONFIGURATION . $configurationType, $this->configurations[$configurationType]);
-			break;
-			default :
-				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" does not support saving.', 1251127425);
+		if ($packageKey !== NULL && $configuration !== NULL) {
+			return (\TYPO3\FLOW3\Utility\Arrays::getValueByPath($configuration, $packageKey));
+		} else {
+			return $configuration;
 		}
 	}
 
@@ -269,7 +222,6 @@ class ConfigurationManager {
 				$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['FLOW3']['core']['context'] = $this->context;
 			break;
 			case self::CONFIGURATION_TYPE_OBJECTS :
-			case self::CONFIGURATION_TYPE_PACKAGE :
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $packageKey => $package) {
 					$configuration = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurationSource->load($package->getConfigurationPath() . $configurationType), $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
@@ -298,10 +250,6 @@ class ConfigurationManager {
 					$subRoutesConfiguration[$packageKey] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
 				}
 			break;
-			case self::CONFIGURATION_TYPE_PACKAGESTATES :
-				$configuration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGESTATES);
-				$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGESTATES));
-			break;
 			default:
 				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
 		}
@@ -312,7 +260,6 @@ class ConfigurationManager {
 			case self::CONFIGURATION_TYPE_POLICY :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 			case self::CONFIGURATION_TYPE_ROUTES :
-			case self::CONFIGURATION_TYPE_PACKAGESTATES :
 				$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
 				$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
 		}
