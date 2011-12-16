@@ -133,8 +133,10 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @api
 	 */
 	public function persistAll() {
-		$this->entityManager->flush();
-		$this->emitAllObjectsPersisted();
+		if ($this->entityManager->isOpen()) {
+			$this->entityManager->flush();
+			$this->emitAllObjectsPersisted();
+		}
 	}
 
 	/**
