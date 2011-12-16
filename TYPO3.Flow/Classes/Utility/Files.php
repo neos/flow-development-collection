@@ -105,16 +105,16 @@ class Files {
 			}
 		} else {
 			$directoryIterator = new \RecursiveDirectoryIterator($path);
-			foreach ($directoryIterator as $fileInfo) {
-				if ($fileInfo->isDir() && !$directoryIterator->isDot()) {
-					self::removeDirectoryRecursively($fileInfo->getPathname());
-				}
-			}
 			$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
 			foreach($recursiveIterator as $fileInfo) {
 				$filePath = self::getUnixStylePath($fileInfo->getPathname());
 				if (!$recursiveIterator->isDot() && self::unlink($filePath) !== TRUE) {
 					throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+				}
+			}
+			foreach ($directoryIterator as $fileInfo) {
+				if ($fileInfo->isDir() && !$directoryIterator->isDot()) {
+					self::removeDirectoryRecursively($fileInfo->getPathname());
 				}
 			}
 		}
