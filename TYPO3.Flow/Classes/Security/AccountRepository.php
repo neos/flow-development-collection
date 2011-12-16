@@ -31,7 +31,7 @@ class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	protected $defaultOrderings = array('creationDate' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING);
 
 	/**
-	 * Returns the account for a specific authentication provider with the given identitifer
+	 * Returns the account for a specific authentication provider with the given identifier
 	 *
 	 * @param string $accountIdentifier The account identifier
 	 * @param string $authenticationProviderName The authentication provider name
@@ -48,7 +48,7 @@ class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
-	 * Returns the account for a specific authentication provider with the given identitifer if it's not expired
+	 * Returns the account for a specific authentication provider with the given identifier if it's not expired
 	 *
 	 * @param string $accountIdentifier The account identifier
 	 * @param string $authenticationProviderName The authentication provider name
