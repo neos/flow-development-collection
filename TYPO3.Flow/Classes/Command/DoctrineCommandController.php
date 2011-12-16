@@ -272,6 +272,9 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Mark/unmark a migration as migrated
 	 *
+	 * If <u>all</u> is given as version, all available migrations are marked
+	 * as requested.
+	 *
 	 * @param string $version The migration to execute
 	 * @param boolean $add The migration to mark as migrated
 	 * @param boolean $delete The migration to mark as not migrated
