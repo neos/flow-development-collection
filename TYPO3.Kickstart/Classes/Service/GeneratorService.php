@@ -263,6 +263,39 @@ class GeneratorService {
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
+		$this->generateTestsForModel($packageKey, $modelName, $overwrite);
+
+		return $this->generatedFiles;
+	}
+
+	/**
+	 * Generate a dummy testcase for a model for the package with the given model name
+	 *
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $modelName The name of the new model fpr which to generate the test
+	 * @param boolean $overwrite Overwrite any existing files?
+	 * @return array An array of generated filenames
+	 */
+	public function generateTestsForModel($packageKey, $modelName, $overwrite = FALSE) {
+		$testName = ucfirst($modelName) . 'Test';
+		$namespace = str_replace('.', '\\', $packageKey) .  '\\Tests\\Unit\\Domain\\Model';
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Tests/Unit/Model/EntityTestTemplate.php.tmpl';
+
+		$contextVariables = array();
+		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['testName'] = $testName;
+		$contextVariables['modelName'] = $modelName;
+		$contextVariables['namespace'] = $namespace;
+
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+		$testFilename = $testName . '.php';
+		$testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . \TYPO3\FLOW3\Package\PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
+		$targetPathAndFilename = $testPath . $testFilename;
+
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
+
 		return $this->generatedFiles;
 	}
 
@@ -339,7 +372,8 @@ class GeneratorService {
 		if (substr($targetPathAndFilename, 0, 11) === 'resource://') {
 			list($packageKey, $resourcePath) = explode('/', substr($targetPathAndFilename, 11), 2);
 			$relativeTargetPathAndFilename = $packageKey . '/Resources/' . $resourcePath;
-
+		} elseif (strpos($targetPathAndFilename, 'Tests') !== FALSE) {
+			$relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Tests/') - 1), '/') + 1);
 		} else {
 			$relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Classes/') - 1), '/') + 1);
 		}
