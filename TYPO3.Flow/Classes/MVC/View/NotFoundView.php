@@ -42,12 +42,12 @@ class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 		$template = file_get_contents($this->getTemplatePathAndFilename());
 
 		if ($this->controllerContext->getRequest() instanceof \TYPO3\FLOW3\MVC\Web\Request) {
-			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseUri(), $template);
+			$template = str_replace('{BASEURI}', $this->controllerContext->getRequest()->getBaseUri(), $template);
 		}
 
 		foreach ($this->variablesMarker as $variableName => $marker) {
 			$variableValue = isset($this->variables[$variableName]) ? $this->variables[$variableName] : '';
-			$template = str_replace('###' . $marker . '###', $variableValue, $template);
+			$template = str_replace('{' . $marker . '}', $variableValue, $template);
 		}
 
 		return $template;
