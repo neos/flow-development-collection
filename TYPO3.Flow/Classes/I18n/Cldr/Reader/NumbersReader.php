@@ -269,7 +269,7 @@ class NumbersReader {
 			return $this->localizedSymbols[(string)$locale];
 		}
 
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
+		$model = $this->cldrRepository->getModelForLocale($locale);
 		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
 	}
 

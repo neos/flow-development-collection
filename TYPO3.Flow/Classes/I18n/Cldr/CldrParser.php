@@ -49,7 +49,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @FLOW3\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
-class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
+class CldrParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XML data, starting from a root node.
@@ -96,7 +96,7 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 			}
 
 			if (!isset($parsedNode[$nameOfChild])) {
-					// We accept only first child when they are non distinguishable (i.e. they differs only by non-distringuishing attributes)
+					// We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
 				$parsedNode[$nameOfChild] = $parsedChild;
 			}
 		}
@@ -120,6 +120,13 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 			// These are not defined as distinguishing in CLDR but we need to preserve them for alias resolving later
 		$distinguishingAttributes[] = 'source';
 		$distinguishingAttributes[] = 'path';
+
+			// These are needed for proper plurals handling
+		$distinguishingAttributes[] = 'locales';
+		$distinguishingAttributes[] = 'count';
+
+			// we need this one for datetime parsing (default[@choice] nodes)
+		$distinguishingAttributes[] = 'choice';
 
 		return in_array($attributeName, $distinguishingAttributes);
 	}

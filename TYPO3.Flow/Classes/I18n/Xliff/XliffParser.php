@@ -26,7 +26,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
-class XliffParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
+class XliffParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XLIFF data, starting from a root node.
@@ -37,13 +37,14 @@ class XliffParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
 		$parsedData = array();
+		$parsedData['sourceLocale'] = new \TYPO3\FLOW3\I18n\Locale((string)$root->file['source-language']);
 		$bodyOfFileTag = $root->file->body;
 
 		foreach ($bodyOfFileTag->children() as $translationElement) {
 			if ($translationElement->getName() === 'trans-unit' && !isset($translationElement['restype'])) {
 					// If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
 
-				$parsedData[(string)$translationElement['id']][0] = array(
+				$parsedData['translationUnits'][(string)$translationElement['id']][0] = array(
 					'source' => (string)$translationElement->source,
 					'target' => (string)$translationElement->target,
 				);
@@ -71,7 +72,7 @@ class XliffParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 						$id = substr($id, 0, strpos($id, '['));
 					}
 
-					$parsedData[$id] = $parsedTranslationElement;
+					$parsedData['translationUnits'][$id] = $parsedTranslationElement;
 				}
 			}
 		}

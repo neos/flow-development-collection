@@ -22,13 +22,64 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  *
  * There are very few XLIFF editors, but they are nice Gettext's .po editors
  * available. Gettext supports plural forms, but it indexes them using integer
- * numbers. Leaving it this way in .xlf files, makes possible to easly convert
+ * numbers. Leaving it this way in .xlf files, makes it possible to easily convert
  * them to .po (e.g. using xliff2po from Translation Toolkit), edit with Poedit,
  * and convert back to .xlf without any information loss (using po2xliff).
  *
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu
  */
-class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
+class XliffModel {
+
+	/**
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $cache;
+
+	/**
+	 * Concrete XML parser which is set by more specific model extending this
+	 * class.
+	 *
+	 * @var \TYPO3\FLOW3\I18n\Xliff\XliffParser
+	 */
+	protected $xmlParser;
+
+	/**
+	 * Absolute path to the file which is represented by this class instance.
+	 *
+	 * @var string
+	 */
+	protected $sourcePath;
+
+	/**
+	 * @var \TYPO3\FLOW3\I18n\Locale
+	 */
+	protected $locale;
+
+	/**
+	 * Parsed data (structure depends on concrete model).
+	 *
+	 * @var array
+	 */
+	protected $xmlParsedData;
+
+	/**
+	 * @param string $sourcePath
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The locale represented by the file
+	 */
+	public function __construct($sourcePath, $locale) {
+		$this->sourcePath = $sourcePath;
+		$this->locale = $locale;
+	}
+
+	/**
+	 * Injects the FLOW3_I18n_XmlModelCache cache
+	 *
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 */
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->cache = $cache;
+	}
 
 	/**
 	 * @param \TYPO3\FLOW3\I18n\Xliff\XliffParser $parser
@@ -36,6 +87,21 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 */
 	public function injectParser(\TYPO3\FLOW3\I18n\Xliff\XliffParser $parser) {
 		$this->xmlParser = $parser;
+	}
+
+	/**
+	 * When it's called, XML file is parsed (using parser set in $xmlParser)
+	 * or cache is loaded, if available.
+	 *
+	 * @return void
+	 */
+	public function initializeObject() {
+		if ($this->cache->has(md5($this->sourcePath))) {
+			$this->xmlParsedData = $this->cache->get(md5($this->sourcePath));
+		} else {
+			$this->xmlParsedData = $this->xmlParser->getParsedData($this->sourcePath);
+			$this->cache->set(md5($this->sourcePath), $this->xmlParsedData);
+		}
 	}
 
 	/**
@@ -47,7 +113,7 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * @return mixed Translated label or FALSE on failure
 	 */
 	public function getTargetBySource($source, $pluralFormIndex = 0) {
-		foreach ($this->xmlParsedData as $translationUnit) {
+		foreach ($this->xmlParsedData['translationUnits'] as $translationUnit) {
 				// $source is always singular (or only) form, so compare with index 0
 			if ($translationUnit[0]['source'] !== $source) {
 				continue;
@@ -57,7 +123,7 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 				return FALSE;
 			}
 
-			return $translationUnit[$pluralFormIndex]['target'];
+			return $translationUnit[$pluralFormIndex]['target'] ?: FALSE;
 		}
 
 		return FALSE;
@@ -65,25 +131,29 @@ class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 
 	/**
 	 * Returns translated label ("target" tag in XLIFF) for the id given.
-	 *
 	 * Id is compared with "id" attribute of "trans-unit" tag (see XLIFF
 	 * specification for details).
 	 *
 	 * @param string $transUnitId The "id" attribute of "trans-unit" tag in XLIFF
-	 * @param string $pluralFormIndex Index of plural form to use (starts with 0)
+	 * @param integer $pluralFormIndex Index of plural form to use (starts with 0)
 	 * @return mixed Translated label or FALSE on failure
 	 */
 	public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0) {
-		if (!isset($this->xmlParsedData[$transUnitId])) {
+		if (!isset($this->xmlParsedData['translationUnits'][$transUnitId])) {
 			return FALSE;
 		}
 
-		$translationUnit = $this->xmlParsedData[$transUnitId];
-		if (count($translationUnit) <= $pluralFormIndex) {
+		if (count($this->xmlParsedData['translationUnits'][$transUnitId]) <= $pluralFormIndex) {
 			return FALSE;
 		}
 
-		return $translationUnit[$pluralFormIndex]['target'];
+		if ($this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['target']) {
+			return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
+		} elseif ($this->locale->getLanguage() === $this->xmlParsedData['sourceLocale']->getLanguage()) {
+			return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['source'] ?: FALSE;
+		} else {
+			return FALSE;
+		}
 	}
 }
 

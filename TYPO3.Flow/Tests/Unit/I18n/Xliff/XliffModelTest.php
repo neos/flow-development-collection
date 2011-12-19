@@ -29,30 +29,30 @@ class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockFilename = 'foo';
 		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('has')->with(md5($mockFilename))->will($this->returnValue(FALSE));
+		$this->mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$this->mockCache->expects($this->any())->method('has')->with(md5($mockFilename))->will($this->returnValue(FALSE));
 
-		$mockXliffParser = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffParser');
-		$mockXliffParser->expects($this->once())->method('getParsedData')->with($mockFilename)->will($this->returnValue($mockParsedData));
+		$this->mockXliffParser = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffParser');
+		$this->mockXliffParser->expects($this->any())->method('getParsedData')->with($mockFilename)->will($this->returnValue($mockParsedData));
 
-		$this->model = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($mockFilename);
-		$this->model->injectCache($mockCache);
-		$this->model->injectParser($mockXliffParser);
+		$this->model = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($mockFilename, new \TYPO3\FLOW3\I18n\Locale('de'));
+		$this->model->injectCache($this->mockCache);
+		$this->model->injectParser($this->mockXliffParser);
 		$this->model->initializeObject();
 	}
 
 	/**
 	 * @test
 	 */
-	public function targetIsReturnedCorretlyWhenSourceProvided() {
+	public function targetIsReturnedCorrectlyWhenSourceProvided() {
 		$result = $this->model->getTargetBySource('Source string');
-		$this->assertEquals('Translated string', $result);
+		$this->assertEquals('Übersetzte Zeichenkette', $result);
 
 		$result = $this->model->getTargetBySource('Source singular', 0);
-		$this->assertEquals('Translated singular', $result);
+		$this->assertEquals('Übersetzte Einzahl', $result);
 
 		$result = $this->model->getTargetBySource('Source singular', 2);
-		$this->assertEquals('Translated plural 2', $result);
+		$this->assertEquals('Übersetzte Mehrzahl 2', $result);
 
 		$result = $this->model->getTargetBySource('Not existing label');
 		$this->assertFalse($result);
@@ -63,14 +63,28 @@ class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function targetIsReturnedCorrectlyWhenIdProvided() {
 		$result = $this->model->getTargetByTransUnitId('key1');
-		$this->assertEquals('Translated string', $result);
+		$this->assertEquals('Übersetzte Zeichenkette', $result);
 
 		$result = $this->model->getTargetByTransUnitId('key2', 1);
-		$this->assertEquals('Translated plural 1', $result);
+		$this->assertEquals('Übersetzte Mehrzahl 1', $result);
 
 		$result = $this->model->getTargetByTransUnitId('not.existing');
 		$this->assertFalse($result);
 	}
+
+	/**
+	 * @test
+	 */
+	public function sourceIsReturnedWhenIdProvidedAndSourceEqualsTargetLanguage() {
+		$this->model = new \TYPO3\FLOW3\I18n\Xliff\XliffModel('foo', new \TYPO3\FLOW3\I18n\Locale('en_US'));
+		$this->model->injectCache($this->mockCache);
+		$this->model->injectParser($this->mockXliffParser);
+		$this->model->initializeObject();
+
+		$result = $this->model->getTargetByTransUnitId('key3');
+		$this->assertEquals('No target', $result);
+	}
+
 }
 
 ?>

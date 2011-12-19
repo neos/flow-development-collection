@@ -18,26 +18,25 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n;
 class LocaleTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @test
+	 * Data provider for theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers
+	 *
+	 * @return array
 	 */
-	public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers() {
-		try {
-			new \TYPO3\FLOW3\I18n\Locale('');
-			$this->fail('Empty string');
-		} catch(\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-		}
+	public function invalidLocaleIdentifiers() {
+		return array(
+			array(''),
+			array('E'),
+			array('deDE')
+		);
+	}
 
-		try {
-			new \TYPO3\FLOW3\I18n\Locale('E');
-			$this->fail('Single letter');
-		} catch(\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-		}
-
-		try {
-			new \TYPO3\FLOW3\I18n\Locale('deDE');
-			$this->fail('No underscore');
-		} catch(\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-		}
+	/**
+	 * @test
+	 * @dataProvider invalidLocaleIdentifiers
+	 * @expectedException \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException
+	 */
+	public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers($invalidIdentifier) {
+		new \TYPO3\FLOW3\I18n\Locale($invalidIdentifier);
 	}
 
 	/**

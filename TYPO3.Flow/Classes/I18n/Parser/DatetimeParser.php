@@ -345,6 +345,7 @@ class DatetimeParser {
 
 				$lengthOfSubformat = strlen($subformat);
 				$numberOfCharactersToRemove = 0;
+				$position = 0;
 
 				switch ($subformat[0]) {
 					case 'K':

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Xml;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -55,7 +55,7 @@ abstract class AbstractXmlParser {
 		}
 
 		if (!isset($rootXmlNode) || $rootXmlNode === FALSE) {
-			throw new \TYPO3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException('The path provided does not point to existing and accessible well-formed XML file.', 1278155987);
+			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('The path provided does not point to existing and accessible well-formed XML file.', 1278155987);
 		}
 
 		return $this->doParsingFromRoot($rootXmlNode);
@@ -68,6 +68,7 @@ abstract class AbstractXmlParser {
 	 * @return array An array representing parsed XML file (structure depends on concrete parser)
 	 */
 	abstract protected function doParsingFromRoot(\SimpleXMLElement $root);
+
 }
 
 ?>

@@ -13,7 +13,7 @@
       </trans-unit>
       <trans-unit id="key1" xml:space="preserve">
         <source>Source string</source>
-        <target>Translated string</target>
+        <target>Übersetzte Zeichenkette</target>
         <context-group name="po-reference" purpose="location">
           <context context-type="sourcefile">foo.po</context>
           <context context-type="linenumber">12</context>
@@ -32,17 +32,20 @@
         </context-group>
         <trans-unit id="key2[0]">
           <source>Source singular</source>
-          <target>Translated singular</target>
+          <target>Übersetzte Einzahl</target>
         </trans-unit>
         <trans-unit id="key2[1]">
           <source>Source plural</source>
-          <target>Translated plural 1</target>
+          <target>Übersetzte Mehrzahl 1</target>
         </trans-unit>
         <trans-unit id="key2[2]">
           <source>Source plural</source>
-          <target>Translated plural 2</target>
+          <target>Übersetzte Mehrzahl 2</target>
         </trans-unit>
       </group>
+      <trans-unit id="key3" xml:space="preserve">
+        <source>No target</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

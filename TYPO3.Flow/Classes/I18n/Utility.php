@@ -80,12 +80,13 @@ class Utility {
 
 	/**
 	 * Extracts a locale tag (identifier) from the filename given.
-	 * 
+	 *
 	 * Locale tag should be placed just before the extension of the file. For
 	 * example, filename /foo/bar.png can be localized as /foo/bar.en_GB.png,
 	 * and this method extracts en_GB from the name.
 	 *
-	 * Note: this method does not validate extracted identifier.
+	 * Note: this method does not validate extracted identifier, but it ignores
+	 * matches on rss, xml and php.
 	 *
 	 * @param string $filename File name / path to extract locale identifier from
 	 * @return mixed The string with extracted locale identifier of FALSE on failure
@@ -93,7 +94,7 @@ class Utility {
 	static public function extractLocaleTagFromFilename($filename) {
 		$filenameParts = explode('.', $filename);
 
-		if (count($filenameParts) < 3) {
+		if (count($filenameParts) < 3 || in_array($filenameParts[count($filenameParts) - 2], array('php', 'rss', 'xml'))) {
 			return FALSE;
 		}
 

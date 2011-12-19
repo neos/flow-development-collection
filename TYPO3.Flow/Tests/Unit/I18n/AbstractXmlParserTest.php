@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\I18n\Xml;
+namespace TYPO3\FLOW3\Tests\Unit\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,21 +21,21 @@ class AbstractXmlParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function invokesDoParsingFromRootMethodForActualParsing() {
-		$sampleXmlFilePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
+		$sampleXmlFilePath = __DIR__ . '/Fixtures/MockCldrData.xml';
 
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
+		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\AbstractXmlParser', array('doParsingFromRoot'));
 		$parser->expects($this->once())->method('doParsingFromRoot');
 		$parser->getParsedData($sampleXmlFilePath);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException
+	 * @expectedException \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException
 	 */
 	public function throwsExceptionWhenBadFilenameGiven() {
 		$mockFilenamePath = 'foo';
 
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
+		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\AbstractXmlParser', array('doParsingFromRoot'));
 		$parser->getParsedData($mockFilenamePath);
 	}
 }

@@ -103,16 +103,8 @@ class CldrModel {
 		} else {
 			$this->parsedData = $this->parseFiles($this->sourcePaths);
 			$this->parsedData = $this->resolveAliases($this->parsedData, '');
+			$this->cache->set($this->cacheKey, $this->parsedData);
 		}
-	}
-
-	/**
-	 * Shutdowns the model. Parsed data is saved to the cache if needed.
-	 *
-	 * @return void
-	 */
-	public function shutdownObject() {
-		$this->cache->set($this->cacheKey, $this->parsedData);
 	}
 
 	/**
@@ -353,7 +345,10 @@ class CldrModel {
 				$sourcePath = implode('/', $currentPathNodeNames) . '/'. $sourcePath;
 
 				unset($data[$nodeString]);
-				$data = array_merge($this->getRawData($sourcePath), $data);
+				$sourceData = $this->getRawData($sourcePath);
+				if (is_array($sourceData)) {
+					$data = array_merge($sourceData, $data);
+				}
 				break;
 			} else {
 				$data[$nodeString] = $this->resolveAliases($data[$nodeString], ($currentPath === '') ? $nodeString : ($currentPath . '/' . $nodeString));
