@@ -33,7 +33,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
 		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
 		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher')));
-		$this->packageManager = new \TYPO3\FLOW3\Package\PackageManager();
+		$this->packageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'));
 
 		mkdir('vfs://Test/Resources');
 		$packageClassTemplateUri = 'vfs://Test/Resources/Package.php.tmpl';
@@ -77,7 +77,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
 		$packageManager->_set('packageKeys', array('acme.testpackage' => 'Acme.TestPackage'));
 		$this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
 	}
@@ -120,7 +120,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
 		}
 
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -143,7 +143,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 		$packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
