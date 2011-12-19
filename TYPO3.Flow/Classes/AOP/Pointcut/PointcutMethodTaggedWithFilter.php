@@ -60,7 +60,7 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointc
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if ($methodDeclaringClassName === NULL || !$this->reflectionService->hasMethod($methodDeclaringClassName, $methodName)) {
+		if ($methodDeclaringClassName === NULL || !method_exists($methodDeclaringClassName, $methodName)) {
 			return FALSE;
 		}
 		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {

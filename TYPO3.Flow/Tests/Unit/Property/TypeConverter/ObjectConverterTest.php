@@ -64,8 +64,12 @@ class ObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider dataProviderForCanConvert
 	 */
 	public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected) {
-		$this->mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TheTargetType', 'valueobject')->will($this->returnValue($isValueObject));
-		$this->mockReflectionService->expects($this->at(1))->method('isClassTaggedWith')->with('TheTargetType', 'entity')->will($this->returnValue($isEntity));
+		if ($isEntity) {
+			$this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\FLOW3\Annotations\Entity')->will($this->returnValue($isEntity));
+		} else {
+			$this->mockReflectionService->expects($this->at(0))->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\FLOW3\Annotations\Entity')->will($this->returnValue($isEntity));
+			$this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', 'TYPO3\FLOW3\Annotations\ValueObject')->will($this->returnValue($isValueObject));
+		}
 
 		$this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
 	}

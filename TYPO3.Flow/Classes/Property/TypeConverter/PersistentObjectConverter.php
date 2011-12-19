@@ -98,9 +98,11 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @return boolean
 	 */
 	public function canConvertFrom($source, $targetType) {
-		$isValueObject = $this->reflectionService->isClassTaggedWith($targetType, 'valueobject');
-		$isEntity = $this->reflectionService->isClassTaggedWith($targetType, 'entity');
-		return ($isEntity || $isValueObject);
+		return (
+			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\FLOW3\Annotations\Entity') ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\FLOW3\Annotations\ValueObject') ||
+			$this->reflectionService->isClassAnnotatedWith($targetType, 'Doctrine\ORM\Mapping\Entity')
+		);
 	}
 
 	/**
@@ -155,7 +157,7 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
-			if ($this->reflectionService->isClassTaggedWith($targetType, 'valueobject')) {
+			if ($this->reflectionService->isClassAnnotatedWith($targetType, 'TYPO3\FLOW3\Annotations\ValueObject')) {
 				// Unset identity for valueobject to use constructor mapping, since the identity is determined from
 				// constructor arguments
 				unset($source['__identity']);

@@ -180,7 +180,7 @@ class ProxyClassBuilder {
 	public function build() {
 		$allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
 		$possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNamesByPackage);
-		$actualAspectClassNames = $this->reflectionService->getClassNamesByTag('aspect');
+		$actualAspectClassNames = $this->reflectionService->getClassNamesByAnnotation('TYPO3\FLOW3\Annotations\Aspect');
 		sort($possibleTargetClassNames);
 		sort($actualAspectClassNames);
 

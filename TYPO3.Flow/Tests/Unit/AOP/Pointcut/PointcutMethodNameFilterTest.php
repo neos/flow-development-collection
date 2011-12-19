@@ -11,8 +11,6 @@ namespace TYPO3\FLOW3\Tests\Unit\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixtures/MethodsTaggedWithSomething.php');
-
 /**
  * Testcase for the Pointcut Method Name Filter
  *

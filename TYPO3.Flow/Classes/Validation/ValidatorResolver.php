@@ -12,6 +12,10 @@ namespace TYPO3\FLOW3\Validation;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Object\Configuration\Configuration;
+use \TYPO3\FLOW3\Validation\Validator\ValidatorInterface;
+use TYPO3\FLOW3\Validation\Validator\GenericObjectValidator;
+use TYPO3\FLOW3\Validation\Validator\ConjunctionValidator;
 
 /**
  * Validator resolver to automatically find a appropriate validator for a given subject
@@ -53,11 +57,13 @@ class ValidatorResolver {
 		/ixS';
 
 	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -66,25 +72,6 @@ class ValidatorResolver {
 	 * @var array
 	 */
 	protected $baseValidatorConjunctions = array();
-
-	/**
-	 * Constructs the validator resolver
-	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the compomenent manager
-	 */
-	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the reflection service
-	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
 
 	/**
 	 * Get a validator for a given data type. Returns a validator implementing
@@ -99,17 +86,18 @@ class ValidatorResolver {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
 		if ($validatorObjectName === FALSE) return NULL;
 
-		$scopeOfValidatorObject = $this->objectManager->getScope($validatorObjectName);
-
-		if ($scopeOfValidatorObject === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-			$validator = new $validatorObjectName($validatorOptions);
-		} elseif ($scopeOfValidatorObject === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
-			$validator = $this->objectManager->get($validatorObjectName);
-		} else {
-			throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" is not of scope singleton or prototype!', 1300694835);
+		switch ($this->objectManager->getScope($validatorObjectName)) {
+			case Configuration::SCOPE_PROTOTYPE:
+				$validator = new $validatorObjectName($validatorOptions);
+				break;
+			case Configuration::SCOPE_SINGLETON:
+				$validator = $this->objectManager->get($validatorObjectName);
+				break;
+			default:
+				throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" is not of scope singleton or prototype!', 1300694835);
 		}
 
-		if (!($validator instanceof \TYPO3\FLOW3\Validation\Validator\ValidatorInterface)) {
+		if (!($validator instanceof ValidatorInterface)) {
 			throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" does not implement TYPO3\FLOW3\Validation\Validator\ValidatorInterface!', 1300694875);
 		}
 
@@ -198,11 +186,11 @@ class ValidatorResolver {
 	 * @return \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator
 	 */
 	protected function buildSubObjectValidator(array $objectPath, \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $propertyValidator) {
-		$rootObjectValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\GenericObjectValidator');
+		$rootObjectValidator = new GenericObjectValidator(array());
 		$parentObjectValidator = $rootObjectValidator;
 
 		while (count($objectPath) > 1) {
-			$subObjectValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\GenericObjectValidator');
+			$subObjectValidator = new GenericObjectValidator(array());
 			$subPropertyName = array_shift($objectPath);
 			$parentObjectValidator->addPropertyValidator($subPropertyName, $subObjectValidator);
 			$parentObjectValidator = $subObjectValidator;
@@ -232,12 +220,12 @@ class ValidatorResolver {
 	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
 	 */
 	protected function buildBaseValidatorConjunction($targetClassName) {
-		$conjunctionValidator = $this->objectManager->get('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator');
+		$conjunctionValidator = new ConjunctionValidator();
 		$this->baseValidatorConjunctions[$targetClassName] = $conjunctionValidator;
 
 		if (class_exists($targetClassName)) {
 				// Model based validator
-			$objectValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\GenericObjectValidator');
+			$objectValidator = new GenericObjectValidator(array());
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 

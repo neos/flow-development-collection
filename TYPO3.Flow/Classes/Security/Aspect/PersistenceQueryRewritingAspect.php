@@ -303,14 +303,14 @@ class PersistenceQueryRewritingAspect {
 
 		if (is_object($leftOperand)
 					&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
-					&& $this->reflectionService->isClassTaggedWith($leftOperand, 'entity')) {
+					&& $this->reflectionService->isClassAnnotatedWith($leftOperand, 'TYPO3\FLOW3\Annotations\Entity')) {
 
 			$leftOperand = $this->persistenceManager->getIdentifierByObject($leftOperand);
 
 		}
 		if (is_object($rightOperand)
 					&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
-					&& $this->reflectionService->isClassTaggedWith($rightOperand, 'entity')) {
+					&& $this->reflectionService->isClassAnnotatedWith($rightOperand, 'TYPO3\FLOW3\Annotations\Entity')) {
 
 			$rightOperand = $this->persistenceManager->getIdentifierByObject($rightOperand);
 		}

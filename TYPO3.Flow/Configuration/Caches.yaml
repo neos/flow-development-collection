@@ -49,6 +49,8 @@ FLOW3_Object_Configuration: []
 FLOW3_ReflectionStatus:
   frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_ReflectionData: []
+FLOW3_Reflection_ReflectionDataRuntimeCache: []
+FLOW3_Reflection_ClassSchemataRuntimeCache: []
 FLOW3_Resource_Status:
   frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_Security_Policy: []

@@ -204,7 +204,7 @@ class Compiler {
 	 * @return string
 	 */
 	static public function renderAnnotation($annotation) {
-		$annotationAsString = '@' . get_class($annotation);
+		$annotationAsString = '@\\' . get_class($annotation);
 
 		$optionNames = get_class_vars(get_class($annotation));
 		$optionsAsStrings = array();

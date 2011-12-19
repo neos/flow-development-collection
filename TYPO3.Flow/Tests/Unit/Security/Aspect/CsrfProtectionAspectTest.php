@@ -74,7 +74,7 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$this->mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService');
 
-		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isMethodTaggedWith'));
+		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isMethodAnnotatedWith'));
 
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager
@@ -164,8 +164,8 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected function expectThat_ActionIsTaggedWithSkipCsrfProtection($expected) {
 		$this->mockReflectionService
 			->expects($this->any())
-			->method('isMethodTaggedWith')
-			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action', 'skipcsrfprotection')
+			->method('isMethodAnnotatedWith')
+			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action', 'TYPO3\FLOW3\Annotations\SkipCsrfProtection')
 			->will($this->returnValue($expected));
 	}
 
