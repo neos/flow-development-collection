@@ -255,6 +255,9 @@ class Files {
 		}
 		$normalizedPathAndFilename = strtolower(rtrim(self::getUnixStylePath($pathAndFilename), '/'));
 		$normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(realpath($pathAndFilename)));
+		if ($normalizedTargetPathAndFilename === '') {
+			return FALSE;
+		}
 		return $normalizedPathAndFilename !== $normalizedTargetPathAndFilename;
 	}
 

@@ -17,6 +17,11 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  */
 class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
+	public function setUp() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+	}
+
 	/**
 	 * @test
 	 */
@@ -186,6 +191,17 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		}
 		symlink($targetPath, $linkPath);
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPath));
+	}
+
+	/**
+	 * @test
+	 */
+	public function is_linkReturnsFalseForStreamWrapperPaths() {
+		$targetPath = 'vfs://Foo/Bar';
+		if (!is_dir($targetPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		}
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPath));
 	}
 
 	/**
