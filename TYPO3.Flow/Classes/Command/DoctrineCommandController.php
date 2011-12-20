@@ -42,13 +42,23 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	}
 
 	/**
+	 * Compile the Doctrine proxy classes
+	 *
+	 * @return void
+	 * @FLOW3\Internal
+	 */
+	public function compileProxiesCommand() {
+		$this->doctrineService->compileProxies();
+	}
+
+	/**
 	 * Validate the class/table mappings
 	 *
-	 * The validate command checks if the current class model schema is valid. Any
-	 * inconsistencies in the relations between models (for example caused by wrong
-	 * or missing annotations) will be reported.
+	 * Checks if the current class model schema is valid. Any inconsistencies
+	 * in the relations between models (for example caused by wrong or
+	 * missing annotations) will be reported.
 	 *
-	 * Note that this command does not check the table structure in the database in
+	 * Note that this does not check the table structure in the database in
 	 * any way.
 	 *
 	 * @return void
@@ -76,6 +86,9 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 *
 	 * Creates a new database schema based on the current mapping information.
 	 *
+	 * It expects the database to be empty, if tables that are to be created already
+	 * exist, this will lead to errors.
+	 *
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @return void
 	 * @see typo3.flow3:doctrine:update
@@ -86,7 +99,11 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->doctrineService->createSchema($output);
-			$this->outputLine('Created database schema.');
+			if ($output === NULL) {
+				$this->outputLine('Created database schema.');
+			} else {
+				$this->outputLine('Wrote schema creation SQL to file "' . $output . '".');
+			}
 		} else {
 			$this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
@@ -96,9 +113,9 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Update the database schema
 	 *
-	 * This comand updates the database schema without using existing migrations.
-	 * It will, unless --unsafe-mode is set, not drop foreign keys, sequences and
-	 * tables.
+	 * Updates the database schema without using existing migrations.
+	 *
+	 * It will not drop foreign keys, sequences and tables, unless <u>--unsafe-mode</u> is set.
 	 *
 	 * @param boolean $unsafeMode If set, foreign keys, sequences and tables can potentially be dropped.
 	 * @param string $output A file to write SQL to, instead of executing the update directly
@@ -111,7 +128,11 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->doctrineService->updateSchema(!$unsafeMode, $output);
-			$this->outputLine('Executed a database schema update.');
+			if ($output === NULL) {
+				$this->outputLine('Executed a database schema update.');
+			} else {
+				$this->outputLine('Wrote schema update SQL to file "' . $output . '".');
+			}
 		} else {
 			$this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
@@ -119,23 +140,14 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	}
 
 	/**
-	 * Compile the Doctrine proxy classes
-	 *
-	 * @return void
-	 * @FLOW3\Internal
-	 */
-	public function compileProxiesCommand() {
-		$this->doctrineService->compileProxies();
-	}
-
-	/**
 	 * Show the current status of entities and mappings
 	 *
 	 * Shows basic information about which entities exist and possibly if their
-	 * mapping information contains errors or not. To run a full validation, use
-	 * the validate command.
+	 * mapping information contains errors or not.
 	 *
-	 * @param boolean $dumpMappingData
+	 * To run a full validation, use the validate command.
+	 *
+	 * @param boolean $dumpMappingData If set, the mapping data will be output
 	 * @return void
 	 * @see typo3.flow3:doctrine:validate
 	 */
@@ -166,26 +178,29 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Run arbitrary DQL and display results
 	 *
-	 * @param integer $depth
-	 * @param string $hydrationModeName
-	 * @param integer $firstResult
-	 * @param integer $maxResult
+	 * Any DQL queries passed after the parameters will be executed, the results will be output:
+	 *
+	 * doctrine:dql --limit 10 'SELECT a FROM TYPO3\FLOW3\Security\Account a'
+	 *
+	 * @param integer $depth How many levels deep the result should be dumped
+	 * @param string $hydrationMode One of: object, array, scalar, single-scalar, simpleobject
+	 * @param integer $offset
+	 * @param integer $limit
 	 * @return void
-	 * @throws \LogicException
 	 * @throws \RuntimeException
 	 */
-	public function dqlCommand($depth = 3, $hydrationModeName = 'object', $firstResult = NULL, $maxResult = NULL) {
+	public function dqlCommand($depth = 3, $hydrationMode = 'array', $offset = NULL, $limit = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$dqlSatetements = $this->request->getExceedingArguments();
-			$hydrationMode = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationModeName));
-			if (!defined($hydrationMode)) {
-				throw new \InvalidArgumentException('Hydration mode "' . $hydrationModeName . '" does not exist. It should be either: object, array, scalar or single-scalar.');
+			$hydrationModeConstant = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationMode));
+			if (!defined($hydrationModeConstant)) {
+				throw new \InvalidArgumentException('Hydration mode "' . $hydrationMode . '" does not exist. It should be either: object, array, scalar or single-scalar.');
 			}
 
 			foreach ($dqlSatetements as $dql) {
-				$resultSet = $this->doctrineService->runDql($dql, $hydrationMode, $firstResult, $maxResult);
+				$resultSet = $this->doctrineService->runDql($dql, $hydrationModeConstant, $offset, $limit);
 				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
 			}
 		} else {
@@ -196,6 +211,9 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 
 	/**
 	 * Show the current migration status
+	 *
+	 * Displays the migration configuration as well as the number of
+	 * available, executed and pending migrations.
 	 *
 	 * @return void
 	 * @see typo3.flow3:doctrine:migrate
@@ -217,8 +235,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Migrate the database schema
 	 *
-	 * This command adjusts the database structure by applying one or more doctrine
-	 * migrations provided by one or more active FLOW3 packages.
+	 * Adjusts the database structure by applying the pending
+	 * migrations provided by currently active packages.
 	 *
 	 * @param string $version The version to migrate to
 	 * @param string $output A file to write SQL to, instead of executing it
@@ -233,11 +251,13 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$output = $this->doctrineService->executeMigrations($version, $output, $dryRun);
-			if ($output != '') {
-				$this->outputLine($output);
-			} else {
+			$result = $this->doctrineService->executeMigrations($version, $output, $dryRun);
+			if ($result == '') {
 				$this->outputLine('No migration was neccessary.');
+			} elseif ($output === NULL) {
+				$this->outputLine($result);
+			} else {
+				$this->outputLine('Wrote migration SQL to file "' . $output .'".');
 			}
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -247,6 +267,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 
 	/**
 	 * Execute a single migration
+	 *
+	 * Manually runs a single migration in the given direction.
 	 *
 	 * @param string $version The migration to execute
 	 * @param string $direction Whether to execute the migration up (default) or down
