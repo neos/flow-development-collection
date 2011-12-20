@@ -27,6 +27,11 @@ class Service {
 	protected $settings;
 
 	/**
+	 * @var \TYPO3\FLOW3\I18n\Locale
+	 */
+	protected $defaultLocale;
+
+	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -63,7 +68,7 @@ class Service {
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
-		$this->settings = $settings;
+		$this->settings = $settings['i18n'];
 	}
 
 	/**
@@ -99,7 +104,7 @@ class Service {
 	 */
 	public function initialize() {
 		try {
-			$this->settings['locale']['defaultLocale'] = new \TYPO3\FLOW3\I18n\Locale($this->settings['locale']['defaultLocaleIdentifier']);
+			$this->defaultLocale = new \TYPO3\FLOW3\I18n\Locale($this->settings['defaultLocale']);
 		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 			throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('Default locale identifier set in the configuration is invalid.', 1280935191);
 		}
@@ -142,7 +147,7 @@ class Service {
 	 * @api
 	 */
 	public function getDefaultLocale() {
-		return $this->settings['locale']['defaultLocale'];
+		return $this->defaultLocale;
 	}
 
 	/**

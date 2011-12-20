@@ -52,7 +52,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockLocaleCollection->expects($this->once())->method('findBestMatchingLocale')->with($desiredLocale)->will($this->returnValue($desiredLocale));
 		$mockLocaleCollection->expects($this->once())->method('getParentLocaleOf')->with($desiredLocale)->will($this->returnValue($parentLocale));
 
-		$mockSettings = array('locale' => array('defaultLocaleIdentifier' => 'sv_SE'));
+		$mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE'));
 
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(TRUE));
@@ -105,7 +105,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockLocaleCollection = $this->getMock('TYPO3\FLOW3\I18n\LocaleCollection');
 		$mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
-		$mockSettings = array('locale' => array('defaultLocaleIdentifier' => 'sv_SE'));
+		$mockSettings = array('i18n' => array('defaultLocale' => 'sv_SE'));
 
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(FALSE));
