@@ -224,7 +224,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		if ($this->persistenceSession->hasIdentifier($identifier)) {
 			return $this->persistenceSession->getObjectByIdentifier($identifier);
 		} else {
-			$objectData = $this->backend->getObjectDataByIdentifier($identifier);
+			$objectData = $this->backend->getObjectDataByIdentifier($identifier, $objectType);
 			if ($objectData !== FALSE) {
 				return $this->dataMapper->mapToObject($objectData);
 			} else {
