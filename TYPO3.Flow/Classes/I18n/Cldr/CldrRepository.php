@@ -29,7 +29,7 @@ class CldrRepository {
 	 *
 	 * @var string
 	 */
-	protected $cldrBasePath = 'resource://TYPO3.FLOW3/Private/Locale/CLDR/Sources/';
+	protected $cldrBasePath = 'resource://TYPO3.FLOW3/Private/I18n/CLDR/Sources/';
 
 	/**
 	 * @var \TYPO3\FLOW3\I18n\Service
