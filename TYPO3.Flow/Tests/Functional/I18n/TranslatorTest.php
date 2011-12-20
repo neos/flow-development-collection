@@ -26,6 +26,7 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * Initialize dependencies
 	 */
 	public function setUp() {
+		parent::setUp();
 		$this->translator = $this->objectManager->get('TYPO3\FLOW3\I18n\Translator');
 	}
 
