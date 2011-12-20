@@ -23,6 +23,18 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class TestEntity {
 
 	/**
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @FLOW3\inject
+	 */
+	protected $objectManager;
+
+	/**
+	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity
+	 * @ORM\ManyToOne
+	 */
+	protected $relatedEntity;
+
+	/**
 	 * @var string
 	 * @FLOW3\Validate(type="StringLength", options={"minimum"=3})
 	 */
@@ -63,5 +75,32 @@ class TestEntity {
 		return $this->arrayProperty;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function sayHello() {
+		return 'Hello';
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntities
+	 */
+	public function setRelatedEntity(\TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity) {
+		$this->relatedEntity = $relatedEntity;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity
+	 */
+	public function getRelatedEntity() {
+		return $this->relatedEntity;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	public function getObjectManager() {
+		return $this->objectManager;
+	}
 }
 ?>

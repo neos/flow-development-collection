@@ -407,6 +407,11 @@ class ProxyClassBuilder {
 			$proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (method_exists(get_parent_class(\$this), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
 		}
 
+			// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')->addPreParentCallCode($this->fixMethodsAndAdvicesArrayForDoctrineProxiesCode());
+			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_fixInjectedPropertiesForDoctrineProxies')->addPreParentCallCode($this->fixInjectedPropertiesForDoctrineProxiesCode());
+
 		$this->buildGetAdviceChainsMethodCode($targetClassName);
 		$this->buildInvokeJoinPointMethodCode($targetClassName);
 		$this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
@@ -478,6 +483,46 @@ class ProxyClassBuilder {
 		}
 		$methodsAndAdvicesArrayCode .= "\t\t);\n";
 		return  $methodsAndAdvicesArrayCode;
+	}
+
+	/**
+	 * Creates code that builds the targetMethodsAndGroupedAdvices array if it does not exist. This happens when a Doctrine
+	 * lazy loading proxy for an object is created for some specific purpose, but filled afterwards "on the fly" if this object
+	 * is part of a wide range "findBy" query.
+	 *
+	 * @todo Remove once doctrine is fixed
+	 * @return string
+	 */
+	protected function fixMethodsAndAdvicesArrayForDoctrineProxiesCode() {
+		$code = <<<EOT
+		if (!isset(\$this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices) || empty(\$this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices)) {
+			\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();
+			if (is_callable('parent::FLOW3_AOP_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')) parent::FLOW3_AOP_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies();
+		}
+EOT;
+		return $code;
+	}
+
+	/**
+	 * Creates code that reinjects dependencies if they do not exist. This is necessary because in certain circumstances
+	 * Doctrine loads a proxy in UnitOfWork->createEntity() without calling __wakeup and thus does not initialize DI.
+	 * This happens when a Doctrine lazy loading proxy for an object is created for some specific purpose, but filled
+	 * afterwards "on the fly" if this object is part of a wide range "findBy" query.
+	 *
+	 * @todo Remove once doctrine is fixed
+	 * @return string
+	 */
+	protected function fixInjectedPropertiesForDoctrineProxiesCode() {
+		$code = <<<EOT
+		if (!\$this instanceof \Doctrine\ORM\Proxy\Proxy || isset(\$this->FLOW3_Proxy_injectProperties_fixInjectedPropertiesForDoctrineProxies)) {
+			return;
+		}
+		\$this->FLOW3_Proxy_injectProperties_fixInjectedPropertiesForDoctrineProxies = TRUE;
+		if (is_callable(array(\$this, 'FLOW3_Proxy_injectProperties'))) {
+			\$this->FLOW3_Proxy_injectProperties();
+		}
+EOT;
+		return $code;
 	}
 
 	/**
