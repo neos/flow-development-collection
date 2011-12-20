@@ -273,7 +273,7 @@ class Files {
 		try {
 				// if not on Windows, call PHPs own unlink() function
 			if (DIRECTORY_SEPARATOR === '/' || is_file($pathAndFilename)) {
-				return \unlink($pathAndFilename);
+				return @\unlink($pathAndFilename);
 			}
 			return rmdir($pathAndFilename);
 		} catch (\Exception $exception) {

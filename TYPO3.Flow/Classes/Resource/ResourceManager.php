@@ -352,7 +352,7 @@ class ResourceManager {
 	 * @return void
 	 */
 	protected function fixFilePermissions($pathAndFilename) {
-		chmod($pathAndFilename, 0666 ^ umask());
+		@chmod($pathAndFilename, 0666 ^ umask());
 	}
 
 	/**
