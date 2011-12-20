@@ -173,7 +173,7 @@ class Service {
 
 		$configuration->createMigrationTable();
 
-		$databasePlatformName = ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
+		$databasePlatformName = $this->getDatabasePlatformName();
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			$configuration->registerMigrationsFromDirectory(
 				\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(
@@ -437,6 +437,14 @@ EOT;
 		return implode("\n", $code);
 	}
 
+	/**
+	 * Get name of current database platform
+	 *
+	 * @return string
+	 */
+	public function getDatabasePlatformName() {
+		return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
+	}
 }
 
 ?>

@@ -314,7 +314,13 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$this->outputLine(sprintf('Generated new migration class to "%s".', $this->doctrineService->generateMigration($diffAgainstCurrent)));
+			$migrationClassPathAndFilename = $this->doctrineService->generateMigration($diffAgainstCurrent);
+			$this->outputLine('<u>Generated new migration class!</u>');
+			$this->outputLine('');
+			$this->outputLine('Next Steps:');
+			$this->outputLine(sprintf('- Move <b>%s</b> to YourPackage/<b>Migrations/%s/</b>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
+			$this->outputLine('- Review and adjust the generated migration.');
+			$this->outputLine('- (optional) execute the migration using <b>./flow3 doctrine:migrate</b>');
 		} else {
 			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
