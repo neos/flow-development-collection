@@ -32,6 +32,20 @@ interface SessionInterface {
 	public function start();
 
 	/**
+	 * Returns TRUE if there is a session that can be resumed. FALSE otherwise
+	 *
+	 * @return boolean
+	 */
+	public function canBeResumed();
+
+	/**
+	 * Resumes an existing session, if any.
+	 *
+	 * @return void
+	 */
+	public function resume();
+
+	/**
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
