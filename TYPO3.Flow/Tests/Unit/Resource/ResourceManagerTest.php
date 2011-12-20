@@ -189,6 +189,25 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @outputBuffering enabled
+	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
+	 */
+	public function createResourceFromContentStoresTheContentInTheCorrectFileAndReturnsTheCorrespondingResourceObject() {
+		$resourceManager = $this->setupResourceManager();
+
+		$fileName = 'myFile.txt';
+		$content = 'some content';
+		$resultResource = $resourceManager->createResourceFromContent($content, $fileName);
+
+		$this->assertTrue(file_exists('vfs://Foo/Persistent/Resources/' . sha1($content)));
+		$this->assertEquals($content, file_get_contents('vfs://Foo/Persistent/Resources/' . sha1($content)));
+		$this->assertEquals($fileName, $resultResource->getFileName());
+		$this->assertEquals('txt', $resultResource->getFileExtension());
+		$this->assertEquals(sha1($content), $resultResource->getResourcePointer()->getHash());
+	}
+
+	/**
+	 * @test
 	 */
 	public function importResourceReturnsFalseForPhpFiles() {
 		$resourceManager = $this->setupResourceManager();

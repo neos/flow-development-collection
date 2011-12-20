@@ -189,14 +189,40 @@ class ResourceManager {
 			return FALSE;
 		}
 		$this->fixFilePermissions($finalTargetPathAndFilename);
-		$resource = new \TYPO3\FLOW3\Resource\Resource();
-		$resource->setFilename($pathInfo['basename']);
 
-		$resourcePointer = $this->getResourcePointerForHash($hash);
-		$resource->setResourcePointer($resourcePointer);
-		$this->importedResources[$resource] = array(
-			'originalFilename' => $pathInfo['basename']
-		);
+		$resource = $this->createResourceFromHashAndFilename($hash, $pathInfo['basename']);
+		$this->attachImportedResource($resource);
+
+		return $resource;
+	}
+
+	/**
+	 * Creates a resource (file) from the given binary content as a persistent resource.
+	 * On a successful creation this method returns a Resource object representing the
+	 * newly created persistent resource.
+	 *
+	 * @param mixed $content The binary content of the file
+	 * @param string $fileName
+	 * @return \TYPO3\FLOW3\Resource\Resource A resource object representing the created resource or FALSE if an error occured.
+	 * @api
+	 */
+	public function createResourceFromContent($content, $fileName) {
+		$pathInfo = pathinfo($fileName);
+		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
+			return FALSE;
+		}
+
+		$hash = sha1($content);
+		$finalTargetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->persistentResourcesStorageBaseUri, $hash));
+		if (!file_exists($finalTargetPathAndFilename)) {
+			file_put_contents($finalTargetPathAndFilename, $content);
+			$this->fixFilePermissions($finalTargetPathAndFilename);
+		}
+
+		$resource = $this->createResourceFromHashAndFilename($hash, $pathInfo['basename']);
+		$this->attachImportedResource($resource);
+
+
 		return $resource;
 	}
 
@@ -251,16 +277,6 @@ class ResourceManager {
 			'originalFilename' => $pathInfo['basename']
 		);
 		return $resource;
-	}
-
-	/**
-	 * Fixes the permissions as needed for FLOW3 to run fine in web and cli context.
-	 *
-	 * @param string $pathAndFilename
-	 * @return void
-	 */
-	protected function fixFilePermissions($pathAndFilename) {
-		chmod($pathAndFilename, 0666 ^ umask());
 	}
 
 	/**
@@ -327,6 +343,46 @@ class ResourceManager {
 		if (!$this->statusCache->has('packageResourcesPublished')) {
 			$this->statusCache->set('packageResourcesPublished', 'y', array(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
 		}
+	}
+
+	/**
+	 * Fixes the permissions as needed for FLOW3 to run fine in web and cli context.
+	 *
+	 * @param string $pathAndFilename
+	 * @return void
+	 */
+	protected function fixFilePermissions($pathAndFilename) {
+		chmod($pathAndFilename, 0666 ^ umask());
+	}
+
+	/**
+	 * Creates a resource object from a given hash and filename. The according
+	 * resource pointer is fetched automatically.
+	 *
+	 * @param string $resourceHash
+	 * @param string $originalFilename
+	 * @return \TYPO3\FLOW3\Resource\Resource
+	 */
+	protected function createResourceFromHashAndFilename($resourceHash, $originalFilename) {
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
+		$resource->setFilename($originalFilename);
+
+		$resourcePointer = $this->getResourcePointerForHash($resourceHash);
+		$resource->setResourcePointer($resourcePointer);
+
+		return $resource;
+	}
+
+	/**
+	 * Attaches the given resource to the imported resources of this script run
+	 *
+	 * @param \TYPO3\FLOW3\Resource\Resource $resource
+	 * @return void
+	 */
+	protected function attachImportedResource(\TYPO3\FLOW3\Resource\Resource $resource) {
+		$this->importedResources->attach($resource, array(
+			'originalFilename' => $resource->getFilename()
+		));
 	}
 }
 
