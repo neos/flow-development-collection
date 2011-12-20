@@ -88,8 +88,8 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishStaticResourcesLinksTheSpecifiedDirectoryIfMirrorModeIsLink() {
-		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FileSystemPublishingTargetTestSource'));
-		$targetRootPath =  \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FileSystemPublishingTargetTestTarget'));
+		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FLOW3FileSystemPublishingTargetTestSource'));
+		$targetRootPath =  \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FLOW3FileSystemPublishingTargetTestTarget'));
 		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($targetRootPath, '_Resources'));
 
 		mkdir($sourcePath);
