@@ -21,10 +21,31 @@ use \TYPO3\FLOW3\Security\Policy\Role;
 class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
+	 * @var string
+	 */
+	protected $temporaryDirectoryPath;
+
+	/**
+	 * @var string
+	 */
+	protected $publishPath;
+
+	/**
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		$temporaryDirectoryBase = realpath(sys_get_temp_dir()) . '/' . str_replace('\\', '_', __CLASS__);
+
+		$this->temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory'));
+		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->temporaryDirectoryPath);
+		$this->publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory'));
+		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->publishPath);
+	}
+
+	public function tearDown() {
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($this->temporaryDirectoryPath);
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($this->publishPath);
 	}
 
 	/**
@@ -276,9 +297,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndNoFilenameIsRequested() {
-		$temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
-
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
@@ -299,7 +317,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
 
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 
@@ -316,7 +334,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
 
 		$mockAccessRestrictionPublisher = $this->getMock('TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
@@ -327,23 +345,17 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$publishingAspect->_set('settings', $settings);
 		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$expectedResult = $publishPath . 'Persistent/TheCurrentSessionId/Role2/';
+		$expectedResult = $this->publishPath . '/Persistent/TheCurrentSessionId/Role2/';
 
 		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
 		$this->assertEquals($result, $expectedResult);
-
-		Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndTheFilenameIsRequested() {
-		$temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
-
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
@@ -364,7 +376,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath));
 
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
@@ -383,7 +395,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
 
 		$mockAccessRestrictionPublisher = $this->getMock('\TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
@@ -394,21 +406,17 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$publishingAspect->_set('settings', $settings);
 		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$expectedResult = $publishPath . 'Persistent/TheCurrentSessionId/Role2/ResourceHash.ResourceFileExtension';
+		$expectedResult = $this->publishPath . '/Persistent/TheCurrentSessionId/Role2/ResourceHash.ResourceFileExtension';
 
 		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
 		$this->assertEquals($result, $expectedResult);
-
-		Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested() {
-		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
@@ -429,7 +437,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath . 'TheBasePath/'));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath . 'TheBasePath/'));
 
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 
@@ -453,7 +461,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$publishingAspect->_set('settings', $settings);
 		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$expectedResult = $publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/';
+		$expectedResult = $this->publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/';
 
 		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
@@ -464,8 +472,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested() {
-		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
-
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
@@ -486,7 +492,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath . 'TheBasePath/'));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath . 'TheBasePath/'));
 
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
@@ -512,7 +518,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$publishingAspect->_set('settings', $settings);
 		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
-		$expectedResult = $publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
+		$expectedResult = $this->publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
 
 		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
@@ -578,9 +584,6 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function inLinkModeRewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesRoleDirectoriesForEachAllowedRoleAndSymlinksThemIntoTheCurrentSessionDirectory() {
-		$temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
-
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
@@ -598,13 +601,13 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		);
 
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue($this->temporaryDirectoryPath));
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($this->publishPath ));
 
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
@@ -633,23 +636,18 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
-		$this->assertFileExists($temporaryDirectoryPath . 'PrivateResourcePublishing/Role2/');
-		$this->assertFileExists($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3/');
-		$this->assertFileExists($publishPath . 'Persistent/TheCurrentSessionId/Role2');
-		$this->assertFileExists($publishPath . 'Persistent/TheCurrentSessionId/Role3');
+		$this->assertFileExists($this->temporaryDirectoryPath . '/PrivateResourcePublishing/Role2/');
+		$this->assertFileExists($this->temporaryDirectoryPath . '/PrivateResourcePublishing/Role3/');
+		$this->assertFileExists($this->publishPath . '/Persistent/TheCurrentSessionId/Role2');
+		$this->assertFileExists($this->publishPath . '/Persistent/TheCurrentSessionId/Role3');
 
-		$temporaryDirectoryPath = realpath($temporaryDirectoryPath) . '/';
-
-		$role2PrivateResourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryPath, 'PrivateResourcePublishing/Role2'));
-		$role2SymlinkedPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role2')));
+		$role2PrivateResourcePath = realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->temporaryDirectoryPath, 'PrivateResourcePublishing/Role2')));
+		$role2SymlinkedPath = realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->publishPath, 'Persistent/TheCurrentSessionId/Role2')));
 		$this->assertEquals($role2PrivateResourcePath, $role2SymlinkedPath);
 
-		$role3PrivateResourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryPath, 'PrivateResourcePublishing/Role3'));
-		$role3SymlinkedPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role3')));
+		$role3PrivateResourcePath = realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->temporaryDirectoryPath, 'PrivateResourcePublishing/Role3')));
+		$role3SymlinkedPath = realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->publishPath, 'Persistent/TheCurrentSessionId/Role3')));
 		$this->assertEquals($role3PrivateResourcePath, $role3SymlinkedPath);
-
-		@Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		@Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**
