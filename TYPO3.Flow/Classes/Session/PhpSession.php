@@ -146,12 +146,21 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
+	 * Returns TRUE if there is a session that can be resumed. FALSE otherwise
+	 *
+	 * @return boolean
+	 */
+	public function canBeResumed() {
+		return isset($_COOKIE[session_name()]);
+	}
+
+	/**
 	 * Resumes an existing session, if any.
 	 *
 	 * @return void
 	 */
 	public function resume() {
-		if ($this->started === FALSE && isset($_COOKIE[session_name()])) {
+		if ($this->started === FALSE && $this->canBeResumed()) {
 			$this->startOrResume();
 		}
 	}

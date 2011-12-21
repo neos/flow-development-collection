@@ -64,6 +64,15 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
+	 * Returns TRUE if there is a session that can be resumed. FALSE otherwise
+	 *
+	 * @return boolean
+	 */
+	public function canBeResumed() {
+		return TRUE;
+	}
+
+	/**
 	 * Resumes an existing session, if any.
 	 *
 	 * @return void
