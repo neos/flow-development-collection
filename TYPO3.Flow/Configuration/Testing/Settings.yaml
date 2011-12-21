@@ -13,7 +13,7 @@ TYPO3:
   FLOW3:
 
     configuration:
-      compileConfigurationFiles: no
+      compileConfigurationFiles: FALSE
 
     error:
       exceptionHandler:
@@ -28,14 +28,14 @@ TYPO3:
         backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
 
     object:
-      registerFunctionalTestClasses: yes
+      registerFunctionalTestClasses: true
 
     persistence:
       backendOptions:
         driver: 'pdo_sqlite'
         path: ':memory:'
-        username: null
-        password: null
+        username: NULL
+        password: NULL
 
     security:
       authentication:
@@ -54,7 +54,7 @@ TYPO3:
     tests:
       functional:
         aop:
-          pointcutExpressionSettingFilterOptionA: yes
+          pointcutExpressionSettingFilterOptionA: true
         dependencyInjection:
           singletonConstructorArgument: 'setting injected singleton value'
           prototypeConstructorArgument: 'setting injected property value'

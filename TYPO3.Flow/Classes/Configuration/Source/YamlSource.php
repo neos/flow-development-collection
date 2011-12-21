@@ -32,8 +32,7 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			try {
-				\Symfony\Component\Yaml\Yaml::setSpecVersion('1.1');
-				$configuration = \Symfony\Component\Yaml\Yaml::load($pathAndFilename . '.yaml');
+				$configuration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename . '.yaml');
 				if (!is_array($configuration)) {
 					$configuration = array();
 				}

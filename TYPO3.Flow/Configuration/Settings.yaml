@@ -23,7 +23,7 @@ TYPO3:
       # much faster to load PHP files.
       #
       # NOTE: You must clear all caches right after switching this option OFF
-      compileConfigurationFiles: yes
+      compileConfigurationFiles: TRUE
 
     core:
 
@@ -57,7 +57,7 @@ TYPO3:
         backend: TYPO3\FLOW3\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW3_PATH_DATA%Logs/System.log
-           createParentDirectories: yes
+           createParentDirectories: TRUE
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
@@ -66,11 +66,11 @@ TYPO3:
         backend: TYPO3\FLOW3\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
-           createParentDirectories: yes
+           createParentDirectories: TRUE
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
-           logIpAddress: yes
+           logIpAddress: TRUE
 
     locale:
 
@@ -104,7 +104,7 @@ TYPO3:
       # in the "Classes" directory - also register class files found in the directory
       # "Tests/Functional/". Enabling this feature obviously only makes sense in a
       # testing context.
-      registerFunctionalTestClasses: no
+      registerFunctionalTestClasses: FALSE
 
     package:
 
@@ -119,21 +119,21 @@ TYPO3:
       backendOptions:
         driver: 'pdo_mysql'
         host: '127.0.0.1'
-        dbname: null
-        user: null
-        password: null
+        dbname: NULL
+        user: NULL
+        password: NULL
         charset: 'utf8'
       doctrine:
         cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
-        sqlLogger: null
+        sqlLogger: NULL
         # By default Doctrine proxy compilation is done in the FLOW3 bootstrap
-        enable: yes
+        enable: TRUE
 
     reflection:
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.
-      logIncorrectDocCommentHints: no
+      logIncorrectDocCommentHints: FALSE
 
     resource:
       publishing:
@@ -141,7 +141,7 @@ TYPO3:
         # If enabled, the publisher will check if the static resources of active packages
         # have changed and if so publishes them again. If disabled, static package resources
         # are only published once and changes are unnoticed until the related cache is flushed.
-        detectPackageResourceChanges: no
+        detectPackageResourceChanges: FALSE
 
         # Options for the File System publishing target
         fileSystem:
@@ -151,13 +151,13 @@ TYPO3:
 
     security:
 
-      enable: yes
+      enable: TRUE
 
       firewall:
 
-        # If set to yes, the firewall will reject any request that is not
+        # If set to TRUE, the firewall will reject any request that is not
         # explicitly allowed by a configured request filter.
-        rejectAll: no
+        rejectAll: FALSE
 
         # The filter configuration for the firewall. Here is an example configuration array:
         #
@@ -287,10 +287,10 @@ TYPO3:
           #domain: .domain.com
 
           # Force SSL cookies.
-          secure: false
+          secure: FALSE
 
           # Allow http access only.
-          httponly: true
+          httponly: TRUE
 
     utility:
       environment:
@@ -305,6 +305,6 @@ TYPO3:
         # affects resource management, routing and all other parts accessing
         # "Environment->getBaseUri()".
         #
-        # If this setting is null, the base URI will be detected from the current
+        # If this setting is NULL, the base URI will be detected from the current
         # request (default).
-        baseUri: null
+        baseUri: NULL

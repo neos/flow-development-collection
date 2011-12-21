@@ -13,7 +13,7 @@ TYPO3:
   FLOW3:
 
     configuration:
-      compileConfigurationFiles: no
+      compileConfigurationFiles: FALSE
 
     error:
       exceptionHandler:
@@ -22,25 +22,25 @@ TYPO3:
         exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
 
     package:
-      detectPackages: yes
+      detectPackages: TRUE
 
     resource:
       publishing:
-        detectPackageResourceChanges: yes
+        detectPackageResourceChanges: TRUE
 
     log:
       systemLogger:
         backendOptions:
           logFileURL: %FLOW3_PATH_DATA%Logs/System_Development.log
-          createParentDirectories: yes
+          createParentDirectories: TRUE
           severityThreshold: %LOG_DEBUG%
       securityLogger:
         backendOptions:
           logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log
-          createParentDirectories: yes
+          createParentDirectories: TRUE
           severityThreshold: %LOG_DEBUG%
       sqlLogger:
         backendOptions:
           logFileURL: %FLOW3_PATH_DATA%Logs/Query_Development.log
-          createParentDirectories: yes
+          createParentDirectories: TRUE
           severityThreshold: %LOG_DEBUG%

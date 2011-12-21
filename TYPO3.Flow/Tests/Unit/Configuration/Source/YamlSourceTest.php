@@ -72,5 +72,26 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertContains('# This comment should stay', $yaml, 'Header comment was removed from file.');
 		$this->assertNotContains('Test: foo', $yaml);
 	}
+
+	/**
+	 * @test
+	 */
+	public function yamlFileIsParsedToArray() {
+		$expectedConfiguration = array(
+			'configurationFileHasBeenLoaded' => TRUE,
+			'TYPO3' => array(
+				'FLOW3' => array(
+					'something' => 'foo',
+					'@bar' => 1,
+					'aboolean' => TRUE
+				)
+			)
+		);
+		$pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
+		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
+		$configuration = $configurationSource->load($pathAndFilename);
+		$this->assertSame($expectedConfiguration, $configuration);
+	}
+
 }
 ?>
