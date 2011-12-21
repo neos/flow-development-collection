@@ -25,5 +25,14 @@ class DocCommentParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals('Testcase for DocCommentParser', $parser->getDescription());
 	}
 
+	/**
+	 * @test
+	 */
+	public function eolCharacterCanBeNewlineOrCarriageReturn() {
+		$parser = new \TYPO3\FLOW3\Reflection\DocCommentParser();
+		$parser->parseDocComment('/**' . chr(10) . ' * @var $foo integer' . chr(13) . chr(10) . ' * @var $bar string' . chr(10) . ' */');
+		$this->assertEquals(array('$foo integer', '$bar string'), $parser->getTagValues('var'));
+	}
+
 }
 ?>
