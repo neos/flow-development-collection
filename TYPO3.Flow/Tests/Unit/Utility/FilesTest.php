@@ -18,6 +18,26 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
 class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
+	 * @var string
+	 */
+	protected $temporaryDirectory;
+
+	public function setUp() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+
+		$intendedTemporaryDirectory = sys_get_temp_dir() . '/' . str_replace('\\', '_', __CLASS__);
+		if (!file_exists($intendedTemporaryDirectory)) {
+			mkdir($intendedTemporaryDirectory);
+		}
+		$this->temporaryDirectory = realpath($intendedTemporaryDirectory);
+	}
+
+	public function tearDown() {
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
+	}
+
+	/**
 	 * @test
 	 */
 	public function getUnixStylePathWorksForPathWithoutSlashes() {
@@ -142,7 +162,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
-		$targetPathAndFilename = tempnam('FLOW3FilesTestFile', '');
+		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
 		file_put_contents($targetPathAndFilename, 'some data');
 		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
 	}
@@ -151,9 +171,9 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsTrueForExistingSymlink() {
-		$targetPathAndFilename = tempnam('FLOW3FilesTestFile', '');
+		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
 		file_put_contents($targetPathAndFilename, 'some data');
-		$linkPathAndFilename = tempnam('FLOW3FilesTestLink', '');
+		$linkPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestLink');
 		if (file_exists($linkPathAndFilename)) {
 			@unlink($linkPathAndFilename);
 		}
@@ -165,7 +185,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsFalseForExistingDirectoryThatIsNoSymlink() {
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory')) . '/';
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory')) . '/';
 		if (!is_dir($targetPath)) {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
 		}
@@ -176,16 +196,86 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsTrueForExistingSymlinkDirectory() {
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory'));
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
 		if (!is_dir($targetPath)) {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
 		}
-		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectoryLink'));
+		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
 		if (is_dir($linkPath)) {
 			\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($linkPath);
 		}
 		symlink($targetPath, $linkPath);
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPath));
+	}
+
+	/**
+	 * @test
+	 */
+	public function is_linkReturnsFalseForStreamWrapperPaths() {
+		$targetPath = 'vfs://Foo/Bar';
+		if (!is_dir($targetPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		}
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPath));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Utility\Exception
+	 */
+	public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
+		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively('NonExistingPath');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Utility\Exception
+	 */
+	public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively('NonExistingPath');
+	}
+
+	/**
+	 * @test
+	 */
+	public function unlinkProperlyRemovesSymlinksPointingToFiles() {
+		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
+		file_put_contents($targetPathAndFilename, 'some data');
+		$linkPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestLink');
+		if (file_exists($linkPathAndFilename)) {
+			@unlink($linkPathAndFilename);
+		}
+		symlink($targetPathAndFilename, $linkPathAndFilename);
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::unlink($linkPathAndFilename));
+		$this->assertTrue(file_exists($targetPathAndFilename));
+		$this->assertFalse(file_exists($linkPathAndFilename));
+	}
+
+	/**
+	 * @test
+	 */
+	public function unlinkProperlyRemovesSymlinksPointingToDirectories() {
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
+		if (!is_dir($targetPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		}
+		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
+		if (is_dir($linkPath)) {
+			\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($linkPath);
+		}
+		symlink($targetPath, $linkPath);
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::unlink($linkPath));
+		$this->assertTrue(file_exists($targetPath));
+		$this->assertFalse(file_exists($linkPath));
+	}
+
+	/**
+	 * @test
+	 * @outputBuffering enabled
+	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
+	 */
+	public function unlinkReturnsFalseIfSpecifiedPathDoesNotExist() {
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::unlink('NonExistingPath'));
 	}
 }
 ?>
