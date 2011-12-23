@@ -33,6 +33,11 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockSubRequest;
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\Web\SubRequest
+	 */
+	protected $mockSubSubRequest;
+
+	/**
 	 * @var \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
@@ -46,7 +51,12 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 		$this->mockSubRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$this->mockSubRequest->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
+		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('CurrentNamespace'));
+		$this->mockSubSubRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$this->mockSubSubRequest->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
+		$this->mockSubSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockSubRequest));
+		$this->mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('CurrentSubNamespace'));
 		$environment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
 		$environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(TRUE));
 
@@ -165,6 +175,7 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$expectedArguments = array(
 			'CurrentNamespace' => array('arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage')
 		);
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->uriFor('SomeAction', array('arg1' => 'val1'), 'SomeController', 'SomePackage');
@@ -174,36 +185,36 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function uriForRecursivelyPrefixesControllerArgumentsWithAllParentRequestArgumentNamespaces() {
-		$mockSubRequest1 = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockSubRequest1->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
-		$mockSubRequest1->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockRequest));
-		$mockSubRequest1->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubRequest1Namespace'));
-
-		$mockSubRequest2 = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockSubRequest2->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
-		$mockSubRequest2->expects($this->any())->method('getParentRequest')->will($this->returnValue($mockSubRequest1));
-		$mockSubRequest2->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubRequest2Namespace'));
-
-		$mockSubRequest3 = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockSubRequest3->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
-		$mockSubRequest3->expects($this->any())->method('getParentRequest')->will($this->returnValue($mockSubRequest2));
-		$mockSubRequest3->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubRequest3Namespace'));
-
+	public function uriForPrefixesControllerArgumentsWithSubRequestArgumentNamespaceOfParentRequestAndCurrentRequestIfNotEmpty() {
 		$expectedArguments = array(
-			'SubRequest1Namespace' => array(
-				'SubRequest2Namespace' => array(
-					'SubRequest3Namespace' => array(
-						'arg1' => 'val1',
-						'@action' => 'someaction',
-						'@controller' => 'somecontroller',
-						'@package' => 'somepackage'
-					)
-				)
+			'CurrentNamespace' => array(
+				'CurrentSubNamespace' => array('arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage')
 			)
 		);
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 
-		$this->uriBuilder->setRequest($mockSubRequest3);
+		$this->uriBuilder->setRequest($this->mockSubSubRequest);
+		$this->uriBuilder->uriFor('SomeAction', array('arg1' => 'val1'), 'SomeController', 'SomePackage');
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
+	 */
+	public function uriForPrefixesControllerArgumentsWithSubRequestArgumentNamespaceOfParentRequestIfCurrentRequestHasNoNamespace() {
+		$expectedArguments = array(
+			'CurrentNamespace' => array('arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage')
+		);
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+
+		$mockSubSubRequest = $this->getMockBuilder('TYPO3\FLOW3\MVC\Web\SubRequest')->disableOriginalConstructor()->getMock();
+		$mockSubSubRequest->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
+		$mockSubSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockSubRequest));
+
+		$mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
+
+		$this->uriBuilder->setRequest($mockSubSubRequest);
 		$this->uriBuilder->uriFor('SomeAction', array('arg1' => 'val1'), 'SomeController', 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
@@ -243,6 +254,26 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function buildMergesArgumentsWithRequestArgumentsOfCurrentRequestIfAddQueryStringIsSetAndRequestIsOfTypeSubRequest() {
+		$expectedArguments = array('CurrentNamespace' => array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Overruled'));
+		$this->mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('CurrentNamespace' => array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Bar'))));
+		$this->mockRouter->expects($this->once())->method('resolve')->with($expectedArguments)->will($this->returnValue('resolvedUri'));
+
+		$this->uriBuilder->setRequest($this->mockSubRequest);
+		$this->uriBuilder->setAddQueryString(TRUE);
+		$this->uriBuilder->setArguments(array('CurrentNamespace' => array('Foo' => 'Overruled')));
+
+		$expectedResult = 'resolvedUri';
+		$actualResult = $this->uriBuilder->build();
+
+		$this->assertEquals($expectedResult, $actualResult);
+
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 */
 	public function buildRemovesSpecifiedQueryParametersIfArgumentsToBeExcludedFromQueryStringIsSet() {
 		$this->mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Bar')));
 		$this->mockRouter->expects($this->once())->method('resolve')->with(array('Foo' => 'Overruled'))->will($this->returnValue('resolvedUri'));
@@ -256,6 +287,25 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertEquals($expectedResult, $actualResult);
 	}
+
+	/**
+	 * @test
+	 */
+	public function buildRemovesSpecifiedQueryParametersInCurrentNamespaceIfArgumentsToBeExcludedFromQueryStringIsSetAndRequestIsOfTypeSubRequest() {
+		$this->mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('CurrentNamespace' => array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Bar'), 'Some' => 'Retained Arguments From Request')));
+		$this->mockRouter->expects($this->once())->method('resolve')->with(array('CurrentNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Retained Arguments From Request'))->will($this->returnValue('resolvedUri'));
+
+		$this->uriBuilder->setRequest($this->mockSubRequest);
+		$this->uriBuilder->setAddQueryString(TRUE);
+		$this->uriBuilder->setArguments(array('CurrentNamespace' => array('Foo' => 'Overruled')));
+		$this->uriBuilder->setArgumentsToBeExcludedFromQueryString(array('Some'));
+
+		$expectedResult = 'resolvedUri';
+		$actualResult = $this->uriBuilder->build();
+
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
 
 	/**
 	 * @test
@@ -289,9 +339,40 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function buildDoesNotMergeRootRequestArgumentsWithTheCurrentArgumentNamespaceIfRequestIsOfTypeSubRequestAndHasAParentSubRequest() {
+		$expectedArguments = array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Overruled')), 'Some' => 'Other Argument From Request');
+		$this->mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed')), 'Some' => 'Other Argument From Request')));
+
+		$this->uriBuilder->setRequest($this->mockSubSubRequest);
+		$this->uriBuilder->setArguments(array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Overruled'))));
+		$this->uriBuilder->build();
+
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
+	 */
+	public function buildMergesArgumentsOfTheParentRequestIfRequestIsOfTypeSubRequestAndHasAParentSubRequest() {
+		$expectedArguments = array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Retained Argument From Parent Request'), 'Some' => 'Other Argument From Request');
+		$this->mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed'), 'Some' => 'Retained Argument From Parent Request'), 'Some' => 'Other Argument From Request')));
+
+		$this->uriBuilder->setRequest($this->mockSubSubRequest);
+		$this->uriBuilder->setArguments(array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Overruled'))));
+		$this->uriBuilder->build();
+
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+
+	/**
+	 * @test
+	 */
 	public function buildAddsPackageKeyFromRootRequestIfRequestIsOfTypeSubRequest() {
 		$expectedArguments = array('@package' => 'RootRequestPackageKey');
 		$this->mockRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('RootRequestPackageKey'));
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->build();
@@ -305,6 +386,7 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function buildAddsSubpackageKeyFromRootRequestIfRequestIsOfTypeSubRequest() {
 		$expectedArguments = array('@subpackage' => 'RootRequestSubpackageKey');
 		$this->mockRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('RootRequestSubpackageKey'));
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->build();
@@ -318,6 +400,7 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function buildAddsControllerNameFromRootRequestIfRequestIsOfTypeSubRequest() {
 		$expectedArguments = array('@controller' => 'RootRequestControllerName');
 		$this->mockRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('RootRequestControllerName'));
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->build();
@@ -331,6 +414,7 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function buildAddsActionNameFromRootRequestIfRequestIsOfTypeSubRequest() {
 		$expectedArguments = array('@action' => 'RootRequestActionName');
 		$this->mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('RootRequestActionName'));
+		$this->mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->build();

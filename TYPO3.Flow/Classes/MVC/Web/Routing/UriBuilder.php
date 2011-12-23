@@ -370,7 +370,14 @@ class UriBuilder {
 			$requestArguments = $rootRequest->getArguments();
 				// remove all arguments of the current SubRequest
 			if ($this->request->getArgumentNamespace() !== '') {
-				unset($requestArguments[$this->request->getArgumentNamespace()]);
+				$requestNamespace = $this->getRequestNamespacePath($this->request);
+				if ($this->addQueryString === FALSE) {
+					$requestArguments = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($requestArguments, $requestNamespace);
+				} else {
+					foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+						$requestArguments = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
+					}
+				}
 			}
 
 				// merge special arguments (package, subpackage, controller & action) from root request
@@ -393,17 +400,32 @@ class UriBuilder {
 
 		} elseif ($this->addQueryString === TRUE) {
 			$requestArguments = $this->request->getArguments();
+			foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+				unset($requestArguments[$argumentToBeExcluded]);
+			}
 		}
 
 		if (count($requestArguments) === 0) {
 			return;
 		}
 
-		foreach($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
-			unset($requestArguments[$argumentToBeExcluded]);
-		}
-
 		$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+	}
+
+	/**
+	 * Get the path of the argument namespaces of all parent requests.
+	 * Example: rootrequest.subrequest.subsubrequest
+	 *
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $request
+	 * @return string
+	 */
+	protected function getRequestNamespacePath(\TYPO3\FLOW3\MVC\Web\Request $request) {
+		if ($request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) {
+			$parentPath = $this->getRequestNamespacePath($request->getParentRequest());
+			return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
+		} else {
+			return '';
+		}
 	}
 
 }
