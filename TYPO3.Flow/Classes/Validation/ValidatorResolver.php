@@ -113,14 +113,16 @@ class ValidatorResolver {
 	 * If no validation is necessary, the returned validator is empty.
 	 *
 	 * @param string $targetClassName Fully qualified class name of the target class, ie. the class which should be validated
+	 * @param array $validationGroups The validation groups to build the validator for
 	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
 	 */
-	public function getBaseValidatorConjunction($targetClassName) {
+	public function getBaseValidatorConjunction($targetClassName, array $validationGroups = array('Default')) {
 		$targetClassName = trim($targetClassName, ' \\');
-		if (!array_key_exists($targetClassName, $this->baseValidatorConjunctions)) {
-			$this->buildBaseValidatorConjunction($targetClassName);
+		$indexKey = $targetClassName . '##' . implode('##', $validationGroups);
+		if (!array_key_exists($indexKey, $this->baseValidatorConjunctions)) {
+			$this->buildBaseValidatorConjunction($indexKey, $targetClassName, $validationGroups);
 		}
-		return $this->baseValidatorConjunctions[$targetClassName];
+		return $this->baseValidatorConjunctions[$indexKey];
 	}
 
 	/**
@@ -222,15 +224,16 @@ class ValidatorResolver {
 	 * Example: $targetClassName is TYPO3\Foo\Domain\Model\Quux, then the validator will be found if it has the
 	 * name TYPO3\Foo\Domain\Validator\QuuxValidator
 	 *
+	 * @param string $indexKey The key to use as index in $this->baseValidatorConjunctions; calculated from target class name and validation groups
 	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
-	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
+	 * @param array $validationGroups The validation groups to build the validator for
+	 * @return void
 	 * @throws Exception\NoSuchValidatorException
 	 * @throws \InvalidArgumentException
 	 */
-	protected function buildBaseValidatorConjunction($targetClassName) {
+	protected function buildBaseValidatorConjunction($indexKey, $targetClassName, array $validationGroups) {
 		$conjunctionValidator = new ConjunctionValidator();
-		$this->baseValidatorConjunctions[$targetClassName] = $conjunctionValidator;
-
+		$this->baseValidatorConjunctions[$indexKey] = $conjunctionValidator;
 		if (class_exists($targetClassName)) {
 				// Model based validator
 			$objectValidator = new GenericObjectValidator(array());
@@ -244,10 +247,10 @@ class ValidatorResolver {
 				}
 				$propertyTargetClassName = $parsedType['type'];
 				if (\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
-						$collectionValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\CollectionValidator', array('elementType' =>$parsedType['elementType']));
+						$collectionValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\CollectionValidator', array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
 						$objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
 				} elseif (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName);
+					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
 					if (count($validatorForProperty) > 0) {
 						$objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
 					}
@@ -255,6 +258,10 @@ class ValidatorResolver {
 
 				$validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, 'TYPO3\FLOW3\Annotations\Validate');
 				foreach ($validateAnnotations as $validateAnnotation) {
+					if (count(array_intersect($validateAnnotation->validationGroups, $validationGroups)) === 0) {
+						// In this case, the validation groups for the property do not match current validation context
+						continue;
+					}
 					$newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
 					if ($newValidator === NULL) {
 						throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1241098027);

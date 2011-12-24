@@ -47,6 +47,12 @@ class TestEntity {
 	protected $name = '';
 
 	/**
+	 * @var string
+	 * @FLOW3\Validate(type="NotEmpty", validationGroups={"SomeOther"})
+	 */
+	protected $description = 'This is some text';
+
+	/**
 	 * @var array
 	 */
 	protected $arrayProperty = array();
@@ -64,6 +70,20 @@ class TestEntity {
 	 */
 	public function setName($name) {
 		$this->name = $name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+
+	/**
+	 * @param string $description
+	 */
+	public function setDescription($description) {
+		$this->description = $description;
 	}
 
 	/**

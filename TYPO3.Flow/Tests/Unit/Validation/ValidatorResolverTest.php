@@ -312,7 +312,7 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver->_set('reflectionService', $mockReflectionService);
 		$validatorResolver->expects($this->once())->method('createValidator')->with($validatorClassName)->will($this->returnValue(new \TYPO3\FLOW3\Validation\Validator\EmailAddressValidator()));
 
-		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
+		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, array('Default'));
 		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
 
 		$this->assertFalse($builtValidators[$modelClassName]->validate('foo@example.com')->hasErrors());
@@ -347,7 +347,7 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver->_set('reflectionService', $mockReflectionService);
 		$validatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->will($this->returnValue($this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface')));
 
-		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
+		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, array('Default'));
 	}
 
 	/**
@@ -358,7 +358,7 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver = $this->getAccessibleMock('TYPO3\FLOW3\Validation\ValidatorResolver', array('dummy'));
 		$validatorResolver->_set('objectManager', $mockObjectManager);
 
-		$this->assertNull($validatorResolver->_call('buildBaseValidatorConjunction', 'NonExistingClassName'));
+		$this->assertNull($validatorResolver->_call('buildBaseValidatorConjunction', 'NonExistingClassName', 'NonExistingClassName', array('Default')));
 	}
 
 	/**
@@ -417,11 +417,11 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('TYPO3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(4))->method('createValidator')->with('TYPO3\FLOW3\Validation\Validator\CollectionValidator', array('elementType' => 'TYPO3\TestPackage\Quux'))->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('TYPO3\FLOW3\Validation\Validator\CollectionValidator', array('elementType' => 'TYPO3\TestPackage\Quux', 'validationGroups' => array('Default')))->will($this->returnValue($mockObjectValidator));
 
-		$validatorResolver->_call('buildBaseValidatorConjunction', $className);
+		$validatorResolver->_call('buildBaseValidatorConjunction', $className . 'Default',  $className, array('Default'));
 		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
-		$this->assertInstanceOf('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', $builtValidators[$className]);
+		$this->assertInstanceOf('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', $builtValidators[$className . 'Default']);
 	}
 
 	/**

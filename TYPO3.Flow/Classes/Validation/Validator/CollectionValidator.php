@@ -47,7 +47,11 @@ class CollectionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVali
 			if (isset($this->options['elementValidator'])) {
 				$collectionElementValidator = $this->validatorResolver->createValidator($this->options['elementValidator']);
 			} elseif (isset($this->options['elementType'])) {
-				$collectionElementValidator = $this->validatorResolver->getBaseValidatorConjunction($this->options['elementType']);
+				if (isset($this->options['validationGroups'])) {
+					$collectionElementValidator = $this->validatorResolver->getBaseValidatorConjunction($this->options['elementType'], $this->options['validationGroups']);
+				} else {
+					$collectionElementValidator = $this->validatorResolver->getBaseValidatorConjunction($this->options['elementType']);
+				}
 			} else {
 				return;
 			}

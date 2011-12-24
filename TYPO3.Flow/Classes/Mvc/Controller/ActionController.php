@@ -198,7 +198,7 @@ class ActionController extends AbstractController {
 		foreach ($this->arguments as $argument) {
 			$validator = $parameterValidators[$argument->getName()];
 
-			$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
+			$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType(), array('Default', 'Controller'));
 			if (count($baseValidatorConjunction) > 0) {
 				$validator->addValidator($baseValidatorConjunction);
 			}

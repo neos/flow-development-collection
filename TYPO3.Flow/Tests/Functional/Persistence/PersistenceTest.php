@@ -277,6 +277,22 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function validationIsOnlyDoneForPropertiesWhichAreInTheDefaultOrPersistencePropertyGroup() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+		$testEntity = $this->testEntityRepository->findOneByName('FLOW3');
+
+			// We now make the TestEntitys Description *invalid*, and still
+			// expect that the saving works without exception.
+		$testEntity->setDescription('');
+		$this->testEntityRepository->update($testEntity);
+		$this->persistenceManager->persistAll();
+	}
+
+	/**
 	 * Helper which inserts example data into the database.
 	 *
 	 * @param string $name

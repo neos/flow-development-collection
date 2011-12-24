@@ -124,7 +124,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 */
 	protected function validateObject($object) {
 		$className = $this->entityManager->getClassMetadata(get_class($object))->getName();
-		$validator = $this->validatorResolver->getBaseValidatorConjunction($className);
+		$validator = $this->validatorResolver->getBaseValidatorConjunction($className, array('Persistence', 'Default'));
 		if ($validator === NULL) return;
 
 		$validationResult = $validator->validate($object);

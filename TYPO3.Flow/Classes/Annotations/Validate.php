@@ -38,6 +38,12 @@ final class Validate {
 	public $argumentName;
 
 	/**
+	 * The validation groups for which this validator should be executed
+	 * @var array
+	 */
+	public $validationGroups = array('Default');
+
+	/**
 	 * @param array $values
 	 * @throws \InvalidArgumentException
 	 */
@@ -53,6 +59,10 @@ final class Validate {
 
 		if (isset($values['value']) || isset($values['argumentName'])) {
 			$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
+		}
+
+		if (isset($values['validationGroups']) && is_array($values['validationGroups'])) {
+			$this->validationGroups = $values['validationGroups'];
 		}
 	}
 
