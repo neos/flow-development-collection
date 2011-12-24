@@ -146,18 +146,7 @@ class ObjectConverter extends AbstractTypeConverter {
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		$effectiveTargetType = $targetType;
-		if (isset($source['__type'])) {
-			if ($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317051258);
-			}
-			$effectiveTargetType = $source['__type'];
-		}
-		$object = $this->buildObject($convertedChildProperties, $effectiveTargetType);
-		if ($effectiveTargetType !== $targetType && !$object instanceof $targetType) {
-			throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $source['__type'] . '" is not a subtype of "' . $targetType .'"', 1317051266);
-		}
-
+		$object = $this->buildObject($convertedChildProperties, $targetType);
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			$result = \TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
@@ -172,6 +161,37 @@ class ObjectConverter extends AbstractTypeConverter {
 		}
 
 		return $object;
+	}
+
+	/**
+	 * Determines the target type based on the source's (optional) __type key.
+	 *
+	 * @param mixed $source
+	 * @param string $originalTargetType
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return string
+	 * @throws \TYPO3\Flow\Property\Exception\InvalidDataTypeException
+	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
+	 * @throws \InvalidArgumentException
+	 */
+	public function getTargetTypeForSource($source, $originalTargetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		$targetType = $originalTargetType;
+
+		if (is_array($source) && array_key_exists('__type', $source)) {
+			$targetType = $source['__type'];
+
+			if ($configuration === NULL) {
+				throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1326277369);
+			}
+			if ($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
+				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
+			}
+			if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, TRUE) === FALSE) {
+				throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
+			}
+		}
+
+		return $targetType;
 	}
 
 	/**
