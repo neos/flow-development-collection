@@ -32,11 +32,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	protected $entityManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
 	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
@@ -55,14 +50,6 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -107,8 +94,8 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @return void
 	 */
 	protected function validateObject($object) {
-		$classSchema = $this->reflectionService->getClassSchema($object);
-		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
+		$className = $this->entityManager->getClassMetadata(get_class($object))->getName();
+		$validator = $this->validatorResolver->getBaseValidatorConjunction($className);
 		if ($validator === NULL) return;
 
 		$validationResult = $validator->validate($object);

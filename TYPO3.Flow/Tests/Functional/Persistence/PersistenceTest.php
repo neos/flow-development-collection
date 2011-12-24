@@ -195,6 +195,29 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 	}
 
+	/**
+	 * Testcase for issue #32830
+	 *
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 */
+	public function validationIsDoneForReconstitutedEntitiesWhichAreLazyLoadingProxies() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+		$theObject = $this->testEntityRepository->findOneByName('FLOW3');
+		$theObjectIdentifier = $this->persistenceManager->getIdentifierByObject($theObject);
+
+			// Here, we completely reset the persistence manager again and work
+			// only with the Object Identifier
+		$this->persistenceManager->clearState();
+
+		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
+		$lazyLoadedEntity = $entityManager->getReference('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity', $theObjectIdentifier);
+		$lazyLoadedEntity->setName('a');
+		$this->testEntityRepository->update($lazyLoadedEntity);
+		$this->persistenceManager->persistAll();
+	}
 
 	/**
 	 * Helper which inserts example data into the database.
