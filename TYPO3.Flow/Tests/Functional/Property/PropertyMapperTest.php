@@ -239,5 +239,71 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		return $entityIdentifier;
 	}
+
+	/**
+	 * Testcase for #32829
+	 *
+	 * @test
+	 */
+	public function mappingToFieldsFromSubclassWorksIfTargetTypeIsOverridden() {
+		$source = array(
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclassWithNewField',
+			'testField' => 'A horse'
+		);
+
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+
+		$theHorse = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclassWithNewField', $theHorse);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidTypeConverterConfigurationsForOverridingTargetTypes
+	 * @expectedException \TYPO3\Flow\Property\Exception
+	 */
+	public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		$source = array(
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclassWithNewField',
+			'testField' => 'A horse'
+		);
+
+		$this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+	}
+
+	/**
+	 * Data provider with invalid configuration for target type overrides
+	 *
+	 * @return array
+	 */
+	public function invalidTypeConverterConfigurationsForOverridingTargetTypes() {
+		$configurationWithNoSetting = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+
+		$configurationWithOverrideOff = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+		$configurationWithOverrideOff->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\ObjectConverter', \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, FALSE);
+
+		return array(
+			array(NULL),
+			array($configurationWithNoSetting),
+			array($configurationWithOverrideOff),
+		);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Property\Exception
+	 */
+	public function convertFromShouldThrowExceptionIfGivenSourceTypeIsNotATargetType() {
+		$source = array(
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
+			'testField' => 'A horse'
+		);
+
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+
+		$this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+	}
 }
 ?>

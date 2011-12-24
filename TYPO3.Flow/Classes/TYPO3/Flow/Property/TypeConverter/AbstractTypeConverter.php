@@ -73,6 +73,19 @@ abstract class AbstractTypeConverter implements \TYPO3\Flow\Property\TypeConvert
 	}
 
 	/**
+	 * Returns the $originalTargetType unchanged in this implementation.
+	 *
+	 * @param mixed $source the source data
+	 * @param string $originalTargetType the type we originally want to convert to
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return string
+	 * @api
+	 */
+	public function getTargetTypeForSource($source, $originalTargetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		return $originalTargetType;
+	}
+
+	/**
 	 * Return the priority of this TypeConverter. TypeConverters with a high priority are chosen before low priority.
 	 *
 	 * @return integer
