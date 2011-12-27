@@ -553,6 +553,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array('Administrator', 'LicenseToKill')));
@@ -564,6 +565,8 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->_set('bootstrap', $bootstrap);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
+
+		$securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
 		$securityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
 		$this->assertTrue($securityContext->hasRole('LicenseToKill'));
@@ -584,6 +587,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
@@ -596,6 +600,28 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$securityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
 		$this->assertTrue($securityContext->hasRole('Everybody'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasRoleReturnsFalseIfAuthenticationManagerIsNotAuthenticated() {
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
+
+		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
+		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
+
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+
+		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->_set('bootstrap', $bootstrap);
+		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
+
+		$this->assertFalse($securityContext->hasRole('SomeRole'));
+		$this->assertFalse($securityContext->hasRole('Everybody'));
 	}
 
 	/**

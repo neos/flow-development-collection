@@ -310,21 +310,24 @@ class Context {
 	 * @return boolean TRUE, if a role with the given string representation was found
 	 */
 	public function hasRole($role) {
-		if ($this->initialized === FALSE) {
+		if (!$this->authenticationManager->isAuthenticated()) {
+			return FALSE;
+		}
+
+		if ((string) $role === 'Everybody') {
+			return TRUE;
+		}
+
+		if ($this->isInitialized() === FALSE) {
 			$this->initialize();
 		}
 
-		$authenticatedRolesExist = FALSE;
 		foreach ($this->getAuthenticationTokens() as $token) {
 			$tokenRoles = $token->getRoles();
 			if ($token->isAuthenticated() && in_array($role, $tokenRoles)) {
 				return TRUE;
-			} else {
-				if (count($tokenRoles) > 0) $authenticatedRolesExist = TRUE;
 			}
 		}
-
-		if (!$authenticatedRolesExist && ((string)$role === 'Everybody')) return TRUE;
 
 		return FALSE;
 	}
