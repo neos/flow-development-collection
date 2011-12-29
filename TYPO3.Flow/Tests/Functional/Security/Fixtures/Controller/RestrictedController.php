@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -11,25 +11,32 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A controller for functional testing
- *
  */
 class RestrictedController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
-	 * @return void
+	 * @return string
 	 */
-	public function publicAction() {}
+	public function publicAction() {
+		return 'public';
+	}
 
 	/**
-	 * @return void
+	 * @return string
 	 */
-	public function customerAction() {}
+	public function customerAction() {
+		return 'customer';
+	}
 
 	/**
-	 * @return void
+	 * @return string
 	 */
-	public function adminAction() {}
+	public function adminAction() {
+		return 'admin';
+	}
 }
 ?>
