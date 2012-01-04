@@ -20,10 +20,10 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lifecycleEventAnnotationsAreDetected() {
-		$classMetadataInfo = new \Doctrine\ORM\Mapping\ClassMetadataInfo('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadataInfo);
-		$this->assertTrue($classMetadataInfo->hasLifecycleCallbacks('prePersist'));
+		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$this->assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
 	}
 
 	/**
@@ -82,19 +82,19 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			),
 		);
 
-		$classMetadataInfo = new \Doctrine\ORM\Mapping\ClassMetadataInfo('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadataInfo);
+		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 
-		$this->assertEquals($expectedTitleMapping, $classMetadataInfo->getFieldMapping('title'), 'mapping for "title" not as expected');
-		$imageAssociationMapping = $classMetadataInfo->getAssociationMapping('image');
-		$thumbnailAssociationMapping = $classMetadataInfo->getAssociationMapping('thumbnail');
+		$this->assertEquals($expectedTitleMapping, $classMetadata->getFieldMapping('title'), 'mapping for "title" not as expected');
+		$imageAssociationMapping = $classMetadata->getAssociationMapping('image');
+		$thumbnailAssociationMapping = $classMetadata->getAssociationMapping('thumbnail');
 		foreach (array_keys($expectedImageAssociationMapping) as $key) {
 			$this->assertEquals($expectedImageAssociationMapping[$key], $imageAssociationMapping[$key], 'mapping for "image" not as expected');
 			$this->assertNotEquals($expectedImageAssociationMapping[$key], $thumbnailAssociationMapping[$key], 'mapping for "thumbnail" not as expected');
 		}
 
-		$commentAssociationMapping = $classMetadataInfo->getAssociationMapping('comment');
+		$commentAssociationMapping = $classMetadata->getAssociationMapping('comment');
 		$this->assertEquals(1, count($commentAssociationMapping['joinColumns']));
 		foreach (array_keys($expectedCommentAssociationMapping) as $key) {
 			$this->assertEquals($expectedCommentAssociationMapping[$key], $commentAssociationMapping[$key], 'mapping for "comment" not as expected');
@@ -141,11 +141,11 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 				'related_post_id' => 'flow3_persistence_identifier',
 			),
 		);
-		$classMetadataInfo = new \Doctrine\ORM\Mapping\ClassMetadataInfo('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadataInfo);
+		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 
-		$relatedAssociationMapping = $classMetadataInfo->getAssociationMapping('related');
+		$relatedAssociationMapping = $classMetadata->getAssociationMapping('related');
 		foreach (array_keys($expectedRelatedAssociationMapping) as $key) {
 			$this->assertEquals($expectedRelatedAssociationMapping[$key], $relatedAssociationMapping[$key]);
 		}
