@@ -77,7 +77,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
-			throw new \RuntimeException('No class schema found for "' . $className . '"', 1295973082);
+			throw new \RuntimeException('No class schema found for "' . $className . '". The class should probably marked as entity or value object!', 1295973082);
 		}
 		return $classSchema;
 	}
