@@ -240,10 +240,11 @@ TYPO3:
       cryptography:
 
         hashingStrategies:
-          default: pbkdf2
+          default: bcrypt
 
           pbkdf2: TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy
           bcrypt: TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy
+          saltedmd5: TYPO3\FLOW3\Security\Cryptography\SaltedMd5HashingStrategy
 
         Pbkdf2HashingStrategy:
 
