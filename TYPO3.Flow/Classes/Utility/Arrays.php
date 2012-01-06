@@ -75,6 +75,8 @@ class Arrays {
 			if (array_key_exists($key, $firstArray) && is_array($firstArray[$key])) {
 				if (is_array($secondArray[$key])) {
 					$firstArray[$key] = self::arrayMergeRecursiveOverrule($firstArray[$key], $secondArray[$key], $dontAddNewKeys, $emptyValuesOverride);
+				} else {
+					$firstArray[$key] = $secondArray[$key];
 				}
 			} else {
 				if ($dontAddNewKeys) {

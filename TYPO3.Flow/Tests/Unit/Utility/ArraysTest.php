@@ -265,5 +265,104 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$actualResult = \TYPO3\FLOW3\Utility\Arrays::removeEmptyElementsRecursively($array);
 		$this->assertEquals($expectedResult, $actualResult);
 	}
+
+	public function arrayMergeRecursiveOverruleData() {
+		return array(
+			'simple usage' => array(
+				'inputArray1' => array(
+					'k1' => 'v1',
+					'k2' => 'v2',
+				),
+				'inputArray2' => array(
+					'k2' => 'v2a',
+					'k3' => 'v3'
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => TRUE, // default
+				'expected' => array(
+					'k1' => 'v1',
+					'k2' => 'v2a',
+					'k3' => 'v3'
+				)
+			),
+
+			'simple usage with recursion' => array(
+				'inputArray1' => array(
+					'k1' => 'v1',
+					'k2' => array(
+						'k2.1' => 'v2.1',
+						'k2.2' => 'v2.2'
+					),
+				),
+				'inputArray2' => array(
+					'k2' => array(
+						'k2.2' => 'v2.2a',
+						'k2.3' => 'v2.3'
+					),
+					'k3' => 'v3'
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => TRUE, // default
+				'expected' => array(
+					'k1' => 'v1',
+					'k2' => array(
+						'k2.1' => 'v2.1',
+						'k2.2' => 'v2.2a',
+						'k2.3' => 'v2.3'
+					),
+					'k3' => 'v3'
+				)
+			),
+
+			'simple type should override array (k2)' => array(
+				'inputArray1' => array(
+					'k1' => 'v1',
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+				),
+				'inputArray2' => array(
+					'k2' => 'v2a',
+					'k3' => 'v3'
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => TRUE, // default
+				'expected' => array(
+					'k1' => 'v1',
+					'k2' => 'v2a',
+					'k3' => 'v3'
+				)
+			),
+
+			'null should override array (k2)' => array(
+				'inputArray1' => array(
+					'k1' => 'v1',
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+				),
+				'inputArray2' => array(
+					'k2' => NULL,
+					'k3' => 'v3'
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => TRUE, // default
+				'expected' => array(
+					'k1' => 'v1',
+					'k2' => NULL,
+					'k3' => 'v3'
+				)
+			),
+		);
+	}
+
+	/**
+	 * @dataProvider arrayMergeRecursiveOverruleData
+	 * @test
+	 */
+	public function arrayMergeRecursiveOverruleMergesSimpleArrays($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride, $expected) {
+		$actual = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
+		$this->assertSame($expected, $actual);
+	}
 }
 ?>
