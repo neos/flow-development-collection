@@ -260,7 +260,7 @@ class DatetimeParser {
 							$pattern = self::PATTERN_MATCH_STRICT_TIMEZONE_TZ;
 						}
 
-						if (preg_match($pattern, $datetimeToParse, $matches) === 0) return FALSE;
+						if (preg_match($pattern, $datetimeToParse, $matches) !== 1) return FALSE;
 
 						$datetimeElements['timezone'] = $matches[0];
 						break;

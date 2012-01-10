@@ -88,7 +88,7 @@ class Locale {
 	 */
 	public function __construct($localeIdentifier) {
 		if (!is_string($localeIdentifier)) throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
 		if (!empty($matches['script'])) $this->script = ucfirst(strtolower($matches['script']));

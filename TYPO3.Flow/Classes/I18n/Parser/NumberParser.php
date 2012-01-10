@@ -162,7 +162,7 @@ class NumberParser {
 
 			if (strlen($numberToParse) < $parsedFormat['minIntegerDigits']) {
 				return FALSE;
-			} elseif (preg_match(self::PATTERN_MATCH_DIGITS, $numberToParse, $matches) === 0) {
+			} elseif (preg_match(self::PATTERN_MATCH_DIGITS, $numberToParse, $matches) !== 1) {
 				return FALSE;
 			}
 
@@ -182,7 +182,7 @@ class NumberParser {
 
 		if (strlen($integerPart) < $parsedFormat['minIntegerDigits']) {
 			return FALSE;
-		} elseif (preg_match(self::PATTERN_MATCH_DIGITS, $integerPart, $matches) === 0) {
+		} elseif (preg_match(self::PATTERN_MATCH_DIGITS, $integerPart, $matches) !== 1) {
 			return FALSE;
 		}
 
@@ -192,7 +192,7 @@ class NumberParser {
 			$countOfDecimalDigits = strlen($decimalPart);
 			if ($countOfDecimalDigits < $parsedFormat['minDecimalDigits'] || $countOfDecimalDigits > $parsedFormat['maxDecimalDigits']) {
 				return FALSE;
-			} elseif (preg_match(self::PATTERN_MATCH_DIGITS, $decimalPart, $matches) === 0) {
+			} elseif (preg_match(self::PATTERN_MATCH_DIGITS, $decimalPart, $matches) !== 1) {
 				return FALSE;
 			}
 
