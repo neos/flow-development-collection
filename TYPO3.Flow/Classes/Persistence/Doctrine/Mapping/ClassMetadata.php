@@ -11,24 +11,43 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
 /**
  */
 class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 
 	/**
-	 * Initializes a new ClassMetadata instance that will hold the object-relational mapping
-	 * metadata of the class with the given name.
+	 * Gets the ReflectionClass instance of the mapped class.
 	 *
-	 * @param string $entityName The name of the entity class the new instance is used for.
+	 * @return \TYPO3\FLOW3\Reflection\ClassReflection
 	 */
-	public function __construct($entityName) {
-		parent::__construct($entityName);
-		$this->reflClass = new \TYPO3\FLOW3\Reflection\ClassReflection($entityName);
-		$this->namespace = $this->reflClass->getNamespaceName();
-		$this->table['name'] = $this->reflClass->getShortName();
+	public function getReflectionClass() {
+		if ($this->reflClass === NULL) {
+			$this->_initializeReflection();
+		}
+		return $this->reflClass;
 	}
 
+	/**
+	 * Initializes $this->reflClass and a number of related variables.
+	 *
+	 * @param ReflectionService $reflService
+	 * @return void
+	 */
+	public function initializeReflection($reflService) {
+		$this->_initializeReflection();
+	}
+
+	/**
+	 * Initializes $this->reflClass and a number of related variables.
+	 *
+	 * @return void
+	 */
+	protected function _initializeReflection() {
+		$this->reflClass = new \TYPO3\FLOW3\Reflection\ClassReflection($this->name);
+		$this->namespace = $this->reflClass->getNamespaceName();
+		$this->name = $this->rootEntityName = $this->reflClass->getName();
+		$this->table['name'] = $this->reflClass->getShortName();
+	}
 }
 
 ?>

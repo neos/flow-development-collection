@@ -97,10 +97,14 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 
 			// Evaluate Entity annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'])) {
+			$mappedSuperclassAnnotation = $classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'];
+			if ($mappedSuperclassAnnotation->repositoryClass !== NULL) {
+				$metadata->setCustomRepositoryClass($mappedSuperclassAnnotation->repositoryClass);
+			}
 			$metadata->isMappedSuperclass = TRUE;
 		} elseif (isset($classAnnotations['TYPO3\FLOW3\Annotations\Entity']) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
 			$entityAnnotation = isset($classAnnotations['TYPO3\FLOW3\Annotations\Entity']) ? $classAnnotations['TYPO3\FLOW3\Annotations\Entity'] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
-			if ($entityAnnotation->repositoryClass) {
+			if ($entityAnnotation->repositoryClass !== NULL) {
 				$metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
 			} elseif ($classSchema->getRepositoryClassName() !== NULL) {
 				if ($this->reflectionService->isClassImplementationOf($classSchema->getRepositoryClassName(), 'Doctrine\ORM\EntityRepository')) {
@@ -150,6 +154,25 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 #			);
 		}
 		$metadata->setPrimaryTable($primaryTable);
+
+			// Evaluate NamedQueries annotation
+		if (isset($classAnnotations['Doctrine\ORM\Mapping\NamedQueries'])) {
+			$namedQueriesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\NamedQueries'];
+
+			if (!is_array($namedQueriesAnnotation->value)) {
+				throw new \UnexpectedValueException("@NamedQueries should contain an array of @NamedQuery annotations.");
+			}
+
+			foreach ($namedQueriesAnnotation->value as $namedQuery) {
+				if (!($namedQuery instanceof \Doctrine\ORM\Mapping\NamedQuery)) {
+					throw new \UnexpectedValueException("@NamedQueries should contain an array of @NamedQuery annotations.");
+				}
+				$metadata->addNamedQuery(array(
+					'name'  => $namedQuery->name,
+					'query' => $namedQuery->query
+				));
+			}
+		}
 
 			// Evaluate InheritanceType annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\InheritanceType'])) {
@@ -345,7 +368,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($oneToOneAnnotation->fetch));
+				$mapping['fetch'] = $this->getFetchMode($className, $oneToOneAnnotation->fetch);
 				$metadata->mapOneToOne($mapping);
 			} elseif ($oneToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToMany')) {
 				$mapping['mappedBy'] = $oneToManyAnnotation->mappedBy;
@@ -364,7 +387,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($oneToManyAnnotation->fetch));
+				$mapping['fetch'] = $this->getFetchMode($className, $oneToManyAnnotation->fetch);
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
 					$mapping['orderBy'] = $orderByAnnotation->value;
@@ -382,7 +405,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$mapping['cascade'] = array('all');
 				}
 				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($manyToOneAnnotation->fetch));
+				$mapping['fetch'] = $this->getFetchMode($className, $manyToOneAnnotation->fetch);
 				$metadata->mapManyToOne($mapping);
 			} elseif ($manyToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToMany')) {
 				if ($manyToManyAnnotation->targetEntity) {
@@ -415,7 +438,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($manyToManyAnnotation->fetch));
+				$mapping['fetch'] = $this->getFetchMode($className, $manyToManyAnnotation->fetch);
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
 					$mapping['orderBy'] = $orderByAnnotation->value;
@@ -643,6 +666,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					if (isset($annotations['Doctrine\ORM\Mapping\PostLoad'])) {
 						$metadata->addLifecycleCallback($method->getName(), \Doctrine\ORM\Events::postLoad);
 					}
+
+					if (isset($annotations['Doctrine\ORM\Mapping\PreFlush'])) {
+						$metadata->addLifecycleCallback($method->getName(), \Doctrine\ORM\Events::preFlush);
+					}
 				}
 			}
 		}
@@ -651,6 +678,24 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		$metadata->addLifecycleCallback('FLOW3_AOP_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
 		$metadata->addLifecycleCallback('FLOW3_AOP_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
+	}
+
+	/**
+	 * Whether the class with the specified name should have its metadata loaded.
+	 * This is only the case if it is either mapped as an Entity or a
+	 * MappedSuperclass (i.e. is not transient).
+	 *
+	 * @param string $className
+	 * @return boolean
+	 */
+	public function isTransient($className) {
+		return strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
+			(
+				!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
+			);
 	}
 
 	/**
@@ -680,21 +725,20 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	}
 
 	/**
-	 * Whether the class with the specified name should have its metadata loaded.
-	 * This is only the case if it is either mapped as an Entity or a
-	 * MappedSuperclass (i.e. is not transient).
+	 * Attempts to resolve the fetch mode.
 	 *
-	 * @param string $className
-	 * @return boolean
+	 * @param string $className The class name
+	 * @param string $fetchMode The fetch mode
+	 * @return integer The fetch mode as defined in ClassMetadata
+	 * @throws \Doctrine\ORM\Mapping\MappingException If the fetch mode is not valid
 	 */
-	public function isTransient($className) {
-		return strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
-				(
-					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') &&
-					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject') &&
-					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
-					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
-				);
+	private function getFetchMode($className, $fetchMode) {
+		$fetchMode = strtoupper($fetchMode);
+		if (!defined('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $fetchMode)) {
+			throw \Doctrine\ORM\Mapping\MappingException::invalidFetchMode($className, $fetchMode);
+		}
+
+		return constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $fetchMode);
 	}
 
 	/**
