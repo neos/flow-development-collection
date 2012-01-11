@@ -33,6 +33,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setUp() {
 		$this->query = $this->getMockBuilder('TYPO3\FLOW3\Persistence\Doctrine\Query')->disableOriginalConstructor()->disableOriginalClone()->getMock();
+		$this->query->expects($this->any())->method('getResult')->will($this->returnValue(array()));
 		$this->queryResult = new \TYPO3\FLOW3\Persistence\Doctrine\QueryResult($this->query);
 	}
 
@@ -48,6 +49,13 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getQueryReturnsAClone() {
 		$this->assertNotSame($this->query, $this->queryResult->getQuery());
+	}
+
+	/**
+	 * @test
+	 */
+	public function offsetGetReturnsNullIfOffsetDoesNotExist() {
+		$this->assertNull($this->queryResult->offsetGet('foo'));
 	}
 }
 ?>

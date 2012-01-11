@@ -79,6 +79,16 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	}
 
 	/**
+	 * Returns the number of objects in the result
+	 *
+	 * @return integer The number of matching objects
+	 * @api
+	 */
+	public function count() {
+		return $this->query->count();
+	}
+
+	/**
 	 * Returns an array with the objects in the result set
 	 *
 	 * @return array
@@ -87,16 +97,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	public function toArray() {
 		$this->initialize();
 		return $this->rows;
-	}
-
-	/**
-	 * Returns the number of objects in the result
-	 *
-	 * @return integer The number of matching objects
-	 * @api
-	 */
-	public function count() {
-		return $this->query->count();
 	}
 
 	/**
@@ -117,7 +117,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 */
 	public function offsetGet($offset) {
 		$this->initialize();
-		return $this->rows[$offset];
+		return isset($this->rows[$offset]) ? $this->rows[$offset] : NULL;
 	}
 
 	/**
@@ -164,7 +164,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 */
 	public function next() {
 		$this->initialize();
-		return next($this->rows);
+		next($this->rows);
 	}
 
 	/**
@@ -176,7 +176,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	}
 
 	/**
-	 * @return void
+	 * @return boolean
 	 */
 	public function valid() {
 		$this->initialize();

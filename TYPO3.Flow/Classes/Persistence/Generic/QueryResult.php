@@ -218,7 +218,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	}
 
 	/**
-	 * @return void
+	 * @return boolean
 	 * @see \Iterator::valid()
 	 */
 	public function valid() {
