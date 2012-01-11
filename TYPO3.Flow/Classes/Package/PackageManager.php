@@ -63,6 +63,16 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	/**
 	 * @var string
 	 */
+	protected $shortcutsPath;
+
+	/**
+	 * @var boolean
+	 */
+	protected $shortcutsNeedUpdate = FALSE;
+
+	/**
+	 * @var string
+	 */
 	protected $packageStatesPathAndFilename;
 
 	/**
@@ -118,6 +128,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->bootstrap = $bootstrap;
 		$this->packagesBasePath = $packagesBasePath;
 		$this->packageStatesPathAndFilename = ($packageStatesPathAndFilename === '') ? FLOW3_PATH_CONFIGURATION . 'PackageStates.php' : $packageStatesPathAndFilename;
+		$this->shortcutsPath = Files::concatenatePaths(array($this->packagesBasePath, '.Shortcuts'));
 
 		$this->loadPackageStates();
 
@@ -128,6 +139,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		$this->classLoader->setPackages($this->activePackages);
+
+		if ($this->shortcutsNeedUpdate === TRUE || !file_exists($this->shortcutsPath)) {
+			$this->updateShortcuts();
+		}
 
 		foreach ($this->activePackages as $package) {
 			$package->boot($bootstrap);
@@ -517,8 +532,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected function savePackageStates() {
 		$packageStatesCode = "<?php\n# This is a generated file, do not edit manually\n# Use the commands flow3:package:activate and flow3:package:deactivate for changes\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
 		file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
-
-		$this->updateShortcuts();
+		$this->shortcutsNeedUpdate = TRUE;
 	}
 
 	/**
@@ -527,19 +541,18 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @return void
 	 */
 	protected function updateShortcuts() {
-		$shortcutsPath = Files::concatenatePaths(array($this->packagesBasePath, '.Shortcuts'));
-		if (file_exists($shortcutsPath)) {
-			Files::removeDirectoryRecursively($shortcutsPath);
+		if (file_exists($this->shortcutsPath)) {
+			Files::removeDirectoryRecursively($this->shortcutsPath);
 		}
-		Files::createDirectoryRecursively($shortcutsPath);
+		Files::createDirectoryRecursively($this->shortcutsPath);
 		foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
 			$packageKeyParts = explode('.', $packageKey);
 			if (count($packageKeyParts) > 1) {
-				$basePath = Files::concatenatePaths(array($shortcutsPath, implode('/', array_slice($packageKeyParts, 0, -1))));
+				$basePath = Files::concatenatePaths(array($this->shortcutsPath, implode('/', array_slice($packageKeyParts, 0, -1))));
 				Files::createDirectoryRecursively($basePath);
 				$symlinkPathAndName = Files::concatenatePaths(array($basePath, array_pop($packageKeyParts)));
 			} else {
-				$symlinkPathAndName = Files::concatenatePaths(array($shortcutsPath, array_pop($packageKeyParts)));
+				$symlinkPathAndName = Files::concatenatePaths(array($this->shortcutsPath, array_pop($packageKeyParts)));
 			}
 			if (!file_exists($symlinkPathAndName)) {
 				symlink($stateConfiguration['packagePath'] . 'Classes/', $symlinkPathAndName);
