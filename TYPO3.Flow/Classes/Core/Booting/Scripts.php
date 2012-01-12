@@ -276,7 +276,8 @@ class Scripts {
 	 */
 	static public function initializeReflectionService(Bootstrap $bootstrap) {
 		$cacheManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager');
-		$settings = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
+		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
+		$settings = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
 
 		$reflectionService = new \TYPO3\FLOW3\Reflection\ReflectionService();
 
@@ -287,6 +288,7 @@ class Scripts {
 		$reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('FLOW3_ReflectionData'));
 		$reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ReflectionDataRuntimeCache'));
 		$reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ClassSchemataRuntimeCache'));
+		$reflectionService->injectSettings($configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3'));
 
 		$reflectionService->initialize($bootstrap);
 

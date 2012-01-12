@@ -112,16 +112,10 @@ class ReflectionService {
 	protected $settings;
 
 	/**
-	 * Array of annotations classnames and the names of classes which are annotated with them
+	 * Array of annotation classnames and the names of classes which are annotated with them
 	 * @var array
 	 */
 	protected $annotatedClasses = array();
-
-	/**
-	 * List of tags which are ignored while reflecting class and method tags and annotations
-	 * @var array
-	 */
-	protected $ignoredTags = array('api', 'package', 'subpackage', 'license', 'copyright', 'author', 'const', 'see', 'todo', 'scope', 'fixme', 'test', 'expectedException', 'dataProvider');
 
 	/**
 	 * Schemata of all classes which can be persisted
@@ -231,7 +225,7 @@ class ReflectionService {
 		}
 
 		$this->annotationReader = new \Doctrine\Common\Annotations\AnnotationReader();
-		foreach ($this->ignoredTags as $tag) {
+		foreach ($this->settings['reflection']['ignoredTags'] as $tag) {
 			\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName($tag);
 		}
 		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($this->classLoader, 'loadClass'));
@@ -1001,7 +995,7 @@ class ReflectionService {
 			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
 
 			foreach ($property->getTagsValues() as $tag => $values) {
-				if (array_search($tag, $this->ignoredTags) === FALSE) {
+				if (array_search($tag, $this->settings['reflection']['ignoredTags']) === FALSE) {
 					$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] = $values;
 				}
 			}
