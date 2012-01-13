@@ -119,7 +119,7 @@ class Translator {
 	 */
 	public function translateByOriginalLabel($originalLabel, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		if ($locale === NULL) {
-			$locale = $this->localizationService->getDefaultLocale();
+			$locale = $this->localizationService->getCurrentLocale();
 		}
 
 		if ($quantity === NULL) {
@@ -160,7 +160,7 @@ class Translator {
 	 */
 	public function translateById($labelId, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		if ($locale === NULL) {
-			$locale = $this->localizationService->getDefaultLocale();
+			$locale = $this->localizationService->getCurrentLocale();
 		}
 
 		if ($quantity === NULL) {

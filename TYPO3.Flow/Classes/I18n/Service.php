@@ -45,6 +45,13 @@ class Service {
 	protected $cache;
 
 	/**
+	 * The currently active locale
+	 *
+	 * @var \TYPO3\FLOW3\I18n\Locale
+	 */
+	protected $currentLocale;
+
+	/**
 	 * The base path to use in filesystem operations. It is changed only in tests.
 	 *
 	 * @var string
@@ -103,6 +110,29 @@ class Service {
 			$this->generateAvailableLocalesCollectionByScanningFilesystem();
 			$this->cache->set('availableLocales', $this->localeCollection);
 		}
+	}
+
+	/**
+	 * Set the current active Locale object of this service
+	 *
+	 * @param \TYPO3\FLOW3\I18n\Locale $currentLocale
+	 * @return void
+	 */
+	public function setCurrentLocale(\TYPO3\FLOW3\I18n\Locale $currentLocale) {
+		$this->currentLocale = $currentLocale;
+	}
+
+	/**
+	 * Returns the current active Locale object of this service
+	 *
+	 * @return \TYPO3\FLOW3\I18n\Locale
+	 */
+	public function getCurrentLocale() {
+		if (!$this->currentLocale instanceof \TYPO3\FLOW3\I18n\Locale
+				|| $this->currentLocale->getLanguage() === 'mul') {
+			return $this->getDefaultLocale();
+		}
+		return $this->currentLocale;
 	}
 
 	/**
