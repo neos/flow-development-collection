@@ -46,7 +46,6 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function modelIsReturnedCorrectlyForSingleFile() {
 		file_put_contents('vfs://Foo/Bar.xml', '');
 
-			// Second access should not invoke objectManager request
 		$result = $this->repository->getModel('Bar');
 		$this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths',  $result);
 
@@ -61,17 +60,12 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Directory');
 		file_put_contents('vfs://Foo/Directory/en.xml', '');
 
-		$mockLocalizationService = $this->getMock('TYPO3\FLOW3\I18n\Service');
-		$mockLocalizationService->expects($this->once())->method('getParentLocaleOf')->will($this->returnValue(NULL));
-
-		$this->repository->injectLocalizationService($mockLocalizationService);
-
 		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
 		$this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths',  $result);
 		$this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths',  $result);
 
 		$result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
-		$this->assertEquals(FALSE, $result);
+		$this->assertEquals(NULL, $result);
 	}
 }
 

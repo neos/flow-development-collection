@@ -100,7 +100,7 @@ class CldrRepository {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return \TYPO3\FLOW3\I18n\Cldr\CldrModel|boolean A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
+	 * @return \TYPO3\FLOW3\I18n\Cldr\CldrModel A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or NULL on failure
 	 */
 	public function getModelForLocale(\TYPO3\FLOW3\I18n\Locale $locale, $directoryPath = 'main') {
 		$directoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
@@ -110,7 +110,7 @@ class CldrRepository {
 		}
 
 		if (!is_dir($directoryPath)) {
-			return FALSE;
+			return NULL;
 		}
 
 		$filesInHierarchy = $this->findLocaleChain($locale, $directoryPath);
@@ -127,17 +127,20 @@ class CldrRepository {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return array<string> Absoulte paths to CLDR files in hierarchy
+	 * @return array<string> Absolute paths to CLDR files in hierarchy
 	 */
 	protected function findLocaleChain(\TYPO3\FLOW3\I18n\Locale $locale, $directoryPath) {
-		$filesInHierarchy = array();
-		$filesInHierarchy[] = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml'));
-		while (($parentLocale = $this->localizationService->getParentLocaleOf($locale)) !== NULL) {
-			$filesInHierarchy[] = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$parentLocale . '.xml'));
-		}
-		$filesInHierarchy[] = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml'));
+		$filesInHierarchy = array(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
 
-		rsort($filesInHierarchy);
+		$localeIdentifier = (string)$locale;
+		while ($localeIdentifier = substr($localeIdentifier, 0, (int)strrpos($localeIdentifier, '_'))) {
+			$possibleFileName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, $localeIdentifier . '.xml'));
+			if (file_exists($possibleFileName)) {
+				array_unshift($filesInHierarchy, $possibleFileName);
+			}
+		}
+		array_unshift($filesInHierarchy, \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
+
 		return $filesInHierarchy;
 	}
 }
