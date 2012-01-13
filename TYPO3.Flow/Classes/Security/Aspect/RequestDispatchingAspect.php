@@ -79,7 +79,9 @@ class RequestDispatchingAspect {
 						$this->securityLogger->log('Starting authentication with entry point of type ' . get_class($entryPoint), LOG_INFO);
 					}
 					$rootRequest = $request;
-					if ($request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) $rootRequest = $request->getRootRequest();
+					if ($request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) {
+						$rootRequest = $request->getRootRequest();
+					}
 					$this->securityContext->setInterceptedRequest($rootRequest);
 					$entryPoint->startAuthentication($rootRequest, $response);
 				}
