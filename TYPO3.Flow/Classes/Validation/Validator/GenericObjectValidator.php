@@ -22,6 +22,11 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	/**
 	 * @var array
 	 */
+	protected $options = array();
+
+	/**
+	 * @var array
+	 */
 	protected $propertyValidators = array();
 
 	/**
@@ -31,12 +36,12 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	static protected $instancesCurrentlyUnderValidation;
 
 	/**
-	 * Sets validation options for the validator
+	 * Constructs the object validator and sets validation options
 	 *
-	 * @param array $validationOptions The validation options
-	 * @return void
+	 * @param array $options The validation options
 	 */
-	public function __construct($validationOptions) {
+	public function __construct(array $options = array()) {
+		$this->options = $options;
 	}
 
 	/**
@@ -44,7 +49,7 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param mixed $value The value that should be validated
+	 * @param mixed $object The value that should be validated
 	 * @return \TYPO3\FLOW3\Error\Result
 	 * @api
 	 */
@@ -156,6 +161,15 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 		} else {
 			return $this->propertyValidators;
 		}
+	}
+
+	/**
+	 * Returns the options of this validator
+	 *
+	 * @return array
+	 */
+	public function getOptions() {
+		return $this->options;
 	}
 }
 

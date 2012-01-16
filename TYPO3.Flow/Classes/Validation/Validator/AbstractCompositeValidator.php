@@ -20,17 +20,23 @@ namespace TYPO3\FLOW3\Validation\Validator;
 abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
 
 	/**
+	 * @var array
+	 */
+	protected $options = array();
+
+	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $validators;
 
 	/**
-	 * Constructs the validator conjunction
+	 * Constructs the composite validator and sets validation options
 	 *
-	 * @param array $validationOptions The validation options
+	 * @param array $options Options for the validator
 	 * @api
 	 */
-	public function __construct($validationOptions = array()) {
+	public function __construct(array $options = array()) {
+		$this->options = $options;
 		$this->validators = new \SplObjectStorage();
 	}
 
@@ -64,6 +70,24 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 */
 	public function count() {
 		return count($this->validators);
+	}
+
+	/**
+	 * Returns the child validators of this Composite Validator
+	 *
+	 * @return \SplObjectStorage
+	 */
+	public function getValidators() {
+		return $this->validators;
+	}
+
+	/**
+	 * Returns the options for this validator
+	 *
+	 * @return array
+	 */
+	public function getOptions() {
+		return $this->options;
 	}
 }
 

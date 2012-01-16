@@ -30,14 +30,13 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	protected $result;
 
 	/**
-	 * Sets options for the validator
+	 * Constructs the validator and sets validation options
 	 *
-	 * @param array $validationOptions Options for the validator
-	 * @return void
+	 * @param array $options Options for the validator
 	 * @api
 	 */
-	public function __construct(array $validationOptions = array()) {
-		$this->options = $validationOptions;
+	public function __construct(array $options = array()) {
+		$this->options = $options;
 	}
 
 	/**
@@ -73,6 +72,15 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	 */
 	protected function addError($message, $code, array $arguments = array()) {
 		$this->result->addError(new \TYPO3\FLOW3\Validation\Error($message, $code, $arguments));
+	}
+
+	/**
+	 * Returns the options of this validator
+	 *
+	 * @return array
+	 */
+	public function getOptions() {
+		return $this->options;
 	}
 }
 

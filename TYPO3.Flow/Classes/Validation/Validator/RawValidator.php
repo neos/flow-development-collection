@@ -31,5 +31,14 @@ class RawValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterfa
 	public function validate($value) {
 		return new \TYPO3\FLOW3\Error\Result();
 	}
+
+	/**
+	 * Returns the options of this validator (not used for this validator)
+	 *
+	 * @return array
+	 */
+	public function getOptions() {
+		return array();
+	}
 }
 ?>

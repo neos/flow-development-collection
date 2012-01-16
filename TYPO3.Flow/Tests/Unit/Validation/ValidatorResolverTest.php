@@ -77,6 +77,7 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 					$this->validatorOptions = $validatorOptions;
 				}
 				public function validate($subject) {}
+				public function getOptions() { return array(); }
 			}');
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getScope')->with($className)->will($this->returnValue(\TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE));

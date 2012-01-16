@@ -19,12 +19,12 @@ namespace TYPO3\FLOW3\Validation\Validator;
 interface ValidatorInterface {
 
 	/**
-	 * Sets validation options for the validator
+	 * Constructs the validator and sets validation options
 	 *
-	 * @param array $validationOptions The validation options
+	 * @param array $options The validation options
 	 * @api
 	 */
-	//public function __construct(array $validationOptions = array());
+	//public function __construct(array $options = array());
 
 	/**
 	 * Checks if the given value is valid according to the validator, and returns
@@ -35,6 +35,13 @@ interface ValidatorInterface {
 	 * @api
 	 */
 	public function validate($value);
+
+	/**
+	 * Returns the options of this validator which can be specified in the constructor
+	 *
+	 * @return array
+	 */
+	public function getOptions();
 
 }
 ?>
