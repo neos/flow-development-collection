@@ -346,12 +346,12 @@ class NumbersReader {
 			$negativeFormat = NULL;
 		}
 
-		if (preg_match(self::PATTERN_MATCH_SUBFORMAT, $positiveFormat, $matches)) {
+		if (preg_match(self::PATTERN_MATCH_SUBFORMAT, $positiveFormat, $matches) === 1) {
 			$parsedFormat['positivePrefix'] = $matches[1];
 			$parsedFormat['positiveSuffix'] = $matches[2];
 		}
 
-		if ($negativeFormat !== NULL && preg_match(self::PATTERN_MATCH_SUBFORMAT, $negativeFormat, $matches)) {
+		if ($negativeFormat !== NULL && preg_match(self::PATTERN_MATCH_SUBFORMAT, $negativeFormat, $matches) === 1) {
 			$parsedFormat['negativePrefix'] = $matches[1];
 			$parsedFormat['negativeSuffix'] = $matches[2];
 		} else {
@@ -365,7 +365,7 @@ class NumbersReader {
 			$parsedFormat['multiplier'] = 1000;
 		}
 
-		if (preg_match(self::PATTERN_MATCH_ROUNDING, $format, $matches)) {
+		if (preg_match(self::PATTERN_MATCH_ROUNDING, $format, $matches) === 1) {
 			$parsedFormat['rounding'] = (float)$matches[1];
 			$format = preg_replace('/[1-9]/', '0', $format);
 		}
