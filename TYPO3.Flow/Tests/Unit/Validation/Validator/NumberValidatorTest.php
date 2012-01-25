@@ -36,7 +36,21 @@ class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
 
 		$this->mockNumberParser = $this->getMock('TYPO3\FLOW3\I18n\Parser\NumberParser');
-		
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
 	}
 
 	/**

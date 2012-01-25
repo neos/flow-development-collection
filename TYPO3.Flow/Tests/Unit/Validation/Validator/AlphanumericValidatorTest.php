@@ -24,6 +24,20 @@ class AlphanumericValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	/**
 	 * @test
 	 */
+	public function alphanumericValidatorShouldReturnNoErrorsIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function alphanumericValidatorShouldReturnNoErrorsIfTheGivenStringIsEmpty() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericString() {
 		$this->assertFalse($this->validator->validate('12ssDF34daweidf')->hasErrors());
 	}

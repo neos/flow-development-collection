@@ -28,7 +28,7 @@ interface ValidatorInterface {
 
 	/**
 	 * Checks if the given value is valid according to the validator, and returns
-	 * the Error Messages object which occured.
+	 * the Error Messages object which occurred.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return \TYPO3\FLOW3\Error\Result

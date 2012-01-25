@@ -28,7 +28,8 @@ class UuidValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator 
 	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a formally valid UUID.
+	 * Checks if the given value is a syntactically valid UUID.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

@@ -22,6 +22,20 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\FloatValidator';
 
 	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
 	 * Data provider with valid floats
 	 *
 	 * @return array
@@ -54,6 +68,7 @@ class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 		return array(
 			array(1029437),
 			array('1029437'),
+			array('foo.bar'),
 			array('not a number')
 		);
 	}

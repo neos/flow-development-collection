@@ -24,6 +24,20 @@ class NumberRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valida
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function numberRangeValidatorReturnsNoErrorForASimpleIntegerInRange() {
 		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
 

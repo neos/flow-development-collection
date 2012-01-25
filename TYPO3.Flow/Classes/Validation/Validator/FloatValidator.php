@@ -22,19 +22,20 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class FloatValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Checks if the given value is a valid float.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * The given $value is valid if it is of type float or a string matching the regular expression [0-9.e+-]
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
 	 * @api
 	 */
 	protected function isValid($value) {
-		if (is_float($value) || (is_string($value) && strpos($value, '.') !== FALSE && preg_match('/^[0-9.e+-]+$/', $value))) {
+		if (is_float($value)) {
 			return;
 		}
-		$this->addError('A valid float number is expected.', 1221560288);
+		if (!is_string($value) || strpos($value, '.') === FALSE || preg_match('/^[0-9.e+-]+$/', $value) !== 1) {
+			$this->addError('A valid float number is expected.', 1221560288);
+		}
 	}
 }
 

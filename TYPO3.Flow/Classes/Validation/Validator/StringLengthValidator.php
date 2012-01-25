@@ -20,35 +20,38 @@ namespace TYPO3\FLOW3\Validation\Validator;
 class StringLengthValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($value) is a valid string and its length
-	 * is between 'minimum' (defaults to 0 if not specified) and 'maximum' (defaults to infinite if not specified)
-	 * to be specified in the validation options.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * Checks if the given $value is a valid string and its length is between 'minimum' (defaults to 0 if not specified)
+	 * and 'maximum' (defaults to infinite if not specified) to be specified in the validation options.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
 	 * @api
 	 */
 	protected function isValid($value) {
 		if (isset($this->options['minimum']) && isset($this->options['maximum'])
 			&& $this->options['maximum'] < $this->options['minimum']) {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
+			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is less than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
 		if (is_object($value)) {
 			if (!method_exists($value, '__toString')) {
-				throw new \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
+				$this->addError('The given object could not be converted to a string.', 1238110957);
+				return;
 			}
 		} elseif (!is_string($value)) {
 			$this->addError('The given value was not a valid string.', 1269883975);
+			return;
 		}
 
 		$stringLength = strlen($value);
 		$isValid = TRUE;
-		if (isset($this->options['minimum']) && $stringLength < $this->options['minimum']) $isValid = FALSE;
-		if (isset($this->options['maximum']) && $stringLength > $this->options['maximum']) $isValid = FALSE;
+		if (isset($this->options['minimum']) && $stringLength < $this->options['minimum']) {
+			$isValid = FALSE;
+		}
+		if (isset($this->options['maximum']) && $stringLength > $this->options['maximum']) {
+			$isValid = FALSE;
+		}
 
 		if ($isValid === FALSE) {
 			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {

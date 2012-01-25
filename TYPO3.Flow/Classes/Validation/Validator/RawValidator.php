@@ -19,34 +19,16 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class RawValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
+class RawValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Sets options for the validator
+	 * This validator is always valid
 	 *
-	 * @param array $validationOptions Options for the validator
+	 * @param mixed $value The value that should be validated (not used here)
+	 * @return void
 	 * @api
 	 */
-	public function __construct(array $validationOptions = array()) {}
-
-	/**
-	 * Always returns an empty result.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @return \TYPO3\FLOW3\Error\Result
-	 * @api
-	 */
-	public function validate($value) {
-		return new \TYPO3\FLOW3\Error\Result();
-	}
-
-	/**
-	 * Returns the options of this validator (not used for this validator)
-	 *
-	 * @return array
-	 */
-	public function getOptions() {
-		return array();
+	public function isValid($value) {
 	}
 }
 ?>

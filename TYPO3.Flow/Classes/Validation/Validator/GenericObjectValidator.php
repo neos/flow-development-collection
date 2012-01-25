@@ -17,12 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
-
-	/**
-	 * @var array
-	 */
-	protected $options = array();
+class GenericObjectValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * @var array
@@ -36,52 +31,37 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 	static protected $instancesCurrentlyUnderValidation;
 
 	/**
-	 * Constructs the object validator and sets validation options
-	 *
-	 * @param array $options The validation options
-	 */
-	public function __construct(array $options = array()) {
-		$this->options = $options;
-	}
-
-	/**
 	 * Checks if the given value is valid according to the property validators
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $object The value that should be validated
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return void
 	 * @api
 	 */
-	public function validate($object) {
-		$messages = new \TYPO3\FLOW3\Error\Result();
-
+	protected function isValid($object) {
 		if (self::$instancesCurrentlyUnderValidation === NULL) {
 			self::$instancesCurrentlyUnderValidation = new \SplObjectStorage();
 		}
-
-		if ($object === NULL) {
-			return $messages;
-		}
-
 		if (!is_object($object)) {
-			$messages->addError(new \TYPO3\FLOW3\Validation\Error('Object expected, %1$s given.', 1241099149, array(gettype($object))));
-			return $messages;
+			$this->addError('Object expected, %1$s given.', 1241099149, array(gettype($object)));
+			return;
 		}
 
 		if (self::$instancesCurrentlyUnderValidation->contains($object)) {
-			return $messages;
+			return;
 		} else {
 			self::$instancesCurrentlyUnderValidation->attach($object);
 		}
 
+		$messages = new \TYPO3\FLOW3\Error\Result();
 		foreach ($this->propertyValidators as $propertyName => $validators) {
 			$propertyValue = $this->getPropertyValue($object, $propertyName);
 			$this->checkProperty($propertyValue, $validators, $messages->forProperty($propertyName));
 		}
+		$this->result = $messages;
 
 		self::$instancesCurrentlyUnderValidation->detach($object);
-		return $messages;
+		return;
 	}
 
 	/**
@@ -161,15 +141,6 @@ class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\Valida
 		} else {
 			return $this->propertyValidators;
 		}
-	}
-
-	/**
-	 * Returns the options of this validator
-	 *
-	 * @return array
-	 */
-	public function getOptions() {
-		return $this->options;
 	}
 }
 

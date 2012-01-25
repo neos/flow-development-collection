@@ -20,10 +20,10 @@ namespace TYPO3\FLOW3\Validation\Validator;
 class CountValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns no error, if the given property ($propertyValue) has a valid count in the given range.
+	 * The given $value is valid if it is an array or \Countable that contains the specified amount of elements.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
 	 * @api
 	 */
@@ -35,9 +35,9 @@ class CountValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator
 
 		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
 		$maximum = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
-		if (count($value) >= $minimum && count($value) <= $maximum) return;
-
-		$this->addError('The count must be between %1$d and %2$d.', 1253718831, array($minimum, $maximum));
+		if (count($value) < $minimum || count($value) > $maximum) {
+			$this->addError('The count must be between %1$d and %2$d.', 1253718831, array($minimum, $maximum));
+		}
 	}
 }
 

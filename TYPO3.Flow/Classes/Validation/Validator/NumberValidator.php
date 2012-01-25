@@ -47,8 +47,7 @@ class NumberValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidato
 
 	/**
 	 * Checks if the given value is a valid number.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -90,14 +89,11 @@ class NumberValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidato
 		if ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT) {
 			if ($this->numberParser->parsePercentNumber($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid percent number is expected.', 1281452093);
-			} else {
-				return;
 			}
+			return;
 		} else {
 			if ($this->numberParser->parseDecimalNumber($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid decimal number is expected.', 1281452094);
-			} else {
-				return;
 			}
 		}
 	}

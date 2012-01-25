@@ -20,6 +20,16 @@ namespace TYPO3\FLOW3\Validation\Validator;
 abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
+	 * Specifies whether this validator accepts empty values.
+	 * If this is TRUE, the validators isValid() method is not called in case of an empty value
+	 * Note: A value is considered empty if it is NULL or an empty string!
+	 * By default all validators except for NotEmpty and the Composite Validators accept empty values
+	 *
+	 * @var boolean
+	 */
+	protected $acceptsEmptyValues = TRUE;
+
+	/**
 	 * @var array
 	 */
 	protected $options = array();
@@ -41,7 +51,7 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 
 	/**
 	 * Checks if the given value is valid according to the validator, and returns
-	 * the Error Messages object which occured.
+	 * the Error Messages object which occurred.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return \TYPO3\FLOW3\Error\Result
@@ -49,7 +59,9 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	 */
 	public function validate($value) {
 		$this->result = new \TYPO3\FLOW3\Error\Result();
-		$this->isValid($value);
+		if ($this->acceptsEmptyValues === FALSE || $this->isEmpty($value) === FALSE) {
+			$this->isValid($value);
+		}
 		return $this->result;
 	}
 
@@ -57,7 +69,9 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	 * Check if $value is valid. If it is not valid, needs to add an error
 	 * to Result.
 	 *
+	 * @param mixed $value
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException if invalid validation options have been specified in the constructor
 	 */
 	abstract protected function isValid($value);
 
@@ -81,6 +95,14 @@ abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\Va
 	 */
 	public function getOptions() {
 		return $this->options;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return boolean TRUE if the given $value is NULL or an empty string ('')
+	 */
+	private function isEmpty($value) {
+		return $value === NULL || $value === '';
 	}
 }
 

@@ -24,6 +24,20 @@ class TextValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function textValidatorReturnsNoErrorForASimpleString() {
 		$this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
 	}

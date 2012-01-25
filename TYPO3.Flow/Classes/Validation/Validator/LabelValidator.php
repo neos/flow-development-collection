@@ -28,9 +28,8 @@ class LabelValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator
 	const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid "label".
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * The given $value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

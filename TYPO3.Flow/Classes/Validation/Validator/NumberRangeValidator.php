@@ -20,12 +20,10 @@ namespace TYPO3\FLOW3\Validation\Validator;
 class NumberRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid number in the given range.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * The given $value is valid if it is a number in the specified range.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
 	 * @api
 	 */
@@ -42,11 +40,9 @@ class NumberRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVal
 			$minimum = $maximum;
 			$maximum = $x;
 		}
-		if ($value >= $minimum && $value <= $maximum) {
-			return;
+		if ($value < $minimum || $value > $maximum) {
+			$this->addError('Please enter a valid number between %1$d and %2$d.', 1221561046, array($minimum, $maximum));
 		}
-
-		$this->addError('Please enter a valid number between %1$d and %2$d.', 1221561046, array($minimum, $maximum));
 	}
 }
 

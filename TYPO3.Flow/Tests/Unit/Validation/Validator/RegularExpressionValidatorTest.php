@@ -24,6 +24,22 @@ class RegularExpressionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->validatorOptions(array('regularExpression' => '/^.*$/'));
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->validatorOptions(array('regularExpression' => '/^.*$/'));
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
 		$this->validatorOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 

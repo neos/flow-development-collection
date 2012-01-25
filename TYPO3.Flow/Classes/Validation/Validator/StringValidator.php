@@ -22,9 +22,8 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class StringValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($value) is a valid string.
-	 *
-	 * Otherwise, it is FALSE.
+	 * Checks if the given $value is a valid string.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

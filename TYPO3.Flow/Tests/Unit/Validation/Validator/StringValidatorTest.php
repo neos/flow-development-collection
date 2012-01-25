@@ -23,6 +23,20 @@ class StringValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function stringValidatorShouldValidateString() {
 		$this->assertFalse($this->validator->validate('Hello World')->hasErrors());
 	}

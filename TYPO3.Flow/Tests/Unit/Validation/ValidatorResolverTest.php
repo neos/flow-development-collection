@@ -72,12 +72,12 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function createValidatorResolvesAndReturnsAValidatorAndPassesTheGivenOptions() {
 		$className = 'Test' . md5(uniqid(mt_rand(), TRUE));
 		eval("class $className implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {" . '
-				public $validatorOptions;
-				public function __construct($validatorOptions) {
-					$this->validatorOptions = $validatorOptions;
+				protected $options = array();
+				public function __construct(array $options = array()) {
+					$this->options = $options;
 				}
 				public function validate($subject) {}
-				public function getOptions() { return array(); }
+				public function getOptions() { return $this->options; }
 			}');
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getScope')->with($className)->will($this->returnValue(\TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
@@ -87,7 +87,7 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with($className)->will($this->returnValue($className));
 		$validator = $validatorResolver->createValidator($className, array('foo' => 'bar'));
 		$this->assertInstanceOf($className, $validator);
-		$this->assertEquals(array('foo' => 'bar'), $validator->validatorOptions);
+		$this->assertEquals(array('foo' => 'bar'), $validator->getOptions());
 	}
 
 	/**

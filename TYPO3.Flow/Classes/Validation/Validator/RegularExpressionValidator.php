@@ -22,9 +22,8 @@ namespace TYPO3\FLOW3\Validation\Validator;
 class RegularExpressionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($value) matches the given regular expression.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * Checks if the given value matches the specified regular expression.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

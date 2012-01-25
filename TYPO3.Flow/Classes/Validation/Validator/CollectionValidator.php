@@ -34,7 +34,6 @@ class CollectionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVali
 	 * @return void
 	 */
 	protected function isValid($value) {
-		if ($value === NULL) return;
 		if ((is_object($value) && !\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType(get_class($value))) && is_array($value) === FALSE) {
 			$this->addError('The given subject was not a collection.', 1317204797);
 			return;

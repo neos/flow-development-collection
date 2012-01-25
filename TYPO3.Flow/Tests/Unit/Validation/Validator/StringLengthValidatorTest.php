@@ -24,6 +24,20 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function stringLengthValidatorReturnsNoErrorForAStringShorterThanMaxLengthAndLongerThanMinLength() {
 		$this->validatorOptions(array('minimum' => 0, 'maximum' => 50));
 		$this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
@@ -143,9 +157,8 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
 	 */
-	public function stringLengthValidatorThrowsAnExceptionIfTheGivenObjectCanNotBeConvertedToAString() {
+	public function validateReturnsErrorsIfTheGivenObjectCanNotBeConvertedToAString() {
 		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
 
@@ -158,7 +171,7 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 		');
 
 		$object = new $className();
-		$this->validator->validate($object);
+		$this->assertTrue($this->validator->validate($object)->hasErrors());
 	}
 }
 

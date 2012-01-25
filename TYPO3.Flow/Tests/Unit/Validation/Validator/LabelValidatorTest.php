@@ -22,6 +22,20 @@ class LabelValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\LabelValidator';
 
 	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
 	 * Data provider with valid labels
 	 *
 	 * @return array

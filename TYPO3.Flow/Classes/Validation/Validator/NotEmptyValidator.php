@@ -22,9 +22,17 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class NotEmptyValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
+	 * This validator always needs to be executed even if the given value is empty.
+	 * See AbstractValidator::validate()
+	 *
+	 * @var boolean
+	 */
+	protected $acceptsEmptyValues = FALSE;
+
+	/**
 	 * Checks if the given property ($propertyValue) is not empty (NULL or empty string).
 	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * If at least one error occurred, the $this->result->hasErrors() is TRUE.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -33,8 +41,7 @@ class NotEmptyValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	protected function isValid($value) {
 		if ($value === NULL) {
 			$this->addError('This property is required.', 1221560910);
-		}
-		if ($value === '') {
+		} elseif ($value === '') {
 			$this->addError('This property is required.', 1221560718);
 		}
 	}

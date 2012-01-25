@@ -48,6 +48,8 @@ class DateTimeRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 	 *   earliestDate: 2007-03-01T13:00:00Z
 	 *   latestDate: 2007-03-30T13:00:00Z
 	 *
+	 * Note: a value of NULL or empty string ('') is considered valid
+	 *
 	 *
 	 * @param mixed $dateTime The DateTime value that should be validated
 	 * @return void
@@ -104,8 +106,7 @@ class DateTimeRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 			$date = new \DateTime($referenceDateParts[0]);
 			return $date->add($interval);
 		} else {
-			$exceptionMessage = 'There is no valid interval declaration in "' . $referenceDateString . '". Exactly one part must begin with "P".';
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException($exceptionMessage, 1324314462);
+			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException(sprintf('There is no valid interval declaration in "%s". Exactly one part must begin with "P".', $referenceDateString), 1324314462);
 		}
 	}
 }

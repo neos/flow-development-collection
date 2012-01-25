@@ -23,7 +23,6 @@ class EmailAddressValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVa
 
 	/**
 	 * Checks if the given value is a valid email address.
-	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * The regexp is a modified version of the last one shown on
 	 * http://www.regular-expressions.info/email.html
@@ -115,12 +114,14 @@ class EmailAddressValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVa
 	 * ?:\r\n)?[ \t])*))*)?;\s*)
 	 * (from http://ex-parrot.com/~pdw/Mail-RFC822-Address.html)
 	 *
+	 * Note: a value of NULL or empty string ('') is considered valid
+	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
 	 * @api
 	 */
 	protected function isValid($value) {
-		if(is_string($value) && preg_match('
+		if(!is_string($value) || preg_match('
 				/^
 					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
 					@
@@ -129,10 +130,9 @@ class EmailAddressValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVa
 						localhost|
 						(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5]))
 					)
-				$/Dix', $value)) {
-			return;
+				$/Dix', $value) !== 1) {
+			$this->addError('Please specify a valid email address.', 1221559976);
 		}
-		$this->addError('Please specify a valid email address.', 1221559976);
 	}
 }
 

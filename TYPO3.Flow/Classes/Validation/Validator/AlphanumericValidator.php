@@ -22,17 +22,17 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class AlphanumericValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid
-	 * alphanumeric string, which is defined as [a-zA-Z0-9]*.
+	 * The given $value is valid if it is an alphanumeric string, which is defined as [a-zA-Z0-9]
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException if this validator cannot validate the given value
 	 * @api
 	 */
 	protected function isValid($value) {
-		if (is_string($value) && preg_match('/^[a-z0-9]*$/i', $value)) return;
-		$this->addError('Only the characters a to z and numbers are allowed.', 1221551320);
+		if (!is_string($value) || preg_match('/^[a-z0-9]*$/i', $value) !== 1) {
+			$this->addError('Only the characters a to z and numbers are allowed.', 1221551320);
+		}
 	}
 }
 

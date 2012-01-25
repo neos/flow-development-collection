@@ -22,6 +22,23 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\CountValidator';
 
 	/**
+	 * @test
+	 */
+	public function countValidatorReturnsNoErrorsIfTheGivenValueIsNull() {
+		$this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countValidatorReturnsNoErrorsIfTheGivenStringIsEmpty() {
+		$this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @return array
 	 */
 	public function countables() {
 		$splObjectStorage = new \SplObjectStorage();
@@ -37,7 +54,7 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * @test
 	 * @dataProvider countables
 	 */
-	public function countValidatorReturnsTrueForValidCountables($countable) {
+	public function countValidatorReturnsNoErrorsForValidCountables($countable) {
 		$this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
 		$this->assertFalse($this->validator->validate($countable)->hasErrors());
 	}
@@ -46,7 +63,7 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * @test
 	 * @dataProvider countables
 	 */
-	public function countValidatorReturnsFalseForInvalidCountables($countable) {
+	public function countValidatorReturnsErrorsForInvalidCountables($countable) {
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 10));
 		$this->assertTrue($this->validator->validate($countable)->hasErrors());
 	}
@@ -67,7 +84,7 @@ class CountValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Ab
 	 * @test
 	 * @dataProvider nonCountables
 	 */
-	public function countValidatorReturnsFalseForNonCountables($nonCountable) {
+	public function countValidatorReturnsErrorsForNonCountables($nonCountable) {
 		$this->assertTrue($this->validator->validate($nonCountable)->hasErrors());
 	}
 }

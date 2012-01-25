@@ -24,6 +24,13 @@ class GenericObjectValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Vali
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function validatorShouldReturnErrorsIfTheValueIsNoObjectAndNotNull() {
 		$this->assertTrue($this->validator->validate('foo')->hasErrors());
 	}

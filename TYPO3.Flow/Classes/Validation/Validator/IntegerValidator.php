@@ -23,17 +23,16 @@ class IntegerValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidat
 
 	/**
 	 * Checks if the given value is a valid integer.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
 	 * @api
 	 */
 	protected function isValid($value) {
-		if (filter_var($value, FILTER_VALIDATE_INT) !== FALSE) return;
-		$this->addError('A valid integer number is expected.', 1221560494);
+		if (filter_var($value, FILTER_VALIDATE_INT) === FALSE) {
+			$this->addError('A valid integer number is expected.', 1221560494);
+		}
 	}
 }
 

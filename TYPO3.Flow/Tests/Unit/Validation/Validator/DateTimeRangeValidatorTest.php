@@ -71,6 +71,22 @@ class DateTimeRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Vali
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
+		$this->validatorOptions(array('earliestDate' => '2007-03-01T13:00:00Z'));
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString() {
+		$this->validatorOptions(array('earliestDate' => '2007-03-01T13:00:00Z'));
+		$this->assertFalse($this->validator->validate('')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function validateReturnsOneErrorIfGivenValueIsNoDate() {
 		$this->validatorOptions(array('earliestDate' => '2007-03-01T13:00:00Z'));
 

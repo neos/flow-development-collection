@@ -47,9 +47,9 @@ class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 
 	/**
 	 * Checks if the given value is a valid DateTime object.
+	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param array $validationOptions Not used
 	 * @return void
 	 * @api
 	 */
@@ -88,20 +88,14 @@ class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 		if ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
 			if ($this->datetimeParser->parseTime($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid time is expected.', 1281454830);
-			} else {
-				return;
 			}
 		} elseif ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
 			if ($this->datetimeParser->parseDateAndTime($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid date and time is expected.', 1281454831);
-			} else {
-				return;
 			}
 		} else {
 			if ($this->datetimeParser->parseDate($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid date is expected.', 1281454832);
-			} else {
-				return;
 			}
 		}
 	}
