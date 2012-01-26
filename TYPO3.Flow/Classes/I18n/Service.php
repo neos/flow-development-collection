@@ -130,7 +130,7 @@ class Service {
 	 *
 	 * @param string $filename Path to the file
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of localized file
-	 * @param bool $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
+	 * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
 	 * @return string Path to the localized file, or $filename when no localized file was found
 	 * @api
 	 */

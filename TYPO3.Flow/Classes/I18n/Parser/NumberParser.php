@@ -56,7 +56,7 @@ class NumberParser {
 	 * @param string $numberToParse Number to be parsed
 	 * @param string $format Number format to use
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @api
 	 */
@@ -70,7 +70,7 @@ class NumberParser {
 	 * @param string $numberToParse Number to be parsed
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @api
 	 */
@@ -85,7 +85,7 @@ class NumberParser {
 	 * @param string $numberToParse Number to be parsed
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @api
 	 */
@@ -100,7 +100,7 @@ class NumberParser {
 	 * @param string $numberToParse Number to be parsed
 	 * @param array $parsedFormat Parsed format (from NumbersReader)
 	 * @param array $localizedSymbols An array with symbols to use
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 */
 	protected function doParsingWithParsedFormat($numberToParse, array $parsedFormat, array $localizedSymbols, $strictMode) {

@@ -59,7 +59,7 @@ class DatetimeParser {
 	 * @param \DateTime $datetimeToParse PHP object representing particular point in time
 	 * @param string $format Format string
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale used for finding literals array
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date / time elements, FALSE on failure
 	 * @api
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
@@ -75,7 +75,7 @@ class DatetimeParser {
 	 * @param \DateTime $dateToParse PHP object representing particular point in time
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date elements, FALSE on failure
 	 * @api
 	 */
@@ -91,7 +91,7 @@ class DatetimeParser {
 	 * @param \DateTime $timeToParse PHP object representing particular point in time
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed time elements, FALSE on failure
 	 * @api
 	 */
@@ -107,7 +107,7 @@ class DatetimeParser {
 	 * @param \DateTime $dateAndTimeToParse PHP object representing particular point in time
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date and time elements, FALSE on failure
 	 */
 	public function parseDateAndTime($dateAndTimeToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
@@ -121,7 +121,7 @@ class DatetimeParser {
 	 * @param string $datetimeToParse Number to be parsed
 	 * @param array $parsedFormat Parsed format (from NumbersReader)
 	 * @param array $localizedLiterals An array with symbols to use
-	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
+	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date and / or time elements, FALSE on failure
 	 */
 	protected function doParsingWithParsedFormat($datetimeToParse, array $parsedFormat, array $localizedLiterals, $strictMode) {
@@ -535,7 +535,7 @@ class DatetimeParser {
 	 * Number is also checked for constraints: minimum and maximum value.
 	 *
 	 * @param string $datetimeToParse Date/time to be parsed
-	 * @param bool $isTwoDigits TRUE if number has surely two digits, FALSE if it has one or two digits
+	 * @param boolean $isTwoDigits TRUE if number has surely two digits, FALSE if it has one or two digits
 	 * @param int $minValue
 	 * @param int $maxValue
 	 * @return int Parsed number
