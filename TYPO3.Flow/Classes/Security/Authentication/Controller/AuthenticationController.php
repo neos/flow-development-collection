@@ -35,10 +35,14 @@ class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 
 	/**
 	 * Calls the authentication manager to authenticate all active tokens
-	 * and redirects to the original intercepted request on success (if there
-	 * is one stored in the security context)
+	 * and redirects to the original intercepted request on success if there
+	 * is one stored in the security context. If no intercepted request is
+	 * found, the function simply returns.
 	 *
-	 * @return void
+	 * If authentication fails, the result of calling the defined
+	 * $errorMethodName is returned.
+	 *
+	 * @return string
 	 */
 	public function authenticateAction() {
 		$authenticated = FALSE;
@@ -57,7 +61,7 @@ class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 				$this->redirect($storedRequest->getControllerActionName(), $storedRequest->getControllerName(), $packageKey, $storedRequest->getArguments());
 			}
 		} else {
-			return $this->errorAction();
+			return call_user_func(array($this, $this->errorMethodName));
 		}
 	}
 

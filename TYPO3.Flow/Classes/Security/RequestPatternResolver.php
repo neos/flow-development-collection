@@ -43,13 +43,15 @@ class RequestPatternResolver {
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoRequestPatternFoundException
 	 */
 	public function resolveRequestPatternClass($name) {
-		$resolvedClassName = '';
-
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
-		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
+		if ($resolvedObjectName !== FALSE) {
+			return $resolvedObjectName;
+		}
 
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\FLOW3\Security\RequestPattern\\' . $name);
-		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
+		if ($resolvedObjectName !== FALSE) {
+			return $resolvedObjectName;
+		}
 
 		throw new \TYPO3\FLOW3\Security\Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
