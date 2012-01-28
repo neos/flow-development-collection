@@ -49,13 +49,33 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	protected $typeConverter = NULL;
 
 	/**
+	 * @var array
+	 */
+	protected $notMappedProperties = array();
+
+	/**
+	 * @param string $propertyName
 	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
-	 * @todo extend to enable whitelisting / blacklisting of properties.
 	 * @api
 	 */
 	public function shouldMap($propertyName) {
-		return TRUE;
+		if (key_exists($propertyName, $this->notMappedProperties)) {
+			return FALSE;
+		} else {
+			return TRUE;
+		}
 	}
+
+	/**
+	 * Mark property as not to be mapped
+	 *
+	 * @param string $propertyName
+	 * @return void
+	 */
+	public function doNotMapProperty($propertyName) {
+		$this->notMappedProperties[$propertyName] = TRUE;
+	}
+
 
 	/**
 	 * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!
