@@ -34,7 +34,7 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
 
 		$mockLocalizationService = $this->getMock('TYPO3\FLOW3\I18n\Service');
-		$mockLocalizationService->expects($this->once())->method('getDefaultLocale')->will($this->returnValue($this->sampleLocale));
+		$mockLocalizationService->expects($this->once())->method('getCurrentLocale')->will($this->returnValue($this->sampleLocale));
 
 		$mockPluralsReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader');
 		$mockPluralsReader->expects($this->once())->method('getPluralForm', 1, $this->sampleLocale)->will($this->returnValue(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE));
