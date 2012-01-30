@@ -200,7 +200,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 			// Here, we completely reset the persistence manager again and work
 			// only with the Object Identifier
-		$this->persistenceManager->clearState();
+		$this->objectManager->get('Doctrine\Common\Persistence\ObjectManager')->flush();
 
 		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
 		$lazyLoadedEntity = $entityManager->getReference('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity', $theObjectIdentifier);
