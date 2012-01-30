@@ -297,5 +297,24 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame($dateAsString, $date->format($dateFormat));
 	}
 
+	/**
+	 * @test
+	 */
+	public function convertFromSupportsDateTimeSubClasses() {
+		$className = 'DateTimeSubClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('
+			class ' . $className . ' extends \\DateTime {
+				public static function createFromFormat($format, $time, $timezone = NULL) {
+					return new ' . $className . '();
+				}
+				public function foo() { return "Bar"; }
+			}
+		');
+		$date = $this->converter->convertFrom('2005-08-15T15:52:01+00:00', $className);
+
+		$this->assertInstanceOf($className, $date);
+		$this->assertSame('Bar', $date->foo());
+	}
+
 }
 ?>

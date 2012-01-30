@@ -80,7 +80,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 * @return boolean
 	 */
 	public function canConvertFrom($source, $targetType) {
-		if ($targetType !== 'DateTime') {
+		if (!is_callable(array($targetType, 'createFromFormat'))) {
 			return FALSE;
 		}
 		if (is_array($source)) {
@@ -115,7 +115,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 		if ($dateAsString === '') {
 			return NULL;
 		}
-		$date = \DateTime::createFromFormat($dateFormat, $dateAsString);
+		$date = $targetType::createFromFormat($dateFormat, $dateAsString);
 		if ($date === FALSE) {
 			return new \TYPO3\FLOW3\Validation\Error('The date "%s" was not recognized (for format "%s").', 1307719788, array($dateAsString, $dateFormat));
 		}
