@@ -58,7 +58,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 */
 	public function __construct($context, array $options = array()) {
 		$this->context = $context;
-		if (is_array($options) || $options instanceof ArrayAccess) {
+		if (is_array($options) || $options instanceof \ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {
 				$methodName = 'set' . ucfirst($optionKey);
 				if (method_exists($this, $methodName)) {
