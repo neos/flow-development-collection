@@ -185,6 +185,28 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	}
 
 	/**
+	 * Migrate source files as needed
+	 *
+	 * This will apply pending code migrations defined in packages to all
+	 * packages that do not yet have those migration applied.
+	 *
+	 * For every migration that has been run, it will create a commit in
+	 * the package. This allows for easy inspection, rollback and use of
+	 * the fixed code.
+	 *
+	 * @param boolean $status Show the migration status, do not run migrations
+	 * @param string $packagesPath If set, use the given path as base when looking for packages
+	 * @return void
+	 * @see typo3.flow3:doctrine:migrate
+	 */
+	public function migrateCommand($status = FALSE, $packagesPath = NULL) {
+		// This command will never be really called. It rather acts as a stub for rendering the
+		// documentation for this command. In reality, the "flow3" command line script will already
+		// check if this command is supposed to be called and invoke the migrate script
+		// directly.
+	}
+
+	/**
 	 * Run the interactive Shell
 	 *
 	 * The shell command runs FLOW3's interactive shell. This shell allows for

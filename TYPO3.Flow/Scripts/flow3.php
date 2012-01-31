@@ -28,6 +28,10 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:setfilepermissions' || $a
 	$returnValue = 0;
 	system(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '), $returnValue);
 	exit($returnValue);
+} elseif (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:migrate' || $argv[1] === 'flow3:core:migrate' || $argv[1] === 'core:migrate')) {
+	array_shift($argv);
+	array_shift($argv);
+	require(__DIR__ . '/migrate.php');
 } else {
 	require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
@@ -36,6 +40,6 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:setfilepermissions' || $a
 
 	$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap($context);
 	$bootstrap->run();
-
 }
+
 ?>
