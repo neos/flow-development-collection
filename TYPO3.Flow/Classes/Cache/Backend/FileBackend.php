@@ -188,7 +188,8 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 			throw new \TYPO3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $temporaryCacheEntryPathAndFilename . '" is ' . strlen($temporaryCacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->environment->getMaximumPathLength() . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
 
-		$expiryTime = ($lifetime === NULL) ? 0 : (time() + $lifetime);
+		$lifetime = $lifetime === NULL ? $this->defaultLifetime : $lifetime;
+		$expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
 		$metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
 		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data . $metaData);
 
