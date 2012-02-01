@@ -389,6 +389,10 @@ class ConfigurationBuilder {
 			}
 
 			foreach ($this->reflectionService->getPropertyNamesByTag($className, 'inject') as $propertyName) {
+				if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
+					$exceptionMessage = 'The property "' . $propertyName . '" in class "' . $className . '" must not be private when annotated for injection.';
+					throw new \TYPO3\FLOW3\Object\Exception($exceptionMessage, 1328109641);
+				}
 				if (!array_key_exists($propertyName, $properties)) {
 					$objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
 					$properties[$propertyName] =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT);

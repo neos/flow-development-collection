@@ -128,5 +128,34 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$configurationBuilder = $this->getAccessibleMock('TYPO3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
 		$configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Object\Exception
+	 */
+	public function privatePropertyAnnotatedForInjectionThrowsException() {
+		$configurationArray = array();
+		$configurationArray['arguments'][1]['setting'] = 'TYPO3.Foo.Bar';
+		$configurationArray['properties']['someProperty']['setting'] = 'TYPO3.Bar.Baz';
+
+		$configurationBuilder = $this->getAccessibleMock('TYPO3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$dummyObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__);
+
+		$reflectionServiceMock = $this->getMock('\TYPO3\FLOW3\Reflection\ReflectionService');
+		$reflectionServiceMock
+				->expects($this->once())
+				->method('getPropertyNamesByTag')
+				->with(__CLASS__, 'inject')
+				->will($this->returnValue(array('dummyProperty')));
+
+		$reflectionServiceMock
+				->expects($this->once())
+				->method('isPropertyPrivate')
+				->with(__CLASS__, 'dummyProperty')
+				->will($this->returnValue(TRUE));
+
+		$configurationBuilder->injectReflectionService($reflectionServiceMock);
+		$configurationBuilder->_call('autowireProperties', array($dummyObjectConfiguration));
+	}
 }
 ?>

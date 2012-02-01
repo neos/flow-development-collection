@@ -46,6 +46,7 @@ class ReflectionService {
 		DATA_METHOD_PARAMETERS = 13,
 		DATA_PROPERTY_TAGS_VALUES = 14,
 		DATA_PROPERTY_ANNOTATIONS = 15,
+		DATA_PROPERTY_VISIBILITY = 24,
 		DATA_PARAMETER_POSITION = 16,
 		DATA_PARAMETER_OPTIONAL = 17,
 		DATA_PARAMETER_TYPE = 18,
@@ -764,6 +765,23 @@ class ReflectionService {
 	}
 
 	/**
+	 * Tells if the specified property is private
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $propertyName Name of the property to analyze
+	 * @return boolean TRUE if the property is private, otherwise FALSE
+	 * @api
+	 */
+	public function isPropertyPrivate($className, $propertyName) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+		return (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY])
+				&& $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] === self::VISIBILITY_PRIVATE);
+	}
+
+	/**
 	 * Tells if the specified class property is tagged with the given tag
 	 *
 	 * @param string $className Name of the class
@@ -978,6 +996,9 @@ class ReflectionService {
 		foreach ($class->getProperties() as $property) {
 			$propertyName = $property->getName();
 			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = array();
+
+			$visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
+			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
 
 			foreach ($property->getTagsValues() as $tag => $values) {
 				if (array_search($tag, $this->ignoredTags) === FALSE) {
