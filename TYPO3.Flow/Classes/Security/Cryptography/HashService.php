@@ -182,7 +182,7 @@ class HashService {
 	 */
 	protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default') {
 		if (isset($this->passwordHashingStrategies[$strategyIdentifier])) {
-			return $this->passwordHashingStrategies[$strategyIdentifier];
+			return array($this->passwordHashingStrategies[$strategyIdentifier], $strategyIdentifier);
 		}
 
 		if ($strategyIdentifier === 'default') {
