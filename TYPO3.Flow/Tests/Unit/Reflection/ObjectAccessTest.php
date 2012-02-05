@@ -115,6 +115,15 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setPropertyWorksIfThePropertyNameIsAnInteger() {
+		$array = new \ArrayObject();
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($array, 42, 'Test');
+		$this->assertSame('Test', $array[42]);
+	}
+
+	/**
+	 * @test
+	 */
 	public function setPropertyReturnsFalseIfPropertyIsNotAccessible() {
 		$this->assertFalse(\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42));
 	}
