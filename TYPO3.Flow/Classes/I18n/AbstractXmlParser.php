@@ -47,7 +47,7 @@ abstract class AbstractXmlParser {
 	 *
 	 * @param string $sourcePath An absolute path to XML file
 	 * @return array Parsed XML file
-	 * @throws \TYPO3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
 	 */
 	protected function parseXmlFile($sourcePath) {
 		if (file_exists($sourcePath)) {

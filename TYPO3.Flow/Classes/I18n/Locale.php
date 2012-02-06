@@ -83,7 +83,7 @@ class Locale {
 	 *
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
 	 * @throws \InvalidArgumentException When argument is not a string
-	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifier If the locale identifier is not valid
+	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
 	 * @api
 	 */
 	public function __construct($localeIdentifier) {

@@ -109,7 +109,7 @@ class XliffModel {
 	 * pair where "source" tag equals to $source parameter.
 	 *
 	 * @param string $source Label in original language ("source" tag in XLIFF)
-	 * @param string $pluralFormIndex Index of plural form to use (starts with 0)
+	 * @param integer $pluralFormIndex Index of plural form to use (starts with 0)
 	 * @return mixed Translated label or FALSE on failure
 	 */
 	public function getTargetBySource($source, $pluralFormIndex = 0) {

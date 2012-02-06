@@ -39,7 +39,7 @@ class NumberFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterface 
 	 *
 	 * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
+	 * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
 	 * @api
 	 */

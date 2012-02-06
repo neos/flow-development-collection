@@ -206,8 +206,8 @@ class NumbersReader {
 	 * locale will be used.
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
-	 * @param int $formatType A type of format (one of constant values)
-	 * @param int $formatLength A length of format (one of constant values)
+	 * @param string $formatType A type of format (one of constant values)
+	 * @param string $formatLength A length of format (one of constant values)
 	 * @return array An array representing parsed format
 	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
 	 */
