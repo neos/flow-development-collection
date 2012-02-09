@@ -62,7 +62,7 @@ class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				$query->equals('authenticationProviderName', $authenticationProviderName),
 				$query->logicalOr(
 					$query->equals('expirationDate', NULL),
-					$query->greaterThan('expirationDate', new \DateTime('today'))
+					$query->greaterThan('expirationDate', new \DateTime())
 				)
 			)
 		)->execute()->getFirst();
