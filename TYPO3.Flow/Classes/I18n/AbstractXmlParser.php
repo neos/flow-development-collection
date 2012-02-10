@@ -50,12 +50,21 @@ abstract class AbstractXmlParser {
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
 	 */
 	protected function parseXmlFile($sourcePath) {
-		if (file_exists($sourcePath)) {
-			$rootXmlNode = simplexml_load_file($sourcePath, 'SimpleXmlElement', \LIBXML_NOWARNING);
+		if (!file_exists($sourcePath)) {
+			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('The path provided does not point to an existing and accessible XML file.', 1328879703);
 		}
-
-		if (!isset($rootXmlNode) || $rootXmlNode === FALSE) {
-			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('The path provided does not point to existing and accessible well-formed XML file.', 1278155987);
+		libxml_use_internal_errors(TRUE);
+		$rootXmlNode = simplexml_load_file($sourcePath, 'SimpleXmlElement', \LIBXML_NOWARNING);
+		if ($rootXmlNode === FALSE) {
+			$errors = array();
+			foreach (libxml_get_errors() as $error) {
+				$errorMessage = trim($error->message) . ' (line ' . $error->line . ', column ' . $error->column;
+				if ($error->file) {
+					$errorMessage .= ' in ' . $error->file;
+				}
+				$errors[] = $errorMessage . ')';
+			}
+			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('Parsing the XML file failed. These error were reported:' . PHP_EOL . implode(PHP_EOL, $errors), 1278155987);
 		}
 
 		return $this->doParsingFromRoot($rootXmlNode);
