@@ -279,7 +279,12 @@ class ValidatorResolver {
 			return $validatorType;
 		}
 
-		$possibleClassName = 'TYPO3\FLOW3\Validation\Validator\\' . $this->getValidatorType($validatorType) . 'Validator';
+		if (strpos($validatorType, ':') !== FALSE) {
+			list($packageName, $packageValidatorType) = explode(':', $validatorType);
+			$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', $packageName, $this->getValidatorType($packageValidatorType));
+		} else {
+			$possibleClassName = sprintf('TYPO3\FLOW3\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
+		}
 		if ($this->objectManager->isRegistered($possibleClassName)) {
 			return $possibleClassName;
 		}

@@ -57,6 +57,19 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function resolveValidatorObjectNameCanResolveShorthandValidatornames() {
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Mypkg:My')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(1))->method('isRegistered')->with('Mypkg\Validation\Validator\\MyValidator')->will($this->returnValue(TRUE));
+
+		$validatorResolver = $this->getAccessibleMock('TYPO3\FLOW3\Validation\ValidatorResolver', array('dummy'));
+		$validatorResolver->_set('objectManager', $mockObjectManager);
+		$this->assertSame('Mypkg\Validation\Validator\\MyValidator', $validatorResolver->_call('resolveValidatorObjectName', 'Mypkg:My'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function resolveValidatorObjectNameCanResolveShortNamesOfBuiltInValidators() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Foo')->will($this->returnValue(FALSE));
