@@ -77,7 +77,7 @@ class FormatResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function throwsExceptionWhenFormatterDoesNotExist() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get', 'TYPO3\FLOW3\I18n\Formatter\FooFormatter')->will($this->throwException(new \TYPO3\FLOW3\I18n\Exception\UnknownFormatterException()));
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\I18n\Formatter\FooFormatter')->will($this->throwException(new \TYPO3\FLOW3\I18n\Exception\UnknownFormatterException()));
 
 		$formatResolver = new \TYPO3\FLOW3\I18n\FormatResolver();
 		$formatResolver->injectObjectManager($mockObjectManager);

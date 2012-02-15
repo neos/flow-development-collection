@@ -93,18 +93,19 @@ class Translator {
 	}
 
 	/**
-	 * Translates message given as $originalLabel.
+	 * Translates the message given as $originalLabel.
 	 *
-	 * Searches for translation in filename defined as $sourceName. It is a
-	 * relative name (interpretation depends on concrete translation provider
-	 * injected to this class).
+	 * Searches for a translation in the source as defined by $sourceName
+	 * (interpretation depends on concrete translation provider used).
 	 *
-	 * If any arguments are provided in $arguments array, they will be inserted
+	 * If any arguments are provided in the $arguments array, they will be inserted
 	 * to the translated string (in place of corresponding placeholders, with
 	 * format defined by these placeholders).
 	 *
 	 * If $quantity is provided, correct plural form for provided $locale will
-	 * be chosen and used to choose correct translation variant.
+	 * be chosen and used to choose correct translation variant. If $arguments
+	 * contains exactly one numeric element, it is automatically used as the
+	 * $quantity.
 	 *
 	 * If no $locale is provided, default system locale will be used.
 	 *
@@ -121,17 +122,11 @@ class Translator {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getCurrentLocale();
 		}
-
-		if ($quantity === NULL) {
-			$pluralForm = NULL;
-		} else {
-			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
-		}
+		$pluralForm = $this->getPluralForm($quantity, $arguments, $locale);
 
 		$translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
 
 		if ($translatedMessage === FALSE) {
-				// Return original message if no translation available
 			$translatedMessage = $originalLabel;
 		}
 
@@ -143,10 +138,19 @@ class Translator {
 	}
 
 	/**
-	 * Returns translated string found under the key $labelId in $sourceName file.
+	 * Returns translated string found under the $labelId.
 	 *
-	 * This method works same as translateByOriginalLabel(), except it uses
-	 * ID, and not source message, as a key.
+	 * Searches for a translation in the source as defined by $sourceName
+	 * (interpretation depends on concrete translation provider used).
+	 *
+	 * If any arguments are provided in the $arguments array, they will be inserted
+	 * to the translated string (in place of corresponding placeholders, with
+	 * format defined by these placeholders).
+	 *
+	 * If $quantity is provided, correct plural form for provided $locale will
+	 * be chosen and used to choose correct translation variant. If $arguments
+	 * contains exactly one numeric element, it is automatically used as the
+	 * $quantity.
 	 *
 	 * @param string $labelId Key to use for finding translation
 	 * @param array $arguments An array of values to replace placeholders with
@@ -162,23 +166,43 @@ class Translator {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getCurrentLocale();
 		}
-
-		if ($quantity === NULL) {
-			$pluralForm = NULL;
-		} else {
-			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
-		}
+		$pluralForm = $this->getPluralForm($quantity, $arguments, $locale);
 
 		$translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
 
 		if ($translatedMessage === FALSE) {
-				// Return the ID if no translation available
-			$translatedMessage = $labelId;
-		} elseif (!empty($arguments)) {
-			$translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
+			return $labelId;
+		} elseif ($arguments !== array()) {
+			return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
 		}
+	}
 
-		return $translatedMessage;
+	/**
+	 * Get the plural form to be used.
+	 *
+	 * If $quantity is non-NULL, the plural form for provided $locale will be
+	 * chosen according to it.
+	 *
+	 * Otherwise, if $arguments contains exactly one numeric element, it is
+	 * automatically used as the $quantity.
+	 *
+	 * In all other cases, NULL is returned.
+	 *
+	 * @param mixed $quantity
+	 * @param array $arguments
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @return string
+	 */
+	protected function getPluralForm($quantity, array $arguments, Locale $locale) {
+		if (!is_numeric($quantity)) {
+			if (count($arguments) === 1) {
+				return is_numeric(current($arguments)) ? $this->pluralsReader->getPluralForm(current($arguments), $locale) : NULL;
+			} else {
+				return NULL;
+			}
+		} else {
+			return $this->pluralsReader->getPluralForm($quantity, $locale);
+		}
 	}
 }
 

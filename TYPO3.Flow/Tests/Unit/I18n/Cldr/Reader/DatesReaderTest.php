@@ -80,9 +80,9 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function dateTimeFormatIsParsedCorrectly() {
 		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('getElement'), array(array()));
-		$mockModel->expects($this->at(0))->method('getElement', 'dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern')->will($this->returnValue('foo {0} {1} bar'));
-		$mockModel->expects($this->at(1))->method('getElement', 'dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern')->will($this->returnValue('dMy'));
-		$mockModel->expects($this->at(2))->method('getElement', 'dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern')->will($this->returnValue('hms'));
+		$mockModel->expects($this->at(0))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern')->will($this->returnValue('foo {0} {1} bar'));
+		$mockModel->expects($this->at(1))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern')->will($this->returnValue('dMy'));
+		$mockModel->expects($this->at(2))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern')->will($this->returnValue('hms'));
 
 		$mockRepository = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
