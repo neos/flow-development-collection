@@ -19,7 +19,8 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
  */
 class BrokenClassImplementingDoctrineProxy {
 	// This class just exists to satisfy the class loader -- else the compilation
-	// run during functional tests will fail. It is NOT used for the testcase.
+	// run during functional tests will fail, as it expects to find a class named
+	// like the file. It is NOT used for the testcase.
 }
 
 
@@ -31,7 +32,7 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Proxies;
  * result in an exception.
  *
  */
-class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy {
+abstract class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy {
 
 }
 ?>
