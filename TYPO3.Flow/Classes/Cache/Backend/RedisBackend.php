@@ -294,19 +294,16 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 			throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1279469941);
 		}
 
-		$lifetimeIsNull = is_null($lifetime);
-		$lifetimeIsInteger = is_integer($lifetime);
-
-		if (!$lifetimeIsNull && !$lifetimeIsInteger) {
-			throw new \InvalidArgumentException('The specified lifetime is of type "' . gettype($lifetime) . '" but a string or NULL is expected.', 1279488008);
+		$lifetime = $lifetime === NULL ? $this->defaultLifetime : $lifetime;
+		if (!is_integer($lifetime)) {
+			throw new \InvalidArgumentException('The specified lifetime is of type "' . gettype($lifetime) . '" but an integer or NULL is expected.', 1279488008);
 		}
-		if ($lifetimeIsInteger && $lifetime < 0) {
-			throw new \InvalidArgumentException('The specified lifetime "' . $lifetime . '" must be greater or equal than zero.', 1279487573);
+		if ($lifetime < 0) {
+			throw new \InvalidArgumentException('The specified lifetime "' . $lifetime . '" must be greater than or equal to zero.', 1279487573);
 		}
 
 		if ($this->connected) {
-			$expiration = $lifetimeIsNull ? $this->defaultLifetime : $lifetime;
-			$expiration = $expiration === 0 ? self::FAKED_UNLIMITED_LIFETIME : $expiration;
+			$expiration = $lifetime === 0 ? self::FAKED_UNLIMITED_LIFETIME : $lifetime;
 
 			if ($this->compression) {
 				$data = gzcompress($data, $this->compressionLevel);
