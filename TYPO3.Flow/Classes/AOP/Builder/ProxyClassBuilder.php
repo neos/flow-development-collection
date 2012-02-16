@@ -246,7 +246,7 @@ class ProxyClassBuilder {
 	 * Determines which of the given classes are potentially proxyable
 	 * and returns their names in an array.
 	 *
-	 * @param array $classNames Names of the classes to check
+	 * @param array $classNamesByPackage Names of the classes to check
 	 * @return array Names of classes which can be proxied
 	 */
 	protected function getProxyableClasses(array $classNamesByPackage) {
@@ -681,7 +681,7 @@ EOT;
 	/**
 	 * Adds a "getAdviceChains()" method to the current proxy class.
 	 *
-	 * @param  $targetClassName
+	 * @param string $targetClassName
 	 * @return void
 	 */
 	protected function buildGetAdviceChainsMethodCode($targetClassName) {
@@ -711,7 +711,7 @@ EOT;
 	/**
 	 * Adds a "invokeJoinPoint()" method to the current proxy class.
 	 *
-	 * @param  $targetClassName
+	 * @param string $targetClassName
 	 * @return void
 	 */
 	protected function buildInvokeJoinPointMethodCode($targetClassName) {
@@ -730,7 +730,10 @@ EOT;
 	/**
 	 * Renders a short message which gives a hint on where the currently parsed pointcut expression was defined.
 	 *
-	 * @return void
+	 * @param string $aspectClassName
+	 * @param string $methodName
+	 * @param string $tagName
+	 * @return string
 	 */
 	protected function renderSourceHint($aspectClassName, $methodName, $tagName) {
 		return sprintf('%s::%s (%s advice)', $aspectClassName, $methodName, $tagName);

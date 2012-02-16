@@ -36,7 +36,7 @@ class RequestBuilder {
 	protected $configurationManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\Web\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $router;
 

@@ -48,6 +48,7 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 * Hash a password using salted MD5
 	 *
 	 * @param string $password The cleartext password
+	 * @param string $staticSalt ignored parameter
 	 * @return string A hashed password with salt
 	 */
 	public function hashPassword($password, $staticSalt = NULL) {
@@ -59,6 +60,7 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 *
 	 * @param string $password The cleartext password
 	 * @param string $hashedPasswordAndSalt The hashed password with salt
+	 * @param string $staticSalt ignored parameter
 	 * @return boolean TRUE if the given password matches the hashed password
 	 */
 	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL) {

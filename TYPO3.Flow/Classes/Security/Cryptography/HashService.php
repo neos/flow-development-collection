@@ -57,7 +57,7 @@ class HashService {
 	 *
 	 * @param string $string The string for which a hash should be generated
 	 * @return string The hash of the string
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
 	 */
 	public function generateHmac($string) {
 		if (!is_string($string)) {

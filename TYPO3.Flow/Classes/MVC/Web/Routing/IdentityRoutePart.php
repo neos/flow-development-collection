@@ -228,8 +228,9 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	/**
 	 * Creates a new ObjectPathMapping and stores it in the repository
 	 *
-	 * @var string $pathSegment
-	 * @var mixed $identifier
+	 * @param string $pathSegment
+	 * @param mixed $identifier
+	 * @return void
 	 */
 	protected function storeObjectPathMapping($pathSegment, $identifier) {
 		$objectPathMapping = new \TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMapping();
@@ -248,7 +249,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 *
 	 * @param string $value
 	 * @return string
-	 * @todo use transliteration of the L18n sub package
+	 * @todo use transliteration of the I18n sub package
 	 */
 	protected function rewriteForUri($value) {
 		$transliteration = array(

@@ -162,8 +162,8 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $cipher cipher text to decrypt
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @throws TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
 	 */
 	public function decrypt($cipher, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438861);
@@ -181,7 +181,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $plaintext The plaintext to sign
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The signature of the given plaintext
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
 	public function sign($plaintext, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1299095799);
@@ -218,7 +218,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $salt The salt used in the md5 password hash
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return boolean TRUE if the password is correct
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
 	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1233655216);
@@ -233,7 +233,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param string $uuid The UUID
 	 * @return void
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function destroyKeypair($uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438863);

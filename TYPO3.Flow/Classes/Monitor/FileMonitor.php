@@ -26,7 +26,7 @@ class FileMonitor {
 	protected $identifier;
 
 	/**
-	 * @var TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface
+	 * @var \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface
 	 */
 	protected $changeDetectionStrategy;
 

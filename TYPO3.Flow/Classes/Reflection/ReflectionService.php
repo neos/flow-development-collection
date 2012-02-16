@@ -1390,7 +1390,7 @@ class ReflectionService {
 	/**
 	 * Loads reflection data from the cache or reflects the class if needed.
 	 *
-	 * @param $className
+	 * @param string $className
 	 * @return void
 	 */
 	protected function loadOrReflectClassIfNecessary($className) {

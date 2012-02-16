@@ -97,6 +97,7 @@ abstract class AbstractTypeConverter implements \TYPO3\FLOW3\Property\TypeConver
 	/**
 	 * Returns an empty list of sub property names
 	 *
+	 * @param mixed $source
 	 * @return array<string>
 	 * @api
 	 */

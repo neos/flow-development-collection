@@ -37,7 +37,7 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	protected $sourceTypes = array('array');
 
 	/**
-	 * @var strng
+	 * @var string
 	 */
 	protected $targetType = 'object';
 

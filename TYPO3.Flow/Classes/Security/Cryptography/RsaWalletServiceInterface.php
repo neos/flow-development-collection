@@ -49,7 +49,7 @@ interface RsaWalletServiceInterface {
 	 *
 	 * @param string $uuid The UUID
 	 * @return \TYPO3\FLOW3\Security\Cryptography\RSAKey The public key
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function getPublicKey($uuid);
 
@@ -61,8 +61,8 @@ interface RsaWalletServiceInterface {
 	 * @param string $cypher Cypher text to decrypt
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @throws TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
 	 */
 	public function decrypt($cypher, $uuid);
 
@@ -72,7 +72,7 @@ interface RsaWalletServiceInterface {
 	 * @param string $plaintext The plaintext to sign
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The signature of the given plaintext
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
 	public function sign($plaintext, $uuid);
 
@@ -113,7 +113,7 @@ interface RsaWalletServiceInterface {
 	 *
 	 * @param string $uuid The UUID
 	 * @return void
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function destroyKeypair($uuid);
 }

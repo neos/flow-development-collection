@@ -30,6 +30,7 @@ class ResourcePointer {
 	/**
 	 * Constructs this resource pointer
 	 *
+	 * @param string $hash
 	 */
 	public function __construct($hash) {
 		if (!is_string($hash) || strlen($hash) !== 40) {

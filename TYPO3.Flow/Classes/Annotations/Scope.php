@@ -26,7 +26,7 @@ final class Scope {
 	public $value = 'prototype';
 
 	/**
-	 * @param string $value
+	 * @param array $values
 	 */
 	public function __construct(array $values) {
 		if (isset($values['value'])) {

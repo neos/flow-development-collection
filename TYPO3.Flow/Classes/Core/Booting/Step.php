@@ -31,8 +31,8 @@ class Step {
 	protected $callback;
 
 	/**
-	 * @param $identifier
-	 * @param $callback
+	 * @param string $identifier
+	 * @param mixed $callback
 	 */
 	public function __construct($identifier, $callback) {
 		$this->identifier = $identifier;

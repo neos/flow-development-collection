@@ -61,6 +61,7 @@ interface TypeConverterInterface {
 	 * Return a list of sub-properties inside the source object.
 	 * The "key" is the sub-property name, and the "value" is the value of the sub-property.
 	 *
+	 * @param mixed $source
 	 * @return array<mixed>
 	 * @api
 	 */

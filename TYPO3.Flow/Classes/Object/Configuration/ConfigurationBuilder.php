@@ -57,7 +57,7 @@ class ConfigurationBuilder {
 	 * which can be resolved automatically.
 	 *
 	 * @param array $availableClassNamesByPackage An array of available class names, grouped by package key
-	 * @param array $rawObjectconfigurationsByPackages An array of package keys and their raw (ie. unparsed) object configurations
+	 * @param array $rawObjectConfigurationsByPackages An array of package keys and their raw (ie. unparsed) object configurations
 	 * @return array<TYPO3\FLOW3\Object\Configuration\Configuration> Object configurations
 	 */
 	public function buildObjectConfigurations(array $availableClassNamesByPackage, array $rawObjectConfigurationsByPackages) {
@@ -124,10 +124,11 @@ class ConfigurationBuilder {
 	}
 
 	/**
-	 * Builds a raw configuration array by parsing possible scope and autowiring annotations from the given class or
-	 * interface.
+	 * Builds a raw configuration array by parsing possible scope and autowiring
+	 * annotations from the given class or interface.
 	 *
-	 * @param  $className
+	 * @param string $className
+	 * @param array $rawObjectConfiguration
 	 * @return array
 	 */
 	protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration) {
@@ -144,8 +145,8 @@ class ConfigurationBuilder {
 	 * Builds an object configuration object from a generic configuration container.
 	 *
 	 * @param string $objectName Name of the object
-	 * @param array configurationArray The configuration array with options for the object configuration
-	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
+	 * @param array $rawConfigurationOptions The configuration array with options for the object configuration
+	 * @param string $configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
 	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration object
 	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if errors occurred during parsing
@@ -302,7 +303,7 @@ class ConfigurationBuilder {
 	 * If mandatory constructor arguments have not been defined yet, this function tries to autowire
 	 * them if possible.
 	 *
-	 * @param array
+	 * @param array &$objectConfigurations
 	 * @return void
 	 */
 	protected function autowireArguments(array &$objectConfigurations) {
@@ -346,9 +347,9 @@ class ConfigurationBuilder {
 	/**
 	 * This function tries to find yet unmatched dependencies which need to be injected via "inject*" setter methods.
 	 *
-	 * @param array
+	 * @param array &$objectConfigurations
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException if a required property could not be autowired.
+	 * @throws \TYPO3\FLOW3\Object\Exception if an injected property is private
 	 */
 	protected function autowireProperties(array &$objectConfigurations) {
 		foreach ($objectConfigurations as $objectConfiguration) {

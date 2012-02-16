@@ -16,7 +16,7 @@
 	</parties>
 	<constraints>
 		<depends>
-			<system minVersion="5.3.0-RC2" type="PHP"/>
+			<system minVersion="5.3.2" type="PHP"/>
 			<system minVersion="1.2.0" type="PHPExtension">zlib</system>
 			<system type="PHPExtension">SPL</system>
 			<system minVersion="1.2.0" type="PHPExtension">json</system>

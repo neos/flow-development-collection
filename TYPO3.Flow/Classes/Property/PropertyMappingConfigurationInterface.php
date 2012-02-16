@@ -25,7 +25,8 @@ namespace TYPO3\FLOW3\Property;
 interface PropertyMappingConfigurationInterface {
 
 	/**
-	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
+	 * @param string $propertyName
+	 * @return boolean TRUE if the given propertyName should be mapped, FALSE otherwise.
 	 * @api
 	 */
 	public function shouldMap($propertyName);

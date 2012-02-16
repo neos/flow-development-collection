@@ -163,7 +163,7 @@ class Bootstrap {
 	 * it will be used if it can handle the request – regardless of the priority
 	 * of this or other request handlers.
 	 *
-	 * @param $className
+	 * @param string $className
 	 */
 	public function setPreselectedRequestHandlerClassName($className) {
 		$this->preselectedRequestHandlerClassName = $className;

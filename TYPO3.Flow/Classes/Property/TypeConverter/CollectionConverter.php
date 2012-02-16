@@ -55,6 +55,7 @@ class CollectionConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	/**
 	 * Returns the source, if it is an array, otherwise an empty array.
 	 *
+	 * @param mixed $source
 	 * @return array
 	 * @api
 	 */

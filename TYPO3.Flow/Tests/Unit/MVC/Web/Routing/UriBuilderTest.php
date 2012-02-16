@@ -200,7 +200,6 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
 	 */
 	public function uriForPrefixesControllerArgumentsWithSubRequestArgumentNamespaceOfParentRequestIfCurrentRequestHasNoNamespace() {
 		$expectedArguments = array(
@@ -352,7 +351,6 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
 	 */
 	public function buildMergesArgumentsOfTheParentRequestIfRequestIsOfTypeSubRequestAndHasAParentSubRequest() {
 		$expectedArguments = array('CurrentNamespace' => array('CurrentSubNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Retained Argument From Parent Request'), 'Some' => 'Other Argument From Request');

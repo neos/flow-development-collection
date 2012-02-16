@@ -85,7 +85,7 @@ class Pointcut {
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
-	 * @throws TYPO3\FLOW3\AOP\Exception\CircularPointcutReferenceException if a circular pointcut reference was detected
+	 * @throws \TYPO3\FLOW3\AOP\Exception\CircularPointcutReferenceException if a circular pointcut reference was detected
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {

@@ -144,7 +144,7 @@ class ProxyClass {
 	 * Adds a constant to this proxy class
 	 *
 	 * @param string $name Name of the constant. Should be ALL_UPPERCASE_WITH_UNDERSCORES
-	 * @param string $value PHP code which assigns the value. Example: 'foo' (including quotes!)
+	 * @param string $valueCode PHP code which assigns the value. Example: 'foo' (including quotes!)
 	 * @return void
 	 */
 	public function addConstant($name, $valueCode) {
@@ -156,6 +156,8 @@ class ProxyClass {
 	 *
 	 * @param string $name Name of the property
 	 * @param string $initialValueCode PHP code of the initial value assignment
+	 * @param string $visibility
+	 * @param string $docComment
 	 * @return void
 	 */
 	public function addProperty($name, $initialValueCode, $visibility = 'private', $docComment = '') {

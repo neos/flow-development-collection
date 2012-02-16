@@ -232,7 +232,7 @@ class Typo3OrgSsoToken implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
-	 * @throws TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
 		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) {

@@ -30,7 +30,7 @@ class CollectionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVali
 	 * Check if $value is valid. If it is not valid, needs to add an error
 	 * to Result.
 	 *
-	 * @param mixed A collection to be validated
+	 * @param mixed $value A collection to be validated
 	 * @return void
 	 */
 	protected function isValid($value) {

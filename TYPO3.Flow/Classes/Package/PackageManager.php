@@ -102,7 +102,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	/**
 	 * Sets the URI specifying the file acting as a template for the Package class files of newly created packages.
 	 *
-	 * @param $packageClassTemplateUri Full path and filename or other valid URI pointing to the template file
+	 * @param string $packageClassTemplateUri Full path and filename or other valid URI pointing to the template file
 	 * @return void
 	 */
 	public function setPackageClassTemplateUri($packageClassTemplateUri) {
@@ -121,7 +121,8 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * Initializes the package manager
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
-	 * @param $packagesBasePath Absolute path of the Packages directory
+	 * @param string $packagesBasePath Absolute path of the Packages directory
+	 * @param string $packageStatesPathAndFilename
 	 * @return void
 	 */
 	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap, $packagesBasePath = FLOW3_PATH_PACKAGES, $packageStatesPathAndFilename = '') {

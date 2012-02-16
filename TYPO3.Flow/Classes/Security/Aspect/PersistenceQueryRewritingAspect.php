@@ -130,7 +130,7 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @param array $constraintDefinitions The constraint expressions
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
-	 * @return \TYPO3\FLOW3\Persistence\Qom\Constraint The build constraint object
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint The build constraint object
 	 */
 	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		$compositeConstraint = NULL;
@@ -174,7 +174,7 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @param array $constraintDefinition The constraint expression
 	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
-	 * @return \TYPO3\FLOW3\Persistence\Qom\Constraint The build constraint object
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint The build constraint object
 	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
@@ -351,7 +351,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Returns the static value of the given operand, this might be also a global object
 	 *
-	 * @param string $expression The expression string representing the operand
+	 * @param mixed $expression The expression string representing the operand
 	 * @return mixed The calculated value
 	 */
 	protected function getValueForOperand($expression) {
@@ -383,7 +383,7 @@ class PersistenceQueryRewritingAspect {
 	 * This is only needed for unit tests!
 	 *
 	 * @param mixed $object The object to fetch the property from
-	 * @param string $propertyPath The path to the property to be fetched
+	 * @param string $path The path to the property to be fetched
 	 * @return mixed The property value
 	 */
 	protected function getObjectValueByPath($object, $path) {

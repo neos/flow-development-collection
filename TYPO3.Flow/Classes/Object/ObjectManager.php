@@ -339,7 +339,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 * because certain parts might already use an instance of this object. Therefore
 	 * this method should only be used in a setUp() method of a functional test case.
 	 *
-	 * @param $objectName The object name
+	 * @param string $objectName The object name
 	 * @return void
 	 */
 	public function forgetInstance($objectName) {

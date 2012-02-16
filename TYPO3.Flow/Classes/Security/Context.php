@@ -443,7 +443,7 @@ class Context {
 	 * Returns TRUE if the given string is a valid CSRF protection token. The token will be removed if the configured
 	 * csrf strategy is 'onePerUri'.
 	 *
-	 * @param string $token The token string to be validated
+	 * @param string $csrfToken The token string to be validated
 	 * @return boolean TRUE, if the token is valid. FALSE otherwise.
 	 */
 	public function isCsrfProtectionTokenValid($csrfToken) {

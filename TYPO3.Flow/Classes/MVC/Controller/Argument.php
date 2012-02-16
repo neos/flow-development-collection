@@ -270,7 +270,7 @@ class Argument {
 	/**
 	 * Sets the value of this argument.
 	 *
-	 * @param mixed $value The value of this argument
+	 * @param mixed $rawValue The value of this argument
 	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
 	 */
 	public function setValue($rawValue) {

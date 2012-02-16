@@ -42,7 +42,7 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	protected $sourceTypes = array('string', 'array');
 
 	/**
-	 * @var strng
+	 * @var string
 	 */
 	protected $targetType = 'object';
 
