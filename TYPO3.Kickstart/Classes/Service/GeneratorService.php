@@ -163,6 +163,7 @@ class GeneratorService {
 	 * @param string $subpackage An optional subpackage name
 	 * @param string $controllerName The name of the new controller
 	 * @param string $viewName The name of the view
+	 * @param string $templateName The name of the view
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
 	 */
