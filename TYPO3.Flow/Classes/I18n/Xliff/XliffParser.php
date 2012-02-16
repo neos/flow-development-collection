@@ -23,6 +23,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * - reads only "source" and "target" in "trans-unit" tags
  *
  * @FLOW3\Scope("singleton")
+ * @throws Exception\InvalidXliffDataException
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
@@ -36,44 +37,51 @@ class XliffParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
 	 * @todo Support "approved" attribute
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
-		$parsedData = array();
-		$parsedData['sourceLocale'] = new \TYPO3\FLOW3\I18n\Locale((string)$root->file['source-language']);
-		$bodyOfFileTag = $root->file->body;
+		$parsedData = array(
+			'sourceLocale' => new \TYPO3\FLOW3\I18n\Locale((string)$root->file['source-language'])
+		);
 
-		foreach ($bodyOfFileTag->children() as $translationElement) {
-			if ($translationElement->getName() === 'trans-unit' && !isset($translationElement['restype'])) {
-					// If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
-
-				$parsedData['translationUnits'][(string)$translationElement['id']][0] = array(
-					'source' => (string)$translationElement->source,
-					'target' => (string)$translationElement->target,
-				);
-			} elseif ($translationElement->getName() === 'group' && isset($translationElement['restype']) && (string)$translationElement['restype'] === 'x-gettext-plurals') {
-					// This is a translation with plural forms
-				$parsedTranslationElement = array();
-
-				foreach ($translationElement->children() as $translationPluralForm) {
-					if ($translationPluralForm->getName() === 'trans-unit') {
-							// When using plural forms, ID looks like this: 1[0], 1[1] etc
-						$formIndex = substr((string)$translationPluralForm['id'], strpos((string)$translationPluralForm['id'], '[') + 1, -1);
-
-						$parsedTranslationElement[(int)$formIndex] = array(
-							'source' => (string)$translationPluralForm->source,
-							'target' => (string)$translationPluralForm->target,
+		foreach ($root->file->body->children() as $translationElement) {
+			switch ($translationElement->getName()) {
+				case 'trans-unit':
+						// If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
+					if (!isset($translationElement['restype'])) {
+						if (!isset($translationElement['id'])) {
+							throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
+						}
+						$parsedData['translationUnits'][(string)$translationElement['id']][0] = array(
+							'source' => (string)$translationElement->source,
+							'target' => (string)$translationElement->target,
 						);
 					}
-				}
+					break;
+				case 'group':
+					if (isset($translationElement['restype']) && (string)$translationElement['restype'] === 'x-gettext-plurals') {
+						$parsedTranslationElement = array();
+						foreach ($translationElement->children() as $translationPluralForm) {
+							if ($translationPluralForm->getName() === 'trans-unit') {
+									// When using plural forms, ID looks like this: 1[0], 1[1] etc
+								$formIndex = substr((string)$translationPluralForm['id'], strpos((string)$translationPluralForm['id'], '[') + 1, -1);
 
-				if (!empty($parsedTranslationElement)) {
-					if (isset($translationElement['id'])) {
-						$id = (string)$translationElement['id'];
-					} else {
-						$id = (string)($translationElement->{'trans-unit'}[0]['id']);
-						$id = substr($id, 0, strpos($id, '['));
+								$parsedTranslationElement[(int)$formIndex] = array(
+									'source' => (string)$translationPluralForm->source,
+									'target' => (string)$translationPluralForm->target,
+								);
+							}
+						}
+
+						if (!empty($parsedTranslationElement)) {
+							if (isset($translationElement->{'trans-unit'}[0]['id'])) {
+								$id = (string)$translationElement->{'trans-unit'}[0]['id'];
+								$id = substr($id, 0, strpos($id, '['));
+							} else {
+								throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399258);
+							}
+
+							$parsedData['translationUnits'][$id] = $parsedTranslationElement;
+						}
 					}
-
-					$parsedData['translationUnits'][$id] = $parsedTranslationElement;
-				}
+					break;
 			}
 		}
 

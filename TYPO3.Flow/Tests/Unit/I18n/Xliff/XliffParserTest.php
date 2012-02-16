@@ -28,6 +28,29 @@ class XliffParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$result = $parser->getParsedData($mockFilenamePath);
 		$this->assertEquals($mockParsedData, $result);
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\I18n\Xliff\Exception\InvalidXliffDataException
+	 */
+	public function missingIdInSingularTransUnitCausesException() {
+		$mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidXliffData.xlf';
+
+		$parser = new \TYPO3\FLOW3\I18n\Xliff\XliffParser();
+		$parser->getParsedData($mockFilenamePath);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\I18n\Xliff\Exception\InvalidXliffDataException
+	 */
+	public function missingIdInPluralTransUnitCausesException() {
+		$mockFilenamePath = __DIR__ . '/../Fixtures/MockInvalidPluralXliffData.xlf';
+
+		$parser = new \TYPO3\FLOW3\I18n\Xliff\XliffParser();
+		$parser->getParsedData($mockFilenamePath);
+	}
+
 }
 
 ?>
