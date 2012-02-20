@@ -34,6 +34,17 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function proxyClassesStillContainDocCommentsFromItsOriginalClass() {
+		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\ClassWithDocComments');
+		$expectedResult = 'This is a example doc comment which should be copied' . chr(10) . 'to the proxy class.';
+		$actualResult = $class->getDescription();
+
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 */
 	public function proxiedMethodsStillContainReturnAnnotationFromOriginalClass() {
 		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
 		$method = $class->getMethod('getSingletonA');
