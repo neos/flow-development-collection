@@ -32,6 +32,14 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'@\TYPO3\FLOW3\Annotations\Scope("singleton")'
 			),
 			array(
+				new FooBarAnnotation(),
+				'@\TYPO3\FLOW3\Tests\Unit\Object\Proxy\FooBarAnnotation(1.2)'
+			),
+			array(
+				new FooBarAnnotation(new FooBarAnnotation()),
+				'@\TYPO3\FLOW3\Tests\Unit\Object\Proxy\FooBarAnnotation(@\TYPO3\FLOW3\Tests\Unit\Object\Proxy\FooBarAnnotation(1.2))'
+			),
+			array(
 				$sessionWithAutoStart,
 				'@\TYPO3\FLOW3\Annotations\Session(autoStart=true)'
 			),
@@ -70,6 +78,16 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals($expectedString, \TYPO3\FLOW3\Object\Proxy\Compiler::renderAnnotation($annotation));
 	}
 
+}
+
+/**
+ * fixture "annotation" for the above test case
+ */
+class FooBarAnnotation {
+	public $value;
+	public function __construct($value = 1.2) {
+		$this->value = $value;
+	}
 }
 
 ?>
