@@ -14,7 +14,8 @@ namespace TYPO3\FLOW3\I18n;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A Service which provides further information about a given locale.
+ * A Service which provides further information about a given locale
+ * and the current state of the i18n and L10n components.
  *
  * @FLOW3\Scope("singleton")
  * @api
@@ -25,11 +26,6 @@ class Service {
 	 * @var array
 	 */
 	protected $settings;
-
-	/**
-	 * @var \TYPO3\FLOW3\I18n\Locale
-	 */
-	protected $defaultLocale;
 
 	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
@@ -50,11 +46,9 @@ class Service {
 	protected $cache;
 
 	/**
-	 * The currently active locale
-	 *
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\FLOW3\I18n\Configuration
 	 */
-	protected $currentLocale;
+	protected $configuration;
 
 	/**
 	 * The base path to use in filesystem operations. It is changed only in tests.
@@ -103,11 +97,7 @@ class Service {
 	 * @return void
 	 */
 	public function initialize() {
-		try {
-			$this->defaultLocale = new \TYPO3\FLOW3\I18n\Locale($this->settings['defaultLocale']);
-		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-			throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('Default locale identifier set in the configuration is invalid.', 1280935191);
-		}
+		$this->configuration = new Configuration($this->settings['defaultLocale']);
 
 		if ($this->cache->has('availableLocales')) {
 			$this->localeCollection = $this->cache->get('availableLocales');
@@ -118,36 +108,11 @@ class Service {
 	}
 
 	/**
-	 * Set the current active Locale object of this service
-	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $currentLocale
-	 * @return void
-	 */
-	public function setCurrentLocale(\TYPO3\FLOW3\I18n\Locale $currentLocale) {
-		$this->currentLocale = $currentLocale;
-	}
-
-	/**
-	 * Returns the current active Locale object of this service
-	 *
-	 * @return \TYPO3\FLOW3\I18n\Locale
-	 */
-	public function getCurrentLocale() {
-		if (!$this->currentLocale instanceof \TYPO3\FLOW3\I18n\Locale
-				|| $this->currentLocale->getLanguage() === 'mul') {
-			return $this->getDefaultLocale();
-		}
-		return $this->currentLocale;
-	}
-
-	/**
-	 * Returns the default Locale object for this FLOW3 installation.
-	 *
-	 * @return \TYPO3\FLOW3\I18n\Locale The default Locale instance
+	 * @return \TYPO3\FLOW3\I18n\Configuration
 	 * @api
 	 */
-	public function getDefaultLocale() {
-		return $this->defaultLocale;
+	public function getConfiguration() {
+		return $this->configuration;
 	}
 
 	/**
@@ -171,7 +136,7 @@ class Service {
 	 */
 	public function getLocalizedFilename($filename, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $strict = FALSE) {
 		if ($locale === NULL) {
-			$locale = $this->getDefaultLocale();
+			$locale = $this->configuration->getCurrentLocale();
 		}
 
 		if (strrpos($filename, '.') !== FALSE) {
@@ -211,7 +176,7 @@ class Service {
 	 * Returns a parent Locale object of the locale provided.
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
+	 * @return \TYPO3\FLOW3\I18n\Locale Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
 	 * @api
 	 */
 	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
@@ -257,20 +222,16 @@ class Service {
 
 			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
 				if ($fileOrDirectory->isFile()) {
-					$localeIdentifier = \TYPO3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
+					$localeIdentifier = Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
 
-					if ($localeIdentifier !== FALSE) {
-						try {
-							$locale = new \TYPO3\FLOW3\I18n\Locale($localeIdentifier);
-							$this->localeCollection->addLocale($locale);
-						} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-								// Just ignore current file and proceed
-						}
+					if ($localeIdentifier !== FALSE && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier) === 1) {
+						$this->localeCollection->addLocale(new Locale($localeIdentifier));
 					}
 				}
 			}
 		}
 	}
+
 }
 
 ?>

@@ -88,7 +88,7 @@ class FormatResolver {
 	 */
 	public function resolvePlaceholders($textWithPlaceholders, array $arguments, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
-			$locale = $this->localizationService->getDefaultLocale();
+			$locale = $this->localizationService->getConfiguration()->getDefaultLocale();
 		}
 
 		while (($startOfPlaceholder = strpos($textWithPlaceholders, '{')) !== FALSE) {

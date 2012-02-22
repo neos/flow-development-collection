@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Functional\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\I18n;
+
 /**
  * Testcase for the I18N translations
  *
@@ -35,8 +37,10 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function idAndLocaleForTranslation() {
 		return array(
-			array('update', new \TYPO3\FLOW3\I18n\Locale('en'), 'Update'),
-			array('update', new \TYPO3\FLOW3\I18n\Locale('de'), 'Aktualisieren')
+			array('authentication.username', new I18n\Locale('en'), 'Username'),
+			array('authentication.username', new I18n\Locale('de_CH'), 'Benutzername'),
+			array('update', new I18n\Locale('en'), 'Update'),
+			array('update', new I18n\Locale('de'), 'Aktualisieren')
 		);
 	}
 
@@ -54,8 +58,8 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function labelAndLocaleForTranslation() {
 		return array(
-			array('Update', new \TYPO3\FLOW3\I18n\Locale('en'), 'Update'),
-			array('Update', new \TYPO3\FLOW3\I18n\Locale('de'), 'Aktualisieren')
+			array('Update', new I18n\Locale('en'), 'Update'),
+			array('Update', new I18n\Locale('de'), 'Aktualisieren')
 		);
 	}
 

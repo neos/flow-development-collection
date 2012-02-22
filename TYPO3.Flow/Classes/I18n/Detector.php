@@ -63,12 +63,12 @@ class Detector {
 		$acceptableLanguages = \TYPO3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
 
 		if ($acceptableLanguages === FALSE) {
-			return $this->localizationService->getDefaultLocale();
+			return $this->localizationService->getConfiguration()->getDefaultLocale();
 		}
 
 		foreach ($acceptableLanguages as $languageIdentifier) {
 			if ($languageIdentifier === '*') {
-				return $this->localizationService->getDefaultLocale();
+				return $this->localizationService->getConfiguration()->getDefaultLocale();
 			}
 
 			try {
@@ -84,7 +84,7 @@ class Detector {
 			}
 		}
 
-		return $this->localizationService->getDefaultLocale();
+		return $this->localizationService->getConfiguration()->getDefaultLocale();
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Detector {
 		try {
 			return $this->detectLocaleFromTemplateLocale(new \TYPO3\FLOW3\I18n\Locale($localeIdentifier));
 		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
-			return $this->localizationService->getDefaultLocale();
+			return $this->localizationService->getConfiguration()->getDefaultLocale();
 		}
 	}
 
@@ -120,7 +120,7 @@ class Detector {
 			return $bestMatchingLocale;
 		}
 
-		return $this->localizationService->getDefaultLocale();
+		return $this->localizationService->getConfiguration()->getDefaultLocale();
 	}
 }
 

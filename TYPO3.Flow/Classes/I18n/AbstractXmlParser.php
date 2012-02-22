@@ -51,7 +51,7 @@ abstract class AbstractXmlParser {
 	 */
 	protected function parseXmlFile($sourcePath) {
 		if (!file_exists($sourcePath)) {
-			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('The path provided does not point to an existing and accessible XML file.', 1328879703);
+			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('The path "' . $sourcePath . '" does not point to an existing and accessible XML file.', 1328879703);
 		}
 		libxml_use_internal_errors(TRUE);
 		$rootXmlNode = simplexml_load_file($sourcePath, 'SimpleXmlElement', \LIBXML_NOWARNING);

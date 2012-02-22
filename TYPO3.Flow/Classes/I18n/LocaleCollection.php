@@ -35,7 +35,7 @@ class LocaleCollection {
 
 	/**
 	 * This array contains a parent Locale objects for given locale.
-	 * 
+	 *
 	 * "Searching" is done by the keys, which are locale tags. The key points to
 	 * the value which is a parent Locale object. If it's not set, there is no
 	 * parent for given locale, or no parent was searched before.
@@ -64,13 +64,13 @@ class LocaleCollection {
 
 	/**
 	 * Returns a parent Locale object of the locale provided.
-	 * 
+	 *
 	 * The parent is a locale which is more generic than the one given as
 	 * parameter. For example, the parent for locale en_GB will be locale en, of
 	 * course if it exists in the locale tree of available locales.
 	 *
 	 * This method returns NULL when no parent locale is available, or when
-	 * Locale object provided is not in three (ie it's not in a group of
+	 * Locale object provided is not in the tree (ie it's not in a group of
 	 * available locales).
 	 *
 	 * Note: to find a best-matching locale to one which doesn't exist in the

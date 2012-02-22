@@ -56,7 +56,7 @@ class NumberValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidato
 	 */
 	protected function isValid($value) {
 		if (!isset($this->options['locale'])) {
-			$locale = $this->localizationService->getDefaultLocale();
+			$locale = $this->localizationService->getConfiguration()->getDefaultLocale();
 		} elseif (is_string($this->options['locale'])) {
 			$locale = new \TYPO3\FLOW3\I18n\Locale($this->options['locale']);
 		} elseif ($this->options['locale'] instanceof \TYPO3\FLOW3\I18n\Locale) {

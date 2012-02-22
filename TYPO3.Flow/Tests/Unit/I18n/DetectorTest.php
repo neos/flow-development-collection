@@ -45,7 +45,7 @@ class DetectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
 		$mockLocalizationService = $this->getMock('TYPO3\FLOW3\I18n\Service');
-		$mockLocalizationService->expects($this->any())->method('getDefaultLocale')->will($this->returnValue(new \TYPO3\FLOW3\I18n\Locale('sv_SE')));
+		$mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new \TYPO3\FLOW3\I18n\Configuration('sv_SE')));
 
 		$this->detector = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Detector', array('dummy'));
 		$this->detector->_set('localeBasePath', 'vfs://Foo/');
