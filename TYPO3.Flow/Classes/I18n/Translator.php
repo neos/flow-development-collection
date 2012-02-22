@@ -175,6 +175,7 @@ class Translator {
 		} elseif ($arguments !== array()) {
 			return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
 		}
+		return $translatedMessage;
 	}
 
 	/**

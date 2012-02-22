@@ -79,6 +79,19 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function returnsIdWhenTranslationNotAvailable() {
 		$mockTranslationProvider = $this->getMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
+		$mockTranslationProvider->expects($this->once())->method('getTranslationById')->with('id', $this->defaultLocale, NULL, 'source', 'packageKey')->will($this->returnValue('translated'));
+
+		$this->translator->injectTranslationProvider($mockTranslationProvider);
+
+		$result = $this->translator->translateById('id', array(), NULL, $this->defaultLocale, 'source', 'packageKey');
+		$this->assertEquals('translated', $result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function translateByIdReturnsTranslationWhenNoArgumentsAreGiven() {
+		$mockTranslationProvider = $this->getMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
 		$mockTranslationProvider->expects($this->once())->method('getTranslationById')->with('id', $this->defaultLocale, NULL, 'source', 'packageKey')->will($this->returnValue(FALSE));
 
 		$this->translator->injectTranslationProvider($mockTranslationProvider);
