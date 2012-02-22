@@ -53,6 +53,28 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$resource->setFilename('file.someunknownextension');
 		$this->assertSame('application/octet-stream', $resource->getMimeType());
 	}
+
+	/**
+	 * @test
+	 */
+	public function getUriReturnsResourceWrapperUri() {
+		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('__toString')->will($this->returnValue('fakeSha1'));
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
+		$resource->setResourcePointer($mockResourcePointer);
+		$this->assertEquals('resource://fakeSha1', $resource->getUri());
+	}
+
+	/**
+	 * @test
+	 */
+	public function toStringReturnsResourcePointerStringRepresentation() {
+		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('__toString')->will($this->returnValue('fakeSha1'));
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
+		$resource->setResourcePointer($mockResourcePointer);
+		$this->assertEquals('fakeSha1', (string) $resource);
+	}
 }
 
 ?>

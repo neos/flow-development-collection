@@ -45,6 +45,24 @@ class Resource {
 	protected $fileExtension = '';
 
 	/**
+	 * Returns the SHA1 of the ResourcePointer this Resource uses.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return $this->resourcePointer->__toString();
+	}
+
+	/**
+	 * Returns a resource://<sha1> URI for use with file operations, …
+	 *
+	 * @return string
+	 */
+	public function getUri() {
+		return 'resource://' . $this->resourcePointer;
+	}
+
+	/**
 	 * Sets the filename
 	 *
 	 * @param string $filename
