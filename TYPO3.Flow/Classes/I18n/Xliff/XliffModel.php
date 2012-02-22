@@ -66,7 +66,7 @@ class XliffModel {
 	 * @param string $sourcePath
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale The locale represented by the file
 	 */
-	public function __construct($sourcePath, $locale) {
+	public function __construct($sourcePath, \TYPO3\FLOW3\I18n\Locale $locale) {
 		$this->sourcePath = $sourcePath;
 		$this->locale = $locale;
 	}

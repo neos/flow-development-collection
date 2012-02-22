@@ -86,13 +86,12 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 				throw new \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
 			}
 				// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
-			$translation = $model->getTargetBySource($originalLabel, (int)array_search($pluralForm, $pluralFormsForProvidedLocale));
+			$pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
 		} else {
-			$translation = $model->getTargetBySource($originalLabel);
+			$pluralFormIndex = 0;
 		}
 
-
-		return $translation;
+		return $model->getTargetBySource($originalLabel, $pluralFormIndex);
 	}
 
 	/**
@@ -116,12 +115,13 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 			if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
 				throw new \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
 			}
-			$translation = $model->getTargetByTransUnitId($labelId, (int)array_search($pluralForm, $pluralFormsForProvidedLocale));
+				// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
+			$pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
 		} else {
-			$translation = $model->getTargetByTransUnitId($labelId);
+			$pluralFormIndex = 0;
 		}
 
-		return $translation;
+		return $model->getTargetByTransUnitId($labelId, $pluralFormIndex);
 	}
 
 	/**
@@ -137,13 +137,13 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * @return \TYPO3\FLOW3\I18n\Xliff\XliffModel New or existing instance
 	 */
 	protected function getModel($packageKey, $sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
-		$sourceName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath, $sourceName . '.xlf'));
-		$sourceName = $this->localizationService->getLocalizedFilename($sourceName, $locale);
+		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath, $sourceName . '.xlf'));
+		list($sourcePath, $locale) = $this->localizationService->getLocalizedFilename($sourcePath, $locale, FALSE);
 
-		if (isset($this->models[$sourceName])) {
-			return $this->models[$sourceName];
+		if (isset($this->models[$sourcePath])) {
+			return $this->models[$sourcePath];
 		}
-		return $this->models[$sourceName] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourceName, $locale);
+		return $this->models[$sourcePath] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourcePath, $locale);
 	}
 }
 

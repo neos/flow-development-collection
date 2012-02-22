@@ -153,17 +153,18 @@ class Service {
 		if ($strict === TRUE) {
 			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
 			if (file_exists($possibleLocalizedFilename)) {
-				return $possibleLocalizedFilename;
+				return array($possibleLocalizedFilename, $locale);
 			}
 		} else {
 			foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
 				$possibleLocalizedFilename = $filenameWithoutExtension . '.' . $localeIdentifier . $extension;
 				if (file_exists($possibleLocalizedFilename)) {
-					return $possibleLocalizedFilename;
+					return array($possibleLocalizedFilename, $locale);
 				}
 			}
 		}
-		return $filename;
+		return array($filename, $locale);
+	}
 
 	/**
 	 * Build a chain of locale objects according to the fallback rule and

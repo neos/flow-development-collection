@@ -51,7 +51,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$service = $this->getMock('TYPO3\FLOW3\I18n\Service', array('getLocaleChain'));
 		$service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
-		$result = $service->getLocalizedFilename($filename, $desiredLocale);
+		list($result,) = $service->getLocalizedFilename($filename, $desiredLocale);
 		$this->assertEquals($expectedFilename, $result);
 	}
 
@@ -67,7 +67,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$service = new \TYPO3\FLOW3\I18n\Service();
 
-		$result = $service->getLocalizedFilename($filename, new \TYPO3\FLOW3\I18n\Locale('en_GB'), TRUE);
+		list($result,) = $service->getLocalizedFilename($filename, new \TYPO3\FLOW3\I18n\Locale('en_GB'), TRUE);
 		$this->assertEquals($expectedFilename, $result);
 	}
 
@@ -83,7 +83,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$service = new \TYPO3\FLOW3\I18n\Service();
 
-		$result = $service->getLocalizedFilename($filename, new \TYPO3\FLOW3\I18n\Locale('en_GB'), TRUE);
+		list($result,) = $service->getLocalizedFilename($filename, new \TYPO3\FLOW3\I18n\Locale('en_GB'), TRUE);
 		$this->assertEquals($expectedFilename, $result);
 	}
 
@@ -95,7 +95,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$service = new \TYPO3\FLOW3\I18n\Service();
 
-		$result = $service->getLocalizedFilename($filename, new \TYPO3\FLOW3\I18n\Locale('pl'), TRUE);
+		list($result,) = $service->getLocalizedFilename($filename, new \TYPO3\FLOW3\I18n\Locale('pl'), TRUE);
 		$this->assertEquals($filename, $result);
 	}
 
@@ -110,7 +110,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$service = $this->getMock('TYPO3\FLOW3\I18n\Service', array('getLocaleChain'));
 		$service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
 
-		$result = $service->getLocalizedFilename($filename, $desiredLocale);
+		list($result,) = $service->getLocalizedFilename($filename, $desiredLocale);
 		$this->assertEquals($filename, $result);
 	}
 
