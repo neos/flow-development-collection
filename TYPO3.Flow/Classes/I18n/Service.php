@@ -98,6 +98,7 @@ class Service {
 	 */
 	public function initialize() {
 		$this->configuration = new Configuration($this->settings['defaultLocale']);
+		$this->configuration->setFallbackRule($this->settings['fallbackRule']);
 
 		if ($this->cache->has('availableLocales')) {
 			$this->localeCollection = $this->cache->get('availableLocales');
@@ -118,30 +119,32 @@ class Service {
 	/**
 	 * Returns the path to the existing localized version of file given.
 	 *
-	 * Searching is done for the default locale if no $locale parameter is
-	 * provided. If parameter $strict is provided, searching is done only for
-	 * provided / default locale (without searching of files localized for
+	 * Searching is done for the current locale if no $locale parameter is
+	 * provided. The search is done according to the configured fallback
+	 * rule.
+	 *
+	 * If parameter $strict is provided, searching is done only for the
+	 * provided / current locale (without searching of files localized for
 	 * more generic locales).
 	 *
 	 * If no localized version of file is found, $filepath is returned without
 	 * any change.
 	 *
-	 * Note: This method assumes that provided file exists.
-	 *
 	 * @param string $filename Path to the file
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of localized file
 	 * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
 	 * @return string Path to the localized file, or $filename when no localized file was found
+	 * @see Configuration::setFallbackRule()
 	 * @api
 	 */
-	public function getLocalizedFilename($filename, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $strict = FALSE) {
+	public function getLocalizedFilename($filename, Locale $locale = NULL, $strict = FALSE) {
 		if ($locale === NULL) {
 			$locale = $this->configuration->getCurrentLocale();
 		}
 
-		if (strrpos($filename, '.') !== FALSE) {
-			$filenameWithoutExtension = substr($filename, 0, strrpos($filename, '.'));
-			$extension = substr($filename, strrpos($filename, '.'));
+		if (($dotPosition = strrpos($filename, '.')) !== FALSE) {
+			$filenameWithoutExtension = substr($filename, 0, $dotPosition);
+			$extension = substr($filename, $dotPosition);
 		} else {
 			$filenameWithoutExtension = $filename;
 			$extension = '';
@@ -149,27 +152,52 @@ class Service {
 
 		if ($strict === TRUE) {
 			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
-
-			if (file_exists($possibleLocalizedFilename)) {
-				return $possibleLocalizedFilename;
-			} else {
-				return $filename;
-			}
-		}
-
-		$locale = $this->localeCollection->findBestMatchingLocale($locale);
-
-		while ($locale !== NULL) {
-			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
-
 			if (file_exists($possibleLocalizedFilename)) {
 				return $possibleLocalizedFilename;
 			}
-
-			$locale = $this->localeCollection->getParentLocaleOf($locale);
+		} else {
+			foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
+				$possibleLocalizedFilename = $filenameWithoutExtension . '.' . $localeIdentifier . $extension;
+				if (file_exists($possibleLocalizedFilename)) {
+					return $possibleLocalizedFilename;
+				}
+			}
 		}
-
 		return $filename;
+
+	/**
+	 * Build a chain of locale objects according to the fallback rule and
+	 * the available locales.
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @return array
+	 */
+	public function getLocaleChain(Locale $locale) {
+		$fallBackRule = $this->configuration->getFallbackRule();
+		$localeChain = array((string)$locale => $locale);
+
+		if ($fallBackRule['strict'] === TRUE) {
+			foreach ($fallBackRule['order'] as $localeIdentifier) {
+				$localeChain[$localeIdentifier] = new Locale($localeIdentifier);
+			}
+		} else {
+			$locale = $this->findBestMatchingLocale($locale);
+			while ($locale !== NULL) {
+				$localeChain[(string)$locale] = $locale;
+				$locale = $this->getParentLocaleOf($locale);
+			}
+			foreach ($fallBackRule['order'] as $localeIdentifier) {
+				$locale = new Locale($localeIdentifier);
+				$locale = $this->findBestMatchingLocale($locale);
+				while ($locale !== NULL) {
+					$localeChain[(string)$locale] = $locale;
+					$locale = $this->getParentLocaleOf($locale);
+				}
+			}
+		}
+		$locale = $this->configuration->getDefaultLocale();
+		$localeChain[(string)$locale] = $locale;
+
+		return $localeChain;
 	}
 
 	/**

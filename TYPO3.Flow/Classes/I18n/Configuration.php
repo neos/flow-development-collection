@@ -29,6 +29,11 @@ class Configuration {
 	protected $currentLocale;
 
 	/**
+	 * @var array
+	 */
+	protected $fallbackRule = array();
+
+	/**
 	 * Constructs a new configuration object with the given locale identifier to
 	 * be used as the default locale of this configuration.
 	 *
@@ -74,6 +79,39 @@ class Configuration {
 			return $this->defaultLocale;
 		}
 		return $this->currentLocale;
+	}
+
+	/**
+	 * Allows to set a fallback order for locale resolving. If not set,
+	 * the implicit inheritance of locales will be used. That is, if a
+	 * locale of en_UK is requested, matches will be searched for in en_UK
+	 * and en before trying the default locale configured in FLOW3.
+	 *
+	 * If this is given an order of [dk, za, fr_CA] a request for en_UK will
+	 * be looked up in en_UK, en, dk, za, fr_CA, fr before trying the default
+	 * locale.
+	 *
+	 * If strict flag is given in the array, the above example would instead look
+	 * in en_UK, dk, za, fr_CA before trying the default locale. In other words,
+	 * the implicit fallback is not applied to the locales in the fallback rule.
+	 *
+	 * Here is an example:
+	 *   array('strict' => FALSE, 'order' => array('dk', 'za'))
+	 *
+	 * @param array $fallbackRule
+	 */
+	public function setFallbackRule(array $fallbackRule) {
+		$this->fallbackRule = $fallbackRule;
+	}
+
+	/**
+	 * Returns the current fallback rule.
+	 *
+	 * @return array
+	 * @see setFallbackRule()
+	 */
+	public function getFallbackRule() {
+		return $this->fallbackRule;
 	}
 
 }

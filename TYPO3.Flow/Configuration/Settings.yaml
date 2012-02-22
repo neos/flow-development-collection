@@ -77,6 +77,13 @@ TYPO3:
       # The default locale identifier.
       defaultLocale: en
 
+      # The fallback rule to use for locale resolution
+      fallbackRule:
+        # Strictly use the defined order (without implicit locale fallback)
+        strict: FALSE
+        # The locales identifiers to use in their desired order
+        order: []
+
     mvc:
 
       # Object name of the controller to use if no other controller could be resolved
