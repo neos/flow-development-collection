@@ -26,6 +26,11 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ObjectManager implements ObjectManagerInterface {
 
 	/**
+	 * @var string The configuration context for this FLOW3 run
+	 */
+	protected $context;
+
+	/**
 	 * @var \TYPO3\FLOW3\Session\SessionInterface
 	 */
 	protected $session;
