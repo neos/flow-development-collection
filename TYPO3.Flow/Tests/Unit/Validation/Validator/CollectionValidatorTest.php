@@ -62,5 +62,50 @@ class CollectionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validat
 		$this->assertTrue($result->hasErrors());
 		$this->assertEquals(2, count($result->getFlattenedErrors()));
 	}
+
+	/**
+	 * @test
+	 */
+	public function collectionValidatorValidatesNestedObjectStructuresWithoutEndlessLooping() {
+		$classNameA = 'A' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $classNameA . '{ public $b = array(); public $integer = 5; }');
+		$classNameB = 'B' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $classNameB . '{ public $a; public $c; public $integer = "Not an integer"; }');
+		$A = new $classNameA();
+		$B = new $classNameB();
+		$A->b = array($B);
+		$B->a = $A;
+		$B->c = array($A);
+
+		$this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will($this->returnValue(new \TYPO3\FLOW3\Validation\Validator\IntegerValidator()));
+		$this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will($this->returnValue(new \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator()));
+
+			// Create validators
+		$aValidator = new \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator(array());
+		$this->validator->_set('options', array('elementValidator' => 'Integer'));
+		$integerValidator = new \TYPO3\FLOW3\Validation\Validator\IntegerValidator(array());
+
+			// Add validators to properties
+		$aValidator->addPropertyValidator('b', $this->validator);
+		$aValidator->addPropertyValidator('integer', $integerValidator);
+
+		$result = $aValidator->validate($A)->getFlattenedErrors();
+		$this->assertEquals('A valid integer number is expected.', $result['b.0'][0]->getMessage());
+	}
+
+	/**
+	 * @test
+	 */
+	public function collectionValidatorIsValidEarlyReturnsOnUnitializedDoctrinePersistenceCollections() {
+		$entityManager = $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', FALSE);
+		$collection = new \Doctrine\Common\Collections\ArrayCollection(array());
+		$persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, '', $collection);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($persistentCollection, 'initialized', FALSE, TRUE);
+
+		$this->mockValidatorResolver->expects($this->never())->method('createValidator');
+
+		$this->validator->validate($persistentCollection);
+	}
+
 }
 ?>
