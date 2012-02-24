@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class RawValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class RawValidator extends AbstractValidator {
 
 	/**
 	 * This validator is always valid

@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class DateTimeRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class DateTimeRangeValidator extends AbstractValidator {
 
 	/**
 	 * Adds errors if the given DateTime doesn't match the set boundaries.

@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class NumberValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class NumberValidator extends AbstractValidator {
 
 	/**
 	 * @var \TYPO3\FLOW3\I18n\Service

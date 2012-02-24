@@ -23,7 +23,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class LabelValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class LabelValidator extends AbstractValidator {
 
 	const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 

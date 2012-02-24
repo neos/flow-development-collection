@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class NotEmptyValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class NotEmptyValidator extends AbstractValidator {
 
 	/**
 	 * This validator always needs to be executed even if the given value is empty.

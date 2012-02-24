@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class FloatValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class FloatValidator extends AbstractValidator {
 
 	/**
 	 * The given $value is valid if it is of type float or a string matching the regular expression [0-9.e+-]

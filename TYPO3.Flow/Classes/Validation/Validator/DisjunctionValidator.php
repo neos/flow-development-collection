@@ -19,7 +19,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class DisjunctionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractCompositeValidator {
+class DisjunctionValidator extends AbstractCompositeValidator {
 
 	/**
 	 * Checks if the given value is valid according to the validators of the
