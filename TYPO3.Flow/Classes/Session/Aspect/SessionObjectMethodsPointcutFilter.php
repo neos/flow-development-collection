@@ -71,7 +71,7 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\Po
 			return FALSE;
 		}
 
-		if (preg_match('/^__wakeup|__construct|__desctruct|__sleep|__serialize|__unserialize|__clone|shutdownObject|initializeObject|inject.*$/', $methodName) !== 0) {
+		if (preg_match('/^__wakeup|__construct|__destruct|__sleep|__serialize|__unserialize|__clone|shutdownObject|initializeObject|inject.*$/', $methodName) !== 0) {
 			return FALSE;
 		}
 
