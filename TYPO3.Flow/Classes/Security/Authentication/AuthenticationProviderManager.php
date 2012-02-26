@@ -35,30 +35,35 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 
 	/**
 	 * The provider resolver
+	 *
 	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver
 	 */
 	protected $providerResolver;
 
 	/**
 	 * The security context of the current request
+	 *
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * The request pattern resolver
+	 *
 	 * @var \TYPO3\FLOW3\Security\RequestPatternResolver
 	 */
 	protected $requestPatternResolver;
 
 	/**
 	 * Array of \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface objects
+	 *
 	 * @var array
 	 */
 	protected $providers = array();
 
 	/**
 	 * Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface objects
+	 *
 	 * @var array
 	 */
 	protected $tokens = array();
@@ -281,6 +286,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 			}
 		}
 	}
-}
 
+}
 ?>

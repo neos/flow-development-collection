@@ -46,6 +46,21 @@ interface TokenInterface {
 	public function isAuthenticated();
 
 	/**
+	 * Sets the authentication status. Usually called by the responsible \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 *
+	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
+	 * @return void
+	 */
+	public function setAuthenticationStatus($authenticationStatus);
+
+	/**
+	 * Returns the current authentication status
+	 *
+	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, REAUTHENTICATION_NEEDED
+	 */
+	public function getAuthenticationStatus();
+
+	/**
 	 * Sets the authentication entry point
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
@@ -56,7 +71,7 @@ interface TokenInterface {
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \TYPO3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available
+	 * @return \TYPO3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
 	 */
 	public function getAuthenticationEntryPoint();
 
@@ -97,6 +112,14 @@ interface TokenInterface {
 	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request);
 
 	/**
+	 * Returns the credentials of this token. The type depends on the provider
+	 * of the token.
+	 *
+	 * @return mixed $credentials The needed credentials to authenticate this token
+	 */
+	public function getCredentials();
+
+	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
 	 * @return \TYPO3\FLOW3\Security\Account An account object
@@ -112,34 +135,11 @@ interface TokenInterface {
 	public function setAccount(\TYPO3\FLOW3\Security\Account $account = NULL);
 
 	/**
-	 * Returns the credentials of this token. The type depends on the provider
-	 * of the token.
-	 *
-	 * @return mixed $credentials The needed credentials to authenticate this token
-	 */
-	public function getCredentials();
-
-	/**
 	 * Returns the currently valid roles.
 	 *
 	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\Role objects
 	 */
 	public function getRoles();
-
-	/**
-	 * Sets the authentication status. Usually called by the responsible \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
-	 *
-	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
-	 * @return void
-	 */
-	public function setAuthenticationStatus($authenticationStatus);
-
-	/**
-	 * Returns the current authentication status
-	 *
-	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, REAUTHENTICATION_NEEDED
-	 */
-	public function getAuthenticationStatus();
 
 	/**
 	 * Returns a string representation of the token for logging purposes.
@@ -149,5 +149,4 @@ interface TokenInterface {
 	public function  __toString();
 
 }
-
 ?>

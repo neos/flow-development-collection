@@ -15,9 +15,8 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * An authentication provider that authenticates SSO requests from typo3.org
- *
  */
-class Typo3OrgSsoProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
+class Typo3OrgSsoProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\AbstractProvider {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
@@ -30,39 +29,6 @@ class Typo3OrgSsoProvider implements \TYPO3\FLOW3\Security\Authentication\Authen
 	 * @FLOW3\Inject
 	 */
 	protected $rsaWalletService;
-
-	/**
-	 * @var string
-	 */
-	protected $name;
-
-	/**
-	 * @var array
-	 */
-	protected $options = array();
-
-	/**
-	 * Constructor
-	 *
-	 * @param string $name The name of this authentication provider
-	 * @param array $options Additional configuration options
-	 * @return void
-	 */
-	public function __construct($name, array $options) {
-		$this->name = $name;
-		$this->options = $options;
-	}
-
-	/**
-	 * Returns TRUE if the given token can be authenticated by this provider
-	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 */
-	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
-		return FALSE;
-	}
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
@@ -112,6 +78,6 @@ class Typo3OrgSsoProvider implements \TYPO3\FLOW3\Security\Authentication\Authen
 			$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
-}
 
+}
 ?>

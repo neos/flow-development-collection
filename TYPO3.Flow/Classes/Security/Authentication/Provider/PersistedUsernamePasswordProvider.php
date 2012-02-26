@@ -17,9 +17,8 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * An authentication provider that authenticates
  * TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
  * The accounts are stored in the Content Repository.
- *
  */
-class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
+class PersistedUsernamePasswordProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\AbstractProvider {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
@@ -32,33 +31,6 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 	 * @FLOW3\Inject
 	 */
 	protected $hashService;
-
-	/**
-	 * @var string
-	 */
-	protected $name;
-
-	/**
-	 * Constructor
-	 *
-	 * @param string $name The name of this authentication provider
-	 * @param array $options Additional configuration options
-	 * @return void
-	 */
-	public function __construct($name, array $options) {
-		$this->name = $name;
-	}
-
-	/**
-	 * Returns TRUE if the given token can be authenticated by this provider
-	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 */
-	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
-		return FALSE;
-	}
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
@@ -98,6 +70,6 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 			$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
-}
 
+}
 ?>

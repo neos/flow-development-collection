@@ -19,12 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
-
-	/**
-	 * @var string
-	 */
-	protected $name;
+class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\AbstractProvider {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Account
@@ -32,31 +27,9 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 	protected $account;
 
 	/**
-	 * @var int
+	 * @var integer
 	 */
 	protected $authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
-
-	/**
-	 * Constructor
-	 *
-	 * @param string $name The name of this authentication provider
-	 * @param array $options Additional configuration options
-	 * @return void
-	 */
-	public function __construct($name, array $options = array()) {
-		$this->name = $name;
-	}
-
-	/**
-	 * Returns TRUE if the given token can be authenticated by this provider
-	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 */
-	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
-		return FALSE;
-	}
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
@@ -121,6 +94,6 @@ class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\Authentica
 		$this->account = NULL;
 		$this->authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
 	}
-}
 
+}
 ?>

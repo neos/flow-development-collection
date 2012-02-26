@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * Contract for an authentication provider used by the \TYPO3\FLOW3\Security\Authenticaton\ProviderManager.
  * Has to add a \TYPO3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
  * a \TYPO3\FLOW3\Security\Authentication\UserDetailsInterface.
- *
  */
 interface AuthenticationProviderInterface {
 
@@ -51,6 +50,6 @@ interface AuthenticationProviderInterface {
 	 * @return void
 	 */
 	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
-}
 
+}
 ?>

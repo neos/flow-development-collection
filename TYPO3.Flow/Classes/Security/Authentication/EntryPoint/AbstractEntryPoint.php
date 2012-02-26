@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication;
+namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,9 +12,16 @@ namespace TYPO3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * Contract for an authentication entry point
+ * An abstract authentication entry point.
  */
-interface EntryPointInterface {
+abstract class AbstractEntryPoint implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterface {
+
+	/**
+	 * The configurations options
+	 *
+	 * @var array
+	 */
+	protected $options = array();
 
 	/**
 	 * Returns TRUE if the given request can be authenticated by the authentication provider
@@ -23,7 +30,9 @@ interface EntryPointInterface {
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
 	 */
-	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request);
+	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+		return ($request instanceof \TYPO3\FLOW3\MVC\Web\Request);
+	}
 
 	/**
 	 * Sets the options array
@@ -31,23 +40,18 @@ interface EntryPointInterface {
 	 * @param array $options An array of configuration options
 	 * @return void
 	 */
-	public function setOptions(array $options);
+	public function setOptions(array $options) {
+		$this->options = $options;
+	}
 
 	/**
 	 * Returns the options array
 	 *
-	 * @return array An array of configuration options
+	 * @return array The configuration options of this entry point
 	 */
-	public function getOptions();
-
-	/**
-	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
-	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The current response
-	 * @return void
-	 */
-	public function startAuthentication(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response);
+	public function getOptions() {
+		return $this->options;
+	}
 
 }
 ?>

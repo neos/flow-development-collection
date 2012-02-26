@@ -16,7 +16,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
  *
  * Has to add a \TYPO3\FLOW3\Security\Authentication\TokenInterface to the security context
  * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
- *
  */
 interface AuthenticationManagerInterface {
 
@@ -64,6 +63,6 @@ interface AuthenticationManagerInterface {
 	 * @return void
 	 */
 	public function logout();
-}
 
+}
 ?>

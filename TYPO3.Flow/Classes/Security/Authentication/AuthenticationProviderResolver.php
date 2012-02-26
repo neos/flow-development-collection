@@ -51,5 +51,6 @@ class AuthenticationProviderResolver {
 
 		throw new \TYPO3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
 	}
+
 }
 ?>
