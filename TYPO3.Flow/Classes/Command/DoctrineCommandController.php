@@ -324,8 +324,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Generate a new migration
 	 *
-	 * If $diffAgainstCurrent is TRUE, it generates a migration file with the
-	 * diff between current DB structure and the found mapping metadata.
+	 * If $diffAgainstCurrent is TRUE (the default), it generates a migration file
+	 * with the diff between current DB structure and the found mapping metadata.
 	 *
 	 * Otherwise an empty migration skeleton is generated.
 	 *

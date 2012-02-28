@@ -609,6 +609,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 			require_once($packageClassPathAndFilename);
 			$packageClassName = str_replace('.', '\\', $packageKey) . '\Package';
+			if (!class_exists($packageClassName)) {
+				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class called "%s".', $packageKey, $packageClassPathAndFilename, $packageClassName), 1327587091);
+			}
 			$this->packages[$packageKey] = new $packageClassName($packageKey, $stateConfiguration['packagePath']);
 
 			if (!$this->packages[$packageKey] instanceof PackageInterface) {
