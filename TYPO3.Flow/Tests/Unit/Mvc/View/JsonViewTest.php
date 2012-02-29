@@ -148,6 +148,51 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * data provider for testTransformValueWithObjectIdentifierExposation()
+	 * @return array
+	 */
+	public function objectIdentifierExposationTestData() {
+		$output = array();
+
+		$dummyIdentifier = 'e4f40dfc-8c6e-4414-a5b1-6fd3c5cf7a53';
+
+		$object = new \stdClass();
+		$object->value1 = new \stdClass();
+		$configuration = array(
+			'_descend' => array(
+				 'value1' => array(
+					  '_exposeObjectIdentifier' => TRUE
+				 )
+			)
+		);
+
+		$expected = array('value1' => array('__identity' => $dummyIdentifier));
+		$output[] = array($object, $configuration, $expected, $dummyIdentifier, 'boolean TRUE should result in __identity key');
+
+		$configuration['_descend']['value1']['_exposedObjectIdentifierKey'] = 'guid';
+		$expected = array('value1' => array('guid' => $dummyIdentifier));
+		$output[] = array($object, $configuration, $expected, $dummyIdentifier, 'string value should result in string-equal key');
+
+		return $output;
+	}
+
+	/**
+	 * @test
+	 * @dataProvider objectIdentifierExposationTestData
+	 */
+	public function testTransformValueWithObjectIdentifierExposation($object, $configuration, $expected, $dummyIdentifier, $description) {
+		$persistenceManagerMock = $this->getMock('TYPO3\FLOW3\Persistence\Generic\PersistenceManager', array('getIdentifierByObject'));
+		$jsonView = $this->getAccessibleMock('TYPO3\FLOW3\MVC\View\JsonView', array('dummy'), array(), '', FALSE);
+		$jsonView->_set('persistenceManager', $persistenceManagerMock);
+
+		$persistenceManagerMock->expects($this->once())->method('getIdentifierByObject')->with($object->value1)->will($this->returnValue($dummyIdentifier));
+
+		$actual = $jsonView->_call('transformValue', $object, $configuration);
+
+		$this->assertEquals($expected, $actual, $description);
+	}
+
+	/**
 	 * @test
 	 */
 	public function renderSetsContentTypeHeader() {
