@@ -469,7 +469,7 @@ class Route {
 	 * @param array $arguments
 	 * @return array the internal arguments
 	 */
-	function extractInternalArguments(array &$arguments) {
+	protected function extractInternalArguments(array &$arguments) {
 		$internalArguments = array();
 		foreach($arguments as $argumentKey => &$argumentValue) {
 			if (substr($argumentKey, 0, 2) === '__') {
