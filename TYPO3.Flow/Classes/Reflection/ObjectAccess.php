@@ -44,8 +44,8 @@ class ObjectAccess {
 	 * - else, throw exception
 	 *
 	 * @param mixed $subject Object or array to get the property from
-	 * @param string $propertyName name of the property to retrieve
-	 * @param boolean $forceDirectAccess directly access property using reflection(!)
+	 * @param string|integer $propertyName Name or index of the property to retrieve
+	 * @param boolean $forceDirectAccess Directly access property using reflection(!)
 	 * @return mixed Value of the property
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
 	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
@@ -54,8 +54,8 @@ class ObjectAccess {
 		if (!is_object($subject) && !is_array($subject)) {
 			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
 		}
-		if (!is_string($propertyName) && (!is_array($subject) && !$subject instanceof \ArrayAccess)) {
-			throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
+		if (!is_string($propertyName) && !is_integer($propertyName)) {
+			throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
 		}
 
 		$propertyExists = FALSE;
@@ -155,7 +155,7 @@ class ObjectAccess {
 	 * - else, return FALSE
 	 *
 	 * @param mixed $subject The target object or array
-	 * @param string $propertyName Name of the property to set
+	 * @param string|integer $propertyName Name or index of the property to set
 	 * @param mixed $propertyValue Value of the property
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @return boolean TRUE if the property could be set, FALSE otherwise
@@ -168,7 +168,7 @@ class ObjectAccess {
 		}
 
 		if (!is_object($subject)) throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject). ' given.', 1237301368);
-		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
+		if (!is_string($propertyName) && !is_integer($propertyName)) throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
 
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
