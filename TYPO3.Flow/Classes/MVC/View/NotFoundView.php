@@ -50,6 +50,8 @@ class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 			$template = str_replace('{' . $marker . '}', $variableValue, $template);
 		}
 
+		$this->controllerContext->getResponse()->setStatus(404);
+
 		return $template;
 	}
 
