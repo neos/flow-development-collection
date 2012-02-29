@@ -338,6 +338,22 @@ class ReflectionService {
 	}
 
 	/**
+	 * Returns the class name of the given object. This is a convenience
+	 * method that returns the expected class names even for proxy classes.
+	 *
+	 * @param object $object
+	 * @return string The class name of the given object
+	 */
+	public function getClassNameByObject($object) {
+		if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
+			$className = get_parent_class($object);
+		} else {
+			$className = get_class($object);
+		}
+		return $className;
+	}
+
+	/**
 	 * Searches for and returns all names of classes which are tagged by the specified
 	 * annotation. If no classes were found, an empty array is returned.
 	 *
