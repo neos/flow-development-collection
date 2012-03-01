@@ -394,8 +394,8 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	}
 
 	/**
-	 * Returns an array of resource constraints, which are configured for the given entity type
-	 * and for at least one of the given roles.
+	 * Returns an array of not GRANTED or explicitly DENIED resource constraints, which are
+	 * configured for the given entity type and for at least one of the given roles.
 	 * Note: If two roles have conflicting privileges for the same resource the GRANT priviliege
 	 * has precedence.
 	 *
@@ -406,14 +406,17 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	public function getResourcesConstraintsForEntityTypeAndRoles($entityType, array $roles) {
 		$deniedResources = array();
 		$grantedResources = array();
+		$abstainedResources = array();
 
 		$entityType = str_replace('\\', '_', $entityType);
 
 		foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
 			foreach ($roles as $roleIdentifier) {
-				if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])) continue;
+				if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])
+					|| $this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_ABSTAIN) {
 
-				if ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
+					$abstainedResources[$resource] = $constraint;
+				} elseif ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
 					$deniedResources[$resource] = $constraint;
 				} else {
 					$grantedResources[] = $resource;
@@ -422,10 +425,10 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		}
 
 		foreach ($grantedResources as $grantedResource) {
-			if (isset($deniedResources[$grantedResource])) unset($deniedResources[$grantedResource]);
+			if (isset($abstainedResources[$grantedResource])) unset($abstainedResources[$grantedResource]);
 		}
 
-		return $deniedResources;
+		return array_merge($abstainedResources, $deniedResources);
 	}
 
 	/**
@@ -498,9 +501,20 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 
 			foreach ($aclEntries['entities'] as $resource => $privilege) {
 				if (!isset($this->acls[$resource])) $this->acls[$resource] = array();
-				$this->acls[$resource][$role] = array(
-					'privilege' => ($privilege === 'GRANT' ? self::PRIVILEGE_GRANT : self::PRIVILEGE_DENY)
-				);
+				$this->acls[$resource][$role] = array();
+				switch ($privilege) {
+					case 'GRANT':
+						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_GRANT;
+						break;
+					case 'DENY':
+						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_DENY;
+						break;
+					case 'ABSTAIN':
+						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_ABSTAIN;
+						break;
+					default:
+						throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+				}
 			}
 		}
 	}

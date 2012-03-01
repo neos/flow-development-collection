@@ -680,7 +680,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 				),
 			),
 			'resource2' => array(
@@ -690,7 +690,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			),
 			'resource3' => array(
 				'Customer' => array(
-                    'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+                    'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN
 				),
 			)
 		);
@@ -701,13 +701,13 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('TYPO3\MyEntity', array('Customer', 'Administrator'));
 
-		$this->assertEquals($result, array('resource1' => 'constraint1', 'resource3' => 'constraint3'));
+		$this->assertEquals($result, array('resource2' => 'constraint2', 'resource3' => 'constraint3'));
 	}
 
 	/**
 	 * @test
 	 */
-	public function getResourcesConstraintsForEntityTypeAndRolesDoesNotReturnConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
+	public function getResourcesConstraintsForEntityTypeAndRolesReturnsConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
 		$entityResourcesConstraints = array(
 			'TYPO3_MyEntity' => array(
 				'resource1' => 'constraint1',
@@ -732,7 +732,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			),
 			'resource3' => array(
 				'Customer' => array(
-					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 				),
 			)
 		);
@@ -743,7 +743,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('TYPO3\MyEntity', array('Customer', 'Administrator'));
 
-		$this->assertEquals($result, array('resource3' => 'constraint3'));
+		$this->assertEquals($result, array('resource1' => 'constraint1', 'resource2' => 'constraint2'));
 	}
 
 	/**
