@@ -149,7 +149,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	 * @return \TYPO3\FLOW3\Security\Account An account object
 	 */
 	public function getAccount() {
-		return $this->account;
+		return $this->isAuthenticated() ? $this->account: NULL;
 	}
 
 	/**
@@ -169,7 +169,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	 */
 	public function getRoles() {
 		$account = $this->getAccount();
-		return ($account !== NULL && $this->isAuthenticated()) ? $account->getRoles() : array();
+		return $account !== NULL ? $account->getRoles() : array();
 	}
 
 	/**

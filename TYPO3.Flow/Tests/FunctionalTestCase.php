@@ -94,7 +94,12 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
-	private $securityContext;
+	protected $securityContext;
+
+	/**
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 */
+	protected $authenticationManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
@@ -104,12 +109,12 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
-	private $accessDecisionManager;
+	protected $accessDecisionManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
 	 */
-	private $testingProvider;
+	protected $testingProvider;
 
 	/**
 	 * Initialize FLOW3
@@ -161,6 +166,30 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		}
 	}
 
+
+	/**
+	 * Sets up security test requirements
+	 *
+	 * @return void
+	 */
+	protected function setupSecurity() {
+		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$this->accessDecisionManager->setOverrideDecision(NULL);
+
+		$this->authenticationManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
+
+		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
+		$this->testingProvider->setName('DefaultProvider');
+
+		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
+		$this->securityContext->clearContext();
+		$this->securityContext->refreshTokens();
+
+		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
+		$actionRequest = $request->createActionRequest();
+		$this->securityContext->injectRequest($actionRequest);
+	}
+
 	/**
 	 * Tears down test requirements depending on the enabled tests
 	 *
@@ -188,6 +217,23 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
+		}
+	}
+
+	/**
+	 * Resets security test requirements
+	 *
+	 * @return void
+	 */
+	protected function tearDownSecurity() {
+		if ($this->accessDecisionManager !== NULL) {
+			$this->accessDecisionManager->reset();
+		}
+		if ($this->testingProvider !== NULL) {
+			$this->testingProvider->reset();
+		}
+		if ($this->securityContext !== NULL) {
+			$this->securityContext->clearContext();
 		}
 	}
 
@@ -245,12 +291,11 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$this->testingProvider->setAccount($account);
 
 		$this->securityContext->clearContext();
+
 		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
 		$actionRequest = $request->createActionRequest();
 		$this->securityContext->injectRequest($actionRequest);
-
-		$authenticationProviderManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
-		$authenticationProviderManager->authenticate();
+		$this->authenticationManager->authenticate();
 
 		return $account;
 	}
@@ -266,49 +311,12 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Sets up security test requirements
-	 *
-	 * @return void
-	 */
-	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$this->accessDecisionManager->setOverrideDecision(NULL);
-
-		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
-		$this->testingProvider->setName('DefaultProvider');
-
-		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		$this->securityContext->clearContext();
-
-		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
-		$actionRequest = $request->createActionRequest();
-		$this->securityContext->injectRequest($actionRequest);
-	}
-
-	/**
-	 * Resets security test requirements
-	 *
-	 * @return void
-	 */
-	protected function tearDownSecurity() {
-		if ($this->accessDecisionManager !== NULL) {
-			$this->accessDecisionManager->reset();
-		}
-		if ($this->testingProvider !== NULL) {
-			$this->testingProvider->reset();
-		}
-		if ($this->securityContext !== NULL) {
-			$this->securityContext->clearContext();
-		}
-	}
-
-	/**
 	 * Sets up a virtual browser and web environment for seamless HTTP and MVC
 	 * related tests.
 	 *
 	 * @return void
 	 */
-	private function setupHttp() {
+	protected function setupHttp() {
 		$_GET = array();
 		$_POST = array();
 		$_COOKIE = array();
