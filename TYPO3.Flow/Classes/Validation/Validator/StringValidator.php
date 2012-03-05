@@ -31,7 +31,7 @@ class StringValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidato
 	 */
 	protected function isValid($value) {
 		if(!is_string($value)) {
-			$this->addError('A valid string is expected.', 1238108067);
+			$this->addError('A valid string is expected.', 1238108070);
 		}
 	}
 }
