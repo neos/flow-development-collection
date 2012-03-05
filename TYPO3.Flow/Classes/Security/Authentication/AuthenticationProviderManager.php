@@ -241,7 +241,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "options". Check your settings and use the new option "providerOptions" instead.', 1327672031);
 			}
 			if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
-				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1248209521);
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
 			}
 
 			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['provider']);
