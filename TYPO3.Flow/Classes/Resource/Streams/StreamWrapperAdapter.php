@@ -180,7 +180,7 @@ class StreamWrapperAdapter {
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
 	public function rename($path_from, $path_to) {
-		$this->createStreamWrapper($path);
+		$this->createStreamWrapper($path_from);
 		return $this->streamWrapper->rename($path_from, $path_to);
 	}
 
