@@ -317,7 +317,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
 	public function seek($offset, $whence = SEEK_SET) {
-		return fseek($this->handle, $offset, $whence);
+		return fseek($this->handle, $offset, $whence) === 0;
 	}
 
 	/**
