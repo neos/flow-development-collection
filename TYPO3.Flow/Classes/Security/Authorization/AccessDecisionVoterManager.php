@@ -73,7 +73,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 * @return array Array of \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 */
 	public function getAccessDecisionVoters() {
-		return $this->accessDecisionVoters();
+		return $this->accessDecisionVoters;
 	}
 
 	/**
