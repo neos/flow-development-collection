@@ -74,7 +74,11 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\Aop\Pointcut\PointcutExpressio
 
 		foreach ($entityResourcesTree as $entityType => $entityResources) {
 			foreach ($entityResources as $resourceName => $constraintDefinition) {
-				$entityResourcesConstraints[$entityType][$resourceName] = $this->parseSingleEntityResource($resourceName, $entityResources);
+				if ($constraintDefinition === PolicyService::MATCHER_ANY) {
+					$entityResourcesConstraints[$entityType][$resourceName] = PolicyService::MATCHER_ANY;
+				} else {
+					$entityResourcesConstraints[$entityType][$resourceName] = $this->parseSingleEntityResource($resourceName, $entityResources);
+				}
 			}
 		}
 

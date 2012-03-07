@@ -30,7 +30,11 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery->expects($this->once())->method('logicalAnd')->with('existingConstraint', 'newConstraints')->will($this->returnValue('mergedResultConstraints'));
 		$mockQuery->expects($this->once())->method('matching')->with('mergedResultConstraints');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed');
+
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
@@ -64,7 +68,11 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery->expects($this->never())->method('logicalAnd');
 		$mockQuery->expects($this->once())->method('matching')->with('newConstraints');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed');
+
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
@@ -96,7 +104,12 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->never())->method('matching');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
+
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed');
+
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
@@ -122,7 +135,11 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	 * @test
 	 */
 	public function rewriteQomQueryDoesNotRewriteQueryIfSecurityContextIsNotInitialized() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed');
+
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
@@ -150,7 +167,11 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed');
+
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);

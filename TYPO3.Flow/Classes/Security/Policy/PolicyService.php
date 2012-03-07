@@ -24,7 +24,8 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	const
 		PRIVILEGE_ABSTAIN = 0,
 		PRIVILEGE_GRANT = 1,
-		PRIVILEGE_DENY = 2;
+		PRIVILEGE_DENY = 2,
+		MATCHER_ANY = 'ANY';
 
 	/**
 	 * The FLOW3 settings
@@ -411,6 +412,10 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		$entityType = str_replace('\\', '_', $entityType);
 
 		foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
+			if ($constraint === self::MATCHER_ANY) {
+				continue;
+			}
+
 			foreach ($roles as $roleIdentifier) {
 				if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])
 					|| $this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_ABSTAIN) {
@@ -488,6 +493,43 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * Checks if there is a special resource definition covering all objects of the
+	 * given type and if this resource has been granted to at least one of the
+	 * given roles.
+	 *
+	 * @param string $entityType The entity type (object name)
+	 * @param array $roles An array of roles the resources have to be configured for
+	 * @return array TRUE if general access is granted, FALSE otherwise
+	 */
+	public function isGeneralAccessForEntityTypeGranted($entityType, array $roles) {
+		$entityType = str_replace('\\', '_', $entityType);
+
+		$foundGeneralResourceDefinition = FALSE;
+		foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
+			if ($constraint === self::MATCHER_ANY) {
+				$foundGeneralResourceDefinition = TRUE;
+				$foundGrantPrivilege = FALSE;
+				foreach ($roles as $roleIdentifier) {
+					if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])) {
+						continue;
+					} elseif ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
+						return FALSE;
+					} elseif ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_GRANT) {
+						$foundGrantPrivilege = TRUE;
+					}
+				}
+				if ($foundGrantPrivilege === TRUE) return TRUE;
+			}
+		}
+
+		if ($foundGeneralResourceDefinition === FALSE) {
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 
 	/**

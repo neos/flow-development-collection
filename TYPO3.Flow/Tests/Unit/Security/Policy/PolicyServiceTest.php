@@ -794,6 +794,95 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function isGeneralAccessForEntityTypeGrantedWorks() {
+		$entityResourcesConstraints = array(
+			'TYPO3_MyEntity' => array(
+				'resource1' => \TYPO3\FLOW3\Security\Policy\PolicyService::MATCHER_ANY,
+				'resource2' => 'constraint2',
+				'resource3' => 'constraint3'
+			)
+		);
+
+		$acls = array(
+			'resource1' => array(
+				'Administrator' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+				),
+				'Customer' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+				),
+				'AnotherRole' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN
+				)
+			),
+			'resource2' => array(
+				'SomeOtherRole' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+				),
+			),
+			'resource3' => array(
+				'Customer' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+				),
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
+		$policyService->_set('acls', $acls);
+
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('Administrator')));
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('SomeOtherRole', 'Administrator', 'AnotherRole')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('Customer')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('AnotherRole')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('SomeOtherRole')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('SomeOtherRole', 'Customer', 'Adminstrator')));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isGeneralAccessForEntityTypeGrantedReturnsTrueIfNoAnyResourceTypeHasBeenDefinedForTheGivenEntity() {
+		$entityResourcesConstraints = array(
+			'TYPO3_MySecondEntity' => array(
+				'resource4' => 'constraint4',
+				'resource5' => 'constraint5'
+			)
+		);
+
+		$acls = array(
+			'resource4' => array(
+				'SomeOtherRole' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+				),
+				'Administrator' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN
+				),
+			),
+			'resource5' => array(
+				'Customer' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+				),
+				'Administrator' => array(
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+				),
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
+		$policyService->_set('acls', $acls);
+
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MySecondEntity', array('SomeOtherRole')));
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MySecondEntity', array('Customer')));
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MySecondEntity', array('Administrator')));
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MySecondEntity', array('SomeOtherRole', 'Customer', 'Adminstrator')));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 */
 	public function getAllParentRolesUnnestsRoleInheritanceCorrectly() {
 		$policy = array(
 			'roles' => array(

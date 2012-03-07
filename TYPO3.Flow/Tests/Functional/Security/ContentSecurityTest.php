@@ -70,7 +70,9 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function anonymousUsersAreNotAllowedToSeeHiddenRestrictableEntities() {
+	public function customersAreNotAllowedToSeeHiddenRestrictableEntities() {
+		$this->authenticateRoles(array('Customer'));
+
 		$defaultEntity = new Fixtures\RestrictableEntity('default');
 		$hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
 		$hiddenEntity->setHidden(TRUE);
@@ -82,11 +84,12 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->persistenceManager->clearState();
 
 		$result = $this->restrictableEntityRepository->findAll();
-		$this->assertTrue(count($result) === 1);
+		$this->assertEquals(1, count($result));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
 	}
+
 }
 ?>

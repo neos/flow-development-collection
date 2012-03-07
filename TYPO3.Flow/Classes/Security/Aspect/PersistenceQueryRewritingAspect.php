@@ -88,13 +88,13 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
-	 * @FLOW3\Before("setting(TYPO3.FLOW3.security.enable) && within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)())")
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 */
 	public function rewriteQomQuery(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
-			return;
+			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
 
 		$query = $joinPoint->getProxy();
@@ -109,6 +109,7 @@ class PersistenceQueryRewritingAspect {
 		$authenticatedRoles = $this->securityContext->getRoles();
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
+			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) return new \TYPO3\FLOW3\Persistence\EmptyQueryResult($query);
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
 			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
 
@@ -118,6 +119,8 @@ class PersistenceQueryRewritingAspect {
 				$query->matching($additionalCalculatedConstraints);
 			}
 		}
+
+		return $joinPoint->getAdviceChain()->proceed($joinPoint);
 	}
 
 	/**
@@ -143,6 +146,7 @@ class PersistenceQueryRewritingAspect {
 		}
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
+			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) return NULL;
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
 			if ($this->checkConstraintDefinitionsOnResultObject($policyConstraintsDefinition, $result) === FALSE) return NULL;
 		}
