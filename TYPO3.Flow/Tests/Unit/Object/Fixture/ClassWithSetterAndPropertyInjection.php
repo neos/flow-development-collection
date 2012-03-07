@@ -18,13 +18,13 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ClassWithSetterAndPropertyInjection {
 
 	/**
-	 * @var TYPO3\Foo\Bar
+	 * @var \TYPO3\Foo\Bar
 	 * @FLOW3\Inject
 	 */
 	protected $firstDependency;
 
 	/**
-	 * @var TYPO3\Coffee\Bar
+	 * @var \TYPO3\Coffee\Bar
 	 * @FLOW3\Inject
 	 */
 	protected $secondDependency;

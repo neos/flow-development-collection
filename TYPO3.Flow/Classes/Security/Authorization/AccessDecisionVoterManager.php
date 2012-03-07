@@ -28,7 +28,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 
 	/**
 	 * The current security context
-	 * @var TYPO3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 

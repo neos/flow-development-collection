@@ -27,12 +27,12 @@ class RequestDispatchingAspect {
 	protected $securityLogger;
 
 	/**
-	 * @var TYPO3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var TYPO3\FLOW3\Security\Authorization\FirewallInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\FirewallInterface
 	 */
 	protected $firewall;
 

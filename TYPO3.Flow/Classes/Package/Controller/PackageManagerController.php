@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 

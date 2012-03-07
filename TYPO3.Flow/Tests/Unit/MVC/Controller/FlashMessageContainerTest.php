@@ -23,8 +23,7 @@ use \TYPO3\FLOW3\Error\Error;
 class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 *
-	 * @var TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
+	 * @var \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
 

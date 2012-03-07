@@ -26,7 +26,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ProxyClassBuilder {
 
 	/**
-	 * @var TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 

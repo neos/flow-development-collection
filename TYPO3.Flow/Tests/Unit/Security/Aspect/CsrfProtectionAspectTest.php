@@ -54,7 +54,7 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * The System Under Test (SUT)
-	 * @var TYPO3\FLOW3\Security\Aspect\CsrfProtectionAspect
+	 * @var \TYPO3\FLOW3\Security\Aspect\CsrfProtectionAspect
 	 */
 	protected $csrfProtectionAspect;
 
