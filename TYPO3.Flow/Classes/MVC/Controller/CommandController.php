@@ -203,6 +203,19 @@ class CommandController implements CommandControllerInterface {
 	}
 
 	/**
+	 * Returns the CLI FLOW3 command depending on the environment
+	 *
+	 * @return string
+	 */
+	public function getFlow3Command() {
+		if (DIRECTORY_SEPARATOR === '/' || (isset($_SERVER['MSYSTEM']) && $_SERVER['MSYSTEM'] === 'MINGW32')) {
+			return './flow3';
+		} else {
+			return 'flow3.bat';
+		}
+	}
+
+	/**
 	 * Outputs specified text to the console window
 	 * You can specify arguments that will be passed to the text via sprintf
 	 * @see http://www.php.net/sprintf
