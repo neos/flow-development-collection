@@ -470,6 +470,24 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertFalse($cloneRequest->isDispatched());
 	}
 
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidHashException
+	 */
+	public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid() {
+		$referrer = array(
+			'@controller' => 'Foo',
+			'@action' => 'bar',
+			'arguments' => base64_encode('some manipulated arguments string without valid HMAC')
+		);
+
+		$httpRequest = HttpRequest::create(new Uri('http://acme.com', 'GET'));
+		$request = new ActionRequest($httpRequest);
+		$request->setArgument('__referrer', $referrer);
+		$this->inject($request, 'hashService', new \TYPO3\FLOW3\Security\Cryptography\HashService());
+		$request->getReferringRequest();
+	}
+
 }
 
 ?>
