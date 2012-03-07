@@ -345,7 +345,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->outputLine('Next Steps:');
 			$this->outputLine(sprintf('- Move <b>%s</b> to YourPackage/<b>Migrations/%s/</b>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
 			$this->outputLine('- Review and adjust the generated migration.');
-			$this->outputLine('- (optional) execute the migration using <b>./flow3 doctrine:migrate</b>');
+			$this->outputLine('- (optional) execute the migration using <b>%s doctrine:migrate</b>', array($this->getFlow3Command()));
 		} else {
 			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
