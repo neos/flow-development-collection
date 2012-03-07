@@ -33,8 +33,11 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$this->view = $this->getMock('TYPO3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'));
 
-		$this->controllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
+		$this->controllerContext = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);
+
+		$responseMock = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array('setStatus'));
+		$this->controllerContext->_set('response', $responseMock);
 	}
 
 	/**
@@ -125,13 +128,29 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
-		$mockResourceManager = $this->getMock('TYPO3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
+		$mockResourceManager = $this->getMock('TYPO3\FLOW3\Resource\ResourceManager');
 
 		$view = new \TYPO3\FLOW3\MVC\View\NotFoundView($mockObjectManager, $mockPackageManager, $mockResourceManager, $mockObjectManager);
 		$view->nonExistingMethod();
+			// dummy assertion to avoid "This test did not perform any assertions" warning
+		$this->assertTrue(TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function renderSets404Status() {
+		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
+		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
+
+		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		file_put_contents($templateUrl, 'template content');
+		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
+
+		$this->controllerContext->getResponse()->expects($this->once())->method('setStatus')->with($this->equalTo(404));
+		$this->view->render();
 	}
 }
 ?>
