@@ -60,6 +60,19 @@ class HashService {
 	}
 
 	/**
+	 * Appends a hash (HMAC) to a given string and returns the result
+	 *
+	 * @param string $string The string for which a hash should be generated
+	 * @return string The original string with HMAC of the string appended
+	 * @see generateHmac()
+	 * @todo Mark as API once it is more stable
+	 */
+	public function appendHmac($string) {
+		$hmac = $this->generateHmac($string);
+		return $string . $hmac;
+	}
+
+	/**
 	 * Tests if a string $string matches the HMAC given by $hash.
 	 *
 	 * @param string $string The string which should be validated
@@ -69,6 +82,33 @@ class HashService {
 	 */
 	public function validateHmac($string, $hmac) {
 		return ($this->generateHmac($string) === $hmac);
+	}
+
+	/**
+	 * Tests if the last 40 characters of a given string $string
+	 * matches the HMAC of the rest of the string and, if true,
+	 * returns the string without the HMAC. In case of a HMAC
+	 * validation error, an exception is thrown.
+	 *
+	 * @param string $string The string with the HMAC appended (in the format 'string<HMAC>')
+	 * @return string the original string without the HMAC, if validation was successful
+	 * @see validateHmac()
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if the given string is not well-formatted
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidHashException if the hash did not fit to the data.
+	 * @todo Mark as API once it is more stable
+	 */
+	public function validateAndStripHmac($string) {
+		if (!is_string($string)) {
+			throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
+		}
+		if (strlen($string) < 40) {
+			throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hashed string must contain at least 40 characters, the given string was only ' . strlen($string) . ' characters long.', 1320830276);
+		}
+		$stringWithoutHmac = substr($string, 0, -40);
+		if ($this->validateHmac($stringWithoutHmac, substr($string, -40)) !== TRUE) {
+			throw new \TYPO3\FLOW3\Security\Exception\InvalidHashException('The given string was not appended with a valid HMAC.', 1320830018);
+		}
+		return $stringWithoutHmac;
 	}
 
 	/**

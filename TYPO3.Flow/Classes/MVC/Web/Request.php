@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\MVC\Web;
  *                                                                        */
 
 use \TYPO3\FLOW3\Property\DataType\Uri;
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 
 /**
@@ -30,6 +31,12 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
+
+	/**
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 * @FLOW3\Inject
+	 */
+	protected $hashService;
 
 	/**
 	 * Package key of the controller which is supposed to handle this request.
@@ -602,7 +609,9 @@ class Request implements \TYPO3\FLOW3\MVC\RequestInterface {
 
 			$arguments = array();
 			if (isset($referrerArray['arguments'])) {
-				$arguments = unserialize($referrerArray['arguments']);
+				$serializedArgumentsWithHmac = $referrerArray['arguments'];
+				$serializedArguments = $this->hashService->validateAndStripHmac($serializedArgumentsWithHmac);
+				$arguments = unserialize(base64_decode($serializedArguments));
 				unset($referrerArray['arguments']);
 			}
 
