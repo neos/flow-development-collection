@@ -14,6 +14,7 @@ resources:
     TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictableEntity:
       TYPO3_FLOW3_allEntities: "ANY"
       TYPO3_FLOW3_hiddenEntities: "this.hidden == TRUE"
+      TYPO3_FLOW3_othersEntities: "current.securityContext.account != this.ownerAccount && this.ownerAccount != NULL"
 
 
 roles:
@@ -37,5 +38,6 @@ acls:
     entities:
       TYPO3_FLOW3_allEntities: GRANT
       TYPO3_FLOW3_hiddenEntities: GRANT
+      TYPO3_FLOW3_othersEntities: GRANT
 
 

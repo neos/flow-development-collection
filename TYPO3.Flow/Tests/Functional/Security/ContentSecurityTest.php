@@ -28,7 +28,7 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var RestrictableEntityRepository
+	 * @var Fixtures\RestrictableEntityRepository
 	 */
 	protected $restrictableEntityRepository;
 
@@ -54,13 +54,18 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$hiddenEntity->setHidden(TRUE);
 
 		$this->restrictableEntityRepository->add($defaultEntity);
+		$defaultEntityIdentifier = $this->persistenceManager->getIdentifierByObject($defaultEntity);
 		$this->restrictableEntityRepository->add($hiddenEntity);
+		$hiddenEntityIdentifier = $this->persistenceManager->getIdentifierByObject($hiddenEntity);
 
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
 
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertTrue(count($result) === 2);
+
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
@@ -78,13 +83,123 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$hiddenEntity->setHidden(TRUE);
 
 		$this->restrictableEntityRepository->add($defaultEntity);
+		$defaultEntityIdentifier = $this->persistenceManager->getIdentifierByObject($defaultEntity);
 		$this->restrictableEntityRepository->add($hiddenEntity);
+		$hiddenEntityIdentifier = $this->persistenceManager->getIdentifierByObject($hiddenEntity);
 
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
 
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertEquals(1, count($result));
+
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+
+		$this->restrictableEntityRepository->removeAll();
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+	}
+
+	/**
+	 * @test
+	 */
+	public function anonymousUsersAreNotAllowedToSeeRestrictableEntitiesAtAll() {
+		$defaultEntity = new Fixtures\RestrictableEntity('default');
+		$hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
+		$hiddenEntity->setHidden(TRUE);
+
+		$this->restrictableEntityRepository->add($defaultEntity);
+		$defaultEntityIdentifier = $this->persistenceManager->getIdentifierByObject($defaultEntity);
+		$this->restrictableEntityRepository->add($hiddenEntity);
+		$hiddenEntityIdentifier = $this->persistenceManager->getIdentifierByObject($hiddenEntity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$result = $this->restrictableEntityRepository->findAll();
+		$this->assertTrue(count($result) === 0);
+
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+
+		$this->restrictableEntityRepository->removeAll();
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+	}
+
+	/**
+	 * @test
+	 */
+	public function customersCannotSeeOthersRestrictableEntites() {
+		$ownAccount = $this->authenticateRoles(array('Customer'));
+		$ownAccount->setAccountIdentifier('ownAccount');
+		$ownAccount->setAuthenticationProviderName('SomeProvider');
+		$ownAccount->setCredentialsSource('foobar');
+		$otherAccount = new \TYPO3\FLOW3\Security\Account();
+		$otherAccount->setAccountIdentifier('othersAccount');
+		$otherAccount->setAuthenticationProviderName('SomeProvider');
+		$otherAccount->setCredentialsSource('foobar');
+		$this->persistenceManager->add($ownAccount);
+		$this->persistenceManager->add($otherAccount);
+
+		$ownEntity = new Fixtures\RestrictableEntity('ownEntity');
+		$ownEntity->setOwnerAccount($ownAccount);
+		$othersEntity = new Fixtures\RestrictableEntity('othersEntity');
+		$othersEntity->setOwnerAccount($otherAccount);
+
+		$this->restrictableEntityRepository->add($ownEntity);
+		$ownEntityIdentifier = $this->persistenceManager->getIdentifierByObject($ownEntity);
+		$this->restrictableEntityRepository->add($othersEntity);
+		$othersEntityIdentifier = $this->persistenceManager->getIdentifierByObject($othersEntity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$result = $this->restrictableEntityRepository->findAll();
+		$this->assertTrue(count($result) === 1);
+
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+
+		$this->restrictableEntityRepository->removeAll();
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+	}
+
+	/**
+	 * @test
+	 */
+	public function administratorsCanSeeOthersRestrictableEntites() {
+		$ownAccount = $this->authenticateRoles(array('Administrator', 'Customer'));
+		$ownAccount->setAccountIdentifier('ownAccount');
+		$ownAccount->setAuthenticationProviderName('SomeProvider');
+		$ownAccount->setCredentialsSource('foobar');
+		$otherAccount = new \TYPO3\FLOW3\Security\Account();
+		$otherAccount->setAccountIdentifier('othersAccount');
+		$otherAccount->setAuthenticationProviderName('SomeProvider');
+		$otherAccount->setCredentialsSource('foobar');
+		$this->persistenceManager->add($ownAccount);
+		$this->persistenceManager->add($otherAccount);
+
+		$ownEntity = new Fixtures\RestrictableEntity('ownEntity');
+		$ownEntity->setOwnerAccount($ownAccount);
+		$othersEntity = new Fixtures\RestrictableEntity('othersEntity');
+		$othersEntity->setOwnerAccount($otherAccount);
+
+		$this->restrictableEntityRepository->add($ownEntity);
+		$ownEntityIdentifier = $this->persistenceManager->getIdentifierByObject($ownEntity);
+		$this->restrictableEntityRepository->add($othersEntity);
+		$othersEntityIdentifier = $this->persistenceManager->getIdentifierByObject($othersEntity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$result = $this->restrictableEntityRepository->findAll();
+		$this->assertTrue(count($result) === 2);
+
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();

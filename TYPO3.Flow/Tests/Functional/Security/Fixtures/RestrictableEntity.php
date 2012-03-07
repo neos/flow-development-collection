@@ -32,6 +32,12 @@ class RestrictableEntity {
 	protected $name;
 
 	/**
+	 * @var \TYPO3\FLOW3\Security\Account
+	 * @ORM\ManyToOne
+	 */
+	protected $ownerAccount;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $name The name of the entity
@@ -68,6 +74,21 @@ class RestrictableEntity {
 	public function getName() {
 		return $this->name;
 	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Security\Account $ownerAccount
+	 */
+	public function setOwnerAccount($ownerAccount) {
+		$this->ownerAccount = $ownerAccount;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\Security\Account
+	 */
+	public function getOwnerAccount() {
+		return $this->ownerAccount;
+	}
+
 
 }
 ?>
