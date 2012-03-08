@@ -29,7 +29,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @var TYPO3\Kickstart\Utility\Inflector
+	 * @var \TYPO3\Kickstart\Utility\Inflector
 	 * @FLOW3\Inject
 	 */
 	protected $inflector;
@@ -37,7 +37,7 @@ class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 	/**
 	 * Humanize a model name
 	 *
-	 * @param boolean $lowercase Wether the result should be lowercased 
+	 * @param boolean $lowercase Wether the result should be lowercased
 	 * @return string The humanized string
 	 */
 	public function render($lowercase = FALSE) {

@@ -29,7 +29,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @var TYPO3\Kickstart\Utility\Inflector
+	 * @var \TYPO3\Kickstart\Utility\Inflector
 	 * @FLOW3\Inject
 	 */
 	protected $inflector;
