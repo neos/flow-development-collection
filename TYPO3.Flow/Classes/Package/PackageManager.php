@@ -66,11 +66,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected $shortcutsPath;
 
 	/**
-	 * @var boolean
-	 */
-	protected $shortcutsNeedUpdate = FALSE;
-
-	/**
 	 * @var string
 	 */
 	protected $packageStatesPathAndFilename;
@@ -141,7 +136,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$this->classLoader->setPackages($this->activePackages);
 
-		if ($this->shortcutsNeedUpdate === TRUE || !file_exists($this->shortcutsPath)) {
+		if (!file_exists($this->shortcutsPath)) {
 			$this->updateShortcuts();
 		}
 
@@ -533,7 +528,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected function savePackageStates() {
 		$packageStatesCode = "<?php\n# This is a generated file, do not edit manually\n# Use the commands flow3:package:activate and flow3:package:deactivate for changes\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
 		file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
-		$this->shortcutsNeedUpdate = TRUE;
+		$this->updateShortcuts();
 	}
 
 	/**
@@ -547,6 +542,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		}
 		Files::createDirectoryRecursively($this->shortcutsPath);
 		foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
+			if ($stateConfiguration['state'] === 'inactive') {
+				continue;
+			}
+
 			$packageKeyParts = explode('.', $packageKey);
 			if (count($packageKeyParts) > 1) {
 				$basePath = Files::concatenatePaths(array($this->shortcutsPath, implode('/', array_slice($packageKeyParts, 0, -1))));
