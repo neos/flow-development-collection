@@ -26,7 +26,7 @@ class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\Intercept
 
 	/**
 	 * The authentication manager
-	 * @var \TYPO3\FLOW3\Security\Authentication\ManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
