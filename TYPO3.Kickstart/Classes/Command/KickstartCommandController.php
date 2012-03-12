@@ -144,9 +144,8 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 				$generatedFiles += $this->generatorService->generateActionController($packageKey, $subpackageName, $currentControllerName, $force);
 			}
 			if ($generateTemplates === TRUE) {
+				$generatedFiles += $this->generatorService->generateLayout($packageKey, 'Default', $force);
 				if ($generateActions === TRUE) {
-					$generatedFiles += $this->generatorService->generateLayout($packageKey, 'Default', $force);
-
 					$generatedFiles += $this->generatorService->generateView($packageKey, $subpackageName, $currentControllerName, 'Index', 'Index', $force);
 					$generatedFiles += $this->generatorService->generateView($packageKey, $subpackageName, $currentControllerName, 'New', 'New', $force);
 					$generatedFiles += $this->generatorService->generateView($packageKey, $subpackageName, $currentControllerName, 'Edit', 'Edit', $force);
