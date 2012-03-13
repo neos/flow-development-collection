@@ -54,7 +54,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function encryptingAndDecryptingBasicallyWorks() {
 		$plaintext = 'some very sensitive data!';
@@ -66,7 +65,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function checkRSAEncryptedPasswordReturnsTrueForACorrectPassword() {
 		$encryptedPassword = $this->rsaWalletService->encryptWithPublicKey('password', $this->keyPairUuid);
@@ -79,7 +77,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function checkRSAEncryptedPasswordReturnsFalseForAnIncorrectPassword() {
 		$encryptedPassword = $this->rsaWalletService->encryptWithPublicKey('wrong password', $this->keyPairUuid);
@@ -92,7 +89,6 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException
 	 */
 	public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException() {

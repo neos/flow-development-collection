@@ -19,7 +19,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
@@ -34,7 +33,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
@@ -52,7 +50,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function parseMethodResourcesStoresTheCorrectResourceTreeTraceInTheTraceParameter() {
 		$resourcesTree = array(
@@ -82,7 +79,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function parseEntityResourcesCallsParseSingleEntityResourceForEachResourceEntryOfAnEntityAndPassesTheCorrectResourceTree() {
 		$resourcesTree = array(
@@ -127,7 +123,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function parseSingleEntityResourceCallsGetRuntimeEvaluationConditionsFromEvaluateStringAndReturnsAnAppropriateConstraintsArray() {
 		$resourcesTree = array(
@@ -149,7 +144,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function parseSingleEntityResourceCallsItselfRecursivelyForReferenceResourcesInAConstraintExpression() {
 		$resourcesTree = array(
@@ -181,7 +175,6 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function parseSingleEntityResourceThrowsAnExceptionIfAnExpressionContainsAReferenceToANotExistingResource() {

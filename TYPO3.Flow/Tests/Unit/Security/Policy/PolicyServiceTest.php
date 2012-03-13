@@ -19,7 +19,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function thePolicyIsLoadedCorrectlyFromTheConfigurationManager() {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -61,7 +60,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function initializeObjectSetsTheEverybodyRoleInThePolicy() {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -111,7 +109,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function initializeObjectAddsTheAbstainPrivilegeForTheEverybodyRoleToEveryResourceWhereNoOtherPrivilegeIsSetInThePolicy() {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -192,7 +189,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchesAsksThePolicyExpressionParserToBuildPointcutFiltersForMethodResourcesAndChecksIfTheyMatchTheGivenClassAndMethod() {
 		$settings = array(
@@ -227,7 +223,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchesAddsRuntimeEvaluationsCorrectlyToTheInternalPolicyCache() {
 		$settings = array(
@@ -301,7 +296,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchesAlwaysReturnsFalseIfSecurityIsDisabled() {
 		$settings = array('security' => array('enable' => FALSE));
@@ -313,7 +307,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchesStoresMatchedPoliciesInAnArrayForLaterCaching() {
 		$settings = array(
@@ -362,7 +355,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegesForJoinPointReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -377,7 +369,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegesForJoinPointReturnsThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -417,7 +408,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegesForJoinPointReturnsOnlyPrivilgesThatPassedRuntimeEvaluationsInThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -452,7 +442,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegeForResourceReturnsThePrivilegeThatHasBeenParsedForTheGivenResource() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -475,7 +464,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfTheResourceHasRuntimeEvaluationsDefined() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -498,7 +486,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegeForResourceReturnsNullIfTheGivenRoleHasNoPriviligesDefinedForTheGivenResource() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -521,7 +508,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
 		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
@@ -537,7 +523,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function initializeObjectLoadsTheEntityConstraintsFromTheCache() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -562,7 +547,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function initializeObjectCallsThePolicyExpressionPraserAndBuildsTheEntityConstraintsIfTheCacheIsEmpty() {
 		$policy = array(
@@ -598,7 +582,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function initializeObjectCallsParseEntityAclsIfTheAclCacheIsEmpty() {
 		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
@@ -623,7 +606,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function parseEntityAclsParsesTheEntityAclsCorrectly() {
 		$policy = array(
@@ -664,7 +646,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function savePolicyCacheStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -686,7 +667,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesBasicallyWorks() {
 		$entityResourcesConstraints = array(
@@ -726,7 +706,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesDoesNotReturnConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
 		$entityResourcesConstraints = array(
@@ -769,7 +748,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function hasPolicyEntryForEntityTypeWorks() {
 		$entityResourcesConstraints = array(
@@ -815,7 +793,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function getAllParentRolesUnnestsRoleInheritanceCorrectly() {
 		$policy = array(
@@ -852,7 +829,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function hasPolicyEntryForMethodWorksCorrectlyIfNoRolesAreGiven() {
 		$aclsCache = array(
@@ -886,7 +862,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function hasPolicyEntryForMethodWorksCorrectlyIfRolesAreGiven() {
 		$aclsCache = array(
@@ -924,7 +899,6 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function hasPolicyEntryForMethodWorksWithCaseInsensitiveClassAndMethodNames() {
 		$aclsCache = array(

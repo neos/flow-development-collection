@@ -19,7 +19,6 @@ class AfterInvocationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function invokeReturnsTheResultPreviouslySetBySetResultIfTheMethodIsNotIntercepted() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');

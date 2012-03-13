@@ -103,7 +103,6 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function addCsrfTokenToUriDoesNothingIfTheTargetControllerActionIsTaggedWithSkipCsrfProtection() {
 		$this->expectThat_PolicyServiceHasPolicyEntry(TRUE);
@@ -117,7 +116,6 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function addCsrfTokenToUriDoesNothingIfTheTargetControllerActionIsNotMentionedInThePolicy() {
 		$this->expectThat_PolicyServiceHasPolicyEntry(FALSE);
@@ -129,7 +127,6 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function addCsrfTokenToUriAddsAnCsrfTokenToTheUriArguentsIfTheTargetControllerActionIsMentionedInThePolicyAndNotTaggedWithSkipCsrfProtection() {
 		$this->expectThat_PolicyServiceHasPolicyEntry(TRUE);
