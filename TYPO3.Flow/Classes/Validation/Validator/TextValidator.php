@@ -24,6 +24,9 @@ class TextValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator 
 	/**
 	 * Checks if the given $value is a valid text (contains no XML tags). @see filter_var()
 	 * Note: a value of NULL or empty string ('') is considered valid
+	 * Be aware that the value of this check entirely depends on the output context.
+	 * The validated text is not expected to be secure in every circumstance, if you want to be sure of that, use
+	 * a customized regular expression or filter on output.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
