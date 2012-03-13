@@ -384,7 +384,14 @@ class Debugger {
 								$codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
 							}
 						}
-						$codeSnippet .= sprintf('%05d', $line) . ': ' . $codeLine;
+						$codeSnippet .= sprintf('%05d', $line) . ': ';
+
+						if ($plaintext) {
+							$codeSnippet .= $codeLine;
+						} else {
+							$codeSnippet .= htmlspecialchars($codeLine);
+						}
+
 						if ($line === $lineNumber && !$plaintext) {
 							$codeSnippet .= '</pre><pre>';
 						}
