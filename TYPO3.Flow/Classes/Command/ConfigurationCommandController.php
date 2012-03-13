@@ -62,7 +62,7 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\MVC\Controller\Command
 				$this->outputLine('  ' . $availableConfigurationType);
 			}
 			$this->outputLine();
-			$this->outputLine('Hint: <b>%s configuration:show --type <configurationType></b>', array($this->getFlow3Command()));
+			$this->outputLine('Hint: <b>%s configuration:show --type <configurationType></b>', array($this->getFlow3InvocationString()));
 			$this->outputLine('      shows the configuration of the specified type.');
 		}
 	}

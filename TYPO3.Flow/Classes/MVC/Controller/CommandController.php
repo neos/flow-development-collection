@@ -207,7 +207,7 @@ class CommandController implements CommandControllerInterface {
 	 *
 	 * @return string
 	 */
-	public function getFlow3Command() {
+	public function getFlow3InvocationString() {
 		if (DIRECTORY_SEPARATOR === '/' || (isset($_SERVER['MSYSTEM']) && $_SERVER['MSYSTEM'] === 'MINGW32')) {
 			return './flow3';
 		} else {
