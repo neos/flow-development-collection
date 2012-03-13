@@ -103,6 +103,17 @@ class Dispatcher {
 		foreach ($this->slots[$signalClassName][$signalName] as $slotInformation) {
 			if (isset($slotInformation['object'])) {
 				$object = $slotInformation['object'];
+			} elseif (substr($slotInformation['method'], 0, 2) === '::') {
+				if (!isset($this->objectManager)) {
+					if (is_callable($slotInformation['class'] . $slotInformation['method'])) {
+						$object = $slotInformation['class'];
+					} else {
+						throw new \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException(sprintf('Cannot dispatch %s::%s to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $signalClassName, $signalName, $slotInformation['class']), 1298113624);
+					}
+				} else {
+					$object = $this->objectManager->getClassNameByObjectName($slotInformation['class']);
+				}
+				$slotInformation['method'] = substr($slotInformation['method'], 2);
 			} else {
 				if (!isset($this->objectManager)) {
 					throw new \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException(sprintf('Cannot dispatch %s::%s to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $signalClassName, $signalName, $slotInformation['class']), 1298113624);
