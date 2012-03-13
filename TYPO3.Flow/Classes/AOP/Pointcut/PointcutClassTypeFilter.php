@@ -96,6 +96,25 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
 	}
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		if (interface_exists($this->interfaceOrClassName)) {
+			$classNames = $this->reflectionService->getAllImplementationClassNamesForInterface($this->interfaceOrClassName);
+		} elseif (class_exists($this->interfaceOrClassName)) {
+			$classNames = $this->reflectionService->getAllSubClassNamesForClass($this->interfaceOrClassName);
+			$classNames[] = $this->interfaceOrClassName;
+		}
+		$filteredIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$filteredIndex->setClassNames($classNames);
+
+		return $classNameIndex->intersect($filteredIndex);
+	}
 }
 
 ?>

@@ -171,52 +171,11 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 			return FALSE;
 		}
 
-		$matches = FALSE;
-
 		if ($this->filters === array()) {
-			if (isset($this->policy['resources']['methods']) === FALSE) {
-				return FALSE;
-			}
-
-			foreach ($this->policy['acls'] as $role => $acl) {
-				if (!isset($acl['methods'])) {
-					continue;
-				}
-				if (!is_array($acl['methods'])) {
-					throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
-				}
-
-				foreach ($acl['methods'] as $resource => $privilege) {
-					$resourceTrace = array();
-					$this->filters[$role][$resource] = $this->policyExpressionParser->parseMethodResources($resource, $this->policy['resources']['methods'], $resourceTrace);
-
-					foreach ($resourceTrace as $currentResource) {
-						$policyForResource = array();
-						switch ($privilege) {
-							case 'GRANT':
-								$policyForResource['privilege'] = self::PRIVILEGE_GRANT;
-								break;
-							case 'DENY':
-								$policyForResource['privilege'] = self::PRIVILEGE_DENY;
-								break;
-							case 'ABSTAIN':
-								$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
-								break;
-							default:
-								throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
-						}
-
-						if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
-							$policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
-						} else {
-							$policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
-						}
-
-						$this->acls[$currentResource][$role] = $policyForResource;
-					}
-				}
-			}
+			$this->buildPointcutFilters();
 		}
+
+		$matches = FALSE;
 
 		foreach ($this->filters as $role => $filtersForRole) {
 			foreach ($filtersForRole as $resource => $filter) {
@@ -468,6 +427,61 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	}
 
 	/**
+	 * Builds the needed pointcut filters for matching the policy resources
+	 *
+	 * @return void
+	 */
+	protected function buildPointcutFilters() {
+		if (isset($this->policy['resources']['methods']) === FALSE) {
+			return FALSE;
+		}
+
+		$filtersForResource = array();
+
+		foreach ($this->policy['acls'] as $role => $acl) {
+			if (!isset($acl['methods'])) {
+				continue;
+			}
+			if (!is_array($acl['methods'])) {
+				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+			}
+
+			foreach ($acl['methods'] as $resource => $privilege) {
+				if (!isset($filtersForResource[$resource])) {
+					$resourceTrace = array();
+					$filtersForResource[$resource] = $this->policyExpressionParser->parseMethodResources($resource, $this->policy['resources']['methods'], $resourceTrace);
+				}
+				$this->filters[$role][$resource] = $filtersForResource[$resource];
+
+				foreach ($resourceTrace as $currentResource) {
+					$policyForResource = array();
+					switch ($privilege) {
+						case 'GRANT':
+							$policyForResource['privilege'] = self::PRIVILEGE_GRANT;
+							break;
+						case 'DENY':
+							$policyForResource['privilege'] = self::PRIVILEGE_DENY;
+							break;
+						case 'ABSTAIN':
+							$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
+							break;
+						default:
+							throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+					}
+
+					if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
+						$policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
+					} else {
+						$policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
+					}
+
+					$this->acls[$currentResource][$role] = $policyForResource;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Parses the policy and stores the configured entity acls in the internal acls array
 	 *
 	 * @return void
@@ -520,6 +534,26 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 		if (!$this->cache->has('entityResourcesConstraints')) {
 			$this->cache->set('entityResourcesConstraints', $this->entityResourcesConstraints);
 		}
+	}
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		if ($this->filters === array()) {
+			$this->buildPointcutFilters();
+		}
+
+		$result = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		foreach ($this->filters as $resources) {
+			foreach ($resources as $filterForResource) {
+				$result->applyUnion($filterForResource->reduceTargetClassNames($classNameIndex));
+			}
+		}
+		return $result;
 	}
 }
 

@@ -118,6 +118,12 @@ class ReflectionService {
 	protected $annotatedClasses = array();
 
 	/**
+	 * Array of method annotations and the classes and methods which are annotated with them
+	 * @var array
+	 */
+	protected $classesByMethodAnnotations = array();
+
+	/**
 	 * Schemata of all classes which can be persisted
 	 * @var array<\TYPO3\FLOW3\Reflection\ClassSchema>
 	 */
@@ -481,6 +487,17 @@ class ReflectionService {
 		}
 		$this->loadOrReflectClassIfNecessary($className);
 		return isset($this->classReflectionData[$className][self::DATA_CLASS_FINAL]);
+	}
+
+	/**
+	 * Returns all class names of classes containing at least one method annotated
+	 * with the given annotation class
+	 *
+	 * @param string $annotationClassName The annotation class name for a method annotation
+	 * @return array An array of class names
+	 */
+	public function getClassesContainingMethodsAnnotatedWith($annotationClassName) {
+		return isset($this->classesByMethodAnnotations[$annotationClassName]) ? array_keys($this->classesByMethodAnnotations[$annotationClassName]) : array();
 	}
 
 	/**
@@ -1031,6 +1048,10 @@ class ReflectionService {
 			$visibility = $method->isPublic() ? self::VISIBILITY_PUBLIC : ($method->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
 			$this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] = $visibility;
 
+			foreach ($this->getMethodAnnotations($className, $methodName) as $methodAnnotation) {
+				$this->classesByMethodAnnotations[get_class($methodAnnotation)][$className] = $methodName;
+			}
+
 			$paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : array();
 			foreach ($method->getParameters() as $parameter) {
 				$this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
@@ -1381,6 +1402,10 @@ class ReflectionService {
 			unset($this->classSchemata[$className]);
 		}
 
+		foreach (array_keys($this->classesByMethodAnnotations) as $annotationClassName) {
+			unset($this->classesByMethodAnnotations[$annotationClassName][$className]);
+		}
+
 		unset($this->classReflectionData[$className]);
 		unset($this->classesCurrentlyBeingForgotten[$className]);
 	}
@@ -1454,7 +1479,8 @@ class ReflectionService {
 			$propertyNames = array(
 				'classReflectionData',
 				'classSchemata',
-				'annotatedClasses'
+				'annotatedClasses',
+				'classesByMethodAnnotations'
 			);
 			foreach ($propertyNames as $propertyName) {
 				$data[$propertyName] = $this->$propertyName;

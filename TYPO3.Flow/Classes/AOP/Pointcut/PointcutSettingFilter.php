@@ -136,6 +136,16 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 			$this->actualSettingValue = $settingValue;
 		}
 	}
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		return $classNameIndex;
+	}
 }
 
 ?>

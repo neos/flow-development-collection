@@ -957,5 +957,47 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertFalse($policyService->hasPolicyEntryForMethod('SecondClass', 'seconDMethod', array('role1')));
 		$this->assertTrue($policyService->hasPolicyEntryForMethod('secondclass', 'secondmethod', array('role2')));
 	}
+
+	/**
+	 * @test
+	 */
+	public function reduceTargetClassNamesPassesTheGivenClassNameIndexToAllResourceFiltersAndReturnsTheUnionOfTheirResults() {
+		$availableClassNames = array(
+			'TestPackage\Subpackage\Class1',
+			'TestPackage\Class2',
+			'TestPackage\Subpackage\SubSubPackage\Class3',
+			'TestPackage\Subpackage2\Class4'
+		);
+		sort($availableClassNames);
+		$availableClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$availableClassNamesIndex->setClassNames($availableClassNames);
+
+		$mockPointcutFilter1 = $this->getMock('\TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter1->expects($this->once())->method('reduceTargetClassNames')->with($availableClassNamesIndex)->will($this->returnValue(new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex(array('TestPackage\Subpackage\Class1' => TRUE))));
+		$mockPointcutFilter2 = $this->getMock('\TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter2->expects($this->once())->method('reduceTargetClassNames')->with($availableClassNamesIndex)->will($this->returnValue(new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex(array('TestPackage\Subpackage\SubSubPackage\Class3' => TRUE))));
+
+		$policyFilterArray = array(
+			'role' => array(
+				'resource1' => $mockPointcutFilter1,
+				'resource2' => $mockPointcutFilter2
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService->_set('filters', $policyFilterArray);
+
+		$expectedClassNames = array(
+			'TestPackage\Subpackage\Class1',
+			'TestPackage\Subpackage\SubSubPackage\Class3'
+		);
+		sort($expectedClassNames);
+		$expectedClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$expectedClassNamesIndex->setClassNames($expectedClassNames);
+
+		$result = $policyService->reduceTargetClassNames($availableClassNamesIndex);
+
+		$this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+	}
 }
 ?>

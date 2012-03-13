@@ -26,9 +26,15 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	protected $reflectionService;
 
 	/**
-	 * @var string A regular expression to match class names
+	 * A regular expression to match class names
+	 * @var string
 	 */
 	protected $classFilterExpression;
+
+	/**
+	 * @var string
+	 */
+	protected $originalExpressionString;
 
 	/**
 	 * The constructor - initializes the class filter with the class filter expression
@@ -37,6 +43,7 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 */
 	public function __construct($classFilterExpression) {
 		$this->classFilterExpression = '/^' . str_replace('\\', '\\\\', $classFilterExpression) . '$/';
+		$this->originalExpressionString = $classFilterExpression;
 	}
 
 	/**
@@ -87,6 +94,24 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
+	}
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		if (!preg_match('/^([^\.\(\)\{\}\[\]\?\+\$\!\|]+)/', $this->originalExpressionString, $matches)) {
+			return $classNameIndex;
+		}
+		$prefixFilter = $matches[1];
+
+			// We sort here to make sure the index is okay
+		$classNameIndex->sort();
+
+		return $classNameIndex->filterByPrefix($prefixFilter);
 	}
 }
 

@@ -66,6 +66,11 @@ class AspectContainer {
 	protected $pointcuts = array();
 
 	/**
+	 * @var \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	protected $cachedTargetClassNameCandidates;
+
+	/**
 	 * The constructor
 	 *
 	 * @param string $className Name of the aspect class
@@ -159,6 +164,31 @@ class AspectContainer {
 	 */
 	public function addPointcut(\TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->pointcuts[] = $pointcut;
+	}
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex) {
+		$result = new Builder\ClassNameIndex();
+		foreach ($this->advisors as $advisor) {
+			$result->applyUnion($advisor->getPointcut()->reduceTargetClassNames($classNameIndex));
+		}
+		foreach ($this->interfaceIntroductions as $interfaceIntroduction) {
+			$result->applyUnion($interfaceIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
+		}
+		$this->cachedTargetClassNameCandidates = $result;
+		return $result;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function getCachedTargetClassNameCandidates() {
+		return $this->cachedTargetClassNameCandidates;
 	}
 }
 

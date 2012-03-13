@@ -531,5 +531,41 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function reduceTargetClassNamesFiltersAllClassesNotMatchedAByClassNameFilter() {
+		$availableClassNames = array(
+			'TestPackage\Subpackage\Class1',
+			'TestPackage\Class2',
+			'TestPackage\Subpackage\SubSubPackage\Class3',
+			'TestPackage\Subpackage2\Class4'
+		);
+		sort($availableClassNames);
+		$availableClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$availableClassNamesIndex->setClassNames($availableClassNames);
+
+		$classNameFilter1 = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TestPackage\Subpackage\SubSubPackage\Class3');
+		$classNameFilter2 = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TestPackage\Subpackage\Class1');
+		$methodNameFilter1 = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('method2');
+
+		$expectedClassNames = array(
+			'TestPackage\Subpackage\Class1',
+			'TestPackage\Subpackage\SubSubPackage\Class3'
+		);
+		sort($expectedClassNames);
+		$expectedClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$expectedClassNamesIndex->setClassNames($expectedClassNames);
+
+		$pointcutFilterComposite = new \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
+		$pointcutFilterComposite->addFilter('&&', $classNameFilter1);
+		$pointcutFilterComposite->addFilter('||', $classNameFilter2);
+		$pointcutFilterComposite->addFilter('&&', $methodNameFilter1);
+
+		$result = $pointcutFilterComposite->reduceTargetClassNames($availableClassNamesIndex);
+
+		$this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+	}
 }
 ?>

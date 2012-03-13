@@ -66,6 +66,11 @@ class CompileTimeObjectManager extends ObjectManager {
 	protected $objectNameBuildStack = array();
 
 	/**
+	 * @var array
+	 */
+	protected $cachedClassNamesByScope = array();
+
+	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
@@ -146,6 +151,27 @@ class CompileTimeObjectManager extends ObjectManager {
 	 */
 	public function getRegisteredClassNames() {
 		return $this->registeredClassNames;
+	}
+
+	/**
+	 * Returns a list of class names, which are configured with the given scope
+	 *
+	 * @param integer $scope One of the ObjectConfiguration::SCOPE_ constants
+	 * @return array An array of class names configured with the given scope
+	 */
+	public function getClassNamesByScope($scope) {
+		if (!isset($this->cachedClassNamesByScope[$scope])) {
+			foreach ($this->objects as $objectName => $information) {
+				if ($information['s'] === $scope) {
+					if (isset($information['c'])) {
+						$this->cachedClassNamesByScope[$scope][] = $information['c'];
+					} else {
+						$this->cachedClassNamesByScope[$scope][] = $objectName;
+					}
+				}
+			}
+		}
+		return $this->cachedClassNamesByScope[$scope];
 	}
 
 	/**

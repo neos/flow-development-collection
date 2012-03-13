@@ -12,7 +12,6 @@ namespace TYPO3\FLOW3\Session\Aspect;
  *                                                                        */
 
 use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
-
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
@@ -33,10 +32,10 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\Po
 	protected $reflectionService;
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -93,7 +92,19 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\Po
 	 * @return array Runtime evaluations
 	 */
 	public function getRuntimeEvaluationsDefinition() {
+		return array();
 	}
 
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		$sessionClasses = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
+		return $classNameIndex->intersect($sessionClasses);
+	}
 }
 ?>

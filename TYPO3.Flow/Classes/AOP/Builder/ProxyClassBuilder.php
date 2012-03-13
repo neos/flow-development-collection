@@ -194,7 +194,16 @@ class ProxyClassBuilder {
 			$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE, $tags);
 		}
 
-		foreach ($possibleTargetClassNames as $targetClassName) {
+		$possibleTargetClassNameIndex = new ClassNameIndex();
+		$possibleTargetClassNameIndex->setClassNames($possibleTargetClassNames);
+
+		$targetClassNameCandidates = new ClassNameIndex();
+		foreach ($this->aspectContainers as $aspectContainer) {
+			$targetClassNameCandidates->applyUnion($aspectContainer->reduceTargetClassNames($possibleTargetClassNameIndex));
+		}
+		$targetClassNameCandidates->sort();
+
+		foreach ($targetClassNameCandidates->getClassNames() as $targetClassName) {
 			$isUnproxied = $this->objectConfigurationCache->has('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
 			$hasCacheEntry = $this->compiler->hasCacheEntryForClass($targetClassName) || $isUnproxied;
 			if ($rebuildEverything === TRUE || $hasCacheEntry === FALSE) {
@@ -560,6 +569,9 @@ EOT;
 		$pointcutQueryIdentifier = 0;
 
 		foreach ($aspectContainers as $aspectContainer) {
+			if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
+				continue;
+			}
 			foreach ($aspectContainer->getAdvisors() as $advisor) {
 				$pointcut = $advisor->getPointcut();
 				foreach ($methods as $method) {
@@ -610,6 +622,9 @@ EOT;
 	protected function getMatchingInterfaceIntroductions(array &$aspectContainers, $targetClassName) {
 		$introductions = array();
 		foreach ($aspectContainers as $aspectContainer) {
+			if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
+				continue;
+			}
 			foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
 				$pointcut = $introduction->getPointcut();
 				if ($pointcut->matches($targetClassName, NULL, NULL, uniqid())) {
@@ -631,6 +646,9 @@ EOT;
 	protected function getMatchingPropertyIntroductions(array &$aspectContainers, $targetClassName) {
 		$introductions = array();
 		foreach ($aspectContainers as $aspectContainer) {
+			if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
+				continue;
+			}
 			foreach ($aspectContainer->getPropertyIntroductions() as $introduction) {
 				$pointcut = $introduction->getPointcut();
 				if ($pointcut->matches($targetClassName, NULL, NULL, uniqid())) {

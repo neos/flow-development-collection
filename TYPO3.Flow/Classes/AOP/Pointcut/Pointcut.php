@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Proxy(false)
  */
-class Pointcut {
+class Pointcut implements PointcutFilterInterface {
 
 	const MAXIMUM_RECURSIONS = 99;
 
@@ -154,6 +154,16 @@ class Pointcut {
 	 */
 	public function getRuntimeEvaluationsClosureCode() {
 		return $this->pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
+	}
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		return $this->pointcutFilterComposite->reduceTargetClassNames($classNameIndex);
 	}
 }
 ?>

@@ -173,6 +173,30 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	}
 
 	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		$result = clone $classNameIndex;
+		foreach ($this->filters as &$operatorAndFilter) {
+			list($operator, $filter) = $operatorAndFilter;
+
+			switch ($operator) {
+				case '&&':
+					$result->applyIntersect($filter->reduceTargetClassNames($result));
+					break;
+				case '||':
+					$result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
+					break;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Returns the PHP code of the conditions used for runtime evaluations
 	 *
 	 * @param string $operator The operator for the given condition

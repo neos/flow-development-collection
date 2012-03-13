@@ -30,5 +30,38 @@ class PointcutClassAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$this->assertTrue($filter->matches('Acme\Some\Class', 'foo', 'Acme\Some\Other\Class', 1234));
 		$this->assertFalse($filter->matches('Acme\Some\Class', 'foo', 'Acme\Some\Other\Class', 1234));
 	}
+
+	/**
+	 * @test
+	 */
+	public function reduceTargetClassNamesFiltersAllClassesNotHavingTheGivenAnnotation() {
+		$availableClassNames = array(
+			'TestPackage\Subpackage\Class1',
+			'TestPackage\Class2',
+			'TestPackage\Subpackage\SubSubPackage\Class3',
+			'TestPackage\Subpackage2\Class4'
+		);
+		sort($availableClassNames);
+		$availableClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$availableClassNamesIndex->setClassNames($availableClassNames);
+
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassNamesByAnnotation')->with('SomeAnnotationClass')->will($this->returnValue(array('TestPackage\Subpackage\Class1','TestPackage\Subpackage\SubSubPackage\Class3','SomeMoreClass')));
+
+		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('SomeAnnotationClass');
+		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
+
+		$expectedClassNames = array(
+			'TestPackage\Subpackage\Class1',
+			'TestPackage\Subpackage\SubSubPackage\Class3'
+		);
+		sort($expectedClassNames);
+		$expectedClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$expectedClassNamesIndex->setClassNames($expectedClassNames);
+
+		$result = $classAnnotatedWithFilter->reduceTargetClassNames($availableClassNamesIndex);
+
+		$this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+	}
 }
 ?>

@@ -82,5 +82,36 @@ class PointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 		$this->assertEquals(array(), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
 	}
+
+	/**
+	 * @test
+	 */
+	public function reduceTargetClassNamesAsksTheResolvedPointcutToReduce() {
+		$mockPointcut = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\Pointcut', array(), array(), '', FALSE);
+		$mockPointcut->expects($this->once())->method('reduceTargetClassNames')->will($this->returnValue('someResult'));
+
+		$mockProxyClassBuilder = $this->getMock('TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);
+		$mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+
+		$pointcutFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
+		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
+
+		$this->assertEquals('someResult', $pointcutFilter->reduceTargetClassNames(new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex()));
+	}
+
+	/**
+	 * @test
+	 */
+	public function reduceTargetClassNamesReturnsTheInputClassNameIndexIfThePointcutCouldNotBeResolved() {
+		$mockProxyClassBuilder = $this->getMock('TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);
+		$mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(FALSE));
+
+		$pointcutFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
+		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
+
+		$inputClassNameIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+
+		$this->assertSame($inputClassNameIndex, $pointcutFilter->reduceTargetClassNames($inputClassNameIndex));
+	}
 }
 ?>

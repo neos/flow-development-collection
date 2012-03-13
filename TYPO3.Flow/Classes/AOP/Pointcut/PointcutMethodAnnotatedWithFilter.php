@@ -83,5 +83,17 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Poi
 		return array();
 	}
 
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+		$classNames = $this->reflectionService->getClassesContainingMethodsAnnotatedWith($this->annotation);
+		$annotatedIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$annotatedIndex->setClassNames($classNames);
+		return $classNameIndex->intersect($annotatedIndex);
+	}
 }
 ?>

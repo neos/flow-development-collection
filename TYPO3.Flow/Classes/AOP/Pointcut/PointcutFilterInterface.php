@@ -44,6 +44,15 @@ interface PointcutFilterInterface {
 	 * @return array Runtime evaluations
 	 */
 	public function getRuntimeEvaluationsDefinition();
+
+
+	/**
+	 * This method is used to optimize the matching process.
+	 *
+	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex An index of class names
+	 * @return array The filtered pointcut array, with pointcuts possibly covered by this filter
+	 */
+	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex);
 }
 
 ?>
