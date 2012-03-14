@@ -165,6 +165,13 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		$this->started = FALSE;
 	}
 
+	/**
+	 * No operation for transient session.
+	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 */
+	static public function destroyAll(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {}
+
 }
 
 ?>

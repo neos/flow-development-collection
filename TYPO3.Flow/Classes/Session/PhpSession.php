@@ -12,6 +12,9 @@ namespace TYPO3\FLOW3\Session;
  *                                                                        */
 
 use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\FLOW3\Configuration\ConfigurationManager;
+use TYPO3\FLOW3\Utility\Files;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
@@ -280,6 +283,28 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		$this->started = FALSE;
 		$this->sessionId = NULL;
 		session_unset();
+	}
+
+	/**
+	 * Destroys (file) data from all active PHP sessions.
+	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return integer The number of session files which have been removed
+	 */
+	static public function destroyAll(Bootstrap $bootstrap) {
+		$settings = $bootstrap->getObjectManager()->get('TYPO3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
+		if (empty($settings['session']['PHPSession']['savePath'])) {
+			$sessionsPath = Files::concatenatePaths(array($bootstrap->getObjectManager()->get('TYPO3\FLOW3\Utility\Environment')->getPathToTemporaryDirectory(), 'Sessions'));
+		} else {
+			$sessionsPath = $settings['session']['PHPSession']['savePath'];
+		}
+		if (is_dir($sessionsPath)) {
+			$filenames = Files::readDirectoryRecursively($sessionsPath);
+			if (count($filenames) > 0) {
+				Files::emptyDirectoryRecursively($sessionsPath);
+			}
+			return count($filenames);
+		}
 	}
 
 	/**
