@@ -60,8 +60,13 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 * The flush command flushes all caches, including code caches, which have been
 	 * registered with FLOW3's Cache Manager.
 	 *
+	 * This command does not remove the precompiled data provided by frozen
+	 * packages.
+	 *
 	 * @return void
 	 * @see typo3.flow3:cache:warmup
+	 * @see typo3.flow3:package:freeze
+	 * @see typo3.flow3:package:refreeze
 	 */
 	public function flushCommand() {
 		$this->cacheManager->flushCaches();

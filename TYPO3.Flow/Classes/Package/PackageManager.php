@@ -209,6 +209,25 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * Returns an array of \TYPO3\FLOW3\Package objects of all frozen packages.
+	 * A frozen package is not considered by file montoring and provides some
+	 * precompiled reflection data in order to improve performance.
+	 *
+	 * @return array Array of \TYPO3\FLOW3\Package
+	 */
+	public function getFrozenPackages() {
+		$frozenPackages = array();
+		foreach ($this->packages as $packageKey => $package) {
+			if (isset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']) &&
+					$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] === TRUE) {
+				$frozenPackages[$packageKey] = $package;
+			}
+
+		}
+		return $frozenPackages;
+	}
+
+	/**
 	 * Returns the upper camel cased version of the given package key or FALSE
 	 * if no such package is available.
 	 *
@@ -364,6 +383,70 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * Freezes a package
+	 *
+	 * @param string $packageKey The package to freeze
+	 * @return void
+	 */
+	public function freezePackage($packageKey) {
+		if (!$this->isPackageActive($packageKey)) {
+			throw new \TYPO3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available or active.', 1331715956);
+		}
+		if ($this->isPackageFrozen($packageKey)) {
+			return;
+		}
+
+		$this->bootstrap->getObjectManager()->get('TYPO3\FLOW3\Reflection\ReflectionService')->freezePackageReflection($packageKey);
+
+		$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] = TRUE;
+		$this->savePackageStates();
+	}
+
+	/**
+	 * Tells if a package is frozen
+	 *
+	 * @param string $packageKey The package to check
+	 * @return boolean
+	 */
+	public function isPackageFrozen($packageKey) {
+		return (
+			isset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']) &&
+			$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] === TRUE
+		);
+	}
+
+	/**
+	 * Unfreezes a package
+	 *
+	 * @param string $packageKey The package to unfreeze
+	 * @return void
+	 */
+	public function unfreezePackage($packageKey) {
+		if (!$this->isPackageFrozen($packageKey)) {
+			return;
+		}
+
+		$this->bootstrap->getObjectManager()->get('TYPO3\FLOW3\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
+
+		unset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']);
+		$this->savePackageStates();
+	}
+
+	/**
+	 * Refreezes a package
+	 *
+	 * @param string $packageKey The package to refreeze
+	 * @return void
+	 */
+	public function refreezePackage($packageKey) {
+		if (!$this->isPackageFrozen($packageKey)) {
+			return;
+		}
+
+		$this->bootstrap->getObjectManager()->get('TYPO3\FLOW3\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
+	}
+
+	/**
 	 * Removes a package from registry and deletes it from filesystem
 	 *
 	 * @param string $packageKey package to remove
@@ -445,6 +528,14 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			}
 		}
 
+			// These packages are frozen by default if no PackageStates.php exists.
+			// At this point we can't make it configurable, because Configuration is
+			// not yet initialized ...
+		$defaultFrozenPackages = array(
+			'TYPO3.FLOW3', 'TYPO3.Fluid', 'TYPO3.Party', 'TYPO3.Kickstart',
+			'TYPO3.Welcome', 'Symfony.Component.Yaml', 'Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM'
+		);
+
 		foreach ($packagePaths as $packagePath) {
 			$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
 			$packageKey = str_replace('/', '.', substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1));
@@ -455,6 +546,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			$this->packageKeys[strtolower($packageKey)] = $packageKey;
 			if (!isset($this->packageStatesConfiguration['packages'][$packageKey])) {
 				$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'active';
+				if (in_array($packageKey, $defaultFrozenPackages)) {
+					$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] = TRUE;
+				}
 			}
 			$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $packagePath;
 		}

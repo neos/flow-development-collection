@@ -121,6 +121,30 @@ interface PackageManagerInterface {
 	public function activatePackage($packageKey);
 
 	/**
+	 * Freezes a package
+	 *
+	 * @param string $packageKey The package to freeze
+	 * @return void
+	 */
+	public function freezePackage($packageKey);
+
+	/**
+	 * Tells if a package is frozen
+	 *
+	 * @param string $packageKey The package to check
+	 * @return boolean
+	 */
+	public function isPackageFrozen($packageKey);
+
+	/**
+	 * Unfreezes a package
+	 *
+	 * @param string $packageKey The package to unfreeze
+	 * @return void
+	 */
+	public function unfreezePackage($packageKey);
+
+	/**
 	 * Removes a package from registry and deletes it from filesystem
 	 *
 	 * @param string $packageKey package to delete

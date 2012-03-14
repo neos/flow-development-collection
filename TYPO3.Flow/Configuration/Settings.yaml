@@ -131,6 +131,10 @@ TYPO3:
       # of @param annotations in the default log.
       logIncorrectDocCommentHints: FALSE
 
+      # Directory to use for storing precompiled reflection data of frozen packages.
+      # This data is not flushed on regular cache:flush operations.
+      precompiledReflectionStoragePath: %FLOW3_PATH_DATA%Temporary/PrecompiledReflectionData/
+
     resource:
       publishing:
 
@@ -300,7 +304,7 @@ TYPO3:
         # Defines the base directory which FLOW3 may use for storing different kinds
         # of temporary files.
         # The directory must be writable and FLOW3 will automatically create a sub
-        # directory named with a hash which will contain the actual temporary files.
+        # directory (named after the context) which will contain the actual temporary files.
         temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/
 
         # Defines an explicit base URI that should be used in the environment. This

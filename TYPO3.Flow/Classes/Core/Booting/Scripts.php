@@ -284,6 +284,7 @@ class Scripts {
 		$reflectionService->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->injectClassLoader($bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader'));
 		$reflectionService->injectSettings($settings);
+		$reflectionService->injectPackageManager($bootstrap->getEarlyInstance('TYPO3\FLOW3\Package\PackageManagerInterface'));
 		$reflectionService->setStatusCache($cacheManager->getCache('FLOW3_ReflectionStatus'));
 		$reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('FLOW3_ReflectionData'));
 		$reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ReflectionDataRuntimeCache'));
@@ -320,7 +321,10 @@ class Scripts {
 		$monitor->injectSystemLogger($systemLogger);
 		$monitor->initializeObject();
 
-		foreach ($packageManager->getActivePackages() as $package) {
+		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+			if ($packageManager->isPackageFrozen($packageKey)) {
+				continue;
+			}
 			$classesPath = $package->getClassesPath();
 			if (is_dir($classesPath)) {
 				$monitor->monitorDirectory($classesPath);

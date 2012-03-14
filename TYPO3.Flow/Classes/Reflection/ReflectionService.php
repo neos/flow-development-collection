@@ -97,6 +97,11 @@ class ReflectionService {
 	protected $systemLogger;
 
 	/**
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * @var boolean
 	 */
 	protected $runsInProductionContext;
@@ -211,6 +216,14 @@ class ReflectionService {
 	 */
 	public function injectClassLoader(\TYPO3\FLOW3\Core\ClassLoader $classLoader) {
 		$this->classLoader = $classLoader;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @return void
+	 */
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
 	}
 
 	/**
@@ -1348,7 +1361,25 @@ class ReflectionService {
 	 * @return void
 	 */
 	protected function forgetChangedClasses() {
-		foreach (array_keys($this->classReflectionData) as $className) {
+		$frozenNamespaces = array();
+		foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
+			if ($this->packageManager->isPackageFrozen($packageKey)) {
+				$frozenNamespaces[] = $package->getPackageNamespace();
+			}
+		}
+
+		$classNames = array_keys($this->classReflectionData);
+		foreach ($frozenNamespaces as $namespace) {
+			$namespace .= '\\';
+			$namespaceLength = strlen($namespace);
+			foreach ($classNames as $index => $className) {
+				if (substr($className, 0, $namespaceLength) === $namespace) {
+					unset($classNames[$index]);
+				}
+			}
+		}
+
+		foreach ($classNames as $className) {
 			if (!$this->statusCache->has(str_replace('\\', '_', $className))) {
 				$this->forgetClass($className);
 			}
@@ -1417,7 +1448,22 @@ class ReflectionService {
 	 */
 	protected function loadClassReflectionCompiletimeCache() {
 		$data = $this->reflectionDataCompiletimeCache->get('ReflectionData');
+
 		if ($data === FALSE) {
+			if ($this->settings['core']['context'] === 'Development') {
+				$useIgBinary = extension_loaded('igbinary');
+				foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+					if ($this->packageManager->isPackageFrozen($packageKey)) {
+						$pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'] . $packageKey . '.dat';
+						if (file_exists($pathAndFilename)) {
+							$data = ($useIgBinary ? igbinary_unserialize(file_get_contents($pathAndFilename)) : unserialize(file_get_contents($pathAndFilename)));
+							foreach ($data as $propertyName => $propertyValue) {
+								$this->$propertyName = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
+							}
+						}
+					}
+				}
+			}
 			return FALSE;
 		}
 
@@ -1447,6 +1493,79 @@ class ReflectionService {
 			$this->classReflectionData[$className] = $this->reflectionDataRuntimeCache->get(str_replace('\\', '_', $className));
 		} else {
 			$this->reflectClass($className);
+		}
+	}
+
+	/**
+	 * Stores the current reflection data related to classes of the specified package
+	 * in the Configuration directory of that package.
+	 *
+	 * This method is used by the package manager.
+	 *
+	 * @param string $packageKey
+	 * @return void
+	 */
+	public function freezePackageReflection($packageKey) {
+		$package = $this->packageManager->getPackage($packageKey);
+
+		$packageNamespace = $package->getPackageNamespace() . '\\';
+		$packageNamespaceLength = strlen($packageNamespace);
+
+		$reflectionData = array(
+			'classReflectionData' => $this->classReflectionData,
+			'classSchemata' => $this->classSchemata,
+			'annotatedClasses' => $this->annotatedClasses,
+			'classesByMethodAnnotations' => $this->classesByMethodAnnotations
+		);
+
+		foreach (array_keys($reflectionData['classReflectionData']) as $className) {
+			if (substr($className, 0, $packageNamespaceLength) !== $packageNamespace) {
+				unset($reflectionData['classReflectionData'][$className]);
+			}
+		}
+
+		foreach (array_keys($reflectionData['classSchemata']) as $className) {
+			if (substr($className, 0, $packageNamespaceLength) !== $packageNamespace) {
+				unset($reflectionData['classSchemata'][$className]);
+			}
+		}
+
+		foreach (array_keys($reflectionData['annotatedClasses']) as $className) {
+			if (substr($className, 0, $packageNamespaceLength) !== $packageNamespace) {
+				unset($reflectionData['annotatedClasses'][$className]);
+			}
+		}
+
+		if (isset($reflectionData['classesByMethodAnnotations'])) {
+			foreach ($reflectionData['classesByMethodAnnotations'] as $annotationClassName => $classNames) {
+				foreach ($classNames as $index => $className) {
+					if (substr($className, 0, $packageNamespaceLength) !== $packageNamespace) {
+						unset($reflectionData['classesByMethodAnnotations'][$annotationClassName][$index]);
+					}
+				}
+			}
+		}
+
+		$path = $pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'];
+		if (!is_dir($path)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($path);
+		}
+		$pathAndFilename = $path . $packageKey . '.dat';
+		file_put_contents($pathAndFilename, extension_loaded('igbinary') ? igbinary_serialize($reflectionData) : serialize($reflectionData));
+	}
+
+	/**
+	 * Removes the precompiled reflection data of a frozen package
+	 *
+	 * This method is used by the package manager.
+	 *
+	 * @param string $packageKey The package to remove the data from
+	 * @return void
+	 */
+	public function unfreezePackageReflection($packageKey) {
+		$pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'] . $packageKey . '.dat';
+		if (file_exists($pathAndFilename)) {
+			unlink($pathAndFilename);
 		}
 	}
 
@@ -1506,6 +1625,14 @@ class ReflectionService {
 			$this->classSchemataRuntimeCache->getBackend()->freeze();
 
 			$this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LOG_INFO);
+		} elseif ($this->settings['core']['context'] === 'Development') {
+			foreach (array_keys($this->packageManager->getFrozenPackages()) as $packageKey) {
+				$pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'] . $packageKey . '.dat';
+				if (!file_exists($pathAndFilename)) {
+					$this->log(sprintf('Rebuilding precompiled reflection data for frozen package %s.', $packageKey), LOG_INFO);
+					$this->freezePackageReflection($packageKey);
+				}
+			}
 		}
 	}
 

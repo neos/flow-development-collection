@@ -141,7 +141,10 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	public function listCommand() {
 		$activePackages = array();
 		$inactivePackages = array();
+		$frozenPackages = array();
 		$longestPackageKey = 0;
+		$freezeSupported = $this->settings['core']['context'] === 'Development';
+
 		foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
 			if (strlen($packageKey) > $longestPackageKey) {
 				$longestPackageKey = strlen($packageKey);
@@ -151,6 +154,9 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			} else {
 				$inactivePackages[$packageKey] = $package;
 			}
+			if ($this->packageManager->isPackageFrozen($packageKey)) {
+				$frozenPackages[$packageKey] = $package;
+			}
 		}
 
 		ksort($activePackages);
@@ -159,16 +165,23 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		$this->outputLine('ACTIVE PACKAGES:');
 		foreach ($activePackages as $package) {
 			$packageMetaData = $package->getPackageMetaData();
-			$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
+			$frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ' );
+			$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
 		}
 
 		if (count($inactivePackages) > 0) {
 			$this->outputLine();
 			$this->outputLine('INACTIVE PACKAGES:');
 			foreach ($inactivePackages as $package) {
+				$frozenState = (isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ' );
 				$packageMetaData = $package->getPackageMetaData();
-				$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
+				$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
 			}
+		}
+
+		if (count($frozenPackages) > 0 && $freezeSupported) {
+			$this->outputLine();
+			$this->outputLine(' * frozen package');
 		}
 	}
 
@@ -198,6 +211,188 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 	}
 
+	/**
+	 * Freeze a package
+	 *
+	 * This function marks a package as <b>frozen</b> in order to improve performance
+	 * in a development context. While a package is frozen, any modification of files
+	 * within that package won't be tracked and can lead to unexpected behavior.
+	 *
+	 * File monitoring won't consider the given package. Further more, reflection
+	 * data for classes contained in the package is cached persistently and loaded
+	 * directly on the first request after caches have been flushed. The precompiled
+	 * reflection data is stored in the <b>Configuration</b> directory of the
+	 * respective package.
+	 *
+	 * By specifying <b>all</b> as a package key, all currently frozen packages are
+	 * frozen.
+	 *
+	 * @param string $packageKey Key of the package to freeze
+	 * @return void
+	 * @see typo3.flow3:package:unfreeze
+	 * @see typo3.flow3:package:refreeze
+	 */
+	public function freezeCommand($packageKey) {
+		if ($this->settings['core']['context'] !== 'Development') {
+			$this->outputLine('Package freezing is only supported in Development context.');
+			$this->quit(3);
+		}
+
+		$packagesToFreeze = array();
+
+		if ($packageKey === 'all') {
+			foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+				if (!$this->packageManager->isPackageFrozen($packageKey)) {
+					$packagesToFreeze[] = $packageKey;
+				}
+			}
+			if ($packagesToFreeze === array()) {
+				$this->outputLine('Nothing to do, all active packages were already frozen.');
+				$this->quit(0);
+			}
+		} elseif ($packageKey === 'blackberry') {
+			$this->outputLine('http://bit.ly/freeze-blackberry');
+			$this->quit(42);
+		} else {
+			if (!$this->packageManager->isPackageActive($packageKey)) {
+				if ($this->packageManager->isPackageAvailable($packageKey)) {
+					$this->outputLine('Package "%s" is not active and thus cannot be frozen.', array($packageKey));
+					$this->quit(1);
+				} else {
+					$this->outputLine('Package "%s" is not available.', array($packageKey));
+					$this->quit(2);
+				}
+			}
+
+			if ($this->packageManager->isPackageFrozen($packageKey)) {
+				$this->outputLine('Package "%s" was already frozen.', array($packageKey));
+				$this->quit(0);
+			}
+
+			$packagesToFreeze = array($packageKey);
+		}
+
+		foreach ($packagesToFreeze as $packageKey) {
+			$this->packageManager->freezePackage($packageKey);
+			$this->outputLine('Froze package "%s".', array($packageKey));
+		}
+	}
+
+	/**
+	 * Unfreeze a package
+	 *
+	 * Unfreezes a previously frozen package. On the next request, this package will
+	 * be considered again by the file monitoring and related services – if they are
+	 * enabled in the current context.
+	 *
+	 * By specifying <b>all</b> as a package key, all currently frozen packages are
+	 * unfrozen.
+	 *
+	 * @param string $packageKey Key of the package to unfreeze, or 'all'
+	 * @return void
+	 * @see typo3.flow3:package:freeze
+	 * @see typo3.flow3:cache:flush
+	 */
+	public function unfreezeCommand($packageKey) {
+		if ($this->settings['core']['context'] !== 'Development') {
+			$this->outputLine('Package freezing is only supported in Development context.');
+			$this->quit(3);
+		}
+
+		$packagesToUnfreeze = array();
+
+		if ($packageKey === 'all') {
+			foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
+				if ($this->packageManager->isPackageFrozen($packageKey)) {
+					$packagesToUnfreeze[] = $packageKey;
+				}
+			}
+			if ($packagesToUnfreeze === array()) {
+				$this->outputLine('Nothing to do, no packages were frozen.');
+				$this->quit(0);
+			}
+		} else {
+			if ($packageKey === NULL) {
+				$this->outputLine('You must specify a package to unfreeze.');
+				$this->quit(1);
+			}
+
+			if (!$this->packageManager->isPackageAvailable($packageKey)) {
+				$this->outputLine('Package "%s" is not available.', array($packageKey));
+				$this->quit(2);
+			}
+			if (!$this->packageManager->isPackageFrozen($packageKey)) {
+				$this->outputLine('Package "%s" was not frozen.', array($packageKey));
+				$this->quit(0);
+			}
+			$packagesToUnfreeze = array($packageKey);
+		}
+
+		foreach ($packagesToUnfreeze as $packageKey) {
+			$this->packageManager->unfreezePackage($packageKey);
+			$this->outputLine('Unfroze package "%s".', array($packageKey));
+		}
+	}
+
+	/**
+	 * Refreeze a package
+	 *
+	 * Refreezes a currently frozen package: all precompiled information is removed
+	 * and file monitoring will consider the package exactly once, on the next
+	 * request. After that request, the package remains frozen again, just with the
+	 * updated data.
+	 *
+	 * By specifying <b>all</b> as a package key, all currently frozen packages are
+	 * refrozen.
+	 *
+	 * @param string $packageKey Key of the package to refreeze, or 'all'
+	 * @return void
+	 * @see typo3.flow3:package:freeze
+	 * @see typo3.flow3:cache:flush
+	 */
+	public function refreezeCommand($packageKey) {
+		if ($this->settings['core']['context'] !== 'Development') {
+			$this->outputLine('Package freezing is only supported in Development context.');
+			$this->quit(3);
+		}
+
+		$packagesToRefreeze = array();
+
+		if ($packageKey === 'all') {
+			foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
+				if ($this->packageManager->isPackageFrozen($packageKey)) {
+					$packagesToRefreeze[] = $packageKey;
+				}
+			}
+			if ($packagesToRefreeze === array()) {
+				$this->outputLine('Nothing to do, no packages were frozen.');
+				$this->quit(0);
+			}
+		} else {
+			if ($packageKey === NULL) {
+				$this->outputLine('You must specify a package to refreeze.');
+				$this->quit(1);
+			}
+
+			if (!$this->packageManager->isPackageAvailable($packageKey)) {
+				$this->outputLine('Package "%s" is not available.', array($packageKey));
+				$this->quit(2);
+			}
+			if (!$this->packageManager->isPackageFrozen($packageKey)) {
+				$this->outputLine('Package "%s" was not frozen.', array($packageKey));
+				$this->quit(0);
+			}
+			$packagesToRefreeze = array($packageKey);
+		}
+
+		foreach ($packagesToRefreeze as $packageKey) {
+			$this->packageManager->refreezePackage($packageKey);
+			$this->outputLine('Refroze package "%s".', array($packageKey));
+		}
+
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
+		$this->sendAndExit(0);
+	}
 }
 
 ?>
