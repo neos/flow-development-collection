@@ -168,16 +168,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				}
 			}
 		}
-
 		if (!isset($primaryTable['name'])) {
 			$className = $classSchema->getClassName();
 			$primaryTable['name'] = $this->inferTableNameFromClassName($className);
-#			$idProperties = array_keys($classSchema->getIdentityProperties());
-#			$primaryTable['uniqueConstraints']['flow3_identifier'] = array(
-#				'columns' => $idProperties
-#			);
 		}
-		$metadata->setPrimaryTable($primaryTable);
 
 			// Evaluate NamedQueries annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\NamedQueries'])) {
@@ -236,7 +230,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			}
 		}
 
-
 			// Evaluate DoctrineChangeTrackingPolicy annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\ChangeTrackingPolicy'])) {
 			$changeTrackingAnnotation = $classAnnotations['Doctrine\ORM\Mapping\ChangeTrackingPolicy'];
@@ -247,6 +240,18 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 
 			// Evaluate annotations on properties/fields
 		$this->evaluatePropertyAnnotations($metadata);
+
+			// build unique index for table
+		if (!isset($primaryTable['uniqueConstraints'])) {
+			$idProperties = array_keys($classSchema->getIdentityProperties());
+			if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== array()) {
+				$uniqueIndexName = $this->truncateIdentifier('flow3_identity_' . $primaryTable['name']);
+				foreach ($idProperties as $idProperty) {
+					$primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = isset($metadata->columnNames[$idProperty]) ? $metadata->columnNames[$idProperty] : strtolower($idProperty);
+				}
+			}
+		}
+		$metadata->setPrimaryTable($primaryTable);
 
 			// Evaluate @HasLifecycleCallbacks annotation
 		$this->evaluateLifeCycleAnnotations($classAnnotations, $class, $metadata);
@@ -260,14 +265,25 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return string
 	 */
 	public function inferTableNameFromClassName($className, $lengthLimit = NULL) {
+		return $this->truncateIdentifier(strtolower(str_replace('\\', '_', $className)), $lengthLimit, $className);
+	}
+
+	/**
+	 * Truncate an identifier if needed and append a hash to ensure uniqueness.
+	 *
+	 * @param string $identifier
+	 * @param integer $lengthLimit
+	 * @param string $hashSource
+	 * @return string
+	 */
+	protected function truncateIdentifier($identifier, $lengthLimit = NULL, $hashSource = NULL) {
 		if ($lengthLimit === NULL) {
 			$lengthLimit = $this->getMaxIdentifierLength();
 		}
-		$tableName = str_replace('\\', '_', $className);
-		if (strlen($tableName) > $lengthLimit) {
-			$tableName = substr($tableName, 0, $lengthLimit - 6) . '_' . substr(sha1($className), 0, 5);
+		if (strlen($identifier) > $lengthLimit) {
+			$identifier = substr($identifier, 0, $lengthLimit - 6) . '_' . substr(sha1($hashSource !== NULL ? $hashSource : $identifier), 0, 5);
 		}
-		return strtolower($tableName);
+		return $identifier;
 	}
 
 	/**
@@ -301,11 +317,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			$tableName = strtolower($classNameParts[1] . '_' . implode('_', array_slice($classNameParts, -2, 2)));
 		}
 
-		if (strlen($tableName) > $this->getMaxIdentifierLength()) {
-			$tableName = substr($tableName, 0, $this->getMaxIdentifierLength() - 6) . '_' . substr(sha1($className), 0, 5);
-		}
-
-		return $tableName;
+		return $this->truncateIdentifier($tableName);
 	}
 
 	/**
