@@ -39,11 +39,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	protected $commandManager;
 
 	/**
-	 * @var array
-	 */
-	protected $commandsByPackagesAndControllers = array();
-
-	/**
 	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
@@ -104,13 +99,16 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		if ($commandIdentifier === NULL) {
 			$this->displayHelpIndex();
 		} else {
-			try {
-				$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
-			} catch (\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
-				$this->outputLine($exception->getMessage());
-				return;
+			$matchingCommands = $this->commandManager->getCommandsByIdentifier($commandIdentifier);
+			$numberOfMatchingCommands = count($matchingCommands);
+			if ($numberOfMatchingCommands === 0) {
+				$this->outputLine('No command could be found that matches the command identifier "%s".', array($commandIdentifier));
+			} elseif ($numberOfMatchingCommands > 1) {
+				$this->outputLine('%d commands match the command identifier "%s":', array($numberOfMatchingCommands, $commandIdentifier));
+				$this->displayShortHelpForCommands($matchingCommands);
+			} else {
+				$this->displayHelpForCommand(array_shift($matchingCommands));
 			}
-			$this->displayHelpForCommand($command);
 		}
 	}
 
@@ -118,7 +116,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @return void
 	 */
 	protected function displayHelpIndex() {
-		$this->buildCommandsIndex();
 		$context = $this->bootstrap->getContext();
 
 		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
@@ -126,7 +123,21 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$this->outputLine();
 		$this->outputLine('The following commands are currently available:');
 
-		foreach ($this->commandsByPackagesAndControllers as $packageKey => $commandControllers) {
+		$this->displayShortHelpForCommands($this->commandManager->getAvailableCommands());
+
+		$this->outputLine('* = compile time command');
+		$this->outputLine();
+		$this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', array($this->getFlow3InvocationString()));
+		$this->outputLine();
+	}
+
+	/**
+	 * @param array<\TYPO3\FLOW3\MVC\CLI\Command> $commands
+	 * @return void
+	 */
+	protected function displayShortHelpForCommands(array $commands) {
+		$commandsByPackagesAndControllers = $this->buildCommandsIndex($commands);
+		foreach ($commandsByPackagesAndControllers as $packageKey => $commandControllers) {
 			$this->outputLine('');
 			$this->outputLine('PACKAGE "%s":', array(strtoupper($packageKey)));
 			$this->outputLine(str_repeat('-', self::MAXIMUM_LINE_LENGTH));
@@ -140,10 +151,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 				$this->outputLine();
 			}
 		}
-		$this->outputLine('* = compile time command');
-		$this->outputLine();
-		$this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', array($this->getFlow3InvocationString()));
-		$this->outputLine();
 	}
 
 	/**
@@ -246,11 +253,9 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$this->outputLine($exception->getMessage());
 		if ($exception instanceof \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException) {
 			$this->outputLine('Please specify the complete command identifier. Matched commands:');
-			foreach ($exception->getMatchingCommands() as $matchingCommand) {
-				$this->outputLine('    %s', array($matchingCommand->getCommandIdentifier()));
-			}
+			$this->displayShortHelpForCommands($exception->getMatchingCommands());
 		}
-		$this->outputLine('');
+		$this->outputLine();
 		$this->outputLine('Enter "%s help" for an overview of all available commands', array($this->getFlow3InvocationString()));
 		$this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', array($this->getFlow3InvocationString()));
 	}
@@ -259,11 +264,12 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * Builds an index of available commands. For each of them a Command object is
 	 * added to the commands array of this class.
 	 *
-	 * @return void
+	 * @param array<\TYPO3\FLOW3\MVC\CLI\Command> $commands
+	 * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
 	 */
-	protected function buildCommandsIndex() {
-		$availableCommands = $this->commandManager->getAvailableCommands();
-		foreach ($availableCommands as $command) {
+	protected function buildCommandsIndex(array $commands) {
+		$commandsByPackagesAndControllers = array();
+		foreach ($commands as $command) {
 			if ($command->isInternal()) {
 				continue;
 			}
@@ -271,8 +277,9 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			$packageKey = strstr($commandIdentifier, ':', TRUE);
 			$commandControllerClassName = $command->getControllerClassName();
 			$commandName = $command->getControllerCommandName();
-			$this->commandsByPackagesAndControllers[$packageKey][$commandControllerClassName][$commandName] = $command;
+			$commandsByPackagesAndControllers[$packageKey][$commandControllerClassName][$commandName] = $command;
 		}
+		return $commandsByPackagesAndControllers;
 	}
 }
 ?>
