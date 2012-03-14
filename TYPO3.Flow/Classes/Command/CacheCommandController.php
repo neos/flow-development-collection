@@ -12,8 +12,8 @@ namespace TYPO3\FLOW3\Command;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
-
 use TYPO3\FLOW3\MVC\CLI\Response;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * Command controller for managing caches
@@ -69,6 +69,7 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 * @see typo3.flow3:package:refreeze
 	 */
 	public function flushCommand() {
+		$this->removeShortcuts();
 		$this->cacheManager->flushCaches();
 		$this->outputLine('Flushed all caches.');
 		if ($this->lockManager->isSiteLocked()) {
@@ -124,6 +125,16 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 * @FLOW3\Signal
 	 */
 	public function emitWarmupCaches() {
+	}
+
+	/**
+	 * Helper method to remove the shortcuts directory used by the classloader.
+	 *
+	 * @param string $packagePath
+	 * @return void
+	 */
+	protected function removeShortcuts($packagePath = FLOW3_PATH_PACKAGES) {
+		Files::removeDirectoryRecursively(Files::concatenatePaths(array($packagePath, '.Shortcuts')));
 	}
 }
 
