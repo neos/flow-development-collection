@@ -792,7 +792,7 @@ policy definitions are configured in the ``Policy.yaml`` files.
 *Roles*
 
 In the section about authentication so called roles were introduced. A role can be
-attached to a users security context, to determine which privileges should be granted to
+attached to a user's security context, to determine which privileges should be granted to
 her. I.e. the access rights of a user are decoupled from the user object itself, making it
 a lot more flexible, if you want to change them. In FLOW3 a role is mainly just a string,
 which must be unique in the whole FLOW3 instance. Following there is an example
@@ -808,15 +808,14 @@ configuration, that will proclaim the roles ``Administrator``, ``Customer``, and
 	  Customer: []
 	  PrivilegedCustomer: [Customer]
 
-.. note::
+The role ``PrivilegedCustomer`` is configured as a sub role of ``Customer``, for
+example it will inherit the privileges from the ``Customer`` role.
 
-	The role ``PrivilegedCustomer`` is configured as a sub role of ``Customer``, for
-	example it will inherit the privileges from the ``Customer`` role.
+FLOW3 will always add the magic ``Everybody`` role, which you don't have to
+configure youreself. This role will also be present, if no account is authenticated.
 
-.. note::
-
-	FLOW3 will always add the magic ``Everybody`` role, which you don't have to
-	confiure youreself. This role will also be present, if no account is authenticated.
+Likewise, the magic role ``Anonymous`` is added to the security context if a user
+is not authenticated.
 
 *Resources*
 

@@ -284,6 +284,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$role1 = new Role('role1');
 		$role11 = new Role('role11');
@@ -346,6 +347,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$role1 = new Role('role1');
 		$role2 = new Role('role2');
@@ -404,23 +406,11 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
-
-		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
-		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
-
-		$token2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
-		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
-
-		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
-		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
-		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array(new Role('Everybody'))));
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->injectRequest($request);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
-		$securityContext->_set('policyService', $mockPolicyService);
-
-		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
 		$result = $securityContext->getRoles();
 
@@ -431,10 +421,30 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getRolesReturnsTheAnonymousRoleIfNoTokenIsAuthenticated() {
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
+
+		$result = $securityContext->getRoles();
+
+		$this->assertInstanceOf('TYPO3\FLOW3\Security\Policy\Role', $result[1]);
+		$this->assertEquals('Anonymous', (string)($result[1]));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 */
 	public function getRolesAddsTheEverybodyRoleToTheRolesFromTheAuthenticatedTokens() {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$role1 = new Role('Role1');
 		$role2 = new Role('Role2');
@@ -511,6 +521,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasRoleWorksWithRecursiveRoles() {
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$roleAdministrator = new Role('Administrator');
 		$roleLicenseToKill = new Role('LicenseToKill');
@@ -549,6 +560,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getRolesDoesNotReturnRolesThePolicyServiceDoesNotKnowAbout() {
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
 		$roleAdministrator = new Role('Administrator');
 		$roleLicenseToKill = new Role('LicenseToKill');
