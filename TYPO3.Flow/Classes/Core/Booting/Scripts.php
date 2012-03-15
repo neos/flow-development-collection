@@ -197,6 +197,7 @@ class Scripts {
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Exception
 	 */
 	static public function initializeProxyClasses(Bootstrap $bootstrap) {
 		$objectConfigurationCache = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager')->getCache('FLOW3_Object_Configuration');

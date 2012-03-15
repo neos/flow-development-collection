@@ -75,6 +75,7 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $packageKey Key of the package containing the source file
 	 * @return mixed Translated label or FALSE on failure
+	 * @throws \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException
 	 */
 	public function getTranslationByOriginalLabel($originalLabel, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		$model = $this->getModel($packageKey, $sourceName, $locale);
@@ -105,6 +106,7 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $packageKey Key of the package containing the source file
 	 * @return mixed Translated label or FALSE on failure
+	 * @throws \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException
 	 */
 	public function getTranslationById($labelId, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		$model = $this->getModel($packageKey, $sourceName, $locale);

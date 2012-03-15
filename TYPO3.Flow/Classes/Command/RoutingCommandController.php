@@ -129,7 +129,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 				$this->outputLine('<b>Generated Path:</b>');
 				$this->outputLine('  ' . $route->getMatchingUri());
 
-				if($controllerObjectName !== NULL) {
+				if ($controllerObjectName !== NULL) {
 					$this->outputLine('<b>Controller:</b>');
 					$this->outputLine('  ' . $controllerObjectName);
 				} else {

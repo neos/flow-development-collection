@@ -54,6 +54,7 @@ class Response extends \TYPO3\FLOW3\Mvc\Response {
 	 *
 	 * @param integer $exitCode
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setExitCode($exitCode) {

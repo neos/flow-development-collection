@@ -64,12 +64,12 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		try {
 			$matchResult = preg_match($this->classFilterExpression, $className);
-		}
-		catch (\Exception $exception) {
+		} catch (\Exception $exception) {
 			throw new \TYPO3\FLOW3\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
 		}
 		if ($matchResult === FALSE) {

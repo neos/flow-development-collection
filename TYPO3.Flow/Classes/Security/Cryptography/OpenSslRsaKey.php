@@ -33,7 +33,6 @@ class OpenSslRsaKey {
 	 *
 	 * @param string $modulus The HEX modulus
 	 * @param string $keyString The private key string
-	 * @return void
 	 */
 	public function __construct($modulus, $keyString) {
 		$this->modulus = $modulus;

@@ -29,7 +29,6 @@ class RequestPatternResolver {
 	 * Constructor.
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;

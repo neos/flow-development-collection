@@ -50,6 +50,7 @@ class Command {
 	 *
 	 * @param string $controllerClassName Class name of the controller providing the command
 	 * @param string $controllerCommandName Command name, i.e. the method name of the command, without the "Command" suffix
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($controllerClassName, $controllerCommandName) {
 		$this->controllerClassName = $controllerClassName;

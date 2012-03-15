@@ -39,7 +39,6 @@ class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\Interceptor
 	 *
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
 	 * @param \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
-	 * @return void
 	 */
 	public function __construct(
 		\TYPO3\FLOW3\Security\Context $securityContext,

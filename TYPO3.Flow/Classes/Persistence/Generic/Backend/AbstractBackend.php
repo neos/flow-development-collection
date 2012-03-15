@@ -308,6 +308,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param object $object
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
 	 * @api
 	 */
 	protected function validateObject($object) {
@@ -362,6 +363,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param object $object The object to work on
 	 * @param array $properties The properties to collect (as per class schema)
 	 * @param boolean $dirty A dirty flag that is passed by reference and set to TRUE if a dirty property was found
+	 * @return array
 	 */
 	protected function collectProperties($identifier, $object, array $properties, &$dirty) {
 		$propertyData = array();
@@ -488,7 +490,9 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param string $propertyName The name of the property to check
 	 * @param array $propertyMetaData Property metadata
 	 * @return mixed The value of the property
+	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException
 	 * @throws \TYPO3\FLOW3\Persistence\Exception
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	protected function checkPropertyValue($object, $propertyName, array $propertyMetaData) {
@@ -503,7 +507,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 				if (!($propertyValue instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)) {
 					throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no entity or value object), in ' . get_class($object) . '::' . $propertyName, 1283531761);
 				}
-			} elseif(!($propertyValue instanceof $propertyType)) {
+			} elseif (!($propertyValue instanceof $propertyType)) {
 				throw new \TYPO3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465558);
 			}
 		} elseif ($propertyValue !== NULL && $propertyType !== $this->getType($propertyValue)) {
@@ -524,6 +528,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param string $parentIdentifier
 	 * @param array $previousArray the previously persisted state of the array
 	 * @return array An array with "flat" values representing the array
+	 * @throws \TYPO3\FLOW3\Persistence\Exception
 	 */
 	protected function processArray(array $array = NULL, $parentIdentifier, array $previousArray = NULL) {
 		if ($previousArray !== NULL && is_array($previousArray['value'])) {
@@ -654,6 +659,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param string $parentIdentifier
 	 * @param array $previousObjectStorage the previously persisted state of the SplObjectStorage
 	 * @return array An array with "flat" values representing the SplObjectStorage
+	 * @throws \TYPO3\FLOW3\Persistence\Exception
 	 */
 	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, array $previousObjectStorage = NULL) {
 		if ($previousObjectStorage !== NULL && is_array($previousObjectStorage['value'])) {

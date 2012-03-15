@@ -31,6 +31,7 @@ class ResourcePointer {
 	 * Constructs this resource pointer
 	 *
 	 * @param string $hash
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($hash) {
 		if (!is_string($hash) || strlen($hash) !== 40) {

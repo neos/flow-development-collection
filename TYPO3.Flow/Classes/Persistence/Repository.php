@@ -75,6 +75,7 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @param object $object The object to add
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function add($object) {
@@ -90,6 +91,7 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @param object $object The object to remove
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function remove($object) {

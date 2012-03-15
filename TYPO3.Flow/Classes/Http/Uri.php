@@ -84,7 +84,7 @@ class Uri {
 	 * Constructs the URI object from a string
 	 *
 	 * @param string $uriString String representation of the URI
-	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function __construct($uriString) {
@@ -120,6 +120,7 @@ class Uri {
 	 *
 	 * @param  string $scheme The scheme. Allowed values are "http" and "https"
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setScheme($scheme) {
@@ -145,6 +146,7 @@ class Uri {
 	 *
 	 * @param string $username User name of the login
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setUsername($username) {
@@ -170,6 +172,7 @@ class Uri {
 	 *
 	 * @param string $password Password of the login
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setPassword($password) {
@@ -195,6 +198,7 @@ class Uri {
 	 *
 	 * @param string $host The hostname(s)
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setHost($host) {
@@ -220,6 +224,7 @@ class Uri {
 	 *
 	 * @param string $port The port number
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setPort($port) {
@@ -245,6 +250,7 @@ class Uri {
 	 *
 	 * @param string $path The path
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setPath($path) {
@@ -302,6 +308,7 @@ class Uri {
 	 *
 	 * @param string $fragment The fragment (aka "anchor")
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setFragment($fragment) {

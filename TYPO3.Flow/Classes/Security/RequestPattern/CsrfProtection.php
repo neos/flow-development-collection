@@ -71,6 +71,7 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
+	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		if ($this->authenticationManager->isAuthenticated() === FALSE) {

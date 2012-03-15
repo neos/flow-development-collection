@@ -58,6 +58,7 @@ class ObjectPathMappingRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $uriPattern the URI pattern of the ObjectPathMapping object
 	 * @param mixed $identifier the identifier of the object, for example the UUID, @see \TYPO3\FLOW3\Persistence\PersistenceManagerInterface::getIdentifierByObject()
 	 * @return \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping
+	 * @throws \InvalidArgumentException
 	 */
 	public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier) {
 		// TODO support "complex" identifiers (see http://forge.typo3.org/issues/29979)

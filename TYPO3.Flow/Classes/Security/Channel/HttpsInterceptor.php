@@ -32,7 +32,6 @@ class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\Intercepto
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $logger A logger to log security relevant actions
-	 * @return void
 	 */
 	public function __construct(
 		\TYPO3\FLOW3\Security\Context $securityContext,

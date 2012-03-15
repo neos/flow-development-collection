@@ -30,7 +30,6 @@ class Policy implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterI
 	 * Constructor.
 	 *
 	 * @param \TYPO3\FLOW3\Security\Policy\PolicyService $policyService The policy service
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\Policy\PolicyService $policyService) {
 		$this->policyService = $policyService;

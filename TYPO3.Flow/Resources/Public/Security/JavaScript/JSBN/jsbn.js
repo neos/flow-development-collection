@@ -1,6 +1,6 @@
 // Copyright (c) 2005  Tom Wu
 // All Rights Reserved.
-// See "LICENSE" for details.
+// See "License-JSBN" for details.
 
 // Basic JavaScript BN library - subset useful for RSA encryption.
 

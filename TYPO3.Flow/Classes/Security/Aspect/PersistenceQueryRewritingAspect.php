@@ -279,6 +279,7 @@ class PersistenceQueryRewritingAspect {
 	 * @param array $constraintDefinition The constraint definition array
 	 * @param object $result The result object returned by the persistence manager
 	 * @return boolean TRUE if the query result is valid for the given constraint
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	protected function checkSingleConstraintDefinitionOnResultObject(array $constraintDefinition, $result) {
 		$referenceToThisFound = FALSE;

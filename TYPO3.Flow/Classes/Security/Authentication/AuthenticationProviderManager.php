@@ -73,7 +73,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
 	 * @param \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
-	 * @return void
 	 */
 	public function __construct(AuthenticationProviderResolver $providerResolver, \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
 		$this->providerResolver = $providerResolver;
@@ -131,6 +130,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception
 	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 * @FLOW3\Session(autoStart=true)
 	 */
@@ -228,6 +228,8 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @param array $providerConfigurations The configured provider settings
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryPointFoundException
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations) {
 		foreach ($providerConfigurations as $providerName => $providerConfiguration) {

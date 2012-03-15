@@ -187,7 +187,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param integer $offset
 	 * @param integer $limit
 	 * @return void
-	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
 	 */
 	public function dqlCommand($depth = 3, $hydrationMode = 'array', $offset = NULL, $limit = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -301,6 +301,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param boolean $add The migration to mark as migrated
 	 * @param boolean $delete The migration to mark as not migrated
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @see typo3.flow3:doctrine:migrate
 	 * @see typo3.flow3:doctrine:migrationstatus
 	 * @see typo3.flow3:doctrine:migrationexecute
@@ -313,7 +314,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			if ($add === FALSE && $delete === FALSE) {
 				throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
 			}
-			$this->outputLine($this->doctrineService->markAsMigrated($version, $add ?: FALSE));
+			$this->doctrineService->markAsMigrated($version, $add ?: FALSE);
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);

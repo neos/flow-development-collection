@@ -58,6 +58,7 @@ class PropertyReflection extends \ReflectionProperty {
 	/**
 	 * Returns the values of the specified tag
 	 *
+	 * @param string $tag
 	 * @return array Values of the given tag
 	 */
 	public function getTagValues($tag) {

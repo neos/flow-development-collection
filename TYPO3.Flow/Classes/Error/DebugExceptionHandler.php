@@ -33,7 +33,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	/**
 	 * Formats and echoes the exception as XHTML.
 	 *
-	 * @param  \Exception $exception The exception object
+	 * @param \Exception $exception The exception object
 	 * @return void
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
@@ -173,7 +173,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	/**
 	 * Returns a link pointing to Forge to create a new issue.
 	 *
-	 * @param Exception $exception
+	 * @param \Exception $exception
 	 * @return string
 	 */
 	protected function getCreateIssueLink(\Exception $exception) {

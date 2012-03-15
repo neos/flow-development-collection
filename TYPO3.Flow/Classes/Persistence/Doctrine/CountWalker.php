@@ -5,7 +5,8 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * This source file is subject to the new BSD license that is bundled     *
- * with this package in the file LICENSE.txt.                             *
+ * with this package in the file License-BSD.txt.                             *
+ *                                                                        *
  * If you did not receive a copy of the license and are unable to         *
  * obtain it through the world-wide-web, please send an email             *
  * to kontakt@beberlei.de so I can send you a copy immediately.           *
@@ -14,7 +15,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  *                                                                        */
 
 use Doctrine\ORM\Query\AST\PathExpression;
-
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**

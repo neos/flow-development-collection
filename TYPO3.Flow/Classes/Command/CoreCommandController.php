@@ -279,6 +279,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * Launch sub process
 	 *
 	 * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or FALSE if an error occurred.
+	 * @throws \RuntimeException
 	 */
 	protected function launchSubProcess() {
 		$systemCommand = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3.php' . ' --start-slave';

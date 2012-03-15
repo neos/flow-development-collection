@@ -11,9 +11,9 @@ namespace TYPO3\FLOW3\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Object\Configuration\Configuration;
-use \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty as Property;
-use \TYPO3\FLOW3\Reflection\ObjectAccess;
+use TYPO3\FLOW3\Object\Configuration\Configuration;
+use TYPO3\FLOW3\Object\Configuration\ConfigurationProperty as Property;
+use TYPO3\FLOW3\Reflection\ObjectAccess;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
@@ -134,6 +134,7 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param string $objectName The object name
 	 * @param object $instance A prebuilt instance
+	 * @return void
 	 */
 	public function setInstance($objectName, $instance) {
 		if ($this->registeredClassNames === array()) {
@@ -256,11 +257,14 @@ class CompileTimeObjectManager extends ObjectManager {
 	/**
 	 * Returns a fresh or existing instance of the object specified by $objectName.
 	 *
-	 * This specialized get() method is able to do setter injection for properties defined in the object configuration
-	 * of the specified object.
+	 * This specialized get() method is able to do setter injection for properties
+	 * defined in the object configuration of the specified object.
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
+	 * @throws \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnresolvedDependenciesException
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 */
 	public function get($objectName) {
 		if (isset($this->objects[$objectName]['i'])) {

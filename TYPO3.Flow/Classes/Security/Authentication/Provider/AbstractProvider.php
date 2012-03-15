@@ -33,7 +33,6 @@ abstract class AbstractProvider implements \TYPO3\FLOW3\Security\Authentication\
 	 *
 	 * @param string $name The name of this authentication provider
 	 * @param array $options Additional configuration options
-	 * @return void
 	 */
 	public function __construct($name, array $options = array()) {
 		$this->name = $name;

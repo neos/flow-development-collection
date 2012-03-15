@@ -124,7 +124,7 @@ class XmlWriter {
 
 		switch ($constraint->getConstraintScope()) {
 			case \TYPO3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM :
-				if(strlen($constraint->getType())) $xml->writeAttribute('type', $constraint->getType());
+				if (strlen($constraint->getType())) $xml->writeAttribute('type', $constraint->getType());
 			break;
 			case \TYPO3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE :
 			break;

@@ -27,11 +27,13 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\FLOW3\Aop\Builder\Abst
 	 * @param string $methodName Name of the method to build an interceptor for
 	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
 	 * @param string $targetClassName Name of the target class to build the interceptor for
-	 * @param array
 	 * @return string PHP code of the interceptor
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
-		if ($methodName !== '__construct') throw new \TYPO3\FLOW3\Aop\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+		if ($methodName !== '__construct') {
+			throw new \TYPO3\FLOW3\Aop\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+		}
 
 		$declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();

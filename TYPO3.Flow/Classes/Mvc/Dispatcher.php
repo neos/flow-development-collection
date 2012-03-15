@@ -63,6 +63,7 @@ class Dispatcher {
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to dispatch
 	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The response, to be modified by the controller
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InfiniteLoopException
 	 * @api
 	 */
 	public function dispatch(RequestInterface $request, ResponseInterface $response) {
@@ -118,6 +119,7 @@ class Dispatcher {
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to dispatch
 	 * @return \TYPO3\FLOW3\Mvc\Controller\ControllerInterface
+	 * @throws \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException
 	 */
 	protected function resolveController(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		$exception = NULL;

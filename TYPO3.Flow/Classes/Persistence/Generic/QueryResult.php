@@ -53,7 +53,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * Injects the DataMapper to map records to objects
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\DataMapper $dataMapper
+	 * @param \TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper
 	 * @return void
 	 */
 	public function injectDataMapper(\TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {

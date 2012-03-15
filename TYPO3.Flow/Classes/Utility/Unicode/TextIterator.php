@@ -86,6 +86,7 @@ class TextIterator implements \Iterator {
 	 *
 	 * @param string $subject
 	 * @param integer $iteratorType The type of iterator
+	 * @throws \TYPO3\FLOW3\Error\Exception
 	 */
 	public function __construct($subject, $iteratorType = self::CHARACTER) {
 		if ($iteratorType < 1 || $iteratorType > 6) throw new \TYPO3\FLOW3\Error\Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
@@ -121,7 +122,7 @@ class TextIterator implements \Iterator {
 	}
 
 	/**
-	 * Returns the key of the current element. That means the number of the 
+	 * Returns the key of the current element. That means the number of the
 	 * current element starting with 0.
 	 *
 	 * @return Key (number) of the current element
@@ -183,7 +184,7 @@ class TextIterator implements \Iterator {
 	}
 
 	/**
-	 * Returns the next elment following the character of the original string 
+	 * Returns the next elment following the character of the original string
 	 * given by its offset
 	 *
 	 * @param integer $offset The offset of the character
@@ -247,21 +248,21 @@ class TextIterator implements \Iterator {
 	}
 
 	/**
-	 *
+	 * @throws UnsupportedFeatureException
 	 */
 	public function getRuleStatus() {
 		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getRuleStatus() is not supported.', 1210849057);
 	}
 
 	/**
-	 *
+	 * @throws UnsupportedFeatureException
 	 */
 	public function getRuleStatusArray() {
 		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getRuleStatusArray() is not supported.', 1210849076);
 	}
 
 	/**
-	 *
+	 * @throws UnsupportedFeatureException
 	 */
 	public function getAvailableLocales() {
 		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getAvailableLocales() is not supported.', 1210849105);
@@ -281,6 +282,7 @@ class TextIterator implements \Iterator {
 	 * Helper function to coordinate the "string splitting"
 	 *
 	 * @return void
+	 * @throws UnsupportedFeatureException
 	 */
 	private function generateIteratorElements() {
 
@@ -313,7 +315,7 @@ class TextIterator implements \Iterator {
 	}
 
 	/**
-	 * Helper function to do the splitting by word. Note: punctuation marks are 
+	 * Helper function to do the splitting by word. Note: punctuation marks are
 	 * treated as words, spaces as boundary elements
 	 *
 	 */
@@ -358,13 +360,12 @@ class TextIterator implements \Iterator {
 	}
 
 	/**
-	 * Helper function to do the splitting by line. Note: one punctuations mark 
+	 * Helper function to do the splitting by line. Note: one punctuations mark
 	 * belongs to the preceding sentence.
 	 * "\n" is boundary element.
 	 *
 	 */
 	private function parseSubjectByLine() {
-		$lines = array();
 		$i = 0;
 		$j = 0;
 		$lines = explode("\n", $this->subject);
@@ -382,8 +383,8 @@ class TextIterator implements \Iterator {
 	}
 
 	/**
-	 * Helper function to do the splitting by sentence. Note: one punctuations 
-	 * mark belongs to the preceeding sentence. Whitespace between sentences is 
+	 * Helper function to do the splitting by sentence. Note: one punctuations
+	 * mark belongs to the preceeding sentence. Whitespace between sentences is
 	 * marked as boundary.
 	 *
 	 */

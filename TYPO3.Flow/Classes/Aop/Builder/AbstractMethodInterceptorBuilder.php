@@ -92,7 +92,9 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @return string The generated code to be used in an "array()" definition
 	 */
 	protected function buildMethodArgumentsArrayCode($className, $methodName, $useArgumentsArray = FALSE) {
-		if ($className === NULL || $methodName === NULL) return '';
+		if ($className === NULL || $methodName === NULL) {
+			return '';
+		}
 
 		$argumentsArrayCode = "\n\t\t\t\t\t\$methodArguments = array();\n";
 
@@ -102,11 +104,11 @@ abstract class AbstractMethodInterceptorBuilder {
 			$argumentIndex = 0;
 			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
 				if ($useArgumentsArray) {
-					$argumentsArrayCode .= "\t\t\t\tif (array_key_exists($argumentIndex, \$arguments)) \$methodArguments['$methodParameterName'] = \$arguments[$argumentIndex];\n";
+					$argumentsArrayCode .= "\t\t\t\tif (array_key_exists(" . $argumentIndex . ", \$arguments)) \$methodArguments['" . $methodParameterName . "'] = \$arguments[" . $argumentIndex . "];\n";
 				} else {
-					$argumentsArrayCode .= "\t\t\t\t\$methodArguments['$methodParameterName'] = ";
+					$argumentsArrayCode .= "\t\t\t\t\$methodArguments['" . $methodParameterName . "'] = ";
 					$argumentsArrayCode .= $methodParameterInfo['byReference'] ? '&' : '';
-					$argumentsArrayCode .= "\$$methodParameterName;\n";
+					$argumentsArrayCode .= '$' . $methodParameterName . ";\n";
 				}
 				$argumentIndex ++;
 			}
@@ -122,7 +124,10 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @return string The generated paramters code
 	 */
 	protected function buildSavedConstructorParametersCode($className) {
-		if ($className === NULL) return '';
+		if ($className === NULL) {
+			return '';
+		}
+
 		$parametersCode = '';
 		$methodParameters = $this->reflectionService->getMethodParameters($className, '__construct');
 		$methodParametersCount = count($methodParameters);
@@ -231,7 +236,6 @@ abstract class AbstractMethodInterceptorBuilder {
 					}
 				}
 ';
-			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		}
 
 		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterAdvice'])) {

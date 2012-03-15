@@ -166,6 +166,7 @@ class Context {
 	 *
 	 * @param array $settings
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Exception
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['authentication']['authenticationStrategy'])) {

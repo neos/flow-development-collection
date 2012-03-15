@@ -107,6 +107,7 @@ class ClassSchema {
 	 * @param string $type Type of the property
 	 * @param boolean $lazy Whether the property should be lazy-loaded when reconstituting
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
 		try {
@@ -157,6 +158,7 @@ class ClassSchema {
 	 *
 	 * @param integer $modelType The model type, one of the MODELTYPE_* constants.
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setModelType($modelType) {
 		if ($modelType !== self::MODELTYPE_ENTITY && $modelType !== self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
@@ -221,6 +223,8 @@ class ClassSchema {
 	 *
 	 * @param string $propertyName
 	 * @return void
+	 * @throws \InvalidArgumentException
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 */
 	public function markAsIdentityProperty($propertyName) {
 		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have identity properties', 1264102084);

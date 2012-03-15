@@ -42,6 +42,7 @@ class Step {
 	/**
 	 * Invokes / executes this step
 	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
 	public function __invoke(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {

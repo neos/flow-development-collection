@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Aop\Builder;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Cache\CacheManager;
+use TYPO3\FLOW3\Cache\CacheManager;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
@@ -295,6 +295,7 @@ class ProxyClassBuilder {
 	 *
 	 * @param  string $aspectClassName Name of the class which forms the aspect, contains advices etc.
 	 * @return mixed The aspect container containing one or more advisors or FALSE if no container could be built
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	protected function buildAspectContainer($aspectClassName) {
 		$aspectContainer = new \TYPO3\FLOW3\Aop\AspectContainer($aspectClassName);
@@ -544,6 +545,7 @@ EOT;
 	 * @param string $targetClassName The target class the pointcut should match with
 	 * @param array $interceptedMethods An array of method names which need to be intercepted
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Aop\Exception\VoidImplementationException
 	 */
 	protected function buildMethodsInterceptorCode($targetClassName, array $interceptedMethods) {
 		foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
@@ -678,6 +680,7 @@ EOT;
 	 *
 	 * @param array $interfaceIntroductions An array of \TYPO3\FLOW3\Aop\InterfaceIntroduction
 	 * @return array An array of method information (interface, method name)
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	protected function getIntroducedMethodsFromInterfaceIntroductions(array $interfaceIntroductions) {
 		$methods = array();

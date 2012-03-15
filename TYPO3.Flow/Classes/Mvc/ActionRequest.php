@@ -260,6 +260,7 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param string $unknownCasedControllerObjectName The fully qualified controller object name
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 * @api
 	 */
 	public function setControllerObjectName($unknownCasedControllerObjectName) {
@@ -342,6 +343,7 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param string $controllerName Name of the controller
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException
 	 */
 	public function setControllerName($controllerName) {
 		if (!is_string($controllerName)) {

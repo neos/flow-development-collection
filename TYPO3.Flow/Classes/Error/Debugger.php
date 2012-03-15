@@ -62,7 +62,7 @@ class Debugger {
 	/**
 	 * Injects the Object Manager
 	 *
-	 * @param ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
 	static public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
@@ -265,7 +265,6 @@ class Debugger {
 	 * @param array $trace The trace
 	 * @param boolean $includeCode Include code snippet
 	 * @param boolean $plaintext
-	 * @param boolean $ansiColors
 	 * @return string Backtrace information
 	 */
 	static public function getBacktraceCode(array $trace, $includeCode = TRUE, $plaintext = FALSE) {
@@ -431,7 +430,7 @@ namespace TYPO3\FLOW3;
  * @param string $title optional custom title for the debug output
  * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If FALSE (default), the variable dump is directly displayed.
  * @param boolean $plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW3_SAPITYPE
- * @return void/string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
+ * @return void|string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @api
  */
 function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) {

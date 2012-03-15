@@ -42,7 +42,7 @@ path " . FLOW3_PATH_ROOT . "Packages/. It has to be the second parameter:
 	exit(1);
 }
 
-if(isset($argv[2]) && strpos($argv[2], '--packages-path') === 0 && isset($argv[3]) ){
+if (isset($argv[2]) && strpos($argv[2], '--packages-path') === 0 && isset($argv[3]) ){
     define('FLOW3_PATH_PACKAGES', $argv[3]);
 } else {
     define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');

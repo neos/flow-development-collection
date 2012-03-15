@@ -1,6 +1,6 @@
 // Copyright (c) 2005  Tom Wu
 // All Rights Reserved.
-// See "LICENSE" for details.
+// See "License-JSBN" for details.
 
 // Extended JavaScript BN functions, required for RSA private ops.
 

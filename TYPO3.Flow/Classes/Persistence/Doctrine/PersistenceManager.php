@@ -120,6 +120,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
 	 */
 	protected function validateObject($object) {
 		$className = $this->entityManager->getClassMetadata(get_class($object))->getName();

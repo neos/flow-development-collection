@@ -54,6 +54,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options - depends on the actual backend
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function __construct($context, array $options = array()) {
@@ -97,10 +98,13 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	 *
 	 * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setDefaultLifetime($defaultLifetime) {
-		if (!is_int($defaultLifetime) || $defaultLifetime < 0) throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);
+		if (!is_int($defaultLifetime) || $defaultLifetime < 0) {
+			throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);
+		}
 		$this->defaultLifetime = $defaultLifetime;
 	}
 
@@ -115,7 +119,9 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 		if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === NULL && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {
 			$expiryTime = new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
 		} else {
-			if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
+			if ($lifetime === NULL) {
+				$lifetime = $this->defaultLifetime;
+			}
 			$expiryTime = new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
 		}
 		return $expiryTime;

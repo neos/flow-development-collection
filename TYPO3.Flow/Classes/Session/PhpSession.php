@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
@@ -61,7 +61,7 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @return void
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException
 	 */
 	public function __construct() {
 		if (ini_get('session.auto_start') != 0) {
@@ -225,6 +225,7 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param mixed $data The data to be stored
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Session\Exception\DataNotSerializeableException
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data) {
@@ -237,6 +238,7 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * Explicitly writes and closes the session
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Session\Exception
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function close() {
@@ -254,6 +256,7 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 *
 	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Session\Exception
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function destroy($reason = NULL) {

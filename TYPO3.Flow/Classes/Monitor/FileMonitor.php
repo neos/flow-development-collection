@@ -134,6 +134,7 @@ class FileMonitor {
 	 *
 	 * @param string $pathAndFilename Absolute path and filename of the file to monitor
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function monitorFile($pathAndFilename) {
@@ -150,6 +151,7 @@ class FileMonitor {
 	 *
 	 * @param string $path Absolute path of the directory to monitor
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function monitorDirectory($path) {

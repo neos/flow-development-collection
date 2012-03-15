@@ -37,6 +37,7 @@ class TransientMemoryBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend 
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @api
 	 */

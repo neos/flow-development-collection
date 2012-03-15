@@ -342,7 +342,7 @@ class Request {
 	 * can be retrieved by the getArgument(s) method, no matter if they
 	 * have been GET, POST or PUT arguments before.
 	 *
-	 * @return void
+	 * @return array
 	 */
 	protected function buildUnifiedArguments(array $getArguments, array $postArguments, array $uploadArguments) {
 		$arguments = $getArguments;

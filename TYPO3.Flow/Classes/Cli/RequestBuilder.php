@@ -135,6 +135,7 @@ class RequestBuilder {
 	 * @param string $controllerObjectName Object name of the designated command controller
 	 * @param string $controllerCommandName Command name of the recognized command (ie. method name without "Command" suffix)
 	 * @return array All and exceeding command line arguments
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentMixingException
 	 */
 	protected function parseRawCommandLineArguments(array $rawCommandLineArguments, $controllerObjectName, $controllerCommandName) {
 		$commandLineArguments = array();

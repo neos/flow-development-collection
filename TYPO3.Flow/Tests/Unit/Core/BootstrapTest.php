@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\FLOW3\Core\Bootstrap;
 
 /**
  * Testcase for the Bootstrap class

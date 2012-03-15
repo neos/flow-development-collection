@@ -121,7 +121,7 @@ class EmailAddressValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVa
 	 * @api
 	 */
 	protected function isValid($value) {
-		if(!is_string($value) || preg_match('
+		if (!is_string($value) || preg_match('
 				/^
 					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
 					@

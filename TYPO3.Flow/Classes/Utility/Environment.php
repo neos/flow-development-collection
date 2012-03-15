@@ -85,7 +85,6 @@ class Environment {
 	 * $_GET, $_POST, $_FILES to local variables.
 	 *
 	 * @param string $context The FLOW3 context
-	 * @return void
 	 */
 	public function __construct($context) {
 		$this->context = $context;

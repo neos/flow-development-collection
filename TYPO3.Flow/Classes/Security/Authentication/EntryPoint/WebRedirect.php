@@ -25,6 +25,8 @@ class WebRedirect extends AbstractEntryPoint {
 	 * @param \TYPO3\FLOW3\Http\Request $request The current request
 	 * @param \TYPO3\FLOW3\Http\Response $response The current response
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
+	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthentication(Request $request, Response $response) {
 		if (!isset($this->options['uri'])) {

@@ -76,7 +76,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	 * Package metadata constructor
 	 *
 	 * @param string $packageKey The package key
-	 * @return void
 	 */
 	public function __construct($packageKey) {
 		$this->packageKey = $packageKey;

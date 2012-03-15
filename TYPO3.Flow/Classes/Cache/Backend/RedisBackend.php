@@ -242,6 +242,7 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param boolean $compression TRUE to enable compression
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setCompression($compression) {
@@ -258,6 +259,8 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * gzcompress default level will be used
 	 *
 	 * @param integer $compressionLevel -1 to 9: Compression level
+	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setCompressionLevel($compressionLevel) {
 		if (!is_integer($compressionLevel)) {

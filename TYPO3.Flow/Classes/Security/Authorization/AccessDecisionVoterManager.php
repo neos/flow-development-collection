@@ -49,7 +49,6 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The security context
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager, \TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->objectManager = $objectManager;
@@ -161,6 +160,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 *
 	 * @param array $voterClassNames Array of access decision voter class names
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception\VoterNotFoundException
 	 */
 	protected function createAccessDecisionVoters(array $voterClassNames) {
 		foreach ($voterClassNames as $voterClassName) {

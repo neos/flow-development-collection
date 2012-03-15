@@ -42,16 +42,16 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\
 	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager The EntityManager to use.
 	 * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata The class descriptor.
 	 */
-	public function __construct(\Doctrine\Common\Persistence\ObjectManager $entityManager, \Doctrine\Common\Persistence\Mapping\ClassMetadata $class = NULL) {
-		if ($class === NULL) {
+	public function __construct(\Doctrine\Common\Persistence\ObjectManager $entityManager, \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata = NULL) {
+		if ($classMetadata === NULL) {
 			if (static::ENTITY_CLASSNAME === NULL) {
 				$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
 			} else {
 				$this->objectType = static::ENTITY_CLASSNAME;
 			}
-			$class = $entityManager->getClassMetadata($this->objectType);
+			$classMetadata = $entityManager->getClassMetadata($this->objectType);
 		}
-		parent::__construct($entityManager, $class);
+		parent::__construct($entityManager, $classMetadata);
 		$this->entityManager = $this->_em;
 	}
 
@@ -174,6 +174,8 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\
 	 * Schedules a modified object for persistence.
 	 *
 	 * @param object $object The modified object
+	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function update($object) {

@@ -106,6 +106,7 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Obje
 	 * @param string $propertyName
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
@@ -129,6 +130,8 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Obje
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException
+	 * @throws \InvalidArgumentException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
@@ -164,6 +167,8 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Obje
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidDataTypeException
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$effectiveTargetType = $targetType;
@@ -197,6 +202,8 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Obje
 	 * @param mixed $identity
 	 * @param string $targetType
 	 * @return object
+	 * @throws \TYPO3\FLOW3\Property\Exception\TargetNotFoundException
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidSourceException
 	 */
 	protected function fetchObjectFromPersistence($identity, $targetType) {
 		if (is_string($identity)) {

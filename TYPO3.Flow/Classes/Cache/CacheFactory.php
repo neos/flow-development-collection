@@ -65,6 +65,8 @@ class CacheFactory {
 	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
 	 * @return \TYPO3\FLOW3\Cache\Frontend\FrontendInterface The created cache frontend
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidBackendException
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidCacheException
 	 * @api
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {

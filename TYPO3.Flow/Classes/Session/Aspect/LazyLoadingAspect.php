@@ -84,7 +84,7 @@ class LazyLoadingAspect {
 	 * all method calls to the session object once there is one.
 	 *
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return void
+	 * @return mixed
 	 * @FLOW3\Around("filter(TYPO3\FLOW3\Session\Aspect\SessionObjectMethodsPointcutFilter)")
 	 */
 	public function callMethodOnOriginalSessionObject(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {

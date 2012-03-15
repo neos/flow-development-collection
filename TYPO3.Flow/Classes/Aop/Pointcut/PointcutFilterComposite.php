@@ -65,7 +65,9 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 			switch ($operator) {
 				case '&&' :
 					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
-						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
+							$this->runtimeEvaluationsDefinition[$operator] = array();
+						}
 						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
 					}
 					if ($this->earlyReturn && !$currentFilterMatches) {
@@ -75,7 +77,9 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 				break;
 				case '&&!' :
 					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
-						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
+							$this->runtimeEvaluationsDefinition[$operator] = array();
+						}
 						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
 						$currentFilterMatches = FALSE;
 					}
@@ -86,14 +90,18 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 				break;
 				case '||' :
 					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
-						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
+							$this->runtimeEvaluationsDefinition[$operator] = array();
+						}
 						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
 					}
 					$matches = $matches || $currentFilterMatches;
 				break;
 				case '||!' :
 					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
-						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
+							$this->runtimeEvaluationsDefinition[$operator] = array();
+						}
 						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
 						$currentFilterMatches = FALSE;
 					}
@@ -207,7 +215,9 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, &$useGlobalObjects = FALSE) {
 		$conditionsCode = array();
 
-		if (count($conditions) === 0) return '';
+		if (count($conditions) === 0) {
+			return '';
+		}
 
 		if (isset($conditions['evaluateConditions']) && is_array($conditions['evaluateConditions'])) {
 			$conditionsCode[] = $this->buildGlobalRuntimeEvaluationsConditionCode($conditions['evaluateConditions'], $useGlobalObjects);
@@ -227,13 +237,15 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 				if ($subOperator === '&&!') {
 					$subOperator = '&&';
 					$negateCurrentSubCondition = TRUE;
-				} else if ($subOperator === '||!') {
+				} elseif ($subOperator === '||!') {
 					$subOperator = '||';
 					$negateCurrentSubCondition = TRUE;
 				}
 
 				$currentSubConditionsCode = $this->buildRuntimeEvaluationsConditionCode($subOperator, $subCondition, $useGlobalObjects);
-				if ($negateCurrentSubCondition === TRUE) $currentSubConditionsCode = '(!' . $currentSubConditionsCode . ')';
+				if ($negateCurrentSubCondition === TRUE) {
+					$currentSubConditionsCode = '(!' . $currentSubConditionsCode . ')';
+				}
 
 				$subConditionsCode .= ($isFirst === TRUE ? '(' : ' ' . $subOperator . ' ') . $currentSubConditionsCode;
 				$isFirst = FALSE;
@@ -242,7 +254,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 
 			$conditionsCode[] = $subConditionsCode;
 
-		} else if (count($conditions) === 1) {
+		} elseif (count($conditions) === 1) {
 			$subOperator = key($conditions);
 			$conditionsCode[] = $this->buildRuntimeEvaluationsConditionCode($subOperator, current($conditions), $useGlobalObjects);
 		}
@@ -251,15 +263,19 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 		if ($operator === '&&!') {
 			$operator = '&&';
 			$negateCondition = TRUE;
-		} else if ($operator === '||!') {
+		} elseif ($operator === '||!') {
 			$operator = '||';
 			$negateCondition = TRUE;
 		}
 
 		$resultCode = implode(' ' . $operator . ' ', $conditionsCode);
 
-		if (count($conditionsCode) > 1) $resultCode = '(' . $resultCode . ')';
-		if ($negateCondition === TRUE) $resultCode = '(!' . $resultCode . ')';
+		if (count($conditionsCode) > 1) {
+			$resultCode = '(' . $resultCode . ')';
+		}
+		if ($negateCondition === TRUE) {
+			$resultCode = '(!' . $resultCode . ')';
+		}
 
 		return $resultCode;
 	}
@@ -289,9 +305,9 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 
 				if ($argumentConstraint['operator'][$i] === 'in') {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
-				} else if ($argumentConstraint['operator'][$i] === 'contains') {
+				} elseif ($argumentConstraint['operator'][$i] === 'contains') {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
-				} else if ($argumentConstraint['operator'][$i] === 'matches') {
+				} elseif ($argumentConstraint['operator'][$i] === 'matches') {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 				} else {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . $leftValue . ' ' . $argumentConstraint['operator'][$i] . ' ' . $rightValue;
@@ -321,9 +337,9 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 
 			if ($constraint['operator'] === 'in') {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
-			} else if ($constraint['operator'] === 'contains') {
+			} elseif ($constraint['operator'] === 'contains') {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
-			} else if ($constraint['operator'] === 'matches') {
+			} elseif ($constraint['operator'] === 'matches') {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 			} else {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . $leftValue . ' ' . $constraint['operator'] . ' ' . $rightValue;
@@ -343,8 +359,6 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	 * @return string The condition code
 	 */
 	protected function buildArgumentEvaluationAccessCode($argumentAccess, &$useGlobalObjects = FALSE) {
-		$argumentAccessCode = '';
-
 		if (is_array($argumentAccess)) {
 			$valuesAccessCodes = array();
 			foreach ($argumentAccess as $singleValue) {
@@ -363,7 +377,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 				}
 
 				$useGlobalObjects = TRUE;
-			} else if (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
+			} elseif (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
 				$argumentAccessCode = '\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
 			} else {
 				$argumentAccessCode = $argumentAccess;

@@ -55,6 +55,7 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 * Removes the specified validator.
 	 *
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator to remove
+	 * @throws \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException
 	 * @api
 	 */
 	public function removeValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {

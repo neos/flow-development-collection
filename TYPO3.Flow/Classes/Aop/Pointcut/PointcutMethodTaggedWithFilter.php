@@ -58,6 +58,7 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Pointc
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
 	 * @return boolean TRUE if the class matches, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($methodDeclaringClassName === NULL || !method_exists($methodDeclaringClassName, $methodName)) {

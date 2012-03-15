@@ -86,7 +86,7 @@ class CsrfProtectionAspect {
 	 *
 	 * @FLOW3\Around("method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return void
+	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
 	 */
 	public function transferCsrfTokenToExtDirectRequests(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$arguments = $this->environment->getRequestUri()->getArguments();

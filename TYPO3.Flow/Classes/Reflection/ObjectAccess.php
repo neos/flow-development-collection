@@ -70,13 +70,14 @@ class ObjectAccess {
 	 * Gets a property of a given object or array.
 	 * This is an internal method that does only limited type checking for performance reasons.
 	 * If you can't make sure that $subject is either of type array or object and $propertyName of type string you should use getProperty() instead.
-	 * @see getProperty()
 	 *
 	 * @param mixed $subject Object or array to get the property from
 	 * @param string $propertyName name of the property to retrieve
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
 	 * @return mixed Value of the property
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
+	 * @see getProperty()
 	 */
 	static public function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
 		if ($subject === NULL) {
@@ -198,6 +199,7 @@ class ObjectAccess {
 	 *
 	 * @param object $object Object to receive property names for
 	 * @return array Array of all gettable property names
+	 * @throws \InvalidArgumentException
 	 */
 	static public function getGettablePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
@@ -232,6 +234,7 @@ class ObjectAccess {
 	 *
 	 * @param object $object Object to receive property names for
 	 * @return array Array of all settable property names
+	 * @throws \InvalidArgumentException
 	 */
 	static public function getSettablePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1264022994);
@@ -258,6 +261,7 @@ class ObjectAccess {
 	 * @param object $object Object containting the property
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean
+	 * @throws \InvalidArgumentException
 	 */
 	static public function isPropertySettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828920);
@@ -275,6 +279,7 @@ class ObjectAccess {
 	 * @param object $object Object containting the property
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean
+	 * @throws \InvalidArgumentException
 	 */
 	static public function isPropertyGettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
@@ -294,6 +299,7 @@ class ObjectAccess {
 	 *
 	 * @param object $object Object to get all properties from.
 	 * @return array Associative array of all properties.
+	 * @throws \InvalidArgumentException
 	 * @todo What to do with ArrayAccess
 	 */
 	static public function getGettableProperties($object) {

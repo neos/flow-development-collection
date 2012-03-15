@@ -13,8 +13,8 @@ namespace TYPO3\FLOW3\Command;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
-use \TYPO3\FLOW3\Cli\Command;
-use \TYPO3\FLOW3\Cli\CommandManager;
+use TYPO3\FLOW3\Cli\Command;
+use TYPO3\FLOW3\Cli\CommandManager;
 
 /**
  * A Command Controller which provides help for available commands

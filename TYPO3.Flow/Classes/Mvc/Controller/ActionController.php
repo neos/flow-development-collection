@@ -114,6 +114,7 @@ class ActionController extends AbstractController {
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request object
 	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The response, modified by this handler
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException
 	 * @api
 	 */
 	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
@@ -144,6 +145,7 @@ class ActionController extends AbstractController {
 	 * Resolves and checks the current action method name
 	 *
 	 * @return string Method name of the current action
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchActionException
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
@@ -160,6 +162,7 @@ class ActionController extends AbstractController {
 	 * Don't override this method - use initializeAction() instead.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException
 	 * @see initializeArguments()
 	 */
 	protected function initializeActionMethodArguments() {
@@ -222,7 +225,6 @@ class ActionController extends AbstractController {
 	 * response object. If the action doesn't return anything and a valid
 	 * view exists, the view is rendered automatically.
 	 *
-	 * @param string $actionMethodName Name of the action method to call
 	 * @return void
 	 */
 	protected function callActionMethod() {

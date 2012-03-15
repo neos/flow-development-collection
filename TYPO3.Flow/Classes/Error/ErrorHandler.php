@@ -55,9 +55,10 @@ class ErrorHandler {
 	 * @param integer $errorLine Line number where the error occurred
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Error\Exception with the data passed to this method
+	 * @throws \Exception
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
-		if(error_reporting() === 0) {
+		if (error_reporting() === 0) {
 			return;
 		}
 

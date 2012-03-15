@@ -90,6 +90,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Injects the backend to use
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
+	 * @return void
 	 * @FLOW3\Autowiring(false)
 	 */
 	public function injectBackend(\TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
@@ -110,6 +111,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Initializes the persistence manager
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\MissingBackendException
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface) throw new \TYPO3\FLOW3\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);

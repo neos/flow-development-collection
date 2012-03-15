@@ -127,30 +127,30 @@ class Locale {
 	}
 
 	/**
- 	 * Returns the variant defined in this locale
- 	 *
- 	 * @return string The variant identifier
+	 * Returns the variant defined in this locale
+	 *
+	 * @return string The variant identifier
 	 * @api
- 	 */
- 	public function getVariant() {
- 		return $this->variant;
- 	}
+	 */
+	public function getVariant() {
+		return $this->variant;
+	}
 
- 	/**
- 	 * Returns the string identifier of this locale
- 	 *
- 	 * @return string The locale identifier (tag)
+	/**
+	 * Returns the string identifier of this locale
+	 *
+	 * @return string The locale identifier (tag)
 	 * @api
- 	 */
- 	public function __toString() {
- 		$localeIdentifier = $this->language;
+	 */
+	public function __toString() {
+		$localeIdentifier = $this->language;
 
- 		if($this->script !== NULL) $localeIdentifier .= '_' . $this->script;
- 		if($this->region !== NULL) $localeIdentifier .= '_' . $this->region;
- 		if($this->variant !== NULL) $localeIdentifier .= '_' . $this->variant;
+		if ($this->script !== NULL) $localeIdentifier .= '_' . $this->script;
+		if ($this->region !== NULL) $localeIdentifier .= '_' . $this->region;
+		if ($this->variant !== NULL) $localeIdentifier .= '_' . $this->variant;
 
- 		return $localeIdentifier;
- 	}
+		return $localeIdentifier;
+	}
 }
 
 ?>

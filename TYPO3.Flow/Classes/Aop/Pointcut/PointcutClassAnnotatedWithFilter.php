@@ -59,7 +59,7 @@ class PointcutClassAnnotatedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Poin
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		 return ($this->reflectionService->getClassAnnotations($className, $this->annotation) !== array());
+		return ($this->reflectionService->getClassAnnotations($className, $this->annotation) !== array());
 	}
 
 	/**

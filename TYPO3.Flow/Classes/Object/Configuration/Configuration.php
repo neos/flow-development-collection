@@ -104,7 +104,6 @@ class Configuration {
 	 *
 	 * @param string $objectName The unique identifier of the object
 	 * @param string $className Name of the class which provides the functionality of this object
-	 * @return void
 	 */
 	public function __construct($objectName, $className = NULL) {
 		$backtrace = debug_backtrace();
@@ -170,6 +169,7 @@ class Configuration {
 	 *
 	 * @param string $className Valid class name of a factory
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidClassException
 	 */
 	public function setFactoryObjectName($className) {
 		if (!class_exists($className, TRUE)) {
@@ -192,6 +192,7 @@ class Configuration {
 	 *
 	 * @param string $methodName The factory method name
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setFactoryMethodName($methodName) {
 		if (!is_string($methodName) || $methodName === '') {

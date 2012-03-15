@@ -38,6 +38,7 @@ class Configuration {
 	 * be used as the default locale of this configuration.
 	 *
 	 * @param string $defaultLocaleIdentifier
+	 * @throws Exception\InvalidLocaleIdentifierException
 	 */
 	public function __construct($defaultLocaleIdentifier) {
 		try {

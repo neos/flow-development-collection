@@ -190,6 +190,7 @@ class Arguments extends \ArrayObject {
 	 * @param string $methodName Name of the method
 	 * @param array $arguments Method arguments
 	 * @return void
+	 * @throws \LogicException
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) !== 'set') throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);

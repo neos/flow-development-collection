@@ -11,8 +11,8 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Utility\Files;
-use \TYPO3\FLOW3\Security\Policy\Role;
+use TYPO3\FLOW3\Utility\Files;
+use TYPO3\FLOW3\Security\Policy\Role;
 
 /**
  * Testcase for the private resources publishing aspect

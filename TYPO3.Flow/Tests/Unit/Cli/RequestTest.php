@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Cli\Request;
+use TYPO3\FLOW3\Cli\Request;
 
 /**
  * Testcase for the CLI Request class

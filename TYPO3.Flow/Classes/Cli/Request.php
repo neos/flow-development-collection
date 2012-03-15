@@ -162,6 +162,7 @@ class Request implements RequestInterface {
 	 * @param string $argumentName Name of the argument to set
 	 * @param mixed $value The new value
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException
 	 */
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || $argumentName === '') throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException('Invalid argument name.', 1300893885);

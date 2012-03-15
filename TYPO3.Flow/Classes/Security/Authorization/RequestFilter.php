@@ -34,7 +34,6 @@ class RequestFilter {
 	 *
 	 * @param \TYPO3\FLOW3\Security\RequestPatternInterface $pattern The pattern this filter matches
 	 * @param \TYPO3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor The interceptor called on pattern match
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\RequestPatternInterface $pattern, \TYPO3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor) {
 		$this->pattern = $pattern;
@@ -66,7 +65,7 @@ class RequestFilter {
 	 * @return boolean Returns TRUE if the filter matched, FALSE otherwise
 	 */
 	public function filterRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		if($this->pattern->matchRequest($request)) {
+		if ($this->pattern->matchRequest($request)) {
 			$this->securityInterceptor->invoke();
 			return TRUE;
 		}

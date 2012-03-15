@@ -197,6 +197,7 @@ class Response implements ResponseInterface{
 	 * @param mixed $value The value of the given header
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {

@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Reflection\ClassReflection;
+use TYPO3\FLOW3\Reflection\ClassReflection;
 
 /**
  * Functional tests for the Proxy Compiler and related features

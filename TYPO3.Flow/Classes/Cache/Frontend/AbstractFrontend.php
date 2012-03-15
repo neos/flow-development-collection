@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Cache\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Cache\CacheManager;
+use TYPO3\FLOW3\Cache\CacheManager;
 
 
 /**
@@ -71,6 +71,7 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -84,6 +85,7 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -107,6 +109,7 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function flushByTag($tag) {

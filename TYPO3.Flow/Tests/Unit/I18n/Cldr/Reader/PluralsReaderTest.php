@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr\Reader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader;
+use TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader;
 
 /**
  * Testcase for the PluralsReader

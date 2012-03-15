@@ -37,8 +37,6 @@ class PolicyEnforcementAspect {
 	 * Constructor.
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
-	 * @param \TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation $afterInvocationInterceptor The after invocation interceptor
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor) {
 		$this->policyEnforcementInterceptor = $policyEnforcementInterceptor;

@@ -65,18 +65,15 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param object $proxy Reference to the proxy class instance of the target class
+	 * @param \TYPO3\FLOW3\Object\Proxy\ProxyInterface $proxy Reference to the proxy class instance of the target class
 	 * @param string $className Class name of the target class this join point refers to
 	 * @param string $methodName Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments Array of method arguments which have been passed to the target method
 	 * @param \TYPO3\FLOW3\Aop\Advice\AdviceChain $adviceChain The advice chain for this join point
 	 * @param mixed $result The result of the method invocations (only used for After Returning advices)
-	 * @param Exception $exception The exception thrown (only used for After Throwing advices)
-	 * @return void
+	 * @param \Exception $exception The exception thrown (only used for After Throwing advices)
 	 */
-	public function __construct($proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
-		if ($adviceChain !== NULL && !$adviceChain instanceof \TYPO3\FLOW3\Aop\Advice\AdviceChain) throw new \InvalidArgumentException('The advice chain must be an instance of \TYPO3\FLOW3\Aop\Advice\AdviceChain.', 1171482537);
-
+	public function __construct(\TYPO3\FLOW3\Object\Proxy\ProxyInterface $proxy, $className, $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = NULL, $result = NULL, \Exception $exception = NULL) {
 		$this->proxy = $proxy;
 		$this->className = $className;
 		$this->methodName = $methodName;
@@ -131,10 +128,13 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	 *
 	 * @param  string $argumentName Name of the argument
 	 * @return mixed Value of the argument
+	 * @throws Exception\InvalidArgumentException
 	 * @api
 	 */
 	public function getMethodArgument($argumentName) {
-		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \TYPO3\FLOW3\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+		if (!array_key_exists($argumentName, $this->methodArguments)) {
+			throw new \TYPO3\FLOW3\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+		}
 		return $this->methodArguments[$argumentName];
 	}
 
@@ -144,10 +144,13 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	 * @param string $argumentName Name of the argument
 	 * @param mixed $argumentValue Value of the argument
 	 * @return void
+	 * @throws Exception\InvalidArgumentException
 	 * @api
 	 */
 	public function setMethodArgument($argumentName, $argumentValue) {
-		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \TYPO3\FLOW3\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1309260269);
+		if (!array_key_exists($argumentName, $this->methodArguments)) {
+			throw new \TYPO3\FLOW3\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1309260269);
+		}
 		$this->methodArguments[$argumentName] = $argumentValue;
 	}
 

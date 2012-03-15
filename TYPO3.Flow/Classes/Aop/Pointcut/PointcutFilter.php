@@ -73,12 +73,15 @@ class PointcutFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterfac
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Aop\Exception\UnknownPointcutException
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcut === NULL) {
 			$this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
-		if ($this->pointcut === FALSE) throw new \TYPO3\FLOW3\Aop\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+		if ($this->pointcut === FALSE) {
+			throw new \TYPO3\FLOW3\Aop\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+		}
 		return $this->pointcut->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 
@@ -100,7 +103,9 @@ class PointcutFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterfac
 		if ($this->pointcut === NULL) {
 			$this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
-		if ($this->pointcut === FALSE) return array();
+		if ($this->pointcut === FALSE) {
+			return array();
+		}
 
 		return $this->pointcut->getRuntimeEvaluationsDefinition();
 	}

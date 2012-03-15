@@ -84,10 +84,11 @@ class DateTimeRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 
 	/**
 	 * Calculates a DateTime object from a given Time interval
-	 * @see isValid()
 	 *
 	 * @param string $referenceDateString being one of <time>, <start>/<offset> or <offset>/<end>
 	 * @return \DateTime
+	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
+	 * @see isValid()
 	 */
 	protected function parseReferenceDate($referenceDateString) {
 		$referenceDateParts = explode('/', $referenceDateString, 2);

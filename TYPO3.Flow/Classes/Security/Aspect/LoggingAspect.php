@@ -38,6 +38,7 @@ class LoggingAspect {
 	 * @FLOW3\After("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
+	 * @throws \Exception
 	 */
 	public function logManagerAuthenticate(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($joinPoint->hasException()) {
@@ -106,6 +107,7 @@ class LoggingAspect {
 	 * @FLOW3\AfterThrowing("method(TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager->decideOnJoinPoint())")
 	 *
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
+	 * @throws \Exception
 	 * @return void
 	 */
 	public function logJoinPointAccessDecisions(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {

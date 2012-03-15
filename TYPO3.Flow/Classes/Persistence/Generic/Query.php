@@ -164,6 +164,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $limit
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setLimit($limit) {
@@ -178,13 +179,12 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Returns the maximum size of the result set to limit.
 	 *
-	 * @param integer
+	 * @return integer
 	 * @api
 	 */
 	public function getLimit() {
 		return $this->limit;
 	}
-
 
 	/**
 	 * Sets the start offset of the result set to $offset. Returns $this to
@@ -192,6 +192,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $offset
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setOffset($offset) {
@@ -242,7 +243,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\And
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalAnd
+	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidNumberOfConstraintsException
 	 * @api
 	 */
 	public function logicalAnd($constraint1) {
@@ -270,7 +272,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param object $constraint1 The first of multiple constraints or an array of constraints.
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Or
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalOr
+	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidNumberOfConstraintsException
 	 * @api
 	 */
 	public function logicalOr($constraint1) {
@@ -296,7 +299,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Performs a logical negation of the given constraint
 	 *
 	 * @param object $constraint Constraint to negate
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Not
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalNot
 	 * @api
 	 */
 	public function logicalNot($constraint) {

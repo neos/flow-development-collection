@@ -64,6 +64,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * Initializes this publishing target
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Resource\Exception
 	 */
 	public function initializeObject() {
 		if ($this->resourcesPublishingPath === NULL) {
@@ -222,6 +223,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * @param string $targetPathAndFilename
 	 * @param boolean $createDirectoriesIfNecessary
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Resource\Exception
 	 */
 	protected function mirrorFile($sourcePathAndFilename, $targetPathAndFilename, $createDirectoriesIfNecessary = FALSE) {
 		if ($createDirectoriesIfNecessary === TRUE) {

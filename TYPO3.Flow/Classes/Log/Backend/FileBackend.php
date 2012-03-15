@@ -123,6 +123,7 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 * the log file or opening a database connection.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException
 	 * @api
 	 */
 	public function open() {

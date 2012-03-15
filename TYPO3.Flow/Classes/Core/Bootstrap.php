@@ -369,6 +369,7 @@ class Bootstrap {
 	 * Returns the object manager instance
 	 *
 	 * @return \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @throws \TYPO3\FLOW3\Exception
 	 */
 	public function getObjectManager() {
 		if (!isset($this->earlyInstances['TYPO3\FLOW3\Object\ObjectManagerInterface'])) {
@@ -382,6 +383,7 @@ class Bootstrap {
 	 * Iterates over the registered request handlers and determines which one fits best.
 	 *
 	 * @return \TYPO3\FLOW3\Core\RequestHandlerInterface A request handler
+	 * @throws \TYPO3\FLOW3\Exception
 	 */
 	protected function resolveRequestHandler() {
 		if ($this->preselectedRequestHandlerClassName !== NULL && isset($this->requestHandlers[$this->preselectedRequestHandlerClassName])) {

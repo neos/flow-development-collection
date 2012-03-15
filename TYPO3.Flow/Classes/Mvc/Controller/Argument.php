@@ -213,6 +213,7 @@ class Argument {
 	 *
 	 * @param string $message A short help message
 	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setShortHelpMessage($message) {

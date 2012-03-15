@@ -39,10 +39,11 @@ final class Validate {
 
 	/**
 	 * @param array $values
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(array $values) {
 		if (!isset($values['type'])) {
-			throw new \InvalidArgumentException('Validate annotations mut be given a validator type.', 1318494791);
+			throw new \InvalidArgumentException('Validate annotations must be given a validator type.', 1318494791);
 		}
 		$this->type = $values['type'];
 

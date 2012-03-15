@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
+use TYPO3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
 
 /**
  * A Package

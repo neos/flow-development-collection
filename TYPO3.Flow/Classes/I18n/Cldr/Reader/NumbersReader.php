@@ -361,7 +361,7 @@ class NumbersReader {
 
 		if (strpos($format, '%') !== FALSE) {
 			$parsedFormat['multiplier'] = 100;
-		} elseif(strpos($format, '‰') !== FALSE) {
+		} elseif (strpos($format, '‰') !== FALSE) {
 			$parsedFormat['multiplier'] = 1000;
 		}
 

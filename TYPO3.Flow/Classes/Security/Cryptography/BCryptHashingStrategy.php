@@ -26,6 +26,7 @@ class BCryptHashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 	 * Construct a PBKDF2 hashing strategy with the given parameters
 	 *
 	 * @param integer $cost
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($cost) {
 		if ($cost < 4 || $cost > 31) {

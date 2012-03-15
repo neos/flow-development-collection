@@ -319,6 +319,7 @@ class DatetimeParser {
 	 * @param array $parsedFormat Format parsed by DatesReader
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @return array Array of parsed date and / or time elements (can be array of NULLs if nothing was parsed)
+	 * @throws \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */

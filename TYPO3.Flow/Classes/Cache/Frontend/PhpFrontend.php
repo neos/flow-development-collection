@@ -37,6 +37,8 @@ class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {

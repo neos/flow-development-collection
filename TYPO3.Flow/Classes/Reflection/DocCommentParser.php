@@ -73,6 +73,7 @@ class DocCommentParser {
 	 *
 	 * @param string $tagName The tag name to retrieve the values for
 	 * @return array The tag's values
+	 * @throws \TYPO3\FLOW3\Reflection\Exception
 	 */
 	public function getTagValues($tagName) {
 		if (!$this->isTaggedWith($tagName)) throw new \TYPO3\FLOW3\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);

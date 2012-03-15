@@ -86,7 +86,7 @@ class RestController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @param mixed $uri Either a string representation of a URI or a \TYPO3\FLOW3\Http\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @return void
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
 	 * @api
 	 */

@@ -29,7 +29,6 @@ class InterceptorResolver {
 	 * Constructor.
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -43,8 +42,6 @@ class InterceptorResolver {
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoInterceptorFoundException
 	 */
 	public function resolveInterceptorClass($name) {
-		$resolvedClassName = '';
-
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 

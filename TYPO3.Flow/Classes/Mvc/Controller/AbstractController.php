@@ -279,6 +279,7 @@ abstract class AbstractController implements ControllerInterface {
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\RequiredArgumentMissingException
 	 * @api
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {

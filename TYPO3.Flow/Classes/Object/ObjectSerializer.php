@@ -245,7 +245,7 @@ class ObjectSerializer {
 	 *
 	 * @param string $objectHash Identifier of the serialized object
 	 * @param array $objectData The object data array
-	 * @return void
+	 * @return object
 	 */
 	protected function reconstituteObject($objectHash, array $objectData) {
 		if (isset($this->reconstitutedObjects[$objectHash])) {

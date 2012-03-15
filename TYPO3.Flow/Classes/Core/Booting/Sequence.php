@@ -44,6 +44,7 @@ class Sequence {
 	 *
 	 * @param string $stepIdentifier
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Exception
 	 */
 	public function removeStep($stepIdentifier) {
 		$removedOccurrences = 0;

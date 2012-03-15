@@ -85,7 +85,7 @@ class ClassLoader {
 	 * a package and specifically registered classes.
 	 *
 	 * @param string $className Name of the class/interface to load
-	 * @return void
+	 * @return boolean
 	 */
 	public function loadClass($className) {
 		if ($className[0] === '\\') {

@@ -67,6 +67,7 @@ class Files {
 	 * @param boolean $returnRealPath If turned on, all paths are resolved by calling realpath()
 	 * @param array $filenames Internally used for the recursion - don't specify!
 	 * @return array Filenames including full path
+	 * @throws Exception
 	 */
 	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, &$filenames = array()) {
 		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
@@ -92,6 +93,7 @@ class Files {
 	 *
 	 * @param string $path Path to the directory which shall be emptied.
 	 * @return void
+	 * @throws Exception
 	 * @see removeDirectoryRecursively()
 	 */
 	static public function emptyDirectoryRecursively($path) {
@@ -124,6 +126,7 @@ class Files {
 	 *
 	 * @param  string $path Path to the directory which shall be removed completely.
 	 * @return void
+	 * @throws Exception
 	 * @see emptyDirectoryRecursively()
 	 */
 	static public function removeDirectoryRecursively($path) {
@@ -149,6 +152,7 @@ class Files {
 	 *
 	 * @param string $path Path to the directory which shall be created
 	 * @return void
+	 * @throws Exception
 	 * @todo Make mode configurable / make umask configurable
 	 */
 	static public function createDirectoryRecursively($path) {
@@ -170,6 +174,7 @@ class Files {
 	 * @param string $sourceDirectory
 	 * @param string $targetDirectory
 	 * @return void
+	 * @throws Exception
 	 */
 	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
 		if (!is_dir($sourceDirectory)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);

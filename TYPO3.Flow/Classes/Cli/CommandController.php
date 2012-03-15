@@ -80,7 +80,7 @@ class CommandController implements ControllerInterface {
 	 */
 	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
 		if (!$request instanceof \TYPO3\FLOW3\Cli\Request) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports command line requests – requests of type "' . get_class($request) . '" given.' , 1300787096);
+			throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports command line requests – requests of type "' . get_class($request) . '" given.', 1300787096);
 		}
 
 		$this->request = $request;
@@ -100,6 +100,7 @@ class CommandController implements ControllerInterface {
 	 *       case insensitive regarding method names.
 	 *
 	 * @return string Method name of the current command
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException
 	 */
 	protected function resolveCommandMethodName() {
 		$commandMethodName = $this->request->getControllerCommandName() . 'Command';
@@ -114,6 +115,7 @@ class CommandController implements ControllerInterface {
 	 * method arguments found in the designated command method.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException
 	 */
 	protected function initializeCommandMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->commandMethodName);
@@ -125,7 +127,9 @@ class CommandController implements ControllerInterface {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
-			if ($dataType === NULL) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->commandMethodName . '() could not be detected.' , 1306755296);
+			if ($dataType === NULL) {
+				throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->commandMethodName . '() could not be detected.', 1306755296);
+			}
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
@@ -159,6 +163,7 @@ class CommandController implements ControllerInterface {
 	 * @param string $controllerObjectName
 	 * @param array $arguments
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
 	 */
 	protected function forward($commandName, $controllerObjectName = NULL, array $arguments = array()) {
 		$this->request->setDispatched(FALSE);
@@ -234,7 +239,7 @@ class CommandController implements ControllerInterface {
 	 * @see output()
 	 */
 	protected function outputLine($text = '', array $arguments = array()) {
-		return $this->output($text . PHP_EOL, $arguments);
+		$this->output($text . PHP_EOL, $arguments);
 	}
 
 	/**
@@ -243,6 +248,7 @@ class CommandController implements ControllerInterface {
 	 *
 	 * @param integer $exitCode Exit code to return on exit
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
 	 */
 	protected function quit($exitCode = 0) {
 		$this->response->setExitCode($exitCode);

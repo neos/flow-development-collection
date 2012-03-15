@@ -58,6 +58,7 @@ class ClassReflection extends \ReflectionClass {
 	 * that \TYPO3\FLOW3\Reflection\MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
+	 * @param string $name
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
 	 */
 	public function getMethod($name) {
@@ -145,6 +146,7 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Returns the values of the specified tag
+	 * @param string $tag
 	 * @return array Values of the given tag
 	 */
 	public function getTagValues($tag) {

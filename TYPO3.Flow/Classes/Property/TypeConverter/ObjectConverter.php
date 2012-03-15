@@ -107,6 +107,7 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @param string $propertyName
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_TARGET_TYPE);
@@ -140,6 +141,9 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidDataTypeException
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$effectiveTargetType = $targetType;

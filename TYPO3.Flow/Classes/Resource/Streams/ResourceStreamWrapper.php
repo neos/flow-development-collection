@@ -67,10 +67,11 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * Any resources which were locked, or allocated, during opening and use of
 	 * the directory stream should be released.
 	 *
-	 * @return boolean TRUE on success or FALSE on failure.
+	 * @return boolean always TRUE
 	 */
 	public function closeDirectory() {
-		return closedir($this->handle);
+		closedir($this->handle);
+		return TRUE;
 	}
 
 	/**
@@ -84,7 +85,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 */
 	public function openDirectory($path, $options) {
 		$resourcePath = $this->evaluateResourcePath($path);
-     	$handle = ($resourcePath !== FALSE) ? opendir($resourcePath) : FALSE;
+		$handle = ($resourcePath !== FALSE) ? opendir($resourcePath) : FALSE;
 		if ($handle !== FALSE) {
 			$this->handle = $handle;
 			return TRUE;
@@ -112,10 +113,11 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * to dir_readdir() should return the first entry in the location returned
 	 * by dir_opendir().
 	 *
-	 * @return boolean TRUE on success or FALSE on failure.
+	 * @return boolean always TRUE
 	 */
 	public function rewindDirectory() {
-		return rewinddir($this->handle);
+		rewinddir($this->handle);
+		return TRUE;
 	}
 
 	/**
@@ -144,6 +146,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $path The directory URL which should be removed.
 	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return void
+	 * @throws \BadMethodCallException
 	 */
 	public function removeDirectory($path, $options) {
 		throw new \BadMethodCallException(__CLASS__ . ' does not support rmdir.', 1256827649);
@@ -389,6 +392,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 *
 	 * @param string $path The file URL which should be deleted.
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @throws \BadMethodCallException
 	 */
 	public function unlink($path) {
 		throw new \BadMethodCallException('The package stream wrapper does not support unlink.', 1256052118);
@@ -438,6 +442,8 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $requestedPath
 	 * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
 	 * @return mixed The full path and filename or FALSE if the file doesn't exist
+	 * @throws \TYPO3\FLOW3\Resource\Exception
+	 * @throws \InvalidArgumentException
 	 */
 	protected function evaluateResourcePath($requestedPath, $checkForExistence = TRUE) {
 		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {

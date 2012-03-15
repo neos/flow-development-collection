@@ -357,7 +357,7 @@ class DatesReader {
 			} else {
 					// Count the length of subformat
 				for ($j = $i + 1; $j < $formatLengthOfFormat; ++$j) {
-					if($format[$j] !== $subformatSymbol) break;
+					if ($format[$j] !== $subformatSymbol) break;
 				}
 
 				$subformat = str_repeat($subformatSymbol, $j - $i);

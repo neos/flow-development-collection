@@ -179,6 +179,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 *
 	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
 	 * @return string
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException
 	 */
 	public function resolve(array $routeValues) {
 		$this->createRoutesFromConfiguration();

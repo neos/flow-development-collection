@@ -103,8 +103,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 *
 	 * @param string $className
 	 * @param \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata
-	 * @todo adjust when Doctrine 2 supports value objects
 	 * @return void
+	 * @throws \Doctrine\ORM\Mapping\MappingException
+	 * @throws \UnexpectedValueException
+	 * @todo adjust when Doctrine 2 supports value objects, see http://www.doctrine-project.org/jira/browse/DDC-93
 	 */
 	public function loadMetadataForClass($className, \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
 		$class = $metadata->getReflectionClass();
@@ -248,6 +250,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * Given a class name a table name is returned. That name should be reasonably unique.
 	 *
 	 * @param string $className
+	 * @param integer $lengthLimit
 	 * @return string
 	 */
 	public function inferTableNameFromClassName($className, $lengthLimit = NULL) {
@@ -329,7 +332,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				if (count($idProperties) === 0) {
 					$joinColumn['name'] = $joinColumn['name'] === NULL ? $joinColumnName : $joinColumn['name'];
 					$joinColumn['referencedColumnName'] = strtolower('FLOW3_Persistence_Identifier');
-				} elseif(count($idProperties) === 1) {
+				} elseif (count($idProperties) === 1) {
 					$joinColumn['name'] = $joinColumn['name'] === NULL ? $joinColumnName : $joinColumn['name'];
 					$joinColumn['referencedColumnName'] = strtolower(current($idProperties));
 				}
@@ -344,6 +347,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 *
 	 * @param \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata
 	 * @return void
+	 * @throws \Doctrine\ORM\Mapping\MappingException
 	 */
 	protected function evaluatePropertyAnnotations(\Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
 		$className = $metadata->name;

@@ -47,7 +47,6 @@ class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\Intercept
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @param \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager, \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
 		$this->authenticationManager = $authenticationManager;

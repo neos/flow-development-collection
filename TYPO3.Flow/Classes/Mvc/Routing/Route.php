@@ -176,6 +176,7 @@ class Route {
 	 *
 	 * @param string $uriPattern
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setUriPattern($uriPattern) {
 		if (!is_string($uriPattern)) throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
@@ -289,6 +290,7 @@ class Route {
 	 *
 	 * @param string $routePath the route path without protocol, host and query string
 	 * @return boolean TRUE if this Route corresponds to the given $routePath, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidRoutePartValueException
 	 * @see getMatchResults()
 	 */
 	public function matches($routePath) {
@@ -353,6 +355,7 @@ class Route {
 	 *
 	 * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
 	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidRoutePartValueException
 	 * @see getMatchingUri()
 	 */
 	public function resolves(array $routeValues) {
@@ -492,9 +495,9 @@ class Route {
 	/**
 	 * Try to get the controller object name from the given $routeValues and throw an exception, if it can't be resolved.
 	 *
-	 * @throws Exception\InvalidControllerException
 	 * @param array $routeValues
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Routing\Exception\InvalidControllerException
 	 */
 	protected function throwExceptionIfTargetControllerDoesNotExist(array $routeValues) {
 		$packageKey = isset($routeValues['@package']) ? $routeValues['@package'] : '';
@@ -519,7 +522,7 @@ class Route {
 		if (!is_array($subject)) {
 			return FALSE;
 		}
-		foreach ($subject as $key => $value) {
+		foreach ($subject as $value) {
 			if ($this->containsObject($value)) {
 				return TRUE;
 			}
@@ -532,6 +535,8 @@ class Route {
 	 * appropriate RoutePart instances.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidRoutePartHandlerException
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidUriPatternException
 	 */
 	public function parse() {
 		if ($this->isParsed || $this->uriPattern === NULL || $this->uriPattern === '') {

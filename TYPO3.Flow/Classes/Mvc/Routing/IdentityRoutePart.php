@@ -63,13 +63,14 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 
 	/**
 	 * @param string $objectType
+	 * @return void
 	 */
 	public function setObjectType($objectType) {
 		$this->objectType = $objectType;
 	}
 
 	/**
-	 * @param return string
+	 * @return string
 	 */
 	public function getObjectType() {
 		return $this->objectType;
@@ -77,6 +78,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 
 	/**
 	 * @param string $uriPattern
+	 * @return void
 	 */
 	public function setUriPattern($uriPattern) {
 		$this->uriPattern = $uriPattern;
@@ -194,6 +196,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 	 *
 	 * @param mixed $object object of type $this->objectType
 	 * @return string URI representation (path segment) of the given object
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidUriPatternException
 	 */
 	protected function createPathSegmentForObject($object) {
 		$uriPattern = $this->getUriPattern();

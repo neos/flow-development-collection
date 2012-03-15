@@ -35,6 +35,7 @@ class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Pas
 	 * @param string $clearString
 	 * @param string $hashedStringAndSalt
 	 * @return boolean TRUE if the clear string matches, otherwise FALSE
+	 * @throws \InvalidArgumentException
 	 */
 	static public function validateSaltedMd5($clearString, $hashedStringAndSalt) {
 		if (strpos($hashedStringAndSalt, ',') === FALSE) {

@@ -78,7 +78,7 @@ class ControllerContext {
 	/**
 	 * Get the response of the controller
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @return \TYPO3\FLOW3\Mvc\ResponseInterface
 	 * @api
 	 */
 	public function getResponse() {

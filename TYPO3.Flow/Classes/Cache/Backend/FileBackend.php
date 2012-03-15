@@ -78,6 +78,7 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 * A frozen backend can only be thawn by calling the flush() method.
 	 *
 	 * @return void
+	 * @throws \RuntimeException
 	 */
 	public function freeze() {
 		if ($this->frozen === TRUE) {
@@ -125,6 +126,7 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
@@ -172,7 +174,10 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
+	 * @throws \RuntimeException
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 * @throws \TYPO3\FLOW3\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -207,6 +212,7 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function get($entryIdentifier) {
@@ -229,6 +235,7 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 *
 	 * @param string $entryIdentifier
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function has($entryIdentifier) {
@@ -245,6 +252,8 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
@@ -381,6 +390,7 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 * Loads PHP code from the cache and require_onces it right away.
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
+	 * @throws \InvalidArgumentException
 	 * @return mixed Potential return value from the include operation
 	 * @api
 	 */

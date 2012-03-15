@@ -40,10 +40,10 @@ class PointcutExpressionParser {
 																|\'(?:\\\\\'|[^\'])*\'
 																|[a-zA-Z0-9\-_.]+
 															)
-														 )
-														 \s*,{0,1}?
-													 )+
-												   /x';
+														)
+														\s*,{0,1}?
+													)+
+												/x';
 	const PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST = '/(?:
 																	\s*(
 																		"(?:\\\"|[^"])*"
@@ -107,6 +107,7 @@ class PointcutExpressionParser {
 	 * @param string $sourceHint A message giving a hint on where the expression was defined. This is used in error messages.
 	 * @return PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function parse($pointcutExpression, $sourceHint) {
 		$this->sourceHint = $sourceHint;
@@ -308,6 +309,7 @@ class PointcutExpressionParser {
 	 * @param string $filterObjectName Object Name of the custom filter (value of the designator)
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	protected function parseDesignatorFilter($operator, $filterObjectName, PointcutFilterComposite $pointcutFilterComposite) {
 		$customFilter = $this->objectManager->get($filterObjectName);
@@ -408,7 +410,7 @@ class PointcutExpressionParser {
 		return $visibility;
 	}
 
-  /**
+	/**
 	* Parses the method arguments pattern and returns the corresponding constraints array
 	*
 	* @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
@@ -435,7 +437,7 @@ class PointcutExpressionParser {
 			$argumentConstraints[$matches[1][$i]]['value'][] = $matches[3][$i];
 		}
 		return $argumentConstraints;
-  }
+	}
 
 	/**
 	 * Parses the evaluate string for runtime evaluations and returns the corresponding conditions array

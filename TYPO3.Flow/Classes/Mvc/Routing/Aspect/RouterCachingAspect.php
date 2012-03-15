@@ -110,7 +110,7 @@ class RouterCachingAspect {
 		if (!is_array($subject)) {
 			return FALSE;
 		}
-		foreach ($subject as $key => $value) {
+		foreach ($subject as $value) {
 			if ($this->containsObject($value)) {
 				return TRUE;
 			}

@@ -68,7 +68,7 @@ class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\Abst
 	/**
 	 * Set the authentication status for authentication
 	 *
-	 * @param int $authenticationStatus
+	 * @param integer $authenticationStatus
 	 * @return void
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {

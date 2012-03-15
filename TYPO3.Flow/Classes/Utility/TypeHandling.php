@@ -38,6 +38,7 @@ class TypeHandling {
 	 *
 	 * @param string $type Type of the property (see PARSE_TYPE_PATTERN)
 	 * @return array An array with information about the type
+	 * @throws Exception\InvalidTypeException
 	 */
 	static public function parseType($type) {
 		$matches = array();

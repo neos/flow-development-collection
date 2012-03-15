@@ -49,9 +49,12 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options - unused here
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function __construct($context, array $options = array()) {
-		if (!extension_loaded('apc')) throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
+		if (!extension_loaded('apc')) {
+			throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
+		}
 		parent::__construct($context, $options);
 	}
 
@@ -82,8 +85,12 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) throw new \TYPO3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
-		if (!is_string($data)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
+		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
+		}
+		if (!is_string($data)) {
+			throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
+		}
 
 		$tags[] = '%APCBE%' . $this->cacheIdentifier;
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
@@ -172,10 +179,13 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 * @api
 	 */
 	public function flush() {
-		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) throw new \TYPO3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
+		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
+		}
 		$this->flushByTag('%APCBE%' . $this->cacheIdentifier);
 	}
 
@@ -198,6 +208,7 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier
 	 * @param array $tags
+	 * @return void
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
@@ -210,10 +221,9 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 
 				// Update identifier-to-tag index
 			$existingTags = $this->findTagsByIdentifier($entryIdentifier);
-			if (array_search($entryIdentifier, $existingTags) === false) {
+			if (array_search($entryIdentifier, $existingTags) === FALSE) {
 				apc_store($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
 			}
-
 		}
 	}
 
@@ -221,7 +231,7 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Removes association of the identifier with the given tags
 	 *
 	 * @param string $entryIdentifier
-	 * @param array $tags
+	 * @return void
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
 			// Get tags for this identifier

@@ -26,6 +26,7 @@ class StringLengthValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVa
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
 	 * @api
 	 */
 	protected function isValid($value) {

@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Cache\Frontend\FrontendInterface;
+use TYPO3\FLOW3\Cache\Frontend\FrontendInterface;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
@@ -66,6 +66,7 @@ class CacheManager {
 	 *
 	 * @param array $cacheConfigurations The cache configurations to set
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setCacheConfigurations(array $cacheConfigurations) {
 		foreach ($cacheConfigurations as $identifier => $configuration) {

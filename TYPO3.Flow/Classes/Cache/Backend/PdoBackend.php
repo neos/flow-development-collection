@@ -203,7 +203,7 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "tags" WHERE "context"=?  AND "cache"=? AND "tag"=?');// . $this->getNotExpiredStatement());
+		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "tags" WHERE "context"=?  AND "cache"=? AND "tag"=?');
 		$statementHandle->execute(array($this->context, $this->cacheIdentifier, $tag));
 		return $statementHandle->fetchAll(\PDO::FETCH_COLUMN);
 	}

@@ -377,7 +377,7 @@ class ReflectionService {
 	 * annotation. If no classes were found, an empty array is returned.
 	 *
 	 * @param string $annotationClassName Name of the annotation class, for example "TYPO3\FLOW3\Annotations\Aspect"
-	 * @return void
+	 * @return array
 	 */
 	public function getClassNamesByAnnotation($annotationClassName) {
 		if ($annotationClassName[0] === '\\') {
@@ -951,6 +951,7 @@ class ReflectionService {
 	 * this service, these classes will be reflected.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Reflection\Exception
 	 */
 	protected function reflectEmergedClasses() {
 		$classNamesToReflect = array();
@@ -989,6 +990,7 @@ class ReflectionService {
 	 *
 	 * @param string $className Full qualified name of the class to reflect
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\InvalidClassException
 	 */
 	protected function reflectClass($className) {
 		$this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);

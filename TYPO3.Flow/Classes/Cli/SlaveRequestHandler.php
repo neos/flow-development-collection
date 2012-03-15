@@ -32,7 +32,6 @@ class SlaveRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 * Constructor
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
-	 * @return void
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;

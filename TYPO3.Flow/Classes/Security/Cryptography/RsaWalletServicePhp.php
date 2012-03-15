@@ -41,6 +41,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 *
 	 * @param array $settings
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration'])
@@ -71,7 +72,8 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * Generates a new keypair and returns a UUID to refer to it
 	 *
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-	 * @return uuid An UUID that identifies the generated keypair
+	 * @return string An UUID that identifies the generated keypair
+	 * @throws \TYPO3\FLOW3\Security\Exception
 	 */
 	public function generateNewKeypair($usedForPasswords = FALSE) {
 
@@ -200,6 +202,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @param string $signature The signature that should be verified
 	 * @param string $uuid The uuid to identify to correct public key
 	 * @return boolean TRUE if the signature is correct for the given plaintext and public key
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException
 	 */
 	public function verifySignature($plaintext, $signature, $uuid) {
 		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1304959763);
@@ -315,6 +318,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * Stores the keys array in the keystore file
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception
 	 */
 	public function shutdownObject() {
 		$temporaryKeystorePathAndFilename = $this->keystorePathAndFilename . uniqid() . '.temp';

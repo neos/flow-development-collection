@@ -429,7 +429,9 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	/**
 	 * Builds the needed pointcut filters for matching the policy resources
 	 *
-	 * @return void
+	 * @return boolean
+	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException
 	 */
 	protected function buildPointcutFilters() {
 		if (isset($this->policy['resources']['methods']) === FALSE) {
@@ -479,6 +481,8 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 				}
 			}
 		}
+
+		return TRUE;
 	}
 
 	/**

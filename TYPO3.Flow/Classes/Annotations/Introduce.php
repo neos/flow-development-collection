@@ -31,6 +31,7 @@ final class Introduce {
 
 	/**
 	 * @param array $values
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(array $values) {
 		if (!isset($values['value']) && !isset($values['pointcutExpression'])) {

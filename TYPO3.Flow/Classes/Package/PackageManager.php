@@ -11,10 +11,10 @@ namespace TYPO3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Package\MetaData\XmlWriter as PackageMetaDataWriter;
-use \TYPO3\FLOW3\Package\Package;
-use \TYPO3\FLOW3\Package\PackageInterface;
-use \TYPO3\FLOW3\Utility\Files;
+use TYPO3\FLOW3\Package\MetaData\XmlWriter as PackageMetaDataWriter;
+use TYPO3\FLOW3\Package\Package;
+use TYPO3\FLOW3\Package\PackageInterface;
+use TYPO3\FLOW3\Utility\Files;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
@@ -258,6 +258,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param \TYPO3\FLOW3\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
 	 * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
 	 * @return \TYPO3\FLOW3\Package\Package The newly created package
+	 * @throws \TYPO3\FLOW3\Package\Exception
+	 * @throws \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
+	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException
 	 * @api
 	 */
 	public function createPackage($packageKey, \TYPO3\FLOW3\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
@@ -315,6 +318,8 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package key of the package to import.
 	 * @return \TYPO3\FLOW3\Package\Package The imported package
+	 * @throws \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
+	 * @throws \TYPO3\FLOW3\Package\Exception\PackageRepositoryException
 	 */
 	public function importPackage($packageKey) {
 		if ($this->isPackageAvailable($packageKey)) {
@@ -387,6 +392,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package to freeze
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 */
 	public function freezePackage($packageKey) {
 		if (!$this->isPackageActive($packageKey)) {
@@ -453,6 +459,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException if the specified package is not known
 	 * @throws \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException if a package is protected and cannot be deleted
+	 * @throws \TYPO3\FLOW3\Package\Exception
 	 * @api
 	 */
 	public function deletePackage($packageKey) {
@@ -506,6 +513,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * For each package a Package object is created and stored in $this->packages.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Package\Exception\DuplicatePackageException
 	 */
 	protected function scanAvailablePackages() {
 		$previousPackageStatesConfiguration = $this->packageStatesConfiguration;
@@ -589,6 +597,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * Requires and registers all packages which were defined in packageStatesConfiguration
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Package\Exception\CorruptPackageException
 	 */
 	protected function registerPackages() {
 		foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {

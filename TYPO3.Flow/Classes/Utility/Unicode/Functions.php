@@ -91,7 +91,7 @@ class Functions {
 	 * PHP6 variant of strlen() - assumes that the string is a Unicode string, not binary
 	 *
 	 * @param  string $string The string to count the characters of
-	 * @return string The number of characters
+	 * @return integer The number of characters
 	 * @api
 	 */
 	static public function strlen($string) {

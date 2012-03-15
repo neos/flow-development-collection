@@ -21,7 +21,7 @@ class StaticRoutePart extends \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart {
 	/**
 	 * Gets default value of the Route Part.
 	 *
-	 * @return string $defaultValue
+	 * @return string
 	 */
 	public function getDefaultValue() {
 		return $this->name;

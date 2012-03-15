@@ -155,6 +155,7 @@ class HashService {
 	 *
 	 * @param string $strategyIdentifier
 	 * @return array Array of \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface and string
+	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default') {
 		if (isset($this->passwordHashingStrategies[$strategyIdentifier])) {
@@ -178,6 +179,7 @@ class HashService {
 
 	/**
 	 * @return string The configured encryption key stored in Data/Persistent/EncryptionKey
+	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	protected function getEncryptionKey() {
 		if ($this->encryptionKey === NULL) {

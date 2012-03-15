@@ -11,8 +11,8 @@ namespace TYPO3\FLOW3\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
-use \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
+use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
@@ -117,6 +117,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param  string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function isRegistered($objectName) {
@@ -148,6 +149,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
 	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function get($objectName) {
@@ -229,6 +231,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $className The class name
 	 * @return string The object name corresponding to the given class name or FALSE if no object is configured to use that class
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function getObjectNameByClassName($className) {
@@ -282,6 +285,8 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The object name
 	 * @param object $instance A prebuilt instance
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Object\Exception\WrongScopeException
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 */
 	public function setInstance($objectName, $instance) {
 		if (!isset($this->objects[$objectName])) {
@@ -390,6 +395,8 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $className Name of the class to instantiate
 	 * @param array $arguments Arguments to pass to the constructor
 	 * @return object The object
+	 * @throws \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException
+	 * @throws \Exception
 	 */
 	protected function instantiateClass($className, array $arguments) {
 		if (isset ($this->classesBeingInstantiated[$className])) {

@@ -139,6 +139,7 @@ class Arrays {
 	 * @param array &$array The array to traverse as a reference
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @return mixed The value found, NULL if the path didn't exist
+	 * @throws \InvalidArgumentException
 	 */
 	static public function getValueByPath(array &$array, $path) {
 		if (is_string($path)) {
@@ -165,6 +166,7 @@ class Arrays {
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @param mixed $value The value to set
 	 * @return array The modified array or object
+	 * @throws \InvalidArgumentException
 	 */
 	static public function setValueByPath($subject, $path, $value) {
 		if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
@@ -193,6 +195,7 @@ class Arrays {
 	 * @param array $array The array
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @return array The modified array
+	 * @throws \InvalidArgumentException
 	 */
 	static public function unsetValueByPath(array $array, $path) {
 		if (is_string($path)) {
@@ -236,6 +239,7 @@ class Arrays {
 	 *
 	 * @param mixed $subject An object or array of objects
 	 * @return array The subject represented as an array
+	 * @throws \InvalidArgumentException
 	 */
 	static public function convertObjectToArray($subject) {
 		if (!is_object($subject) && !is_array($subject)) {

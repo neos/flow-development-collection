@@ -11,8 +11,8 @@ namespace TYPO3\FLOW3\Object\DependencyInjection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Utility\Arrays;
-use \TYPO3\FLOW3\Configuration\ConfigurationManager;
+use TYPO3\FLOW3\Utility\Arrays;
+use TYPO3\FLOW3\Configuration\ConfigurationManager;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
@@ -304,6 +304,7 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @return string The built code
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 */
 	protected function buildConstructorInjectionCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$assignments = array();
@@ -379,9 +380,9 @@ class ProxyClassBuilder {
 	/**
 	 * Builds the code necessary to inject setter based dependencies.
 	 *
-	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration (needed to produce helpful exception message)
 	 * @return string The built code
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 */
 	protected function buildPropertyInjectionCode(\TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$commands = array();
@@ -541,6 +542,7 @@ class ProxyClassBuilder {
 	 * @param string $customFactoryObjectName
 	 * @param string $customFactoryMethodName
 	 * @param array $arguments
+	 * @return string
 	 */
 	protected function buildCustomFactoryCall($customFactoryObjectName, $customFactoryMethodName, array $arguments) {
 		$parametersCode = $this->buildMethodParametersCode($arguments);

@@ -85,7 +85,7 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	public function blockIllegalRequests(\TYPO3\FLOW3\Mvc\ActionRequest $request) {
 		$filterMatched = FALSE;
 		foreach($this->filters as $filter) {
-			if($filter->filterRequest($request)) $filterMatched = TRUE;
+			if ($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
 		if ($this->rejectAll && !$filterMatched) throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
 	}

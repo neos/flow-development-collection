@@ -200,6 +200,7 @@ class ConfigurationManager {
 	 * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param array $packages An array of Package objects (indexed by package key) to consider
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException
 	 */
 	protected function loadConfiguration($configurationType, array $packages) {
 		$this->cacheNeedsUpdate = TRUE;
@@ -305,6 +306,7 @@ class ConfigurationManager {
 	 * in the context's Configuration directory.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Configuration\Exception
 	 */
 	protected function saveConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
@@ -358,6 +360,7 @@ EOD;
 	 * @param array $routesConfiguration
 	 * @param array $subRoutesConfiguration
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
 	 */
 	protected function mergeRoutesWithSubRoutes(array &$routesConfiguration, array $subRoutesConfiguration) {
 		$mergedRoutesConfiguration = array();
@@ -386,6 +389,7 @@ EOD;
 	 * @param array $subRoutesConfiguration
 	 * @param string $subRouteKey the key of the sub route: <subRouteKey>
 	 * @return array the merged route configuration
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
 	 */
 	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
 		$mergedSubRoutesConfigurations = array();

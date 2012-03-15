@@ -133,6 +133,7 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 	 *
 	 * @param string $runlevel
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidCommandIdentifierException
 	 */
 	public function exitIfCompiletimeCommandWasNotCalledCorrectly($runlevel) {
 		if ($runlevel === 'Runtime') {

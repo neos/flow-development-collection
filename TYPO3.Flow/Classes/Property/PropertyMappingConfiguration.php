@@ -59,7 +59,7 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @api
 	 */
 	public function shouldMap($propertyName) {
-		if (key_exists($propertyName, $this->notMappedProperties)) {
+		if (array_key_exists($propertyName, $this->notMappedProperties)) {
 			return FALSE;
 		} else {
 			return TRUE;

@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Persistence\Doctrine\Query;
+use TYPO3\FLOW3\Persistence\Doctrine\Query;
 
 /**
  * Testcase for query

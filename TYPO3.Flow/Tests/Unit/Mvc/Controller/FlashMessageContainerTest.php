@@ -11,10 +11,10 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Error\Message;
-use \TYPO3\FLOW3\Error\Notice;
-use \TYPO3\FLOW3\Error\Warning;
-use \TYPO3\FLOW3\Error\Error;
+use TYPO3\FLOW3\Error\Message;
+use TYPO3\FLOW3\Error\Notice;
+use TYPO3\FLOW3\Error\Warning;
+use TYPO3\FLOW3\Error\Error;
 
 /**
  * Testcase for the Flash Messages Container

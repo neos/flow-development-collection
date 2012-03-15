@@ -97,6 +97,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 * @param array $convertedChildProperties not used currently
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \DateTime
+	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$dateFormat = $this->getDefaultDateFormat($configuration);
@@ -131,6 +132,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 *
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	protected function getDefaultDateFormat(\TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if ($configuration === NULL) {
@@ -168,6 +170,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	 * @param \DateTime $date
 	 * @param array $source
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException
 	 */
 	protected function overrideTimezoneIfSpecified(\DateTime $date, array $source) {
 		if (!isset($source['timezone']) || strlen($source['timezone']) === 0) {

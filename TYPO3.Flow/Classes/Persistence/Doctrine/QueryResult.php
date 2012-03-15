@@ -32,7 +32,6 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	protected $query;
 
 	/**
-	 * @param array $rows
 	 * @param \TYPO3\FLOW3\Persistence\Doctrine\Query $query
 	 */
 	public function __construct(\TYPO3\FLOW3\Persistence\Doctrine\Query $query) {

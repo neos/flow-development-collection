@@ -53,12 +53,15 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	 * @param string $methodNameFilterExpression A regular expression which filters method names
 	 * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
 	 * @param array $methodArgumentConstraints array of method constraints
+	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, array $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
-		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier "' . $methodVisibility . '".', 1172494794);
+		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) {
+			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier "' . $methodVisibility . '".', 1172494794);
+		}
 		$this->methodVisibility = $methodVisibility;
-        $this->methodArgumentConstraints = $methodArgumentConstraints;
+		$this->methodArgumentConstraints = $methodArgumentConstraints;
 	}
 
 	/**
@@ -91,6 +94,7 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);

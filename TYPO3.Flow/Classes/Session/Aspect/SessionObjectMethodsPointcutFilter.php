@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Session\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**

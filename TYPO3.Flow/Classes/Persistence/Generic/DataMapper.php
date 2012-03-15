@@ -89,6 +89,8 @@ class DataMapper {
 	 *
 	 * @param array $objectData
 	 * @return object
+	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidObjectDataException
+	 * @throws \TYPO3\FLOW3\Persistence\Exception
 	 */
 	public function mapToObject(array $objectData) {
 		if ($objectData === array()) {
@@ -137,6 +139,7 @@ class DataMapper {
 	 * @param string $identifier The identifier of the object
 	 * @param array $objectData
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
 	 */
 	public function thawProperties($object, $identifier, array $objectData) {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);

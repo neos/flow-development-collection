@@ -34,7 +34,7 @@ class Role {
 	 * Constructor.
 	 *
 	 * @param string $identifier The string identifier of this role
-	 * @return void
+	 * @throws \RuntimeException
 	 */
 	public function __construct($identifier) {
 		if (!is_string($identifier)) {

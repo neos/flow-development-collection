@@ -81,6 +81,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options - depends on the actual backend
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function __construct($context, array $options = array()) {
 		if (!extension_loaded('memcache')) throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "memcache" must be installed and loaded in order to use the Memcached backend.', 1213987706);
@@ -118,6 +119,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Initializes the identifier prefix
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function initializeObject() {
 		if (!count($this->servers)) throw new \TYPO3\FLOW3\Cache\Exception('No servers were given to Memcache', 1213115903);
@@ -182,7 +184,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 		}
 
 		try {
-			if(strlen($data) > self::MAX_BUCKET_SIZE) {
+			if (strlen($data) > self::MAX_BUCKET_SIZE) {
 				$data = str_split($data, self::MAX_BUCKET_SIZE - 1024);
 				$success = TRUE;
 				$chunkNumber = 1;
@@ -282,6 +284,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 * @api
 	 */
 	public function flush() {
@@ -309,6 +312,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $entryIdentifier
 	 * @param array $tags
+	 * @return void
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
@@ -324,7 +328,6 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 			if (array_search($tag, $existingTags) === FALSE) {
 				$this->memcache->set($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
 			}
-
 		}
 	}
 
@@ -332,7 +335,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Removes association of the identifier with the given tags
 	 *
 	 * @param string $entryIdentifier
-	 * @param array $tags
+	 * @return void
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
 			// Get tags for this identifier

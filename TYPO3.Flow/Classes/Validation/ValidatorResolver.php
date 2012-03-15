@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Validation;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Object\Configuration\Configuration;
-use \TYPO3\FLOW3\Validation\Validator\ValidatorInterface;
+use TYPO3\FLOW3\Validation\Validator\ValidatorInterface;
 use TYPO3\FLOW3\Validation\Validator\GenericObjectValidator;
 use TYPO3\FLOW3\Validation\Validator\ConjunctionValidator;
 
@@ -80,7 +80,8 @@ class ValidatorResolver {
 	 *
 	 * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
 	 * @param array $validatorOptions Options to be passed to the validator
-	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorResolver Validator Resolver or NULL if none found.
+	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorInterface
+	 * @throws Exception\NoSuchValidatorException
 	 */
 	public function createValidator($validatorType, array $validatorOptions = array()) {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
@@ -128,6 +129,9 @@ class ValidatorResolver {
 	 * @param string $className
 	 * @param string $methodName
 	 * @return array An Array of ValidatorConjunctions for each method parameters.
+	 * @throws Exception\InvalidValidationConfigurationException
+	 * @throws Exception\NoSuchValidatorException
+	 * @throws Exception\InvalidTypeHintException
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
@@ -218,6 +222,8 @@ class ValidatorResolver {
 	 *
 	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
+	 * @throws Exception\NoSuchValidatorException
+	 * @throws \InvalidArgumentException
 	 */
 	protected function buildBaseValidatorConjunction($targetClassName) {
 		$conjunctionValidator = new ConjunctionValidator();

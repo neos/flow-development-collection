@@ -26,6 +26,11 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 	const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
 
 	/**
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 */
+	protected $configurationManager;
+
+	/**
 	 * The path leading to the setting to match with
 	 * @var string
 	 */
@@ -107,8 +112,9 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 	 * Parses the given configuration path expression and sets $this->actualSettingValue
 	 * and $this->condition accordingly
 	 *
-	 * @param string settingComparisonExpression The configuration expression (path + optional condition)
+	 * @param string $settingComparisonExpression The configuration expression (path + optional condition)
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	protected function parseConfigurationOptionPath($settingComparisonExpression) {
 		$settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
@@ -130,7 +136,9 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 			$settingPackageKey = array_shift($configurationKeys);
 			$settingValue = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
 			foreach ($configurationKeys as $currentKey) {
-				if (!isset($settingValue[$currentKey])) throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
+				if (!isset($settingValue[$currentKey])) {
+					throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
+				}
 				$settingValue = $settingValue[$currentKey];
 			}
 			$this->actualSettingValue = $settingValue;

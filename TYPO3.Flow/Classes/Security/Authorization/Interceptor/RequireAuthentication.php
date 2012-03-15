@@ -30,7 +30,6 @@ class RequireAuthentication implements \TYPO3\FLOW3\Security\Authorization\Inter
 	 * Constructor.
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
-	 * @return void
 	 */
 	public function __construct(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
