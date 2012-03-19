@@ -148,17 +148,23 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 
 			if ($tableAnnotation->indexes !== NULL) {
 				foreach ($tableAnnotation->indexes as $indexAnnotation) {
-					$primaryTable['indexes'][$indexAnnotation->name] = array(
-						'columns' => $indexAnnotation->columns
-					);
+					$index = array('columns' => $indexAnnotation->columns);
+					if (!empty($indexAnnotation->name)) {
+						$primaryTable['indexes'][$indexAnnotation->name] = $index;
+					} else {
+						$primaryTable['indexes'][] = $index;
+					}
 				}
 			}
 
 			if ($tableAnnotation->uniqueConstraints !== NULL) {
 				foreach ($tableAnnotation->uniqueConstraints as $uniqueConstraint) {
-					$primaryTable['uniqueConstraints'][$uniqueConstraint->name] = array(
-						'columns' => $uniqueConstraint->columns
-					);
+					$uniqueConstraint = array('columns' => $uniqueConstraint->columns);
+					if (!empty($uniqueConstraint->name)) {
+						$primaryTable['uniqueConstraints'][$uniqueConstraint->name] = $uniqueConstraint;
+					} else {
+						$primaryTable['uniqueConstraints'][] = $uniqueConstraint;
+					}
 				}
 			}
 		}
@@ -460,6 +466,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$mapping['cascade'] = $manyToManyAnnotation->cascade;
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['cascade'] = array('all');
+				}
+				if ($manyToManyAnnotation->orphanRemoval) {
+					$mapping['orphanRemoval'] = $manyToManyAnnotation->orphanRemoval;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['orphanRemoval'] = TRUE;
 				}
 				$mapping['fetch'] = $this->getFetchMode($className, $manyToManyAnnotation->fetch);
 
