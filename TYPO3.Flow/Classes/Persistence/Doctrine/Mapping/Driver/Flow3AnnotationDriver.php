@@ -472,7 +472,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$mapping['nullable'] = FALSE;
 
 				if ($columnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Column')) {
-					$mapping['type'] = $columnAnnotation->type;
+					$mapping['type'] = ($columnAnnotation->type === 'string') ? NULL : $columnAnnotation->type;
 					$mapping['length'] = $columnAnnotation->length;
 					$mapping['precision'] = $columnAnnotation->precision;
 					$mapping['scale'] = $columnAnnotation->scale;
