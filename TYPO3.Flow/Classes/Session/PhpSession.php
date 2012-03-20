@@ -64,7 +64,9 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @return void
 	 */
 	public function __construct() {
-		if (ini_get('session.auto_start') != 0) throw new \TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException('PHP\'s session.auto_start must be disabled.', 1219848292);
+		if (ini_get('session.auto_start') != 0) {
+			throw new \TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException('PHP\'s session.auto_start must be disabled.', 1219848292);
+		}
 	}
 
 	/**
@@ -146,22 +148,29 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
-	 * Returns TRUE if there is a session that can be resumed. FALSE otherwise
+	 * Returns TRUE if there is a session that can be resumed.
+	 *
+	 * If a to-be-resumed session was inactive for too long, this function will
+	 * trigger the expiration of that session. An expired session cannot be resumed.
 	 *
 	 * @return boolean
 	 */
 	public function canBeResumed() {
-		return isset($_COOKIE[session_name()]);
+		if (!isset($_COOKIE[session_name()]) || $this->started === TRUE) {
+			return FALSE;
+		}
+		return !$this->autoExpire();
 	}
 
 	/**
 	 * Resumes an existing session, if any.
 	 *
-	 * @return void
+	 * @return integer If a session was resumed, the inactivity of since the last request is returned
 	 */
 	public function resume() {
 		if ($this->started === FALSE && $this->canBeResumed()) {
-			$this->startOrResume();
+			$previousInactivityInSeconds = $this->startOrResume();
+			return $previousInactivityInSeconds;
 		}
 	}
 
@@ -243,11 +252,14 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	/**
 	 * Explicitly destroys all session data
 	 *
+	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
-	public function destroy() {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
+	public function destroy($reason = NULL) {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
+		}
 		try {
 			$cookieInfo = session_get_cookie_params();
 			if ((empty($cookieInfo['domain'])) && (empty($cookieInfo['secure']))) {
@@ -261,7 +273,10 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		} catch (\Exception $exception) {
 			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
 		}
-		unset($_SESSION);
+
+		$this->started = FALSE;
+		$this->sessionId = NULL;
+		session_unset();
 	}
 
 	/**
@@ -277,14 +292,49 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
+	 * Automatically expires the session if the user has been inactive for too long.
+	 *
+	 * @return boolean TRUE if the session expired, FALSE if not
+	 */
+	protected function autoExpire() {
+		session_start();
+
+			// should never happen, but we handle this case gracefully:
+		if (!isset($_SESSION['TYPO3_FLOW3_Session_LastActivity'])) {
+			session_write_close();
+			return FALSE;
+		}
+
+		$lastActivitySecondsAgo = time() - $_SESSION['TYPO3_FLOW3_Session_LastActivity'];
+		$timeout = $this->settings['session']['inactivityTimeout'];
+
+		$expired = FALSE;
+		if ($timeout !== 0 && $lastActivitySecondsAgo > $timeout) {
+			$this->started = TRUE;
+			$this->sessionId = session_id();
+			$this->destroy(sprintf('Session was inactive for %s seconds, more than the configured timeout of %s seconds.', $lastActivitySecondsAgo, $timeout));
+			$expired = TRUE;
+		}
+
+		session_write_close();
+		return $expired;
+	}
+
+	/**
 	 * Starts or resumes a session
 	 *
-	 * @return void
+	 * @return mixed If a session was resumed, the number of seconds it has been inactive previously. If a new session was started: TRUE
 	 */
 	protected function startOrResume() {
 		session_start();
 		$this->sessionId = session_id();
 		$this->started = TRUE;
+
+		$previousInactivityInSeconds = TRUE;
+		if ($this->hasKey('TYPO3_FLOW3_Session_LastActivity')) {
+			$previousInactivityInSeconds = time() - $this->getData('TYPO3_FLOW3_Session_LastActivity');
+		}
+		$this->putData('TYPO3_FLOW3_Session_LastActivity', time());
 
 		if ($this->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
 			$sessionObjects = $this->getData('TYPO3_FLOW3_Object_ObjectManager');
@@ -305,6 +355,8 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 				$this->putData('TYPO3_FLOW3_Object_ObjectManager', array());
 			}
 		}
+
+		return $previousInactivityInSeconds;
 	}
 }
 

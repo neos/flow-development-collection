@@ -51,7 +51,7 @@ class LoggingAspect {
 	public function logResume(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('Resumed session with id %s', $joinPoint->getProxy()->getId()), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('Resumed session with id %s which was inactive for %s seconds.', $joinPoint->getProxy()->getId(), $joinPoint->getResult()), LOG_DEBUG);
 		}
 	}
 
@@ -65,7 +65,8 @@ class LoggingAspect {
 	public function logDestroy(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('Destroyed session with id %s', $joinPoint->getProxy()->getId()), LOG_DEBUG);
+			$reason = $joinPoint->getMethodArgument('reason') ?: 'no reason given';
+			$this->systemLogger->log(sprintf('Destroyed session with id %s: %s', $joinPoint->getProxy()->getId(), $reason), LOG_DEBUG);
 		}
 	}
 

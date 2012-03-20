@@ -267,13 +267,19 @@ TYPO3:
           openSSLConfiguration: []
 
     session:
+
+      # Specifies the number of seconds a user must be idle before the sesssion
+      # automatically expires. If set to "0", a session will never expire
+      # automatically.
+      inactivityTimeout: 3600
+
       PHPSession:
 
         # A specific name for the session, used in the session cookie.
         # The session name must be alphanumerical and must contain at least one
         # character – not only numbers.
         #
-        # If left empty, a the session name will be determined from the base URL.
+        # If left empty, the session name will be determined from the base URL.
         name: 'FLOW3'
 
         # Where to store session data in the filesystem. If this is empty, a default
@@ -282,8 +288,12 @@ TYPO3:
 
         # PHP default is used if one of the following parameters is empty.
         cookie:
+
           # Cookie lifetime in seconds
-          lifetime: 3600
+          # Note that if you want to sessions expire automatically, you should rather
+          # set inactivityTimeout to the wanted value. Only in rare cases you'd want
+          # some other cookie lifetime than "0".
+          lifetime: 0
 
           # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
           path: /
