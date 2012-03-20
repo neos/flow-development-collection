@@ -46,6 +46,11 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	protected $createParentDirectories = FALSE;
 
 	/**
+	 * @var boolean
+	 */
+	protected $logMessageOrigin = FALSE;
+
+	/**
 	 * @var resource
 	 */
 	protected $fileHandle;
@@ -99,6 +104,18 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 */
 	public function setLogFilesToKeep($logFilesToKeep) {
 		$this->logFilesToKeep = $logFilesToKeep;
+	}
+
+	/**
+	 * If enabled, a hint about where the log message was created is added to the
+	 * log file.
+	 *
+	 * @param boolean $flag
+	 * @return void
+	 * @api
+	 */
+	public function setLogMessageOrigin($flag) {
+		$this->logMessageOrigin = ($flag === TRUE);
 	}
 
 	/**
@@ -203,7 +220,8 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 		$ipAddress = ($this->logIpAddress === TRUE) ? str_pad((isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''), 15) : '';
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
 		$output = strftime('%y-%m-%d %H:%M:%S', time()) . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message;
-		if ($className !== NULL || $methodName !== NULL) {
+
+		if ($this->logMessageOrigin === TRUE && ($className !== NULL || $methodName !== NULL)) {
 			$output .= ' [logged in ' . $className . '::' . $methodName . '()]';
 		}
 		if (!empty($additionalData)) {

@@ -61,6 +61,7 @@ TYPO3:
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
+           logMessageOrigin: FALSE
 
       securityLogger:
         backend: TYPO3\FLOW3\Log\Backend\FileBackend
