@@ -39,7 +39,7 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'fieldName' => 'title',
 			'columnName' => 'title',
 			'targetEntity' => 'string',
-			'nullable' => TRUE,
+			'nullable' => FALSE,
 			'type' => 'string',
 		);
 

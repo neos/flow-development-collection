@@ -23,7 +23,7 @@ class Comment {
 	/**
 	 * @var string
 	 */
-	protected $content;
+	protected $content = '';
 
 	/**
 	 * @return string

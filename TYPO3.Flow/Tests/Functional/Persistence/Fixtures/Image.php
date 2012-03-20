@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A sample entity for tests
@@ -22,6 +23,7 @@ class Image {
 
 	/**
 	 * @var string
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $data;
 

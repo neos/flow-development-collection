@@ -446,7 +446,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 
 				$metadata->mapManyToMany($mapping);
 			} else {
-				$mapping['nullable'] = TRUE;
+				$mapping['nullable'] = FALSE;
 
 				if ($columnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Column')) {
 					$mapping['type'] = $columnAnnotation->type;

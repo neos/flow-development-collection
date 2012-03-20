@@ -56,6 +56,7 @@ class Account {
 
 	/**
 	 * @var \DateTime
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $expirationDate;
 

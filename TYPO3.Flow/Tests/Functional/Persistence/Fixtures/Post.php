@@ -25,7 +25,7 @@ class Post {
 	/**
 	 * @var string
 	 */
-	protected $title;
+	protected $title = '';
 
 	/**
 	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image

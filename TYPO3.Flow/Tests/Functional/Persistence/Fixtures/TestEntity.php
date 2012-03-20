@@ -24,7 +24,7 @@ class TestEntity {
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @FLOW3\inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectManager;
 
@@ -44,7 +44,7 @@ class TestEntity {
 	 * @var string
 	 * @FLOW3\Validate(type="StringLength", options={"minimum"=3})
 	 */
-	protected $name;
+	protected $name = '';
 
 	/**
 	 * @var array
