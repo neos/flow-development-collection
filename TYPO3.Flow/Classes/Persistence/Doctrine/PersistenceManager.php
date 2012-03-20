@@ -37,6 +37,11 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	protected $validatorResolver;
 
 	/**
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
 	 * @return void
 	 */
@@ -61,6 +66,14 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 */
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Initializes the persistence manager, called by FLOW3.
 	 *
 	 * @return void
@@ -77,10 +90,25 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 */
 	public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $eventArgs) {
 		$unitOfWork = $this->entityManager->getUnitOfWork();
+		$entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
-		foreach ($unitOfWork->getScheduledEntityInsertions() AS $entity) {
+		$knownValueObjects = array();
+		foreach ($entityInsertions as $entity) {
+			if ($this->reflectionService->getClassSchema($entity)->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+				$identifier = $this->getIdentifierByObject($entity);
+				$className = $this->reflectionService->getClassNameByObject($entity);
+
+				if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
+					unset($entityInsertions[spl_object_hash($entity)]);
+					continue;
+				}
+
+				$knownValueObjects[$className][$identifier] = TRUE;
+			}
 			$this->validateObject($entity);
 		}
+
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, TRUE);
 
 		foreach ($unitOfWork->getScheduledEntityUpdates() AS $entity) {
 			$this->validateObject($entity);

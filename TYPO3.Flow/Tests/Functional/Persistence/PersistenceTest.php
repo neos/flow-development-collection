@@ -11,8 +11,9 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
-use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject;
 
 /**
  * Testcase for persistence
@@ -167,6 +168,62 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
 		$actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
 		$this->assertSame($expectedEntity, $actualEntity);
+	}
+
+	/**
+	 * @test
+	 */
+	public function valueObjectsWithTheSameValueAreOnlyPersistedOnce() {
+		$valueObject1 = new TestValueObject('sameValue');
+		$valueObject2 = new TestValueObject('sameValue');
+
+		$testEntity1 = new TestEntity();
+		$testEntity1->setRelatedValueObject($valueObject1);
+		$testEntity2 = new TestEntity();
+		$testEntity2->setRelatedValueObject($valueObject2);
+
+		$this->testEntityRepository->add($testEntity1);
+		$this->testEntityRepository->add($testEntity2);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$testEntities = $this->testEntityRepository->findAll();
+
+		$this->assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
+	}
+
+	/**
+	 * @test
+	 */
+	public function alreadyPersistedValueObjectsAreCorrectlyReused() {
+		$valueObject1 = new TestValueObject('sameValue');
+		$testEntity1 = new TestEntity();
+		$testEntity1->setRelatedValueObject($valueObject1);
+
+		$this->testEntityRepository->add($testEntity1);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$valueObject2 = new TestValueObject('sameValue');
+		$testEntity2 = new TestEntity();
+		$testEntity2->setRelatedValueObject($valueObject2);
+
+		$valueObject3 = new TestValueObject('sameValue');
+		$testEntity3 = new TestEntity();
+		$testEntity3->setRelatedValueObject($valueObject3);
+
+		$this->testEntityRepository->add($testEntity2);
+		$this->testEntityRepository->add($testEntity3);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$testEntities = $this->testEntityRepository->findAll();
+
+		$this->assertSame($testEntities[0]->getRelatedValueObject(), $testEntities[1]->getRelatedValueObject());
+		$this->assertSame($testEntities[1]->getRelatedValueObject(), $testEntities[2]->getRelatedValueObject());
 	}
 
 	/**
