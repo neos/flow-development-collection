@@ -144,7 +144,7 @@ class StreamWrapperAdapter {
 	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
-	public function mkdir($path, $mode,$options) {
+	public function mkdir($path, $mode, $options) {
 		$this->createStreamWrapper($path);
 		return $this->streamWrapper->makeDirectory($path, $mode, $options);
 	}
@@ -257,12 +257,10 @@ class StreamWrapperAdapter {
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
 	public function stream_lock($operation) {
-		switch ($operation) {
-			case LOCK_UN:
-				$this->streamWrapper->unlock();
-			break;
-			default:
-				$this->streamWrapper->lock($operation);
+		if ($operation === LOCK_UN) {
+			return $this->streamWrapper->unlock();
+		} else {
+			return $this->streamWrapper->lock($operation);
 		}
 	}
 
