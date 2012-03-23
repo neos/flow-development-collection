@@ -51,9 +51,15 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function saveWritesArrayToGivenFileAsYAML() {
 		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
 		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
-		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
+		$mockConfiguration = array(
+			'configurationFileHasBeenLoaded' => TRUE,
+			'foo' => array(
+				'bar' => 'Baz'
+			)
+		);
+		$configurationSource->save($pathAndFilename, $mockConfiguration);
 
-		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10);
+		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '    bar: Baz' . chr(10);
 		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file.');
 	}
 
@@ -69,7 +75,7 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
 		$yaml = file_get_contents($pathAndFilename . '.yaml');
-		$this->assertContains('# This comment should stay', $yaml, 'Header comment was removed from file.');
+		$this->assertContains('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
 		$this->assertNotContains('Test: foo', $yaml);
 	}
 

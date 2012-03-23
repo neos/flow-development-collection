@@ -28,6 +28,7 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the file extension (ie. ".yaml")
 	 * @return array
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
 	 */
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
@@ -57,8 +58,8 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration);
-		file_put_contents($pathAndFilename . '.yaml', $header . PHP_EOL . $yaml);
+		$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99);
+		file_put_contents($pathAndFilename . '.yaml', $header . chr(10) . $yaml);
 	}
 
 	/**
@@ -71,7 +72,6 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 */
 	protected function getHeaderFromFile($pathAndFilename) {
 		$header = '';
-		$line = '';
 		$fileHandle = fopen($pathAndFilename, 'r');
 		while ($line = fgets($fileHandle)) {
 			if (preg_match('/^#/', $line)) {
