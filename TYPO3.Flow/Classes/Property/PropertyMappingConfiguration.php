@@ -95,11 +95,12 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	/**
 	 * Allow all properties in property mapping, even unknown ones.
 	 *
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowAllProperties() {
 		$this->mapUnknownProperties = TRUE;
+		return $this;
 	}
 
 	/**
@@ -111,13 +112,14 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @param string $propertyName1
 	 * @param string $propertyName2
 	 * @param string $propertyName3 ...
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowProperties() {
 		foreach (func_get_args() as $propertyName) {
 			$this->propertiesToBeMapped[$propertyName] = $propertyName;
 		}
+		return $this;
 	}
 
 	/**
@@ -126,7 +128,7 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * Example: allowAllPropertiesExcept('password', 'userGroup')
 	 *
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowAllPropertiesExcept() {
@@ -135,6 +137,7 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 		foreach (func_get_args() as $propertyName) {
 			$this->propertiesNotToBeMapped[$propertyName] = $propertyName;
 		}
+		return $this;
 	}
 
 	/**
@@ -185,22 +188,24 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param string $sourcePropertyName
 	 * @param string $targetPropertyName
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setMapping($sourcePropertyName, $targetPropertyName) {
 		$this->mapping[$sourcePropertyName] = $targetPropertyName;
+		return $this;
 	}
 
 	/**
 	 * Set all options for the given $typeConverter.
 	 * @param string $typeConverter class name of type converter
 	 * @param array $options
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setTypeConverterOptions($typeConverter, array $options) {
 		$this->configuration[$typeConverter] = $options;
+		return $this;
 	}
 
 	/**
@@ -209,11 +214,12 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * @param string $typeConverter class name of type converter
 	 * @param string $optionKey
 	 * @param mixed $optionValue
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setTypeConverterOption($typeConverter, $optionKey, $optionValue) {
 		$this->configuration[$typeConverter][$optionKey] = $optionValue;
+		return $this;
 	}
 
 	/**
@@ -263,11 +269,12 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * Set a type converter which should be used for this specific conversion.
 	 *
 	 * @param \TYPO3\FLOW3\Property\TypeConverterInterface $typeConverter
-	 * @return void
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setTypeConverter(\TYPO3\FLOW3\Property\TypeConverterInterface $typeConverter) {
 		$this->typeConverter = $typeConverter;
+		return $this;
 	}
 }
 ?>

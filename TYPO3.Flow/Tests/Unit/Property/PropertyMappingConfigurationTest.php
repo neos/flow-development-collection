@@ -146,7 +146,6 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		return $childConfiguration;
 	}
 
-
 	/**
 	 * @test
 	 */
@@ -154,6 +153,30 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->propertyMappingConfiguration->setMapping('k1', 'k1a');
 		$this->assertEquals('k1a', $this->propertyMappingConfiguration->getTargetPropertyName('k1'));
 		$this->assertEquals('k2', $this->propertyMappingConfiguration->getTargetPropertyName('k2'));
+	}
+
+	/**
+	 * @return array Signature: $methodToTestForFluentInterface [, $argumentsForMethod = array() ]
+	 */
+	public function fluentInterfaceMethodsDataProvider() {
+		return array(
+			array('allowAllProperties'),
+			array('allowProperties'),
+			array('allowAllPropertiesExcept'),
+			array('setMapping', array('k1', 'k1a')),
+			array('setTypeConverterOptions', array('someConverter', array('k1' => 'v1', 'k2' => 'v2'))),
+			array('setTypeConverterOption', array('someConverter', 'k1', 'v3')),
+			array('setTypeConverter', array($this->getMock('TYPO3\FLOW3\Property\TypeConverterInterface'))),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider fluentInterfaceMethodsDataProvider
+	 */
+	public function respectiveMethodsProvideFluentInterface($methodToTestForFluentInterface, array $argumentsForMethod = array()) {
+		$actualResult = call_user_func_array(array($this->propertyMappingConfiguration, $methodToTestForFluentInterface), $argumentsForMethod);
+		$this->assertSame($this->propertyMappingConfiguration, $actualResult);
 	}
 }
 ?>
