@@ -101,7 +101,7 @@ class Argument {
 		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
 		if (strlen($name) === 0) throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
 		$this->name = $name;
-		$this->dataType = \TYPO3\FLOW3\Utility\TypeHandling::normalizeType($dataType);
+		$this->setDataType($dataType);
 	}
 
 	/**
@@ -163,6 +163,16 @@ class Argument {
 	 */
 	public function getShortName() {
 		return $this->shortName;
+	}
+
+	/**
+	 * Sets the data type of this argument that is also used for property mapping.
+	 * @param string $dataType
+	 * @return \TYPO3\FLOW3\MVC\Controller\Argument $this
+	 */
+	public function setDataType($dataType) {
+		$this->dataType = \TYPO3\FLOW3\Utility\TypeHandling::normalizeType($dataType);
+		return $this;
 	}
 
 	/**
