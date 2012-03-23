@@ -39,6 +39,13 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *  'timezone' => '<timezone>', // string, see http://www.php.net/manual/timezones.php
  * );
  *
+ * As an alternative to providing the date as string, you might supply day, month and year as array items each:
+ * array(
+ *  'day' => '<day>', // integer
+ *  'month' => '<month>', // integer
+ *  'year' => '<year>', // integer
+ * );
+ *
  * @api
  * @FLOW3\Scope("singleton")
  */
@@ -92,7 +99,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 	/**
 	 * Converts $source to a \DateTime using the configured dateFormat
 	 *
-	 * @param string $source the string to be converted to a \DateTime object
+	 * @param string|array $source the string to be converted to a \DateTime object
 	 * @param string $targetType must be "DateTime"
 	 * @param array $convertedChildProperties not used currently
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
@@ -104,10 +111,16 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 		if (is_string($source)) {
 			$dateAsString = $source;
 		} else {
-			if (!isset($source['date']) || !is_string($source['date'])) {
+			if (isset($source['date']) && is_string($source['date'])) {
+				$dateAsString = $source['date'];
+			} elseif($this->isDatePartKeysProvided($source)) {
+				if ($source['day'] < 1 || $source['month'] < 1 || $source['year'] < 1) {
+					return new \TYPO3\FLOW3\Validation\Error('Could not convert the given date parts into a DateTime object because one or more parts were 0.', 1333032779);
+				}
+				$dateAsString = sprintf('%d-%d-%d', $source['year'], $source['month'], $source['day']);
+			} else {
 				throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('Could not convert the given source into a DateTime object because it was not an array with a valid date as a string', 1308003914);
 			}
-			$dateAsString = $source['date'];
 			if (isset($source['dateFormat']) && strlen($source['dateFormat']) > 0) {
 				$dateFormat = $source['dateFormat'];
 			}
@@ -124,6 +137,17 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 			$this->overrideTimezoneIfSpecified($date, $source);
 		}
 		return $date;
+	}
+
+	/**
+	 * Returns whether date information (day, month, year) are present as keys in $source.
+	 * @param $source
+	 * @return bool
+	 */
+	protected function isDatePartKeysProvided(array $source) {
+		return isset($source['day']) && is_numeric($source['day'])
+			&& isset($source['month']) && is_numeric($source['month'])
+			&& isset($source['year']) && is_numeric($source['year']);
 	}
 
 	/**
