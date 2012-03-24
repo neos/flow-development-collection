@@ -65,7 +65,7 @@ class LoggingAspect {
 	public function logDestroy(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$reason = $joinPoint->getMethodArgument('reason') ?: 'no reason given';
+			$reason = $joinPoint->isMethodArgument('reason') ? $joinPoint->getMethodArgument('reason') : 'no reason given';
 			$this->systemLogger->log(sprintf('Destroyed session with id %s: %s', $joinPoint->getProxy()->getId(), $reason), LOG_DEBUG);
 		}
 	}

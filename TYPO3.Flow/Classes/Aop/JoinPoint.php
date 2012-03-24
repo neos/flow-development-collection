@@ -22,7 +22,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 
 	/**
 	 * A reference to the proxy object
-	 * @var \TYPO3\FLOW3\Object\Proxy\ProxyInterface
+	 * @var object
 	 */
 	protected $proxy;
 
@@ -65,7 +65,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param \TYPO3\FLOW3\Object\Proxy\ProxyInterface $proxy Reference to the proxy class instance of the target class
+	 * @param object $proxy Reference to the proxy class instance of the target class
 	 * @param string $className Class name of the target class this join point refers to
 	 * @param string $methodName Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments Array of method arguments which have been passed to the target method
@@ -73,7 +73,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	 * @param mixed $result The result of the method invocations (only used for After Returning advices)
 	 * @param \Exception $exception The exception thrown (only used for After Throwing advices)
 	 */
-	public function __construct(\TYPO3\FLOW3\Object\Proxy\ProxyInterface $proxy, $className, $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = NULL, $result = NULL, \Exception $exception = NULL) {
+	public function __construct($proxy, $className, $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = NULL, $result = NULL, \Exception $exception = NULL) {
 		$this->proxy = $proxy;
 		$this->className = $className;
 		$this->methodName = $methodName;
