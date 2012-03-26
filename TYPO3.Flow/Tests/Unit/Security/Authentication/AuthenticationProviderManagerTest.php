@@ -38,7 +38,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function configuredProvidersAndTokensAreBuiltCorrectly() {
 		$this->markTestSkipped('Refactor unit tests in ' . __CLASS__);
@@ -103,7 +102,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function configuredRequestPatternsAreSetCorrectlyInAToken() {
 		$this->markTestSkipped('Refactor unit tests in ' . __CLASS__);
@@ -169,7 +167,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function configuredAuthenticationEntryPointIsInstalledCorrectly() {
 		$this->markTestSkipped('Refactor unit tests in ' . __CLASS__);
@@ -228,7 +225,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function authenticateDelegatesAuthenticationToTheCorrectProvidersInTheCorrectOrder() {
 		$securityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -259,7 +255,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function authenticateAuthenticatesOnlyTokensWithStatusAuthenticationNeeded() {
 		$securityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -290,7 +285,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticateThrowsAnExceptionIfNoTokenCouldBeAuthenticated() {
@@ -312,7 +306,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticateThrowsAnExceptionIfAuthenticateAllTokensIsTrueButATokenCouldNotBeAuthenticated() {
@@ -430,7 +423,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function noTokensAndProvidersAreBuiltIfTheConfigurationArrayIsEmpty() {
 		$this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', array());
@@ -444,7 +436,6 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 
 	/**
 	 * @test
-	 * @category unit
 	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException
 	 */
 	public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist() {

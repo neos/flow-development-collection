@@ -19,7 +19,6 @@ class PolicyEnforcementTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function invokeCallsTheAuthenticationManager() {
 		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
@@ -36,7 +35,6 @@ class PolicyEnforcementTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function invokeCallsTheAccessDecisionManagerToDecideOnTheCurrentJoinPoint() {
 		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');

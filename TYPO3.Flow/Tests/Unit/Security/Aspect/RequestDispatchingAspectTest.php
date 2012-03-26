@@ -13,7 +13,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Aspect;
 
 /**
  * Testcase for the request dispatching aspect
- *
  */
 class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
