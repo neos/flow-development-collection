@@ -35,10 +35,10 @@ class Typo3OrgSsoToken extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	 * Updates the username and password credentials from the POST vars, if the POST parameters
 	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
+	 * @param \TYPO3\FLOW3\Http\Request $request The current request instance
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
 		$getArguments = $this->environment->getRawGetArguments();
 
 		if (!empty($getArguments['user'])

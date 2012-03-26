@@ -19,16 +19,16 @@ class ControllerObjectNameTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
 		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\FLOW3\Security\Controller\LoginController'));
 
 		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\ControllerObjectName();
 		$requestPattern->setPattern('TYPO3\FLOW3\Security\.*');
 
 		$this->assertTrue($requestPattern->matchRequest($request));
+		$this->assertEquals('TYPO3\FLOW3\Security\.*', $requestPattern->getPattern());
 	}
 }
 ?>

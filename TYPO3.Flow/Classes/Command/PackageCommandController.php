@@ -22,7 +22,6 @@ use TYPO3\FLOW3\Core\Booting\Scripts;
 class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -38,6 +37,14 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @return void
+	 */
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+		$this->packageManager =  $packageManager;
 	}
 
 	/**

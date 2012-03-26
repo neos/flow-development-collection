@@ -14,18 +14,19 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * An action controller test fixture
+ * A controller fixture
  *
  * @FLOW3\Scope("singleton")
  */
-class TestingController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+class RoutingTestAController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
-	 * @param \TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
-	 * @FLOW3\IgnoreValidation(argumentName="$argument")
+	 * @param string $bar
+	 * @param string $baz
+	 * @return string
 	 */
-	public function showObjectArgumentAction(TestObjectArgument $argument) {
-		return $argument->getEmailAddress();
+	public function barAndBazAction($bar, $baz) {
+		return $bar . ' and ' . $baz;
 	}
 
 }

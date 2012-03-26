@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
 
 /**
  * This class holds an URI pattern an decides, if a \TYPO3\FLOW3\Mvc\ActionRequest object matches against this pattern
- * Note: This pattern can only be used for web requests.
  *
  */
 class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
@@ -24,17 +23,6 @@ class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 * @var string
 	 */
 	protected $uriPattern = '';
-
-	/**
-	 * Returns TRUE, if this pattern can match against the given request object.
-	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
-	 * @return boolean TRUE if this pattern can match
-	 */
-	public function canMatch(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		if ($request instanceof \TYPO3\FLOW3\Mvc\ActionRequest) return TRUE;
-		return FALSE;
-	}
 
 	/**
 	 * Returns the set pattern.
@@ -64,12 +52,9 @@ class Uri implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 */
 	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		if (!($request instanceof \TYPO3\FLOW3\Mvc\ActionRequest)) throw new \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException('The given request type is not supported.', 1216903641);
-
-		return (boolean)preg_match('/^' . $this->uriPattern . '$/', $request->getRequestUri()->getPath());
+		return (boolean)preg_match('/^' . $this->uriPattern . '$/', $request->getHttpRequest()->getUri()->getPath());
 	}
 }
 

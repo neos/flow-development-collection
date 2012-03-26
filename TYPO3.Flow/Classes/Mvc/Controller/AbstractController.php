@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Mvc\Routing\UriBuilder;
-use \TYPO3\FLOW3\Error\Message;
-
+use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Error\Message;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * An abstract base class for Controllers
+ * An abstract base class for HTTP based controllers
  *
  * @api
  * @FLOW3\Scope("singleton")
@@ -30,21 +30,14 @@ abstract class AbstractController implements ControllerInterface {
 	protected $uriBuilder;
 
 	/**
-	 * Contains the settings of the current package
-	 * @var array
-	 * @api
-	 */
-	protected $settings;
-
-	/**
 	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
 
 	/**
-	 * The current request
-	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
+	 * The current action request directed to this controller
+	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
 	 * @api
 	 */
 	protected $request;
@@ -62,16 +55,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @api
 	 */
 	protected $arguments;
-
-	/**
-	 * An array of supported request types. By default only web requests are supported.
-	 * Modify or replace this array if your specific controller supports certain
-	 * (additional) request types.
-	 *
-	 * @var array
-	 * @api
-	 */
-	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request');
 
 	/**
 	 * @var \TYPO3\FLOW3\Mvc\Controller\ControllerContext
@@ -94,72 +77,28 @@ abstract class AbstractController implements ControllerInterface {
 	protected $persistenceManager;
 
 	/**
-	 * Constructs the controller
+	 * Initializes the controller
 	 *
+	 * This method should be called by the concrete processRequest() method.
+	 *
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException
 	 */
-	public function __construct() {
-		$this->arguments = new Arguments(array());
-	}
-
-	/**
-	 * Injects the settings of the package this controller belongs to.
-	 *
-	 * @param array $settings Settings container of the current package
-	 * @return void
-	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
-	}
-
-	/**
-	 * Checks if the current request type is supported by the controller.
-	 *
-	 * If your controller only supports certain request types, either
-	 * replace / modify the supporteRequestTypes property or override this
-	 * method.
-	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The current request
-	 * @return boolean TRUE if this request type is supported, otherwise FALSE
-	 * @api
-	 */
-	public function canProcessRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		foreach ($this->supportedRequestTypes as $supportedRequestType) {
-			if ($request instanceof $supportedRequestType) return TRUE;
+	protected function initializeController(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
+		if (!$request instanceof ActionRequest) {
+			throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports action requests – requests of type "' . get_class($request) . '" given. ' , 1187701131);
 		}
-		return FALSE;
-	}
-
-	/**
-	 * Processes a general request. The result can be returned by altering the given response.
-	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
-	 * @return void
-	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
-	 * @api
-	 */
-	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
-		if (!$this->canProcessRequest($request)) throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
 
 		$this->request = $request;
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->initializeUriBuilder();
-
-		$this->initializeControllerArgumentsBaseValidators();
-		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
-	}
-
-	/**
-	 * Initialize the URI builder in $this->uriBuilder
-	 *
-	 * @return void
-	 */
-	protected function initializeUriBuilder() {
 		$this->uriBuilder = new UriBuilder();
 		$this->uriBuilder->setRequest($this->request);
+
+		$this->arguments = new Arguments(array());
+		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
@@ -175,6 +114,7 @@ abstract class AbstractController implements ControllerInterface {
 
 	/**
 	 * Creates a Message object and adds it to the FlashMessageContainer.
+	 *
 	 * This method should be used to add FlashMessages rather than interacting with the container directly.
 	 *
 	 * @param string $messageBody text of the FlashMessage
@@ -189,7 +129,7 @@ abstract class AbstractController implements ControllerInterface {
 	 */
 	public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = NULL) {
 		if (!is_string($messageBody)) {
-			throw new \InvalidArgumentException('The message body must be of type string but "' . gettype($messageBody) . '" given.', 1243258395);
+			throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
 		}
 		switch ($severity) {
 			case Message::SEVERITY_NOTICE:
@@ -212,33 +152,49 @@ abstract class AbstractController implements ControllerInterface {
 	 * Forwards the request to another action and / or controller.
 	 *
 	 * Request is directly transfered to the other action / controller
-	 * without the need for a new request.
 	 *
 	 * @param string $actionName Name of the action to forward to
 	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+	 * @param string $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
 	 * @param array $arguments Arguments to pass to the target action
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\ForwardException
 	 * @see redirect()
 	 * @api
 	 */
 	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = array()) {
-		$this->request->setDispatched(FALSE);
-		$this->request->setControllerActionName($actionName);
-		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
+		$nextRequest = clone $this->request;
+		$nextRequest->setControllerActionName($actionName);
+
+		if ($controllerName !== NULL) {
+			$nextRequest->setControllerName($controllerName);
+		}
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
 			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
 		} else {
 			$subpackageKey = NULL;
 		}
-		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
-		$this->request->setControllerSubpackageKey($subpackageKey);
-		$arguments = $this->persistenceManager->convertObjectsToIdentityArrays($arguments);
-		$this->request->setArguments($arguments);
+		if ($packageKey !== NULL) {
+			$nextRequest->setControllerPackageKey($packageKey);
+		}
+		if ($subpackageKey !== NULL) {
+			$nextRequest->setControllerSubpackageKey($subpackageKey);
+		}
 
+		$regularArguments = array();
+		foreach ($arguments as $argumentName => $argumentValue) {
+			if (substr($argumentName, 0, 2) === '__') {
+				$nextRequest->setArgument($argumentName, $argumentValue);
+			} else {
+				$regularArguments[$argumentName] = $argumentValue;
+			}
+		}
+		$nextRequest->setArguments($this->persistenceManager->convertObjectsToIdentityArrays($regularArguments));
 		$this->arguments->removeAll();
-		throw new \TYPO3\FLOW3\Mvc\Exception\StopActionException();
+
+		$forwardException = new \TYPO3\FLOW3\Mvc\Exception\ForwardException();
+		$forwardException->setNextRequest($nextRequest);
+		throw $forwardException;
 	}
 
 	/**
@@ -262,8 +218,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @api
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303, $format = NULL) {
-		if (!$this->request instanceof \TYPO3\FLOW3\Mvc\ActionRequest) throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1238101344);
-
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
 			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
 		} else {
@@ -276,15 +230,12 @@ abstract class AbstractController implements ControllerInterface {
 			$this->uriBuilder->setFormat($format);
 		}
 
-		$uri = $this->uriBuilder->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-		$this->redirectToUri($this->request->getBaseUri() . $uri, $delay, $statusCode);
+		$uri = $this->uriBuilder->setCreateAbsoluteUri(TRUE)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+		$this->redirectToUri($uri, $delay, $statusCode);
 	}
 
 	/**
-	 * Redirects the web request to another uri.
-	 *
-	 * NOTE: This method only supports web requests and will throw an exception
-	 * if used with other request types.
+	 * Redirects to another URI
 	 *
 	 * @param mixed $uri Either a string representation of a URI or a \TYPO3\FLOW3\Http\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
@@ -294,8 +245,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @api
 	 */
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
-		if (!$this->request instanceof \TYPO3\FLOW3\Mvc\ActionRequest) throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1220539734);
-
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
 		$this->response->setStatus($statusCode);
@@ -318,36 +267,23 @@ abstract class AbstractController implements ControllerInterface {
 	 * @api
 	 */
 	protected function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
-		if (!$this->request instanceof \TYPO3\FLOW3\Mvc\ActionRequest) throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException('throwStatus() only supports web requests.', 1220539739);
-
 		$this->response->setStatus($statusCode, $statusMessage);
-		if ($content === NULL) $content = $this->response->getStatus();
+		if ($content === NULL) {
+			$content = $this->response->getStatus();
+		}
 		$this->response->setContent($content);
 		throw new \TYPO3\FLOW3\Mvc\Exception\StopActionException();
-	}
-
-	/**
-	 * Collects the base validators which were defined for the data type of each
-	 * controller argument and adds them to the argument's validator conjunction.
-	 *
-	 * @return void
-	 */
-	protected function initializeControllerArgumentsBaseValidators() {
-		foreach ($this->arguments as $argument) {
-			$validator = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
-			if (count($validator) > 0) $argument->setValidator($validator);
-		}
 	}
 
 	/**
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
+	 * @api
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		foreach ($this->arguments as $argument) {
 			$argumentName = $argument->getName();
-
 			if ($this->request->hasArgument($argumentName)) {
 				$argument->setValue($this->request->getArgument($argumentName));
 			} elseif ($argument->isRequired()) {

@@ -446,11 +446,9 @@ class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 		);
 
 		$mockProviderResolver = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver', array(), array(), '', FALSE);
-		$mockProviderResolver->expects($this->once())->method('resolveProviderClass')->will($this->returnValue(NULL));
+		$mockRequestPatternResolver = $this->getMock('TYPO3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE);
 
-		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array(), '', FALSE);
-		$this->authenticationProviderManager->_set('providerResolver', $mockProviderResolver);
-
+		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array($mockProviderResolver, $mockRequestPatternResolver));
 		$this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
 	}
 }

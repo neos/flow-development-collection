@@ -11,6 +11,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Utility\Arrays;
 
 /**
  * An URI Builder
@@ -305,7 +306,7 @@ class UriBuilder {
 	/**
 	 * Adds the argument namespace of the current request to the specified arguments.
 	 * This happens recursively iterating through the nested requests in case of a subrequest.
-	 * For example if this is executed inside a widget subrequest in a plugin subrequest, the result would be:
+	 * For example if this is executed inside a widget sub request in a plugin sub request, the result would be:
 	 * array(
 	 *   'pluginRequestNamespace' => array(
 	 *     'widgetRequestNamespace => $arguments
@@ -317,7 +318,7 @@ class UriBuilder {
 	 */
 	protected function addNamespaceToArguments(array $arguments) {
 		$currentRequest = $this->request;
-		while($currentRequest instanceof \TYPO3\FLOW3\Mvc\Web\SubRequest) {
+		while(!$currentRequest->isMainRequest()) {
 			$argumentNamespace = $currentRequest->getArgumentNamespace();
 			if ($argumentNamespace !== '') {
 				$arguments = array($argumentNamespace => $arguments);
@@ -335,7 +336,7 @@ class UriBuilder {
 	 * @api
 	 */
 	public function build(array $arguments = array()) {
-		$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
+		$arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
 		$this->mergeArgumentsWithRequestArguments($arguments);
 
 		$uri = $this->router->resolve($arguments);
@@ -344,7 +345,7 @@ class UriBuilder {
 			$uri = 'index.php/' . $uri;
 		}
 		if ($this->createAbsoluteUri === TRUE) {
-			$uri = $this->request->getBaseUri() . $uri;
+			$uri = $this->request->getHttpRequest()->getBaseUri() . $uri;
 		}
 		if ($this->section !== '') {
 			$uri .= '#' . $this->section;
@@ -354,48 +355,57 @@ class UriBuilder {
 
 	/**
 	 * Merges specified arguments with arguments from request.
-	 * If $this->request is no SubRequest, request arguments will only be merged if $this->addQueryString is set.
+	 *
+	 * If $this->request is no sub request, request arguments will only be merged if $this->addQueryString is set.
 	 * Otherwise all request arguments except for the ones prefixed with the current request argument namespace will
 	 * be merged. Additionally special arguments (PackageKey, SubpackageKey, ControllerName & Action) are merged.
 	 *
-	 * Note: values of $arguments always overrule request arguments!
+	 * The argument provided through the $arguments parameter always overrule the request
+	 * arguments.
+	 *
+	 * The request hierarchy is structured as follows:
+	 * root (HTTP) > main (Action) > sub (Action) > sub sub (Action)
 	 *
 	 * @param array $arguments
 	 * @return void
 	 */
 	protected function mergeArgumentsWithRequestArguments(array &$arguments) {
 		$requestArguments = array();
-		if ($this->request instanceof \TYPO3\FLOW3\Mvc\Web\SubRequest) {
-			$rootRequest = $this->request->getRootRequest();
-			$requestArguments = $rootRequest->getArguments();
-				// remove all arguments of the current SubRequest
+
+		$mainRequest = $this->request->getMainRequest();
+		$isSubRequest = ($this->request !== $mainRequest);
+
+		if ($isSubRequest) {
+			$requestArguments = $mainRequest->getArguments();
+
+				// remove all arguments of the current sub request
 			if ($this->request->getArgumentNamespace() !== '') {
 				$requestNamespace = $this->getRequestNamespacePath($this->request);
 				if ($this->addQueryString === FALSE) {
-					$requestArguments = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($requestArguments, $requestNamespace);
+					$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
 				} else {
 					foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
-						$requestArguments = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
+						$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
 					}
 				}
 			}
 
-				// merge special arguments (package, subpackage, controller & action) from root request
-			$rootRequestPackageKey = $rootRequest->getControllerPackageKey();
-			if (!empty($rootRequestPackageKey)) {
-				$requestArguments['@package'] = $rootRequestPackageKey;
+				// merge special arguments (package, subpackage, controller & action) from main request
+			$mainRequestPackageKey = $mainRequest->getControllerPackageKey();
+			if (!empty($mainRequestPackageKey)) {
+				$requestArguments['@package'] = $mainRequestPackageKey;
 			}
-			$rootRequestSubpackageKey = $rootRequest->getControllerSubpackageKey();
-			if (!empty($rootRequestSubpackageKey)) {
-				$requestArguments['@subpackage'] = $rootRequestSubpackageKey;
+			$mainRequestSubpackageKey = $mainRequest->getControllerSubpackageKey();
+			if (!empty($mainRequestSubpackageKey)) {
+				$requestArguments['@subpackage'] = $mainRequestSubpackageKey;
 			}
-			$rootRequestControllerName = $rootRequest->getControllerName();
-			if (!empty($rootRequestControllerName)) {
-				$requestArguments['@controller'] = $rootRequestControllerName;
+			$mainRequestControllerName = $mainRequest->getControllerName();
+			if (!empty($mainRequestControllerName)) {
+				$requestArguments['@controller'] = $mainRequestControllerName;
 			}
-			$rootRequestActionName = $rootRequest->getControllerActionName();
-			if (!empty($rootRequestActionName)) {
-				$requestArguments['@action'] = $rootRequestActionName;
+			$mainRequestActionName = $mainRequest->getControllerActionName();
+			if (!empty($mainRequestActionName)) {
+				$requestArguments['@action'] = $mainRequestActionName;
 			}
 
 		} elseif ($this->addQueryString === TRUE) {
@@ -409,18 +419,18 @@ class UriBuilder {
 			return;
 		}
 
-		$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+		$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 	}
 
 	/**
 	 * Get the path of the argument namespaces of all parent requests.
-	 * Example: rootrequest.subrequest.subsubrequest
+	 * Example: mainrequest.subrequest.subsubrequest
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request
 	 * @return string
 	 */
-	protected function getRequestNamespacePath(\TYPO3\FLOW3\Mvc\ActionRequest $request) {
-		if ($request instanceof \TYPO3\FLOW3\Mvc\Web\SubRequest) {
+	protected function getRequestNamespacePath($request) {
+		if (!$request instanceof \TYPO3\FLOW3\Http\Request) {
 			$parentPath = $this->getRequestNamespacePath($request->getParentRequest());
 			return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
 		} else {

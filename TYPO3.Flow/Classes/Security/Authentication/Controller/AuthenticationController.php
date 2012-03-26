@@ -55,10 +55,11 @@ class AuthenticationController extends \TYPO3\FLOW3\Mvc\Controller\ActionControl
 		if ($authenticated) {
 			$storedRequest = $this->securityContext->getInterceptedRequest();
 			if ($storedRequest !== NULL) {
-				$packageKey = $storedRequest->getControllerPackageKey();
-				$subpackageKey = $storedRequest->getControllerSubpackageKey();
+				$mainRequest = $storedRequest->getMainRequest();
+				$packageKey = $mainRequest->getControllerPackageKey();
+				$subpackageKey = $mainRequest->getControllerSubpackageKey();
 				if ($subpackageKey !== NULL) $packageKey .= '\\' . $subpackageKey;
-				$this->redirect($storedRequest->getControllerActionName(), $storedRequest->getControllerName(), $packageKey, $storedRequest->getArguments());
+				$this->redirect($mainRequest->getControllerActionName(), $mainRequest->getControllerName(), $packageKey, $mainRequest->getArguments());
 			}
 		} else {
 			return call_user_func(array($this, $this->errorMethodName));

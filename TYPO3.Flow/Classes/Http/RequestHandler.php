@@ -13,14 +13,17 @@ namespace TYPO3\FLOW3\Http;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\MVC\Web\Response;
+use TYPO3\FLOW3\Core\RequestHandlerInterface;
+use TYPO3\FLOW3\Configuration\ConfigurationManager;
+use TYPO3\FLOW3\Security\Exception\AccessDeniedException;
 
 /**
  * A request handler which can handle HTTP requests.
  *
  * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy("disable")
  */
-class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class RequestHandler implements RequestHandlerInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
@@ -28,9 +31,19 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
 	 */
-	protected $request;
+	protected $dispatcher;
+
+	/**
+	 * @var array
+	 */
+	protected $routesConfiguration;
+
+	/**
+	 * @var \TYPO3\FLOW3\Mvc\Routing\Router
+	 */
+	protected $router;
 
 	/**
 	 * Make exit() a closure so it can be manipulated during tests
@@ -75,37 +88,51 @@ class RequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 * @return void
 	 */
 	public function handleRequest() {
-		$sequence = $this->bootstrap->buildRuntimeSequence();
-		$sequence->invoke($this->bootstrap);
+		$this->boot();
+		$this->resolveDependencies();
 
-		$objectManager = $this->bootstrap->getObjectManager();
-
-		$this->request = $objectManager->get('TYPO3\FLOW3\MVC\Web\RequestBuilder')->build();
+		$request = Request::createFromEnvironment();
 		$response = new Response();
 
-		$dispatcher = $objectManager->get('TYPO3\FLOW3\MVC\Dispatcher');
-		$dispatcher->dispatch($this->request, $response);
+		$this->router->setRoutesConfiguration($this->routesConfiguration);
+		$actionRequest = $this->router->route($request);
+
+		$this->securityContext->injectRequest($actionRequest);
+
+		$this->dispatcher->dispatch($actionRequest, $response);
 
 		$response->send();
+
 		$this->bootstrap->shutdown('Runtime');
 		$this->exit->__invoke();
 	}
 
 	/**
-	 * Returns the top level request built by the request handler.
+	 * Boots up FLOW3 to runtime
 	 *
-	 * In most cases the dispatcher or other parts of the request-response chain
-	 * should be preferred for retrieving the current request, because sub requests
-	 * or simulated requests are built later in the process.
-	 *
-	 * If, however, the original top level request is wanted, this is the right
-	 * method for getting it.
-	 *
-	 * @return \TYPO3\FLOW3\MVC\RequestInterface The originally built web request
-	 * @api
+	 * @return void
 	 */
-	public function getRequest() {
-		return $this->request;
+	protected function boot() {
+		$sequence = $this->bootstrap->buildRuntimeSequence();
+		$sequence->invoke($this->bootstrap);
+	}
+
+	/**
+	 * Resolves a few dependencies of this request handler which can't be resolved
+	 * automatically due to the early stage of the boot process this request handler
+	 * is invoked at.
+	 *
+	 * @return void
+	 */
+	protected function resolveDependencies() {
+		$objectManager = $this->bootstrap->getObjectManager();
+		$this->dispatcher = $objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher');
+
+		$configurationManager = $objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager');
+		$this->routesConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$this->router = $objectManager->get('TYPO3\FLOW3\Mvc\Routing\Router');
+
+		$this->securityContext = $objectManager->get('TYPO3\FLOW3\Security\Context');
 	}
 
 }

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Property\DataType;
+namespace TYPO3\FLOW3\Http;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -10,7 +10,6 @@ namespace TYPO3\FLOW3\Property\DataType;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-
 
 /**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986

@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Client\Browser;
+
 /**
  * Functional tests for the ActionController
  */
@@ -19,16 +21,12 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function ignoreValidationAnnotationsAreHandledCorrectly() {
-		$arguments = array(
-			'argument' => array(
-				'name' => 'Foo',
-				'emailAddress' => '-invalid-'
-			)
-		);
-		$result = $this->sendWebRequest('Testing', 'TYPO3.FLOW3\Tests\Functional\Mvc\Fixtures', 'showObjectArgument', $arguments);
+	public function actionIsCalledAccordingToActionRequestAndSimpleResponseIsReturned() {
+		var_dump('x');
+		return '';
+#		$browser = new Browser();
+		$response = $browser->request('http://localhost/test/mvc/actioncontrollertesta/first');
 
-		$this->assertEquals('-invalid-', $result, 'Action should process with invalid argument');
 	}
 
 }

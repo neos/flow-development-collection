@@ -14,48 +14,17 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * An object argument with validation
+ * A controller fixture
+ *
+ * @FLOW3\Scope("singleton")
  */
-class TestObjectArgument {
-
-	/**
-	 * @var string
-	 * @FLOW3\Validate(type="NotEmpty")
-	 */
-	protected $name;
-
-	/**
-	 * @var string
-	 * @FLOW3\Validate(type="EmailAddress")
-	 */
-	protected $emailAddress;
+class ActionControllerTestAController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @return string
 	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getEmailAddress() {
-		return $this->emailAddress;
-	}
-
-	/**
-	 * @param string $emailAddress
-	 */
-	public function setEmailAddress($emailAddress) {
-		$this->emailAddress = $emailAddress;
+	public function firstAction() {
+		return 'First action was called';
 	}
 
 }

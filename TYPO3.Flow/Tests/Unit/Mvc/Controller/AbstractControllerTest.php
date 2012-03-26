@@ -11,10 +11,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Mvc\Controller\Arguments;
+use TYPO3\FLOW3\Http\Request as HttpRequest;
+use TYPO3\FLOW3\Http\Response as HttpResponse;
+use TYPO3\FLOW3\Http\Uri;
+use TYPO3\FLOW3\Mvc\FlashMessageContainer;
+use TYPO3\FLOW3\Error\Message;
+
 /**
  * Testcase for the MVC Abstract Controller
- *
- * @covers \TYPO3\FLOW3\Mvc\Controller\AbstractController
  */
 class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -22,372 +28,35 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @expectedException TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException
 	 */
-	public function processRequestWillThrowAnExceptionIfTheGivenRequestIsNotSupported() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
+	public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported() {
+		$request = new \TYPO3\FLOW3\Cli\Request();
+		$response = new \TYPO3\FLOW3\Cli\Response();
 
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('mapRequestArgumentsToControllerArguments'), array($this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface')), '', FALSE);
-		$controller->_set('supportedRequestTypes', array('TYPO3\Something\Request'));
-		$controller->processRequest($mockRequest, $mockResponse);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$controller->_call('initializeController', $request, $response);
 	}
 
 	/**
 	 * @test
 	 */
-	public function processRequestSetsTheDispatchedFlagOfTheRequestAndBuildsTheControllerContext() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
+	public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext() {
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
+		$response = new HttpResponse();
 
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
 
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
-		$controller->_set('arguments', new \TYPO3\FLOW3\Mvc\Controller\Arguments());
-		$controller->_set('flashMessageContainer', $this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer'));
-		$controller->processRequest($mockRequest, $mockResponse);
+		$this->assertFalse($request->isDispatched());
+		$controller->_call('initializeController', $request, $response);
 
-		$this->assertInstanceOf('TYPO3\FLOW3\Mvc\Controller\ControllerContext', $controller->getControllerContext());
+		$this->assertTrue($request->isDispatched());
+		$this->assertInstanceOf('TYPO3\FLOW3\Mvc\Controller\Arguments', $controller->_get('arguments'));
+		$this->assertSame($request, $controller->_get('uriBuilder')->getRequest());
+		$this->assertSame($request, $controller->getControllerContext()->getRequest());
 	}
 
 	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function forwardThrowsAStopActionException() {
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->will($this->returnValue(array()));
-		$mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE);
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('setDispatched')->with(FALSE);
-		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('persistenceManager', $mockPersistenceManager);
-		$controller->_call('forward', 'foo');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
-		$arguments = array('foo' => 'bar');
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->will($this->returnValue($arguments));
-
-		$mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE);
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
-		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
-		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with('Baz');
-		$mockRequest->expects($this->once())->method('setArguments')->with($arguments);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('persistenceManager', $mockPersistenceManager);
-		$controller->_call('forward', 'foo', 'Bar', 'Baz', $arguments);
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function forwardResetsArguments() {
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnValue(array()));
-		$mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array('removeAll'), array(), '', FALSE);
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('persistenceManager', $mockPersistenceManager);
-
-		$mockArguments->expects($this->once())->method('removeAll');
-
-		$controller->_call('forward', 'foo');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function forwardSetsSubpackageKeyIfNeeded() {
-		$arguments = array('foo' => 'bar');
-
-		$mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE);
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnValue($arguments));
-
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
-		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
-		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with('Baz');
-		$mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with('Blub');
-		$mockRequest->expects($this->once())->method('setArguments')->with($arguments);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('persistenceManager', $mockPersistenceManager);
-		$controller->_call('forward', 'foo', 'Bar', 'Baz\\Blub', $arguments);
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function forwardResetsSubpackageKeyIfNeeded() {
-		$arguments = array('foo' => 'bar');
-
-		$mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE);
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnValue($arguments));
-
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
-		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
-		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with('Baz');
-		$mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with(NULL);
-		$mockRequest->expects($this->once())->method('setArguments')->with($arguments);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('persistenceManager', $mockPersistenceManager);
-		$controller->_call('forward', 'foo', 'Bar', 'Baz', $arguments);
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function forwardRemovesObjectsFromArgumentsBeforePassingThemToRequest() {
-		$originalArguments = array('foo' => 'bar', 'bar' => array('someObject' => new \stdClass()));
-		$convertedArguments = array('foo' => 'bar', 'bar' => array('someObject' => array('__identity' => 'x')));
-
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->will($this->returnValue($convertedArguments));
-
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('setArguments')->with($convertedArguments);
-
-		$mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array('removeAll'), array(), '', FALSE);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('persistenceManager', $mockPersistenceManager);
-
-		$controller->_call('forward', 'someAction', 'SomeController', 'SomePackage', $originalArguments);
-	}
-
-	/**
-	 * @test
-	 */
-	public function redirectRedirectsToTheSpecifiedAction() {
-		$arguments = array('foo' => 'bar');
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
-
-		$mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
-		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
-		$controller->expects($this->once())->method('redirectToUri')->with('the uri');
-		$controller->_set('uriBuilder', $mockUriBuilder);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('response', $mockResponse);
-		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments);
-	}
-
-	/**
-	 * @test
-	 */
-	public function redirectUsesRequestFormatAsDefault() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->atLeastOnce())->method('getFormat')->will($this->returnValue('json'));
-
-		$mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
-		$mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->will($this->returnValue($mockUriBuilder));
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
-		$controller->_set('uriBuilder', $mockUriBuilder);
-		$controller->_set('request', $mockRequest);
-		$controller->_call('redirect', 'show');
-	}
-
-	/**
-	 * @test
-	 */
-	public function redirectUsesGivenFormat() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->never())->method('getFormat');
-
-		$mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
-		$mockUriBuilder->expects($this->once())->method('setFormat')->with('pdf')->will($this->returnValue($mockUriBuilder));
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
-		$controller->_set('uriBuilder', $mockUriBuilder);
-		$controller->_set('request', $mockRequest);
-		$controller->_call('redirect', 'show', NULL, NULL, NULL, 0, 303, 'pdf');
-	}
-
-	/**
-	 * @test
-	 */
-	public function redirectToUriSetsStatus() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
-		$mockResponse->expects($this->once())->method('setStatus')->with(303);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'));
-		$controller->_set('response', $mockResponse);
-		$controller->_set('request', $mockRequest);
-		try {
-			$controller->_call('redirectToUri', 'theUri', 1);
-		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $exception) {}
-	}
-
-
-	/**
-	 * @test
-	 */
-	public function redirectToUriUsesLocationHeaderOnlyIfDelayIsZero() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
-		$mockResponse->expects($this->never())->method('setHeader');
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'));
-		$controller->_set('response', $mockResponse);
-		$controller->_set('request', $mockRequest);
-		try {
-			$controller->_call('redirectToUri', 'theUri', 1);
-		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $exception) {}
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\StopActionException
-	 */
-	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
-		$mockResponse->expects($this->once())->method('setStatus')->with(404, 'File Really Not Found');
-		$mockResponse->expects($this->once())->method('setContent')->with('<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('response', $mockResponse);
-
-		$controller->_call('throwStatus', 404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
-	}
-
-	/**
-	 * @test
-	 */
-	public function initializeControllerArgumentsBaseValidatorsRegistersValidatorsDeclaredInTheArgumentModels() {
-		$mockValidators = array(
-			'foo' => $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface'),
-		);
-
-		$mockValidatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
-		$mockValidatorResolver->expects($this->at(0))->method('getBaseValidatorConjunction')->with('FooType')->will($this->returnValue($mockValidators['foo']));
-		$mockValidatorResolver->expects($this->at(1))->method('getBaseValidatorConjunction')->with('BarType')->will($this->returnValue(NULL));
-
-		$mockArgumentFoo = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Argument', array(), array('foo', 'FooType'));
-		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('FooType'));
-		$mockArgumentFoo->expects($this->once())->method('setValidator')->with($mockValidators['foo']);
-
-		$mockArgumentBar = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Argument', array(), array('bar', 'barType'));
-		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('BarType'));
-		$mockArgumentBar->expects($this->never())->method('setValidator');
-
-		$mockArguments = new \TYPO3\FLOW3\Mvc\Controller\Arguments();
-		$mockArguments->addArgument($mockArgumentFoo);
-		$mockArguments->addArgument($mockArgumentBar);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('validatorResolver', $mockValidatorResolver);
-		$controller->_call('initializeControllerArgumentsBaseValidators');
-	}
-
-	/**
-	 * @test
-	 */
-	public function mapRequestArgumentsToControllerArgumentsShouldPutRequestDataToArgumentObject() {
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-
-		$argumentFoo = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Argument', array('setValue'), array('foo', 'string'));
-		$argumentFoo->setRequired(FALSE);
-		$argumentBar = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Argument', array('setValue'), array('bar', 'string'));
-		$argumentBar->setRequired(FALSE);
-
-		$argumentBar->expects($this->once())->method('setValue')->with('theBarArgumentValue');
-
-		$arguments = new \TYPO3\FLOW3\Mvc\Controller\Arguments($mockObjectManager);
-		$arguments->addArgument($argumentFoo);
-		$arguments->addArgument($argumentBar);
-
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->at(0))->method('hasArgument')->with('foo')->will($this->returnValue(FALSE));
-		$mockRequest->expects($this->at(1))->method('hasArgument')->with('bar')->will($this->returnValue(TRUE));
-		$mockRequest->expects($this->at(2))->method('getArgument')->with('bar')->will($this->returnValue('theBarArgumentValue'));
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-
-		$controller->_set('arguments', $arguments);
-		$controller->_set('request', $mockRequest);
-
-		$controller->_call('mapRequestArgumentsToControllerArguments');
-	}
-
-	/**
-	 * @test
-	 * @expectedException TYPO3\FLOW3\Mvc\Exception\RequiredArgumentMissingException
-	 */
-	public function mapRequestArgumentsToControllerArgumentsShouldThrowExceptionIfRequiredArgumentWasNotSet() {
-		$argumentFoo = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Argument', array('setValue'), array('foo', 'string'));
-		$argumentFoo->setRequired(TRUE);
-
-		$arguments = new \TYPO3\FLOW3\Mvc\Controller\Arguments();
-		$arguments->addArgument($argumentFoo);
-
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->at(0))->method('hasArgument')->with('foo')->will($this->returnValue(FALSE));
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-
-		$controller->_set('arguments', $arguments);
-		$controller->_set('request', $mockRequest);
-
-		$controller->_call('mapRequestArgumentsToControllerArguments');
-	}
-
-	/**
-	 * @test
-	 */
-	public function addFlashMessageCreatesMessageByDefaultAndAddsItToFlashMessageContainer() {
-		$expectedMessage = new \TYPO3\FLOW3\Error\Message('MessageBody');
-		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer');
-		$mockFlashMessageContainer->expects($this->once())->method('addMessage')->with($expectedMessage);
-
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
-		$controller->_set('flashMessageContainer', $mockFlashMessageContainer);
-		$controller->_call('addFlashMessage', 'MessageBody');
-	}
-
-	/**
-	 * @test
+	 * @return array
 	 */
 	public function addFlashMessageDataProvider() {
 		return array(
@@ -419,12 +88,341 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider addFlashMessageDataProvider()
 	 */
 	public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = \TYPO3\FLOW3\Error\Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = NULL) {
-		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer');
-		$mockFlashMessageContainer->expects($this->once())->method('addMessage')->with($expectedMessage);
+		$flashMessageContainer = new FlashMessageContainer();
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
 
-		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
-		$controller->_set('flashMessageContainer', $mockFlashMessageContainer);
-		$controller->_call('addFlashMessage', $messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
+		$controller->addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
+		$this->assertEquals(array($expectedMessage), $flashMessageContainer->getMessages());
 	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function addFlashMessageThrowsExceptionOnInvalidMessageBody() {
+		$flashMessageContainer = new FlashMessageContainer();
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', $flashMessageContainer);
+
+		$controller->addFlashMessage(new \stdClass());
+	}
+
+	/**
+	 * @test
+	 */
+	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
+
+		$originalRequest = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
+		$this->inject($originalRequest, 'objectManager', $mockObjectManager);
+		$response = new HttpResponse();
+
+		$this->inject($originalRequest, 'objectManager', $mockObjectManager);
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+		$controller->_call('initializeController', $originalRequest, $response);
+
+		try {
+			$controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', array('foo' => 'bar'));
+		} catch (\TYPO3\FLOW3\Mvc\Exception\ForwardException $exception) {
+		}
+
+		if (!isset($exception)) {
+			$this->fail('ForwardException was not thrown after calling forward()');
+		}
+		$nextRequest = $exception->getNextRequest();
+
+		$this->assertFalse($nextRequest->isDispatched());
+		$this->assertEquals('MyPackage', $nextRequest->getControllerPackageKey());
+		$this->assertEquals('theTarget', $nextRequest->getControllerActionName());
+		$this->assertEquals('bar', $nextRequest->getArgument('foo'));
+
+			// all arguments of the current controller must be reset, in case the controller is called again later:
+		$arguments = $controller->_get('arguments');
+		$this->assertFalse($arguments->hasArgument('foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function forwardSetsAndResetsSubpackageKeyIfNeeded() {
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnArgument(0));
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
+
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
+		$this->inject($request, 'objectManager', $mockObjectManager);
+		$response = new HttpResponse();
+
+		$this->inject($request, 'objectManager', $mockObjectManager);
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+		$controller->_call('initializeController', $request, $response);
+
+		try {
+			$controller->_call('forward', 'theTarget', 'Bar', 'MyPackage\MySubPackage', array('foo' => 'bar'));
+		} catch (\TYPO3\FLOW3\Mvc\Exception\ForwardException $exception) {
+		}
+
+		$nextRequest = $exception->getNextRequest();
+
+		$this->assertEquals('MyPackage', $nextRequest->getControllerPackageKey());
+		$this->assertEquals('MySubPackage', $nextRequest->getControllerSubPackageKey());
+		$this->assertEquals('theTarget', $nextRequest->getControllerActionName());
+		$this->assertEquals('bar', $nextRequest->getArgument('foo'));
+
+		try {
+			$controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', array('foo' => 'bar'));
+		} catch (\TYPO3\FLOW3\Mvc\Exception\ForwardException $exception) {
+		}
+
+		$nextRequest = $exception->getNextRequest();
+
+		$this->assertEquals('MyPackage', $nextRequest->getControllerPackageKey());
+		$this->assertEquals(NULL, $nextRequest->getControllerSubPackageKey());
+		$this->assertEquals('theTarget', $nextRequest->getControllerActionName());
+		$this->assertEquals('bar', $nextRequest->getArgument('foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function forwardConvertsObjectsFoundInArgumentsIntoIdentifiersBeforePassingThemToRequest() {
+		$originalArguments = array('foo' => 'bar', 'bar' => array('someObject' => new \stdClass()));
+		$convertedArguments = array('foo' => 'bar', 'bar' => array('someObject' => array('__identity' => 'x')));
+
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->will($this->returnValue($convertedArguments));
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
+
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
+		$this->inject($request, 'objectManager', $mockObjectManager);
+		$response = new HttpResponse();
+
+		$this->inject($request, 'objectManager', $mockObjectManager);
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+		$controller->_call('initializeController', $request, $response);
+
+		try {
+			$controller->_call('forward', 'other', 'Bar', 'MyPackage', $originalArguments);
+		} catch (\TYPO3\FLOW3\Mvc\Exception\ForwardException $exception) {
+		}
+
+		$nextRequest = $exception->getNextRequest();
+		$this->assertEquals($convertedArguments, $nextRequest->getArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function redirectRedirectsToTheSpecifiedAction() {
+		$arguments = array('foo' => 'bar');
+
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
+		$response = new HttpResponse();
+
+		$mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('setFormat')->with('doc')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest', 'redirectToUri'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+		$this->inject($controller, 'uriBuilder', $mockUriBuilder);
+
+		$controller->expects($this->once())->method('redirectToUri')->with('the uri');
+		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments, 0, 303, 'doc');
+	}
+
+	/**
+	 * @test
+	 */
+	public function redirectUsesRequestFormatAsDefaultAndUnsetsSubPackageKeyIfNeccessary() {
+		$arguments = array('foo' => 'bar');
+
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo.json')));
+		$request->setFormat('json');
+		$response = new HttpResponse();
+
+		$mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', NULL)->will($this->returnValue('the uri'));
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest', 'redirectToUri'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+		$this->inject($controller, 'uriBuilder', $mockUriBuilder);
+
+		$controller->expects($this->once())->method('redirectToUri')->with('the uri');
+		$controller->_call('redirect', 'show', 'Stuff', 'Super', $arguments);
+	}
+
+	/**
+	 * @test
+	 */
+	public function redirectToUriSetsStatus() {
+		$uri = 'http://flow3.typo3.org/awesomeness';
+
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo.json')));
+		$response = new HttpResponse();
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+
+		$exceptionThrown = FALSE;
+		try {
+			$controller->_call('redirectToUri', $uri);
+		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $e) {
+			$exceptionThrown = TRUE;
+		}
+
+		if (!$exceptionThrown) {
+			$this->fail('No StopActionException thrown.');
+		}
+
+		$this->assertEquals('303', substr($response->getStatus(), 0, 3));
+		$this->assertEquals($uri, $response->getHeader('Location'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function redirectToUriUsesLocationHeaderOnlyIfDelayIsZero() {
+		$uri = 'http://flow3.typo3.org/awesomeness';
+
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo.json')));
+		$response = new HttpResponse();
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+
+		try {
+			$controller->_call('redirectToUri', $uri, 10, 301);
+		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $e) {
+		}
+
+		$this->assertEquals('301', substr($response->getStatus(), 0, 3));
+		$this->assertNull($response->getHeader('Location'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo.json')));
+		$response = new HttpResponse();
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+
+		$message = '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>';
+
+		$exceptionThrown = FALSE;
+		try {
+			$controller->_call('throwStatus', 404, 'File Really Not Found', $message);
+		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $e) {
+			$exceptionThrown = TRUE;
+		}
+
+		if (!$exceptionThrown) {
+			$this->fail('No StopActionException thrown.');
+		}
+
+		$this->assertEquals('404 File Really Not Found', $response->getStatus());
+		$this->assertEquals($message, $response->getContent());
+	}
+
+	/**
+	 * @test
+	 */
+	public function throwStatusSetsTheStatusMessageAsContentIfNoFurtherContentIsProvided() {
+		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo.json')));
+		$response = new HttpResponse();
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+
+		try {
+			$controller->_call('throwStatus', 404);
+		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $e) {
+		}
+
+		$this->assertEquals('404 Not Found', $response->getStatus());
+		$this->assertEquals('404 Not Found', $response->getContent());
+	}
+
+	/**
+	 * @test
+	 */
+	public function mapRequestArgumentsToControllerArgumentsDoesJustThat() {
+		$mockPropertyMapper = $this->getMock('TYPO3\FLOW3\Property\PropertyMapper', array('convert'), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
+
+		$httpRequest = HttpRequest::create(new Uri('http://localhost/?foo=bar&baz=quux'));
+		$request = $httpRequest->createActionRequest();
+		$response = new HttpResponse();
+
+		$controllerArguments = new Arguments();
+		$controllerArguments->addNewArgument('foo', 'string', TRUE);
+		$controllerArguments->addNewArgument('baz', 'string', TRUE);
+
+		foreach ($controllerArguments as $controllerArgument) {
+			$this->inject($controllerArgument, 'propertyMapper', $mockPropertyMapper);
+		}
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+		$controller->_set('arguments', $controllerArguments);
+
+		$controller->_call('mapRequestArgumentsToControllerArguments');
+		$this->assertEquals('bar', $controllerArguments['foo']->getValue());
+		$this->assertEquals('quux', $controllerArguments['baz']->getValue());
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\FLOW3\Mvc\Exception\RequiredArgumentMissingException
+	 */
+	public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet() {
+		$httpRequest = HttpRequest::create(new Uri('http://localhost/'));
+		$request = $httpRequest->createActionRequest();
+		$response = new HttpResponse();
+
+		$controllerArguments = new Arguments();
+		$controllerArguments->addNewArgument('foo', 'string', TRUE);
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\AbstractController', array('processRequest'));
+		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+		$controller->_call('initializeController', $request, $response);
+		$controller->_set('arguments', $controllerArguments);
+
+		$controller->_call('mapRequestArgumentsToControllerArguments');
+	}
+
 }
 ?>

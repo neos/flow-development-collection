@@ -66,7 +66,7 @@ class RequestFilter {
 	 * @return boolean Returns TRUE if the filter matched, FALSE otherwise
 	 */
 	public function filterRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		if($this->pattern->canMatch($request) && $this->pattern->matchRequest($request)) {
+		if($this->pattern->matchRequest($request)) {
 			$this->securityInterceptor->invoke();
 			return TRUE;
 		}

@@ -1,0 +1,34 @@
+#                                                                        #
+# Routes leading to controllers used in functional tests                 #
+#                                                                        #
+
+##
+# Routes for the Http functional tests
+
+-
+  name: 'Functional Test: Http - FooController'
+  uriPattern: 'test/http/foo'
+  defaults:
+    '@package':    'TYPO3.FLOW3'
+    '@subpackage': 'Tests\Functional\Http\Fixtures'
+    '@controller': 'Foo'
+
+##
+# Routes for the Mvc functional tests
+
+-
+  name: 'Functional Test: MVC - RoutingTestControllerA'
+  uriPattern: 'test/mvc/routingtesta/{bar}/{baz}'
+  defaults:
+    '@package':    'TYPO3.FLOW3'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'RoutingTestA'
+    '@action':     'barAndBaz'
+
+-
+  name: 'Functional Test: MVC - ActionControllerTestControllerAController'
+  uriPattern: 'test/mvc/actioncontrollertesta/{@action}'
+  defaults:
+    '@package':    'TYPO3.FLOW3'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'ActionControllerTestA'

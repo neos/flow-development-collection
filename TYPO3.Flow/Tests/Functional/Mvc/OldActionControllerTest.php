@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
+namespace TYPO3\FLOW3\Tests\Functional\Mvc;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -11,95 +11,29 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Mvc\Controller\FlashMessage;
-use \TYPO3\FLOW3\Error\Message;
-use \TYPO3\FLOW3\Error\Notice;
-use \TYPO3\FLOW3\Error\Warning;
-use \TYPO3\FLOW3\Error\Error;
-
 /**
- * Testcase for the MVC Action Controller
- *
- * @covers \TYPO3\FLOW3\Mvc\Controller\ActionController
+ * Old Functional tests for the ActionController
  */
-class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
-
-	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\Arguments
-	 */
-	protected $mockArguments;
-
-	/**
-	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
-	 */
-	protected $mockRequest;
-
-	/**
-	 * @var \TYPO3\FLOW3\Mvc\Web\Response
-	 */
-	protected $mockResponse;
-
-	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $mockReflectionService;
-
-	/**
-	 * @var \TYPO3\FLOW3\Mvc\FlashMessageContainer
-	 */
-	protected $mockFlashMessageContainer;
-
-	public function setUp() {
-		$this->mockArguments = $this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array('getValidationResults'), array(), '', FALSE);
-		$this->mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$this->mockResponse = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
-		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
-		$this->mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer', array(), array(), '', FALSE);
-	}
+class OldActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
 	 */
-	public function processRequestSticksToSpecifiedSequence() {
-		$this->mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
-		$this->mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue(NULL));
-		$this->mockRequest->expects($this->once())->method('setFormat')->with('detectedformat');
+	public function ignoreValidationAnnotationsAreHandledCorrectly() {
+		$this->markTestSkipped('Needs refactoring');
+		$arguments = array(
+			'argument' => array(
+				'name' => 'Foo',
+				'emailAddress' => '-invalid-'
+			)
+		);
+		$result = $this->sendWebRequest('Testing', 'TYPO3.FLOW3\Tests\Functional\Mvc\Fixtures', 'showObjectArgument', $arguments);
 
-		$mockView = $this->getMock('TYPO3\FLOW3\Mvc\View\ViewInterface');
-
-		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\ActionController', array(
-			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments',
-			'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext',
-			'detectFormat', 'resolveView', 'initializeView', 'callActionMethod'),
-			array(), '', TRUE);
-		$mockController->expects($this->at(0))->method('resolveActionMethodName')->will($this->returnValue('fooAction'));
-		$mockController->expects($this->at(1))->method('initializeActionMethodArguments');
-		$mockController->expects($this->at(2))->method('initializeActionMethodValidators');
-		$mockController->expects($this->at(3))->method('initializeAction');
-		$mockController->expects($this->at(4))->method('initializeFooAction');
-		$mockController->expects($this->at(5))->method('mapRequestArgumentsToControllerArguments');
-		$mockController->expects($this->at(6))->method('detectFormat')->will($this->returnValue('detectedformat'));
-		$mockController->expects($this->at(7))->method('resolveView')->will($this->returnValue($mockView));
-		$mockController->expects($this->at(8))->method('initializeView');
-		$mockController->expects($this->at(9))->method('callActionMethod');
-
-		$mockController->_set('flashMessageContainer', $this->mockFlashMessageContainer);
-
-		$mockController->processRequest($this->mockRequest, $this->mockResponse);
-
-		$this->assertSame($this->mockRequest, $mockController->_get('uriBuilder')->getRequest());
-		$this->assertSame($this->mockRequest, $mockController->_get('request'));
-		$this->assertSame($this->mockResponse, $mockController->_get('response'));
+		$this->assertEquals('-invalid-', $result, 'Action should process with invalid argument');
 	}
 
-	protected function injectDependenciesIntoController($mockController) {
-		$mockController->_set('request', $this->mockRequest);
-		$mockController->_set('response', $this->mockResponse);
-		$mockController->_set('arguments', $this->mockArguments);
-		$mockController->_set('reflectionService', $this->mockReflectionService);
-		$mockController->_set('flashMessageContainer', $this->mockFlashMessageContainer);
-		$mockController->_set('actionMethodName', 'fooAction');
-	}
+
+
 	/**
 	 * @test
 	 */

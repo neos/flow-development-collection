@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Security\RequestPatternInterface;
 
 /**
  * An abstract authentication token.
@@ -44,7 +45,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	/**
 	 * @var array
 	 */
-	protected $requestPatterns = NULL;
+	protected $requestPatterns = array();
 
 	/**
 	 * The authentication entry point
@@ -100,23 +101,26 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	}
 
 	/**
-	 * Returns TRUE if \TYPO3\FLOW3\Security\RequestPattern were set
+	 * Returns TRUE if any request pattern has been defined
 	 *
-	 * @return boolean True if a \TYPO3\FLOW3\Security\RequestPatternInterface was set
+	 * @return boolean
 	 */
 	public function hasRequestPatterns() {
-		if ($this->requestPatterns != NULL) return TRUE;
-		return FALSE;
+		return ($this->requestPatterns !== array());
 	}
 
 	/**
 	 * Sets request patterns
 	 *
-	 * @param array $requestPatterns Array of \TYPO3\FLOW3\Security\RequestPattern to be set
+	 * @param array $requestPatterns Array of RequestPatternInterface to be set
 	 * @return void
-	 * @see hasRequestPattern()
 	 */
 	public function setRequestPatterns(array $requestPatterns) {
+		foreach ($requestPatterns as $requestPattern) {
+			if (!$requestPattern instanceof RequestPatternInterface) {
+				throw new \InvalidArgumentException(sprintf('Invalid request pattern passed to token of type "%s"', get_class($this)), 1327398366);
+			}
+		}
 		$this->requestPatterns = $requestPatterns;
 	}
 
@@ -196,7 +200,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	 *
 	 * @return string The class name
 	 */
-	public function  __toString() {
+	public function __toString() {
 		return get_class($this);
 	}
 

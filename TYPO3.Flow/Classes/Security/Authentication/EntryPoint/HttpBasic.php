@@ -11,23 +11,25 @@ namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Response;
+
 /**
  * An authentication entry point, that sends an HTTP header to start HTTP Basic authentication.
  */
-class HttpBasic extends \TYPO3\FLOW3\Security\Authentication\EntryPoint\AbstractEntryPoint {
+class HttpBasic extends AbstractEntryPoint {
 
 	/**
 	 * Starts the authentication: Send HTTP header
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The current request
-	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The current response
+	 * @param \TYPO3\FLOW3\Http\Request $request The current request
+	 * @param \TYPO3\FLOW3\Http\Response $response The current response
 	 * @return void
 	 */
-	public function startAuthentication(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
-		if (!$this->canForward($request)) throw new \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException('Unsupported request type for authentication entry point given.', 1237282465);
+	public function startAuthentication(Request $request, Response $response) {
 		$response->setStatus(401);
-		$response->setHeader('WWW-Authenticate', 'Basic realm="' . (isset($this->options['realm']) ? $this->options['realm'] : 'Authentication required!') . '"');
-		$response->setContent('Authorization required!');
+		$response->setHeader('WWW-Authenticate', 'Basic realm="' . (isset($this->options['realm']) ? $this->options['realm'] : sha1(FLOW3_PATH_ROOT)) . '"');
+		$response->setContent('Authorization required');
 	}
 
 }

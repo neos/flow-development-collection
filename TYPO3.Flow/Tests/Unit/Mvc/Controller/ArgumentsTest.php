@@ -76,6 +76,7 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			$arguments->getArgument('someArgument');
 			$this->fail('getArgument() did not throw an exception although the specified argument does not exist.');
 		} catch (\TYPO3\FLOW3\Mvc\Exception\NoSuchArgumentException $exception) {
+			$this->assertTrue(TRUE);
 		}
 	}
 
@@ -127,14 +128,6 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame($addedArgument, $retrievedArgument, 'The added and the retrieved argument are not the same.');
 
 		$this->assertEquals('dummyName', $addedArgument->getName(), 'The name of the added argument is not as expected.');
-	}
-
-	/**
-	 * @test
-	 */
-	public function addNewArgumentAssumesTextDataTypeByDefault() {
-		$arguments = new Arguments();
-		$arguments->addNewArgument('dummyName');
 	}
 
 	/**

@@ -17,7 +17,6 @@ use TYPO3\FLOW3\Http\Request as HttpRequest;
 
 /**
  * Testcase for the MVC Request class
- *
  */
 class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -77,6 +76,20 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function isMainRequestChecksIfTheParentRequestIsNotAnHttpRequest() {
+		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
+		$actionRequest = new ActionRequest($httpRequest);
+		$anotherActionRequest = new ActionRequest($actionRequest);
+		$yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
+
+		$this->assertTrue($actionRequest->isMainRequest());
+		$this->assertFalse($anotherActionRequest->isMainRequest());
+		$this->assertFalse($yetAnotherActionRequest->isMainRequest());
+	}
+
+	/**
+	 * @test
+	 */
 	public function requestIsDispatchable() {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 		$actionRequest = new ActionRequest($httpRequest);
@@ -120,7 +133,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('somepackage\Package')
 				->will($this->returnValue('SomePackage\Package'));
 		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-				->will($this->returnValue(NULL));
+				->will($this->returnValue(FALSE));
 
 		$actionRequest = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\ActionRequest', array('dummy'), array($httpRequest));
 		$actionRequest->_set('objectManager', $mockObjectManager);

@@ -11,6 +11,11 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Uri;
+use TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic;
+use TYPO3\FLOW3\Security\Authentication\TokenInterface;
+
 /**
  * Testcase for username/password HTTP Basic Auth authentication token
  *
@@ -19,68 +24,50 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function credentialsAreSetCorrectlyFromRequestHeadersArguments() {
-		$requestHeaders = array(
-			'User' => 'admin',
-			'Pw' => 'password'
+		$serverEnvironment = array(
+			'PHP_AUTH_USER' => 'robert',
+			'PHP_AUTH_PW' => 'mysecretpassword, containing a : colon ;-)'
 		);
 
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
+		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), array(), $serverEnvironment);
+		$token = new UsernamePasswordHttpBasic();
+		$token->updateCredentials($request);
 
-		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
-		$token->_set('environment', $mockEnvironment);
-
-		$token->updateCredentials($mockRequest);
-
-		$expectedCredentials = array ('username' => 'admin', 'password' => 'password');
-		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
+		$expectedCredentials = array ('username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)');
+		$this->assertEquals($expectedCredentials, $token->getCredentials());
+		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}
 
 	/**
 	 * @test
-	 * @category unit
 	 */
-	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
-		$requestHeaders = array(
-			'User' => 'admin',
-			'Pw' => 'password'
+	public function credentialsAreSetCorrectlyForCGI() {
+		$expectedCredentials = array ('username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)');
+
+		$serverEnvironment = array(
+			'REDIRECT_REMOTE_AUTHORIZATION' => 'Basic ' . base64_encode($expectedCredentials['username'] . ':' . $expectedCredentials['password'])
 		);
 
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
+		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), array(), $serverEnvironment);
+		$token = new UsernamePasswordHttpBasic();
+		$token->updateCredentials($request);
 
-		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
-		$token->_set('environment', $mockEnvironment);
-
-		$token->updateCredentials($mockRequest);
-
-		$this->assertSame(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertEquals($expectedCredentials, $token->getCredentials());
+		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived() {
-		$requestHeaders = array(
-			'Custom-Header' => 'xyt'
-		);
+		$request = Request::create(new Uri('http://foo.com'));
 
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
+		$token = new UsernamePasswordHttpBasic();
+		$token->updateCredentials($request);
 
-		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
-		$token->_set('environment', $mockEnvironment);
-
-		$token->updateCredentials($mockRequest);
-
-		$this->assertSame(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
+		$this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
 	}
 }
 ?>

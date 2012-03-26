@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Fixture\CLI\Command;
+namespace TYPO3\FLOW3\Http;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -11,24 +11,15 @@ namespace TYPO3\FLOW3\Mvc\Fixture\CLI\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * A mock CLI Command
- */
-class MockACommandController extends \TYPO3\FLOW3\Cli\Command {
-
-	public function fooCommand() {
-	}
-
-	public function barCommand($someArgument) {
-	}
-}
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * Another mock CLI Command
+ * An HTTP client
+ *
+ * @api
  */
-class MockBCommandController extends \TYPO3\FLOW3\Cli\Command {
+class Client {
 
-	public function bazCommand() {
-	}
 }
+
 ?>

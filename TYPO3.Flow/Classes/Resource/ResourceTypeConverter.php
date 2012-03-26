@@ -75,6 +75,9 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 	 * @return object An object or an instance of TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		if (!isset($source['error'])) {
+			return new \TYPO3\FLOW3\Error\Error('Could not convert the given input into into a Resource object because the source array is corrupt.' , 1332765679);
+		}
 		if ($source['error'] === \UPLOAD_ERR_NO_FILE) {
 			if (isset($source['submittedFile']) && isset($source['submittedFile']['fileName']) && isset($source['submittedFile']['resourcePointer'])) {
 				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'TYPO3\FLOW3\Resource\ResourcePointer');
@@ -88,7 +91,9 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 			return NULL;
 		}
 
-		if ($source['error'] !== \UPLOAD_ERR_OK) return new \TYPO3\FLOW3\Error\Error(\TYPO3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+		if ($source['error'] !== \UPLOAD_ERR_OK) {
+			return new \TYPO3\FLOW3\Error\Error(\TYPO3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+		}
 
 		if (isset($this->convertedResources[$source['tmp_name']])) {
 			return $this->convertedResources[$source['tmp_name']];

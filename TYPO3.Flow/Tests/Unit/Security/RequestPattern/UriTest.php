@@ -11,60 +11,24 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\RequestPattern;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+
 /**
  * Testcase for the URI request pattern
- *
  */
 class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
-	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 */
-	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
-		$cliRequest = $this->getMock('TYPO3\FLOW3\Cli\Request');
-
-		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
-		$requestPattern->matchRequest($cliRequest);
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 */
-	public function canMatchReturnsTrueForASupportedRequestType() {
-		$webRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-
-		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
-		$this->assertTrue($requestPattern->canMatch($webRequest));
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 */
-	public function canMatchReturnsFalseForAnUnsupportedRequestType() {
-		$cliRequest = $this->getMock('TYPO3\FLOW3\Cli\Request');
-
-		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
-		$this->assertFalse($requestPattern->canMatch($cliRequest));
-	}
-
-	/**
-	 * @test
-	 * @category unit
 	 */
 	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$uri = $this->getMock('TYPO3\FLOW3\Http\Uri', array(), array(), '', FALSE);
-
-		$request->expects($this->once())->method('getRequestUri')->will($this->returnValue($uri));
-		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));
+		$uri = new \TYPO3\FLOW3\Http\Uri('http://typo3.org/some/nice/path/to/index.php');
+		$request = Request::create($uri)->createActionRequest();
 
 		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$requestPattern->setPattern('/some/nice/.*');
 
+		$this->assertEquals('/some/nice/.*', $requestPattern->getPattern());
 		$this->assertTrue($requestPattern->matchRequest($request));
 	}
 }

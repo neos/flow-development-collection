@@ -11,50 +11,43 @@ namespace TYPO3\FLOW3\Mvc;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Http\Uri;
-
+use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Http\Uri;
+use TYPO3\FLOW3\Http\Request as HttpRequest;
 
 /**
- * Represents a web request.
+ * Represents an internal request targeted to a controller action
  *
  * @api
  */
 class ActionRequest implements RequestInterface {
 
 	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
 	 * Package key of the controller which is supposed to handle this request.
-	 *
 	 * @var string
 	 */
 	protected $controllerPackageKey = NULL;
 
 	/**
 	 * Subpackage key of the controller which is supposed to handle this request.
-	 *
 	 * @var string
 	 */
 	protected $controllerSubpackageKey = NULL;
 
 	/**
 	 * Object name of the controller which is supposed to handle this request.
-	 *
 	 * @var string
 	 */
 	protected $controllerName = NULL;
 
 	/**
 	 * Name of the action the controller is supposed to take.
-	 *
 	 * @var string
 	 */
 	protected $controllerActionName = NULL;
@@ -62,7 +55,6 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * The arguments for this request. They must be only simple types, no
 	 * objects allowed.
-	 *
 	 * @var array
 	 */
 	protected $arguments = array();
@@ -71,101 +63,145 @@ class ActionRequest implements RequestInterface {
 	 * Framework-internal arguments for this request, such as __referrer.
 	 * All framework-internal arguments start with double underscore (__),
 	 * and are only used from within the framework. Not for user consumption.
-	 * Internal Arguments can be objects, in contrast to public arguments
-	 *
+	 * Internal Arguments can be objects, in contrast to public arguments.
 	 * @var array
 	 */
 	protected $internalArguments = array();
 
 	/**
-	 * The requested representation format
-	 *
+	 * Arguments and configuration for plugins – including widgets – which are
+	 * sub controllers to the controller referred to by this request.
+	 * @var array
+	 */
+	protected $pluginArguments = array();
+
+	/**
+	 * An optional namespace for arguments of this request. Used, for example, in
+	 * plugins and widgets.
 	 * @var string
 	 */
-	protected $format;
+	protected $argumentNamespace = '';
+
+	/**
+	 * The requested representation format
+	 * @var string
+	 */
+	protected $format = 'html';
 
 	/**
 	 * If this request has been changed and needs to be dispatched again
-	 *
 	 * @var boolean
 	 */
 	protected $dispatched = FALSE;
 
 	/**
-	 * If this request is a forward because of an error, the original request gets filled.
-	 *
+	 * The parent request – either another ActionRequest or Http Request
+	 * @var object
+	 */
+	protected $parentRequest;
+
+	/**
+	 * Cached pointer to the root request (usually an HTTP request)
+	 * @var object
+	 */
+	protected $rootRequest;
+
+	/**
+	 * Cached pointer to a request referring to this one (if any)
 	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
 	 */
-	protected $originalRequest = NULL;
+	protected $referringRequest;
 
 	/**
-	 * If the request is a foreward because of an error, these mapping results get filled here.
+	 * Constructs this action request
 	 *
-	 * @var \TYPO3\FLOW3\Error\Result
+	 * @param object $parentRequest Either an HTTP request or another ActionRequest
+	 * @api
 	 */
-	protected $originalRequestMappingResults = NULL;
-
-	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\RouterInterface
-	 */
-	protected $router;
-
-	/**
-	 * Contains the request method
-	 * @var string
-	 */
-	protected $method = 'GET';
-
-	/**
-	 * The request URI
-	 * @var \TYPO3\FLOW3\Http\Uri
-	 */
-	protected $requestUri;
-
-	/**
-	 * The base URI for this request - ie. the host and path leading to which all FLOW3 URI paths are relative
-	 *
-	 * @var \TYPO3\FLOW3\Http\Uri
-	 */
-	protected $baseUri;
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the package manager
-	 *
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager A reference to the package manager
-	 * @return void
-	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Mvc\Routing\RouterInterface $router
-	 * @return void
-	 */
-	public function injectRouter(\TYPO3\FLOW3\Mvc\Routing\RouterInterface $router) {
-		$this->router = $router;
-	}
-
-	/**
-	 * @param object $parentRequest
-	 */
-	public function __construct($parentRequest = NULL) {
+	public function __construct($parentRequest) {
+		if (!$parentRequest instanceof HttpRequest && !$parentRequest instanceof ActionRequest) {
+			throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
+		}
 		$this->parentRequest = $parentRequest;
 	}
 
+	/**
+	 * Returns the parent request
+	 *
+	 * @return object
+	 * @api
+	 */
 	public function getParentRequest() {
 		return $this->parentRequest;
+	}
+
+	/**
+	 * Returns the top level request: the HTTP request object
+	 *
+	 * @return \TYPO3\FLOW3\Http\Request
+	 * @api
+	 */
+	public function getHttpRequest() {
+		if ($this->rootRequest === NULL) {
+			$this->rootRequest = ($this->parentRequest instanceof HttpRequest) ? $this->parentRequest : $this->parentRequest->getHttpRequest();
+		}
+		return $this->rootRequest;
+	}
+
+	/**
+	 * Returns the top level ActionRequest: the one just below the HTTP request
+	 *
+	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @api
+	 */
+	public function getMainRequest() {
+		return ($this->parentRequest instanceof HttpRequest) ? $this : $this->parentRequest->getMainRequest();
+	}
+
+	/**
+	 * Checks if this request is the uppermost ActionRequest, just one below the
+	 * HTTP request.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isMainRequest() {
+		return ($this->parentRequest instanceof HttpRequest);
+	}
+
+	/**
+	 * Returns an ActionRequest which referred to this request, if any.
+	 *
+	 * The referring request is not set or determined automatically but must be
+	 * explictly set through the corresponding internal argument "__referrer".
+	 * This mechanism is used by FLOW3's form and validation mechanisms.
+	 *
+	 * @return Request the referring request, or NULL if no referrer found
+	 */
+	public function getReferringRequest() {
+		if ($this->referringRequest !== NULL) {
+			return $this->referringRequest;
+		}
+		if (!isset($this->internalArguments['__referrer'])) {
+			return NULL;
+		}
+		if (is_array($this->internalArguments['__referrer'])) {
+			$referrerArray = $this->internalArguments['__referrer'];
+
+			$referringRequest = $this->getHttpRequest()->createActionRequest();
+
+			$arguments = array();
+			if (isset($referrerArray['arguments'])) {
+				$arguments = unserialize($referrerArray['arguments']);
+				unset($referrerArray['arguments']);
+			}
+
+			$referringRequest->setArguments(\TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
+			return $referringRequest;
+		} else {
+			$this->referringRequest = $this->internalArguments['__referrer'];
+		}
+		return $this->referringRequest;
 	}
 
 	/**
@@ -201,8 +237,14 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getControllerObjectName() {
-		$controllerObjectName = $this->router->getControllerObjectName($this->controllerPackageKey, $this->controllerSubpackageKey, $this->controllerName);
-		return ($controllerObjectName !== NULL) ? $controllerObjectName : '';
+		$possibleObjectName = '@package\@subpackage\Controller\@controllerController';
+		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $this->controllerPackageKey), $possibleObjectName);
+		$possibleObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@controller', $this->controllerName, $possibleObjectName);
+		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
+
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
+		return ($controllerObjectName !== FALSE) ? $controllerObjectName : '';
 	}
 
 	/**
@@ -240,17 +282,17 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Sets the package key of the controller.
 	 *
-	 * @param string $packageKey The package key.
+	 * This function tries to determine the correct case for the given package key.
+	 * If the Package Manager does not know the specified package, the package key
+	 * cannot be verified or corrected and is stored as is.
+	 *
+	 * @param string $packageKey The package key
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidPackageKeyException if the package key is not valid
+	 * @api
 	 */
 	public function setControllerPackageKey($packageKey) {
-		$upperCamelCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
-		if ($upperCamelCasedPackageKey !== FALSE) {
-			$this->controllerPackageKey = $upperCamelCasedPackageKey;
-		} else {
-			$this->controllerPackageKey = $packageKey;
-		}
+		$upperCamelCasedPackageClassName = $this->objectManager->getCaseSensitiveObjectName(str_replace('.', '\\', $packageKey) . '\Package');
+		$this->controllerPackageKey = ($upperCamelCasedPackageClassName !== FALSE) ? substr(str_replace('\\', '.', $upperCamelCasedPackageClassName), 0, strlen($packageKey)) : $packageKey;
 	}
 
 	/**
@@ -270,7 +312,7 @@ class ActionRequest implements RequestInterface {
 	 * @return void
 	 */
 	public function setControllerSubpackageKey($subpackageKey) {
-		$this->controllerSubpackageKey = $subpackageKey;
+		$this->controllerSubpackageKey = (empty($subpackageKey) ? NULL : $subpackageKey);
 	}
 
 	/**
@@ -294,8 +336,12 @@ class ActionRequest implements RequestInterface {
 	 * @return void
 	 */
 	public function setControllerName($controllerName) {
-		if (!is_string($controllerName)) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
-		if (strpos($controllerName, '_') !== FALSE) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
+		if (!is_string($controllerName)) {
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
+		}
+		if (strpos($controllerName, '_') !== FALSE) {
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
+		}
 		$this->controllerName = $controllerName;
 	}
 
@@ -329,8 +375,12 @@ class ActionRequest implements RequestInterface {
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException if the action name is not valid
 	 */
 	public function setControllerActionName($actionName) {
-		if (!is_string($actionName)) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
-		if ($actionName === '') throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
+		if (!is_string($actionName)) {
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+		}
+		if ($actionName === '') {
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
+		}
 		if ($actionName[0] !== strtolower($actionName[0])) {
 			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		}
@@ -368,14 +418,23 @@ class ActionRequest implements RequestInterface {
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException if the given argument value is an object
 	 */
 	public function setArgument($argumentName, $value) {
-		if (!is_string($argumentName) || strlen($argumentName) === 0) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
+		if (!is_string($argumentName) || strlen($argumentName) === 0) {
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
+		}
 
 		if (substr($argumentName, 0, 2) === '__') {
 			$this->internalArguments[$argumentName] = $value;
 			return;
 		}
 
-		if (is_object($value)) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
+		if (is_object($value)) {
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
+		}
+
+		if (substr($argumentName, 0, 2) === '--') {
+			$this->pluginArguments[substr($argumentName, 2)] = $value;
+			return;
+		}
 
 		switch ($argumentName) {
 			case '@package':
@@ -396,23 +455,7 @@ class ActionRequest implements RequestInterface {
 			default:
 				$this->arguments[$argumentName] = $value;
 		}
-	}
 
-	/**
-	 * Sets the specified arguments.
-	 * The arguments array will be reset therefore any arguments
-	 * which existed before will be overwritten!
-	 *
-	 * @param array $arguments An array of argument names and their values
-	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException if an argument name is no string
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException if an argument value is an object
-	 */
-	public function setArguments(array $arguments) {
-		$this->arguments = array();
-		foreach ($arguments as $key => $value) {
-			$this->setArgument($key, $value);
-		}
 	}
 
 	/**
@@ -440,6 +483,24 @@ class ActionRequest implements RequestInterface {
 	}
 
 	/**
+	 * Sets the specified arguments.
+	 *
+	 * The arguments array will be reset therefore any arguments
+	 * which existed before will be overwritten!
+	 *
+	 * @param array $arguments An array of argument names and their values
+	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException if an argument name is no string
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException if an argument value is an object
+	 */
+	public function setArguments(array $arguments) {
+		$this->arguments = array();
+		foreach ($arguments as $key => $value) {
+			$this->setArgument($key, $value);
+		}
+	}
+
+	/**
 	 * Returns an Array of arguments and their values
 	 *
 	 * @return array Array of arguments and their values (which may be arguments and values as well)
@@ -447,6 +508,61 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function getArguments() {
 		return $this->arguments;
+	}
+
+	/**
+	 * Returns the value of the specified internal argument.
+	 *
+	 * Internal arguments are set via setArgument(). In order to be handled as an
+	 * internal argument, its name must start with two underscores.
+	 *
+	 * @param string $argumentName Name of the argument, for example "__fooBar"
+	 * @return string Value of the argument, or NULL if not set.
+	 */
+	public function getInternalArgument($argumentName) {
+		return (isset($this->internalArguments[$argumentName]) ? $this->internalArguments[$argumentName] : NULL);
+	}
+
+	/**
+	 * Returns the internal arguments of the request, that is, all arguments whose
+	 * name starts with two underscores.
+	 *
+	 * @return array
+	 */
+	public function getInternalArguments() {
+		return $this->internalArguments;
+	}
+
+	/**
+	 * Sets a namespace for the arguments of this request.
+	 *
+	 * This doesn't affect the actual behavior of argument handling within this
+	 * classes' methods but is used in other parts of FLOW3 and its libraries to
+	 * render argument names which don't conflict with each other.
+	 *
+	 * @param string $namespace Argument namespace
+	 * @return void
+	 */
+	public function setArgumentNamespace($namespace) {
+		$this->argumentNamespace = $namespace;
+	}
+
+	/**
+	 * Returns the argument namespace, if any.
+	 *
+	 * @return string
+	 */
+	public function getArgumentNamespace() {
+		return $this->argumentNamespace;
+	}
+
+	/**
+	 * Returns an array of plugin argument configurations
+	 *
+	 * @return array
+	 */
+	public function getPluginArguments() {
+		return $this->pluginArguments;
 	}
 
 	/**
@@ -470,166 +586,10 @@ class ActionRequest implements RequestInterface {
 	}
 
 	/**
-	 * Returns the original request. Filled only if a property mapping error occured.
-	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest the original request.
+	 * Resets the dispatched status to FALSE
 	 */
-	public function getOriginalRequest() {
-		return $this->originalRequest;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $originalRequest
-	 * @return void
-	 */
-	public function setOriginalRequest(\TYPO3\FLOW3\Mvc\ActionRequest $originalRequest) {
-		$this->originalRequest = $originalRequest;
-	}
-
-	/**
-	 * Get the request mapping results for the original request.
-	 *
-	 * @return \TYPO3\FLOW3\Error\Result
-	 */
-	public function getOriginalRequestMappingResults() {
-		if ($this->originalRequestMappingResults === NULL) {
-			return new \TYPO3\FLOW3\Error\Result();
-		}
-		return $this->originalRequestMappingResults;
-	}
-
-	/**
-	 *
-	 * @param \TYPO3\FLOW3\Error\Result $originalRequestMappingResults
-	 */
-	public function setOriginalRequestMappingResults(\TYPO3\FLOW3\Error\Result $originalRequestMappingResults) {
-		$this->originalRequestMappingResults = $originalRequestMappingResults;
-	}
-
-	/**
-	 * Get the internal arguments of the request, i.e. every argument starting
-	 * with two underscores.
-	 *
-	 * @return array
-	 */
-	public function getInternalArguments() {
-		return $this->internalArguments;
-	}
-
-	/**
-	 * Returns the value of the specified argument
-	 *
-	 * @param string $argumentName Name of the argument
-	 * @return string Value of the argument, or NULL if not set.
-	 */
-	public function getInternalArgument($argumentName) {
-		if (!isset($this->internalArguments[$argumentName])) return NULL;
-		return $this->internalArguments[$argumentName];
-	}
-
-	/**
-	 * Sets the Request URI
-	 *
-	 * @param \TYPO3\FLOW3\Http\Uri $requestUri
-	 * @return void
-	 */
-	public function setRequestUri(Uri $requestUri) {
-		$this->requestUri = $requestUri;
-	}
-
-	/**
-	 * Returns the request URI
-	 *
-	 * @return \TYPO3\FLOW3\Http\Uri URI of this web request
-	 * @api
-	 */
-	public function getRequestUri() {
-		return $this->requestUri;
-	}
-
-	/**
-	 * Sets the Base URI
-	 *
-	 * @param \TYPO3\FLOW3\Http\Uri $baseUri
-	 * @return void
-	 */
-	public function setBaseUri(Uri $baseUri) {
-		$this->baseUri = $baseUri;
-	}
-
-	/**
-	 * Returns the base URI
-	 *
-	 * @return \TYPO3\FLOW3\Http\Uri URI of this web request
-	 * @api
-	 */
-	public function getBaseUri() {
-		return $this->baseUri;
-	}
-
-	/**
-	 * Sets the request method
-	 *
-	 * @param string $method Name of the request method
-	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidRequestMethodException if the request method is not supported
-	 * @api
-	 */
-	public function setMethod($method) {
-		if ($method === '' || (strtoupper($method) !== $method)) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidRequestMethodException('The request method "' . $method . '" is not supported.', 1217778382);
-		$this->method = $method;
-	}
-
-	/**
-	 * Returns the name of the request method
-	 *
-	 * @return string Name of the request method
-	 * @api
-	 */
-	public function getMethod() {
-		return $this->method;
-	}
-
-	/**
-	 * Returns the the request path relative to the base URI
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function getRoutePath() {
-		return substr($this->requestUri->getPath(), strlen($this->baseUri->getPath()));
-	}
-
-	/**
-	 * Get a freshly built request object pointing to the Referrer.
-	 *
-	 * @return Request the referring request, or NULL if no referrer found
-	 */
-	public function getReferringRequest() {
-		if (isset($this->internalArguments['__referrer']) && is_array($this->internalArguments['__referrer'])) {
-			$referrerArray = $this->internalArguments['__referrer'];
-
-			$referringRequest = new Request;
-
-			$arguments = array();
-			if (isset($referrerArray['arguments'])) {
-				$arguments = unserialize($referrerArray['arguments']);
-				unset($referrerArray['arguments']);
-			}
-
-			$referringRequest->setArguments(\TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
-			return $referringRequest;
-		}
-		return NULL;
-	}
-
-	/**
-	 * Returns the original root request.
-	 *
-	 * @return \TYPO3\FLOW3\Http\Request
-	 */
-	public function getRootRequest() {
-		return ($this->parentRequest instanceof \TYPO3\FLOW3\Http\Request) ? $this->parentRequest : $this->parentRequest->getRootRequest();
+	public function __clone() {
+		$this->dispatched = FALSE;
 	}
 
 }

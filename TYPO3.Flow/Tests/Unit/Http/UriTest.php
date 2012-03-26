@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Property\DataType;
+namespace TYPO3\FLOW3\Tests\Unit\Http;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -11,8 +11,10 @@ namespace TYPO3\FLOW3\Tests\Unit\Property\DataType;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\FLOW3\Http\Uri;
+
 /**
- * Testcase for the MVC URI class
+ * Testcase for the URI class
  *
  */
 class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
@@ -24,7 +26,7 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function constructorParsesAFullBlownUriStringCorrectly() {
 		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
-		$uri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
+		$uri = new Uri($uriString);
 
 		$check = (
 			$uri->getScheme() == 'http' &&
@@ -41,11 +43,34 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Uri strings
+	 */
+	public function uriStrings() {
+		return array(
+			array('http://flow3.typo3.org/x'),
+			array('http://flow3.typo3.org/foo/bar?baz=1&quux=true'),
+			array('https://robert@localhost/arabica/coffee.html'),
+			array('http://127.0.0.1/bar.baz.com/foo.js'),
+		);
+	}
+
+	/**
+	 * Checks round trips for various URIs
+	 *
+	 * @dataProvider uriStrings
+	 * @test
+	 */
+	public function urisCanBeConvertedForthAndBackWithoutLoss($uriString) {
+		$uri = new Uri($uriString);
+		$this->assertSame($uriString, (string)$uri);
+	}
+
+	/**
 	 * @test
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
 		$uriString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
-		$uri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
+		$uri = new Uri($uriString);
 
 		$check = (
 			$uri->getScheme() == 'http' &&
@@ -58,13 +83,33 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * URIs for testing host parsing
+	 */
+	public function hostTestUris() {
+		return array(
+			array('http://www.typo3.org/about/project', 'www.typo3.org'),
+			array('http://flow3.typo3.org/foo', 'flow3.typo3.org')
+		);
+	}
+
+	/**
+	 * @dataProvider hostTestUris
+	 * @test
+	 */
+	public function constructorParsesHostCorrectly($uriString, $expectedHost) {
+		$uri = new Uri($uriString);
+		$this->assertSame($expectedHost, $uri->getHost());
+	}
+
+
+	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
 	 *
 	 * @test
 	 */
 	public function stringRepresentationIsCorrect() {
 		$uriString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
-		$uri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
+		$uri = new Uri($uriString);
 		$this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
 	}
 }

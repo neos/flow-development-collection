@@ -62,6 +62,7 @@ class NotFoundController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController 
 	 * @api
 	 */
 	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
+		$this->initializeController($request, $response);
 		$this->notFoundView->setControllerContext($this->controllerContext);
 		if ($this->exception !== NULL) {
 			$this->notFoundView->assign('errorMessage', $this->exception->getMessage());

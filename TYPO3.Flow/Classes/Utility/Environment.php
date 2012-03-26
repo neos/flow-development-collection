@@ -158,35 +158,6 @@ class Environment {
 	}
 
 	/**
-	 * Returns all HTTP headers set for this request by converting them from
-	 * HTTP_* environment variables. E.g. "HTTP_ACCEPT" will be available under
-	 * "Accept" and "HTTP_CUSTOM_HEADER" as "Custom-Header".
-	 *
-	 * Note that this doesn't give you the raw headers in any case. For example
-	 * "HTTP_SOAPACTION" will be available as "Soapaction" and not under the
-	 * original mixed-case name "SOAPAction".
-	 *
-	 * @return array
-	 * @api
-	 */
-	public function getRequestHeaders() {
-		$headers = array();
-		foreach($this->SERVER as $key => $value) {
-			if (strpos($key, 'HTTP_') === 0) {
-				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
-				$headers[$key] = $value;
-			} elseif (strpos($key, 'PHP_AUTH_') === 0) {
-				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 9)))));
-				$headers[$key] = $value;
-			} elseif ($key == 'REDIRECT_REMOTE_AUTHORIZATION') {
-				$authorizationData = base64_decode($value);
-				list($headers['User'], $headers['Pw']) = explode(':', $authorizationData);
-			}
-		}
-		return $headers;
-	}
-
-	/**
 	 * Returns a sorted list (most important first) of accepted formats (ie. file extensions) as
 	 * defined in the browser's Accept header.
 	 *

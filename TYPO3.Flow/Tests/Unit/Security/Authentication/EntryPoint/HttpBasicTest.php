@@ -11,60 +11,32 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Response;
+use TYPO3\FLOW3\Http\Uri;
+use TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic;
+
 /**
  * Testcase for HTTP Basic Auth authentication entry point
- *
  */
 class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
-	 */
-	public function canForwardReturnsTrueForWebRequests() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
-
-		$this->assertTrue($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Mvc\ActionRequest')));
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 */
-	public function canForwardReturnsFalseForNonWebRequests() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
-
-		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Cli\Request')));
-		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Mvc\RequestInterface')));
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 */
-	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
-
-		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\Cli\Request'), $this->getMock('TYPO3\FLOW3\Cli\Response'));
-	}
-
-	/**
-	 * @test
-	 * @category unit
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array('setStatus', 'setContent', 'setHeader'));
+		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$response = new Response();
 
-		$response->expects($this->once())->method('setStatus')->with(401);
-		$response->expects($this->once())->method('setHeader')->with('WWW-Authenticate', 'Basic realm="realm string"');
-		$response->expects($this->once())->method('setContent')->with('Authorization required!');
-
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
+		$entryPoint = new HttpBasic();
 		$entryPoint->setOptions(array('realm' => 'realm string'));
 
-		$entryPoint->startAuthentication($request, $response);
+		$entryPoint->startAuthentication($request->getHttpRequest(), $response);
+
+		$this->assertEquals('401', substr($response->getStatus(), 0, 3));
+		$this->assertEquals('Basic realm="realm string"', $response->getHeader('WWW-Authenticate'));
+		$this->assertEquals('Authorization required', $response->getContent());
+		$this->assertEquals(array('realm' => 'realm string'), $entryPoint->getOptions());
 	}
 }
 ?>

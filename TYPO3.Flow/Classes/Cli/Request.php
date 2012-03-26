@@ -103,6 +103,26 @@ class Request implements RequestInterface {
 	}
 
 	/**
+	 * Returns the this request, as CLI request nesting is not supported.
+	 *
+	 * @return \TYPO3\FLOW3\Cli\Request
+	 * @api
+	 */
+	public function getMainRequest() {
+		return $this;
+	}
+
+	/**
+	 * Returns true, as CLI request nesting is not supported.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isMainRequest() {
+		return TRUE;
+	}
+
+	/**
 	 * Sets the name of the command contained in this request.
 	 *
 	 * Note that the command name must start with a lower case letter and is case sensitive.

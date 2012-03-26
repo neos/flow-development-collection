@@ -12,12 +12,17 @@ namespace TYPO3\FLOW3\Mvc;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\Controller\ControllerInterface;
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Mvc\Exception\StopActionException;
+use TYPO3\FLOW3\Mvc\Exception\ForwardException;
 
 /**
  * Dispatches requests to the controller which was specified by the request and
  * returns the response the controller generated.
  *
  * @FLOW3\Scope("singleton")
+ * @api
  */
 class Dispatcher {
 
@@ -27,42 +32,19 @@ class Dispatcher {
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
-	 */
-	protected $signalSlotDispatcher;
-
-	/**
 	 * @var array
 	 */
 	protected $settings = array();
 
 	/**
+	 * Inject the Object Manager through setter injection because property injection
+	 * is not available during compile time.
+	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager A reference to the package manager
-	 * @return void
-	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher
-	 * @return void
-	 */
-	public function injectSignalSlotDispatcher(\TYPO3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
-		$this->signalSlotDispatcher = $signalSlotDispatcher;
 	}
 
 	/**
@@ -76,27 +58,30 @@ class Dispatcher {
 	}
 
 	/**
-	 * Dispatches a request to a controller and initializes the security framework.
+	 * Dispatches a request to a controller
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to dispatch
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, to be modified by the controller
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to dispatch
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The response, to be modified by the controller
 	 * @return void
+	 * @api
 	 */
-	public function dispatch(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
+	public function dispatch(RequestInterface $request, ResponseInterface $response) {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
 			if ($dispatchLoopCount++ > 99) {
-				throw new \TYPO3\FLOW3\MVC\Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+				throw new \TYPO3\FLOW3\Mvc\Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
 			}
 			$controller = $this->resolveController($request);
 			try {
-				$this->emitBeforeControllerInvocation($request, $controller);
+				$this->emitBeforeControllerInvocation($request, $response, $controller);
 				$controller->processRequest($request, $response);
-				$this->emitAfterControllerInvocation($controller);
-			} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
-				$this->emitAfterControllerInvocation($controller);
-				if ($request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest && $request->isDispatched()) {
-					throw $stopActionException;
+				$this->emitAfterControllerInvocation($request, $response, $controller);
+			} catch (StopActionException $exception) {
+				$this->emitAfterControllerInvocation($request, $response, $controller);
+				if ($exception instanceof ForwardException) {
+					$request = $exception->getNextRequest();
+				} elseif ($request->isMainRequest() === FALSE) {
+					$request = $request->getParentRequest();
 				}
 			}
 		}
@@ -104,25 +89,27 @@ class Dispatcher {
 
 	/**
 	 * This signal is emitted directly before the request is been dispatched to a controller.
-	 * It is mainly useful for collecting performance metrics.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
-	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response
+	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerInterface $controller
 	 * @return void
 	 * @FLOW3\Signal
 	 */
-	protected function emitBeforeControllerInvocation(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller) {
+	protected function emitBeforeControllerInvocation(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller) {
 	}
 
 	/**
 	 * This signal is emitted directly after the request has been dispatched to a controller and the controller
 	 * returned control back to the dispatcher.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response
+	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerInterface $controller
 	 * @return void
 	 * @FLOW3\Signal
 	 */
-	protected function emitAfterControllerInvocation(\TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller) {
+	protected function emitAfterControllerInvocation(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller) {
 	}
 
 	/**

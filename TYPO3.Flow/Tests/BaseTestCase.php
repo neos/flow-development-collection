@@ -25,19 +25,20 @@ namespace TYPO3\FLOW3\Tests;
  * The mother of all test cases.
  *
  * Don't sub class this test case but rather choose a more specialized base test case,
- * such as Unit*, Functional* or Selenium*.
+ * such as UnitTestCase or FunctionalTestCase
  *
  * @api
  */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Disable the backup and restoration of the $GLOBALS array.
+	 * @var array
 	 */
-	protected $backupGlobals = FALSE;
+	protected $backupGlobalsBlacklist = array('GLOBALS', 'bootstrap', '__PHPUNIT_BOOTSTRAP');
 
 	/**
 	 * Enable or disable the backup and restoration of static attributes.
+	 * @var boolean
 	 */
 	protected $backupStaticAttributes = FALSE;
 

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Security\Exception;
+namespace TYPO3\FLOW3\Tests\Functional\Http\Fixtures\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -11,12 +11,18 @@ namespace TYPO3\FLOW3\Security\Exception;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * A "RequestTypeNotSupported" Exception
- *
- * @api
- */
-class RequestTypeNotSupportedException extends \TYPO3\FLOW3\Security\Exception {
-}
+class FooController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 
+	/**
+	 * Process Request
+	 *
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
+	 * @param \TYPO3\FLOW3\Http\Reponse $response
+	 * @return void
+	 */
+	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
+		$this->initializeController($request, $response);
+		$response->appendContent('FooController responded');
+	}
+}
 ?>

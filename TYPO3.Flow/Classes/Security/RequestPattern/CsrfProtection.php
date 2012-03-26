@@ -45,24 +45,11 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	protected $policyService;
 
 	/**
-	 * Returns TRUE, if this pattern can match against the given request object.
-	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
-	 * @return boolean TRUE if this pattern can match
-	 */
-	public function canMatch(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		if ($request instanceof \TYPO3\FLOW3\Mvc\ActionRequest) return TRUE;
-		return FALSE;
-	}
-
-	/**
 	 * NULL: This pattern holds no configured pattern value
 	 *
 	 * @return string The set pattern (always NULL here)
 	 */
-	public function getPattern() {
-		return NULL;
-	}
+	public function getPattern() {}
 
 	/**
 	 * Does nothing, as this pattern holds not configure pattern value
@@ -78,21 +65,23 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 */
 	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
 		$actionName = $request->getControllerActionName(). 'Action';
 
-		if ($this->policyService->hasPolicyEntryForMethod($controllerClassName, $actionName)
-			&& !$this->reflectionService->isMethodTaggedWith($controllerClassName, $actionName, 'skipcsrfprotection')) {
+		if ($this->policyService->hasPolicyEntryForMethod($controllerClassName, $actionName) && !$this->reflectionService->isMethodTaggedWith($controllerClassName, $actionName, 'skipcsrfprotection')) {
 			$internalArguments = $request->getInternalArguments();
-			if (!isset($internalArguments['__csrfToken'])) return TRUE;
+			if (!isset($internalArguments['__csrfToken'])) {
+				return TRUE;
+			}
 			$csrfToken = $internalArguments['__csrfToken'];
 			if (!$this->securityContext->hasCsrfProtectionTokens()) {
 				throw new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('No tokens in security context, possible session timeout', 1317309673);
 			}
-			if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === FALSE) return TRUE;
+			if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === FALSE) {
+				return TRUE;
+			}
 		}
 		return FALSE;
 	}

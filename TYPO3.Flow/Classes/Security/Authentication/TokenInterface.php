@@ -106,10 +106,10 @@ interface TokenInterface {
 	 * make sure that the authentication manager will (re-)authenticate the tokens with the current credentials.
 	 * Note: You should not persist the credentials!
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
+	 * @param \TYPO3\FLOW3\Http\Request $request The current request instance
 	 * @return boolean TRUE if this token needs to be (re-)authenticated
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request);
+	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request);
 
 	/**
 	 * Returns the credentials of this token. The type depends on the provider

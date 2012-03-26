@@ -43,12 +43,15 @@ TYPO3:
 
         providers:
           DefaultProvider:
-            providerClass: TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
+            provider: 'TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider'
+            entryPoint: 'WebRedirect'
+            entryPointOptions:
+              uri: 'flow3/authentication'
 
     # Setting for functional tests to test global objects in runtime evaluations
     aop:
       globalObjects:
-        testContext: TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TestContext
+        testContext: 'TYPO3\FLOW3\Tests\Functional\Aop\Fixtures\TestContext'
 
     # Settings for functional tests to test setting designator and setting injection
     tests:

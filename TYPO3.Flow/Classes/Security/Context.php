@@ -12,12 +12,12 @@ namespace TYPO3\FLOW3\Security;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
-
 use TYPO3\FLOW3\Security\Policy\Role;
+use TYPO3\FLOW3\Mvc\ActionRequest;
 
 /**
  * This is the default implementation of a security context, which holds current
- * security information like Roles oder details auf authenticated users.
+ * security information like roles oder details of authenticated users.
  *
  * @FLOW3\Scope("session")
  */
@@ -98,7 +98,7 @@ class Context {
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\RequestInterface
+	 * @var \TYPO3\FLOW3\Http\Request
 	 * @FLOW3\Transient
 	 */
 	protected $request;
@@ -119,12 +119,6 @@ class Context {
 	 * @FLOW3\Inject
 	 */
 	protected $hashService;
-
-	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
-	 * @FLOW3\Inject
-	 */
-	protected $bootstrap;
 
 	/**
 	 * One of the CSRF_* constants to set the csrf strategy
@@ -151,6 +145,20 @@ class Context {
 	public function injectAuthenticationManager(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->authenticationManager->setSecurityContext($this);
+	}
+
+	/**
+	 * Inject the current action request
+	 *
+	 * This method is called manually by the request handler which created the HTTP
+	 * request.
+	 *
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request The current HTTP request
+	 * @return void
+	 * @FLOW3\Autowiring(FALSE)
+	 */
+	public function injectRequest(ActionRequest $request) {
+		$this->request = $request;
 	}
 
 	/**
@@ -204,8 +212,6 @@ class Context {
 	 * @return void
 	 */
 	public function initialize() {
-		$this->request = $this->bootstrap->getActiveRequestHandler()->getRequest();
-
 		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) {
 			$this->csrfTokens = array();
 		}
@@ -451,13 +457,13 @@ class Context {
 	}
 
 	/**
-	 * Sets a request, to be stored for later resuming after it
+	 * Sets an action request, to be stored for later resuming after it
 	 * has been intercepted by a security exception.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $interceptedRequest
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $interceptedRequest
 	 * @return void
 	 */
-	public function setInterceptedRequest(\TYPO3\FLOW3\Mvc\RequestInterface $interceptedRequest = NULL) {
+	public function setInterceptedRequest(ActionRequest $interceptedRequest = NULL) {
 		$this->interceptedRequest = $interceptedRequest;
 	}
 
@@ -465,7 +471,7 @@ class Context {
 	 * Returns the request, that has been stored for later resuming after it
 	 * has been intercepted by a security exception, NULL if there is none.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
 	 */
 	public function getInterceptedRequest() {
 		return $this->interceptedRequest;
@@ -498,9 +504,7 @@ class Context {
 				$tokenIsActive = TRUE;
 
 				foreach ($requestPatterns as $requestPattern) {
-					if ($requestPattern->canMatch($this->request)) {
-						$tokenIsActive &= $requestPattern->matchRequest($this->request);
-					}
+					$tokenIsActive &= $requestPattern->matchRequest($this->request);
 				}
 				if ($tokenIsActive) {
 					$this->activeTokens[$token->getAuthenticationProviderName()] = $token;
@@ -553,7 +557,7 @@ class Context {
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
-			$token->updateCredentials($this->request);
+			$token->updateCredentials($this->request->getHttpRequest());
 		}
 	}
 

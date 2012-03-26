@@ -11,71 +11,45 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Response;
+use TYPO3\FLOW3\Http\Uri;
+use TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect;
+
 /**
  * Testcase for web redirect authentication entry point
- *
  */
 class WebRedirectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
-	 */
-	public function canForwardReturnsTrueForWebRequests() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
-
-		$this->assertTrue($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Mvc\ActionRequest')));
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 */
-	public function canForwardReturnsFalseForNonWebRequests() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
-
-		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Cli\Request')));
-		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Mvc\RequestInterface')));
-	}
-
-	/**
-	 * @test
-	 * @category unit
 	 * @expectedException TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$response = new Response();
+
+		$entryPoint = new WebRedirect();
 		$entryPoint->setOptions(array('something' => 'irrelevant'));
 
-		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\Mvc\ActionRequest'), $this->getMock('TYPO3\FLOW3\Mvc\Web\Response'));
+		$entryPoint->startAuthentication($request->getHttpRequest(), $response);
 	}
 
 	/**
 	 * @test
-	 * @category unit
-	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
-	 */
-	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
-
-		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\Cli\Request'), $this->getMock('TYPO3\FLOW3\Cli\Response'));
-	}
-
-	/**
-	 * @test
-	 * @category unit
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response');
+		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$response = new Response();
 
-		$response->expects($this->once())->method('setStatus')->with(303);
-		$response->expects($this->once())->method('setHeader')->with('Location', 'some/page');
-
-		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$entryPoint = new WebRedirect();
 		$entryPoint->setOptions(array('uri' => 'some/page'));
 
-		$entryPoint->startAuthentication($request, $response);
+		$entryPoint->startAuthentication($request->getHttpRequest(), $response);
+
+		$this->assertEquals('303', substr($response->getStatus(), 0, 3));
+		$this->assertEquals('http://robertlemke.com/some/page', $response->getHeader('Location'));
+		$this->assertEquals(array('uri' => 'some/page'), $entryPoint->getOptions());
 	}
 }
 ?>

@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Cli;
 
 use \TYPO3\FLOW3\Cli\CommandManager;
 
-require_once(__DIR__ . '/../Fixture/CLI/Command/MockCommandController.php');
+require_once('Fixtures/Command/MockCommandController.php');
 
 /**
  * Testcase for the CLI CommandManager class
@@ -49,14 +49,14 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getAvailableCommandsReturnsAllAvailableCommands() {
 		$commandManager = new CommandManager();
 		$commandManager->injectReflectionService($this->mockReflectionService);
-		$mockCommandControllerClassNames = array('TYPO3\FLOW3\Mvc\Fixture\CLI\Command\MockACommandController', 'TYPO3\FLOW3\Mvc\Fixture\CLI\Command\MockBCommandController');
-		$this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with('TYPO3\FLOW3\Mvc\Controller\CommandController')->will($this->returnValue($mockCommandControllerClassNames));
+		$mockCommandControllerClassNames = array('TYPO3\FLOW3\Tests\Unit\Cli\Fixtures\Command\MockACommandController', 'TYPO3\FLOW3\Tests\Unit\Cli\Fixtures\Command\MockBCommandController');
+		$this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with('TYPO3\FLOW3\Cli\CommandController')->will($this->returnValue($mockCommandControllerClassNames));
 
 		$commands = $commandManager->getAvailableCommands();
 		$this->assertEquals(3, count($commands));
-		$this->assertEquals('typo3.flow3.mvc.fixture.cli:mocka:foo', $commands[0]->getCommandIdentifier());
-		$this->assertEquals('typo3.flow3.mvc.fixture.cli:mocka:bar', $commands[1]->getCommandIdentifier());
-		$this->assertEquals('typo3.flow3.mvc.fixture.cli:mockb:baz', $commands[2]->getCommandIdentifier());
+		$this->assertEquals('typo3.flow3.tests.unit.cli.fixtures:mocka:foo', $commands[0]->getCommandIdentifier());
+		$this->assertEquals('typo3.flow3.tests.unit.cli.fixtures:mocka:bar', $commands[1]->getCommandIdentifier());
+		$this->assertEquals('typo3.flow3.tests.unit.cli.fixtures:mockb:baz', $commands[2]->getCommandIdentifier());
 	}
 
 	/**

@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Mvc;
  *                                                                        */
 
 /**
- * Contract for a request.
+ * Contract for a dispatchable request.
  *
  * @api
  */
@@ -38,6 +38,32 @@ interface RequestInterface {
 	 * @api
 	 */
 	public function isDispatched();
+
+	/**
+	 * Returns the object name of the controller which is supposed to process the
+	 * request.
+	 *
+	 * @return string The controller's object name
+	 * @api
+	 */
+	public function getControllerObjectName();
+
+	/**
+	 * Returns the top level Request: the one just below the HTTP request
+	 *
+	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @api
+	 */
+	public function getMainRequest();
+
+	/**
+	 * Checks if this request is the uppermost ActionRequest, just one below the
+	 * HTTP request.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isMainRequest();
 
 }
 ?>

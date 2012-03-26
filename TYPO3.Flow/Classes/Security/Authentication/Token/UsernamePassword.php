@@ -26,12 +26,6 @@ class UsernamePassword extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @FLOW3\Inject
-	 */
-	protected $environment;
-
-	/**
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 * @FLOW3\Inject
 	 */
@@ -45,13 +39,17 @@ class UsernamePassword extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	 *       __authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]
 	 *   and __authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
+	 * @param \TYPO3\FLOW3\Http\Request $request The original HTTP request
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
-		$postArguments = $this->environment->getRawPostArguments();
-		$username = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
-		$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
+	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
+		if ($request->getMethod() !== 'POST') {
+			return;
+		}
+
+		$arguments = $request->getArguments();
+		$username = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
+		$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
 
 		if (!empty($username) && !empty($password)) {
 			$this->credentials['username'] = $username;

@@ -28,7 +28,7 @@ class RestController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * The response which will be returned by this action controller
-	 * @var \TYPO3\FLOW3\Mvc\Web\Response
+	 * @var \TYPO3\FLOW3\Http\Response
 	 */
 	protected $response;
 

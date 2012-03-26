@@ -252,7 +252,7 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 														'value' => array('42')
 									)))));
 
-		$expectedResult = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
+		$expectedResult = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\Aop\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 								"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
 								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'FLOW3', 'aop', 'globalObjects'));\n" .
 								"\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
@@ -301,7 +301,7 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 														'value' => array('42')
 									)))));
 
-		$expectedResult = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
+		$expectedResult = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\Aop\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 								"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
 								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'FLOW3', 'aop', 'globalObjects'));\n" .
 								"\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .

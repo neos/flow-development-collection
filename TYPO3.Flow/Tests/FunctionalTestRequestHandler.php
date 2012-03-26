@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional;
+namespace TYPO3\FLOW3\Tests;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,11 +27,6 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerIn
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
-
-	/**
-	 * @var \TYPO3\FLOW3\Cli\Request
-	 */
-	protected $request;
 
 	/**
 	 * Constructor
@@ -73,25 +68,6 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerIn
 	public function handleRequest() {
 		$sequence = $this->bootstrap->buildRuntimeSequence();
 		$sequence->invoke($this->bootstrap);
-	}
-
-	/**
-	 * Returns the request which has previously been set with setRequest()
-	 *
-	 * @return \TYPO3\FLOW3\MVC\RequestInterface The originally built web request
-	 */
-	public function getRequest() {
-		return $this->request;
-	}
-
-	/**
-	 * Sets the request – used by the base functional test case
-	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
-	 * @return void
-	 */
-	public function setRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
-		$this->request = $request;
 	}
 }
 

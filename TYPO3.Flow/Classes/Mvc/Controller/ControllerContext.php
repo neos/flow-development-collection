@@ -50,14 +50,14 @@ class ControllerContext {
 	/**
 	 * Constructs this context
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response
-	 * @param \TYPO3\FLOW3\MVC\Controller\Arguments $arguments
-	 * @param \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder
-	 * @param \TYPO3\FLOW3\MVC\FlashMessageContainer $flashMessageContainer The flash messages
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
+	 * @param \TYPO3\FLOW3\Http\Response $response
+	 * @param \TYPO3\FLOW3\Mvc\Controller\Arguments $arguments
+	 * @param \TYPO3\FLOW3\Mvc\Routing\UriBuilder $uriBuilder
+	 * @param \TYPO3\FLOW3\Mvc\FlashMessageContainer $flashMessageContainer The flash messages
 	 */
-	public function __construct(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response, \TYPO3\FLOW3\MVC\Controller\Arguments $arguments,
-			\TYPO3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder, \TYPO3\FLOW3\MVC\FlashMessageContainer $flashMessageContainer) {
+	public function __construct(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Http\Response $response, \TYPO3\FLOW3\Mvc\Controller\Arguments $arguments,
+			\TYPO3\FLOW3\Mvc\Routing\UriBuilder $uriBuilder, \TYPO3\FLOW3\Mvc\FlashMessageContainer $flashMessageContainer) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->arguments = $arguments;

@@ -11,19 +11,13 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Response;
+
 /**
  * Contract for an authentication entry point
  */
 interface EntryPointInterface {
-
-	/**
-	 * Returns TRUE if the given request can be authenticated by the authentication provider
-	 * represented by this entry point
-	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The current request
-	 * @return boolean TRUE if authentication is possible
-	 */
-	public function canForward(\TYPO3\FLOW3\Mvc\RequestInterface $request);
 
 	/**
 	 * Sets the options array
@@ -43,11 +37,11 @@ interface EntryPointInterface {
 	/**
 	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The current response
+	 * @param \TYPO3\FLOW3\Http\Request $request The current request
+	 * @param \TYPO3\FLOW3\Http\Response $response The current response
 	 * @return void
 	 */
-	public function startAuthentication(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response);
-
+	public function startAuthentication(Request $request, Response $response);
 }
+
 ?>

@@ -13,7 +13,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
 
 /**
  * Testcase for the Utility Environment class
- *
  */
 class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -432,65 +431,5 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame($untangledFiles, $result);
 	}
 
-	/**
-	 * @test
-	 */
-	public function getRequestHeadersConvertsHTTPServerVariables() {
-		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
-		$serverGlobal = array(
-			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
-			'HTTP_CUSTOM_HEADER' => 'abcdefg'
-		);
-		$environment->_set('SERVER', $serverGlobal);
-
-		$headers = $environment->getRequestHeaders();
-		$this->assertEquals(array(
-			'Accept-Encoding' => 'gzip,deflate',
-			'Custom-Header' => 'abcdefg'
-		), $headers);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getRequestHeadersRespectsAuthorizationVariables() {
-		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
-		$serverGlobal = array(
-			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
-			'HTTP_CUSTOM_HEADER' => 'abcdefg',
-			'PHP_AUTH_USER' => 'admin',
-			'PHP_AUTH_PW' => 'password'
-		);
-		$environment->_set('SERVER', $serverGlobal);
-
-		$headers = $environment->getRequestHeaders();
-		$this->assertEquals(array(
-			'Accept-Encoding' => 'gzip,deflate',
-			'Custom-Header' => 'abcdefg',
-			'User' => 'admin',
-			'Pw' => 'password'
-		), $headers);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getRequestHeadersRespectsAuthorizationVariablesRedirectedWhenRunningPhpAsCgi() {
-		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
-		$serverGlobal = array(
-			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
-			'HTTP_CUSTOM_HEADER' => 'abcdefg',
-			'REDIRECT_REMOTE_AUTHORIZATION' => base64_encode('admin:password')
-		);
-		$environment->_set('SERVER', $serverGlobal);
-
-		$headers = $environment->getRequestHeaders();
-		$this->assertEquals(array(
-			'Accept-Encoding' => 'gzip,deflate',
-			'Custom-Header' => 'abcdefg',
-			'User' => 'admin',
-			'Pw' => 'password'
-		), $headers);
-	}
 }
 ?>

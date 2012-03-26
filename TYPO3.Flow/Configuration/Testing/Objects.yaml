@@ -8,15 +8,32 @@
 # global Configuration directory and its sub directories.                #
 #                                                                        #
 
+#
+# For functional tests we are going to use the InternalRequestEngine by default:
+#
+TYPO3\FLOW3\Http\Client\Browser:
+  properties:
+    requestEngine:
+      object: TYPO3\FLOW3\Http\Client\InternalRequestEngine
+
+#
+# Sesions should be transient in a test context:
+#
 TYPO3\FLOW3\Session\SessionInterface:
   className: TYPO3\FLOW3\Session\TransientSession
 
+#
+# Security and Resource handling need specialized testing classes:
+#
 TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
   className: TYPO3\FLOW3\Tests\Functional\Security\Authorization\TestingAccessDecisionManager
 
 TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
   className: TYPO3\FLOW3\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
 
+#
+# Configuration of fixture classes:
+#
 TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
   arguments:
     1:

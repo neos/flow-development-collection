@@ -98,7 +98,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
 	 */
 	public function route(\TYPO3\FLOW3\Http\Request $httpRequest) {
-		$this->actionRequest = $httpRequest->createSubRequest();
+		$this->actionRequest = $httpRequest->createActionRequest();
 
 		$routePath = substr($httpRequest->getUri()->getPath(), strlen($httpRequest->getBaseUri()->getPath()));
 		$matchResults = $this->findMatchResults($routePath);

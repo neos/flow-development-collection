@@ -28,7 +28,7 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $controllerContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Web\Response
+	 * @var \TYPO3\FLOW3\Http\Response
 	 */
 	protected $response;
 
@@ -39,7 +39,7 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$this->view = $this->getMock('TYPO3\FLOW3\Mvc\View\JsonView', array('loadConfigurationFromYamlFile'));
 		$this->controllerContext = $this->getMock('TYPO3\FLOW3\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$this->response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array());
+		$this->response = $this->getMock('TYPO3\FLOW3\Http\Response', array());
 		$this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
 		$this->view->setControllerContext($this->controllerContext);
 	}

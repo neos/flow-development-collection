@@ -11,6 +11,11 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Response;
+use TYPO3\FLOW3\Http\Uri;
+use TYPO3\FLOW3\Mvc\ActionRequest;
+
 /**
  * Testcase for the request dispatching aspect
  */
@@ -20,8 +25,8 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
+		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$response = new Response();
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
@@ -48,8 +53,8 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
+		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$response = new Response();
 		$exception = new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -80,8 +85,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockJoinPoint->expects($this->any())->method('getException')->will($this->returnCallback($getExceptionCallback));
 		$mockContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken)));
 		$mockToken->expects($this->once())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint));
-		$mockEntryPoint->expects($this->once())->method('canForward')->will($this->returnValue(TRUE));
-		$mockEntryPoint->expects($this->once())->method('startAuthentication')->with($this->equalTo($request), $this->equalTo($response));
+		$mockEntryPoint->expects($this->once())->method('startAuthentication')->with($this->equalTo($request->getHttpRequest()), $this->equalTo($response));
 
 		$dispatchingAspect = new \TYPO3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
@@ -93,7 +97,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
 		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Http\Response', array(), array(), '', FALSE);
 		$exception = new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -160,7 +164,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setAccessDeniedResponseHeaderSetsTheResponseStatusTo403IfAnAccessDeniedExceptionHasBeenThrownWhileExecutingAWebRequest() {
-		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Http\Response', array(), array(), '', FALSE);
 		$response->expects($this->once())->method('setContent')->with('Access denied!');
 		$response->expects($this->once())->method('setStatus')->with(403);
 

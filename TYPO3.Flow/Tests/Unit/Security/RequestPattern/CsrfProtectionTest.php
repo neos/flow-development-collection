@@ -11,23 +11,25 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\RequestPattern;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Uri;
+
 /**
  * Testcase for the CsrfProtection request pattern
- *
  */
 class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchRequestReturnsFalseIfTheTargetActionIsTaggedWithSkipCsrfProtection() {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
-		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$request->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
+		$request->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with($controllerObjectName)->will($this->returnValue($controllerObjectName));
@@ -43,19 +45,18 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
 		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
 
-		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
+		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($request));
 	}
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchRequestReturnsFalseIfTheTargetActionIsNotMentionedInThePolicy() {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -73,14 +74,13 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchRequestReturnsTrueIfTheTargetActionIsMentionedInThePolicyButNoCsrfTokenHasBeenSent() {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array()));
 
@@ -103,14 +103,13 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchRequestReturnsTrueIfTheTargetActionIsMentionedInThePolicyButTheCsrfTokenIsInvalid() {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'invalidCsrfToken')));
 
@@ -138,14 +137,13 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @category unit
 	 */
 	public function matchRequestReturnsFalseIfTheTargetActionIsMentionedInThePolicyAndTheCsrfTokenIsValid() {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
-		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'validToken')));
 

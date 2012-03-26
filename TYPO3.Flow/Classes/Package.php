@@ -31,13 +31,13 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\Web\RequestHandler($bootstrap));
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Cli\SlaveRequestHandler($bootstrap));
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Cli\CommandRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Http\RequestHandler($bootstrap));
 
 		if ($bootstrap->getContext() === 'Testing') {
 			$bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
-			$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\Functional\FunctionalTestRequestHandler($bootstrap));
+			$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler($bootstrap));
 		}
 
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:core:*');
@@ -57,6 +57,7 @@ class Package extends BasePackage {
 
 		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'flushClassFileCachesByChangedFiles');
 		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'markDoctrineProxyCodeOutdatedByChangedFiles');
+
 	}
 }
 

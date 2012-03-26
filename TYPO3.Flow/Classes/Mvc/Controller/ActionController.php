@@ -12,6 +12,8 @@ namespace TYPO3\FLOW3\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
 
 /**
  * A multi action controller
@@ -19,7 +21,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @FLOW3\Scope("singleton")
  * @api
  */
-class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
+class ActionController extends AbstractController {
 
 	/**
 	 * @FLOW3\Inject
@@ -34,15 +36,8 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 	protected $reflectionService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
 	 * An array of formats (such as "html", "txt", "json" ...) which are supported
-	 * by this controller. If none is specified, this controller will default to
-	 * "html" for web requests and "txt" for command line requests.
+	 * by this controller. If none is specified, this controller will default to "html".
 	 *
 	 * @var array
 	 */
@@ -90,7 +85,7 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 	 *
 	 * @var string
 	 */
-	protected $actionMethodName = 'indexAction';
+	protected $actionMethodName;
 
 	/**
 	 * Name of the special error action method which is called in case of errors
@@ -101,23 +96,28 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 	protected $errorMethodName = 'errorAction';
 
 	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request object
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The response, modified by this handler
 	 * @return void
 	 * @api
 	 */
-	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
-		if ($this->canProcessRequest($request) === FALSE) {
-			throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
-		}
-
-		$this->request = $request;
-		$this->request->setDispatched(TRUE);
-		$this->response = $response;
-
-		$this->initializeUriBuilder();
+	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
+		$this->initializeController($request, $response);
 
 		$this->actionMethodName = $this->resolveActionMethodName();
 
@@ -131,11 +131,6 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
-
-		if ($this->request->getFormat() === NULL) {
-			$this->request->setFormat($this->detectFormat());
-		}
 
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) {
@@ -186,6 +181,7 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 
 	/**
 	 * Adds the needed valiators to the Arguments:
+	 *
 	 * - Validators checking the data type from the @param annotation
 	 * - Custom validators specified with validate annotations.
 	 * - Model-based validators (validate annotations in the model)
@@ -268,38 +264,6 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 		} elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
 			$this->response->appendContent((string)$actionResult);
 		}
-	}
-
-	/**
-	 * Sets the format for this request if none has been explicitly defined
-	 * elswhere.
-	 *
-	 * @return string The detected format
-	 */
-	protected function detectFormat() {
-		if ($this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) {
-			switch ($this->request->getMethod()) {
-				case 'GET' :
-				case 'POST' :
-				case 'HEAD' :
-
-						// If the client supports any format besides HTML which is also supported
-						// by this controller, use that instead of HTML:
-					foreach ($this->environment->getAcceptedFormats() as $acceptedFormat) {
-						if ($acceptedFormat !== 'html' && array_search($acceptedFormat, $this->supportedFormats) !== FALSE) {
-							return $acceptedFormat;
-						}
-					}
-					return 'html';
-				break;
-
-				case 'PUT' :
-				case 'DELETE' :
-					// @TODO Parse "Content-Type" header
-					return 'html';
-			}
-		}
-		return 'txt';
 	}
 
 	/**
@@ -389,21 +353,19 @@ class ActionController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 		if ($errorFlashMessage !== FALSE) {
 			$this->flashMessageContainer->addMessage($errorFlashMessage);
 		}
-
 		$referringRequest = $this->request->getReferringRequest();
-
 		if ($referringRequest !== NULL) {
-			$originalRequest = clone $this->request;
-			$this->request->setOriginalRequest($originalRequest);
-			$this->request->setOriginalRequestMappingResults($this->arguments->getValidationResults());
-
-			if ($referringRequest->getControllerSubpackageKey() !== NULL) {
-				$packageAndSubpackageKey = $referringRequest->getControllerPackageKey() . '\\' . $referringRequest->getControllerSubpackageKey();
+			$subPackageKey = $referringRequest->getControllerSubpackageKey();
+			if ($subPackageKey !== NULL) {
+				rtrim($packageAndSubpackageKey = $referringRequest->getControllerPackageKey() . '\\' . $referringRequest->getControllerSubpackageKey(), '\\');
 			} else {
 				$packageAndSubpackageKey = $referringRequest->getControllerPackageKey();
 			}
+			$argumentsForNextController = $referringRequest->getArguments();
+			$argumentsForNextController['__submittedArguments'] = $this->request->getArguments();
+			$argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
 
-			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageAndSubpackageKey, $referringRequest->getArguments());
+			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageAndSubpackageKey, $argumentsForNextController);
 		}
 
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;

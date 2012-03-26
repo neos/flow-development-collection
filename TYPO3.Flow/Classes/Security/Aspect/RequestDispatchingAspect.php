@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Security\Aspect;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\ActionRequest;
 
 /**
  * The central security aspect, that invokes the security interceptors.
@@ -50,8 +51,12 @@ class RequestDispatchingAspect {
 	}
 
 	/**
-	 * Advices the dispatch method so that illegal requests are blocked before invoking
-	 * any controller.
+	 * Advices the dispatch method so that illegal action requests are blocked before
+	 * invoking any controller.
+	 *
+	 * The "request" referred to within this method is an ActionRequest or some other
+	 * dispatchable request implementing RequestInterface. Note that we don't deal
+	 * with HTTP requests here.
 	 *
 	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Dispatcher->dispatch())")
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
@@ -70,7 +75,7 @@ class RequestDispatchingAspect {
 			foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 				$entryPoint = $token->getAuthenticationEntryPoint();
 
-				if ($entryPoint !== NULL && $entryPoint->canForward($request)) {
+				if ($entryPoint !== NULL) {
 					$entryPointFound = TRUE;
 					if ($entryPoint instanceof \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect) {
 						$options = $entryPoint->getOptions();
@@ -78,16 +83,19 @@ class RequestDispatchingAspect {
 					} else {
 						$this->securityLogger->log('Starting authentication with entry point of type ' . get_class($entryPoint), LOG_INFO);
 					}
-					$rootRequest = $request;
-					if ($request instanceof \TYPO3\FLOW3\Mvc\Web\SubRequest) $rootRequest = $request->getRootRequest();
-					$this->securityContext->setInterceptedRequest($rootRequest);
-					$entryPoint->startAuthentication($rootRequest, $response);
+					$this->securityContext->setInterceptedRequest($request->getMainRequest());
+					$entryPoint->startAuthentication($request->getHttpRequest(), $response);
 				}
 			}
 			if ($entryPointFound === FALSE) {
 				$this->securityLogger->log('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.', LOG_NOTICE);
 				throw $exception;
 			}
+		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
+			$this->securityLogger->log('Access denied', LOG_WARNING);
+			$response = $joinPoint->getMethodArgument('response');
+			$response->setStatus(403);
+			$response->setContent('<h1>403 Forbidden</h1><p>' . $exception->getMessage());
 		}
 	}
 
@@ -105,7 +113,9 @@ class RequestDispatchingAspect {
 		try {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
-			if ($response instanceof \TYPO3\FLOW3\Mvc\Web\Response) $response->setStatus(403);
+			if ($response instanceof \TYPO3\FLOW3\Http\Response) {
+				$response->setStatus(403);
+			}
 			$response->setContent('Access denied!');
 		}
 	}

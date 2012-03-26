@@ -238,8 +238,8 @@ class Bootstrap {
 	 * This method makes only sense to use during functional tests. During a functional
 	 * test run the active request handler chosen by the bootstrap will be a command
 	 * line request handler specialized on running functional tests. A functional
-	 * test case can then set the active request handler to one which simulates a
-	 * web request.
+	 * test case can then set the active request handler to one which simulates, for
+	 * example, an HTTP request.
 	 *
 	 * @param \TYPO3\FLOW3\Core\RequestHandlerInterface $requestHandler
 	 * @return void
@@ -500,6 +500,8 @@ class Bootstrap {
 		define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
 		define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
 		define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+
+		define('FLOW3_VERSION_BRANCH', '1.1');
 	}
 
 	/**

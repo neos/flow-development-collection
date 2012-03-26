@@ -44,21 +44,6 @@ interface RequestHandlerInterface {
 	 */
 	public function getPriority();
 
-	/**
-	 * Returns the top level request built by the request handler.
-	 *
-	 * In most cases the dispatcher or other parts of the request-response chain
-	 * should be preferred for retrieving the current request, because sub requests
-	 * or simulated requests are built later in the process.
-	 *
-	 * If, however, the original top level request is wanted, this is the right
-	 * method for getting it.
-	 *
-	 * @return \TYPO3\FLOW3\MVC\RequestInterface The originally built web request
-	 * @api
-	 */
-	public function getRequest();
-
 }
 
 ?>

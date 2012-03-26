@@ -24,17 +24,6 @@ abstract class AbstractEntryPoint implements \TYPO3\FLOW3\Security\Authenticatio
 	protected $options = array();
 
 	/**
-	 * Returns TRUE if the given request can be authenticated by the authentication provider
-	 * represented by this entry point
-	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
-	 * @return boolean TRUE if authentication is possible
-	 */
-	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request) {
-		return ($request instanceof \TYPO3\FLOW3\MVC\Web\Request);
-	}
-
-	/**
 	 * Sets the options array
 	 *
 	 * @param array $options An array of configuration options
