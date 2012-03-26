@@ -27,7 +27,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
 
 	const MAPPING_REGULAR = 0;
 	const MAPPING_INVERSE = 1;
@@ -675,9 +675,9 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		}
 
 			// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-		$metadata->addLifecycleCallback('FLOW3_AOP_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
+		$metadata->addLifecycleCallback('FLOW3_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-		$metadata->addLifecycleCallback('FLOW3_AOP_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
+		$metadata->addLifecycleCallback('FLOW3_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 	}
 
 	/**
@@ -782,10 +782,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
 		return $classNameIndex;
 	}
 }

@@ -394,7 +394,7 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');
@@ -441,7 +441,7 @@ class ObjectSerializerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');

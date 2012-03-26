@@ -20,10 +20,10 @@ interface RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 */
-	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request);
+	public function canMatch(\TYPO3\FLOW3\Mvc\RequestInterface $request);
 
 	/**
 	 * Returns the set pattern
@@ -41,12 +41,12 @@ interface RequestPatternInterface {
 	public function setPattern($pattern);
 
 	/**
-	 * Matches a \TYPO3\FLOW3\MVC\RequestInterface against its set pattern rules
+	 * Matches a \TYPO3\FLOW3\Mvc\RequestInterface against its set pattern rules
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 */
-	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request);
+	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request);
 }
 
 ?>

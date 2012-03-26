@@ -23,11 +23,11 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function currentRequestIsSetInTheSecurityContext() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -47,12 +47,12 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function securityContextIsSetToInitialized() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
 		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -72,12 +72,12 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function initializeSeparatesActiveAndInactiveTokens() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
 		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -98,9 +98,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function initializeUpdatesAndSeparatesActiveAndInactiveTokensCorrectly() {
 		$settings = array();
 		$settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -169,9 +169,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function securityContextCallsTheAuthenticationManagerToSetItsTokens() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -193,9 +193,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function tokenFromAnAuthenticationManagerIsReplacedIfThereIsOneOfTheSameTypeInTheSession() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -238,9 +238,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function initializeCallsUpdateCredentialsOnAllActiveTokens() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -311,9 +311,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function authenticationStrategyIsSetCorrectlyFromConfiguration($settings, $expectedAuthenticationStrategy) {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -336,9 +336,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getRolesReturnsTheCorrectRoles() {
 		$settings = array();
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -401,9 +401,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getRolesTakesInheritanceOfRolesIntoAccount() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -463,9 +463,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getRolesReturnsTheEverybodyRoleEvenIfNoTokenIsAuthenticated() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -496,9 +496,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getRolesAddsTheEverybodyRoleToTheRolesFromTheAuthenticatedTokens() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -582,9 +582,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function hasRoleWorksWithRecursiveRoles() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -625,9 +625,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function hasRoleReturnsTrueForTheEverybodyRoleIfNoOtherRoleIsAuthenticated() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -666,9 +666,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getPartyAsksTheCorrectAuthenticationTokenAndReturnsItsParty() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -706,9 +706,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getAccountReturnsTheAccountAttachedToTheFirstAuthenticatedToken() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -742,9 +742,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPartyByTypeReturnsTheFirstAuthenticatedPartyWithGivenType() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -784,9 +784,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAccountByAuthenticationProviderNameReturnsTheAuthenticatedAccountWithGivenProviderName() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -821,9 +821,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAccountByAuthenticationProviderNameReturnsNullIfNoAccountFound() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -844,9 +844,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getCsrfProtectionTokenReturnsANewTokenIfNoneIsPresentInTheContext() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -867,9 +867,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function getCsrfProtectionTokenReturnsANewTokenIfTheCsrfStrategyIsOnePerUri() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -893,9 +893,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContext() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
@@ -919,9 +919,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContextAndUnsetsItIfTheCsrfStrategyIsOnePerUri() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 
-		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\RequestHandler', array(), array(), '', FALSE);
+		$mockRequestHandler = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
 		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);

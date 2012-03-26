@@ -31,10 +31,10 @@ class LoggingAspect {
 	 * Logs calls of start()
 	 *
 	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->start())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logStart(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logStart(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$this->systemLogger->log(sprintf('Started session with id %s', $session->getId()), LOG_DEBUG);
@@ -45,10 +45,10 @@ class LoggingAspect {
 	 * Logs calls of resume()
 	 *
 	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->resume())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logResume(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logResume(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$this->systemLogger->log(sprintf('Resumed session with id %s which was inactive for %s seconds.', $joinPoint->getProxy()->getId(), $joinPoint->getResult()), LOG_DEBUG);
@@ -59,10 +59,10 @@ class LoggingAspect {
 	 * Logs calls of destroy()
 	 *
 	 * @FLOW3\Before("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->destroy())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logDestroy(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logDestroy(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$reason = $joinPoint->getMethodArgument('reason') ?: 'no reason given';
@@ -74,10 +74,10 @@ class LoggingAspect {
 	 * Logs calls of renewId()
 	 *
 	 * @FLOW3\Around("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->renewId())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logRenewId(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logRenewId(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		$oldId = $session->getId();
 		$newId = $joinPoint->getAdviceChain()->proceed($joinPoint);

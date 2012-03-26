@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\AOP\Builder;
+namespace TYPO3\FLOW3\Tests\Unit\Aop\Builder;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -20,9 +20,9 @@ class ClassNameIndexTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function intersectOfTwoIndicesWorks() {
-		$index1 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index1 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index1->setClassNames(array('\Foo\Bar', '\Foo\Baz'));
-		$index2 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index2 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index2->setClassNames(array('\Foo\Baz', '\Foo\Blubb'));
 		$intersectedIndex = $index1->intersect($index2);
 
@@ -33,9 +33,9 @@ class ClassNameIndexTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function applyIntersectWorks() {
-		$index1 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index1 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index1->setClassNames(array('\Foo\Bar', '\Foo\Baz'));
-		$index2 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index2 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index2->setClassNames(array('\Foo\Baz', '\Foo\Blubb'));
 		$index1->applyIntersect($index2);
 
@@ -46,9 +46,9 @@ class ClassNameIndexTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function unionOfTwoIndicesWorks() {
-		$index1 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index1 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index1->setClassNames(array('\Foo\Bar', '\Foo\Baz'));
-		$index2 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index2 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index2->setClassNames(array('\Foo\Baz', '\Foo\Blubb'));
 		$intersectedIndex = $index1->union($index2);
 		$intersectedIndex->sort();
@@ -60,9 +60,9 @@ class ClassNameIndexTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function applyUnionWorks() {
-		$index1 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index1 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index1->setClassNames(array('\Foo\Bar', '\Foo\Baz'));
-		$index2 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index2 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index2->setClassNames(array('\Foo\Baz', '\Foo\Blubb'));
 		$index1->applyUnion($index2);
 		$index1->sort();
@@ -74,7 +74,7 @@ class ClassNameIndexTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function filterByPrefixWork() {
-		$index1 = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$index1 = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$index1->setClassNames(array('\Foo\Bar', '\Foo\Baz', '\Bar\Baz', '\Foo\Blubb'));
 			// We need to call sort manually!
 		$index1->sort();

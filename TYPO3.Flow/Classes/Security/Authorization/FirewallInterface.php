@@ -21,10 +21,10 @@ interface FirewallInterface {
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to be analyzed
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to be analyzed
 	 * @return void
 	 */
-	public function blockIllegalRequests(\TYPO3\FLOW3\MVC\RequestInterface $request);
+	public function blockIllegalRequests(\TYPO3\FLOW3\Mvc\RequestInterface $request);
 }
 
 ?>

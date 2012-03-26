@@ -23,7 +23,7 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 */
 	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
-		$cliRequest = $this->getMock('TYPO3\FLOW3\MVC\CLI\Request');
+		$cliRequest = $this->getMock('TYPO3\FLOW3\Cli\Request');
 
 		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$requestPattern->matchRequest($cliRequest);
@@ -34,7 +34,7 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function canMatchReturnsTrueForASupportedRequestType() {
-		$webRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$webRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 
 		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$this->assertTrue($requestPattern->canMatch($webRequest));
@@ -45,7 +45,7 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function canMatchReturnsFalseForAnUnsupportedRequestType() {
-		$cliRequest = $this->getMock('TYPO3\FLOW3\MVC\CLI\Request');
+		$cliRequest = $this->getMock('TYPO3\FLOW3\Cli\Request');
 
 		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$this->assertFalse($requestPattern->canMatch($cliRequest));
@@ -56,8 +56,8 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
-		$uri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
+		$uri = $this->getMock('TYPO3\FLOW3\Http\Uri', array(), array(), '', FALSE);
 
 		$request->expects($this->once())->method('getRequestUri')->will($this->returnValue($uri));
 		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));

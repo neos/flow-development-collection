@@ -54,13 +54,13 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed() {
 		$mockPublishingConfiguration = $this->getMock('TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', FALSE);
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('resultOfTheOriginalMethod'));
 
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
@@ -93,7 +93,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 
 		$publishingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
@@ -122,7 +122,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 
 		$publishingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
@@ -165,7 +165,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFilename')->will($this->returnValue('ResourceFileName.ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
@@ -218,7 +218,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFilename')->will($this->returnValue('ResourceTitle.ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
 
@@ -243,13 +243,13 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsTheResultOfTheOriginalMethodIfNoSecurityPublishingConfigurationIsPassed() {
 		$mockPublishingConfiguration = $this->getMock('TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface', array(), array(), '', FALSE);
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('resultOfTheOriginalMethod'));
 
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
@@ -283,7 +283,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 
@@ -325,7 +325,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 		$mockResource->expects($this->any())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
@@ -386,7 +386,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(TRUE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
@@ -445,7 +445,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getPublishingConfiguration')->will($this->returnValue($mockPublishingConfiguration));
 		$mockResource->expects($this->any())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
@@ -502,7 +502,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(TRUE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
@@ -559,7 +559,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
@@ -617,7 +617,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));
@@ -684,7 +684,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$mockResource->expects($this->once())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->once())->method('getFileExtension')->will($this->returnValue('ResourceFileExtension'));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->at(0))->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockPublishingTargetProxy));

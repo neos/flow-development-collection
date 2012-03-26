@@ -51,10 +51,10 @@ class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\Interceptor
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 */
-	public function setJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function setJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 
 	}
 

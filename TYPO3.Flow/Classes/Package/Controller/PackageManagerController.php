@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class PackageManagerController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
@@ -28,7 +28,7 @@ class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionControl
 	/**
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\CLI\Request');
+	protected $supportedRequestTypes = array('TYPO3\FLOW3\Cli\Request');
 
 	/**
 	 * Injects the package manager

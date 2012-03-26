@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Entity
  */
-class CleanEntity implements \TYPO3\FLOW3\AOP\ProxyInterface {
+class CleanEntity implements \TYPO3\FLOW3\Aop\ProxyInterface {
 
 	/**
 	 * Just a normal string
@@ -35,10 +35,10 @@ class CleanEntity implements \TYPO3\FLOW3\AOP\ProxyInterface {
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface: The join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 
 	}
 

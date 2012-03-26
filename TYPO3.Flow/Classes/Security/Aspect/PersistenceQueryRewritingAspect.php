@@ -71,10 +71,10 @@ class PersistenceQueryRewritingAspect {
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
 	 * @FLOW3\Before("setting(TYPO3.FLOW3.security.enable) && within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 */
-	public function rewriteQomQuery(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewriteQomQuery(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
 			return;
 		}
@@ -99,10 +99,10 @@ class PersistenceQueryRewritingAspect {
 	 * Checks, if the current policy allows the retrieval of the object fetched by getObjectDataByIdentifier()
 	 *
 	 * @FLOW3\Around("within(TYPO3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 */
-	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		if ($this->securityContext->isInitialized() === FALSE) {

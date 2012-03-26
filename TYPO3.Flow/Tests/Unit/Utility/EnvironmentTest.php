@@ -85,7 +85,7 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function requestUriServerVariableArrayPairs() {
 		return array(
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/index.php',
@@ -93,7 +93,7 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				)
 			),
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/Web/index.php',
@@ -101,7 +101,7 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				),
 			),
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/index.php',
@@ -109,7 +109,7 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				)
 			),
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/Web/index.php',
@@ -117,7 +117,7 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				)
 			),
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/dev/flow3/blog/Web/posts/index'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/dev/flow3/blog/Web/posts/index'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/dev/flow3/blog/Web/index.php',
@@ -145,18 +145,18 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function requestUriBaseUriScriptNameTuples() {
 		return array(
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/'),
 				'/index.php'
 			),
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/Web/'),
 				'/Web/index.php'
 			),
 			array(
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/cms/Web/is/the/base/for/typo3?5=0'),
-				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/cms/Web/'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/cms/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Http\Uri('http://flow3.typo3.org/cms/Web/'),
 				'/cms/Web/index.php'
 			),
 		);

@@ -26,7 +26,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	protected $resourcesPublishingPath;
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Http\Uri
 	 */
 	protected $resourcesBaseUri;
 
@@ -165,7 +165,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 
 	/**
 	 * Returns the base URI where persistent resources are published an accessbile from the outside
-	 * @return \TYPO3\FLOW3\Property\DataType\Uri The base URI
+	 * @return \TYPO3\FLOW3\Http\Uri The base URI
 	 */
 	public function getResourcesBaseUri() {
 		return $this->resourcesBaseUri;

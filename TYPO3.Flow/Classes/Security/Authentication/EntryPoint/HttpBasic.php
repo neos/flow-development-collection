@@ -19,11 +19,11 @@ class HttpBasic extends \TYPO3\FLOW3\Security\Authentication\EntryPoint\Abstract
 	/**
 	 * Starts the authentication: Send HTTP header
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
-	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The current response
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The current response
 	 * @return void
 	 */
-	public function startAuthentication(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
+	public function startAuthentication(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
 		if (!$this->canForward($request)) throw new \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException('Unsupported request type for authentication entry point given.', 1237282465);
 		$response->setStatus(401);
 		$response->setHeader('WWW-Authenticate', 'Basic realm="' . (isset($this->options['realm']) ? $this->options['realm'] : 'Authentication required!') . '"');

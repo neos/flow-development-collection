@@ -20,11 +20,11 @@ interface AccessDecisionManagerInterface {
 	/**
 	 * Decides if access should be granted on the given object in the current security context
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function decideOnJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function decideOnJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint);
 
 	/**
 	 * Decides if access should be granted on the given resource in the current security context

@@ -36,10 +36,10 @@ class LoggingAspect {
 	 * Logs calls and results of the authenticate() method of the Authentication Manager
 	 *
 	 * @FLOW3\After("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logManagerAuthenticate(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logManagerAuthenticate(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($joinPoint->hasException()) {
 			$exception = $joinPoint->getException();
 			$this->securityLogger->log('Authentication failed: "' . $exception->getMessage() . '" #' . $exception->getCode(), LOG_NOTICE);
@@ -58,10 +58,10 @@ class LoggingAspect {
 	 * Logs calls and results of the logout() method of the Authentication Manager
 	 *
 	 * @FLOW3\AfterReturning("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logManagerLogout(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logManagerLogout(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$securityContext = $joinPoint->getProxy()->getSecurityContext();
 		if (!$securityContext->isInitialized()) {
 			return;
@@ -80,10 +80,10 @@ class LoggingAspect {
 	 * Logs calls and results of the authenticate() method of an authentication provider
 	 *
 	 * @FLOW3\AfterReturning("within(TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logPersistedUsernamePasswordProviderAuthenticate(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logPersistedUsernamePasswordProviderAuthenticate(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$token = $joinPoint->getMethodArgument('authenticationToken');
 
 		switch ($token->getAuthenticationStatus()) {
@@ -105,10 +105,10 @@ class LoggingAspect {
 	 *
 	 * @FLOW3\AfterThrowing("method(TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager->decideOnJoinPoint())")
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
 	 * @return void
 	 */
-	public function logJoinPointAccessDecisions(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logJoinPointAccessDecisions(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$exception = $joinPoint->getException();
 
 		$subjectJoinPoint = $joinPoint->getMethodArgument('joinPoint');

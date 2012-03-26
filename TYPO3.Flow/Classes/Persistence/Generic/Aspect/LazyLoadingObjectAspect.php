@@ -37,11 +37,11 @@ class LazyLoadingObjectAspect {
 	 * to be a Closure that populates the object. That variable is unset after
 	 * initializing the object!
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())")
 	 */
-	public function initialize(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function initialize(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		if (property_exists($proxy, 'FLOW3_Persistence_LazyLoadingObject_thawProperties') && $proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties instanceof \Closure) {
 			$proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties->__invoke($proxy);

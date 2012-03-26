@@ -130,7 +130,7 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyArrayIfMethodHasNoArguments() {
-		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Controller\ActionController', array('fooAction'), array(), '', FALSE);
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue(array()));

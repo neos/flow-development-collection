@@ -64,11 +64,11 @@ class PrivateResourcesPublishingAspect {
 	 * Returns the web URI to be used to publish the specified persistent resource
 	 *
 	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method, a rewritten private resource URI or FALSE on error
 	 * @todo Rewrite of the resource title should be done by general string to uri rewrite function from somewhere else
 	 */
-	public function rewritePersistentResourceWebUriForPrivateResources(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewritePersistentResourceWebUriForPrivateResources(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
 		$filename = $resource->getFilename();
 		$configuration = $resource->getPublishingConfiguration();
@@ -96,10 +96,10 @@ class PrivateResourcesPublishingAspect {
 	 * Returns the publish path and filename to be used to publish the specified persistent resource
 	 *
 	 * @FLOW3\Around("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResources(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResources(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
 		$configuration = $resource->getPublishingConfiguration();
 		$returnFilename = $joinPoint->getMethodArgument('returnFilename');
@@ -148,11 +148,11 @@ class PrivateResourcesPublishingAspect {
 	 * Unpublishes a private resource from all private user directories
 	 *
 	 * @FLOW3\After("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @todo implement this method
 	 */
-	public function unpublishPrivateResource(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function unpublishPrivateResource(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		return FALSE;
 	}
 }

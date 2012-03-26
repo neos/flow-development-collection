@@ -21,8 +21,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function enforcePolicyPassesTheGivenJoinPointOverToThePolicyEnforcementInterceptor() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
@@ -37,8 +37,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function enforcePolicyCallsThePolicyEnforcementInterceptorCorrectly() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
@@ -55,8 +55,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function enforcePolicyPassesTheGivenJoinPointOverToTheAfterInvocationInterceptor() {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
@@ -73,8 +73,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function enforcePolicyPassesTheReturnValueOfTheInterceptedMethodOverToTheAfterInvocationInterceptor() {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
@@ -94,8 +94,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function enforcePolicyCallsTheTheAfterInvocationInterceptorCorrectly() {
 		$this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
@@ -111,8 +111,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @todo adjust when AfterInvocationInterceptor is used again
 	 */
 	public function enforcePolicyCallsTheAdviceChainCorrectly() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		// $mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
@@ -129,8 +129,8 @@ class PolicyEnforcementAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @todo adjust when AfterInvocationInterceptor is used again
 	 */
 	public function enforcePolicyReturnsTheResultOfTheOriginalMethodCorrectly() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		// $mockAfterInvocationInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
 		$mockPolicyEnforcementInterceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 

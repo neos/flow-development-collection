@@ -76,7 +76,7 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Http\Uri
 	 */
 	protected $baseUri;
 
@@ -110,10 +110,10 @@ class Environment {
 	/**
 	 * Set the base URI
 	 *
-	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri The base URI or NULL if the base URI should be detected automatically
+	 * @param \TYPO3\FLOW3\Http\Uri $baseUri The base URI or NULL if the base URI should be detected automatically
 	 * @return void
 	 */
-	public function setBaseUri(\TYPO3\FLOW3\Property\DataType\Uri $baseUri = NULL) {
+	public function setBaseUri(\TYPO3\FLOW3\Http\Uri $baseUri = NULL) {
 		$this->baseUri = $baseUri;
 	}
 
@@ -277,7 +277,7 @@ class Environment {
 	 *
 	 * The script name "index.php" will be removed if it exists.
 	 *
-	 * @return \TYPO3\FLOW3\Property\DataType\Uri The request URI
+	 * @return \TYPO3\FLOW3\Http\Uri The request URI
 	 * @api
 	 */
 	public function getRequestUri() {
@@ -285,13 +285,13 @@ class Environment {
 			return FALSE;
 		}
 
-		return new \TYPO3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . str_replace('/index.php' , '', $this->SERVER['REQUEST_URI']));
+		return new \TYPO3\FLOW3\Http\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . str_replace('/index.php' , '', $this->SERVER['REQUEST_URI']));
 	}
 
 	/**
 	 * Returns the current base URI which is the root FLOW3's relative URIs.
 	 *
-	 * @return \TYPO3\FLOW3\Property\DataType\Uri The base URI
+	 * @return \TYPO3\FLOW3\Http\Uri The base URI
 	 */
 	public function getBaseUri() {
 		if ($this->baseUri === NULL) {

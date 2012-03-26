@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Command;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\MVC\CLI\Response;
+use TYPO3\FLOW3\Cli\Response;
 use TYPO3\FLOW3\Utility\Files;
 
 /**
@@ -22,7 +22,7 @@ use TYPO3\FLOW3\Utility\Files;
  *
  * @FLOW3\Scope("singleton")
  */
-class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
+class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 	/**
 	 * @var \TYPO3\FLOW3\Cache\CacheManager

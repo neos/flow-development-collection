@@ -138,7 +138,7 @@ class Context {
 	protected $csrfTokens = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\RequestInterface
+	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
 	 */
 	protected $interceptedRequest;
 
@@ -454,10 +454,10 @@ class Context {
 	 * Sets a request, to be stored for later resuming after it
 	 * has been intercepted by a security exception.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $interceptedRequest
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $interceptedRequest
 	 * @return void
 	 */
-	public function setInterceptedRequest(\TYPO3\FLOW3\MVC\RequestInterface $interceptedRequest = NULL) {
+	public function setInterceptedRequest(\TYPO3\FLOW3\Mvc\RequestInterface $interceptedRequest = NULL) {
 		$this->interceptedRequest = $interceptedRequest;
 	}
 
@@ -465,7 +465,7 @@ class Context {
 	 * Returns the request, that has been stored for later resuming after it
 	 * has been intercepted by a security exception, NULL if there is none.
 	 *
-	 * @return \TYPO3\FLOW3\MVC\RequestInterface
+	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
 	 */
 	public function getInterceptedRequest() {
 		return $this->interceptedRequest;

@@ -91,7 +91,7 @@ class FilterFirewallTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function allConfiguredFiltersAreCalled() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 
 		$mockFilter1 = $this->getMock('TYPO3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
 		$mockFilter1->expects($this->once())->method('filterRequest')->with($mockRequest);
@@ -112,7 +112,7 @@ class FilterFirewallTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 */
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 
 		$mockFilter1 = $this->getMock('TYPO3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
 		$mockFilter1->expects($this->once())->method('filterRequest')->with($mockRequest)->will($this->returnValue(FALSE));

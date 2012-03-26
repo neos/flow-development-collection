@@ -24,11 +24,11 @@ class AccessGrant implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionV
 	 * Votes to grant access, if the given object is one of the supported types
 	 *
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer One of: VOTE_GRANT
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 
 	}
 

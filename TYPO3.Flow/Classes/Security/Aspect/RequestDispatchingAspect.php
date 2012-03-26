@@ -53,11 +53,11 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that illegal requests are blocked before invoking
 	 * any controller.
 	 *
-	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\MVC\Dispatcher->dispatch())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Dispatcher->dispatch())")
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 */
-	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
 
 		try {
@@ -79,9 +79,7 @@ class RequestDispatchingAspect {
 						$this->securityLogger->log('Starting authentication with entry point of type ' . get_class($entryPoint), LOG_INFO);
 					}
 					$rootRequest = $request;
-					if ($request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) {
-						$rootRequest = $request->getRootRequest();
-					}
+					if ($request instanceof \TYPO3\FLOW3\Mvc\Web\SubRequest) $rootRequest = $request->getRootRequest();
 					$this->securityContext->setInterceptedRequest($rootRequest);
 					$entryPoint->startAuthentication($rootRequest, $response);
 				}
@@ -97,17 +95,17 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that access denied exceptions are transformed into the correct
 	 * response status.
 	 *
-	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\MVC\Dispatcher->dispatch())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Dispatcher->dispatch())")
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 */
-	public function setAccessDeniedResponseHeader(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function setAccessDeniedResponseHeader(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$response = $joinPoint->getMethodArgument('response');
 
 		try {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
-			if ($response instanceof \TYPO3\FLOW3\MVC\Web\Response) $response->setStatus(403);
+			if ($response instanceof \TYPO3\FLOW3\Mvc\Web\Response) $response->setStatus(403);
 			$response->setContent('Access denied!');
 		}
 	}

@@ -32,7 +32,7 @@ class ReconstitutableClassWithSimpleProperties implements \TYPO3\FLOW3\Persisten
 	 * The constructor - similar to what you would find in a AOP proxy class.
 	 *
 	 */
-	public function __construct($someArgument, \TYPO3\FLOW3\Object\ObjectManagerInterface $FLOW3_AOP_Proxy_objectManager) {
+	public function __construct($someArgument, \TYPO3\FLOW3\Object\ObjectManagerInterface $FLOW3_Aop_Proxy_objectManager) {
 		$this->constructorHasBeenCalled = TRUE;
 	}
 
@@ -40,9 +40,9 @@ class ReconstitutableClassWithSimpleProperties implements \TYPO3\FLOW3\Persisten
 		$this->stringDependency = $string;
 	}
 
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+	public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 
-	public function FLOW3_AOP_Proxy_declareMethodsAndAdvices() {}
+	public function FLOW3_Aop_Proxy_declareMethodsAndAdvices() {}
 
 }
 ?>

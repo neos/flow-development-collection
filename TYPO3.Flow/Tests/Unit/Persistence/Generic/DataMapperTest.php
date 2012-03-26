@@ -65,7 +65,7 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
 		$mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
-		$mockEntity = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_invokeJoinPoint', '__wakeup'), array(), $mockEntityClassName);
+		$mockEntity = $this->getMock('TYPO3\FLOW3\Aop\ProxyInterface', array('FLOW3_Aop_Proxy_invokeJoinPoint', '__wakeup'), array(), $mockEntityClassName);
 
 		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => array('foo'));
 

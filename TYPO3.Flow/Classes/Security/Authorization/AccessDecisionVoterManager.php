@@ -81,11 +81,11 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 * It iterates over all available \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function decideOnJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function decideOnJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$denyVotes = 0;
 		$grantVotes = 0;
 		$abstainVotes = 0;

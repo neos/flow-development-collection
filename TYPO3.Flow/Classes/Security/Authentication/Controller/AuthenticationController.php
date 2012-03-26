@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class AuthenticationController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * The authentication manager

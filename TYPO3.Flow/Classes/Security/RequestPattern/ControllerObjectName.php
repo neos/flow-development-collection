@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
 
 
 /**
- * This class holds an controller object name pattern an decides, if a \TYPO3\FLOW3\MVC\Web\Request object matches against this pattern
+ * This class holds an controller object name pattern an decides, if a \TYPO3\FLOW3\Mvc\ActionRequest object matches against this pattern
  *
  */
 class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterface {
@@ -27,10 +27,10 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 */
-	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function canMatch(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		return TRUE;
 	}
 
@@ -54,13 +54,13 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	}
 
 	/**
-	 * Matches a \TYPO3\FLOW3\MVC\RequestInterface against its set controller object name pattern rules
+	 * Matches a \TYPO3\FLOW3\Mvc\RequestInterface against its set controller object name pattern rules
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 */
-	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->controllerObjectNamePattern) . '$/', $request->getControllerObjectName());
 	}
 }

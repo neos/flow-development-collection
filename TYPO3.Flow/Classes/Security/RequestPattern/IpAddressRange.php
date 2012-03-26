@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
 
 
 /**
- * This class holds an ipAddressRange pattern an decides, if a \TYPO3\FLOW3\MVC\RequestInterface object matches against this pattern
+ * This class holds an ipAddressRange pattern an decides, if a \TYPO3\FLOW3\Mvc\RequestInterface object matches against this pattern
  *
  */
 class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
@@ -26,10 +26,10 @@ class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 */
-	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function canMatch(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		return TRUE;
 	}
 
@@ -53,13 +53,13 @@ class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	}
 
 	/**
-	 * Matches a \TYPO3\FLOW3\MVC\RequestInterface against its set ip address range
+	 * Matches a \TYPO3\FLOW3\Mvc\RequestInterface against its set ip address range
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 */
-	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		return FALSE;
 	}
 }

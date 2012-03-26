@@ -337,7 +337,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function detectResourcesBaseUriDetectsUriWithSubDirectoryCorrectly() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Property\DataType\Uri('http://www.server.com/')));
+		$mockEnvironment->expects($this->once())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Http\Uri('http://www.server.com/')));
 
 		$expectedBaseUri = 'http://www.server.com/_Resources/';
 

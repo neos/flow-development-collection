@@ -65,11 +65,11 @@ class PersistenceMagicAspect {
 	/**
 	 * After returning advice, making sure we have an UUID for each and every entity.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)())")
 	 */
-	public function generateUuid(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function generateUuid(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', \TYPO3\FLOW3\Utility\Algorithms::generateUUID(), TRUE);
 		$this->persistenceManager->registerNewObject($proxy);
@@ -78,11 +78,11 @@ class PersistenceMagicAspect {
 	/**
 	 * After returning advice, generates the value hash for the object
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Before("classAnnotatedWith(TYPO3\FLOW3\Annotations\ValueObject) && method(.*->__construct())")
 	 */
-	public function generateValueHash(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function generateValueHash(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		$hashSource = get_class($proxy);
 		if (property_exists($proxy, 'FLOW3_Persistence_Identifier')) {
@@ -106,11 +106,11 @@ class PersistenceMagicAspect {
 	/**
 	 * Mark object as cloned after cloning.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
 	 * @return void
 	 * @FLOW3\AfterReturning("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
 	 */
-	public function cloneObject(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function cloneObject(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->FLOW3_Persistence_clone = TRUE;
 	}
 

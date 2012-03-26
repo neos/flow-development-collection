@@ -26,11 +26,11 @@ interface AccessDecisionVoterInterface {
 	 * Votes if access should be granted for the given object in the current security context
 	 *
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint);
 
 	/**
 	 * Votes if access should be granted for the given resource in the current security context

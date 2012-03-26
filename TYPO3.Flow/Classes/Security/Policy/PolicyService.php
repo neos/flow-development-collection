@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
 
 	const
 		PRIVILEGE_ABSTAIN = 0,
@@ -266,11 +266,11 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	/**
 	 * Returns the configured roles for the given joinpoint
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @return array Array of roles
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getRolesForJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function getRolesForJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
@@ -287,11 +287,11 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * contains the privilege's resource as key of each privilege.
 	 *
 	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
 	 * @return array Array of privileges
 	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getPrivilegesForJoinPoint(\TYPO3\FLOW3\Security\Policy\Role $role, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function getPrivilegesForJoinPoint(\TYPO3\FLOW3\Security\Policy\Role $role, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		$roleIdentifier = (string)$role;
 
@@ -527,7 +527,7 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	 * @return void
 	 */
 	public function savePolicyCache() {
-		$tags = array('TYPO3_FLOW3_AOP');
+		$tags = array('TYPO3_FLOW3_Aop');
 		if (!$this->cache->has('acls')) {
 			$this->cache->set('acls', $this->acls, $tags);
 		}
@@ -539,15 +539,15 @@ class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
 		if ($this->filters === array()) {
 			$this->buildPointcutFilters();
 		}
 
-		$result = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$result = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		foreach ($this->filters as $resources) {
 			foreach ($resources as $filterForResource) {
 				$result->applyUnion($filterForResource->reduceTargetClassNames($classNameIndex));

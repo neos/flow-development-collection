@@ -23,7 +23,7 @@ class PolicyEnforcementTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function invokeCallsTheAuthenticationManager() {
 		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$accessDecisionManager = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$joinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$joinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 
@@ -39,7 +39,7 @@ class PolicyEnforcementTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function invokeCallsTheAccessDecisionManagerToDecideOnTheCurrentJoinPoint() {
 		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$accessDecisionManager = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$joinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$joinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 
 		$accessDecisionManager->expects($this->once())->method('decideOnJoinPoint')->with($joinPoint);
 

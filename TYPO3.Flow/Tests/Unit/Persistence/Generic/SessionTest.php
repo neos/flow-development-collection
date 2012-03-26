@@ -534,7 +534,7 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdentifierByObjectReturnsUUIDForKnownObject() {
-		$knownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
+		$knownObject = $this->getMock('TYPO3\FLOW3\Aop\ProxyInterface');
 		$fakeUUID = '123-456';
 
 		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
@@ -550,7 +550,7 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdentifierByObjectReturnsUuidForObjectBeingAOPProxy() {
-		$knownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
+		$knownObject = $this->getMock('TYPO3\FLOW3\Aop\ProxyInterface');
 		$knownObject->FLOW3_Persistence_Identifier = 'fakeUuid';
 
 		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
@@ -566,7 +566,7 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdentifierByObjectReturnsHashForObjectBeingAOPProxy() {
-		$knownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
+		$knownObject = $this->getMock('TYPO3\FLOW3\Aop\ProxyInterface');
 		$knownObject->FLOW3_Persistence_Identifier = 'fakeHash';
 
 		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
@@ -582,7 +582,7 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
-		$unknownObject = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
+		$unknownObject = $this->getMock('TYPO3\FLOW3\Aop\ProxyInterface');
 
 		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
 		$session->injectReflectionService($this->getMock('TYPO3\FLOW3\Reflection\ReflectionService'));
@@ -594,7 +594,7 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdentifierByObjectReturnsValueOfPropertyTaggedWithId() {
-		$object = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
+		$object = $this->getMock('TYPO3\FLOW3\Aop\ProxyInterface');
 		$object->FLOW3_Persistence_Identifier = 'randomlyGeneratedUuid';
 		$object->customId = 'customId';
 

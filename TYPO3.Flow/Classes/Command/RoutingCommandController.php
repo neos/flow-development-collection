@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
+class RoutingCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 	/**
 	 * @FLOW3\Inject
@@ -28,7 +28,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
+	 * @var \TYPO3\FLOW3\Mvc\Routing\RouterInterface
 	 */
 	protected $router;
 
@@ -117,7 +117,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			try {
 				$resolves = $route->resolves($routeValues);
 				$controllerObjectName = $this->router->getControllerObjectName($package, $subpackage, $controller);
-			} catch (\TYPO3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException $e) {
+			} catch (\TYPO3\FLOW3\Mvc\Routing\Exception\InvalidControllerException $e) {
 				$resolves = FALSE;
 			}
 

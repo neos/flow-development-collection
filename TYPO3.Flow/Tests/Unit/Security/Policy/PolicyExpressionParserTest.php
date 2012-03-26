@@ -19,7 +19,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
+	 * @expectedException \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
 		$resourcesTree = array(
@@ -59,7 +59,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		);
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('create')->will($this->returnValue($mockPointcutFilterComposite));

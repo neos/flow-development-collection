@@ -78,11 +78,11 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to be analyzed
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to be analyzed
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException if the
 	 */
-	public function blockIllegalRequests(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function blockIllegalRequests(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		$filterMatched = FALSE;
 		foreach($this->filters as $filter) {
 			if($filter->filterRequest($request)) $filterMatched = TRUE;

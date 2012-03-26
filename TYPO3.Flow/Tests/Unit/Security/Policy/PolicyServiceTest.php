@@ -206,7 +206,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'acls' => array('TheRole' => array('methods' => array('theResource' => 'GRANT')))
 		);
 
-		$mockFilter = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -241,17 +241,17 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			))
 		);
 
-		$mockFilter1 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter1 = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter1->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 		$mockFilter1->expects($this->once())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(TRUE));
 		$mockFilter1->expects($this->once())->method('getRuntimeEvaluationsClosureCode')->will($this->returnValue('closureCode1'));
 
-		$mockFilter2 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter2 = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter2->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 		$mockFilter2->expects($this->once())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(FALSE));
 		$mockFilter2->expects($this->never())->method('getRuntimeEvaluationsClosureCode');
 
-		$mockFilter3 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter3 = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter3->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 		$mockFilter3->expects($this->once())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(TRUE));
 		$mockFilter3->expects($this->once())->method('getRuntimeEvaluationsClosureCode')->will($this->returnValue('closureCode3'));
@@ -324,7 +324,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'acls' => array('theRole' => array('methods' => array('theResource' => 'GRANT')))
 		);
 
-		$mockFilter = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -357,7 +357,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPrivilegesForJoinPointReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
@@ -371,7 +371,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPrivilegesForJoinPointReturnsThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
@@ -410,7 +410,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPrivilegesForJoinPointReturnsOnlyPrivilgesThatPassedRuntimeEvaluationsInThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
@@ -650,7 +650,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function savePolicyCacheStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(FALSE));
-		$mockCache->expects($this->at(1))->method('set')->with('acls', array('aclsArray'), array('TYPO3_FLOW3_AOP'));
+		$mockCache->expects($this->at(1))->method('set')->with('acls', array('aclsArray'), array('TYPO3_FLOW3_Aop'));
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(3))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 
@@ -943,13 +943,13 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'TestPackage\Subpackage2\Class4'
 		);
 		sort($availableClassNames);
-		$availableClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$availableClassNamesIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$availableClassNamesIndex->setClassNames($availableClassNames);
 
-		$mockPointcutFilter1 = $this->getMock('\TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
-		$mockPointcutFilter1->expects($this->once())->method('reduceTargetClassNames')->with($availableClassNamesIndex)->will($this->returnValue(new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex(array('TestPackage\Subpackage\Class1' => TRUE))));
-		$mockPointcutFilter2 = $this->getMock('\TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
-		$mockPointcutFilter2->expects($this->once())->method('reduceTargetClassNames')->with($availableClassNamesIndex)->will($this->returnValue(new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex(array('TestPackage\Subpackage\SubSubPackage\Class3' => TRUE))));
+		$mockPointcutFilter1 = $this->getMock('\TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter1->expects($this->once())->method('reduceTargetClassNames')->with($availableClassNamesIndex)->will($this->returnValue(new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex(array('TestPackage\Subpackage\Class1' => TRUE))));
+		$mockPointcutFilter2 = $this->getMock('\TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter2->expects($this->once())->method('reduceTargetClassNames')->with($availableClassNamesIndex)->will($this->returnValue(new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex(array('TestPackage\Subpackage\SubSubPackage\Class3' => TRUE))));
 
 		$policyFilterArray = array(
 			'role' => array(
@@ -966,7 +966,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'TestPackage\Subpackage\SubSubPackage\Class3'
 		);
 		sort($expectedClassNames);
-		$expectedClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$expectedClassNamesIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$expectedClassNamesIndex->setClassNames($expectedClassNames);
 
 		$result = $policyService->reduceTargetClassNames($availableClassNamesIndex);

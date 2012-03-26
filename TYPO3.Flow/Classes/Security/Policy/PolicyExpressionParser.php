@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @FLOW3\Scope("singleton")
  * @FLOW3\Proxy(false)
  */
-class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser {
+class PolicyExpressionParser extends \TYPO3\FLOW3\Aop\Pointcut\PointcutExpressionParser {
 
 	/**
 	 * @var array The resources array from the configuration.
@@ -32,14 +32,14 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 	 * @param string $pointcutExpression The pointcut expression to parse
 	 * @param array $methodResourcesTree The method resources tree
 	 * @param array $trace A trace of all visited pointcut expression, used for circular reference detection
-	 * @return \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
+	 * @return \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
 	 */
 	public function parseMethodResources($pointcutExpression, array $methodResourcesTree, array &$trace = array()) {
-		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
+		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 		if (count($methodResourcesTree) > 0) $this->methodResourcesTree = $methodResourcesTree;
 
-		$pointcutFilterComposite = new \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
+		$pointcutFilterComposite = new \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite();
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		for ($partIndex = 0; $partIndex < count($pointcutExpressionParts); $partIndex += 2) {
@@ -85,13 +85,13 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressio
 	 *
 	 * @param string $operator The operator
 	 * @param string $pointcutExpression The pointcut expression (value of the designator)
-	 * @param \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
+	 * @param \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
 	 * @param array &$trace
 	 * @return void
-	 * @throws \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
+	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
 	 */
-	protected function parseDesignatorPointcut($operator, $pointcutExpression, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, array &$trace = array()) {
-		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
+	protected function parseDesignatorPointcut($operator, $pointcutExpression, \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite, array &$trace = array()) {
+		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
 
 		$pointcutFilterComposite->addFilter($operator, $this->parseMethodResources($this->methodResourcesTree[$pointcutExpression], array(), $trace));
 	}

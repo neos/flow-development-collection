@@ -38,7 +38,7 @@ class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\Intercept
 
 	/**
 	 * The current joinpoint
-	 * @var \TYPO3\FLOW3\AOP\JoinPointInterface
+	 * @var \TYPO3\FLOW3\Aop\JoinPointInterface
 	 */
 	protected $joinPoint;
 
@@ -57,10 +57,10 @@ class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\Intercept
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 */
-	public function setJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function setJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$this->joinPoint = $joinPoint;
 	}
 

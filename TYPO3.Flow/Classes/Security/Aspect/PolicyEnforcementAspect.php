@@ -50,10 +50,10 @@ class PolicyEnforcementAspect {
 	 * before calling the policy enforcement interceptor
 	 *
 	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && filter(TYPO3\FLOW3\Security\Policy\PolicyService)")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function enforcePolicy(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function enforcePolicy(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$this->policyEnforcementInterceptor->setJoinPoint($joinPoint);
 		$this->policyEnforcementInterceptor->invoke();
 

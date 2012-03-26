@@ -13,15 +13,15 @@ namespace TYPO3\FLOW3\Command;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
-use \TYPO3\FLOW3\MVC\CLI\Command;
-use \TYPO3\FLOW3\MVC\CLI\CommandManager;
+use \TYPO3\FLOW3\Cli\Command;
+use \TYPO3\FLOW3\Cli\CommandManager;
 
 /**
  * A Command Controller which provides help for available commands
  *
  * @FLOW3\Scope("singleton")
  */
-class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
+class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
@@ -132,7 +132,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * @param array<\TYPO3\FLOW3\MVC\CLI\Command> $commands
+	 * @param array<\TYPO3\FLOW3\Cli\Command> $commands
 	 * @return void
 	 */
 	protected function displayShortHelpForCommands(array $commands) {
@@ -156,10 +156,10 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	/**
 	 * Render help text for a single command
 	 *
-	 * @param \TYPO3\FLOW3\MVC\CLI\Command $command
+	 * @param \TYPO3\FLOW3\Cli\Command $command
 	 * @return void
 	 */
-	protected function displayHelpForCommand(\TYPO3\FLOW3\MVC\CLI\Command $command) {
+	protected function displayHelpForCommand(\TYPO3\FLOW3\Cli\Command $command) {
 		$this->outputLine();
 		$this->outputLine('<u>' . $command->getShortDescription() . '</u>');
 		$this->outputLine();
@@ -233,7 +233,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 				try {
 					$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
 					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
-				} catch (\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
+				} catch (\TYPO3\FLOW3\Mvc\Exception\CommandException $exception) {
 					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, '<i>Command not available</i>'));
 				}
 			}
@@ -246,12 +246,12 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * Displays an error message
 	 *
 	 * @FLOW3\Internal
-	 * @param \TYPO3\FLOW3\MVC\Exception\CommandException $exception
+	 * @param \TYPO3\FLOW3\Mvc\Exception\CommandException $exception
 	 * @return void
 	 */
-	public function errorCommand(\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
+	public function errorCommand(\TYPO3\FLOW3\Mvc\Exception\CommandException $exception) {
 		$this->outputLine($exception->getMessage());
-		if ($exception instanceof \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException) {
+		if ($exception instanceof \TYPO3\FLOW3\Mvc\Exception\AmbiguousCommandIdentifierException) {
 			$this->outputLine('Please specify the complete command identifier. Matched commands:');
 			$this->displayShortHelpForCommands($exception->getMatchingCommands());
 		}
@@ -264,7 +264,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * Builds an index of available commands. For each of them a Command object is
 	 * added to the commands array of this class.
 	 *
-	 * @param array<\TYPO3\FLOW3\MVC\CLI\Command> $commands
+	 * @param array<\TYPO3\FLOW3\Cli\Command> $commands
 	 * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
 	 */
 	protected function buildCommandsIndex(array $commands) {

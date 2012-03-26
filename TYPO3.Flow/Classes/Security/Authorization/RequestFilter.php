@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Security\Authorization;
 
 
 /**
- * A RequestFilter is configured to match specific \TYPO3\FLOW3\MVC\RequestInterfaces and call
+ * A RequestFilter is configured to match specific \TYPO3\FLOW3\Mvc\RequestInterfaces and call
  * a \TYPO3\FLOW3\Security\Authorization\InterceptorInterface if needed.
  *
  */
@@ -62,10 +62,10 @@ class RequestFilter {
 	/**
 	 * Tries to match the given request against this filter and calls the set security interceptor on success.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to be matched
+	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to be matched
 	 * @return boolean Returns TRUE if the filter matched, FALSE otherwise
 	 */
-	public function filterRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+	public function filterRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
 		if($this->pattern->canMatch($request) && $this->pattern->matchRequest($request)) {
 			$this->securityInterceptor->invoke();
 			return TRUE;

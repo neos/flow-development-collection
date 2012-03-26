@@ -64,11 +64,11 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->mockUriBuilder = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
 
 		$this->mockUriBuilder->expects($this->any())->method('getArguments')->will($this->returnValue($this->internalUriBuilderArguments));
 
-		$this->mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
+		$this->mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPoint', array(), array(), '', FALSE);
 		$this->mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($this->mockUriBuilder));
 		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('arguments')->will($this->returnValue($this->arguments));
 

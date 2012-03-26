@@ -23,7 +23,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfOneVoterReturnsADenyVote() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
@@ -45,7 +45,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
@@ -67,7 +67,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function decideOnJoinPointGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
@@ -89,7 +89,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function decideOnJoinPointGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));

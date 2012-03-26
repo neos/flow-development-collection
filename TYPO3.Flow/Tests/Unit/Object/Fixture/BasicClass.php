@@ -172,7 +172,7 @@ class BasicClass {
 	 *
 	 * @param  array $someArray Some array
 	 * @return void
-	 * @see    \TYPO3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilderTest
+	 * @see    \TYPO3\FLOW3\Aop\Builder\AdvicedMethodInterceptorBuilderTest
 	 */
 	public function methodWhichExpectsAnArrayArgument(array $someArray) {
 	}

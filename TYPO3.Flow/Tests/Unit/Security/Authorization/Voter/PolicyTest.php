@@ -29,7 +29,7 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->any())->method('getPrivilegesForJoinPoint')->will($this->returnValue(array()));
@@ -45,7 +45,7 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 
 		$Policy = new \TYPO3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
@@ -59,7 +59,7 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array(new \TYPO3\FLOW3\Security\Policy\Role('role1'))));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('getPrivilegesForJoinPoint')->will($this->throwException(new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException()));
 
@@ -82,7 +82,7 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 
 		$getPrivilegesCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();
@@ -115,7 +115,7 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 
 		$getPrivilegesCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();

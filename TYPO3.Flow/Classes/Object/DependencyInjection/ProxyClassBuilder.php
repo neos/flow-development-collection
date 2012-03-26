@@ -222,7 +222,7 @@ class ProxyClassBuilder {
 	\$allReflectedProperties = \$reflectedClass->getProperties();
 	foreach(\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
-		if (in_array(\$propertyName, array('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'FLOW3_AOP_Proxy_groupedAdviceChains', 'FLOW3_AOP_Proxy_methodIsInAdviceMode'))) continue;
+		if (in_array(\$propertyName, array('FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices', 'FLOW3_Aop_Proxy_groupedAdviceChains', 'FLOW3_Aop_Proxy_methodIsInAdviceMode'))) continue;
 		if (\$reflectionService->isPropertyTaggedWith('".$className."', \$propertyName, 'transient')) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
 			foreach(\$this->\$propertyName as \$key => \$value) {

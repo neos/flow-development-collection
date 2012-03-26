@@ -22,15 +22,15 @@ use TYPO3\FLOW3\Cache\Backend\FreezableBackendInterface;
  * @FLOW3\Scope("singleton")
  * @FLOW3\Proxy(false)
  */
-class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
+class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\CLI\RequestBuilder
+	 * @var \TYPO3\FLOW3\Cli\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -55,7 +55,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	protected $proxyClassCompiler;
 
 	/**
-	 * @var \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder
+	 * @var \TYPO3\FLOW3\Aop\Builder\ProxyClassBuilder
 	 */
 	protected $aopProxyClassBuilder;
 
@@ -65,18 +65,18 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	protected $dependencyInjectionProxyClassBuilder;
 
 	/**
-	 * @param \TYPO3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder
+	 * @param \TYPO3\FLOW3\Cli\RequestBuilder $requestBuilder
 	 * @return void
 	 */
-	public function injectRequestBuilder(\TYPO3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder) {
+	public function injectRequestBuilder(\TYPO3\FLOW3\Cli\RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\MVC\Dispatcher $dispatcher
+	 * @param \TYPO3\FLOW3\Mvc\Dispatcher $dispatcher
 	 * @return void
 	 */
-	public function injectDispatcher(\TYPO3\FLOW3\MVC\Dispatcher $dispatcher) {
+	public function injectDispatcher(\TYPO3\FLOW3\Mvc\Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -113,10 +113,10 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $aopProxyClassBuilder
+	 * @param \TYPO3\FLOW3\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder
 	 * @return void
 	 */
-	public function injectAopProxyClassBuilder(\TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
+	public function injectAopProxyClassBuilder(\TYPO3\FLOW3\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
 		$this->aopProxyClassBuilder = $aopProxyClassBuilder;
 	}
 
@@ -218,7 +218,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			readline_write_history($historyPathAndFilename);
 
 			$request = $this->requestBuilder->build($commandLine);
-			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
+			$response = new \TYPO3\FLOW3\Cli\Response();
 			$command = $request->getCommand();
 
 			if ($request === FALSE || $command->getCommandIdentifier() === FALSE) {
@@ -344,10 +344,10 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$suggestions = array();
 
 		$availableCommands = $this->bootstrap->getObjectManager()
-			->get('TYPO3\FLOW3\MVC\CLI\CommandManager')
+			->get('TYPO3\FLOW3\Cli\CommandManager')
 			->getAvailableCommands();
 
-		/** @var $command \TYPO3\FLOW3\MVC\CLI\Command */
+		/** @var $command \TYPO3\FLOW3\Cli\Command */
 		foreach ($availableCommands as $command) {
 			if ($command->isInternal() === FALSE) {
 				$suggestions[] = $command->getCommandIdentifier();

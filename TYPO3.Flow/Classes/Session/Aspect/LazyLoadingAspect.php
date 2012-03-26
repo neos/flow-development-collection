@@ -62,12 +62,12 @@ class LazyLoadingAspect {
 	 * Those methods will trigger a session initialization if a session does not exist
 	 * yet.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @fixme The pointcut expression below does not consider the options of the session annotation ‚Äì¬†needs adjustments in the AOP framework
 	 * @FLOW3\Before("methodAnnotatedWith(TYPO3\FLOW3\Annotations\Session)")
 	 */
-	public function initializeSession(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function initializeSession(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($this->session->isStarted() === TRUE) {
 			return;
 		}
@@ -83,11 +83,11 @@ class LazyLoadingAspect {
 	 * Around advice, wrapping every method of a scope session object. It redirects
 	 * all method calls to the session object once there is one.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @FLOW3\Around("filter(TYPO3\FLOW3\Session\Aspect\SessionObjectMethodsPointcutFilter)")
 	 */
-	public function callMethodOnOriginalSessionObject(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function callMethodOnOriginalSessionObject(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
 		$methodName = $joinPoint->getMethodName();
 		$proxy = $joinPoint->getProxy();

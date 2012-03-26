@@ -28,7 +28,7 @@ class SessionObjectMethodsPointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTest
 			'TestPackage\Subpackage2\Class4'
 		);
 		sort($availableClassNames);
-		$availableClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$availableClassNamesIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$availableClassNamesIndex->setClassNames($availableClassNames);
 
 		$mockCompileTimeObjectManager = $this->getMock('TYPO3\FLOW3\Object\CompileTimeObjectManager', array(), array(), '', FALSE);
@@ -42,7 +42,7 @@ class SessionObjectMethodsPointcutFilterTest extends \TYPO3\FLOW3\Tests\UnitTest
 			'TestPackage\Subpackage\SubSubPackage\Class3'
 		);
 		sort($expectedClassNames);
-		$expectedClassNamesIndex = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+		$expectedClassNamesIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$expectedClassNamesIndex->setClassNames($expectedClassNames);
 
 		$result = $sessionObjectMethodsPointcutFilter->reduceTargetClassNames($availableClassNamesIndex);

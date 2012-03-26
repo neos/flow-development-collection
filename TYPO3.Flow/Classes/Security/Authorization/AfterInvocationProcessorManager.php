@@ -29,12 +29,12 @@ class AfterInvocationProcessorManager implements \TYPO3\FLOW3\Security\Authoriza
 	 *
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param object $object The return object to be processed
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint of the returning method
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 * @todo processors must also be configurable
 	 */
-	public function process(\TYPO3\FLOW3\Security\Context $securityContext, $object, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function process(\TYPO3\FLOW3\Security\Context $securityContext, $object, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 
 	}
 

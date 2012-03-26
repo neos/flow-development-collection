@@ -20,8 +20,8 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
@@ -31,8 +31,8 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		};
 
 		$mockSecurityLogger = $this->getMock('TYPO3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('TYPO3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
 
@@ -48,8 +48,8 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
 		$exception = new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -64,7 +64,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		};
 
 		$mockSecurityLogger = $this->getMock('TYPO3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('TYPO3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockToken = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
@@ -72,7 +72,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockException = $this->getMock('TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException', array(), array(), '', FALSE);
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($mockException));
 
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
@@ -92,8 +92,8 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
 		$exception = new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -108,14 +108,14 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		};
 
 		$mockSecurityLogger = $this->getMock('TYPO3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('TYPO3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockToken = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 
 		$mockException = $this->getMock('TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException', array(), array(), '', FALSE);
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($mockException));
 
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
@@ -132,7 +132,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setAccessDeniedResponseHeaderSetsTheResponseContentToAccessDeniedIfAnAccessDeniedExceptionHasBeenThrown() {
-		$response = $this->getMock('TYPO3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Mvc\Response', array(), array(), '', FALSE);
 		$response->expects($this->once())->method('setContent')->with('Access denied!');
 		$response->expects($this->never())->method('setStatus');
 
@@ -145,10 +145,10 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			elseif ($args[0] === 'response') return $response;
 		};
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($exception));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('response')->will($this->returnCallback($getMethodArgumentCallback));
 
@@ -160,7 +160,7 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setAccessDeniedResponseHeaderSetsTheResponseStatusTo403IfAnAccessDeniedExceptionHasBeenThrownWhileExecutingAWebRequest() {
-		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array(), array(), '', FALSE);
 		$response->expects($this->once())->method('setContent')->with('Access denied!');
 		$response->expects($this->once())->method('setStatus')->with(403);
 
@@ -173,10 +173,10 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			elseif ($args[0] === 'response') return $response;
 		};
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($exception));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('response')->will($this->returnCallback($getMethodArgumentCallback));
 

@@ -23,7 +23,7 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function cloneObjectMarksTheObjectAsCloned() {
 		$object = new \stdClass();
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 
 		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
@@ -40,7 +40,7 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		eval('class ' . $className . ' implements \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface { public $FLOW3_Persistence_Identifier = NULL; }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
 
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
@@ -72,7 +72,7 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		eval('class ' . $className . ' { public $foo; public $bar; }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 
@@ -94,7 +94,7 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$object = new $className();
 		$object->FLOW3_Persistence_Identifier = 'existinguuidhash';
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 
@@ -116,7 +116,7 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		eval('class ' . $className . ' { }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 

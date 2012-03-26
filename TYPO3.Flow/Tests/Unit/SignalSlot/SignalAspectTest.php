@@ -22,7 +22,7 @@ class SignalAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function forwardSignalToDispatcherForwardsTheSignalsMethodArgumentsToTheDispatcher() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPoint', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getClassName')->will($this->returnValue('SampleClass'));
 		$mockJoinPoint->expects($this->any())->method('getMethodName')->will($this->returnValue('emitSignal'));
 		$mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(array('arg1' => 'val1', 'arg2' => array('val2'))));

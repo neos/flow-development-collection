@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
@@ -98,11 +98,11 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\Po
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\AOP\Builder\ClassNameIndex
+	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\AOP\Builder\ClassNameIndex $classNameIndex) {
-		$sessionClasses = new \TYPO3\FLOW3\AOP\Builder\ClassNameIndex();
+	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+		$sessionClasses = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
 		return $classNameIndex->intersect($sessionClasses);
 	}

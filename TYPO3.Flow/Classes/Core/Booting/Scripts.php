@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Core\Booting;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\Property\DataType\Uri;
+use TYPO3\FLOW3\Http\Uri;
 
 /**
  * Initialization scripts for modules of the FLOW3 package

@@ -20,7 +20,7 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theSetIncerceptorIsCalledIfTheRequestPatternMatches() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$requestPattern = $this->getMock('TYPO3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -36,7 +36,7 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$requestPattern = $this->getMock('TYPO3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -52,7 +52,7 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theSetIncerceptorIsNotCalledIfTheRequestPatternCannotMatchTheRequest() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$requestPattern = $this->getMock('TYPO3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -68,7 +68,7 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theFilterReturnsTrueIfThePatternMatched() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$requestPattern = $this->getMock('TYPO3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -83,7 +83,7 @@ class RequestFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theFilterReturnsFalseIfThePatternDidNotMatch() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\RequestInterface');
 		$requestPattern = $this->getMock('TYPO3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('TYPO3\FLOW3\Security\Authorization\InterceptorInterface');
 

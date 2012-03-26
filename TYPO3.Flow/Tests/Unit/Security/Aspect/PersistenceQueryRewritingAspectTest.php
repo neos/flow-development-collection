@@ -31,7 +31,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery->expects($this->once())->method('logicalAnd')->with('existingConstraint', 'newConstraintsNegated')->will($this->returnValue('mergedResultConstraints'));
 		$mockQuery->expects($this->once())->method('matching')->with('mergedResultConstraints');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
@@ -65,7 +65,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery->expects($this->never())->method('logicalAnd');
 		$mockQuery->expects($this->once())->method('matching')->with('newConstraintsNegated');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
@@ -96,7 +96,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->never())->method('matching');
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
@@ -121,7 +121,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	 * @test
 	 */
 	public function rewriteQomQueryDoesNotRewriteQueryIfSecurityContextIsNotInitialized() {
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
@@ -148,7 +148,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
@@ -399,16 +399,16 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function checkAccessAfterFetchingAnObjectByIdentifierChecksTheConstraintsGivenByThePolicyServiceForTheReturnedObject() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');
 		$result = new $entityClassName();
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($result));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
 		$roles = array('role1', 'role2');
@@ -438,10 +438,10 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -465,10 +465,10 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
 
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
 
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -605,7 +605,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForEqualityOperators() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');
@@ -637,7 +637,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheInOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');
@@ -664,7 +664,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheContainsOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');
@@ -691,7 +691,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheMatchesOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');
@@ -718,7 +718,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	public function checkSingleConstraintDefinitionOnResultObjectComparesTheIdentifierWhenComparingPersistedObjects() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_Aop_Proxy_invokeJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 			public function __wakeup() {}
 		}');

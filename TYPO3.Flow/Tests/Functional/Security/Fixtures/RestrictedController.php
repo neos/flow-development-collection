@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
  * A controller for functional testing
  *
  */
-class RestrictedController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class RestrictedController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @return void

@@ -25,7 +25,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 
@@ -54,7 +54,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 
@@ -79,7 +79,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array()));
@@ -109,7 +109,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'invalidCsrfToken')));
@@ -144,7 +144,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$controllerObjectName = 'SomeControllerObjectName';
 		$controllerActionName = 'list';
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'validToken')));

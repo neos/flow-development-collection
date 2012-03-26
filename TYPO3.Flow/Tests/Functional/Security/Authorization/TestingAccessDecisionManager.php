@@ -29,11 +29,11 @@ class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\A
 	/**
 	 * Decides on a joinpoint
 	 *
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function decideOnJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function decideOnJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($this->overrideDecision === FALSE) {
 			throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
 		} elseif ($this->overrideDecision === TRUE) {

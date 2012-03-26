@@ -89,7 +89,7 @@ TYPO3:
 
       # Object name of the controller to use if no other controller could be resolved
       # matching the request.
-      notFoundController: TYPO3\FLOW3\MVC\Controller\NotFoundController
+      notFoundController: TYPO3\FLOW3\Mvc\Controller\NotFoundController
 
     object:
 

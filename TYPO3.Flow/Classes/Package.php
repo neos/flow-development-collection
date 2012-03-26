@@ -31,9 +31,9 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\CLI\SlaveRequestHandler($bootstrap));
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\CLI\CommandRequestHandler($bootstrap));
 		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\MVC\Web\RequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Cli\SlaveRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Cli\CommandRequestHandler($bootstrap));
 
 		if ($bootstrap->getContext() === 'Testing') {
 			$bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
@@ -45,7 +45,7 @@ class Package extends BasePackage {
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
-		$dispatcher->connect('TYPO3\FLOW3\MVC\CLI\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\FLOW3\Cli\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Reflection\ReflectionService', 'saveToCache');

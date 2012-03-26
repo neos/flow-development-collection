@@ -68,7 +68,7 @@
   uriPattern: ''
   defaults:
     '@package':    'TYPO3.FLOW3'
-    '@subpackage': 'MVC'
+    '@subpackage': 'Mvc'
     '@controller': 'Standard'
     '@action':     'index'
     '@format':     'html'

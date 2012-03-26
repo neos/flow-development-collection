@@ -24,7 +24,7 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function canForwardReturnsTrueForWebRequests() {
 		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 
-		$this->assertTrue($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\Web\Request')));
+		$this->assertTrue($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Mvc\ActionRequest')));
 	}
 
 	/**
@@ -34,8 +34,8 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function canForwardReturnsFalseForNonWebRequests() {
 		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 
-		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\CLI\Request')));
-		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\RequestInterface')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Cli\Request')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\Mvc\RequestInterface')));
 	}
 
 	/**
@@ -46,7 +46,7 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
 		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 
-		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\MVC\CLI\Request'), $this->getMock('TYPO3\FLOW3\MVC\CLI\Response'));
+		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\Cli\Request'), $this->getMock('TYPO3\FLOW3\Cli\Response'));
 	}
 
 	/**
@@ -54,8 +54,8 @@ class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @category unit
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
-		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array('setStatus', 'setContent', 'setHeader'));
+		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest');
+		$response = $this->getMock('TYPO3\FLOW3\Mvc\Web\Response', array('setStatus', 'setContent', 'setHeader'));
 
 		$response->expects($this->once())->method('setStatus')->with(401);
 		$response->expects($this->once())->method('setHeader')->with('WWW-Authenticate', 'Basic realm="realm string"');

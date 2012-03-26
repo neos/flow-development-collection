@@ -34,7 +34,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	protected $handle;
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Http\Uri
 	 */
 	protected $uri;
 

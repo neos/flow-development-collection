@@ -40,10 +40,10 @@ class Policy implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterI
 	 * This is the default Policy voter, it votes for the access privilege for the given join point
 	 *
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 */
-	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {

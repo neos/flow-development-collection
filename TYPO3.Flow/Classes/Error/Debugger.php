@@ -33,11 +33,11 @@ class Debugger {
 	 * @var array
 	 */
 	static protected $blacklistedClassNames = '/
-		(TYPO3\\\\FLOW3\\\\AOP.*)
+		(TYPO3\\\\FLOW3\\\\Aop.*)
 		(TYPO3\\\\FLOW3\\\\Cac.*) |
 		(TYPO3\\\\FLOW3\\\\Con.*) |
 		(TYPO3\\\\FLOW3\\\\Uti.*) |
-		(TYPO3\\\\FLOW3\\\\MVC\\\\Web\\\\Routing.*) |
+		(TYPO3\\\\FLOW3\\\\Mvc\\\\Routing.*) |
 		(TYPO3\\\\FLOW3\\\\Log.*) |
 		(TYPO3\\\\FLOW3\\\\Obj.*) |
 		(TYPO3\\\\FLOW3\\\\Pac.*) |
@@ -50,7 +50,7 @@ class Debugger {
 		/xs';
 
 	static protected $blacklistedPropertyNames = '/
-		(FLOW3_AOP_.*)
+		(FLOW3_Aop_.*)
 		/xs';
 
 	/**
