@@ -1,0 +1,130 @@
+# Literals
+
+TRUE
+
+    => %
+
+true
+
+    => TRUE
+
+FALSE
+
+    => %
+
+false
+
+    => FALSE
+
+0
+
+    => %
+
+1
+
+    => %
+
+42
+
+    => %
+
+0.77
+
+    => %
+
+"Foo Bar"
+
+    => 'Foo Bar'
+
+"Foo {$test} Bar"
+
+    => 'Foo {$test} Bar'
+
+'Foo Bar'
+
+    => %
+
+'Foo \'Blubb\' Bar'
+
+    => %
+
+"Foo \"Blubb\" 'Buzz' Bar"
+
+    => 'Foo \"Blubb\" \'Buzz\' Bar'
+
+['a', 'b', 'c']
+
+    => array('a', 'b', 'c')
+
+['a', 'b', ['a', 'b']]
+
+    => array('a', 'b', array('a', 'b'))
+
+{key: 'value'}
+
+    => array('key' => 'value')
+
+{bar: myvar}
+
+    => array('bar' => $v->g('myvar'))
+
+{foo: 'bar', "Super glue": true, baz: {bar: myvar}}
+
+    => array('foo' => 'bar', 'Super glue' => TRUE, 'baz' => array('bar' => $v->g('myvar')))
+
+# Object paths
+
+myvar
+
+    => $v->g('myvar')
+
+foo.bar
+
+    => $v->g('foo.bar')
+
+myarr[i]
+
+    => $v->g('myvar')->g($v->g('i')) ???
+
+foo.bar[i].baz
+
+    => $v->g('foo')->g('bar')->g($v->g('i'))->g('baz') ???
+
+# Comparison
+
+myvar == 1
+
+    => $v->g('myvar') === 1
+
+mystr == "Foo"
+
+    => $v->g('mystr') === 'Foo'
+
+# Regexp?
+
+mystr ~= /Test/
+
+# Calculation
+
+myvar + 1
+
+    => $v->g('myvar') + 1
+
+# Comparison
+
+myvar == 1
+
+mystr == 'Test'
+
+myint > 42
+
+foo.bar <= 17
+
+myint + i < 42
+
+# Boolean expression
+
+myexp || myvar
+
+myexp || myvar || bar.baz == 1
+
