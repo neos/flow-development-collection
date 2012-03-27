@@ -232,22 +232,28 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations) {
 		foreach ($providerConfigurations as $providerName => $providerConfiguration) {
 
-			if (!is_array($providerConfiguration) || !isset($providerConfiguration['providerClass'])) {
-				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
+			if (isset($providerConfiguration['providerClass'])) {
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "providerClass". Check your settings and use the new option "provider" instead.', 1327672030);
+			}
+			if (isset($providerConfiguration['options'])) {
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "options". Check your settings and use the new option "providerOptions" instead.', 1327672031);
+			}
+			if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1248209521);
 			}
 
-			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['providerClass']);
+			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['provider']);
 			if ($providerObjectName === NULL) {
-				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
 			}
 			$providerOptions = array();
-			if (isset($providerConfiguration['options']) && is_array($providerConfiguration['options'])) $providerOptions = $providerConfiguration['options'];
+			if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) $providerOptions = $providerConfiguration['providerOptions'];
 
 			$providerInstance = new $providerObjectName($providerName, $providerOptions);
 			$this->providers[] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
-				if (isset($providerConfiguration['tokenClass']) && $providerConfiguration['tokenClass'] !== $tokenClassName) {
+				if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
 					continue;
 				}
 				$tokenInstance = new $tokenClassName();
@@ -267,10 +273,12 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 				$tokenInstance->setRequestPatterns($requestPatterns);
 			}
 
-			if (isset($providerConfiguration['entryPoint']) && is_array($providerConfiguration['entryPoint'])) {
-				reset($providerConfiguration['entryPoint']);
-
-				$entryPointName = key($providerConfiguration['entryPoint']);
+			if (isset($providerConfiguration['entryPoint'])) {
+				if (is_array($providerConfiguration['entryPoint'])) {
+					$message = 'Invalid entry point configuration in setting "TYPO3:FLOW3:security:authentication:providers:' . $providerName .'. Check your settings and make sure to specify only one entry point for each provider.';
+					throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException($message, 1327671458);
+				}
+				$entryPointName = $providerConfiguration['entryPoint'];
 				$entryPointClassName = $entryPointName;
 				if (!class_exists($entryPointClassName)) {
 					$entryPointClassName = 'TYPO3\FLOW3\Security\Authentication\EntryPoint\\' . $entryPointClassName;
@@ -280,7 +288,9 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 				}
 
 				$entryPoint = new $entryPointClassName();
-				$entryPoint->setOptions($providerConfiguration['entryPoint'][$entryPointName]);
+				if (isset($providerConfiguration['entryPointOptions'])) {
+					$entryPoint->setOptions($providerConfiguration['entryPointOptions']);
+				}
 
 				$tokenInstance->setAuthenticationEntryPoint($entryPoint);
 			}

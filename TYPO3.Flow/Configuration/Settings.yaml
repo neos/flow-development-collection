@@ -196,10 +196,10 @@ TYPO3:
         # to the URI login/form/action where the login form resides.
         #
         #  AdminInterfaceProvider:
-        #    providerClass: PersistedUsernamePasswordProvider
-        #    entryPoint:
-        #      WebRedirect:
-        #        uri: login/form/action
+        #    provider: 'PersistedUsernamePasswordProvider'
+        #    entryPoint: 'WebRedirect'
+        #    entryPointOptions:
+        #      uri: 'login/form/action'
         providers: []
 
         # One of the available authentication strategies:
