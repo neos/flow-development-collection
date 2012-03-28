@@ -33,9 +33,9 @@ class PersistedUsernamePasswordProvider extends \TYPO3\FLOW3\Security\Authentica
 	protected $hashService;
 
 	/**
-	 * Returns the classnames of the tokens this provider is responsible for.
+	 * Returns the class names of the tokens this provider can authenticate.
 	 *
-	 * @return string The classname of the token this provider is responsible for
+	 * @return array
 	 */
 	public function getTokenClassNames() {
 		return array('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', 'TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic');
