@@ -16,7 +16,6 @@ use TYPO3\FLOW3\Http\Uri;
 
 /**
  * Testcase for the Http Request class
- *
  */
 class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -227,6 +226,59 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$uri = new Uri('http://dev.blog.rob/foo/bar');
 		$request = new Request(array(), array(), array(), array(), $server);
 		$this->assertEquals($uri, $request->getUri());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContentReturnsTheRequestBodyContent() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+
+		$expectedContent = 'userid=joe&password=joh316';
+		file_put_contents('vfs://Foo/content.txt', $expectedContent);
+
+		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
+
+		$actualContent = $request->getContent();
+		$this->assertEquals($expectedContent, $actualContent);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContentReturnsTheRequestBodyContentAsResourcePointerIfRequested() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+
+		$expectedContent = 'userid=joe&password=joh316';
+		file_put_contents('vfs://Foo/content.txt', $expectedContent);
+
+		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
+
+		$resource = $request->getContent(TRUE);
+		$actualContent = fread($resource, strlen($expectedContent));
+
+		$this->assertSame($expectedContent, $actualContent);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\Http\Exception
+	 */
+	public function getContentThrowsAnExceptionOnTryingToRetrieveContentAsResourceAlthoughItHasBeenRetrievedPreviously() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+
+		file_put_contents('vfs://Foo/content.txt', 'xy');
+
+		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
+
+		$request->getContent(TRUE);
+		$request->getContent(TRUE);
 	}
 
 	/**

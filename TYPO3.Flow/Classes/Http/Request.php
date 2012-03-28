@@ -65,6 +65,20 @@ class Request {
 	protected $server;
 
 	/**
+	 * Cached entity body content of this request
+	 *
+	 * @var string
+	 */
+	protected $content;
+
+	/**
+	 * URI for the "input" stream wrapper which can be modified for testing purposes
+	 *
+	 * @var string
+	 */
+	protected $inputStreamUri = 'php://input';
+
+	/**
 	 * Constructs a new Request object based on the given environment data.
 	 *
 	 * @param array $get Data similar to that which is typically provided by $_GET
@@ -256,6 +270,28 @@ class Request {
 	 */
 	public function getHeaders() {
 		return $this->headers;
+	}
+
+	/**
+	 * Returns the content of the request body
+	 *
+	 * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
+	 * @return string|resource
+	 * @api
+	 */
+	public function getContent($asResource = FALSE) {
+		if ($asResource === TRUE) {
+			if ($this->content !== NULL) {
+				throw new Exception('Cannot return request content as resource because it has already been retrieved.', 1332942478);
+			}
+			$this->content = '';
+			return fopen($this->inputStreamUri, 'rb');
+		}
+
+		if ($this->content === NULL) {
+			$this->content = file_get_contents($this->inputStreamUri);
+		}
+		return $this->content;
 	}
 
 	/**
