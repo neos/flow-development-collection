@@ -24,7 +24,7 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('Something.Jpeg');
 		$this->assertSame('jpeg', $resource->getFileExtension());
-		$this->assertSame('Something.jpeg', $resource->getFileName());
+		$this->assertSame('Something.jpeg', $resource->getFilename());
 	}
 
 	/**
@@ -34,7 +34,7 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('FileWithoutExtension');
 		$this->assertSame('', $resource->getFileExtension());
-		$this->assertSame('FileWithoutExtension', $resource->getFileName());
+		$this->assertSame('FileWithoutExtension', $resource->getFilename());
 	}
 
 	/**

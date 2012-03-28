@@ -172,7 +172,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function publishPersistentResourceLeavesOutEmptyFileName() {
+	public function publishPersistentResourceLeavesOutEmptyFilename() {
 		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
 

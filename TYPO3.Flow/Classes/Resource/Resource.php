@@ -53,7 +53,7 @@ class Resource {
 	 * @param string $filename
 	 * @return void
 	 */
-	public function setFileName($filename) {
+	public function setFilename($filename) {
 		$pathInfo = pathinfo($filename);
 		if (isset($pathInfo['extension'])) {
 			$this->fileExtension = strtolower($pathInfo['extension']);
@@ -71,7 +71,7 @@ class Resource {
 	 *
 	 * @return string The filename
 	 */
-	public function getFileName() {
+	public function getFilename() {
 		return $this->filename;
 	}
 

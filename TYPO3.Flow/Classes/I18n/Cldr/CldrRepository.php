@@ -134,9 +134,9 @@ class CldrRepository {
 
 		$localeIdentifier = (string)$locale;
 		while ($localeIdentifier = substr($localeIdentifier, 0, (int)strrpos($localeIdentifier, '_'))) {
-			$possibleFileName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, $localeIdentifier . '.xml'));
-			if (file_exists($possibleFileName)) {
-				array_unshift($filesInHierarchy, $possibleFileName);
+			$possibleFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, $localeIdentifier . '.xml'));
+			if (file_exists($possibleFilename)) {
+				array_unshift($filesInHierarchy, $possibleFilename);
 			}
 		}
 		array_unshift($filesInHierarchy, \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));

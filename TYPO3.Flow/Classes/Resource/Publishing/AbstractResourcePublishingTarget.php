@@ -24,7 +24,7 @@ abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource
 	 * @param string $filename The raw resource file name
 	 * @return string The rewritten title
 	 */
-	protected function rewriteFileNameForUri($filename) {
+	protected function rewriteFilenameForUri($filename) {
 		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
 	}
 

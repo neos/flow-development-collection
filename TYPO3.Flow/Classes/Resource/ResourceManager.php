@@ -201,12 +201,12 @@ class ResourceManager {
 	 * newly created persistent resource.
 	 *
 	 * @param mixed $content The binary content of the file
-	 * @param string $fileName
+	 * @param string $filename
 	 * @return \TYPO3\FLOW3\Resource\Resource A resource object representing the created resource or FALSE if an error occured.
 	 * @api
 	 */
-	public function createResourceFromContent($content, $fileName) {
-		$pathInfo = pathinfo($fileName);
+	public function createResourceFromContent($content, $filename) {
+		$pathInfo = pathinfo($filename);
 		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
 			return FALSE;
 		}

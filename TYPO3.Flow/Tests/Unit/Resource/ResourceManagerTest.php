@@ -148,7 +148,7 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$hash = sha1_file('vfs://Foo/SomeResource.txt');
 
 		$actualResource = $resourceManager->importResource('vfs://Foo/SomeResource.txt');
-		$this->assertEquals('SomeResource.txt', $actualResource->getFileName());
+		$this->assertEquals('SomeResource.txt', $actualResource->getFilename());
 		$this->assertEquals($hash, $actualResource->getResourcePointer()->getHash());
 
 		$this->assertFileEquals('vfs://Foo/SomeResource.txt', 'vfs://Foo/Persistent/Resources/' . $hash);
@@ -176,13 +176,13 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function createResourceFromContentStoresTheContentInTheCorrectFileAndReturnsTheCorrespondingResourceObject() {
 		$resourceManager = $this->setupResourceManager();
 
-		$fileName = 'myFile.txt';
+		$filename = 'myFile.txt';
 		$content = 'some content';
-		$resultResource = $resourceManager->createResourceFromContent($content, $fileName);
+		$resultResource = $resourceManager->createResourceFromContent($content, $filename);
 
 		$this->assertTrue(file_exists('vfs://Foo/Persistent/Resources/' . sha1($content)));
 		$this->assertEquals($content, file_get_contents('vfs://Foo/Persistent/Resources/' . sha1($content)));
-		$this->assertEquals($fileName, $resultResource->getFileName());
+		$this->assertEquals($filename, $resultResource->getFilename());
 		$this->assertEquals('txt', $resultResource->getFileExtension());
 		$this->assertEquals(sha1($content), $resultResource->getResourcePointer()->getHash());
 	}

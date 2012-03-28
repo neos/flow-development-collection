@@ -79,11 +79,11 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 			return new \TYPO3\FLOW3\Error\Error('Could not convert the given input into into a Resource object because the source array is corrupt.' , 1332765679);
 		}
 		if ($source['error'] === \UPLOAD_ERR_NO_FILE) {
-			if (isset($source['submittedFile']) && isset($source['submittedFile']['fileName']) && isset($source['submittedFile']['resourcePointer'])) {
+			if (isset($source['submittedFile']) && isset($source['submittedFile']['filename']) && isset($source['submittedFile']['resourcePointer'])) {
 				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'TYPO3\FLOW3\Resource\ResourcePointer');
 				if ($resourcePointer) {
 					$resource = new Resource();
-					$resource->setFileName($source['submittedFile']['fileName']);
+					$resource->setFilename($source['submittedFile']['filename']);
 					$resource->setResourcePointer($resourcePointer);
 					return $resource;
 				}

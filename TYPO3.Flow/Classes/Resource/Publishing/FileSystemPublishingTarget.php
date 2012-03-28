@@ -264,7 +264,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 */
 	protected function buildPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$filename = $resource->getFilename();
-		$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . $this->rewriteFileNameForUri($filename);
+		$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . $this->rewriteFilenameForUri($filename);
 		return $this->resourcesBaseUri . 'Persistent/' . $resource->getResourcePointer()->getHash() . $rewrittenFilename;
 	}
 
