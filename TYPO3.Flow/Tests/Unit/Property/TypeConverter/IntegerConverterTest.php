@@ -54,6 +54,20 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function convertFromReturnsNullIfEmptyStringSpecified() {
+		$this->assertNull($this->converter->convertFrom('', 'integer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertFromReturnsAnErrorIfSpecifiedStringIsNotNumeric() {
+		$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $this->converter->convertFrom('not numeric', 'integer'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function canConvertFromShouldReturnTrueForANumericStringSource() {
 		$this->assertTrue($this->converter->canConvertFrom('15', 'integer'));
 	}
@@ -63,6 +77,20 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function canConvertFromShouldReturnTrueForAnIntegerSource() {
 		$this->assertTrue($this->converter->canConvertFrom(123, 'integer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function canConvertFromShouldReturnTrueForAnEmptyValue() {
+		$this->assertTrue($this->converter->canConvertFrom('', 'integer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function canConvertFromShouldReturnTrueForANullValue() {
+		$this->assertTrue($this->converter->canConvertFrom(NULL, 'integer'));
 	}
 
 	/**
