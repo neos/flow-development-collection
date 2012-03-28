@@ -17,7 +17,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Command controller for the Kickstart generator
  *
  */
-class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
+class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
