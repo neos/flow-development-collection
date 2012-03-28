@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Error\Error;
 
 /**
  * Converter which transforms a simple type to a float, by simply casting it.
@@ -24,7 +25,7 @@ class FloatConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCon
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('string');
+	protected $sourceTypes = array('float', 'integer', 'string');
 
 	/**
 	 * @var string
@@ -39,14 +40,21 @@ class FloatConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCon
 	/**
 	 * Actually convert from $source to $targetType, by doing a typecast.
 	 *
-	 * @param string $source
+	 * @param float|integer|string $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return float
+	 * @return float|\TYPO3\FLOW3\Error\Error
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		if ($source === NULL || strlen($source) === 0) {
+			return NULL;
+		}
+
+		if (!is_numeric($source)) {
+			return new Error('"%s" is no float.' , 1332934124, array($source));
+		}
 		return (float)$source;
 	}
 }

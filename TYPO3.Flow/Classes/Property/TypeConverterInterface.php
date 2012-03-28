@@ -87,13 +87,14 @@ interface TypeConverterInterface {
 	 *   This is the normal case.
 	 * - NULL, indicating that this object should *not* be mapped (i.e. a "File Upload" Converter could return NULL if no file has been uploaded, and a silent failure should occur.
 	 * - An instance of \TYPO3\FLOW3\Error\Error -- This will be a user-visible error message lateron.
-	 * Furthermore, it should throw an Exception if an unexpected failure occured or a configuration issue happened.
+	 * Furthermore, it should throw an Exception if an unexpected failure (like a security error) occured or a configuration issue happened.
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return mixed the target type
+	 * @return mixed|\TYPO3\FLOW3\Error\Error the target type, or an error object if a user-error occured
+	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException thrown in case a developer error occured
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL);
