@@ -81,11 +81,13 @@ class ValidatorResolver {
 	 * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
 	 * @param array $validatorOptions Options to be passed to the validator
 	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorInterface
-	 * @throws Exception\NoSuchValidatorException
+	 * @throws \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException
 	 */
 	public function createValidator($validatorType, array $validatorOptions = array()) {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
-		if ($validatorObjectName === FALSE) return NULL;
+		if ($validatorObjectName === FALSE) {
+			return NULL;
+		}
 
 		switch ($this->objectManager->getScope($validatorObjectName)) {
 			case Configuration::SCOPE_PROTOTYPE:
@@ -272,26 +274,30 @@ class ValidatorResolver {
 	}
 
 	/**
-	 * Returns an object of an appropriate validator for the given type. If no
-	 * validator is available NULL is returned
+	 * Returns the class name of an appropriate validator for the given type. If no
+	 * validator is available FALSE is returned
 	 *
 	 * @param string $validatorType Either the fully qualified class name of the validator or the short name of a built-in validator
-	 * @return string Name of the validator object or FALSE
+	 * @return string|boolean Class name of the validator or FALSE if not available
 	 */
 	protected function resolveValidatorObjectName($validatorType) {
 		$validatorType = ltrim($validatorType, '\\');
 
 		if ($this->objectManager->isRegistered($validatorType)) {
-			return $validatorType;
+			$possibleClassName = $validatorType;
+		} else {
+			if (strpos($validatorType, ':') !== FALSE) {
+				list($packageName, $packageValidatorType) = explode(':', $validatorType);
+				$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', $packageName, $this->getValidatorType($packageValidatorType));
+			} else {
+				$possibleClassName = sprintf('TYPO3\FLOW3\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
+			}
+			if (!$this->objectManager->isRegistered($possibleClassName)) {
+				return FALSE;
+			}
 		}
 
-		if (strpos($validatorType, ':') !== FALSE) {
-			list($packageName, $packageValidatorType) = explode(':', $validatorType);
-			$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', $packageName, $this->getValidatorType($packageValidatorType));
-		} else {
-			$possibleClassName = sprintf('TYPO3\FLOW3\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
-		}
-		if ($this->objectManager->isRegistered($possibleClassName)) {
+		if ($this->reflectionService->isClassImplementationOf($possibleClassName, 'TYPO3\FLOW3\Validation\Validator\ValidatorInterface')) {
 			return $possibleClassName;
 		}
 
