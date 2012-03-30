@@ -306,7 +306,10 @@ class Context {
 			}
 		}
 
-		return $roles;
+		return array_intersect(
+			$roles,
+			$this->policyService->getRoles()
+		);
 	}
 
 	/**

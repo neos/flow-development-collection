@@ -252,14 +252,16 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	public function getAllParentRoles(\TYPO3\FLOW3\Security\Policy\Role $role) {
 		$result = array();
 
-		foreach ($this->policy['roles'][(string)$role] as $currentIdentifier) {
-			$currentParent = new \TYPO3\FLOW3\Security\Policy\Role($currentIdentifier);
-			if (!in_array($currentParent, $result)) $result[] = $currentParent;
-			foreach ($this->getAllParentRoles($currentParent) as $currentGrandParent) {
-				if (!in_array($currentGrandParent, $result)) $result[] = $currentGrandParent;
+		$parentRoles = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->policy, 'roles.' . $role);
+		if (is_array($parentRoles)) {
+			foreach ($this->policy['roles'][(string)$role] as $currentIdentifier) {
+				$currentParent = new \TYPO3\FLOW3\Security\Policy\Role($currentIdentifier);
+				if (!in_array($currentParent, $result)) $result[] = $currentParent;
+				foreach ($this->getAllParentRoles($currentParent) as $currentGrandParent) {
+					if (!in_array($currentGrandParent, $result)) $result[] = $currentGrandParent;
+				}
 			}
 		}
-
 		return $result;
 	}
 

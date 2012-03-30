@@ -318,10 +318,14 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$token5->expects($this->any())->method('getRoles')->will($this->returnValue(array($role5)));
 		$token5->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token6Provider'));
 
+		$everybodyRole = new Role('Everybody');
+
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
 
-		$everybodyRole = new Role('Everybody');
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array(
+			$everybodyRole, $role1, $role11, $role2, $role5
+		)));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('dummy'), array(), '', FALSE);
 		$securityContext->injectRequest($request);
@@ -374,6 +378,9 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnCallback($policyServiceCallback));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array(
+			$everybodyRole, $role1, $role2, $role3, $role4, $role5, $role6, $role7, $role8, $role9
+		)));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
@@ -404,9 +411,14 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$token2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array(new Role('Everybody'))));
+
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->injectRequest($request);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
+		$securityContext->_set('policyService', $mockPolicyService);
 
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
@@ -438,6 +450,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array(new Role('Everybody'))));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->injectRequest($request);
@@ -466,15 +479,20 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 
+		$roleAdministrator = new Role('Administrator');
+		$roleLicenseToKill = new Role('LicenseToKill');
+		$roleCustomer = new Role('Customer');
+
 		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
-		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array(new Role('Administrator'), new Role('LicenseToKill'))));
+		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleAdministrator, $roleLicenseToKill)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
-		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array('Customer')));
+		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleCustomer)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleAdministrator, $roleLicenseToKill, $roleCustomer)));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->injectRequest($request);
@@ -492,15 +510,17 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function hasRoleWorksWithRecursiveRoles() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
+		$roleAdministrator = new Role('Administrator');
+		$roleLicenseToKill = new Role('LicenseToKill');
+		$roleCustomer = new Role('Customer');
+
 		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
-		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array(new Role('Administrator'), new Role('LicenseToKill'))));
+		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleAdministrator, $roleLicenseToKill)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
-		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array(new Role('Customer'))));
+		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleCustomer)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
@@ -515,12 +535,45 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			return array();
 		};
 
-
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnCallback($policyServiceCallback));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleAdministrator, $roleLicenseToKill, $roleCustomer)));
+
 		$securityContext->_set('policyService', $mockPolicyService);
 
 		$this->assertTrue($securityContext->hasRole('Customer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getRolesDoesNotReturnRolesThePolicyServiceDoesNotKnowAbout() {
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+
+		$roleAdministrator = new Role('Administrator');
+		$roleLicenseToKill = new Role('LicenseToKill');
+		$roleCustomer = new Role('Customer');
+
+		$token1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
+		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleAdministrator, $roleLicenseToKill)));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
+		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleCustomer)));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$securityContext = $this->getAccessibleMock('TYPO3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
+		$securityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array($roleAdministrator, $roleCustomer)));
+
+		$securityContext->_set('policyService', $mockPolicyService);
+
+		$this->assertTrue($securityContext->hasRole('Administrator'));
+		$this->assertTrue($securityContext->hasRole('Customer'));
+		$this->assertFalse($securityContext->hasRole('LicenseToKill'));
 	}
 
 	/**
@@ -544,6 +597,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+		$mockPolicyService->expects($this->any())->method('getRoles')->will($this->returnValue(array()));
 		$securityContext->_set('policyService', $mockPolicyService);
 
 		$this->assertTrue($securityContext->hasRole('Everybody'));
