@@ -18,9 +18,27 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class IsOperation extends AbstractOperation {
 
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @var string
+	 */
 	static protected $shortName = 'is';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @var boolean
+	 */
 	static protected $final = TRUE;
 
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+	 * @param array $arguments the arguments for this operation
+	 * @return mixed|null if the operation is final, the return value
+	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (count($arguments) == 0) {
 			return count($flowQuery->getContext()) > 0;

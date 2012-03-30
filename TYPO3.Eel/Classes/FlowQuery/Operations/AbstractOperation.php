@@ -45,14 +45,26 @@ abstract class AbstractOperation implements \TYPO3\Eel\FlowQuery\OperationInterf
 	 */
 	static protected $final = FALSE;
 
+	/**
+	 * @return integer the priority of the operation
+	 * @api
+	 */
 	static public function getPriority() {
 		return static::$priority;
 	}
 
+	/**
+	 * @return boolean TRUE if the operation is final, FALSE otherwise
+	 * @api
+	 */
 	static public function isFinal() {
 		return static::$final;
 	}
 
+	/**
+	 * @return string the short name of the operation
+	 * @api
+	 */
 	static public function getShortName() {
 		if (!is_string(static::$shortName)) {
 			throw new \TYPO3\Eel\FlowQuery\FlowQueryException('Short name in class ' . __CLASS__ . ' is empty.', 1332488549);
@@ -60,6 +72,13 @@ abstract class AbstractOperation implements \TYPO3\Eel\FlowQuery\OperationInterf
 		return static::$shortName;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param array (or array-like object) $context onto which this operation should be applied
+	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+	 * @api
+	 */
 	public function canEvaluate($context) {
 		return TRUE;
 	}

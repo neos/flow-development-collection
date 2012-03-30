@@ -17,8 +17,21 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Add another $flowQuery object to the current one.
  */
 class AddOperation extends AbstractOperation {
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @var string
+	 */
 	static protected $shortName = 'add';
 
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+	 * @param array $arguments the arguments for this operation
+	 * @return mixed|null if the operation is final, the return value
+	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		$output = array();
 		foreach ($flowQuery->getContext() as $element) {

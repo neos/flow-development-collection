@@ -41,7 +41,7 @@ interface OperationInterface {
 	/**
 	 * This method is called to determine whether the operation
 	 * can work with the $context objects. It can be implemented
-	 * to
+	 * to implement runtime conditions.
 	 *
 	 * @param array (or array-like object) $context onto which this operation should be applied
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
