@@ -89,7 +89,7 @@ class CommandManager {
 	 * @param string $commandIdentifier command identifier in the format foo:bar:baz
 	 * @return \TYPO3\FLOW3\MVC\CLI\Command
 	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchCommandException if no matching command is available
-	 * @throws AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
+	 * @throws \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
 	 * @api
 	 */
 	public function getCommandByIdentifier($commandIdentifier) {
@@ -101,13 +101,7 @@ class CommandManager {
 			$commandIdentifier = 'typo3.flow3:cache:sys';
 		}
 
-		$matchedCommands = array();
-		$availableCommands = $this->getAvailableCommands();
-		foreach ($availableCommands as $command) {
-			if ($this->commandMatchesIdentifier($command, $commandIdentifier)) {
-				$matchedCommands[] = $command;
-			}
-		}
+		$matchedCommands = $this->getCommandsByIdentifier($commandIdentifier);
 		if (count($matchedCommands) === 0) {
 			throw new \TYPO3\FLOW3\MVC\Exception\NoSuchCommandException('No command could be found that matches the command identifier "' . $commandIdentifier . '".', 1310556663);
 		}
@@ -115,6 +109,25 @@ class CommandManager {
 			throw new \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException('More than one command matches the command identifier "' . $commandIdentifier . '"', 1310557169, NULL, $matchedCommands);
 		}
 		return current($matchedCommands);
+	}
+
+	/**
+	 * Returns an array of Commands that matches the given identifier.
+	 * If no Command could be found, an empty array is returned
+	 *
+	 * @param string $commandIdentifier command identifier in the format foo:bar:baz
+	 * @return array<\TYPO3\FLOW3\MVC\CLI\Command>
+	 * @api
+	 */
+	public function getCommandsByIdentifier($commandIdentifier) {
+		$availableCommands = $this->getAvailableCommands();
+		$matchedCommands = array();
+		foreach ($availableCommands as $command) {
+			if ($this->commandMatchesIdentifier($command, $commandIdentifier)) {
+				$matchedCommands[] = $command;
+			}
+		}
+		return $matchedCommands;
 	}
 
 	/**
@@ -176,7 +189,10 @@ class CommandManager {
 
 	/**
 	 * Returns TRUE if the specified command identifier matches the identifier of the specified command.
-	 * This is the case, if the identifiers are the same or if at least the last two command parts match (case sensitive).
+	 * This is the case, if
+	 *  - the identifiers are the same
+	 *  - if at least the last two command parts match (case sensitive) or
+	 *  - if only the package key is specified and matches the commands package key
 	 * The first part (package key) can be reduced to the last subpackage, as long as the result is unambiguous.
 	 *
 	 * @param Command $command
@@ -187,7 +203,8 @@ class CommandManager {
 		$commandIdentifierParts = explode(':', $command->getCommandIdentifier());
 		$searchedCommandIdentifierParts = explode(':', $commandIdentifier);
 		$packageKey = array_shift($commandIdentifierParts);
-		if (count($searchedCommandIdentifierParts) === 3) {
+		$searchedCommandIdentifierPartsCount = count($searchedCommandIdentifierParts);
+		if ($searchedCommandIdentifierPartsCount === 3 || $searchedCommandIdentifierPartsCount === 1) {
 			$searchedPackageKey = array_shift($searchedCommandIdentifierParts);
 			if ($searchedPackageKey !== $packageKey
 				&& substr($packageKey, - (strlen($searchedPackageKey) + 1)) !== '.' . $searchedPackageKey)
@@ -195,7 +212,9 @@ class CommandManager {
 				return FALSE;
 			}
 		}
-		if (count($searchedCommandIdentifierParts) !== 2) {
+		if ($searchedCommandIdentifierPartsCount === 1) {
+			return TRUE;
+		} elseif (count($searchedCommandIdentifierParts) !== 2) {
 			return FALSE;
 		}
 		return $searchedCommandIdentifierParts === $commandIdentifierParts;

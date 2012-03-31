@@ -126,6 +126,58 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException
+	 */
+	public function getCommandByIdentifierThrowsExceptionIfOnlyPackageKeyIsSpecifiedAndContainsMoreThanOneCommand() {
+		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
+		$mockCommand2 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
+		$mockCommand3 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand3->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:command'));
+		$mockCommand4 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand4->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:othercommand'));
+		$mockCommands = array($mockCommand1, $mockCommand2, $mockCommand3, $mockCommand4);
+		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
+
+		$this->commandManager->getCommandByIdentifier('packagekey');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getCommandsByIdentifierReturnsAnEmptyArrayIfNoCommandMatches() {
+		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
+		$mockCommand2 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
+		$mockCommands = array($mockCommand1, $mockCommand2);
+		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
+
+		$this->assertSame(array(), $this->commandManager->getCommandsByIdentifier('nonexistingpackage'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getCommandsByIdentifierReturnsAllCommandsOfTheSpecifiedPackage() {
+		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
+		$mockCommand2 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
+		$mockCommand3 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand3->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:command'));
+		$mockCommand4 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand4->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:othercommand'));
+		$mockCommands = array($mockCommand1, $mockCommand2, $mockCommand3, $mockCommand4);
+		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
+
+		$expectedResult = array($mockCommand3, $mockCommand4);
+		$this->assertSame($expectedResult, $this->commandManager->getCommandsByIdentifier('packagekey'));
+	}
+
+	/**
+	 * @test
 	 */
 	public function getShortestIdentifierForCommandAlwaysReturnsShortNameForFlow3HelpCommand() {
 		$mockHelpCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
