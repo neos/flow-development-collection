@@ -32,8 +32,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	const MAPPING_REGULAR = 0;
 	const MAPPING_INVERSE = 1;
 
-	const TABLE_NAME_LENGTH_LIMIT = 64;
-
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
@@ -45,9 +43,19 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	protected $reader;
 
 	/**
+	 * @var \Doctrine\Common\Persistence\ObjectManager
+	 */
+	protected $entityManager;
+
+	/**
 	 * @var array
 	 */
 	protected $classNames;
+
+	/**
+	 * @var integer
+	 */
+	protected $tableNameLengthLimit = NULL;
 
 	/**
 	 * Initializes a new AnnotationDriver that uses the given AnnotationReader for reading
@@ -63,6 +71,14 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
+	 * @return void
+	 */
+	public function setEntityManager(\Doctrine\Common\Persistence\ObjectManager $entityManager) {
+		$this->entityManager = $entityManager;
 	}
 
 	/**
@@ -234,7 +250,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @param string $className
 	 * @return string
 	 */
-	public function inferTableNameFromClassName($className, $lengthLimit = self::TABLE_NAME_LENGTH_LIMIT) {
+	public function inferTableNameFromClassName($className, $lengthLimit = NULL) {
+		if ($lengthLimit === NULL) {
+			$lengthLimit = $this->getMaxIdentifierLength();
+		}
 		$tableName = str_replace('\\', '_', $className);
 		if (strlen($tableName) > $lengthLimit) {
 			$tableName = substr($tableName, 0, $lengthLimit - 6) . '_' . substr(sha1($className), 0, 5);
@@ -252,8 +271,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	protected function inferJoinTableNameFromClassAndPropertyName($className, $propertyName) {
 		$prefix = $this->inferTableNameFromClassName($className);
 		$suffix = '_' . strtolower($propertyName . '_join');
-		if (strlen($prefix . $suffix) > self::TABLE_NAME_LENGTH_LIMIT) {
-			$prefix = $this->inferTableNameFromClassName($className, self::TABLE_NAME_LENGTH_LIMIT - strlen($suffix));
+		if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
+			$prefix = $this->inferTableNameFromClassName($className, $this->getMaxIdentifierLength() - strlen($suffix));
 		}
 		return $prefix . $suffix;
 	}
@@ -273,8 +292,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			$tableName = strtolower($classNameParts[1] . '_' . implode('_', array_slice($classNameParts, -2, 2)));
 		}
 
-		if (strlen($tableName) > self::TABLE_NAME_LENGTH_LIMIT) {
-			$tableName = substr($tableName, 0, self::TABLE_NAME_LENGTH_LIMIT - 6) . '_' . substr(sha1($className), 0, 5);
+		if (strlen($tableName) > $this->getMaxIdentifierLength()) {
+			$tableName = substr($tableName, 0, $this->getMaxIdentifierLength() - 6) . '_' . substr(sha1($className), 0, 5);
 		}
 
 		return $tableName;
@@ -678,6 +697,18 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		$metadata->addLifecycleCallback('FLOW3_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
 		$metadata->addLifecycleCallback('FLOW3_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
+	}
+
+	/**
+	 * Derive maximum identifier length from doctrine DBAL
+	 *
+	 * @return integer
+	 */
+	protected function getMaxIdentifierLength() {
+		if ($this->tableNameLengthLimit === NULL) {
+			$this->tableNameLengthLimit = $this->entityManager->getConnection()->getDatabasePlatform()->getMaxIdentifierLength();
+		}
+		return $this->tableNameLengthLimit;
 	}
 
 	/**

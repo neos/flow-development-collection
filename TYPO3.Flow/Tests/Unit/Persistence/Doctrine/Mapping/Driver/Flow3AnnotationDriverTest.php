@@ -37,7 +37,8 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider classNameToTableNameMappings
 	 */
 	public function testInferTableNameFromClassName($className, $tableName) {
-		$driver = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver();
+		$driver = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver', array('getMaxIdentifierLength'));
+		$driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue(64));
 		$this->assertEquals($tableName, $driver->inferTableNameFromClassName($className));
 	}
 
@@ -61,8 +62,25 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider classAndPropertyNameToJoinTableNameMappings
 	 */
 	public function testInferJoinTableNameFromClassAndPropertyName($className, $propertyName, $tableName) {
-		$driver = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver', array('dummy'));
+		$driver = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver', array('getMaxIdentifierLength'));
+		$driver->expects($this->any())->method('getMaxIdentifierLength')->will($this->returnValue(64));
 		$this->assertEquals($tableName, $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getMaxIdentifierLengthAsksDoctrineForValue() {
+		$mockDatabasePlatform = $this->getMockForAbstractClass('Doctrine\DBAL\Platforms\AbstractPlatform', array(), '', TRUE, TRUE, TRUE, array('getMaxIdentifierLength'));
+		$mockDatabasePlatform->expects($this->atLeastOnce())->method('getMaxIdentifierLength')->will($this->returnValue(2048));
+		$mockConnection = $this->getMock('Doctrine\DBAL\Connection', array(), array(), '', FALSE);
+		$mockConnection->expects($this->atLeastOnce())->method('getDatabasePlatform')->will($this->returnValue($mockDatabasePlatform));
+		$mockEntityManager = $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', FALSE);
+		$mockEntityManager->expects($this->atLeastOnce())->method('getConnection')->will($this->returnValue($mockConnection));
+
+		$driver = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver', array('dummy'));
+		$driver->_set('entityManager', $mockEntityManager);
+		$this->assertEquals(2048, $driver->_call('getMaxIdentifierLength'));
 	}
 
 }

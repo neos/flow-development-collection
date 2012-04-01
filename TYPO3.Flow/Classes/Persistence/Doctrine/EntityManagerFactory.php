@@ -98,7 +98,8 @@ class EntityManagerFactory {
 		}
 
 			// must use ObjectManager in compile phase...
-		$config->setMetadataDriverImpl($this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver'));
+		$flow3AnnotationDriver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
+		$config->setMetadataDriverImpl($flow3AnnotationDriver);
 
 		$proxyDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
 		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($proxyDirectory);
@@ -106,7 +107,9 @@ class EntityManagerFactory {
 		$config->setProxyNamespace('TYPO3\FLOW3\Persistence\Doctrine\Proxies');
 		$config->setAutoGenerateProxyClasses(FALSE);
 
-		return \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
+		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
+		$flow3AnnotationDriver->setEntityManager($entityManager);
+		return $entityManager;
 	}
 
 }
