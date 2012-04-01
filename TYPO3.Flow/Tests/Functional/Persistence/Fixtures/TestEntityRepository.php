@@ -16,5 +16,10 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  */
 class TestEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
+	/**
+	 * @var array
+	 */
+	protected $defaultOrderings = array('name' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING);
+
 }
 ?>
