@@ -64,7 +64,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		if (isset($routes[$index - 1])) {
 			$route = $routes[$index - 1];
 
-			$this->outputLine('<b>Informations for Route ' . $index . ':</b>');
+			$this->outputLine('<b>Information for route ' . $index . ':</b>');
 			$this->outputLine('  Name: ' . $route->getName());
 			$this->outputLine('  Pattern: ' . $route->getUriPattern());
 			$this->outputLine('  Defaults: ');
