@@ -24,7 +24,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $className . ' {
-				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
+				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = TRUE) {}
 			}
 		');
 		$methodParameters = array(
@@ -51,13 +51,20 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 			),
 			'arg4' => array(
 				'position' => 3,
+				'byReference' => TRUE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg5' => array(
+				'position' => 4,
 				'byReference' => FALSE,
 				'array' => FALSE,
 				'optional' => TRUE,
 				'allowsNull' => TRUE
 			),
-			'arg5' => array(
-				'position' => 4,
+			'arg6' => array(
+				'position' => 5,
 				'byReference' => FALSE,
 				'array' => FALSE,
 				'optional' => TRUE,
@@ -74,8 +81,9 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 				\$methodArguments['arg1'] = \$arg1;
 				\$methodArguments['arg2'] = \$arg2;
 				\$methodArguments['arg3'] = \$arg3;
-				\$methodArguments['arg4'] = \$arg4;
+				\$methodArguments['arg4'] = &\$arg4;
 				\$methodArguments['arg5'] = \$arg5;
+				\$methodArguments['arg6'] = \$arg6;
 			";
 
 		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);

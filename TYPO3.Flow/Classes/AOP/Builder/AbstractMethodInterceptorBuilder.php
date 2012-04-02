@@ -104,7 +104,9 @@ abstract class AbstractMethodInterceptorBuilder {
 				if ($useArgumentsArray) {
 					$argumentsArrayCode .= "\t\t\t\tif (array_key_exists($argumentIndex, \$arguments)) \$methodArguments['$methodParameterName'] = \$arguments[$argumentIndex];\n";
 				} else {
-					$argumentsArrayCode .= "\t\t\t\t\$methodArguments['$methodParameterName'] = \$$methodParameterName;\n";
+					$argumentsArrayCode .= "\t\t\t\t\$methodArguments['$methodParameterName'] = ";
+					$argumentsArrayCode .= $methodParameterInfo['byReference'] ? '&' : '';
+					$argumentsArrayCode .= "\$$methodParameterName;\n";
 				}
 				$argumentIndex ++;
 			}
