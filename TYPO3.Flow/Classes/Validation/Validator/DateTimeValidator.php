@@ -54,6 +54,9 @@ class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	 * @api
 	 */
 	protected function isValid($value) {
+		if ($value instanceof \DateTime) {
+			return;
+		}
 		if (!isset($this->options['locale'])) {
 			$locale = $this->localizationService->getConfiguration()->getDefaultLocale();
 		} elseif (is_string($this->options['locale'])) {

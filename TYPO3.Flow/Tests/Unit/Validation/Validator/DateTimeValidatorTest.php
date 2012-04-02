@@ -60,6 +60,15 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 	/**
 	 * @test
 	 */
+	public function validateReturnsNoErrorIfTheGivenValueIsOfTypeDateTime() {
+		$this->validatorOptions(array());
+		$this->validator->injectDatetimeParser($this->mockDatetimeParser);
+		$this->assertFalse($this->validator->validate(new \DateTime())->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function returnsErrorsOnIncorrectValues() {
 		$sampleInvalidTime = 'this is not a time string';
 
