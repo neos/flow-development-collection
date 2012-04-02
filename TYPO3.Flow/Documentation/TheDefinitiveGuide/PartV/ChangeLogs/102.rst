@@ -1,0 +1,238 @@
+====================
+1.0.2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Make Doctrine package protected
+-----------------------------------------------------------------------------------------
+
+* Related: `#32599 <http://forge.typo3.org/issues/32599>`_
+* Commit: `f87567c <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=f87567cac7ab8392c936b5366e5ba0d7f168f43f>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Symfony.Component.Yaml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Make Yaml package protected
+-----------------------------------------------------------------------------------------
+
+* Related: `#32599 <http://forge.typo3.org/issues/32599>`_
+* Commit: `7884051 <http://git.typo3.org/FLOW3/Packages/Symfony.Component.Yaml.git?a=commit;h=7884051cfd11f387241e42ef06c63a7746fd3fbc>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.FLOW3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Make emptyDirectoryRecursively() ignore . and ..
+-----------------------------------------------------------------------------------------
+
+The check for this breaks when the iterator returns . and .., they are
+then handled like files, which cannot work.
+
+* Fixes: `#32762 <http://forge.typo3.org/issues/32762>`_
+* Commit: `fa850f3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fa850f3efd00d37e5124a81c2d809ffdf79349df>`_
+
+[BUGFIX] Unit tests remove their temporary files
+-----------------------------------------------------------------------------------------
+
+Some unit tests create many temporary files outside vfs://
+that are now removed after running the test.
+
+* Fixes: `#32723 <http://forge.typo3.org/issues/32723>`_
+* Commit: `f95aa83 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f95aa8385b91967eb342513d08dbdbc4f87cb38e>`_
+
+[BUGFIX] Files::emptyDirectoryRecursively affects targets of symlinks
+-----------------------------------------------------------------------------------------
+
+\\TYPO3\\FLOW3\\Utility\\Files::removeDirectoryRecursively() fails to
+properly unlink directory symlinks on Windows.
+
+Thus \\TYPO3\\FLOW3\\Utility\\Files::emptyDirectoryRecursively()
+iterates through the target files of a symlinked folder and
+removes them!
+
+This change fixes this by introducing a custom unlink() function
+that can remove a symlink regardless of it's type (file/directory).
+
+* Fixes: `#32550 <http://forge.typo3.org/issues/32550>`_
+* Commit: `12eea66 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=12eea665d94747288a82a9a0e02094ac6ab8d42b>`_
+
+[BUGFIX] Fix unit tests with PHPUnit 3.6.5 in strict mode
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#32738 <http://forge.typo3.org/issues/32738>`_
+* Commit: `d5533b0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d5533b0bb05c88853df170a4b988984e459552c3>`_
+
+[BUGFIX] Logout doesn't work anymore
+-----------------------------------------------------------------------------------------
+
+Since 93b608a calling AuthenticationProviderManager::logout()
+without initializing the Security Context first, returns without
+actually destroying the authentication cookie.
+
+This change fixes this by introducing a new convenience method
+isAuthenticated() to the AuthentcationManagerInterface allowing the
+AuthenticationProviderManager to check whether a user is
+authenticated before trying to fetch the session.
+
+* Fixes: `#32285 <http://forge.typo3.org/issues/32285>`_
+* Commit: `6ba03e4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6ba03e4810791eb15f43282789b8dd29d8d57c09>`_
+
+[BUGFIX] "Wrong" EOL characters break parsing of doc comments
+-----------------------------------------------------------------------------------------
+
+When \\n\\r was used as EOL instead of just \\n the parsed doc comments
+would retain the \\r which would cause confusing exceptions in some
+cases later on.
+
+* Fixes: `#31363 <http://forge.typo3.org/issues/31363>`_
+* Related: `#32466 <http://forge.typo3.org/issues/32466>`_
+* Related: `#31087 <http://forge.typo3.org/issues/31087>`_
+* Commit: `6ca1f9b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6ca1f9b2734e083f0f707af0d2f83f7bf5da87de>`_
+
+[BUGFIX] Make validation upon persistence work again
+-----------------------------------------------------------------------------------------
+
+The validation upon persistence was dropped (more or less by accident)
+when we switched to Doctrine. This change brings it back.
+
+In addition it fixes the exception message produced in the generic
+AbstractBackend when validation fails.
+
+* Fixes: `#31502 <http://forge.typo3.org/issues/31502>`_
+* Commit: `3522f1b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3522f1b264b022a5fabc2dc9c7a05a82c88b5d67>`_
+
+[BUGFIX] Fix unit tests failing with PHPUnit 3.6
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#32015 <http://forge.typo3.org/issues/32015>`_
+* Commit: `f030d70 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f030d705121da8dc5946e0d6a097cef9c70fb2b7>`_
+
+[TASK] Make FLOW3 package protected
+-----------------------------------------------------------------------------------------
+
+* Related: `#32599 <http://forge.typo3.org/issues/32599>`_
+* Commit: `c82dc98 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c82dc98ace74c80f3f5386a6f55bbef63c187c5f>`_
+
+[BUGFIX] Only flush() the Doctrine ORM if it is open
+-----------------------------------------------------------------------------------------
+
+In some cases it can happen, that the EntityManager is closed at the end
+of a request This can be a valid situation (see #30933 for more).
+
+This change makes persistAll() check if the EntityManager is open
+before calling flush() on it.
+
+* Fixes: `#30934 <http://forge.typo3.org/issues/30934>`_
+* Commit: `4911190 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=491119035d378be54da1894ee083d1f5dacc5dde>`_
+
+[BUGFIX] ACL file permissions do not work correctly
+-----------------------------------------------------------------------------------------
+
+When setting file permissions the setting of ACL would succeed but
+the set permissions did not work as expected. This changes fixes that.
+
+In addition it makes the calls in a chain so that the check for the
+return value of the chmod commands is more robust. The directories
+that are created are now always owned by the command line user.
+
+* Fixes: `#32499 <http://forge.typo3.org/issues/32499>`_
+* Commit: `9ae0f93 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9ae0f93715a01307ed474446562eb9d74275f197>`_
+
+[BUGFIX] Trigger allObjectsPersisted after every functional test
+-----------------------------------------------------------------------------------------
+
+The tearDown() method of the base functional test case clears the
+persistence manager's state so it is ready for the next test, avoiding
+side effects.
+
+However, certain repositories (such as the TYPO3CR NodeRepository) rely
+on the signal "allObjectsPersisted" which triggers their internal
+cleanup function. If this signal is not, sent, the next test will still
+see added objects stored directly in the repository.
+
+The solution is to call persistAll() in the tearDown() method, even if
+the just executed test doesn't require it.
+
+* Fixes: `#32346 <http://forge.typo3.org/issues/32346>`_
+* Commit: `36a893c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=36a893c22e774810d0511797ab4d989531342f67>`_
+
+[BUGFIX] Fix check for stripped comments
+-----------------------------------------------------------------------------------------
+
+The bootstrap checks for the presence of doc comments, to avoid
+problems with some bytecode caches that strip comments.
+
+That check did not work correctly (FALSE is returned but the check
+expects an empty string). In case an error is seen, the exception
+cannot be thrown as well (no classloader available at that point).
+That exception issue has been been fixed for another check as well.
+
+On top of this the check for magic_quotes_gpc has been adjusted a
+tiny bit.
+
+* Fixes: `#32049 <http://forge.typo3.org/issues/32049>`_
+* Commit: `8264f7e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8264f7eb5286fe42cc8a9413ffb43a77d33917a3>`_
+
+[TASK] Move ObjectValidationFailedException out of Generic
+-----------------------------------------------------------------------------------------
+
+The exception is not specific to generic persistence, thus it should
+not be inside the Generic namespace.
+
+* Related: `#31502 <http://forge.typo3.org/issues/31502>`_
+* Commit: `a8e6d8e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a8e6d8e2adce35928fea0e424128ea6adfe6d291>`_
+
+[BUGFIX] Adjust AuthenticationController to FlashMessages
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#31931 <http://forge.typo3.org/issues/31931>`_
+* Commit: `d381413 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d381413f8b4f8acce8ffb80364dde7cea558c8b4>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Make Fluid package protected
+-----------------------------------------------------------------------------------------
+
+* Related: `#32599 <http://forge.typo3.org/issues/32599>`_
+* Commit: `d57a87b <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=d57a87b61a5703461676e8b819a500968c985c1f>`_
+
+[BUGFIX] Fix unit tests failing with PHPUnit 3.6
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#32016 <http://forge.typo3.org/issues/32016>`_
+* Commit: `bf98ab6 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=bf98ab6dc79464c39eb104420e1bdd8deea04439>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Make Party package protected
+-----------------------------------------------------------------------------------------
+
+* Related: `#32599 <http://forge.typo3.org/issues/32599>`_
+* Commit: `b5e5c6d <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=b5e5c6d71da63308a2f1e110f8cdfd53ce2296fe>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix links on Welcome screen
+-----------------------------------------------------------------------------------------
+
+The links to the FLOW3 website were mostly wrong.
+
+* Fixes: `#32005 <http://forge.typo3.org/issues/32005>`_
+* Commit: `6cd06cb <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=6cd06cb0e4b10a2d0bef8967652d08f049f35216>`_
+

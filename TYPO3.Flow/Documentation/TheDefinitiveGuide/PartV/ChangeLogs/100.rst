@@ -1,0 +1,1491 @@
+====================
+1.0.0
+====================
+
+~~~~~~~~~~~~~~~~~~~~
+TYPO3.FLOW3
+~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update version in Package.xml
+-----------------------------------------------------------------------------------------
+
+* Commit: `f9f52ba <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f9f52bac02e7bf729052f633dd5bf93ce7928428>`_
+
+[TASK] Remove not-fixable functional test
+-----------------------------------------------------------------------------------------
+
+Due to the changes to the session scope, this
+test is not working anymore and there is no
+easy way to test the expected behavior with
+the current code base.
+
+* Commit: `02bc4a8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=02bc4a8e9a85832af20c105dd11b87ee54a42a01>`_
+
+[BUGFIX] renderAnnotation handles boolean values correctly
+-----------------------------------------------------------------------------------------
+
+When rendering annotations into proxy classes, boolean values for
+options got lost.
+
+* Fixes: `#31111 <http://forge.typo3.org/issues/31111>`_
+* Commit: `1f17268 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1f172689920c1a2e0bc4697473e9a35bf655b54a>`_
+
+[TASK] Make migrate-annotations.php a tiny bit less strict
+-----------------------------------------------------------------------------------------
+
+When spaces (yuck) where used for indentation, @validate annotations were
+not migrated. This fixes that. Promise you will fix your indentation in
+return.
+
+* Commit: `d8af36d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d8af36d8ec07ff04742efa13d2faffa8f6f01064>`_
+
+[BUGFIX] Terminate cleanly after displaying exception message in CLI
+-----------------------------------------------------------------------------------------
+
+If an exception occurred during a CLI request, it could happen that
+another exception was thrown and displayed (SignalSlot, ObjectManager
+not yet initialized) because the framework is in an early, unstable
+state and thus cannot shutdown the bootstrap normally.
+
+Therefore, if an exception was caught in the bootstrap, FLOW3 must exit
+directly without trying to shutdown the bootstrap in the regular way.
+
+* Commit: `3732564 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3732564cfa933ed4064704d4047a82794acd2f2e>`_
+
+[BUGFIX] Fix package:import git URLs
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#31104 <http://forge.typo3.org/issues/31104>`_
+* Commit: `e493de8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=e493de834d5f04fbe484d69209262c3c55cda828>`_
+
+[TASK] Disable SQL query logging by default
+-----------------------------------------------------------------------------------------
+
+* Commit: `4fdeed8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4fdeed851ef125d271ff7835311fe014f63eff5b>`_
+
+[TASK] Don't flush caches after package:create
+-----------------------------------------------------------------------------------------
+
+Creating a new package does not really require flushing
+all caches because it only adds code (the package class)
+but does not remove any code. In Development context this
+should not cause any problems and developers save time
+if caches are not flushed.
+
+* Commit: `70f9da6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=70f9da6c1ac989b8c386cb8d6e96e243e4a39d35>`_
+
+[BUGFIX] Missing Lazy annotation in migration script
+-----------------------------------------------------------------------------------------
+
+The Lazy annotation is missing in the migration-annotation.php script
+
+* Resolves: `#31083 <http://forge.typo3.org/issues/31083>`_
+* Commit: `69f039e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=69f039e5292ba60c2f68f349ebe431683625deba>`_
+
+[BUGFIX] Minor fix in LinkTest
+-----------------------------------------------------------------------------------------
+
+This fixes a test for \TYPO3\FLOW3\Utility\Files::is_link()
+that failed to properly delete a previously generated symlink
+
+* Commit: `00f1cfe <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=00f1cfebe896bb8a1dca4ec4f13dc37b70bc7acc>`_
+
+[TASK] Remove scope annotations for prototypes
+-----------------------------------------------------------------------------------------
+
+* Commit: `f1eca95 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f1eca95a65de4ceb7635c5d418b32aa0527d5781>`_
+
+[BUGFIX] Fix doc comment parsing of single line descriptions
+-----------------------------------------------------------------------------------------
+
+A simple bugfix and test for single line description in doc comment
+blocks.
+
+* Commit: `629d5e3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=629d5e38e14101233eae58a630da6b0be0e34ccc>`_
+
+[TASK] Drop @author tags from source code
+-----------------------------------------------------------------------------------------
+
+* Commit: `1da6a9e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1da6a9eab6d4c51f183bdd199332d054552404e5>`_
+
+[BUGFIX] Exception when entities/valueobjects are not prototype
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#31042 <http://forge.typo3.org/issues/31042>`_
+* Commit: `9c48618 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9c48618359df5e4a2d3d5e026a43adcb67944c18>`_
+
+[TASK] Beautify exception messages in command line interface
+-----------------------------------------------------------------------------------------
+
+This wraps a try-catch block around the request handling part for
+command line commands and renders a more friendly exception message
+with a reference to the exception code and exception reference number,
+if any.
+
+* Commit: `2915d77 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2915d772762f8ffa72ee4df040356856fd258808>`_
+
+[BUGFIX] make is_link() work around work for paths with trailing slash
+-----------------------------------------------------------------------------------------
+
+On Windows \TYPO3\FLOW3\Utility\Files::is_link() compares the
+given path with the resolved absolute path due to a bug in the
+native is_link() implementation.
+This fails if the given path ends on a slash because that is
+stripped of by PHPs realpath() function.
+This change strips of any trailing slash before comparing the
+paths.
+
+* Resolves: `#31061 <http://forge.typo3.org/issues/31061>`_
+* Commit: `b306b18 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b306b18ac9efcba83ae9525bf470cc020d6d4b34>`_
+
+[TASK] Clean up unit tests using the real ReflectionService
+-----------------------------------------------------------------------------------------
+
+* Commit: `994f209 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=994f209eb72b9c9dd4e1c26bd2c7fcad4d9c5a40>`_
+
+[TASK] Cache annotation parsing results
+-----------------------------------------------------------------------------------------
+
+Now class and property annotations are collected during regular
+class reflection and reused later. This avoids building a new
+class/property reflection and parsing of code and docblocks for
+every call reading annotations.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `3cc446e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3cc446e5e1832f4f5ca0e7ba0d259b06b514c501>`_
+
+[TASK] Fix edge case in annotation migration script
+-----------------------------------------------------------------------------------------
+
+The script failed to replace (some?) nested ORM annotations with
+prefixed ones.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `b22b157 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b22b157a121a2d93ea8d07786a1aa21a3824e602>`_
+
+[BUGFIX] Fix error when doctrine:validate finds errors
+-----------------------------------------------------------------------------------------
+
+* Commit: `207a6c9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=207a6c976169f0e874c6bb5e072f3d84f92a6a59>`_
+
+[BUGFIX] PackageManager::createPackage() creates invalid annotation
+-----------------------------------------------------------------------------------------
+
+The PackageManager::createPackage() that is called by the
+package:create command still creates a Package.php file with a
+"@scope" annotation.
+
+* Resolves: `#31052 <http://forge.typo3.org/issues/31052>`_
+* Commit: `139a4da <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=139a4dac9fecd25c694657ef269ff43761be5eb5>`_
+
+[BUGFIX] Reuse FLOW3 classloader in ReflectionService
+-----------------------------------------------------------------------------------------
+
+There was a second class loader being created for the annotation
+parser. It was lacking the available packages and thus failed
+under some circumstances.
+
+The changes adds reuse of the classloader already created in the
+FLOW3 bootstrap.
+
+* Fixes: `#31015 <http://forge.typo3.org/issues/31015>`_
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `59b7586 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=59b758615957dea8a2efc0defbac2a190b15b31e>`_
+
+[TASK] Add appendExceedingArguments setting to all default routes
+-----------------------------------------------------------------------------------------
+
+This adds the setting appendExceedingArguments to the default
+fallback routes of FLOW3 in order to make more custom routes work
+out of the box.
+
+* Related: `#30778 <http://forge.typo3.org/issues/30778>`_
+* Commit: `b483234 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b483234cc626e749c46ae495e3364329d28c4b8a>`_
+
+[!!!][TASK] Only append exceeding request arguments to URI if configured
+-----------------------------------------------------------------------------------------
+
+This changes the default behavior of the routing framework in
+order to be more consequent and easier to extend in the future.
+In detail this changes handling of arguments that are passed to
+the router::resolve() method but are not part of the route
+configuration.
+Until now these arguments were just appended to the resulting
+URI as query string, but this leads to unexpected behavior (see
+
+Now, if you need this behavior, you have to explicitly tell the
+route by enabling the setting "appendExceedingArguments".
+This is done for the default action route provided with FLOW3,
+so that most links will work out of the box.
+
+* Resolves: `#30778 <http://forge.typo3.org/issues/30778>`_
+* Commit: `d74ce5d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d74ce5d9cf5081ebe019c594b80c4d17b96d4fa8>`_
+
+[BUGFIX] Routing does not always work if splitString is optional
+-----------------------------------------------------------------------------------------
+
+If the route part following an identity route part optional
+like "{post}(.html)", the identityRoutePart creates a correct
+link but matching of the URI without the optional part fails,
+if the dynamic part contains the split string (in this example
+if the post contains the string ".html").
+This change fixes this by always matching against the complete
+routePath with an improved RegEx.
+
+* Resolves: `#30929 <http://forge.typo3.org/issues/30929>`_
+* Commit: `ce14c00 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ce14c0003eb87316e760985c7fa59cbee5af1a72>`_
+
+[TASK] Safeguard APC use (in CLI requests)
+-----------------------------------------------------------------------------------------
+
+When activating APC as cache for Doctrine one would get fatal
+errors in CLI, because by default APC is disabled for CLI PHP.
+
+Thus we check for the existence of apc_fetch() before actually
+using the ApcCache.
+
+* Commit: `10fc76e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=10fc76e9f70603634d9e0b9465a57ba12f2521ef>`_
+
+[TASK] Convenience Method for adding FlashMessages
+-----------------------------------------------------------------------------------------
+
+This adds a method addFlashMessage() to the AbstractController
+This should be used for adding FlashMessages instead of
+interacting with the FlashMessageContainer directly in order to
+reduce interdependencies.
+Besides this change renames the default severity of
+FlashMessages from SEVERITY_MESSAGE to SEVERITY_OK.
+
+* Related: `#30825 <http://forge.typo3.org/issues/30825>`_
+* Commit: `1f9a0e6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1f9a0e6552f5290244925dff7b5dc1cc15928491>`_
+
+[TASK] Teach AOP classAnnotatedWith & methodAnnotatedWith
+-----------------------------------------------------------------------------------------
+
+Two new point cut designators added, includes tests. The pattern
+given is used as is, only backslashes are escaped for ease of use.
+
+Also changes the use of classTaggedWith and methodTaggedWith use in
+FLOW3 itself to the new designators.
+
+Related:# 27627
+
+* Commit: `db6c825 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=db6c8259102bf2715c6ce12e07e8c6219aabf73d>`_
+
+[TASK] Useless cleanup of @return annotations...
+-----------------------------------------------------------------------------------------
+
+just because I touched those files anyway.
+
+* Commit: `4e01754 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4e01754c2eaacc3ab09eee29bbb58f8654c27103>`_
+
+[TASK] Adjust to new annotation syntax
+-----------------------------------------------------------------------------------------
+
+The syntax for annotations changed with #27627, this adjusts the
+code as needed.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `42e8a5e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=42e8a5ebcca3faa970c5325d6fc99e4d0f79c5b7>`_
+
+[TASK] Support new annotation syntax
+-----------------------------------------------------------------------------------------
+
+This adds support for the new annotation syntax in a way that aims
+to change as little code as needed. It does this by adding support
+for namespaced annotations to DocCommentParser, adding some methods
+to read annotations using Doctrine Common to the ReflectionService
+and adjusts some other parts of the code that needed to be changed
+already.
+
+Existing annotations in userland code can be migrated using the
+migrate-annotations.php script. Run it without arguments to get
+instructions.
+
+Further changes to fully resolve #27627 will follow.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `f00f63f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f00f63fa2f6134a94a6b478dd6b2583e236705a9>`_
+
+[TASK] Add our annotations as classes
+-----------------------------------------------------------------------------------------
+
+This adds classes for all annotations used in FLOW3 to the
+TYPO3\FLOW3\Annotations namespace.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `32bb751 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=32bb751e779df8c6bcd28ce54ce01335d9a446ad>`_
+
+[TASK] Remove leftover encoding declarations
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#30861 <http://forge.typo3.org/issues/30861>`_
+* Commit: `b7573cb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b7573cb080369c31e15465a3debb470f8a0b4d85>`_
+
+[!!!][BUGFIX] invalid YAML parser result should be empty array
+-----------------------------------------------------------------------------------------
+
+A non array result of the symfony YAML parser will now be
+converted to an empty array to not break things.
+
+Breaking because the new parser seems to behave different than
+HordeYaml in some circumstances, so errors may arise due to
+missing configuration because the file wasn't parsed.
+
+* Commit: `795c7d0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=795c7d004e089faa11903088661280ecbdc0fd78>`_
+
+[BUGFIX] Fix access denied exception after session timeout with CSRF
+-----------------------------------------------------------------------------------------
+
+This change nests the firewall inspection in the try catch block that
+also catches AuthenticationRequired exceptions from requests. The
+CsrfProtection pattern will check if any CSRF token is present in the
+context and throws an AuthenticationRequired exception otherwise to
+proceed to an entry point for re-authentication.
+
+* Resolves: `#30436 <http://forge.typo3.org/issues/30436>`_
+* Commit: `0edbd68 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0edbd68a074a248a8ddd4b023002a7a51e98ca48>`_
+
+[FEATURE] Initialize session and session objects on demand
+-----------------------------------------------------------------------------------------
+
+The default behavior of FLOW3 was that a session was initialized – and
+thus a cookie sent – on every request, no matter if the session was
+needed or not. This feature delays session initialization until when a
+session is really needed. Existing sessions will be resumed
+automatically.
+
+A new session is only started if the Session->start() method is called
+explicitly, or if a method which was tagged with @session autostart=true
+was called.
+
+* Resolves: `#26358 <http://forge.typo3.org/issues/26358>`_
+* Commit: `6d7d3b9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6d7d3b9ae15b120acb647526f92ed443fdab312a>`_
+
+[TASK] Get rid of some duplicate code
+-----------------------------------------------------------------------------------------
+
+Moves one duplicate method up and removes one that was
+completely unused by now.
+
+The tests for the latter have been moved to where the code
+is actually still used.
+
+* Commit: `c03a6ab <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c03a6ab106b95c131d79c7fa505d978233fcf08c>`_
+
+[!!!][TASK] Change default authentication strategy
+-----------------------------------------------------------------------------------------
+
+This changes the default authentication strategy from "anyToken"
+to "atLeastOneToken" in order to provoke an exception if
+authentication fails in the common use case (login with username
+and password).
+
+* Resolves: `#29488 <http://forge.typo3.org/issues/29488>`_
+* Commit: `d77d259 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d77d259613775337751115098200e6175adfcb28>`_
+
+[TASK] Remove scope annotations from interfaces
+-----------------------------------------------------------------------------------------
+
+They have no effect and in userland code even trigger an error.
+
+* Commit: `b7326a8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b7326a86c391c26745d172d34dd3b532d6d067ba>`_
+
+[TASK] Make PHPSessions configurable
+-----------------------------------------------------------------------------------------
+
+Resolve: #30848
+
+* Commit: `0800ec1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0800ec1be94a63719efaea59c146f2de12e7fbfe>`_
+
+[!!!][TASK] Clean up Flash Messages API
+-----------------------------------------------------------------------------------------
+
+- FlashMessageContainer is moved to \TYPO3\FLOW3\MVC
+- FlashMessage is removed
+- FlashMessageContainer now uses \TYPO3\FLOW3\Error\Message instead of
+  FlashMessage objects
+- Message has an optional argument "title", which is not used so far
+  but that way is compatible to v4 flashMessages
+- Message has now a "severity" property
+
+* Resolves: `#30825 <http://forge.typo3.org/issues/30825>`_
+* Commit: `2dc4ac4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2dc4ac4cbd6e370edb3aab21fcf5ec8e15ef4077>`_
+
+[BUGFIX] Proxy Class Builder should work with NULL default
+-----------------------------------------------------------------------------------------
+
+Optional arguments with NULL default value will now be correctly
+autowired in the proxy class. Therefor optional arguments after
+a default NULL will be correctly handled.
+
+* Resolves: `#30858 <http://forge.typo3.org/issues/30858>`_
+* Commit: `8175869 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8175869916ad95c8bdd06498c8caaad5d6c1ceac>`_
+
+[BUGFIX] Security_Randomizer fallback does not work
+-----------------------------------------------------------------------------------------
+
+This fix should allow Security_Randomizer to work on Win x64
+by making sure that the mt_rand fallback actually returns random
+bytes.
+
+see http://sourceforge.net/tracker/?group_id=294448&atid=1243705
+for more details
+
+* Resolves: `#29976 <http://forge.typo3.org/issues/29976>`_
+* Commit: `1dd7ba6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1dd7ba68d3f0b6d6b2c0f9ef9f480e80aab08f2d>`_
+
+[TASK] Use Symphony YAML parser for settings instead Horde/YAML
+-----------------------------------------------------------------------------------------
+
+Drop Horde YAML parser and use Symfony YAML parser instead.
+It is now included in the new package
+Symfony.Component.Yaml be sure to have in active to test this.
+
+Also drop Symfony Console Component
+
+* Resolves: `#30826 <http://forge.typo3.org/issues/30826>`_
+* Commit: `23468ad <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=23468adc78877afc51af7a4c39fe3e649afb226e>`_
+
+[BUGFIX] No endless recursion on a missing CLI PHP binary
+-----------------------------------------------------------------------------------------
+
+If a wrong path has been specified or a PHP binary is used which
+does not support CLI, FLOW3 could end up in an endless recursion
+on executing the compile sub command.
+
+This change set adds a check for the proper SAPI type in FLOW3's
+command line script.
+
+* Fixes: `#30633 <http://forge.typo3.org/issues/30633>`_
+* Commit: `a7da340 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a7da3409cb3173d17fcabae5c5cc0c10911f0672>`_
+
+[TASK] ClassLoader returns TRUE now if class was found
+-----------------------------------------------------------------------------------------
+
+* Commit: `bd7ea42 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=bd7ea42b46a1d54c90a8b7a3527ec6a0bdd70ff4>`_
+
+[TASK] Fix type annotation for ReflectionService in ObjectSerializer
+-----------------------------------------------------------------------------------------
+
+The var annotation for the ReflectionService property was wrong.
+
+* Commit: `7e90134 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=7e90134862d94ac139e1cc3112893bdbfd6eb126>`_
+
+[TASK] Fixed consistent typo in variable name
+-----------------------------------------------------------------------------------------
+
+In the bootstrap one variable was called
+$possibleComanndControllerIdentifier instead of
+$possibleCommandControllerIdentifier
+
+* Commit: `d8bed4b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d8bed4b60100ef11ad8a29ca0127521f3a866351>`_
+
+[BUGFIX] Static Route Parts are not reset
+-----------------------------------------------------------------------------------------
+
+StaticRoutePart::resolve() sets the value to the route parts
+name (= the corresponding URI part).
+RoutePart::match() merges the route parts value into the
+resulting request arguments. The value of the route part must be
+reset to NULL before the route parth is processed.
+The StaticRoutePart currently fails to do so. Usually this has
+no effect because match() is always called before resolve() but
+it fails when using FLOW3 with an app server like AiP.
+
+* Resolves: `#30542 <http://forge.typo3.org/issues/30542>`_
+* Commit: `9d03bb5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9d03bb5259c34403d95f7048da9c80e8a7fb7543>`_
+
+[TASK] Use IndexedReader instead of our own "fix"
+-----------------------------------------------------------------------------------------
+
+There was a mapAnnotationsToKeys() method in our annotation
+driver. Using the IndexedReader from Doctrine is the better
+option.
+
+* Commit: `6216c3d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6216c3d791d7fe33503c06c03566e607b52e9b1b>`_
+
+[TASK] Another cosmetic fix.
+-----------------------------------------------------------------------------------------
+
+* Commit: `b46db7b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b46db7bf9436bf9e3beeffd89ccef1acdc06bcfc>`_
+
+[TASK] Trivial cosmetic fixes.
+-----------------------------------------------------------------------------------------
+
+* Commit: `cb9d87a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cb9d87ad8f93a34e272dca8128250cfed82faf9c>`_
+
+[BUGFIX] Wrong default value 'Text' for $dataType
+-----------------------------------------------------------------------------------------
+
+The default value 'Text' for $dataType in the signature of the method
+addNewArgument should be 'string' because there is no TypeConverter for
+'Text'.
+
+* Resolves: `#29978 <http://forge.typo3.org/issues/29978>`_
+* Commit: `2b29376 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2b29376b3ea683ccf15ae925a6cd0373d3749491>`_
+
+[BUGFIX] Fix regression: flush caches blocked by aggregate analysis
+-----------------------------------------------------------------------------------------
+
+On trying to flush the caches after a package has been removed or
+deactivated, the Reflection Service can fail due to stale class schema
+cache entries. Like the other similar code, the code introduced in
+I5538230b42624629a6746ebff5e9e5dae6e93859 must also check if the class
+still exists.
+
+* Relates: `#29416 <http://forge.typo3.org/issues/29416>`_
+* Commit: `bdb224d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=bdb224d862d122e9f3ba97b123d21a3454537efe>`_
+
+[TASK] Clarify persistence behavior for inheritance in aggregate roots
+-----------------------------------------------------------------------------------------
+
+This adds a number of functional tests to make sure the repository
+behaves as expected. For Person and User, the latter being a subclass
+of the former, a PersonRepository will also be able to handle User:
+
+* it will return both types
+* it will accept both types for add/remove/update
+
+* Resolves: `#29543 <http://forge.typo3.org/issues/29543>`_
+* Commit: `095a742 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=095a742b7d86e082e273444585d222169bce19c0>`_
+
+[!!!][BUGFIX] Make sure only complete hierarchies are aggregate root
+-----------------------------------------------------------------------------------------
+
+Reported as "Aggregate root detection for Person vs AbstractParty is
+broken" the issue at hand was that one could not rely on certain
+semantics bound to aggregate root handling:
+
+The association from Account to Person is cascaded during persist,
+because the fact that Person has a PersonRepository is not detected
+from the type hint to AbstractParty in the Account class.
+
+The solution this change introduces is as follows: all classes in a
+hierarchy must have a repository assigned. This can be done by
+having one repository on the tip of the hierarchy, but any entity
+can have it's own repository as well.
+
+* Fixes: `#29416 <http://forge.typo3.org/issues/29416>`_
+* Commit: `23961c8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=23961c893f130fad1a0cada8891a81f5aec084df>`_
+
+[TASK] Clean up class schema building code
+-----------------------------------------------------------------------------------------
+
+Extract some code into methods to make coming changed
+easier.
+
+Also add another test to the unit test for ClassSchema.
+
+* Commit: `c2cf3aa <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c2cf3aa08b6c257d3aecd5df37e7e1562ecfad9c>`_
+
+[TASK] Some tiny spelling fixes
+-----------------------------------------------------------------------------------------
+
+* Commit: `5704577 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=570457782d633273d19deca3aeca50262b420bbf>`_
+
+[BUGFIX] Allow file exists check through ResourceStreamWrapper
+-----------------------------------------------------------------------------------------
+
+For file exists checks, we need to make sure that the
+ResourceStreamWrapper returns FALSE when checking  the path for a
+non-existing persistent resource, and does not continue to the package
+check.
+
+* Related: `#30254 <http://forge.typo3.org/issues/30254>`_
+* Commit: `0ef0e45 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0ef0e45d5fee21220038defa9bed6dc641f1a7c4>`_
+
+[!!!][BUGFIX] Fix column names for association properties
+-----------------------------------------------------------------------------------------
+
+For associations without a join table the column names in the
+model tables followed the target type, not the property name as
+it was intended (flow3_resource_resourcepointer instead of
+resourcepointer).
+
+This is a breaking change, as it requires database changes. For
+the framework packages migrations are included, for custom code
+generating a migration (or using update) is needed.
+
+* Fixes: `#30223 <http://forge.typo3.org/issues/30223>`_
+* Commit: `395997d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=395997deae0c4230636276d0c2c0bf7a22d6fcc1>`_
+
+[TASK] Simplify license header in PHP files
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#29415 <http://forge.typo3.org/issues/29415>`_
+* Commit: `1a7fd59 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1a7fd5984752efae57af95ebe5b54ab56dadba1a>`_
+
+[TASK] Fix foreign key handling in migration
+-----------------------------------------------------------------------------------------
+
+Migrating down would not work because FK constraints where not named.
+
+* Commit: `3831728 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3831728995ab9b8f2c0f2a0ec12df1205118d8aa>`_
+
+[TASK] Fix failing unit test after SecurityContext change
+-----------------------------------------------------------------------------------------
+
+Fix a failing unit test after change 5358.
+
+* Commit: `35bda30 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=35bda30a32e6f6db3fd51651289400ad9877cea8>`_
+
+[BUGFIX] AOP proxies are no longer broken if __call() exists
+-----------------------------------------------------------------------------------------
+
+If a class contains a magic __call() method, AOP proxy classes are
+broken due to a is_callable() use – method_exists() in addition would
+be correct.
+
+* Fixes: `#30351 <http://forge.typo3.org/issues/30351>`_
+* Commit: `3e36de8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3e36de833c1308ebf4aa3081f0d8e741e6085542>`_
+
+[BUGFIX] @version annotations are not ignored anymore
+-----------------------------------------------------------------------------------------
+
+For optimization reasons FLOW3's Reflection Service ignored @version
+annotations. Due to this, Doctrine's Optimistic Locking feature could
+not be used.
+
+This change set removes @version from the list of ignored tags.
+
+* Fixes: `#30380 <http://forge.typo3.org/issues/30380>`_
+* Commit: `9c85705 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9c8570559b39140255d8aa0b59e8926b2f9c73a0>`_
+
+[BUGFIX] No persistence side effects anymore in functional tests
+-----------------------------------------------------------------------------------------
+
+Doctrine's Unit of Work still contained objects from previous tests.
+In order to prevent side effects, the Entity Manager must be cleared
+before executing further tests.
+
+* Fixes: `#30379 <http://forge.typo3.org/issues/30379>`_
+* Commit: `10af83a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=10af83a3299ea8b0719bc470f28d5d1c8ca481e8>`_
+
+[FEATURE] Support mapping of integer to string
+-----------------------------------------------------------------------------------------
+
+Just a small additional source type in the StringConverter.
+
+* Resolves: `#30317 <http://forge.typo3.org/issues/30317>`_
+* Commit: `892d67d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=892d67dcb85b93ba1f2a121672bf9243cceb26ec>`_
+
+[TASK] Guard the account for NULL when getting a party
+-----------------------------------------------------------------------------------------
+
+This could happen, if the account in the persistence was deleted during
+a session.
+
+* Commit: `2ae3f0c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2ae3f0ce684d00a0b352db1e7b0a3431a4551152>`_
+
+[BUGFIX] CLI Help throws exception if related comments are not available
+-----------------------------------------------------------------------------------------
+
+The flow3:help:help command parses @see annotations of the
+commands and retrieves the method description of related
+commands.
+This leads to an exception if the target command is not
+available (e.g. if the respective package is not loaded).
+
+This change fixes this by replacing the short description
+with "<i>Command not available</i>" in those cases.
+
+* Resolves: `#30261 <http://forge.typo3.org/issues/30261>`_
+* Commit: `75a8b89 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=75a8b899390e115cbf5028abcb485029547aeb7d>`_
+
+[BUGFIX] CLI CommandManager throws exception for ambiguous commands
+-----------------------------------------------------------------------------------------
+
+This change ensures that the CommandManager returns the complete
+CommandIdentifier for commands with the same controller and command
+names, for example:
+package.key:controller:command and
+otherpackage.key:controller:command
+
+* Resolves: `#30260 <http://forge.typo3.org/issues/30260>`_
+* Commit: `5e5daa1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=5e5daa1b69c58ba531b270ed685e9528ba01a413>`_
+
+[TASK] Clean up PersistentObjectConverter unit test
+-----------------------------------------------------------------------------------------
+
+* Commit: `87863f3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=87863f3dd1db5786c03ba9c2ee4f91b7b718ec59>`_
+
+[BUGFIX] Read ObjectConverter configuration correctly
+-----------------------------------------------------------------------------------------
+
+When checking for property mapping configuration the ObjectConverter
+asks for the "ArrayToObjectConverter" configuration. This is a leftover
+and should be "ObjectConverter".
+
+Also remove the unused persistence manager that is injected.
+
+* Fixes: `#30262 <http://forge.typo3.org/issues/30262>`_
+* Commit: `a9d8cc9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a9d8cc9e25281b876204e333c99d833993120046>`_
+
+[BUGFIX] Allow ObjectConverter to use constructor parameters
+-----------------------------------------------------------------------------------------
+
+We need this for image upload in Phoenix.
+
+* Resolves: `#30255 <http://forge.typo3.org/issues/30255>`_
+* Commit: `d366973 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d366973e7ac31b49939d6a17ff642193620800dd>`_
+
+[BUGFIX] Allow file creation through ResourceStreamWrapper
+-----------------------------------------------------------------------------------------
+
+For file creation, we need to make sure that the ResourceStreamWrapper
+also returns the path for a non-existing persistent resource.
+
+We need that e.g. for TYPO3 image uploads to work.
+
+* Resolves: `#30254 <http://forge.typo3.org/issues/30254>`_
+* Commit: `c031922 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c0319226fb990162c30d216e51ffcf349af20ca4>`_
+
+[BUGFIX] Do not override parent instance in compiled proxies
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#30234 <http://forge.typo3.org/issues/30234>`_
+* Commit: `0275a5f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0275a5fff4f950ad969447836b2312cac7c99e6c>`_
+
+[!!!][TASK] Create lower cased URIs by default
+-----------------------------------------------------------------------------------------
+
+The routing framework is capable of creating case sensitive
+URIs so it is possible to resolve different actions depending
+on the case of URI segments.
+
+This changes the behavior to convert URIs to lower case by
+default as that is the most common requirement.
+
+If you want to keep the case, you can achieve that by setting
+toLowerCase to FALSE. This can be done for the whole route or
+for specific Route Parts:
+
+.. code-block:: yaml
+
+  -
+    name: 'Case sensitive Route'
+    uriPattern:    'posts/{post}/{category}'
+    defaults:
+      '@package':    'TYPO3.Blog'
+      '@controller': 'Post'
+      '@action':     'index'
+      '@format':     'html'
+    toLowerCase: false
+  
+  -
+    name: 'Case sensitive Route Part'
+    uriPattern:    'posts/{post}/{category}'
+    defaults:
+      '@package':    'TYPO3.Blog'
+      '@controller': 'Post'
+      '@action':     'index'
+      '@format':     'html'
+    routeParts:
+      post:
+        toLowerCase: false
+  
+Note: This is a breaking change in the sense that dynamic route
+parts are now resolved to a lower cased string by default.
+
+* Resolves: `#29977 <http://forge.typo3.org/issues/29977>`_
+* Commit: `755a735 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=755a73526244e29df6b1c106b6e16e9309508e8a>`_
+
+[BUGFIX] Fix recursion error in \TYPO3\FLOW3\var_dump()
+-----------------------------------------------------------------------------------------
+
+A var_dump of for example the PersistenceManager results in a memory
+error. This happens because the dumped object is not checked against
+the blacklisted class list.
+
+* Resolves: `#30163 <http://forge.typo3.org/issues/30163>`_
+* Commit: `01ffa9c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=01ffa9ce3068e09ab1b771e366b30d17df5af997>`_
+
+[TASK] Fix unit test side effects
+-----------------------------------------------------------------------------------------
+
+The CacheFactoryTest created directories in the distribution
+root when run from there. Now it used a mocked filesystem.
+
+The warnings about chmod() seem to be unavoidable, some
+comments about that were added to the affected test.
+
+* Commit: `b301de5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b301de55bdd60a75fd9c23a7b8f724607e770b06>`_
+
+[FEATURE] Add generic Identity RoutePartHandler
+-----------------------------------------------------------------------------------------
+
+This implements improved routing for persisted objects.
+
+When an object type is specified in the routing configuration,
+the new "IdentityRoutePart" is used to match/resolve the route
+part.
+
+By default the resolved URI representation (path segment) is
+built from the identity properties of the domain model. If no
+identity properties are defined, the technical identifier (UUID)
+is used.
+
+Additionally a custom URI pattern can be defined in the route.
+For properties of type DateTime the date format can be specified
+prefixed by a colon.
+
+If a path segment already exists, the IdentityRoutePart handler
+will append an increasing counter to ensure unique URIs.
+
+Sample Route:
+
+.. code-block:: yaml
+
+  -
+    uriPattern:    'posts/{post}'
+    defaults:
+      '@package':    'TYPO3.Blog'
+      '@controller': 'Post'
+      '@action':     'show'
+      '@format':     'html'
+    routeParts:
+      post:
+        objectType: TYPO3\Blog\Domain\Model\Post
+
+* Resolves: `#8736 <http://forge.typo3.org/issues/8736>`_
+* Commit: `38232ef <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=38232efbd45fa0cf83dc5d5b6dd6df4c8521a081>`_
+
+[BUGFIX] Don't remove referenced entities
+-----------------------------------------------------------------------------------------
+
+This change adds a check to the removal of dereferenced
+entities in the AbstractBackend. If the entity was visited
+during the peristence, another reference to the entity was found and it will not be removed.
+
+* Commit: `2c949e3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2c949e36da65af8f579d465bfa0e5f9a9028b4f1>`_
+
+[!!!][FEATURE] Improve default routing for entities
+-----------------------------------------------------------------------------------------
+
+This improves the default dynamic route part handler so that it
+can resolve objects that are known to the persistence manager.
+If the routing comes across an object when creating an URI, the
+identifier (UUID) of the object is used to resolve the URI part.
+
+This is a breaking change, because routes with dynamic parts now
+also match objects even if no custom route part handler is used.
+
+The route:
+
+.. code-block:: yaml
+
+  -
+    uriPattern:    'posts/{post}'
+    defaults:
+      '@package':    'TYPO3.Blog'
+      '@controller': 'Post'
+      '@action':     'show'
+      '@format':     'html'
+
+Will now result in the URI "posts/<UUID>"
+
+* Related: `#8736 <http://forge.typo3.org/issues/8736>`_
+* Commit: `0863e52 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0863e5249839a36c7fc4cf5462e41b95f0d136ed>`_
+
+[TASK] Reanimate some ActionController unit tests
+-----------------------------------------------------------------------------------------
+
+* Commit: `cc2caa5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cc2caa52abf6b3d17707177da365d6a4d5a3e8ff>`_
+
+[BUGFIX] Fix check against @ignorevalidation annotations
+-----------------------------------------------------------------------------------------
+
+The check for argument names against @ignorevalidation annotations
+was done with the raw argument name, but the annotation is to be
+given with a leading dollar sign::
+
+ @ignorevalidation $fooBar
+
+The check thus always failed.
+
+* Fixes: `#29761 <http://forge.typo3.org/issues/29761>`_
+* Commit: `87418d9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=87418d9b0b8c9454993da1e4b6711c8e363f5469>`_
+
+[BUGFIX] Fix case of sub package key arguments in Router::getControllerObjectName()
+-----------------------------------------------------------------------------------------
+
+This just changes the method argument name to be in sync with the annotation
+
+* Commit: `72269db <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=72269db19faaf0e00a87aa7a6ec1415d3855a32a>`_
+
+[FEATURE] Provide signal for after objects have been persisted
+-----------------------------------------------------------------------------------------
+
+This provides two signals – one for the generic and one for the
+Doctrine persistence manager - which is emitted right after
+persistAll() was called.
+
+* Commit: `b28cd35 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b28cd358af478aa79e12bf5e32e4e308e3683773>`_
+
+[BUGFIX] Proxy code of advised abstract classes don't produce errors
+-----------------------------------------------------------------------------------------
+
+The AOP ProxyClassBuilder produced invalid code when signals were
+defined in an abstract class. This was due to invalid proxy class
+code and a wrong initialization procedure.
+
+This change fixes the issue by making sure that the advice information
+is also built for parent proxy classes when sub classes are used.
+
+Additionally this change set contains functional tests for the
+AOP proxy and the signal slot mechanism.
+
+* Fixes: `#28638 <http://forge.typo3.org/issues/28638>`_
+* Commit: `43f08cb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=43f08cbd553613dea9c927c297ab677440806f04>`_
+
+[BUGFIX] Lifecycle annotations were not detected
+-----------------------------------------------------------------------------------------
+
+The detection of Doctrine lifecycle event annotations was broken
+since  the last Doctrine update (because of the changed return values
+of the annotation reader).
+
+* Fixes: `#29908 <http://forge.typo3.org/issues/29908>`_
+* Commit: `31a9345 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=31a934570e6fc2cff811a8ec35bfd423c14d50da>`_
+
+[BUGFIX] (Resource): Resource manager can also handle files without extension
+-----------------------------------------------------------------------------------------
+
+Furthermore, we use move_uploaded_file instead of rename to move the target
+file to the final destination, as this also works across partition boundaries
+in all cases.
+
+* Related: `#29572 <http://forge.typo3.org/issues/29572>`_
+* Commit: `c6546f4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c6546f423f870d83b1a7cfb7667b6bfee5b38ca1>`_
+
+[TASK] Use correct respone mock in FunctionalTestCase
+-----------------------------------------------------------------------------------------
+
+The sendWebRequest() method used mocked ResponseInterface, but lacks
+the setStatus() method present in the Web\Response class. This change
+makes it use a mock of Web\Response.
+
+* Commit: `1c27b88 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1c27b883039bca2e7b65251ed3fc564a9d29a468>`_
+
+[FEATURE] Support dropping instances in the Object Manager
+-----------------------------------------------------------------------------------------
+
+This adds a non-API function to the Object Manager which allows for
+unregistering instances of arbitrary objects. The next time an object
+of that type is requested, a new instance will be created.
+
+This function can be used in functional tests, but must be used with
+care because if other parts of the application already use an instance
+of the respective type, the whole application might become unstable
+because multiple instances of a singleton could be the result.
+
+* Resolves: `#30018 <http://forge.typo3.org/issues/30018>`_
+* Commit: `d22fa5e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d22fa5ee33802ccafc7b64ce278e40a2286d55bb>`_
+
+[BUGFIX] Less persistence side effects in functional tests
+-----------------------------------------------------------------------------------------
+
+Previously, the persistence manager was only teared down after a whole
+test case ran through. This change makes sure that this clean up happens
+after each individual test to ensure that data generated by previous
+tests are gone when the next test is run.
+
+* Fixes: `#30017 <http://forge.typo3.org/issues/30017>`_
+* Commit: `eca27e4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=eca27e400e89769d6a7a77379e1692c0d8d0ec8d>`_
+
+[BUGFIX] Invalid static resource symlinks are removed again
+-----------------------------------------------------------------------------------------
+
+Whenever the resource publishing of FLOW3 finds an invalid
+symbolic link in the static resources directory, it should
+remove that link and re-publish the resources of the package
+in question.
+
+Because Utility\Files::removeDirectoryRecursively() could
+not cope with symbolic links, this auto-cleanup failed.
+
+This change set makes removeDirectoryRecursively() and
+emptyDirectoryRecursively() symlink aware and sets its
+behavior to not follow links but remove the links instead.
+
+Note: change set I2d5c544e6db728594209294cfe779b8bad3c6d59
+did not completely fix the issue. If the old symbolic link
+pointed to nowhere, the publishStaticResources() method
+failed.
+
+* Fixes: `#29777 <http://forge.typo3.org/issues/29777>`_
+* Commit: `5adfc6f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=5adfc6f4a3e808e88e4673f625065563e5553d5b>`_
+
+[BUGFIX] (Property): Enable mapping of Value Objects
+-----------------------------------------------------------------------------------------
+
+If a value object is edited through a Fluid form, we should not try to fetch it
+from persistence, but need to re-create it from scratch due do the value object
+semantics.
+
+Thus, we need to discard the __identity property in that case.
+
+The change set also adds a functional test.
+
+* Resolves: `#29905 <http://forge.typo3.org/issues/29905>`_
+* Commit: `ba7f2df <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ba7f2df6b70770cb06e05cddc101a0f4429c729b>`_
+
+[BUGFIX] Fix help command controller argument use
+-----------------------------------------------------------------------------------------
+
+The command controller was intended to be used with the optional
+command identifier without using that as a named option - but that
+is a requirement. Thus we now use the first exceeding argument
+if the option is not given.
+
+* Fixes: `#29895 <http://forge.typo3.org/issues/29895>`_
+* Commit: `320877b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=320877b9db981e3bbc8b2908480240bfd6838edb>`_
+
+[!!!][BUGFIX] Optional CLI arguments have to be named
+-----------------------------------------------------------------------------------------
+
+This reverts commit 090c243226aee1ede12ab289d651bdbb80564f92 and brings back Ia9f59326e5c4dc793102db20883ae798ae2f27cd which was correct after all.
+
+* Commit: `2908881 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=29088818c2970d5c6991e0e367e1af7690d39bc1>`_
+
+Revert "[!!!][BUGFIX] Optional CLI arguments have to be named"
+-----------------------------------------------------------------------------------------
+
+This reverts commit a43360b35c0b44288d204462b825dfa564bd3cf2
+
+* Commit: `090c243 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=090c243226aee1ede12ab289d651bdbb80564f92>`_
+
+[!!!][BUGFIX] Optional CLI arguments have to be named
+-----------------------------------------------------------------------------------------
+
+Currently exceeding arguments are ignored if a command has optional
+arguments, because the RequestBuilder then can't differentiate them.
+
+This change requires options to be named:
+For commands expecting one optional argument you were able to write
+./flow3 command value
+Now you'd have to write
+./flow3 command --optional-argument value
+
+* Resolves: `#29792 <http://forge.typo3.org/issues/29792>`_
+* Commit: `a43360b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a43360b35c0b44288d204462b825dfa564bd3cf2>`_
+
+[BUGFIX] Invalid static resource symlinks are removed again
+-----------------------------------------------------------------------------------------
+
+Whenever the resource publishing of FLOW3 finds an invalid
+symbolic link in the static resources directory, it should
+remove that link and re-publish the resources of the package
+in question.
+
+Because Utility\Files::removeDirectoryRecursively() could
+not cope with symbolic links, this auto-cleanup failed.
+
+This change set makes removeDirectoryRecursively() and
+emptyDirectoryRecursively() symlink aware and sets its
+behavior to not follow links but remove the links instead.
+
+* Fixes: `#29777 <http://forge.typo3.org/issues/29777>`_
+* Commit: `af9ac03 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=af9ac039850c0371d60d4e3d065d0dfc29af5795>`_
+
+[BUGFIX] Repository does not crash with wrong argument type
+-----------------------------------------------------------------------------------------
+
+This fixes the safe guard in the add(), remove() and update()
+functions of the base repository.
+
+* Commit: `3a9a2b1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3a9a2b117cd113f6875c0fa51bcda269d769ca63>`_
+
+[TASK] Remove @license annotation from files
+-----------------------------------------------------------------------------------------
+
+* Related: `#29415 <http://forge.typo3.org/issues/29415>`_
+* Commit: `410f746 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=410f7464501e5c2995fe9fb0edf6bd69a379cf77>`_
+
+[TASK] Fix a method docblock in RawValidator
+-----------------------------------------------------------------------------------------
+
+* Commit: `d5f5e44 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d5f5e448b6ded66f62b03e0bdafa4a39ebb5ee8e>`_
+
+
+~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update version in Package.xml
+-----------------------------------------------------------------------------------------
+
+* Commit: `58f143c <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=58f143c18edd51a003f180036d4e58bd0d2ba0d1>`_
+
+[BUGFIX] AjaxWidgetContext is not stored in session
+-----------------------------------------------------------------------------------------
+
+This change adds the required Session autostart annotation
+to the AjaxWidgetContext.
+
+* Resolves: `#31119 <http://forge.typo3.org/issues/31119>`_
+* Commit: `4b48063 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=4b480637f842093727ddd86f0515e9868813a9d1>`_
+
+[TASK] Remove scope annotations for prototypes
+-----------------------------------------------------------------------------------------
+
+* Commit: `caafde6 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=caafde689130c64fbf014ec21bb4e5d158887755>`_
+
+[TASK] Drop @author tags from source code
+-----------------------------------------------------------------------------------------
+
+* Commit: `9c2e837 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=9c2e837a50ecc8505d73131b45a77a61fcf487ca>`_
+
+[TASK] Fix two failing unit tests
+-----------------------------------------------------------------------------------------
+
+* Related: `#31015 <http://forge.typo3.org/issues/31015>`_
+* Commit: `cf7b9db <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=cf7b9db796fdc3f9895e300bd40ad3aaad9eda52>`_
+
+[TASK] Fix two failing unit tests
+-----------------------------------------------------------------------------------------
+
+Two tests started to fail because the annotation reader was not
+initialized. Bad functional style unit tests fixed the dirty
+way...
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `8894121 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=88941212d7d29e4e3999c0b6e111e9ee5d653338>`_
+
+[TASK] Adjust to new annotation syntax
+-----------------------------------------------------------------------------------------
+
+The syntax for annotations changed with #27627, this adjusts the
+code as needed.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `984cc21 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=984cc21af56b9ff0c2dbd40c41aaad703f7fe209>`_
+
+[FEATURE] Catch Routing Exceptions in uri and link ViewHelpers
+-----------------------------------------------------------------------------------------
+
+This change makes sure that exceptions that are thrown by the
+router are caught and rethrown as ViewHelper exceptions in all
+ViewHelpers that make use of the UriBuilder.
+This makes it easier for developers to debug their templates
+(see #30777).
+
+* Resolves: `#30777 <http://forge.typo3.org/issues/30777>`_
+* Commit: `24a8e23 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=24a8e237a5134b7576b24dcc18d27200d312819b>`_
+
+[TASK] Remove scope annotations from interfaces
+-----------------------------------------------------------------------------------------
+
+They have no effect and in userland code even trigger an error.
+
+* Commit: `77b5d77 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=77b5d7734939512c10195d08f3d1541230258f32>`_
+
+[TASK] Cleaned up Flash Messages API
+-----------------------------------------------------------------------------------------
+
+Adjust to Flash Message cleanup in TYPO3.FLOW3.
+
+* Commit: `11ddba9 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=11ddba9982b1a13a5127b07d45e793ac9fb944c0>`_
+
+[TASK] Fix case of a @see annotation
+-----------------------------------------------------------------------------------------
+
+The annotation used @See (uppercase s), but @see is correct.
+
+* Commit: `10e0d07 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=10e0d074a671728500cc1550c1dc96dbb4d9566c>`_
+
+[TASK] Simplify license header in PHP files
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#29415 <http://forge.typo3.org/issues/29415>`_
+* Commit: `14bacba <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=14bacba86377f6fb7dbcf486dca40d63b0647550>`_
+
+~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~
+
+
+[TASK] Update version in Package.xml
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `ce241a6 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=ce241a6df0756d046e5170e135091fb814b450d0>`_
+
+[BUGFIX] Generating ActionControllers using a comma separated list creates wrong Models and Repositories
+---------------------------------------------------------------------------------------------------------
+
+
+* Fixes: `#30980 <http://forge.typo3.org/issues/30980>`_
+* Commit: `3a630b8 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=3a630b87bee6934250fc3b225c3a07675940b15c>`_
+
+[BUGFIX] Make Kickstarter use addFlashMessage() in CRUD controller
+-----------------------------------------------------------------------------------------
+
+This uses addFlashMessage() instead of flashMessageContainer->add() in
+generated CRUD controllers.
+
+
+* Fixes: `#31082 <http://forge.typo3.org/issues/31082>`_
+* Commit: `0d3d4b0 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=0d3d4b056c1cf1f82d7e6b1891de8c35a22df780>`_
+
+[TASK] Use new keyword instead of create()
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `87c89da <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=87c89da18f3508c3817d55ad25cf0c9a218e70dd>`_
+
+[TASK] Remove scope annotations for prototypes
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `5a53a2e <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=5a53a2e505ddd415b98fc1eccd8a5b82f3081ee7>`_
+
+[TASK] Drop @author tags from source code
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `12f7ae9 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=12f7ae936c1ffc0296b405f7a61684c434c027bf>`_
+
+[TASK] Adjust to new annotation syntax
+-----------------------------------------------------------------------------------------
+
+The syntax for annotations changed with #27627, this adjusts the
+code as needed.
+
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `542653d <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=542653d002ec10e9c2beaf887de8c3aa2c28f9ca>`_
+
+[BUGFIX] DateTime properties throw exception
+-----------------------------------------------------------------------------------------
+
+When kickstarting models that contain properties of type
+DateTime, CRUD Views throw exceptions because the property
+can't be converted to string implicitly.
+This is fixed by wrapping DateTime properties in
+format.date ViewHelpers in the affected templates.
+
+
+* Resolves: `#30526 <http://forge.typo3.org/issues/30526>`_
+* Commit: `ca4761b <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=ca4761bec9e2745acd71172ecc18f638cc6a717f>`_
+
+[FEATURE] Generate fields in views if Model already exists
+-----------------------------------------------------------------------------------------
+
+When generating views add reflection of model-class to generate
+fields for existing properties in views
+
+* Resolves: `#30253 <http://forge.typo3.org/issues/30253>`_
+
+* Commit: `afad63b <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=afad63b2029e4b0e489a9006d30c2f2a403f9c6d>`_
+
+[TASK] Simplify license header in PHP files
+-----------------------------------------------------------------------------------------
+
+
+* Resolves: `#29415 <http://forge.typo3.org/issues/29415>`_
+* Commit: `895ac16 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=895ac16bc69c9c63dece5b996daed8e59c9265a2>`_
+
+[BUGFIX] Render @return annotation in CRUD actions
+-----------------------------------------------------------------------------------------
+
+Generated CRUD actions did not have a @return annotation at all.
+
+
+* Fixes: `#30052 <http://forge.typo3.org/issues/30052>`_
+* Commit: `db3fb3b <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=db3fb3b65aa496183bb13a6e27b9d9367c6deea8>`_
+
+[TASK] Tweak help for kickstart:actioncontroller
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `9f6d1a3 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=9f6d1a36b7de03b18a3f16867db0fe07eb5c385b>`_
+
+[FEATURE] Display update schema reminder
+-----------------------------------------------------------------------------------------
+
+After kickstarting a new action controller with
+--generate-related or a new model, the command
+now displays a hint that the database schema
+needs to be updated manually.
+
+Also adjusts the KickstartCommandController to
+use outputLine() instead of echo and return.
+
+
+* Resolves: `#29883 <http://forge.typo3.org/issues/29883>`_
+* Commit: `033cb94 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=033cb9413e1796a225d861734eb04bec57faf235>`_
+
+~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~
+
+
+[TASK] Update version in Package.xml
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `7792f9c <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=7792f9c81767e29361fe061a8a9913747c9ab4ac>`_
+
+[TASK] Remove scope annotations for prototypes
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `0bf7e4e <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=0bf7e4ecf6ec671e68e00ffa363e8dad01e18cf3>`_
+
+[TASK] Drop @author tags from source code
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `fd10606 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=fd10606d88e422e129dc090bc97bdf158aabb268>`_
+
+[TASK] Adjust to new annotation syntax
+-----------------------------------------------------------------------------------------
+
+The syntax for annotations changed with #27627, this adjusts the
+code as needed.
+
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `a541ef3 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=a541ef328d980fec386f9130afc0163a2a0b41a5>`_
+
+[TASK] Use Collection interface, not ArrayCollection
+-----------------------------------------------------------------------------------------
+
+* Commit: `9ecaa42 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=9ecaa42358d11215e887a1e2db89043104c31047>`_
+
+fix case of @column annotation
+-----------------------------------------------------------------------------------------
+
+
+* Commit: `904d203 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=904d2035c29092b828d2377e27facfeb62dec3e5>`_
+
+[!!!][TASK] Make PersonRepository a generic PartyRepository
+-----------------------------------------------------------------------------------------
+
+The change to fix #29416 requires any AbstractParty to have a
+repository, not only subclasses like Person.
+
+If you were using PersonRepository, use PartyRepository instead
+now.
+
+
+* Related: `#29416 <http://forge.typo3.org/issues/29416>`_
+* Commit: `a074d69 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=a074d691cd1f0af1b98095472c0d0aadf2061928>`_
+
+[TASK] Simplify license header in PHP files
+-----------------------------------------------------------------------------------------
+
+
+* Resolves: `#29415 <http://forge.typo3.org/issues/29415>`_
+* Commit: `acaf644 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=acaf644386be8559c830b2dba710b0954a60f1db>`_
+
+[TASK] Fix foreign key handling in migration
+-----------------------------------------------------------------------------------------
+
+Migrating down would not work because FK constraints where not named.
+
+
+* Commit: `718546f <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=718546f47763af3fd26b2a49d995d1a566fd3f11>`_
+
+[BUGFIX] Adjust association property column names
+-----------------------------------------------------------------------------------------
+
+The needed migration to go with the fix for #30223 (see change Ia32cfcc6cd49385a61845243e67cb0ddd62f5268).
+
+
+* Related: `#30223 <http://forge.typo3.org/issues/30223>`_
+* Commit: `b275c75 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=b275c75c2799a7e46d037a1653e7b7a625445412>`_
+
+~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~
+
+
+[TASK] Update version in Package.xml
+-----------------------------------------------------------------------------------------
+
+* Commit: `daf32c8 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=daf32c84a59e715991270cbc232345595c50a7a5>`_
+
+[TASK] Drop @author tags from source code
+-----------------------------------------------------------------------------------------
+
+* Commit: `f246ff5 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=f246ff5d7dc8c1981b1b1c4b46737804d151b4df>`_
+
+[TASK] Adjust to new annotation syntax
+-----------------------------------------------------------------------------------------
+
+The syntax for annotations changed with #27627, this adjusts the
+code as needed.
+
+* Related: `#27627 <http://forge.typo3.org/issues/27627>`_
+* Commit: `f988bea <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=f988beaf19300c81d73814e0af2cbeb4ce13d5e8>`_
+
+[TASK] Tiny fix to reload JS call in template
+-----------------------------------------------------------------------------------------
+
+* Commit: `3fdc799 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=3fdc79956081360c9c2efb22f2fae9fd69a941a7>`_
+
+[TASK] Simplify license header in PHP files
+-----------------------------------------------------------------------------------------
+
+
+* Related: `#29415 <http://forge.typo3.org/issues/29415>`_
+* Commit: `33b40a7 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=33b40a7dd8bc828547b44e28ea5bca5cdedbc31a>`_
+
+~~~~~~~~~~~~~~~~~~~~
+Doctrine
+~~~~~~~~~~~~~~~~~~~~
+
+
+[TASK] Update version in Package.xml
+-----------------------------------------------------------------------------------------
+
+* Commit: `2e9cad2 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=2e9cad2857c7fcff6c00286990704cc498204294>`_
+
+[TASK] Update ORM to 2.2.0-DEV
+-----------------------------------------------------------------------------------------
+
+Still includes 4 of our own patches on top of upstream commit
+509e5fb12ff0ab7fc933338bd999c9c850297243.
+
+* Commit: `0054a16 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=0054a16404deb92a9e4455787ab3a75ac1a2785b>`_
+
+[TASK] Update Common to 2.2.0-DEV
+-----------------------------------------------------------------------------------------
+
+* Commit: `2ab0454 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=2ab045411ffe5ada3f1c569b822e0f573d8ea0fb>`_
+
+[TASK] Update ORM to 2.1.x
+-----------------------------------------------------------------------------------------
+
+Still includes 5 of our own patches on top of upstream commit
+623ab9cee97b99188f0b5bb671ef8e2618485bf5.
+
+* Commit: `8c09ee2 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=8c09ee292f3e859bde583e4d38700a3a5ba146b8>`_
+
+[TASK] Update data fixtures plugin
+-----------------------------------------------------------------------------------------
+
+It is now at 76f8221609129651937f52553f3e1b2bd915fd3e.
+
+* Commit: `e836b0e <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=e836b0e5139a2685db736d8eea693e24410e0116>`_
+
+[TASK] Update Migrations to master
+-----------------------------------------------------------------------------------------
+
+* Commit: `ce1497e <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=ce1497ea7d08beeb11649cc2f3bcf259edd1b780>`_
+
+[TASK] Update DBAL to 2.1.4-DEV
+-----------------------------------------------------------------------------------------
+
+Still includes two of our own patches on top of upstream commit
+17005ec6a0d1c6647597c37749a1087807e12c83
+
+* Commit: `5079217 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=507921715f6b3a35e37116ad7733be28b960a32d>`_
+
+[TASK] Update Common to 2.1.2 release
+-----------------------------------------------------------------------------------------
+
+* Commit: `e4ed890 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=e4ed890a582ed9c60a2b522d97f07f806fd3e071>`_

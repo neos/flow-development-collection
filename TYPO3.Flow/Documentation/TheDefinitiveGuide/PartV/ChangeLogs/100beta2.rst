@@ -1,0 +1,616 @@
+====================
+1.0.0 beta 2
+====================
+
+[TASK] Remove @license annotation from files
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon Sep 12 11:07:54 2011 +0200 by Karsten Dambekalns
+* Committed on Mon Sep 12 11:09:06 2011 +0200 by Karsten Dambekalns
+* Commit: `439d2e2 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=439d2e22e2a05689a1c69c1413f8d313d2f08bcb>`_
+
+
+* Change-Id: `I6c67fdc1d55171b717791f7d558b41209653793c <https://review.typo3.org/#q,I6c67fdc1d55171b717791f7d558b41209653793c,n,z>`_
+* Related: `#29415 <http://forge.typo3.org/issues/29415>`_
+
+
+ 799 files changed, 0 insertions(+), 799 deletions(-)
+
+[BUGFIX] Allow use of the Collection interface in "type hints"
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Sep 1 15:16:56 2011 +0200 by Karsten Dambekalns
+* Committed on Fri Sep 9 15:14:28 2011 +0200 by Robert Lemke
+* Commit: `cb1ff88 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=cb1ff889fb940b4f8efb3f91677b5379ca43d12b>`_
+
+In type hints as well as @var and @param annotations it is better to
+use the Collection interface instead of concrete implementations like
+ArrayCollection. This was not possible so far.
+
+This changes makes it possible to use Collection instead. When FLOW3 has
+to create an instance for Collection, it will create an ArrayCollection.
+
+
+* Change-Id: `I7edbaee97932469018ec89e640bfed10d4d54252 <https://review.typo3.org/#q,I7edbaee97932469018ec89e640bfed10d4d54252,n,z>`_
+* Fixes: `#29419 <http://forge.typo3.org/issues/29419>`_
+
+
+ 9 files changed, 166 insertions(+), 163 deletions(-)
+
+[BUGFIX] Type declaration errors give hint on root cause
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 9 13:20:23 2011 +0200 by Robert Lemke
+* Committed on Fri Sep 9 14:03:19 2011 +0200 by Karsten Dambekalns
+* Commit: `bdcb242 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=bdcb2420ac97d330accc646042a1b07589c44307>`_
+
+The TypeHandling::parseType() function will now throw a more specific
+exception which allows other code parts to display more meaningful
+error messages if a variable type was declared wrongly.
+
+
+* Change-Id: `I010378956d80b66824bf9012b24ca36a8031c562 <https://review.typo3.org/#q,I010378956d80b66824bf9012b24ca36a8031c562,n,z>`_
+* Resolves: `#25816 <http://forge.typo3.org/issues/25816>`_
+
+ 6 files changed, 52 insertions(+), 7 deletions(-)
+
+[BUGFIX] setfilepermissions does not use sudo anymore
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 9 12:05:52 2011 +0200 by Robert Lemke
+* Committed on Fri Sep 9 12:05:52 2011 +0200 by Robert Lemke
+* Commit: `f7cc2c8 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=f7cc2c8861248157e89aa0d93a52c465b2bfa108>`_
+
+This changes the behavior of the setfilerpermissions
+command. Instead of using sudo right away, the bash
+script now checks if it is run as root and if not
+displays a message that it should.
+
+
+* Change-Id: `Ied6dae7d4a78909442ac5087767267214f6ebc12 <https://review.typo3.org/#q,Ied6dae7d4a78909442ac5087767267214f6ebc12,n,z>`_
+* Resolves: `#29326 <http://forge.typo3.org/issues/29326>`_
+
+
+ 1 files changed, 8 insertions(+), 5 deletions(-)
+
+[TASK] Improve message for compile errors
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 9 11:47:55 2011 +0200 by Robert Lemke
+* Committed on Fri Sep 9 11:47:55 2011 +0200 by Robert Lemke
+* Commit: `7874d79 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=7874d79e40b729444995987ce7a67bc243b0a964>`_
+
+If the compile run fails, FLOW3 will display a long exception
+message stating that either the PHP binary could not be executed
+or something else went wrong.
+
+This patch splits up the messages in two and checks if the binary
+could be executed and only then gives a hint on configuring the
+PHP binary path.
+
+
+* Change-Id: `Ia9379496add1721a0b388a8665934a641caa470d <https://review.typo3.org/#q,Ia9379496add1721a0b388a8665934a641caa470d,n,z>`_
+
+
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+[TASK] Rename __CSRF-TOKEN to __csrfToken
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 9 10:57:37 2011 +0200 by Karsten Dambekalns
+* Committed on Fri Sep 9 10:58:33 2011 +0200 by Karsten Dambekalns
+* Commit: `6da0628 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=6da0628400724c467a2560c680eda34f535f5e54>`_
+
+The name for the CSRF token did not follow our camelCase conventions.
+
+
+* Change-Id: `I270994c9f5e930bcd5109057c2623cc25265383e <https://review.typo3.org/#q,I270994c9f5e930bcd5109057c2623cc25265383e,n,z>`_
+* Resolves: `#27233 <http://forge.typo3.org/issues/27233>`_
+
+
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+[TASK] Fix default error message rendering in ActionController
+-----------------------------------------------------------------------------------------
+
+* Authored on Wed Sep 7 15:47:39 2011 +0200 by Karsten Dambekalns
+* Committed on Fri Sep 9 10:25:26 2011 +0200 by Karsten Dambekalns
+* Commit: `883d023 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=883d02307c9f953476f31e775afb63fedaa89f17>`_
+
+
+* Change-Id: `I1fe74815ebf7554ad271f347200ab0dcfebc2edb <https://review.typo3.org/#q,I1fe74815ebf7554ad271f347200ab0dcfebc2edb,n,z>`_
+
+
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[FEATURE] Styled CLI response and help descriptions
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Sep 8 14:51:05 2011 +0200 by Robert Lemke
+* Committed on Thu Sep 8 17:06:02 2011 +0200 by Robert Lemke
+* Commit: `15d6918 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=15d69186af3d0fdffbc45976aec3d85e31b9a96b>`_
+
+This introduces support for styled output in the CLI response
+and some brushed up help functionality.
+
+
+* Change-Id: `Ibe31c602800a1699b3ef37d9128836efa64314d4 <https://review.typo3.org/#q,Ibe31c602800a1699b3ef37d9128836efa64314d4,n,z>`_
+* Resolves: `#29407 <http://forge.typo3.org/issues/29407>`_
+
+
+ 6 files changed, 266 insertions(+), 34 deletions(-)
+
+[TASK] Reformatted and improved doc comments of commands
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Sep 8 15:03:24 2011 +0200 by Robert Lemke
+* Committed on Thu Sep 8 17:01:32 2011 +0200 by Bastian Waidelich
+* Commit: `79164d7 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=79164d7569f588b1b39e186fdfb5d66416b2447b>`_
+
+This change set contains several fixes and enhancements of the doc
+comments of FLOW3's commands. These are mostly adjustments to the new
+CLI help support.
+
+* Related: `#29407 <http://forge.typo3.org/issues/29407>`_
+
+* Change-Id: `I07a421a5384f6ccf5935f6467d63b9746b663659 <https://review.typo3.org/#q,I07a421a5384f6ccf5935f6467d63b9746b663659,n,z>`_
+
+
+ 7 files changed, 108 insertions(+), 35 deletions(-)
+
+[BUGFIX] AOP: Fix call to parent method if method is not proxied in subclass
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon May 30 20:44:30 2011 +0200 by Lienhart Woitok
+* Committed on Thu Sep 8 15:50:16 2011 +0200 by Andreas Förthner
+* Commit: `ea09313 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=ea0931397852d76e99d6fa5a2543b49c6c207029>`_
+
+If a method is overridden in a subclass that calls its advice parent class,
+but no proxy method is generated for this method, invokeJoinPoint has to 
+call invokeJoinPoint of the parent class. This has to be done regardless
+of the method being in advice mode or not.
+
+
+* Change-Id: `Ie89b99577ad4843d2d6fef5f86bb3a9371dab57c <https://review.typo3.org/#q,Ie89b99577ad4843d2d6fef5f86bb3a9371dab57c,n,z>`_
+* Resolves: `#29576 <http://forge.typo3.org/issues/29576>`_
+
+ 5 files changed, 32 insertions(+), 1 deletions(-)
+
+[FEATURE] Serialization can handle entities in arrays
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Sep 6 16:17:17 2011 +0200 by Andreas Förthner
+* Committed on Thu Sep 8 14:20:54 2011 +0200 by Andreas Förthner
+* Commit: `2e39bf1 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=2e39bf1491f141ebe548a4db936a3733760d34ed>`_
+
+* Resolves: `#27015 <http://forge.typo3.org/issues/27015>`_
+
+* Change-Id: `I10f925a56c15d199e3f49bc0974496b88120f129 <https://review.typo3.org/#q,I10f925a56c15d199e3f49bc0974496b88120f129,n,z>`_
+
+
+ 3 files changed, 115 insertions(+), 6 deletions(-)
+
+[TASK] Arrays::setValueByPath works with \ArrayAccess
+-----------------------------------------------------------------------------------------
+
+* Authored on Wed May 25 17:29:09 2011 +0200 by Andreas Förthner
+* Committed on Thu Sep 8 14:19:59 2011 +0200 by Andreas Förthner
+* Commit: `5fdd10a <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=5fdd10aff7bcc561dcd8df94004299c41cb26dcc>`_
+
+By this change the method is not limited to simply arrays
+anymore. Instead objects implementing \ArrayAccess are
+also accepted.
+
+
+* Change-Id: `I6ca03ea3b54671c1d08faf2c79ecc7b4f92cc656 <https://review.typo3.org/#q,I6ca03ea3b54671c1d08faf2c79ecc7b4f92cc656,n,z>`_
+
+
+ 2 files changed, 39 insertions(+), 9 deletions(-)
+
+[BUGFIX] (MVC): ActionController ErrorAction forgets SubpackageKey
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Sep 6 09:21:34 2011 +0200 by Sebastian Kurfuerst
+* Committed on Thu Sep 8 10:26:17 2011 +0200 by Karsten Dambekalns
+* Commit: `2d82dad <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=2d82dad18baef6741acb0d020b81b46059e18271>`_
+
+In case a validation error happened, a forward() is done to the referring
+action, which then re-displays the form.
+
+However, when the referring action contains a subpackage key, this redirection
+was broken.
+
+
+* Change-Id: `Id4dfaea7d919ba2eb8d031be505d76815927999f <https://review.typo3.org/#q,Id4dfaea7d919ba2eb8d031be505d76815927999f,n,z>`_
+* Resolves: `#28487 <http://forge.typo3.org/issues/28487>`_
+
+
+ 2 files changed, 50 insertions(+), 12 deletions(-)
+
+[FEATURE] Simple remote package import support
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon Sep 5 15:42:37 2011 +0200 by Robert Lemke
+* Committed on Wed Sep 7 15:54:24 2011 +0200 by Robert Lemke
+* Commit: `b207a55 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=b207a55abfc59eb8c691eee60d864c7394b5a66b>`_
+
+This adds a new command package:import which allows for importing
+a package from git.typo3.org. Currently only packages of the TYPO3
+vendor namespace are supported and it requires that the git command
+line tool is installed and executable by PHP.
+
+Note that it is very likely that this feature won't stay like this in
+future versions of FLOW3.
+
+
+* Change-Id: `I918471c7be1ad1fe2b387325b08911695591890a <https://review.typo3.org/#q,I918471c7be1ad1fe2b387325b08911695591890a,n,z>`_
+* Relates: `#29489 <http://forge.typo3.org/issues/29489>`_
+
+
+ 5 files changed, 113 insertions(+), 0 deletions(-)
+
+[!!!][BUGFIX] DateTimeConverter returns Errors instead of throwing exceptions
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Sep 6 09:41:46 2011 +0200 by Sebastian Kurfuerst
+* Committed on Wed Sep 7 14:34:08 2011 +0200 by Karsten Dambekalns
+* Commit: `b47d1c6 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=b47d1c61aaaf67c6d9c3379d87fe132ff7bded80>`_
+
+As described in the Property Mapper reference manual, DateTimeConverter should
+only throw exceptions when detecting *developer failures*. If *user failures*
+happen, such as invalid input, an \TYPO3\FLOW3\Error\Error object should instead
+be returned, as this is shown to the end-user in a friendly way, and the original
+form is redisplayed.
+
+Furthermore, DateTimeConverter must convert an empty date string ('') to NULL;
+else it is not possible to define *optional* DateTime properties.
+
+If you need a *required* DateTime property, use the @validate NotEmpty annotation
+in your model.
+
+
+* Change-Id: `Ie95602c44e9d86586353514cbde2cd06259f3b30 <https://review.typo3.org/#q,Ie95602c44e9d86586353514cbde2cd06259f3b30,n,z>`_
+* Resolves: `#27806 <http://forge.typo3.org/issues/27806>`_
+
+
+ 2 files changed, 52 insertions(+), 20 deletions(-)
+
+[TASK] Two small code (style) fixes
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Sep 1 17:55:48 2011 +0200 by Karsten Dambekalns
+* Committed on Wed Sep 7 11:04:54 2011 +0200 by Karsten Dambekalns
+* Commit: `8be02b2 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=8be02b2e553215e96542ff6badf2ac6c47ae7065>`_
+
+Adds a leading backslash to a @var annotation and replaces one create()
+call on the ObjectManager by use of the new keyword.
+
+New version of reverted Id2e04252faf7b2d51b06de2e5b98cb14b1640ba7 with
+a fixed unit test
+
+
+* Change-Id: `Ic1445022d4a7e8251bba47341bc347276df740f2 <https://review.typo3.org/#q,Ic1445022d4a7e8251bba47341bc347276df740f2,n,z>`_
+
+
+ 3 files changed, 41 insertions(+), 19 deletions(-)
+
+[TASK] Fix a typehint in ActionController
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Sep 6 16:05:24 2011 +0200 by Christopher Hlubek
+* Committed on Tue Sep 6 16:05:24 2011 +0200 by Christopher Hlubek
+* Commit: `3659434 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=3659434563683fd0f865e06a29c558eaf966656b>`_
+
+
+* Change-Id: `If6b952e484007ce035dd27aa4cae1010498e5ae0 <https://review.typo3.org/#q,If6b952e484007ce035dd27aa4cae1010498e5ae0,n,z>`_
+
+
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[FEATURE] Remove support for @uuid annotation and support @Id
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Apr 28 15:38:25 2011 +0200 by Karsten Dambekalns
+* Committed on Tue Sep 6 15:11:50 2011 +0200 by Christopher Hlubek
+* Commit: `9740863 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=974086360faccb442d270fb7a8370f94ccebce1b>`_
+
+Support for userland access to the framework-provided technical entity
+identifier was built for a specific use case not needed anymore, and the
+idea of exposing that internal identifier is bad to begin with.
+
+This change however allows the @Id annotation to be used to get the
+identifier of an object from a custom property.
+
+
+* Change-Id: `I0a61acb9693a1ca6cf769da15873c499f2ce3078 <https://review.typo3.org/#q,I0a61acb9693a1ca6cf769da15873c499f2ce3078,n,z>`_
+
+ 12 files changed, 36 insertions(+), 159 deletions(-)
+
+[BUGFIX] Interactive shell works again
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon Sep 5 16:52:58 2011 +0200 by Robert Lemke
+* Committed on Tue Sep 6 11:48:32 2011 +0200 by Robert Lemke
+* Commit: `2b52d22 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=2b52d22ee35312440284a09ed3557bd20c82ade7>`_
+
+The interactive shell (flow3:core:shell) could not launch
+the sub process anymore because the name of the FLOW3 script
+has changed from "flow3" to "flow3.php". Due to this, no
+command could be executed within the interactive shell.
+
+This change set adjusts the script name and all commands
+should work again.
+
+
+* Change-Id: `I35928b0b36a8cb4cb82f3520077a3d658794a10e <https://review.typo3.org/#q,I35928b0b36a8cb4cb82f3520077a3d658794a10e,n,z>`_
+* Resolves: `#29292 <http://forge.typo3.org/issues/29292>`_
+
+
+ 5 files changed, 29 insertions(+), 6 deletions(-)
+
+[TASK] Enable lazy loading for session entities
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Jun 17 09:55:13 2011 +0200 by Andreas Förthner
+* Committed on Tue Sep 6 11:23:04 2011 +0200 by Andreas Förthner
+* Commit: `6c490de <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=6c490dec7bdd261a867dabd58bf855bebdbb25b4>`_
+
+By this, persisted entities that are referenced
+in the session are (de)serialized as lazy loading
+proxies. This is a huge performance gain compared
+to serializing the original entities.
+
+
+* Change-Id: `I996b221dc82187f117b00223e5373e080dca7593 <https://review.typo3.org/#q,I996b221dc82187f117b00223e5373e080dca7593,n,z>`_
+* Resolves: `#29506 <http://forge.typo3.org/issues/29506>`_
+
+
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[FEATURE] Make lazy loading possible for getObjectByIdentifier
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Jun 17 09:54:04 2011 +0200 by Andreas Förthner
+* Committed on Tue Sep 6 11:22:53 2011 +0200 by Andreas Förthner
+* Commit: `ba3a473 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=ba3a4738cc1dad2b2fef2e17cc5e097834e650e0>`_
+
+Lazy loading can be switched on by a new optional parameter.
+
+
+* Change-Id: `I20954588a14b68f63f9b32a841c5bc2aba4cc7c0 <https://review.typo3.org/#q,I20954588a14b68f63f9b32a841c5bc2aba4cc7c0,n,z>`_
+* Relates: `#29506 <http://forge.typo3.org/issues/29506>`_
+
+
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+[BUGFIX] package:* commands no longer issue a fatal error
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon Sep 5 15:23:28 2011 +0200 by Robert Lemke
+* Committed on Tue Sep 6 11:10:46 2011 +0200 by Robert Lemke
+* Commit: `df34272 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=df34272c15e2a8d04ef0f15a896d1e13865cd883>`_
+
+Most package:* commands and sometimes also the flow3:cache:flush
+command issued a fatal error. The actual command was executed
+successfully, but the SignalAspect caused a fatal error because
+the proxy code cache had already been flushed and therefore
+FLOW3 was in an unstable state.
+
+Those commands which flush the code caches will now exit right away
+to avoid any further code execution.
+
+
+* Change-Id: `I8bbb9112cec12f1888e79896787db8a9d4e125a0 <https://review.typo3.org/#q,I8bbb9112cec12f1888e79896787db8a9d4e125a0,n,z>`_
+* Resolves: `#29414 <http://forge.typo3.org/issues/29414>`_
+
+
+ 5 files changed, 38 insertions(+), 2 deletions(-)
+
+Revert "[TASK] Two small code (style) fixes"
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Sep 6 08:43:37 2011 +0200 by Robert Lemke
+* Committed on Tue Sep 6 08:43:37 2011 +0200 by Gerrit Code Review
+* Commit: `593ef34 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=593ef34f10168729c489bdee31d8d1dd99ec670a>`_
+
+Breaks unit tests.
+
+This reverts commit 784dae35ce078702ca088a85e569c3b44bbe74cb
+
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+[BUGFIX] Injected settings are now from the correct package
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon Sep 5 18:21:38 2011 +0200 by Robert Lemke
+* Committed on Mon Sep 5 18:21:38 2011 +0200 by Robert Lemke
+* Commit: `c850b2a <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=c850b2a033dcf382bf4607a95af29ecf03b99329>`_
+
+This fixes a bug caused by the Configuration Builder which resulted
+in settings of a wrong package being injected into classes under
+certain circumstances.
+
+
+* Change-Id: `Id2c26e600efb6ac34733d42cc0e518526e583fee <https://review.typo3.org/#q,Id2c26e600efb6ac34733d42cc0e518526e583fee,n,z>`_
+* Resolves: `#29486 <http://forge.typo3.org/issues/29486>`_
+
+
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+[BUGFIX] Skip functional tests for Doctrine if Doctrine is not used
+-----------------------------------------------------------------------------------------
+
+* Authored on Mon Sep 5 12:40:00 2011 +0200 by Christopher Hlubek
+* Committed on Mon Sep 5 12:40:35 2011 +0200 by Christopher Hlubek
+* Commit: `4dcf8f3 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=4dcf8f3e315e35c130db96ffda3b334cc1fbecaf>`_
+
+The functional tests for Doctrine should only be run if the Doctrine
+persistence manager is actually configured. Otherwise this causes
+the functional tests not to run with alternative implementations.
+
+
+* Change-Id: `I09afeda006d1a59beeec9ac76f400dfd999c413e <https://review.typo3.org/#q,I09afeda006d1a59beeec9ac76f400dfd999c413e,n,z>`_
+
+ 4 files changed, 21 insertions(+), 2 deletions(-)
+
+[FEATURE] Enable use of @ (shut-up-operator)
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 2 18:44:16 2011 +0200 by Ferdinand Kuhl
+* Committed on Mon Sep 5 12:02:19 2011 +0200 by Robert Lemke
+* Commit: `1cf1c89 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=1cf1c8974f03f032b9d51ae36c219fb64690b6db>`_
+
+By default, FLOW3 makes sure to convert any error into an exception
+so that even notices don't go undiscovered.
+
+But foreign code is not always clean and so E_NOTICE or E_STRICT
+are quite common. If one doesn't want to deactivate this kinds of errors
+generally the @-Operator is the only way to temporarily disable
+error-reporting.
+
+This patch allows the error-handler to return immediately if it
+detects that the parent function made use of the shut-up
+operator
+
+
+* Change-Id: `Id8d70b594e69e0de390b29624304de32442a74e4 <https://review.typo3.org/#q,Id8d70b594e69e0de390b29624304de32442a74e4,n,z>`_
+* Resolves: `#29358 <http://forge.typo3.org/issues/29358>`_
+
+
+ 1 files changed, 8 insertions(+), 1 deletions(-)
+
+[TASK] Make migrate.php executable
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 2 10:56:38 2011 +0200 by Karsten Dambekalns
+* Committed on Fri Sep 2 10:57:04 2011 +0200 by Karsten Dambekalns
+* Commit: `fcfd801 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=fcfd801d9521ddb7da46c9ae6d0c27fb3e6ce911>`_
+
+
+* Change-Id: `I21c89f0d801a2d92754a727805df44864f49cbf7 <https://review.typo3.org/#q,I21c89f0d801a2d92754a727805df44864f49cbf7,n,z>`_
+
+
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+
+[BUGFIX] Fix use of sys_get_temp_dir() in EnvironmentTest
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 2 10:08:37 2011 +0200 by Karsten Dambekalns
+* Committed on Fri Sep 2 10:10:31 2011 +0200 by Karsten Dambekalns
+* Commit: `aad9e63 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=aad9e634f78978b3967caa784f089cdfb73d5922>`_
+
+There was a parameter given to sys_get_temp_dir(), but it accepts none.
+
+
+* Change-Id: `Ie4b240b4de3a91f8c31e4334c52af6e93d225fd9 <https://review.typo3.org/#q,Ie4b240b4de3a91f8c31e4334c52af6e93d225fd9,n,z>`_
+* Fixes: `#29452 <http://forge.typo3.org/issues/29452>`_
+
+
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+[BUGFIX] (Reflection): Prevent use of ReflectionService for Doctrine Proxies
+-----------------------------------------------------------------------------------------
+
+* Authored on Fri Sep 2 08:28:00 2011 +0200 by Sebastian Kurfuerst
+* Committed on Fri Sep 2 08:31:04 2011 +0200 by Sebastian Kurfuerst
+* Commit: `98f877b <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=98f877bb3524bff1db2c991b494d1cc10682c2ad>`_
+
+When calling the ReflectionService with a class name for a doctrine proxy,
+really weird side-effects can happen, as the Doctrine Proxy class is then
+also stored in the Reflection Cache. On the next compilation run, really
+weird side-effects can happen. See the corresponding issue for a full
+description.
+
+By throwing an exception when a doctrine class is reflected, we prevent
+the issue from appearing in the first place.
+
+* Resolves: `#29449 <http://forge.typo3.org/issues/29449>`_
+
+* Change-Id: `Ia709b70e4e31facfd88563c5836009d7cee6d7b2 <https://review.typo3.org/#q,Ia709b70e4e31facfd88563c5836009d7cee6d7b2,n,z>`_
+
+ 4 files changed, 99 insertions(+), 0 deletions(-)
+
+[!!!][TASK] Remove generic persistence PDO backend
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Sep 1 11:05:41 2011 +0200 by Karsten Dambekalns
+* Committed on Thu Sep 1 18:00:56 2011 +0200 by Karsten Dambekalns
+* Commit: `45cacad <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=45cacad12b8a14886e34dfeb64d9db61a34acace>`_
+
+The generic persistence PDO backend is no longer maintained,
+there is no use for it. If you want to target a RDBMS, use the
+Doctrine 2 integration.
+
+
+* Change-Id: `Ife28072288018b233f3781c7f70f63a8cd1c6b39 <https://review.typo3.org/#q,Ife28072288018b233f3781c7f70f63a8cd1c6b39,n,z>`_
+* Resolves: `#29412 <http://forge.typo3.org/issues/29412>`_
+
+
+ 5 files changed, 1 insertions(+), 2596 deletions(-)
+
+[BUGFIX] Generic abstract backend does not cascade persist
+-----------------------------------------------------------------------------------------
+
+* Authored on Wed Aug 31 18:01:25 2011 +0200 by Karsten Dambekalns
+* Committed on Thu Sep 1 18:00:50 2011 +0200 by Karsten Dambekalns
+* Commit: `a149b64 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=a149b6426d4519cd246706518498ce7286b69809>`_
+
+This changes makes checkPropertyValue() return the value it found, as
+expected in collectProperties() - both methods in AbstractBackend.
+
+* Fixes: `#29392 <http://forge.typo3.org/issues/29392>`_
+
+* Change-Id: `I4cafd98ef456c46eed6ae3933238cb7e7e4e345d <https://review.typo3.org/#q,I4cafd98ef456c46eed6ae3933238cb7e7e4e345d,n,z>`_
+
+
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+[TASK] Two small code (style) fixes
+-----------------------------------------------------------------------------------------
+
+* Authored on Thu Sep 1 17:55:48 2011 +0200 by Karsten Dambekalns
+* Committed on Thu Sep 1 18:00:01 2011 +0200 by Karsten Dambekalns
+* Commit: `784dae3 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=784dae35ce078702ca088a85e569c3b44bbe74cb>`_
+
+Adds a leading backslash to a @var annotation and replaces one create()
+call on the ObjectManager by use of the new keyword.
+
+
+* Change-Id: `Id2e04252faf7b2d51b06de2e5b98cb14b1640ba7 <https://review.typo3.org/#q,Id2e04252faf7b2d51b06de2e5b98cb14b1640ba7,n,z>`_
+
+
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+[TASK] Make generic persistence follow new paradigms
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Aug 30 19:46:02 2011 +0200 by Christopher Hlubek
+* Committed on Wed Aug 31 10:44:13 2011 +0200 by Christopher Hlubek
+* Commit: `afe640d <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=afe640d9ed35d1e005aabac542ee0824c007b50c>`_
+
+This change fixes the introduces changedObjects properties by adding
+an additional collection and changes the abstract backend to ignore
+nested reconstituted aggregate root objects when processing an
+object.
+
+
+* Change-Id: `I6c359803e740ca8e29213557344da21680f8accf <https://review.typo3.org/#q,I6c359803e740ca8e29213557344da21680f8accf,n,z>`_
+* Resolves: `#29201 <http://forge.typo3.org/issues/29201>`_
+
+ 5 files changed, 54 insertions(+), 17 deletions(-)
+
+[BUGFIX] ActionController should initialize Errors correctly
+-----------------------------------------------------------------------------------------
+
+* Authored on Tue Aug 30 18:11:07 2011 +0200 by Christian Müller
+* Committed on Tue Aug 30 18:11:07 2011 +0200 by Christian Müller
+* Commit: `ba62d0b <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=ba62d0b91bb5140edc619332e0856deb73584442>`_
+
+The ActionController should use the correct controller API in
+getErrorFlashMessage() so that arguments can be rendered.
+
+
+* Change-Id: `I47b30096e2a183a19aa062001082f6509b5e5fce <https://review.typo3.org/#q,I47b30096e2a183a19aa062001082f6509b5e5fce,n,z>`_
+
+
+ 1 files changed, 1 insertions(+), 1 deletions(-)
