@@ -56,11 +56,11 @@ class AbstractControllerTestAController extends ActionController {
 	 * @param string $firstArgument
 	 * @param string $secondArgument
 	 * @param string $third
-	 * @param string $forth
+	 * @param string $fourth
 	 * @return string
 	 */
-	public function thirdAction($firstArgument, $secondArgument, $third = NULL, $forth = 'default') {
-		return "thirdAction-$firstArgument-$secondArgument-$third-$forth";
+	public function thirdAction($firstArgument, $secondArgument, $third = NULL, $fourth = 'default') {
+		return "thirdAction-$firstArgument-$secondArgument-$third-$fourth";
 	}
 
 	/**

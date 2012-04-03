@@ -39,7 +39,6 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$requestHandler->handleRequest();
 
 		$this->expectOutputString('FooController responded');
-
 	}
 
 }

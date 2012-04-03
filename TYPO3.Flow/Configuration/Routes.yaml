@@ -2,8 +2,6 @@
 # Default subroutes configuration for the FLOW3 package                  #
 #                                                                        #
 
-# $Id$
-
 ##
 # Default route to the FLOW3 Authentication Controller
 

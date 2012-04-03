@@ -556,8 +556,10 @@ class Context {
 	 * @return void
 	 */
 	protected function updateTokens(array $tokens) {
-		foreach ($tokens as $token) {
-			$token->updateCredentials($this->request->getHttpRequest());
+		if ($this->request !== NULL) {
+			foreach ($tokens as $token) {
+				$token->updateCredentials($this->request->getHttpRequest());
+			}
 		}
 	}
 

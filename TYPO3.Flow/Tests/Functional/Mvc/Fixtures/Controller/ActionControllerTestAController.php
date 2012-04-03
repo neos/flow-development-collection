@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\View\ViewInterface;
 
 /**
  * A controller fixture
@@ -27,5 +28,30 @@ class ActionControllerTestAController extends \TYPO3\FLOW3\Mvc\Controller\Action
 		return 'First action was called';
 	}
 
+	/**
+	 * @return string
+	 */
+	public function secondAction() {
+		return 'Second action was called';
+	}
+
+	/**
+	 * @param string $firstArgument
+	 * @param string $secondArgument
+	 * @param string $third
+	 * @param string $fourth
+	 * @return string
+	 */
+	public function thirdAction($firstArgument, $secondArgument, $third = NULL, $fourth = 'default') {
+		return "thirdAction-$firstArgument-$secondArgument-$third-$fourth";
+	}
+
+	/**
+	 * @param string $emailAddress
+	 * @return void
+	 */
+	public function fourthAction($emailAddress) {
+		$this->view->assign('emailAddress', $emailAddress);
+	}
 }
 ?>

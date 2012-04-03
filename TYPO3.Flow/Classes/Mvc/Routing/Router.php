@@ -88,6 +88,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 */
 	public function setRoutesConfiguration(array $routesConfiguration) {
 		$this->routesConfiguration = $routesConfiguration;
+		$this->routesCreated = FALSE;
 	}
 
 	/**
@@ -119,6 +120,17 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	public function getRoutes() {
 		$this->createRoutesFromConfiguration();
 		return $this->routes;
+	}
+
+	/**
+	 * Manually adds a route
+	 *
+	 * @param \TYPO3\FLOW3\Mvc\Routing\Route $route
+	 * @return void
+	 */
+	public function addRoute(Route $route) {
+		$this->createRoutesFromConfiguration();
+		array_unshift($this->routes, $route);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Http;
+namespace TYPO3\FLOW3\Http\Client;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -14,12 +14,10 @@ namespace TYPO3\FLOW3\Http;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * An HTTP client
- *
- * @api
+ * Interface for a Request Engine which can be used by a HTTP Client implementation
+ * for sending requests and returning responses.
  */
-class Client {
-
+interface RequestEngineInterface {
 }
 
 ?>

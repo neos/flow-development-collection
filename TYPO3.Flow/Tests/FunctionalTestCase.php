@@ -34,29 +34,67 @@ use TYPO3\FLOW3\Core\Bootstrap;
 abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 	/**
+	 * A functional instance of the Object Manager, for use in concrete test cases.
+	 *
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @api
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @api
 	 */
 	protected static $bootstrap;
 
 	/**
+	 * If enabled, this test case will modify the behavior of the security framework
+	 * in a way which allows for easy simulation of roles and authentication.
+	 *
 	 * @var boolean
+	 * @api
 	 */
 	protected $testableSecurityEnabled = FALSE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * If enabled, this test case will automatically provide a virtual browser
+	 * for sending HTTP requests to FLOW3's request handler and MVC framework.
+	 *
+	 * @var boolean
+	 * @api
 	 */
-	protected $securityContext;
+	protected $testableHttpEnabled = FALSE;
 
 	/**
+	 * If enabled, this test case will automatically run the compile() method on
+	 * the Persistence Manager before running a test.
+	 *
 	 * @var boolean
+	 * @api
+	 * @todo Check if the remaining behavior related to persistence should also be covered by this setting
 	 */
 	static protected $testablePersistenceEnabled = FALSE;
+
+	/**
+	 * If testableHttpEnabled is set, contains a virtual, preinitialized browser
+	 *
+	 * @var \TYPO3\FLOW3\Http\Client\Browser
+	 * @api
+	 */
+	protected $browser;
+
+	/**
+	 * If testableHttpEnabled is set, contains the router instance used in the browser's request engine
+	 *
+	 * @var \TYPO3\FLOW3\Mvc\Routing\Router
+	 * @api
+	 */
+	protected $router;
+
+	/**
+	 * @var \TYPO3\FLOW3\Security\Context
+	 */
+	private $securityContext;
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
@@ -66,12 +104,12 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
-	protected $accessDecisionManager;
+	private $accessDecisionManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
 	 */
-	protected $testingProvider;
+	private $testingProvider;
 
 	/**
 	 * Initialize FLOW3
@@ -83,27 +121,20 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Tear down FLOW3
-	 *
-	 * @return void
-	 *
-	 * FIXME Is this necessary?
-	 */
-	static public function tearDownAfterClass() {
-#		self::$bootstrap = NULL;
-	}
-
-	/**
 	 * Enables security tests for this testcase
 	 *
 	 * @return void
+	 * @deprecated since 1.1 – please set the class property directly
 	 */
 	protected function enableTestableSecurity() {
 		$this->testableSecurityEnabled = TRUE;
 	}
 
 	/**
-	 * Sets up test requirements depending on the enabled tests
+	 * Sets up test requirements depending on the enabled tests.
+	 *
+	 * If you override this method, don't forget to call parent::setUp() in your
+	 * own implementation.
 	 *
 	 * @return void
 	 */
@@ -124,26 +155,10 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		if ($this->testableSecurityEnabled === TRUE) {
 			$this->setupSecurity();
 		}
-	}
 
-	/**
-	 * Sets up security test requirements
-	 *
-	 * @return void
-	 */
-	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$this->accessDecisionManager->setOverrideDecision(NULL);
-
-		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
-		$this->testingProvider->setName('DefaultProvider');
-
-		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		$this->securityContext->clearContext();
-
-		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
-		$actionRequest = $request->createActionRequest();
-		$this->securityContext->injectRequest($actionRequest);
+		if ($this->testableHttpEnabled === TRUE) {
+			$this->setupHttp();
+		}
 	}
 
 	/**
@@ -177,16 +192,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Resets security test requirements
-	 *
-	 * @return void
-	 */
-	protected function tearDownSecurity() {
-		$this->accessDecisionManager->reset();
-		$this->testingProvider->reset();
-	}
-
-	/**
 	 * Calls the given action of the given controller
 	 *
 	 * @param string $controllerName The name of the controller to be called
@@ -195,6 +200,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @param array $arguments Optional arguments passed to controller
 	 * @param string $format The request format, defaults to 'html'
 	 * @return string The result of the controller action
+	 * @deprecated since 1.1
 	 */
 	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
 		if (!getenv('FLOW3_REWRITEURLS')) {
@@ -244,6 +250,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 *
 	 * @param array $roleNames A list of roles the new account should have
 	 * @return \TYPO3\FLOW3\Security\Account The created account
+	 * @api
 	 */
 	protected function authenticateRoles(array $roleNames) {
 		$account = new \TYPO3\FLOW3\Security\Account();
@@ -268,9 +275,90 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Disables authorization for the current test
 	 *
 	 * @return void
+	 * @api
 	 */
 	protected function disableAuthorization() {
 		$this->accessDecisionManager->setOverrideDecision(TRUE);
+	}
+
+	/**
+	 * Sets up security test requirements
+	 *
+	 * @return void
+	 */
+	private function setupSecurity() {
+		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$this->accessDecisionManager->setOverrideDecision(NULL);
+
+		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
+		$this->testingProvider->setName('DefaultProvider');
+
+		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
+		$this->securityContext->clearContext();
+
+		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
+		$actionRequest = $request->createActionRequest();
+		$this->securityContext->injectRequest($actionRequest);
+	}
+
+	/**
+	 * Resets security test requirements
+	 *
+	 * @return void
+	 */
+	private function tearDownSecurity() {
+		$this->accessDecisionManager->reset();
+		$this->testingProvider->reset();
+	}
+
+	/**
+	 * Sets up a virtual browser and web environment for seamless HTTP and MVC
+	 * related tests.
+	 *
+	 * @return void
+	 */
+	private function setupHttp() {
+		$_GET = array();
+		$_POST = array();
+		$_COOKIE = array();
+		$_FILES = array();
+		$_SERVER = array (
+			'REDIRECT_FLOW3_CONTEXT' => 'Development',
+			'REDIRECT_FLOW3_REWRITEURLS' => '1',
+			'REDIRECT_STATUS' => '200',
+			'FLOW3_CONTEXT' => 'Testing',
+			'FLOW3_REWRITEURLS' => '1',
+			'HTTP_HOST' => 'localhost',
+			'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7',
+			'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+			'HTTP_ACCEPT_LANGUAGE' => 'en-us',
+			'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
+			'HTTP_CONNECTION' => 'keep-alive',
+			'PATH' => '/usr/bin:/bin:/usr/sbin:/sbin',
+			'SERVER_SIGNATURE' => '',
+			'SERVER_SOFTWARE' => 'Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/1.0.0e DAV/2 PHP/5.3.8',
+			'SERVER_NAME' => 'localhost',
+			'SERVER_ADDR' => '127.0.0.1',
+			'SERVER_PORT' => '80',
+			'REMOTE_ADDR' => '127.0.0.1',
+			'DOCUMENT_ROOT' => '/opt/local/apache2/htdocs/',
+			'SERVER_ADMIN' => 'george@localhost',
+			'SCRIPT_FILENAME' => '/opt/local/apache2/htdocs/Web/index.php',
+			'REMOTE_PORT' => '51439',
+			'REDIRECT_QUERY_STRING' => '',
+			'REDIRECT_URL' => '',
+			'GATEWAY_INTERFACE' => 'CGI/1.1',
+			'SERVER_PROTOCOL' => 'HTTP/1.1',
+			'REQUEST_METHOD' => 'GET',
+			'QUERY_STRING' => '',
+			'REQUEST_URI' => '',
+			'SCRIPT_NAME' => '/index.php',
+			'PHP_SELF' => '/index.php',
+			'REQUEST_TIME' => 1326472534,
+		);
+
+		$this->browser = new \TYPO3\FLOW3\Http\Client\Browser();
+		$this->router = $this->browser->getRequestEngine()->getRouter();
 	}
 
 }

@@ -46,6 +46,11 @@ class RequestHandler implements RequestHandlerInterface {
 	protected $router;
 
 	/**
+	 * @var \TYPO3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * Make exit() a closure so it can be manipulated during tests
 	 *
 	 * @var Closure
