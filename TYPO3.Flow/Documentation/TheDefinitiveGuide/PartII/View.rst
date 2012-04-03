@@ -81,7 +81,9 @@ Let's build a simple layout for your blog. You only need to adjust the file call
 ``Default.html`` inside the ``TYPO3.Blog/Resources/Private/Layouts`` directory to contain
 the following code:
 
-.. code-block:: xml
+*Resources/Private/Layouts/Default.html*:
+
+.. code-block:: html
 
 	<!DOCTYPE html
 		 PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -124,12 +126,16 @@ The first Fluid tag used is the ``<f:base>`` tag. This tag instructs Fluid to
 render an HTML ``<base>`` tag containing the correct absolute base URI for your
 site – in your case resulting in:
 
+*Resources/Private/Layouts/Default.html*:
+
 .. code-block:: html
 
 	<base href="http://dev.tutorial.local/"></base>
 
 The second occurrence of Fluid markup is actually no tag but a
 variable accessor:
+
+*Resources/Private/Layouts/Default.html*:
 
 .. code-block:: html
 
@@ -148,12 +154,16 @@ title, you just need to note down ``{blog.title}``.
 The third appearance of Fluid syntax is an alternative way to address view
 helpers, the view helper shorthand syntax:
 
+*Resources/Private/Layouts/Default.html*:
+
 .. code-block:: html
 
 	<link rel="stylesheet" href="{f:uri.resource(path: 'Blog.css')}" type="text/css" />
 
 This instructs the URI view helper to create a relative resource URL pointing
 to your style sheet. The generated HTML code will look like this:
+
+*Resources/Private/Layouts/Default.html*:
 
 .. code-block:: html
 
@@ -163,6 +173,8 @@ If you look at the remaining markup of the layout you'll find more uses of view
 helpers, including conditions and link generation. There's only one more view
 helper you need to know about before proceeding with our first template,
 the **render** view helper:
+
+*Resources/Private/Layouts/Default.html*:
 
 .. code-block:: html
 
@@ -185,7 +197,9 @@ replace the automatically generated template for the Post controller's index
 action in ``TYPO3.Blog/Resources/Private/Templates/Post/Index.html`` by some more
 meaningful HTML:
 
-.. code-block:: xml
+*Resources/Private/Templates/Post/Index.html*:
+
+.. code-block:: html
 
 	<f:layout name="Default" />
 
@@ -240,6 +254,10 @@ An ``<f:if>`` condition makes sure that the list of posts is only rendered if
 about posts - you need to adapt the ``indexAction`` of the ``PostController``
 to assign blogs to the view::
 
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
+
 	/**
 	 * List action for this controller. Displays latest posts
 	 *
@@ -261,7 +279,9 @@ To fully understand the above code you need to know two facts:
 After creating the folder ``Resources/Private/Partials/`` add the following to a file named
 ``PostMetaData.html``:
 
-.. code-block:: xml
+*Resources/Private/Partials/PostMetaData.html*:
+
+.. code-block:: html
 
 	<p class="metadata">
 		Published on <f:format.date format='d.m.Y'>{post.date}</f:format.date> by {post.author}
@@ -300,7 +320,11 @@ Create a New Post
 
 Time to create a form which allows you to enter details for a new post.
 The first component you need is the ``newAction`` whose sole purpose is
-displaying the form::
+displaying the form:
+
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	/**
 	 * Shows a form for creating a new post object
@@ -321,7 +345,9 @@ and description in our header (defined in ``Master.html``) would be empty.
 The second component is the actual form. Adjust the template  ``New.html`` in
 the ``Resources/Public/Templates/Post/`` folder:
 
-.. code-block:: xml
+*Resources/Public/Templates/Post/New.html*:
+
+.. code-block:: html
 
 	<f:layout name="Default" />
 
@@ -356,7 +382,11 @@ and that the values of the form's elements become property values of
 this object. In this example the form contains (property) values for a
 post object. The form's elements are named after the class properties of the
 ``Post`` domain model: ``blog``, ``author``, ``title``, ``content`` and
-``relatedPosts``. Let's look at the ``createAction`` again::
+``relatedPosts``. Let's look at the ``createAction`` again:
+
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	/**
 	 * Creates a new post
@@ -401,6 +431,8 @@ on its part assigns the blog to the template.
 
 First you need to add the "edit" link to the post index template:
 
+*Resources/Public/Templates/Post/Index.html*:
+
 .. code-block:: html
 
 	...
@@ -419,7 +451,9 @@ The modified template will now render a little pencil next to each post:
 Adjust the template ``Templates/Post/Edit.html`` and insert the following
 HTML code:
 
-.. code-block:: xml
+*Resources/Public/Templates/Post/Edit.html*:
+
+.. code-block:: html
 
 	<f:layout name="Default" />
 
@@ -455,6 +489,10 @@ by Fluid.
 
 What's missing now is a small adjustment to the PHP code displaying the edit form::
 
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
+
 	/**
 	 * Shows a form for editing an existing post object
 	 *
@@ -473,6 +511,10 @@ link of your list of posts should result in a screen similar to this:
 .. image:: /Images/GettingStarted/EditPost.png
 
 When you submit the form you call the ``updateAction``::
+
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	/**
 	 * Updates the given post object

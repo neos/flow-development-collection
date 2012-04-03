@@ -13,7 +13,11 @@ Setup Controller
 The ``SetupController`` will be in charge of creating a ``Blog`` object, setting a title
 and description and storing it in the ``BlogRepository``. The kickstarter created a very
 basic setup controller containing only one action, the ``indexAction``. Let's create and
-store a new blog once the index action is called::
+store a new blog once the index action is called:
+
+*Classes/Controller/SetupController.php*:
+
+.. code-block:: php
 
 	<?php
 	namespace TYPO3\Blog\Controller;
@@ -81,7 +85,9 @@ the database.
 Using the blog and post repository sounds plausible, but where do you get the
 repositories from?
 
-::
+*Classes/Controller/SetupController.php*:
+
+.. code-block:: php
 
 	/**
 	 * @FLOW3\Inject
@@ -111,7 +117,11 @@ tables for our package:
 Try out the ``SetupController`` by accessing
 http://dev.tutorial.local/typo3.blog/setup/index. If all went right you should see the
 *Successfully created a blog* message on your screen. In order to find this blog again, we
-add a method ``findActive`` to the ``BlogRepository``::
+add a method ``findActive`` to the ``BlogRepository``:
+
+*Classes/Domain/Repository/BlogRepository.php*:
+
+.. code-block:: php
 
 	/**
 	 * Finds the active blog.
@@ -134,7 +144,9 @@ This is all we need for moving on to something more visible: the blog posts.
 Basic Post Controller
 =====================
 
-Now let us add some more code to *.../Classes/Controller/PostController.php*::
+Now let us add some more code to *.../Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	...
 
@@ -183,7 +195,11 @@ Create Action
 In the ``SetupController`` we have seen how a new blog and a post can be
 created and filled with some hardcoded values. At least the posts should,
 however, be filled with values provided by the blog author, so we need to pass
-the new post as an argument to a ``createAction`` in the ``PostController``::
+the new post as an argument to a ``createAction`` in the ``PostController``:
+
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	// ...
 

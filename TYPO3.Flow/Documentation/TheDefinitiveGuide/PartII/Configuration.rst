@@ -99,6 +99,8 @@ in the `Reference Manual <http://flow3.typo3.org/documentation/>`_.
 	location with a very short absolute file path, for example ``C:\\tmp\\``.
 	Do that by adding the following to the file ``Configuration/Settings.yaml``:
 
+	*Configuration/Settings.yaml*:
+
 	.. code-block:: yaml
 
 		utility:
@@ -134,6 +136,8 @@ After you have created an empty database and set up a user with sufficient acces
 rights, copy the file ``Configuration/Development/Settings.yaml.example`` to
 ``Configuration/Development/Settings.yaml``. Open and adjust the file to your needs -
 for a common MySQL setup, it would look similar to this:
+
+*Configuration/Development/Settings.yaml*:
 
 .. code-block:: yaml
 

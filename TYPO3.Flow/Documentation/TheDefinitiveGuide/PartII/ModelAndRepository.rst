@@ -23,7 +23,7 @@ databases and think only in terms of objects.
     copy the needed files from there to "your" sandbox project.
 
     To see the full-scale code of the Blog as used by some of us, take a look at
-    the `Blog package <http://git.typo3.org/FLOW3/Packages/TYPO3.Blog.git>`_ in 
+    the `Blog package <http://git.typo3.org/FLOW3/Packages/TYPO3.Blog.git>`_ in
     our Git repository.
 
 Domain models are really the heart of your application and therefore it is
@@ -56,7 +56,11 @@ That command will output the created file and a hint:
 	Created .../TYPO3.Blog/Classes/Domain/Model/Blog.php
 	As a new model was generated, don't forget to update the database schema with the respective doctrine:* commands.
 
-Open the generated file and complete it to look like the following::
+Open the generated file and complete it to look like the following:
+
+*Classes/Domain/Model/Blog.php*:
+
+.. code-block:: php
 
 	...
 
@@ -144,11 +148,17 @@ Open the generated file and complete it to look like the following::
 	`PHP manual <http://php.net/manual/en/language.namespaces.php>`_.
 
 As you can see there's nothing really fancy in it, the class mostly consists of
-getters and setters. Let's take a closer look at the model line-by-line::
+getters and setters. Let's take a closer look at the model line-by-line:
+
+*Classes/Domain/Model/Blog.php*:
+
+.. code-block:: php
 
 	namespace TYPO3\Blog\Domain\Model;
 
 This namespace declaration must be the very first code in your file.
+
+*Classes/Domain/Model/Blog.php*:
 
 .. code-block:: php
 
@@ -172,7 +182,11 @@ of information for the persistence framework because it declares that
 - According to DDD, an entity is an object which has an identity, that
   is even if two objects with the same values exist, their identity matters.
 
-The model's properties are implemented as regular class properties::
+The model's properties are implemented as regular class properties:
+
+*Classes/Domain/Model/Blog.php*:
+
+.. code-block:: php
 
 	/**
 	 * The blog's title.
@@ -245,7 +259,11 @@ We need a model for the posts as well, so kickstart it like this:
 Note that we use the ``--force`` option to overwrite the model - it was created along with
 the Post controller earlier because we used the ``--generate-related`` flag.
 
-Adjust the generated code as follows::
+Adjust the generated code as follows:
+
+*Classes/Domain/Model/Post.php*:
+
+.. code-block:: php
 
 	/**
 	 * The blog
@@ -320,7 +338,11 @@ You can kickstart the repository with:
 
 	myhost:tutorial johndoe$ ./flow3 kickstart:repository TYPO3.Blog Blog
 
-This will generate a vanilla repository for blogs containing this code::
+This will generate a vanilla repository for blogs containing this code:
+
+*Classes/Domain/Repository/BlogRepository.php*:
+
+.. code-block:: php
 
 	<?php
 	namespace TYPO3\Blog\Domain\Repository;
@@ -353,7 +375,11 @@ repository ``BlogRepository`` FLOW3 assumes that it's supposed to store
 
 To finish up, open the repository for our posts (which was generated along with the Post
 controller we kickstarted earlier) and add the following find methods to the generated
-code::
+code:
+
+*Classes/Domain/Repository/BlogRepository.php*:
+
+.. code-block:: php
 
 	/**
 	 * Finds posts by the specified blog

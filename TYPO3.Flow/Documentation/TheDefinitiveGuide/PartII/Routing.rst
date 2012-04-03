@@ -17,7 +17,7 @@ Post Index Route
 ================
 
 Our first task is to simplify accessing the list of posts. For that you need to
-edit a file called *Routes.yaml* in the global *Configurations/* directory
+edit a file called *Routes.yaml* in the global *Configuration/* directory
 (located at the same level like the *Data* and *Packages* directories).
 This file already contains a few routes which we ignore for the time being.
 
@@ -101,6 +101,8 @@ For this to work you need to create a new *Routes.yaml* file in the
 (*Packages/Application/TYPO3.Blog/Configuration/Routes.yaml*) and paste the
 route you already created:
 
+*Configuration/Routes.yaml*:
+
 .. code-block:: yaml
 
 	#                                                                        #
@@ -126,6 +128,8 @@ An Action Route
 The URI pointing to the ``newAction`` is still http://dev.tutorial.local/typo3.blog/post/new
 so let's beautify the action URIs as well by inserting a new route before the
 '``Blogs``' route:
+
+*Configuration/Routes.yaml*:
 
 .. code-block:: yaml
 
@@ -160,6 +164,8 @@ Our goal is to produce an URI like:
 
 and use this as our edit link. That's done by adding following route at the
 *top of the file*:
+
+*Configuration/Routes.yaml*:
 
 .. code-block:: yaml
 

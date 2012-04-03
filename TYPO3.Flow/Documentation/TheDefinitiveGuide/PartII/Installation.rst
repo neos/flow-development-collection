@@ -155,7 +155,7 @@ This virtual host will later be accessible via the URL http://dev.tutorial.local
 Because FLOW3 provides an ``.htaccess`` file with ``mod_rewrite`` rules in it,
 you need to make sure that the directory grants the neccessary rights:
 
-*httpd.conf*
+*httpd.conf*:
 
 .. code-block:: none
 
@@ -212,6 +212,8 @@ machine. Add the following line to your */etc/hosts* file
 	enable the ``Production`` context by editing the ``.htaccess`` file in the
 	``Web`` directory and remove the comment sign in front of the ``SetEnv``
 	line:
+
+*.htaccess*:
 
 .. code-block:: none
 

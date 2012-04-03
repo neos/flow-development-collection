@@ -41,7 +41,11 @@ three types:
 	Base model and supplemental rules are not covered by this tutorial.
 
 Rules for the base properties are defined directly in the model in form
-of annotations::
+of annotations:
+
+*Classes/Domain/Model/Post.php*:
+
+.. code-block:: php
 
 	/**
 	 * @var string
@@ -90,7 +94,9 @@ Fluid comes with a specialized view helper which allows for iterating over
 validation errors. Just add the ``<f:form.errors>`` view helper to your
 *New.html* template as shown in this example:
 
-.. code-block:: xml
+*Resources/Private/Templates/Post/New.html*:
+
+.. code-block:: html
 
 	<f:layout name="Default" />
 
@@ -127,7 +133,9 @@ Validating Updated Arguments
 Now that you know how validation errors can be displayed, you should add a
 ``<f:form.errors>`` view helper to the *Edit.html* template as well:
 
-.. code-block:: xml
+*Resources/Private/Templates/Post/Edit.html*:
+
+.. code-block:: html
 
 	<f:layout name="Default" />
 
@@ -141,14 +149,18 @@ Now that you know how validation errors can be displayed, you should add a
 				</div>
 			</f:if>
 		</f:form.validationResults>
-	
+
 	...
 
 Try updating a post with an empty title and you should see the following:
 
 .. image:: /Images/GettingStarted/UpdateActionInfiniteLoop.png
 
-Can you imagine what happened? Let's look at the ``editAction`` again::
+Can you imagine what happened? Let's look at the ``editAction`` again:
+
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	/**
 	 * Shows a form for editing an existing post object
@@ -188,7 +200,11 @@ valid, but we don't really care about the ``editAction`` or ``newAction`` which
 only displays the form.
 
 There's a very simple remedy to this problem: don't validate the post. With one
-additional annotation the whole mechanism works as expected::
+additional annotation the whole mechanism works as expected:
+
+*Classes/Controller/PostController.php*:
+
+.. code-block:: php
 
 	/**
 	 * Shows a form for editing an existing post object

@@ -95,13 +95,13 @@ a ``Blog`` object in an array or better in an
 from a given Blog all you need to do is calling the ``getPosts`` method of the
 Blog in question:
 
-code::
+.. code-blog:: php
 
 	$posts = $blog->getPosts();
 
 Executing ``getComments`` on the Post would return all related comments:
 
-code::
+.. code-block:: php
 
 	$comments = $post->getComments();
 
