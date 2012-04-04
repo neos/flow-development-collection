@@ -227,3 +227,8 @@ welcome screen:
 
 .. image:: /Images/GettingStarted/Welcome.png
 
+.. tip::
+	If you get in trouble during the installation check out the `installation hints
+	<http://forge.typo3.org/projects/flow3/wiki/Installation_hints>`_ on forge. On
+	Windows you will most likely have to check the section *Running on Windows OS's*
+	of that page.
