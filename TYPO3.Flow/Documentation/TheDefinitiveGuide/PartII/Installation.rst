@@ -141,10 +141,16 @@ loaded with ``Include`` in ``httpd.conf``):
 
 	<VirtualHost *:80>
 		DocumentRoot /var/apache2/htdocs/tutorial/Web/
-		ServerName tutorial.local
+		ServerName dev.tutorial.local
 	</VirtualHost>
 
-This virtual host will later be accessible via the URL http://tutorial.local.
+This virtual host will later be accessible via the URL http://dev.tutorial.local.
+
+.. note::
+	FLOW3 runs per default in the ``Development`` context. That's why the *ServerName*
+	in this example is  *dev.*tutorial.local. Later you will add another virtual
+	host for the ``Production`` context. The concept of contexts is explained in the
+	next section *Configuration*.
 
 Because FLOW3 provides an ``.htaccess`` file with ``mod_rewrite`` rules in it,
 you need to make sure that the directory grants the neccessary rights:
@@ -185,12 +191,12 @@ following virtual host to your Apache configuration:
 
 	<VirtualHost *:80>
 		DocumentRoot /var/apache2/htdocs/tutorial/Web/
-		ServerName dev.tutorial.local
-		SetEnv FLOW3_CONTEXT Development
+		ServerName tutorial.local
+		SetEnv FLOW3_CONTEXT Production
 	</VirtualHost>
 
-You'll be able to access the same application running in ``Development``
-context by accessing the URL http://dev.tutorial.local. What's left is telling
+You'll be able to access the same application running in ``Production``
+context by accessing the URL http://tutorial.local. What's left is telling
 your operating system that the invented domain names can be found on your local
 machine. Add the following line to your */etc/hosts* file
 (*C:\windows\system32\drivers\etc\hosts* on Windows):
@@ -202,15 +208,15 @@ machine. Add the following line to your */etc/hosts* file
 	127.0.0.1 tutorial.local dev.tutorial.local
 
 .. tip::
-	If you decided to skip setting up virtual hosts earlier on, you should
-	enable the ``Development`` context by editing the ``.htaccess`` file in the
+	If you decided to skip setting up virtual hosts earlier on, you can
+	enable the ``Production`` context by editing the ``.htaccess`` file in the
 	``Web`` directory and remove the comment sign in front of the ``SetEnv``
 	line:
 
 .. code-block:: none
 
 	# You can specify a default context by activating this option:
-	SetEnv FLOW3_CONTEXT Development
+	SetEnv FLOW3_CONTEXT Production
 
 Welcome to FLOW3
 ----------------
