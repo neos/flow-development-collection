@@ -217,15 +217,15 @@ into the ``Translator``.
 Fluid Viewhelper
 ----------------
 
-There is a ``TranslateViewHelper`` for Fluid. It covers all ``Translator`` 
-features: it supports both translation modes, plural forms, and placeholders. 
+There is a ``TranslateViewHelper`` for Fluid. It covers all ``Translator``
+features: it supports both translation modes, plural forms, and placeholders.
 In the simplest case, the ``TranslateViewHelper`` can be used like this:
 
 .. code-block:: xml
 
   <f:translate id="label.id"/>
 
-It will output the translation with the ID "label.id" (corresponding to the 
+It will output the translation with the ID "label.id" (corresponding to the
 trans-unit id in XLIFF files).
 
 The ``TranslateViewHelper`` also accepts all optional parameters the ``Translator`` does.
@@ -348,24 +348,21 @@ File locations and naming
 -------------------------
 
 Each FLOW3 package may contain any number of XLIFF files. The location for these files is
-the *Resources/Private/Locale/Translations* folder. The files there can be named at will,
+the *Resources/Private/Translations* folder. The files there can be named at will,
 but keep in mind that *Main* is the default catalog name. The target locale is then added
-to the filename as described in the `Localizing resources`_ section earlier. The minimum
-needed to provide message catalogs for the *en* and *de* locales thus would be:
+as a directory hierarchy in between. The minimum needed to provide message catalogs for the
+*en* and *de* locales thus would be:
 
 
 .. code-block:: text
 
   Resources/
     Private/
-      Locale/
-        Translations/
-          Main.en.xlf
-          Main.de.xlf
-
-..tip::
-
-  There is never a file *Main.xlf* as there is no such thing as a global default language.
+      Translations/
+        en/
+          Main.xlf
+        de/
+          Main.xlf
 
 XLIFF file creation
 -------------------
@@ -397,8 +394,8 @@ the files you are working on.
   element is found. This eliminates the need to duplicate messages in catalogs where
   source and target language are the same.
 
-  But you may stil ask yourself *do I really need to duplicate all the strings 
-  in XLIFF files?* The answer is *you should*. Using target allows to fix typos 
+  But you may stil ask yourself *do I really need to duplicate all the strings
+  in XLIFF files?* The answer is *you should*. Using target allows to fix typos
   or change wording without breaking translation by label for all other languages.
 
 Labels may contain placeholders to be replaced with given arguments during
