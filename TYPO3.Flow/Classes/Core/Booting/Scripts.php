@@ -48,6 +48,27 @@ class Scripts {
 	}
 
 	/**
+	 * Does some emergency, forced, low level flush caches if the user told to do
+	 * so through the command line.
+	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return void
+	 */
+	static public function forceFlushCachesIfNeccessary(Bootstrap $bootstrap) {
+		if (!isset($_SERVER['argv']) || !isset($_SERVER['argv'][1]) || !isset($_SERVER['argv'][2])
+			|| !in_array($_SERVER['argv'][1], array('typo3.flow3:cache:flush', 'flow3:cache:flush'))
+			|| !in_array($_SERVER['argv'][2], array('--force', '-f'))) {
+			return;
+		}
+
+		$bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager')->flushCaches();
+		$environment = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Utility\Environment');
+		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
+		echo "Force-flushed caches." . PHP_EOL;
+		exit(0);
+	}
+
+	/**
 	 * Initializes the Signal Slot module
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap

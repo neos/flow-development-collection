@@ -284,6 +284,7 @@ class Bootstrap {
 			$sequence->addStep(new Step('typo3.flow3:lockmanager:locksiteorexit', function() use ($bootstrap) { $bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\LockManager')->lockSiteOrExit(); } ), 'typo3.flow3:systemlogger');
 		}
 
+		$sequence->addStep(new Step('typo3.flow3:cachemanagement:forceflush', array('TYPO3\FLOW3\Core\Booting\Scripts', 'forceFlushCachesIfNeccessary')), 'typo3.flow3:systemlogger');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:compiletime:create', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeCreate')), 'typo3.flow3:systemlogger');
 		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:objectmanagement:compiletime:create');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:compiletime:finalize', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeFinalize')), 'typo3.flow3:reflectionservice');
