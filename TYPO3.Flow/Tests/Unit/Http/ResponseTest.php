@@ -107,5 +107,14 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(array('MyValue', 'OtherValue'), $response->getHeader('MyHeader'));
 	}
 
+	/**
+	 * @test
+	 */
+	public function getParentResponseReturnsResponseSetInConstructor() {
+		$parentResponse = new Response();
+
+		$response = new Response($parentResponse);
+		$this->assertSame($parentResponse, $response->getParentResponse());
+	}
 }
 ?>

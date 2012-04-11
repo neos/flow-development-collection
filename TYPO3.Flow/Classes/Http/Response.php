@@ -108,12 +108,21 @@ class Response implements ResponseInterface{
 	/**
 	 * Construct this Response
 	 *
-	 * @param
+	 * @param Response $parentResponse
 	 */
 	public function __construct(Response $parentResponse = NULL) {
 		$this->headers = new Headers();
 		$this->headers->set('X-FLOW3-Powered', 'FLOW3/' . FLOW3_VERSION_BRANCH);
 		$this->parentResponse = $parentResponse;
+	}
+
+	/**
+	 * Return the parent response or NULL if none exists.
+	 *
+	 * @return Response the parent response, or NULL if none
+	 */
+	public function getParentResponse() {
+		return $this->parentResponse;
 	}
 
 	/**
