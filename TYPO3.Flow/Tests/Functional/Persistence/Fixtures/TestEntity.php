@@ -35,6 +35,12 @@ class TestEntity {
 	protected $relatedEntity;
 
 	/**
+	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject
+	 * @ORM\ManyToOne
+	 */
+	protected $relatedValueObject;
+
+	/**
 	 * @var string
 	 * @FLOW3\Validate(type="StringLength", options={"minimum"=3})
 	 */
@@ -101,6 +107,21 @@ class TestEntity {
 	 */
 	public function getObjectManager() {
 		return $this->objectManager;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject $relatedValueObject
+	 * @return void
+	 */
+	public function setRelatedValueObject($relatedValueObject) {
+		$this->relatedValueObject = $relatedValueObject;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject
+	 */
+	public function getRelatedValueObject() {
+		return $this->relatedValueObject;
 	}
 }
 ?>
