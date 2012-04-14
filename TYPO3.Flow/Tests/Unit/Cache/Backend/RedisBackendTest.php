@@ -97,13 +97,6 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test Functional
 	 */
-	public function initializeObjectThrowsNoExceptionIfPasswordOptionIsSet() {
-		$this->setUpBackend(array('password' => 'foo'));
-	}
-
-	/**
-	 * @test Functional
-	 */
 	public function initializeObjectThrowsNoExceptionIfGivenDatabaseWasSuccessfullySelected() {
 		$this->setUpBackend(array('database' => 1));
 	}
