@@ -11,10 +11,17 @@ namespace TYPO3\FLOW3\Tests\Functional\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Mvc\Routing\Route;
+
 /**
  * Functional tests for the HTTP Request Handler
  */
 class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+
+	/**
+	 * @var boolean
+	 */
+	protected $testableHttpEnabled = TRUE;
 
 	/**
 	 * @var boolean
@@ -25,11 +32,23 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController() {
+		$foundRoute = FALSE;
+		foreach ($this->router->getRoutes() as $route) {
+			if ($route->getName() === 'FLOW3 :: FLOW3 :: Functional Test: HTTP - FooController') {
+				$foundRoute = TRUE;
+			}
+		}
+
+		if (!$foundRoute) {
+			$this->markTestSkipped('In this distribution the FLOW3 routes are not included into the global configuration.');
+			return;
+		}
+
 		$_SERVER = array (
-			'HTTP_HOST' => 'robertlemke.com',
+			'HTTP_HOST' => 'localhost',
 			'REQUEST_METHOD' => 'GET',
 			'QUERY_STRING' => '',
-			'REQUEST_URI' => '/test/http/foo',
+			'REQUEST_URI' => '/typo3/flow3/test/http/foo',
 			'SCRIPT_NAME' => '/index.php',
 			'PHP_SELF' => '/index.php',
 		);
