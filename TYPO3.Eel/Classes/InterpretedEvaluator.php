@@ -17,7 +17,7 @@ namespace TYPO3\Eel;
  * There is no generated PHP code so this evaluator does not perform very
  * good in multiple invocations.
  */
-class InterpretedEvaluator {
+class InterpretedEvaluator implements EelEvaluatorInterface {
 
 	/**
 	 * Evaluate an expression under a given context

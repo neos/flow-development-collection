@@ -1,0 +1,11 @@
+#                                                                          #
+# Object Configuration for the TYPO3.Eel package                           #
+#                                                                          #
+# This file contains the default object configuration for the FLOW3        #
+# Framework. Because it is loaded at a very early stage during ini-        #
+# tialization, this configuration cannot be overriden by other con-        #
+# figuration files.                                                        #
+#                                                                          #
+
+TYPO3\Eel\EelEvaluatorInterface:
+  className: TYPO3\Eel\CompilingEvaluator

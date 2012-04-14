@@ -17,7 +17,7 @@ namespace TYPO3\Eel;
  * This simple implementation will lazily parse and evaluate the generated PHP
  * code into a function with a name built from the hashed expression.
  */
-class CompilingEvaluator {
+class CompilingEvaluator implements EelEvaluatorInterface {
 
 	/**
 	 * Evaluate an expression under a given context
