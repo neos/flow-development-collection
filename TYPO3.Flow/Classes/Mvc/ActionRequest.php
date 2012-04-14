@@ -29,6 +29,12 @@ class ActionRequest implements RequestInterface {
 	protected $objectManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 * @FLOW3\Inject
+	 */
+	protected $hashService;
+
+	/**
 	 * Package key of the controller which is supposed to handle this request.
 	 * @var string
 	 */
@@ -192,7 +198,9 @@ class ActionRequest implements RequestInterface {
 
 			$arguments = array();
 			if (isset($referrerArray['arguments'])) {
-				$arguments = unserialize($referrerArray['arguments']);
+				$serializedArgumentsWithHmac = $referrerArray['arguments'];
+				$serializedArguments = $this->hashService->validateAndStripHmac($serializedArgumentsWithHmac);
+				$arguments = unserialize(base64_decode($serializedArguments));
 				unset($referrerArray['arguments']);
 			}
 
