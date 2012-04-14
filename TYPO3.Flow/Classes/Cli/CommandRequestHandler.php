@@ -29,10 +29,29 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 	protected $bootstrap;
 
 	/**
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
+	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
+	 */
+	protected $dispatcher;
+
+	/**
+	 * @var \TYPO3\FLOW3\Cli\Request
+	 */
+	protected $request;
+
+	/**
+	 * @var \TYPO3\FLOW3\Cli\Response
+	 */
+	protected $response;
+
+	/**
 	 * Constructor
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
-	 * @return void
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -64,72 +83,22 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 	 */
 	public function handleRequest() {
 		try {
-			if ($this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '')) {
-				$this->handleCompiletimeCommand();
-			} else {
-				$this->handleRuntimeCommand();
-			}
+			$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? 'Compiletime' : 'Runtime';
+			$this->boot($runLevel);
+
+			$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
+			$this->request = $this->objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
+			$this->response = new Response();
+
+			$this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
+
+			$this->dispatcher->dispatch($this->request, $this->response);
+			$this->response->send();
+
+			$this->shutdown($runLevel);
 		} catch (\Exception $exception) {
 			$this->handleException($exception);
 		}
-	}
-
-	/**
-	 * Specialized handler for compiletime commands
-	 *
-	 * Builds and executes a boot sequences for bringing FLOW3 into compiletime and
-	 * then dispatches the command as specified in the command line.
-	 *
-	 * @return void
-	 */
-	protected function handleCompiletimeCommand() {
-		$sequence = $this->bootstrap->buildCompiletimeSequence();
-		$sequence->invoke($this->bootstrap);
-
-		$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
-		$objectManager = $this->bootstrap->getObjectManager();
-
-		$request = $objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
-		$response = new Response();
-
-		$controller = $objectManager->get($request->getControllerObjectName());
-		$controller->processRequest($request, $response);
-
-		$response->send();
-		$this->bootstrap->shutdown('Compiletime');
-
-		$objectManager->get('TYPO3\FLOW3\Core\LockManager')->unlockSite();
-		exit($response->getExitCode());
-	}
-
-	/**
-	 * Specialized handler for runtime commands
-	 *
-	 * Builds and executes a boot sequences for bringing FLOW3 into runtime and
-	 * then dispatches the command as specified in the command line.
-	 *
-	 * @return void
-	 */
-	protected function handleRuntimeCommand() {
-		$sequence = $this->bootstrap->buildRuntimeSequence();
-		$sequence->invoke($this->bootstrap);
-
-		$objectManager = $this->bootstrap->getObjectManager();
-
-		$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
-		$request = $objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
-		$command = $request->getCommand();
-		if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidCommandIdentifierException(sprintf('The command "%s" must be specified by its full command identifier because it is a compile time command which cannot be resolved from an abbreviated command identifier.', $command->getCommandIdentifier()), 1310992499);
-		}
-		$response = new Response();
-
-		$controller = $objectManager->get($request->getControllerObjectName());
-		$controller->processRequest($request, $response);
-
-		$response->send();
-		$this->bootstrap->shutdown('Runtime');
-		exit($response->getExitCode());
 	}
 
 	/**
@@ -154,6 +123,63 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 		$response->setContent(sprintf("<b>Uncaught Exception</b>\n%s%s\n", $exceptionMessage, $exceptionReference));
 		$response->send();
 		exit(1);
+	}
+
+	/**
+	 * Checks if compile time command was not recognized as such, then runlevel was
+	 * booted but it turned out that in fact the command is a compile time command.
+	 *
+	 * This happens if the user doesn't specify the full command identifier.
+	 *
+	 * @param string $runlevel
+	 * @return void
+	 */
+	public function exitIfCompiletimeCommandWasNotCalledCorrectly($runlevel) {
+		if ($runlevel === 'Runtime') {
+			$command = $this->request->getCommand();
+			if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
+				$this->response->appendContent(sprintf(
+					"<b>Unrecognized Command</b>\n\n" .
+					"Sorry, but he command \"%s\" must be specified by its full command\n" .
+					"identifier because it is a compile time command which cannot be resolved\n" .
+					"from an abbreviated command identifier.\n\n",
+					$command->getCommandIdentifier())
+				);
+				$this->response->send();
+				$this->shutdown($runlevel);
+				exit(1);
+			}
+		}
+	}
+
+	/**
+	 * Initializes the matching boot sequence depending on the type of the command
+	 * (runtime or compiletime) and manually injects the necessary dependencies of
+	 * this request handler.
+	 *
+	 * @param string $runlevel Either "Compiletime" or "Runtime"
+	 * @return void
+	 */
+	protected function boot($runlevel) {
+		$sequence = ($runlevel === 'Compiletime') ? $this->bootstrap->buildCompiletimeSequence() : $this->bootstrap->buildRuntimeSequence();
+		$sequence->invoke($this->bootstrap);
+
+		$this->objectManager = $this->bootstrap->getObjectManager();
+		$this->dispatcher = $this->objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher');
+	}
+
+	/**
+	 * Starts the shutdown sequence
+	 *
+	 * @param string $runlevel Either "Compiletime" or "Runtime"
+	 * @return void
+	 */
+	protected function shutdown($runlevel) {
+		$this->bootstrap->shutdown($runlevel);
+		if ($runlevel === 'Compiletime') {
+			$this->objectManager->get('TYPO3\FLOW3\Core\LockManager')->unlockSite();
+		}
+		exit($this->response->getExitCode());
 	}
 }
 
