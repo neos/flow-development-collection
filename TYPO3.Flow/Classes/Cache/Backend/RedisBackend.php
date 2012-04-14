@@ -165,7 +165,7 @@ class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 
 		try {
 			$this->connected = $this->redis->connect($this->hostname, $this->port);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			throw new \TYPO3\FLOW3\Cache\Exception('Could not connect to redis server.', 1294734537, $e);
 		}
 
