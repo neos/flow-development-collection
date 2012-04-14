@@ -45,6 +45,7 @@ class Typo3OrgSsoProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException
+	 * @FLOW3\Session(autoStart=true)
 	 */
 	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if (!($authenticationToken instanceof \TYPO3\FLOW3\Security\Authentication\Token\Typo3OrgSsoToken)) {

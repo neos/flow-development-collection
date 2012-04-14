@@ -79,11 +79,11 @@ class LoggingAspect {
 	 */
 	public function logRenewId(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
-		$oldId = $session->getId();
 		$newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
-
-		$this->systemLogger->log(sprintf('Changed session id from %s to %s', $oldId, $newId), LOG_DEBUG);
-
+		if ($session->isStarted()) {
+			$oldId = $session->getId();
+			$this->systemLogger->log(sprintf('Changed session id from %s to %s', $oldId, $newId), LOG_DEBUG);
+		}
 		return $newId;
 	}
 }

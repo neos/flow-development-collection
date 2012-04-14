@@ -45,6 +45,7 @@ class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\Abst
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
+	 * @FLOW3\Session(autoStart=true)
 	 */
 	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		$authenticationToken->setAuthenticationStatus($this->authenticationStatus);

@@ -132,7 +132,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception
 	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
-	 * @FLOW3\Session(autoStart=true)
 	 */
 	public function authenticate() {
 		$anyTokenAuthenticated = FALSE;
