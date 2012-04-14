@@ -27,6 +27,12 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	protected $securityContext;
 
 	/**
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @FLOW3\Inject
+	 */
+	protected $authenticationManager;
+
+	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @FLOW3\Inject
 	 */
@@ -67,6 +73,10 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 */
 	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
+		if ($this->authenticationManager->isAuthenticated() === FALSE) {
+			return FALSE;
+		}
+
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
 		$actionName = $request->getControllerActionName(). 'Action';
 
