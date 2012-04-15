@@ -23,9 +23,9 @@ if [ "$#" != "3" ]; then
 fi
 
 if [ "$(id -u)" != "0" ]; then
-   echo "This command must be called as super user. Use 'sudo' or run as root." 1>&2
+	echo "This command must be called as super user. Use 'sudo' or run as root." 1>&2
 	echo
-   exit 1
+	exit 1
 fi
 
 COMMANDLINE_USER="$1"
