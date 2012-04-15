@@ -250,9 +250,10 @@ class Service {
 	 * @param string $version The version to migrate to
 	 * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
 	 * @param boolean $dryRun Whether to do a dry run or not
+	 * @param boolean $quiet Whether to do a quiet run or not
 	 * @return string
 	 */
-	public function executeMigrations($version = NULL, $outputPathAndFilename = NULL, $dryRun = FALSE) {
+	public function executeMigrations($version = NULL, $outputPathAndFilename = NULL, $dryRun = FALSE, $quiet = FALSE) {
 		$configuration = $this->getMigrationConfiguration();
 		$migration = new \Doctrine\DBAL\Migrations\Migration($configuration);
 
@@ -261,7 +262,19 @@ class Service {
 		} else {
 			$migration->migrate($version, $dryRun);
 		}
-		return strip_tags(implode(PHP_EOL, $this->output));
+
+		if ($quiet === TRUE) {
+			$output = '';
+			foreach ($this->output as $line) {
+				$line = strip_tags($line);
+				if (strpos($line, '  ++ migrating ') !== FALSE || strpos($line, '  -- reverting ') !== FALSE) {
+					$output .= substr($line, -15);
+				}
+			}
+			return $output;
+		} else {
+			return strip_tags(implode(PHP_EOL, $this->output));
+		}
 	}
 
 	/**

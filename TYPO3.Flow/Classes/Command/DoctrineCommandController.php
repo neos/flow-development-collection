@@ -241,23 +241,28 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param string $version The version to migrate to
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @param boolean $dryRun Whether to do a dry run or not
+	 * @param boolean $quiet If set, only the executed migration versions will be output, one per line
 	 * @return void
 	 * @see typo3.flow3:doctrine:migrationstatus
 	 * @see typo3.flow3:doctrine:migrationexecute
 	 * @see typo3.flow3:doctrine:migrationgenerate
 	 * @see typo3.flow3:doctrine:migrationversion
 	 */
-	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE) {
+	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE, $quiet = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$result = $this->doctrineService->executeMigrations($version, $output, $dryRun);
+			$result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
 			if ($result == '') {
-				$this->outputLine('No migration was neccessary.');
+				if (!$quiet) {
+					$this->outputLine('No migration was neccessary.');
+				}
 			} elseif ($output === NULL) {
 				$this->outputLine($result);
 			} else {
-				$this->outputLine('Wrote migration SQL to file "' . $output .'".');
+				if (!$quiet) {
+					$this->outputLine('Wrote migration SQL to file "' . $output .'".');
+				}
 			}
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
