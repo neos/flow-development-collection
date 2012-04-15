@@ -25,7 +25,9 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:setfilepermissions' || $a
 	}
 	array_shift($argv);
 	array_shift($argv);
-	system(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '));
+	$returnValue = 0;
+	system(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '), $returnValue);
+	exit($returnValue);
 } else {
 	require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
