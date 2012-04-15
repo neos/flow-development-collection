@@ -31,18 +31,9 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 		$functionName = 'expression_' . $identifier;
 
 		if (!function_exists($functionName)) {
-			$parser = new CompilingEelParser($expression);
-			$res = $parser->match_Expression();
-
-			if ($parser->pos !== strlen($expression)) {
-				throw new Exception(sprintf('The Eel Expression "%s" could not be parsed. Error at character %d.', $expression, $parser->pos+1), 1327682383);
-			}
-
-			if (!array_key_exists('code', $res)) {
-				throw new \Exception('No code in result: ' . json_encode($res));
-			}
-			$code = 'function ' . $functionName . '($context){return ' . $res['code'] . ';}';
-			eval($code);
+			$code = $this->generateEvaluatorCode($expression);
+			$functionDeclaration = 'function ' . $functionName . '($context){return ' . $code . ';}';
+			eval($functionDeclaration);
 		}
 
 		$result = $functionName($context);
@@ -51,6 +42,29 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 		} else {
 			return $result;
 		}
+	}
+
+	/**
+	 * Internal generator method
+	 *
+	 * Used by unit tests to debug generated PHP code.
+	 *
+	 * @param string $expression
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function generateEvaluatorCode($expression) {
+		$parser = new CompilingEelParser($expression);
+		$res = $parser->match_Expression();
+
+		if ($parser->pos !== strlen($expression)) {
+			throw new Exception(sprintf('Expression "%s" could not be parsed. Error at character %d.', $expression, $parser->pos + 1), 1327682383);
+		}
+
+		if (!array_key_exists('code', $res)) {
+			throw new Exception(sprintf('Parser error, no code in result %s ', json_encode($res)), 1334491498);
+		}
+		return $res['code'];
 	}
 
 }

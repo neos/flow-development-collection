@@ -107,7 +107,7 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function Disjunction_rgt(&$result, $sub) {
-		$result['code'] = '(' . $result['code'] .  ')||(' . $sub['code'] . ')';
+		$result['code'] = '(' . $this->unwrapExpression($result['code']) .  ')||(' . $this->unwrapExpression($sub['code']) . ')';
 	}
 
 	public function Conjunction_lft(&$result, $sub) {
@@ -115,7 +115,7 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function Conjunction_rgt(&$result, $sub) {
-		$result['code'] = '(' . $result['code'] . ')&&(' . $sub['code'] . ')';
+		$result['code'] = '(' . $this->unwrapExpression($result['code']) . ')&&(' . $this->unwrapExpression($sub['code']) . ')';
 	}
 
 	public function Comparison_lft(&$result, $sub) {
@@ -126,24 +126,37 @@ class CompilingEelParser extends EelParser {
 		$result['comp'] = $sub['text'];
 	}
 
+	/**
+	 * Return an expression that unwraps the given expression
+	 * if it is a Context object.
+	 *
+	 * @param string $expression
+	 * @return string
+	 */
+	protected function unwrapExpression($expression) {
+		$varName = '$_' . $this->tmpId++;
+		return '((' . $varName . '=' . $expression . ') instanceof \TYPO3\Eel\Context?' . $varName . '->unwrap():' . $varName . ')';
+	}
+
 	public function Comparison_rgt(&$result, $sub) {
-		$rval = $sub['code'];
+		$lval = $this->unwrapExpression($result['code']);
+		$rval = $this->unwrapExpression($sub['code']);
 
 		switch ($result['comp']) {
 		case '==':
-			$result['code'] = $result['code'] . '===' . $rval;
+			$result['code'] = '(' . $lval . ')===(' . $rval . ')';
 			break;
 		case '<':
-			$result['code'] = $result['code'] . '<' . $rval;
+			$result['code'] = '(' . $lval . ')<(' . $rval . ')';
 			break;
 		case '<=':
-			$result['code'] = $result['code'] . '<=' . $rval;
+			$result['code'] = '(' . $lval . ')<=(' . $rval . ')';
 			break;
 		case '>':
-			$result['code'] = $result['code'] . '>' . $rval;
+			$result['code'] = '(' . $lval . ')>(' . $rval . ')';
 			break;
 		case '>=':
-			$result['code'] = $result['code'] . '>=' . $rval;
+			$result['code'] = '(' . $lval . ')>=(' . $rval . ')';
 			break;
 		}
 	}
@@ -157,10 +170,14 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function SumCalculation_rgt(&$result, $sub) {
-		$rval = $sub['code'];
+		$rval = $this->unwrapExpression($sub['code']);
+		$lval = $this->unwrapExpression($result['code']);
+
 		switch ($result['op']) {
 		case '+':
-			$result['code'] = $result['code'] . '+' . $rval;
+			$xVarName = '$_x_' . $this->tmpId++;
+			$yVarName = '$_y_' . $this->tmpId++;
+			$result['code'] = '(is_string(' . $xVarName . '=' . $lval . ')|is_string(' . $yVarName . '=' . $rval . '))?(' . $xVarName . ' . ' . $yVarName . '):(' . $xVarName . '+' . $yVarName . ')';
 			break;
 		case '-':
 			$result['code'] = $result['code'] . '-' .  $rval;
@@ -177,16 +194,18 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function ProdCalculation_rgt(&$result, $sub) {
-		$rval = $sub['code'];
+		$rval = $this->unwrapExpression($sub['code']);
+		$lval = $this->unwrapExpression($result['code']);
+
 		switch ($result['op']) {
 		case '/':
-			$result['code'] = $result['code'] . '/' . $rval;
+			$result['code'] = $lval . '/' . $rval;
 			break;
 		case '*':
-			$result['code'] = $result['code'] . '*' . $rval;
+			$result['code'] = $lval . '*' . $rval;
 			break;
 		case '%':
-			$result['code'] = $result['code'] . '%' . $rval;
+			$result['code'] = $lval . '%' . $rval;
 			break;
 		}
 	}

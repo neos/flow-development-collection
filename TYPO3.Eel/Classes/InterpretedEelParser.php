@@ -109,7 +109,7 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function Disjunction_rgt(&$result, $sub) {
-		$result['val'] = $result['val'] || (boolean)$sub['val'];
+		$result['val'] = (boolean)$this->unwrap($result['val']) || (boolean)$this->unwrap($sub['val']);
 	}
 
 	public function Conjunction_lft(&$result, $sub) {
@@ -117,7 +117,7 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function Conjunction_rgt(&$result, $sub) {
-		$result['val'] = $result['val'] && (boolean)$sub['val'];
+		$result['val'] = (boolean)$this->unwrap($result['val']) && (boolean)$this->unwrap($sub['val']);
 	}
 
 	public function Comparison_lft(&$result, $sub) {
@@ -129,22 +129,24 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function Comparison_rgt(&$result, $sub) {
-		$rval = $sub['val'];
+		$lval = $this->unwrap($result['val']);
+		$rval = $this->unwrap($sub['val']);
+
 		switch ($result['comp']) {
 		case '==':
-			$result['val'] = $result['val'] === $rval;
+			$result['val'] = $lval === $rval;
 			break;
 		case '<':
-			$result['val'] = $result['val'] < $rval;
+			$result['val'] = $lval < $rval;
 			break;
 		case '<=':
-			$result['val'] = $result['val'] <= $rval;
+			$result['val'] = $lval <= $rval;
 			break;
 		case '>':
-			$result['val'] = $result['val'] > $rval;
+			$result['val'] = $lval > $rval;
 			break;
 		case '>=':
-			$result['val'] = $result['val'] >= $rval;
+			$result['val'] = $lval >= $rval;
 			break;
 		}
 	}
@@ -158,13 +160,20 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function SumCalculation_rgt(&$result, $sub) {
+		$lval = $result['val'];
 		$rval = $sub['val'];
+
 		switch ($result['op']) {
 		case '+':
-			$result['val'] += $rval;
+			if (is_string($lval) || is_string($rval)) {
+					// Do not unwrap here and use better __toString handling of Context
+				$result['val'] = $lval . $rval;
+			} else {
+				$result['val'] = $this->unwrap($lval) + $this->unwrap($rval);
+			}
 			break;
 		case '-':
-			$result['val'] -= $rval;
+			$result['val'] = $this->unwrap($lval) - $this->unwrap($rval);
 			break;
 		}
 	}
@@ -178,17 +187,34 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function ProdCalculation_rgt(&$result, $sub) {
-		$rval = $sub['val'];
+		$lval = $this->unwrap($result['val']);
+		$rval = $this->unwrap($sub['val']);
+
 		switch ($result['op']) {
 		case '/':
-			$result['val'] = $result['val'] / $rval;
+			$result['val'] = $lval / $rval;
 			break;
 		case '*':
-			$result['val'] *= $rval;
+			$result['val'] = $lval * $rval;
 			break;
 		case '%':
-			$result['val'] = $result['val'] % $rval;
+			$result['val'] = $lval % $rval;
 			break;
+		}
+	}
+
+	/**
+	 * If $value is an instance of Context, the result of unwrap()
+	 * is returned, otherwise $value is returned unchanged.
+	 *
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	protected function unwrap($value) {
+		if ($value instanceof Context) {
+			return $value->unwrap();
+		} else {
+			return $value;
 		}
 	}
 

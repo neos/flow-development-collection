@@ -1,8 +1,8 @@
 <?php
-namespace Eel;
+namespace TYPO3\Eel;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Eel".                        *
+ * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *

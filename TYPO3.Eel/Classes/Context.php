@@ -29,6 +29,17 @@ class Context {
 		$this->value = $value;
 	}
 
+	/**
+	 * Get a value of the context
+	 *
+	 * This basically acts as a safe access to non-existing properties, unified array and
+	 * property access (using getters) and access to the current value (empty path).
+	 *
+	 * If a property or key did not exist this method will return NULL.
+	 *
+	 * @param string|Context $path The path as string or Context value, will be unwrapped for convenience
+	 * @return mixed The value
+	 */
 	public function get($path) {
 		if ($path instanceof \TYPO3\Eel\Context) {
 			$path = $path->unwrap();
@@ -44,16 +55,25 @@ class Context {
 		}
 	}
 
+	/**
+	 * Get a value by path and wrap it into another context
+	 *
+	 * @param string $path
+	 * @return \TYPO3\Eel\Context The wrapped value
+	 */
 	public function getAndWrap($path = NULL) {
 		return $this->wrap($this->get($path));
 	}
 
 	/**
+	 * Call a method on this context
 	 *
 	 * @param string $method
-	 * @param array $arguments
+	 * @param array $arguments Arguments to the method, if of type Context they will be unwrapped
+	 * @return mixed
+	 * @throws \Exception
 	 */
-	public function call($method, $arguments = array()) {
+	public function call($method, array $arguments = array()) {
 		for ($i = 0; $i < count($arguments); $i++) {
 			if ($arguments[$i] instanceof Context) {
 				$arguments[$i] = $arguments[$i]->unwrap();
@@ -63,26 +83,35 @@ class Context {
 			$callback = array($this->value, $method);
 		} elseif (is_array($this->value)) {
 			if (!array_key_exists($method, $this->value)) {
-				// TODO Return NULL or throw Exception?
+					// TODO Return NULL or throw Exception?
 				return NULL;
 			}
 			$callback = $this->value[$method];
 		} else {
-			// TODO Better general error handling (return NULL?)
-			throw new \Exception('Needs object or array to call method');
+				// TODO Better general error handling (return NULL?)
+			throw new \Exception('Needs object or array to call method, but has ' . gettype($this->value));
 		}
 		if (!is_callable($callback)) {
-			// TODO Better general error handling (return NULL?)
+				// TODO Better general error handling (return NULL?)
 			throw new \Exception('Method "' . $method . '" does not exist');
 		}
 		return call_user_func_array($callback, $arguments);
 	}
 
-	public function callAndWrap($method, $arguments = array()) {
+	/**
+	 * Call a method and wrap the result
+	 *
+	 * @param string $method
+	 * @param array $arguments
+	 * @return mixed
+	 */
+	public function callAndWrap($method, array $arguments = array()) {
 		return $this->wrap($this->call($method, $arguments));
 	}
 
 	/**
+	 * Wraps the given value in a new Context
+	 *
 	 * @param mixed $value
 	 * @return \TYPO3\Eel\Context
 	 */
@@ -92,6 +121,7 @@ class Context {
 
 	/**
 	 * Unwrap the context value recursively
+	 *
 	 * @return mixed
 	 */
 	public function unwrap() {
@@ -122,6 +152,16 @@ class Context {
 		}
 		$this->value[] = $value;
 		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function __toString() {
+		if (is_object($this->value) && !method_exists($this->value, '__toString')) {
+			return '[object ' . get_class($this->value) . ']';
+		}
+		return (string)$this->value;
 	}
 
 }

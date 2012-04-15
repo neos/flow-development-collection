@@ -1,8 +1,8 @@
 <?php
-namespace Eel;
+namespace TYPO3\Eel;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Eel".                        *
+ * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -19,13 +19,13 @@ namespace Eel;
  * This parser can evaluate the expression language for FLOW3 and uses the
  * basic types from AbstractParser.
  */
-class EelParser extends AbstractParser {
+class EelParser extends \TYPO3\Eel\AbstractParser {
 
 /*!* BasicTypes
 OffsetAccess: '[' < Expression > ']'
-MethodCall: Identifier '(' < Expression* > ')'
+MethodCall: Identifier '(' < Expression? > (',' < Expression > )* ')'
 ObjectPath: (MethodCall | Identifier) ('.' (MethodCall | Identifier) | OffsetAccess)*
-Term: term:BooleanLiteral | term:NumberLiteral | term:StringLiteral | term:ObjectPath
+Term: term:BooleanLiteral !Identifier | term:NumberLiteral | term:StringLiteral | term:ObjectPath
 */
 
 /*!* CombinedExpressions

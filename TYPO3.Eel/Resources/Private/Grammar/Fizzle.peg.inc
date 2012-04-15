@@ -1,8 +1,8 @@
 <?php
-namespace Eel\FlowQuery;
+namespace TYPO3\Eel\FlowQuery;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Eel".                        *
+ * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -18,7 +18,7 @@ namespace Eel\FlowQuery;
  * This is the parser for a CSS-like selector language for Objects and TYPO3CR Nodes.
  * You can think of it as "Sizzle for PHP" (hence the name).
  */
-class FizzleParser extends \Eel\AbstractParser {
+class FizzleParser extends \TYPO3\Eel\AbstractParser {
 /*!* FilterExpressions
 
 FilterGroup: :Filter ( S ',' S :Filter )*

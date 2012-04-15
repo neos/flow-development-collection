@@ -74,6 +74,23 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @return array
 	 */
+	public function stringConcatenations() {
+		$c = new Context(array('foo' => 'bar'));
+		return array(
+			// Just concatenate two strings
+			array('"a" + "b"', $c, 'ab'),
+			// Concatenate a string and an integer
+			array('2 + "b"', $c, '2b'),
+			// Concatenate a wrapped element and a string
+			array('foo + "b"', $c, 'barb'),
+			// Concatenate three elements
+			array('foo + " x " + foo', $c, 'bar x bar')
+		);
+	}
+
+	/**
+	 * @return array
+	 */
 	public function notExpressions() {
 		$c = new Context();
 		return array(
@@ -92,7 +109,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return array
 	 */
 	public function comparisonExpressions() {
-		$c = new Context();
+		$c = new Context(array(
+			'answer' => 42
+		));
 		return array(
 			array('1==0', $c, FALSE),
 			array('1==1', $c, TRUE),
@@ -107,6 +126,8 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('1 <0', $c, FALSE),
 			// Parenthesed comparisons
 			array('(0 > 1) < (0 < 1)', $c, TRUE),
+			// Comparisons and variables
+			array('answer > 1', $c, TRUE),
 		);
 	}
 
@@ -114,7 +135,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return array
 	 */
 	public function calculationExpressions() {
-		$c = new Context();
+		$c = new Context(array(
+			'answer' => 42
+		));
 		return array(
 			// Very basic
 			array('1 + 1', $c, 2),
@@ -122,8 +145,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('2*2', $c, 4),
 			// Multiple calc with precedence
 			array('1 + 2 * 3 + 4 / 2 + 2', $c, 11),
-			//
 			array('(1 + 2) * 3 + 4 / (2 + 2)', $c, 10),
+			// Calculation with variables
+			array('2* answer', $c, 84),
 		);
 	}
 
@@ -146,7 +170,10 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return array
 	 */
 	public function booleanExpressions() {
-		$c = new Context();
+		$c = new Context(array(
+			'trueVar' => TRUE,
+			'falseVar' => FALSE
+		));
 		return array(
 			// Boolean literals work
 			array('false', $c, FALSE),
@@ -158,6 +185,11 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('!1 < 2', $c, FALSE),
 			// Named and symbolic operators can be mixed
 			array('TRUE && true and FALSE or false', $c, FALSE),
+			// Using variables and literals
+			array('trueVar || FALSE', $c, TRUE),
+			array('trueVar && TRUE', $c, TRUE),
+			array('falseVar || FALSE', $c, FALSE),
+			array('falseVar && TRUE', $c, FALSE),
 		);
 	}
 
@@ -224,6 +256,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'count' => function($array) {
 				return count($array);
 			},
+			'pow' => function($base, $exp) {
+				return pow($base, $exp);
+			},
 			'funcs' => array(
 				'dup' => function($array) {
 					return array_map(function($item) { return $item * 2; }, $array);
@@ -234,6 +269,12 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		return array(
 			// Call first-level method
 			array('count(arr)', $c, 3),
+			// Method with multiple arguments
+			array('pow(2, 8)', $c, 256),
+			// Combine method call and operation
+			array('count(arr) + 1', $c, 4),
+			// Nested method call and operation inside an method call
+			array('pow(2, count(arr) + 1)', $c, 16),
 			// Nest method calls and object paths
 			array('funcs.dup(arr).b', $c, 4),
 		);
@@ -295,6 +336,18 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param mixed $result
 	 */
 	public function stringLiteralsCanBeParsed($expression, $context, $result) {
+		$this->assertEvaluated($result, $expression, $context);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider stringConcatenations
+	 *
+	 * @param string $expression
+	 * @param \TYPO3\Eel\Context $context
+	 * @param mixed $result
+	 */
+	public function stringConcatenationsCanBeParsed($expression, $context, $result) {
 		$this->assertEvaluated($result, $expression, $context);
 	}
 
@@ -391,6 +444,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
 	 * @dataProvider booleanExpressions
 	 *
 	 * @param string $expression
@@ -404,6 +458,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider arrayLiteralExpressions
+	 *
 	 * @param string $expression
 	 * @param \TYPO3\Eel\Context $context
 	 * @param mixed $result

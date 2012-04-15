@@ -35,5 +35,23 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest {
 		$this->assertEvaluated('some {$context->unwrap()} string with \'quoted stuff\'', '"some {$context->unwrap()} string with \'quoted stuff\'"', $context);
 	}
 
+	/**
+	 * Assert that the expression is evaluated to the expected result
+	 * under the given context. It also ensures that the Eel expression is
+	 * recognized using the predefined regular expression.
+	 *
+	 * @param mixed $expected
+	 * @param string $expression
+	 * @param \TYPO3\Eel\Context $context
+	 */
+	protected function assertEvaluated($expected, $expression, $context) {
+		$evaluator = $this->getAccessibleMock('TYPO3\Eel\CompilingEvaluator', array('dummy'));
+		$code = $evaluator->_call('generateEvaluatorCode', $expression);
+		$this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');
+
+		$wrappedExpression = '${' . $expression . '}';
+		$this->assertSame(1, preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
+	}
+
 }
 ?>
