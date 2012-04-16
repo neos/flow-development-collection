@@ -198,7 +198,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * This command generates a new domain model class. The fields are specified as
 	 * a variable list of arguments with field name and type separated by a colon
-	 * (for example "title:string size:int type:MyType").
+	 * (for example "title:string" "size:int" "type:MyType").
 	 *
 	 * @param string $packageKey The package key of the package for the domain model
 	 * @param string $modelName The name of the new domain model class
