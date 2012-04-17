@@ -182,6 +182,7 @@ class Scripts {
 
 		$cacheManager = new \TYPO3\FLOW3\Cache\CacheManager();
 		$cacheManager->setCacheConfigurations($configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+		$cacheManager->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface'));
 
 		$cacheFactory = new \TYPO3\FLOW3\Cache\CacheFactory($bootstrap->getContext(), $cacheManager, $environment);
 
@@ -194,7 +195,6 @@ class Scripts {
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Exception
 	 */
 	static public function initializeProxyClasses(Bootstrap $bootstrap) {
 		$objectConfigurationCache = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager')->getCache('FLOW3_Object_Configuration');
@@ -202,8 +202,9 @@ class Scripts {
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
 
-			// will be FALSE here only if caches are totally empty, class monitoring runs only in compiletime
-		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $bootstrap->getContext() !== 'Production') {
+			// In Production context, the compile sub command will only be run if the
+			// code cache is completely empty:
+		if ($bootstrap->getContext() !== 'Production' || $objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			self::executeCommand('typo3.flow3:core:compile', $settings);
 			if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === TRUE) {
 				self::compileDoctrineProxies($bootstrap);
@@ -213,7 +214,7 @@ class Scripts {
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
 			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
-			system($command, $result);
+			exec($command, $output, $result);
 			if ($result !== 0) {
 				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
 			}
@@ -268,6 +269,7 @@ class Scripts {
 	 * Initializes the runtime Object Manager
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return void
 	 */
 	static public function initializeObjectManager(Bootstrap $bootstrap) {
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
@@ -305,10 +307,10 @@ class Scripts {
 		$reflectionService->injectClassLoader($bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader'));
 		$reflectionService->injectSettings($settings);
 		$reflectionService->injectPackageManager($bootstrap->getEarlyInstance('TYPO3\FLOW3\Package\PackageManagerInterface'));
-		$reflectionService->setStatusCache($cacheManager->getCache('FLOW3_ReflectionStatus'));
-		$reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('FLOW3_ReflectionData'));
-		$reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ReflectionDataRuntimeCache'));
-		$reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ClassSchemataRuntimeCache'));
+		$reflectionService->setStatusCache($cacheManager->getCache('FLOW3_Reflection_Status'));
+		$reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('FLOW3_Reflection_CompiletimeData'));
+		$reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_RuntimeData'));
+		$reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_RuntimeClassSchemata'));
 		$reflectionService->injectSettings($configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3'));
 		$reflectionService->injectEnvironment($bootstrap->getEarlyInstance('TYPO3\FLOW3\Utility\Environment'));
 
@@ -329,44 +331,75 @@ class Scripts {
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	static public function initializeClassFileMonitor(Bootstrap $bootstrap) {
+	static public function initializeSystemFileMonitor(Bootstrap $bootstrap) {
+		$fileMonitors = array(
+			'FLOW3_ClassFiles' => self::createFileMonitor('FLOW3_ClassFiles', $bootstrap),
+			'FLOW3_ConfigurationFiles' => self::createFileMonitor('FLOW3_ConfigurationFiles', $bootstrap),
+			'FLOW3_TranslationFiles' => self::createFileMonitor('FLOW3_TranslationFiles', $bootstrap)
+		);
+
 		$context = $bootstrap->getContext();
-		$cacheManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager');
-		$systemLogger = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface');
 		$packageManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Package\PackageManagerInterface');
-		$signalSlotDispatcher = $bootstrap->getEarlyInstance('TYPO3\FLOW3\SignalSlot\Dispatcher');
-
-		$changeDetectionStrategy = new \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
-		$changeDetectionStrategy->injectCache($cacheManager->getCache('FLOW3_Monitor'));
-
-		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_ClassFiles');
-		$monitor->injectCache($cacheManager->getCache('FLOW3_Monitor'));
-		$monitor->injectChangeDetectionStrategy($changeDetectionStrategy);
-		$monitor->injectSignalDispatcher($signalSlotDispatcher);
-		$monitor->injectSystemLogger($systemLogger);
-		$monitor->initializeObject();
-
-		$changeDetectionStrategy->setFileMonitor($monitor);
-
 		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
 			if ($packageManager->isPackageFrozen($packageKey)) {
 				continue;
 			}
-			$classesPath = $package->getClassesPath();
-			if (is_dir($classesPath)) {
-				$monitor->monitorDirectory($classesPath);
-			}
+			self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ClassFiles'], $package->getClassesPath());
+			self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ConfigurationFiles'], $package->getConfigurationPath());
+			self::monitorDirectoryIfItExists($fileMonitors['FLOW3_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/');
 			if ($context === 'Testing') {
-				$functionalTestsPath = $package->getFunctionalTestsPath();
-				if (is_dir($functionalTestsPath)) {
-					$monitor->monitorDirectory($functionalTestsPath);
-				}
+				self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ClassFiles'], $package->getFunctionalTestsPath());
 			}
 		}
 
-		$monitor->detectChanges();
-		$monitor->shutdownObject();
-		$changeDetectionStrategy->shutdownObject();
+		self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ConfigurationFiles'], FLOW3_PATH_CONFIGURATION);
+
+		foreach ($fileMonitors as $fileMonitor) {
+			$fileMonitor->detectChanges();
+		}
+		foreach ($fileMonitors as $fileMonitor) {
+			$fileMonitor->shutdownObject();
+		}
+	}
+
+	/**
+	 * Factory method for conveniently building a file monitor using a
+	 * ModificationTimeStrategy.
+	 *
+	 * @param string $monitorIdentifier Identifier for the new file monitor
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The bootstrap instance
+	 * @return \TYPO3\FLOW3\Monitor\FileMonitor
+	 */
+	static protected function createFileMonitor($monitorIdentifier, Bootstrap $bootstrap) {
+		$fileMonitorCache = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager')->getCache('FLOW3_Monitor');
+
+			// The change detector needs to be instantiated and registered manually because
+			// it has a complex dependency (cache) but still needs to be a singleton.
+		$fileChangeDetector = new \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
+		$fileChangeDetector->injectCache($fileMonitorCache);
+		$bootstrap->getObjectManager()->registerShutdownObject($fileChangeDetector, 'shutdownObject');
+
+		$fileMonitor = new \TYPO3\FLOW3\Monitor\FileMonitor($monitorIdentifier);
+		$fileMonitor->injectCache($fileMonitorCache);
+		$fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
+		$fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance('TYPO3\FLOW3\SignalSlot\Dispatcher'));
+		$fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface'));
+		$fileMonitor->initializeObject();
+
+		return $fileMonitor;
+	}
+
+	/**
+	 * Let the given file monitor track changes of the specified directory if it exists.
+	 *
+	 * @param \TYPO3\FLOW3\Monitor\FileMonitor $fileMonitor
+	 * @param string $path
+	 * @return void
+	 */
+	static protected function monitorDirectoryIfItExists(\TYPO3\FLOW3\Monitor\FileMonitor $fileMonitor, $path) {
+		if (is_dir($path)) {
+			$fileMonitor->monitorDirectory($path);
+		}
 	}
 
 	/**

@@ -152,14 +152,14 @@ TYPO3\FLOW3\Mvc\Routing\Aspect\RouterCachingAspect:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_MVC_Web_Routing_FindMatchResults
+            value: FLOW3_Mvc_Routing_FindMatchResults
     resolveCache:
       object:
         factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_MVC_Web_Routing_Resolve
+            value: FLOW3_Mvc_Routing_Resolve
 
 #                                                                          #
 # Object                                                                   #

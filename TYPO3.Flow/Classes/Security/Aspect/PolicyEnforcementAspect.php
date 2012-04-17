@@ -23,6 +23,7 @@ class PolicyEnforcementAspect {
 
 	/**
 	 * The policy enforcement interceptor
+	 *
 	 * @var \TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement
 	 */
 	protected $policyEnforcementInterceptor;
@@ -60,6 +61,27 @@ class PolicyEnforcementAspect {
 			// @TODO Once we use the AfterInvocation again, it needs to be invoked here and its result returned instead.
 		return $result;
 	}
+
+	/**
+	 * Makes sure that the AOP proxies are rebuilt if a policy has changed.
+	 *
+	 * Note: This is not an advice but a method which is used as a slot for a signal
+	 *       sent by the system file monitor defined in the bootstrap scripts.
+	 *
+	 * @param string $fileMonitorIdentifier Identifier of the File Monitor
+	 * @param array $changedFiles A list of full paths to changed files
+	 * @return void
+	 */
+	public function triggerAopProxyRebuildingByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
+		if ($fileMonitorIdentifier !== 'FLOW3_PolicyFiles') {
+			return;
+		}
+		$this->systemLogger->log('The security policies have changed, thus triggering an AOP proxy class rebuild.', LOG_INFO);
+
+		$this->flushCachesByTag(\TYPO3\FLOW3\Cache\CacheManager::getClassTag());
+		$this->flushCachesByTag(\TYPO3\FLOW3\Cache\CacheManager::getClassTag('TYPO3\FLOW3\Security\Aspect\PolicyEnforcementAspect'));
+	}
+
 }
 
 ?>
