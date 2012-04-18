@@ -3,7 +3,7 @@
 	<key>TYPO3.FLOW3</key>
 	<title>FLOW3</title>
 	<description>FLOW3 is an enterprise PHP application framework making extensive use of software development paradigms that had not been brought to PHP programming yet.</description>
-	<version>1.0.0</version>
+	<version>1.1.0-dev</version>
 	<categories/>
 	<parties>
 		<person role="LeadDeveloper">
