@@ -116,7 +116,7 @@ class XliffTranslationProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$expectedLocale = new \TYPO3\FLOW3\I18n\Locale('za');
 
 		$mockLocalizationService = $this->getMock('TYPO3\FLOW3\I18n\Service');
-		$mockLocalizationService->expects($this->once())->method('getLocalizedFilename')->will($this->returnValue(array($expectedSourcePath, $expectedLocale)));
+		$mockLocalizationService->expects($this->once())->method('getXliffFilenameAndPath')->will($this->returnValue(array($expectedSourcePath, $expectedLocale)));
 
 		$translationProvider = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider', array('dummy'));
 		$translationProvider->injectLocalizationService($mockLocalizationService);

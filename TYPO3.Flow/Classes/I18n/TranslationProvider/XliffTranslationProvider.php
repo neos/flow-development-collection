@@ -139,13 +139,16 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * @return \TYPO3\FLOW3\I18n\Xliff\XliffModel New or existing instance
 	 */
 	protected function getModel($packageKey, $sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
-		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath, $sourceName . '.xlf'));
-		list($sourcePath, $locale) = $this->localizationService->getLocalizedFilename($sourcePath, $locale, FALSE);
+		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath));
+		list($sourcePath, $foundLocale) = $this->localizationService->getXliffFilenameAndPath($sourcePath, $sourceName, $locale);
 
+		if ($sourcePath === FALSE) {
+			throw new \TYPO3\FLOW3\I18n\Exception('No XLIFF file is available for ' . $packageKey . '::' . $sourceName . '::' . $locale . ' in the locale chain.', 1334759591);
+		}
 		if (isset($this->models[$sourcePath])) {
 			return $this->models[$sourcePath];
 		}
-		return $this->models[$sourcePath] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourcePath, $locale);
+		return $this->models[$sourcePath] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourcePath, $foundLocale);
 	}
 }
 

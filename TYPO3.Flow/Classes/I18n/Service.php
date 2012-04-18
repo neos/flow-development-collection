@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\I18n;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * A Service which provides further information about a given locale
@@ -167,6 +168,41 @@ class Service {
 	}
 
 	/**
+	 * Returns the path to the existing localized version of file given.
+	 *
+	 * Searching is done for the current locale if no $locale parameter is
+	 * provided. The search is done according to the configured fallback
+	 * rule.
+	 *
+	 * If parameter $strict is provided, searching is done only for the
+	 * provided / current locale (without searching of files localized for
+	 * more generic locales).
+	 *
+	 * If no localized version of file is found, $filepath is returned without
+	 * any change.
+	 *
+	 * @param string $path Base directory to the translation files
+	 * @param string $sourceName name of the translation source
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of XLIFF file
+	 * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
+	 * @see Configuration::setFallbackRule()
+	 * @api
+	 */
+	public function getXliffFilenameAndPath($path, $sourceName, Locale $locale = NULL) {
+		if ($locale === NULL) {
+			$locale = $this->configuration->getCurrentLocale();
+		}
+
+		foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
+			$possibleXliffFilename = Files::concatenatePaths(array($path, $localeIdentifier, $sourceName . '.xlf'));
+			if (file_exists($possibleXliffFilename)) {
+				return array($possibleXliffFilename, $locale);
+			}
+		}
+		return array(FALSE, $locale);
+	}
+
+	/**
 	 * Build a chain of locale objects according to the fallback rule and
 	 * the available locales.
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
@@ -244,16 +280,18 @@ class Service {
 	protected function generateAvailableLocalesCollectionByScanningFilesystem() {
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {
 
-			if (!is_dir($this->localeBasePath . $activePackage->getPackageKey() . '/')) continue;
+			$packageResourcesPath = $this->localeBasePath . $activePackage->getPackageKey() . '/';
+			if (!is_dir($packageResourcesPath)) {
+				continue;
+			}
 
-			$directoryIterator = new \RecursiveDirectoryIterator($this->localeBasePath . $activePackage->getPackageKey() . '/', \RecursiveDirectoryIterator::UNIX_PATHS);
+			$directoryIterator = new \RecursiveDirectoryIterator($packageResourcesPath, \RecursiveDirectoryIterator::UNIX_PATHS);
 			$recursiveIteratorIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
 
 			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
 				if ($fileOrDirectory->isFile()) {
-					$localeIdentifier = Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
-
-					if ($localeIdentifier !== FALSE && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier) === 1) {
+					$localeIdentifier = Utility::extractLocaleTagFromFilename($fileOrDirectory->getFilename());
+					if ($localeIdentifier !== FALSE) {
 						$this->localeCollection->addLocale(new Locale($localeIdentifier));
 					}
 				}

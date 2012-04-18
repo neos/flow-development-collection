@@ -118,9 +118,12 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeCorrectlyGeneratesAvailableLocales() {
-		mkdir('vfs://Foo/Bar/Private/', 0777, TRUE);
-		foreach (array('en', 'sr_Cyrl_RS', 'en_GB', 'sr') as $localeIdentifier) {
+		mkdir('vfs://Foo/Bar/Private/Translations', 0777, TRUE);
+		foreach (array('en', 'sr_Cyrl_RS') as $localeIdentifier) {
 			file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
+		}
+		foreach (array('en_GB', 'sr') as $localeIdentifier) {
+			file_put_contents('vfs://Foo/Bar/Private/Translations/' . $localeIdentifier . '.xlf', 'FooBar');
 		}
 
 		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');

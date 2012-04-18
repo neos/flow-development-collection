@@ -56,9 +56,13 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function filenamesWithLocale() {
 		return array(
-			array('/foo/bar/foobar.en_GB.ext', 'en_GB'),
-			array('/foo/bar/foobar.ext', FALSE),
-			array('/foo/bar/foobar', FALSE),
+			array('foobar.en_GB.ext', 'en_GB'),
+			array('en_GB.xlf', 'en_GB'),
+			array('foobar.ext', FALSE),
+			array('foobar', FALSE),
+			array('foobar.php.tmpl', FALSE),
+			array('foobar.rss.php', FALSE),
+			array('foobar.xml.php', FALSE),
 		);
 	}
 
