@@ -228,14 +228,14 @@ class Service {
 			'New Migrations'        => $newMigrations
 		);
 		foreach ($info as $name => $value) {
-			$output .= '    >> ' . $name . ': ' . str_repeat(' ', 50 - strlen($name)) . $value . "\n";
+			$output .= '    >> ' . $name . ': ' . str_repeat(' ', 50 - strlen($name)) . $value . PHP_EOL;
 		}
 
 		if ($migrations = $configuration->getMigrations()) {
 			$output .= "\n == Migration Versions\n";
 			foreach ($migrations as $version) {
-				$status = $version->isMigrated() ? 'migrated' : "not migrated\n";
-				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . str_repeat(' ', 30 - strlen($name)) . $status . "\n";
+				$status = $version->isMigrated() ? 'migrated' : 'not migrated';
+				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . str_repeat(' ', 30 - strlen($name)) . $status . PHP_EOL;
 			}
 		}
 
