@@ -342,15 +342,80 @@ class Request {
 	 * can be retrieved by the getArgument(s) method, no matter if they
 	 * have been GET, POST or PUT arguments before.
 	 *
-	 * @return array
+	 * @param array $getArguments
+	 * @param array $postArguments
+	 * @param array $uploadArguments
+	 * @return array the unified arguments
 	 */
 	protected function buildUnifiedArguments(array $getArguments, array $postArguments, array $uploadArguments) {
 		$arguments = $getArguments;
 		if ($this->method === 'POST' || $this->method === 'PUT') {
 			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $uploadArguments);
+			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
 		}
 		return $arguments;
+	}
+
+	/**
+	 * Transforms the convoluted _FILES superglobal into a manageable form.
+	 *
+	 * @param array $convolutedFiles The _FILES superglobal
+	 * @return array Untangled files
+	 */
+	protected function untangleFilesArray(array $convolutedFiles) {
+		$untangledFiles = array();
+
+		$fieldPaths = array();
+		foreach ($convolutedFiles as $firstLevelFieldName => $fieldInformation) {
+			if (!is_array($fieldInformation['error'])) {
+				$fieldPaths[] = array($firstLevelFieldName);
+			} else {
+				$newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
+				array_walk($newFieldPaths,
+					function(&$value, $key) {
+						$value = explode('/', $value);
+					}
+				);
+				$fieldPaths = array_merge($fieldPaths, $newFieldPaths);
+			}
+		}
+
+		foreach ($fieldPaths as $fieldPath) {
+			if (count($fieldPath) === 1) {
+				$fileInformation = $convolutedFiles[$fieldPath{0}];
+			} else {
+				$fileInformation = array();
+				foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
+					$fileInformation[$key] = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
+				}
+			}
+			$untangledFiles = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
+		}
+		return $untangledFiles;
+	}
+
+	/**
+	 * Returns and array of all possibles "field paths" for the given array.
+	 *
+	 * @param array $structure The array to walk through
+	 * @param string $firstLevelFieldName
+	 * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
+	 */
+	protected function calculateFieldPaths(array $structure, $firstLevelFieldName = NULL) {
+		$fieldPaths = array();
+		if (is_array($structure)) {
+			foreach ($structure as $key => $subStructure) {
+				$fieldPath = ($firstLevelFieldName !== NULL ? $firstLevelFieldName . '/' : '') . $key;
+				if (is_array($subStructure)) {
+					foreach($this->calculateFieldPaths($subStructure) as $subFieldPath) {
+						$fieldPaths[] = $fieldPath . '/' . $subFieldPath;
+					}
+				} else {
+					$fieldPaths[] = $fieldPath;
+				}
+			}
+		}
+		return $fieldPaths;
 	}
 
 }
