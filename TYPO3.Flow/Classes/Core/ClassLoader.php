@@ -102,18 +102,18 @@ class ClassLoader {
 			return FALSE;
 		}
 
-			// Load classes from the FLOW3 package at a very early stage where the
-			// no packages have been registered and the .Shortcuts directory might not exist:
+			// Load classes from the FLOW3 package at a very early stage where
+			// no packages have been registered yet:
 		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
 			require(FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php');
 			return TRUE;
 		}
 
 			// Loads any non-proxied class of registered packages:
-		foreach ($this->packageNamespaces as $packageNamespace => $packageNamespaceLength) {
-			if (substr($className, 0, $packageNamespaceLength) === $packageNamespace) {
-				if ($this->considerTestsNamespace === TRUE && substr($className, $packageNamespaceLength + 1, 16) === 'Tests\Functional') {
-					$classPathAndFilename = $this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageNamespaceLength + 1)) . '.php';
+		foreach ($this->packageNamespaces as $packageNamespace => $packageData) {
+			if (substr($className, 0, $packageData['namespaceLength']) === $packageNamespace) {
+				if ($this->considerTestsNamespace === TRUE && substr($className, $packageData['namespaceLength'] + 1, 16) === 'Tests\Functional') {
+					$classPathAndFilename = $this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageData['namespaceLength'] + 1)) . '.php';
 					if (file_exists($classPathAndFilename)) {
 						require($classPathAndFilename);
 						return TRUE;
@@ -123,7 +123,7 @@ class ClassLoader {
 						// The only reason using file_exists here is that Doctrine tries
 						// out several combinations of annotation namespaces and thus also triggers
 						// autoloading for non-existant classes in a valid package namespace
-					$classPathAndFilename = $this->packagesPath . '.Shortcuts/' . str_replace('\\', '/', $className) . '.php';
+					$classPathAndFilename = $packageData['classesPath'] . str_replace('\\', '/', substr($className, $packageData['namespaceLength'])) . '.php';
 					if (file_exists($classPathAndFilename)) {
 						require ($classPathAndFilename);
 						return TRUE;
@@ -144,7 +144,7 @@ class ClassLoader {
 	public function setPackages(array $packages) {
 		$this->packages = $packages;
 		foreach ($packages as $package) {
-			$this->packageNamespaces[$package->getPackageNamespace()] = strlen($package->getPackageNamespace());
+			$this->packageNamespaces[$package->getPackageNamespace()] = array('namespaceLength' => strlen($package->getPackageNamespace()), 'classesPath' => $package->getClassesPath());
 		}
 	}
 

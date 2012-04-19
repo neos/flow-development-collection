@@ -63,11 +63,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	/**
 	 * @var string
 	 */
-	protected $shortcutsPath;
-
-	/**
-	 * @var string
-	 */
 	protected $packageStatesPathAndFilename;
 
 	/**
@@ -124,7 +119,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->bootstrap = $bootstrap;
 		$this->packagesBasePath = $packagesBasePath;
 		$this->packageStatesPathAndFilename = ($packageStatesPathAndFilename === '') ? FLOW3_PATH_CONFIGURATION . 'PackageStates.php' : $packageStatesPathAndFilename;
-		$this->shortcutsPath = Files::concatenatePaths(array($this->packagesBasePath, '.Shortcuts'));
 
 		$this->loadPackageStates();
 
@@ -135,10 +129,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		$this->classLoader->setPackages($this->activePackages);
-
-		if (!file_exists($this->shortcutsPath)) {
-			$this->updateShortcuts();
-		}
 
 		foreach ($this->activePackages as $package) {
 			$package->boot($bootstrap);
@@ -495,7 +485,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	protected function loadPackageStates() {
 		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
-		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 1) {
+		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 2) {
+			if (is_dir(FLOW3_PATH_PACKAGES . '.Shortcuts')) {
+				Files::removeDirectoryRecursively(FLOW3_PATH_PACKAGES . '.Shortcuts');
+			}
 			$this->packageStatesConfiguration = array();
 		}
 		if ($this->packageStatesConfiguration === array() || $this->bootstrap->getContext() !== 'Production') {
@@ -559,9 +552,20 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 				}
 			}
 			$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $packagePath;
+
+				// Change this to read the target from Composer or any other source
+			$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = Package::DIRECTORY_CLASSES;
 		}
 
-		$this->packageStatesConfiguration['version'] = 1;
+			// sort longer package keys first, to find specific matches before generic ones
+		uksort($this->packageStatesConfiguration['packages'], function($a, $b) {
+			if (strlen($a) === strlen($b)) {
+				return 0;
+			}
+			return (strlen($a) > strlen($b)) ? -1 : 1;
+		});
+
+		$this->packageStatesConfiguration['version'] = 2;
 
 		if ($this->packageStatesConfiguration !== $previousPackageStatesConfiguration) {
 			$this->savePackageStates();
@@ -612,7 +616,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			if (!class_exists($packageClassName)) {
 				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class called "%s".', $packageKey, $packageClassPathAndFilename, $packageClassName), 1327587091);
 			}
-			$this->packages[$packageKey] = new $packageClassName($packageKey, $stateConfiguration['packagePath']);
+			$this->packages[$packageKey] = new $packageClassName($packageKey, $stateConfiguration['packagePath'], $stateConfiguration['classesPath']);
 
 			if (!$this->packages[$packageKey] instanceof PackageInterface) {
 				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package class %s in package "%s" does not implement PackageInterface.', $packageClassName, $packageKey), 1300782487);
@@ -626,45 +630,23 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 	/**
 	 * Saves the current content of $this->packageStatesConfiguration to the
-	 * PackageStates.php file (and updates the Packages/.Shortcuts folder).
+	 * PackageStates.php file.
 	 *
 	 * @return void
-	 * @see updateShortcuts()
 	 */
 	protected function savePackageStates() {
-		$packageStatesCode = "<?php\n# This is a generated file, do not edit manually\n# Use the commands flow3:package:activate and flow3:package:deactivate for changes\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
+		$fileDescription = "# PackageStates.php\n\n";
+		$fileDescription .= "# This file is maintained by FLOW3's package management. Although you can edit it\n";
+		$fileDescription .= "# manually, you should rather use the command line commands for maintaining packages.\n";
+		$fileDescription .= "# You'll find detailed information about the typo3.flow3:package:* commands in their\n";
+		$fileDescription .= "# respective help screens.\n\n";
+		$fileDescription .= "# This file will be regenerated automatically if it doesn't exist. Deleting this file\n";
+		$fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
+
+		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
 		file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
-		$this->updateShortcuts();
 	}
 
-	/**
-	 * Updates the Packages/.Shortcuts folder to the current packages.
-	 *
-	 * @return void
-	 */
-	protected function updateShortcuts() {
-		if (file_exists($this->shortcutsPath)) {
-			Files::removeDirectoryRecursively($this->shortcutsPath);
-		}
-		Files::createDirectoryRecursively($this->shortcutsPath);
-		foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
-			if ($stateConfiguration['state'] === 'inactive') {
-				continue;
-			}
-
-			$packageKeyParts = explode('.', $packageKey);
-			if (count($packageKeyParts) > 1) {
-				$basePath = Files::concatenatePaths(array($this->shortcutsPath, implode('/', array_slice($packageKeyParts, 0, -1))));
-				Files::createDirectoryRecursively($basePath);
-				$symlinkPathAndName = Files::concatenatePaths(array($basePath, array_pop($packageKeyParts)));
-			} else {
-				$symlinkPathAndName = Files::concatenatePaths(array($this->shortcutsPath, array_pop($packageKeyParts)));
-			}
-			if (!file_exists($symlinkPathAndName)) {
-				symlink($stateConfiguration['packagePath'] . 'Classes/', $symlinkPathAndName);
-			}
-		}
-	}
 }
 
 ?>

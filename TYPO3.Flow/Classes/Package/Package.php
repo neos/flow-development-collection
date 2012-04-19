@@ -33,6 +33,12 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
+	 * Full path to this package's PSR-0 class loader entry point
+	 * @var string
+	 */
+	protected $classesPath;
+
+	/**
 	 * If this package is protected and therefore cannot be deactivated or deleted
 	 * @var boolean
 	 * @api
@@ -64,16 +70,19 @@ class Package implements PackageInterface {
 	 *
 	 * @param string $packageKey Key of this package
 	 * @param string $packagePath Absolute path to the package's main directory
+	 * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, defaults to 'Classes'
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 */
-	public function __construct($packageKey, $packagePath) {
+	public function __construct($packageKey, $packagePath, $classesPath = self::DIRECTORY_CLASSES) {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		if (!(is_dir($packagePath) || (\TYPO3\FLOW3\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
-		if (substr($packagePath, -1, 1) != '/') throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
+		if (substr($packagePath, -1, 1) !== '/') throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
+		if (substr($classesPath, 1, 1) === '/') throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package classes path has a leading forward slash.', 1334841320);
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
+		$this->classesPath = $classesPath;
 	}
 
 	/**
@@ -104,7 +113,7 @@ class Package implements PackageInterface {
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
-			$this->classFiles = $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_CLASSES);
+			$this->classFiles = $this->buildArrayOfClassFiles($this->packagePath . $this->classesPath);
 		}
 		return $this->classFiles;
 	}
@@ -186,7 +195,7 @@ class Package implements PackageInterface {
 	 * @api
 	 */
 	public function getClassesPath() {
-		return $this->packagePath . self::DIRECTORY_CLASSES;
+		return $this->packagePath . $this->classesPath;
 	}
 
 	/**

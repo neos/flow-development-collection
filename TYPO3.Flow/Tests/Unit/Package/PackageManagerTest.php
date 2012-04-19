@@ -33,7 +33,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
 		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
 		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher')));
-		$this->packageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'));
+		$this->packageManager = new \TYPO3\FLOW3\Package\PackageManager();
 
 		mkdir('vfs://Test/Resources');
 		$packageClassTemplateUri = 'vfs://Test/Resources/Package.php.tmpl';

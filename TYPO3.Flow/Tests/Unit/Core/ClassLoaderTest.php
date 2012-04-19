@@ -35,17 +35,13 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
 
-		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes/', 0770, TRUE);
-		mkdir('vfs://Test/Packages/.Shortcuts/Acme/MyApp/', 0770, TRUE);
-		$package1 = new \TYPO3\FLOW3\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme/MyApp/');
-		mkdir('vfs://Test/Packages/Application/Acme/MyAppAddon/Classes/', 0770, TRUE);
-		mkdir('vfs://Test/Packages/.Shortcuts/Acme/MyAppAddon/', 0770, TRUE);
-		$package2 = new \TYPO3\FLOW3\Package\Package('Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme/MyAppAddon/');
+		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/', 0770, TRUE);
+		$package1 = new \TYPO3\FLOW3\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/');
+		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/', 0770, TRUE);
+		$package2 = new \TYPO3\FLOW3\Package\Package('Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/');
 
 		$this->classLoader = new \TYPO3\FLOW3\Core\ClassLoader();
-		$propertyReflection = new \ReflectionProperty($this->classLoader, 'packagesPath');
-		$propertyReflection->setAccessible(TRUE);
-		$propertyReflection->setValue($this->classLoader, 'vfs://Test/Packages/');
+		$this->inject($this->classLoader, 'packagesPath', 'vfs://Test/Packages/');
 		$this->classLoader->setPackages(array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2));
 	}
 
@@ -55,8 +51,8 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function classesFromSubDirectoriesAreLoaded() {
-		mkdir('vfs://Test/Packages/.Shortcuts/Acme/MyApp/SubDirectory', 0770, TRUE);
-		file_put_contents('vfs://Test/Packages/.Shortcuts/Acme/MyApp/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/SubDirectory', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
 		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyApp\SubDirectory\ClassInSubDirectory');
@@ -69,8 +65,8 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function classesFromFunctionalTestsDirectoriesAreLoaded() {
-		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Tests/Functional/Essentials', 0770, TRUE);
-		file_put_contents('vfs://Test/Packages/Application/Acme/MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->setConsiderTestsNamespace(TRUE);
 		$this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');
@@ -83,8 +79,8 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
 		$this->markTestSkipped('Currently, this test is unbelievably slow, and CPU is increasing radically... It seems something weird happens inside of vfsStream.');
 
-		mkdir('vfs://Test/Packages/.Shortcuts/Acme/MyApp/SubDirectory/A/B/C/D/E/F/G/H/I/J', 0770, TRUE);
-		file_put_contents('vfs://Test/Packages/.Shortcuts/Acme/MyApp/SubDirectory/A/B/C/D/E/F/G/H/I/J/K.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J/K.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
 		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyApp\SubDirectory\A\B\C\D\E\F\G\H\I\J\K');
@@ -98,7 +94,7 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function classesFromSubMatchingPackagesAreLoaded() {
-		file_put_contents('vfs://Test/Packages/.Shortcuts/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
 		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyAppAddon\Class');

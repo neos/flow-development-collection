@@ -79,7 +79,6 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			// bootstrap in order to reliably flush the temporary data before any
 			// other code can cause fatal errors.
 
-		$this->removeShortcuts();
 		$this->cacheManager->flushCaches();
 		$this->outputLine('Flushed all caches.');
 		if ($this->lockManager->isSiteLocked()) {
@@ -137,15 +136,6 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	public function emitWarmupCaches() {
 	}
 
-	/**
-	 * Helper method to remove the shortcuts directory used by the classloader.
-	 *
-	 * @param string $packagePath
-	 * @return void
-	 */
-	protected function removeShortcuts($packagePath = FLOW3_PATH_PACKAGES) {
-		Files::removeDirectoryRecursively(Files::concatenatePaths(array($packagePath, '.Shortcuts')));
-	}
 }
 
 ?>
