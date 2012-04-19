@@ -65,6 +65,13 @@ class Request {
 	protected $server;
 
 	/**
+	 * The "http" settings
+	 *
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
 	 * Cached entity body content of this request
 	 *
 	 * @var string
@@ -166,6 +173,17 @@ class Request {
 	 */
 	static public function createFromEnvironment() {
 		return new static($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
+	}
+
+	/**
+	 * Injects the settings of this package
+	 *
+	 * @param array $settings
+	 * @return void
+	 * @FLOW3\Autowiring(FALSE)
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
 	}
 
 	/**
@@ -330,10 +348,14 @@ class Request {
 	 * @return void
 	 */
 	protected function detectBaseUri() {
-		$this->baseUri = clone $this->uri;
-		$this->baseUri->setQuery(NULL);
-		$this->baseUri->setFragment(NULL);
-		$this->baseUri->setPath($this->getScriptRequestPath());
+		if (isset($this->settings['http']['baseUri']) && $this->settings['http']['baseUri'] !== NULL) {
+			$this->baseUri = new Uri($this->settings['http']['baseUri']);
+		} else {
+			$this->baseUri = clone $this->uri;
+			$this->baseUri->setQuery(NULL);
+			$this->baseUri->setFragment(NULL);
+			$this->baseUri->setPath($this->getScriptRequestPath());
+		}
 	}
 
 	/**

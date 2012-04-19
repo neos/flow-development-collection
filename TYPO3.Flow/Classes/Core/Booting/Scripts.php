@@ -65,9 +65,6 @@ class Scripts {
 		$environment = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Utility\Environment');
 		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
 
-		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
-		$settings = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
-
 		echo "Force-flushed caches." . PHP_EOL;
 		exit(0);
 	}
@@ -115,10 +112,6 @@ class Scripts {
 
 		$environment = new \TYPO3\FLOW3\Utility\Environment($context);
 		$environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
-
-		if (isset($settings['utility']['environment']['baseUri']) && $settings['utility']['environment']['baseUri'] !== NULL) {
-			$environment->setBaseUri(new Uri($settings['utility']['environment']['baseUri']));
-		}
 
 		$configurationManager->injectEnvironment($environment);
 		$packageManager->injectSettings($settings);

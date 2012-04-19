@@ -57,6 +57,13 @@ class RequestHandler implements HttpRequestHandlerInterface {
 
 
 	/**
+	 * The "http" settings
+	 *
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
 	 * Make exit() a closure so it can be manipulated during tests
 	 *
 	 * @var Closure
@@ -103,6 +110,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 
 		$this->boot();
 		$this->resolveDependencies();
+		$this->request->injectSettings($this->settings);
 
 		$response = new Response();
 
@@ -150,12 +158,12 @@ class RequestHandler implements HttpRequestHandlerInterface {
 		$this->dispatcher = $objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher');
 
 		$configurationManager = $objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager');
+		$this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
 
 		$this->routesConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router = $objectManager->get('TYPO3\FLOW3\Mvc\Routing\Router');
 
 		$this->securityContext = $objectManager->get('TYPO3\FLOW3\Security\Context');
 	}
-
 }
 ?>

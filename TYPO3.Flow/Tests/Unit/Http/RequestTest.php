@@ -319,6 +319,29 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function getBaseUriReturnsThePresetBaseUriIfItHasBeenSet() {
+		$server = array (
+			'HTTP_HOST' => 'dev.blog.rob',
+			'REQUEST_METHOD' => 'GET',
+			'REQUEST_URI' => '/foo/bar',
+			'SCRIPT_NAME' => '/index.php',
+			'PHP_SELF' => '/index.php',
+		);
+
+		$settings = array(
+			'http' => array(
+				'baseUri' => 'http://prod.blog.rob/'
+			)
+		);
+
+		$request = new Request(array(), array(), array(), array(), $server);
+		$request->injectSettings($settings);
+		$this->assertEquals('http://prod.blog.rob/', (string)$request->getBaseUri());
+	}
+
+	/**
 	 * Data Provider
 	 */
 	public function variousArguments() {
