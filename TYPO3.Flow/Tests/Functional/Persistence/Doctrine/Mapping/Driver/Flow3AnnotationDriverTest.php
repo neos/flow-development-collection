@@ -111,7 +111,7 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'fieldName' => 'related',
 			'columnName' => 'related',
 			'joinTable' => array(
-				'name' => 'typo3_flow3_tests_functional_persistence_fixt_3ebc7_related_join',
+				'name' => 'typo3_flow3_tests_functional_persistence_fix_3ebc7_related_join',
 				'schema' => NULL,
 				'joinColumns' => array(
 					0 => array(
