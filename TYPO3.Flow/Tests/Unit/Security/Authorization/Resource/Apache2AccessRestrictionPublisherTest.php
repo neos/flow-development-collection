@@ -28,11 +28,9 @@ class Apache2AccessRestrictionPublisherTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	 * @test
 	 */
 	public function publishAccessRestrictionsForPathPublishesAHtaccessFileInTheGivenDirectory() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getRemoteAddress')->will($this->returnValue('192.168.1.234'));
+		$_SERVER['REMOTE_ADDR'] = '192.168.1.234';
 
 		$publisher = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authorization\Resource\Apache2AccessRestrictionPublisher', array('dummy'));
-		$publisher->_set('environment', $mockEnvironment);
 		$publisher->publishAccessRestrictionsForPath('vfs://Foo/');
 
 		$expectedFileContents = 'Deny from all' . chr(10) . 'Allow from 192.168.1.234';

@@ -31,9 +31,9 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	protected $resourcesBaseUri;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
-	protected $environment;
+	protected $bootstrap;
 
 	/**
 	 * @var array
@@ -41,13 +41,13 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	protected $settings;
 
 	/**
-	 * Injects the server environment
+	 * Injects the bootstrap
 	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment The environment
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
+	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		$this->bootstrap = $bootstrap;
 	}
 
 	/**
@@ -200,18 +200,19 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	}
 
 	/**
-	 * Detects the (resources) base URI and stores it as a protected
-	 * class variable.
-	 *
-	 * This functionality somewhat duplicates the detection used in the Web
-	 * Request Builder but for the time being this should be good enough.
+	 * Detects the (resources) base URI and stores it as a protected class variable.
 	 *
 	 * $this->resourcesPublishingPath must be set prior to calling this method.
 	 *
 	 * @return void
 	 */
 	protected function detectResourcesBaseUri() {
-		$uri = $this->environment->getBaseUri();
+		$requestHandler = $this->bootstrap->getActiveRequestHandler();
+		if ($requestHandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
+			$uri = $requestHandler->getHttpRequest()->getBaseUri();
+		} else {
+			$uri = '';
+		}
 		$this->resourcesBaseUri = $uri . substr($this->resourcesPublishingPath, strlen(FLOW3_PATH_WEB));
 	}
 

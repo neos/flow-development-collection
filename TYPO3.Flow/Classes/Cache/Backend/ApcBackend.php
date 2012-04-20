@@ -67,7 +67,7 @@ class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$pathHash = substr(md5(FLOW3_PATH_WEB . $this->environment->getSAPIName() . $processUser['name'] . $this->context), 0, 12);
+		$pathHash = substr(md5(FLOW3_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context), 0, 12);
 		$this->identifierPrefix = 'FLOW3_' . $pathHash;
 	}
 

@@ -55,7 +55,6 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 */
 	protected $request;
 
-
 	/**
 	 * The "http" settings
 	 *

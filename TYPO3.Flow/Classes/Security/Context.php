@@ -153,7 +153,7 @@ class Context {
 	 * This method is called manually by the request handler which created the HTTP
 	 * request.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request The current HTTP request
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request The current ActionRequest
 	 * @return void
 	 * @FLOW3\Autowiring(FALSE)
 	 */

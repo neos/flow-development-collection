@@ -21,21 +21,18 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class Apache2AccessRestrictionPublisher implements \TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @FLOW3\Inject
-	 */
-	protected $environment;
-
-	/**
 	 * Publishes an Apache2 .htaccess file which allows access to the given directory only for the current session remote ip
 	 *
 	 * @param string $path The path to publish the restrictions for
 	 * @return void
 	 */
 	public function publishAccessRestrictionsForPath($path) {
-		$content = "Deny from all\nAllow from " . $this->environment->getRemoteAddress();
+		$remoteAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : NULL;
 
-		file_put_contents($path . '.htaccess', $content);
+		if ($remoteAddress !== NULL) {
+			$content = "Deny from all\nAllow from " . $remoteAddress;
+			file_put_contents($path . '.htaccess', $content);
+		}
 	}
 }
 

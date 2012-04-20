@@ -336,14 +336,20 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function detectResourcesBaseUriDetectsUriWithSubDirectoryCorrectly() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getBaseUri')->will($this->returnValue(new \TYPO3\FLOW3\Http\Uri('http://www.server.com/')));
+		$expectedBaseUri = 'http://www.sarkosh.dk/_Resources/';
 
-		$expectedBaseUri = 'http://www.server.com/_Resources/';
+		$uri = new \TYPO3\FLOW3\Http\Uri('http://www.sarkosh.dk/cdcollection/albums');
+		$httpRequest = \TYPO3\FLOW3\Http\Request::create($uri);
+
+		$requestHandler = $this->getMock('TYPO3\FLOW3\Http\HttpRequestHandlerInterface');
+		$requestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+
+		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
+		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($requestHandler));
 
 		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 		$publishingTarget->_set('resourcesPublishingPath', FLOW3_PATH_WEB . '_Resources/');
-		$publishingTarget->injectEnvironment($mockEnvironment);
+		$publishingTarget->injectBootstrap($bootstrap);
 
 		$publishingTarget->_call('detectResourcesBaseUri');
 

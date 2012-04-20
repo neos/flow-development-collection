@@ -154,7 +154,7 @@ class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
-		$this->identifierPrefix = 'FLOW3_' . md5($cache->getIdentifier() . $this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
+		$this->identifierPrefix = 'FLOW3_' . md5($cache->getIdentifier() . \TYPO3\FLOW3\Utility\Files::getUnixStylePath($_SERVER['SCRIPT_FILENAME']) . PHP_SAPI) . '_';
 	}
 
 	/**
