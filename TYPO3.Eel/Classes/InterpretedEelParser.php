@@ -81,7 +81,7 @@ class InterpretedEelParser extends EelParser {
 		$result['val'] = $sub['val'];
 	}
 
-	public function Expression_Disjunction(&$result, $sub) {
+	public function Expression_exp(&$result, $sub) {
 		$result['val'] = $sub['val'];
 	}
 
@@ -93,7 +93,7 @@ class InterpretedEelParser extends EelParser {
 		$result['val'] = $sub['val'];
 	}
 
-	public function NotExpression_Expression(&$result, $sub) {
+	public function NotExpression_exp(&$result, $sub) {
 		$result['val'] = !(boolean)$sub['val'];
 	}
 
@@ -202,6 +202,23 @@ class InterpretedEelParser extends EelParser {
 			break;
 		}
 	}
+
+	public function ConditionalExpression_cond(&$result, $sub) {
+		$result['val'] = $sub['val'];
+	}
+
+	public function ConditionalExpression_then(&$result, $sub) {
+		$result['then'] = $sub['val'];
+	}
+
+	public function ConditionalExpression_else(&$result, $sub) {
+		if ((boolean)$this->unwrap($result['val'])) {
+			$result['val'] = $result['then'];
+		} else {
+			$result['val'] = $sub['val'];
+		}
+	}
+
 
 	/**
 	 * If $value is an instance of Context, the result of unwrap()

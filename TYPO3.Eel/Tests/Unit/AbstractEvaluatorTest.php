@@ -182,7 +182,8 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('TRUE && TRUE || FALSE && FALSE', $c, TRUE),
 			array('TRUE && FALSE || FALSE && TRUE', $c, FALSE),
 			array('1 < 2 && 2 > 1', $c, TRUE),
-			array('!1 < 2', $c, FALSE),
+			array('!1 < 2', $c, TRUE),
+			array('!(1 < 2)', $c, FALSE),
 			// Named and symbolic operators can be mixed
 			array('TRUE && true and FALSE or false', $c, FALSE),
 			// Using variables and literals
@@ -300,6 +301,26 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('[[1, 2], 3, 4]', $c, array(array(1, 2), 3, 4)),
 			// Nested expressions in array literal
 			array('[[foo[bar], 2], test("a"), 4]', $c, array(array('Hello', 2), 'test|a|', 4)),
+		);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function conditionalOperatorExpressions() {
+		$c = new Context(array(
+			'answer' => 42,
+			'trueVar' => TRUE,
+			'a' => 5,
+			'b' => 10
+		));
+		return array(
+			// Simple ternary operator expression (condition)
+			array('TRUE ? 1 : 2', $c, 1),
+			// Ternary operator using variables
+			array('trueVar ? answer : FALSE', $c, 42),
+			array('!trueVar ? FALSE : answer', $c, 42),
+			array('a < b ? 1 : 2', $c, 1)
 		);
 	}
 
@@ -464,6 +485,18 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param mixed $result
 	 */
 	public function arrayLiteralsCanBeParsed($expression, $context, $result) {
+		$this->assertEvaluated($result, $expression, $context);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider conditionalOperatorExpressions
+	 *
+	 * @param string $expression
+	 * @param \TYPO3\Eel\Context $context
+	 * @param mixed $result
+	 */
+	public function conditionalOperatorsCanBeParsed($expression, $context, $result) {
 		$this->assertEvaluated($result, $expression, $context);
 	}
 

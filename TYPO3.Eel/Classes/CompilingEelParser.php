@@ -79,7 +79,7 @@ class CompilingEelParser extends EelParser {
 		$result['code'] = $sub['code'];
 	}
 
-	public function Expression_Disjunction(&$result, $sub) {
+	public function Expression_exp(&$result, $sub) {
 		$result['code'] = $sub['code'];
 	}
 
@@ -91,8 +91,8 @@ class CompilingEelParser extends EelParser {
 		$result['code'] = '(' . $sub['code'] . ')';
 	}
 
-	public function NotExpression_Expression(&$result, $sub) {
-		$result['code'] = '!(' . $sub['code'] . ')';
+	public function NotExpression_exp(&$result, $sub) {
+		$result['code'] = '(!' .$this->unwrapExpression($sub['code']) . ')';
 	}
 
 	public function ArrayLiteral_Expression(&$result, $sub) {
@@ -208,6 +208,18 @@ class CompilingEelParser extends EelParser {
 			$result['code'] = $lval . '%' . $rval;
 			break;
 		}
+	}
+
+	public function ConditionalExpression_cond(&$result, $sub) {
+		$result['code'] = $sub['code'];
+	}
+
+	public function ConditionalExpression_then(&$result, $sub) {
+		$result['code'] = '(' . $this->unwrapExpression($result['code']) . '?' . $sub['code'];
+	}
+
+	public function ConditionalExpression_else(&$result, $sub) {
+		$result['code'] .= ':' . $sub['code'] . ')';
 	}
 
 }

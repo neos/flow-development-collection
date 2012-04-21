@@ -29,10 +29,11 @@ Term: term:BooleanLiteral !Identifier | term:NumberLiteral | term:StringLiteral 
 */
 
 /*!* CombinedExpressions
-Expression: Disjunction
+Expression: exp:ConditionalExpression
 SimpleExpression: term:WrappedExpression | term:NotExpression | term:ArrayLiteral | term:Term
 WrappedExpression: '(' < Expression > ')'
-NotExpression: (/ ! | not\s+ /) > Expression
+NotExpression: (/ ! | not\s+ /) > exp:SimpleExpression
+ConditionalExpression: cond:Disjunction (< '?' > then:Expression < ':' > else:Expression)?
 Disjunction: lft:Conjunction (< / \|\| | or\s+ / > rgt:Conjunction)*
 Conjunction: lft:Comparison (< / && | and\s+ / > rgt:Comparison)*
 Comparison: lft:SumCalculation (< comp:/ == | <= | >= | < | > / > rgt:SumCalculation)?
