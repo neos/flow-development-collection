@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Server: Apache/2.2.17 (Ubuntu)
+X-Powered-By: PHP/5.3.5-1ubuntu7.2
+X-FLOW3-Powered: FLOW3/1.2
+Cache-Control: public, s-maxage=600
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Type: text/html; charset=UTF-8
+Content-Length: 3795
+Date: Wed, 29 Aug 2012 09:03:49 GMT
+Age: 550
+Via: 1.1 varnish
+Connection: keep-alive
+
+<!DOCTYPE html>
+<html>
+the body
+</html>

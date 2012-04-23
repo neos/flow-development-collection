@@ -311,6 +311,89 @@ methods requiring a URI will also accept a string representation.
 You are encouraged to use the ``Uri`` class for your own purposes – you'll get a
 nice API and validation for free!
 
+Virtual Browser
+---------------
+
+The HTTP foundation comes with a virtual browser which allows for sending and
+receiving HTTP requests and responses. The browser's API basically follows the
+functions of a typical web browser. The requests and responses are used in form of
+``Http\Request`` and ``Http\Response`` instances, similar to the requests and
+responses used by FLOW3's request handling mechanism.
+
+Request Engines
+~~~~~~~~~~~~~~~
+
+The engine responsible for actually sending the request is pluggable. Currently
+there are two engines delivered with FLOW3:
+
+	* ``InternalRequestEngine`` simulates requests for use in functional tests
+	* ``CurlEngine`` uses the cURL extension to send real requests to other servers
+
+Sending a request and processing the response is a matter of a few lines::
+
+	/**
+	 * A sample controller
+	 */
+	class MyController extends ActionController {
+
+		/**
+		 * @FLOW3\Inject
+		 * @var \TYPO3\FLOW3\Http\Client\Browser
+		 */
+		protected $browser;
+
+		/**
+		 * @FLOW3\Inject
+		 * @var \TYPO3\FLOW3\Http\Client\CurlEngine
+		 */
+		protected $browserRequestEngine;
+
+		/**
+		 * Some action
+		 */
+		public function testAction() {
+			$this->browser->setRequestEngine($this->browserRequestEngine);
+			$response = $this->browser->request('http://flow3.typo3.org');
+			return ($response->hasHeader('X-FLOW3-Powered') ? 'yes' : 'no');
+		}
+
+As there is no default engine selected for the browser, you need to set one
+yourself. Of course you can use the advanced Dependency Injection techniques
+(through Objects.yaml) for injecting an engine into the browser you use.
+
+Also note that the virtual browser is of scope Prototype in order to support
+multiple browsers with possibly different request engines.
+
+Functional Testing
+~~~~~~~~~~~~~~~~~~
+
+The base test case for functional test cases already provides a browser which you
+can use for testing controllers and other application parts which are accessible
+via HTTP. This browser has the ``InternalRequestEngine`` set by default::
+
+	/**
+	 * Some functional tests
+	 */
+	class SomeTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+
+		/**
+		 * @var boolean
+		 */
+		protected $testableHttpEnabled = TRUE;
+
+		/**
+		 * Send a request to a controller of my application.
+		 * Hint: The host name is not evaluated by FLOW3 and thus doesn't matter
+		 *
+		 * @test
+		 */
+		public function someTest() {
+			$response = $this->browser->request('http://localhost/Acme.Demo/Foo/bar.html');
+			$this->assertContains('it works', $response->getContent());
+		}
+
+	}
+
 
 .. _RFC 2616: http://tools.ietf.org/html/rfc2616
 .. _REST: http://en.wikipedia.org/wiki/Representational_state_transfer

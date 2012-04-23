@@ -21,8 +21,6 @@ use TYPO3\FLOW3\Mvc\Routing\Route;
  * HTTP requests internally.
  *
  * This engine is particularly useful in functional test scenarios.
- *
- * @FLOW3\Scope("singleton")
  */
 class InternalRequestEngine implements RequestEngineInterface {
 
@@ -107,7 +105,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 	}
 
 	/**
-	 * Returns the router used by this request engine
+	 * Returns the router used by this internal request engine
 	 *
 	 * @return \TYPO3\FLOW3\Mvc\Routing\Router
 	 */

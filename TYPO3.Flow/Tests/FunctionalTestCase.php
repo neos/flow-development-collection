@@ -382,6 +382,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		);
 
 		$this->browser = new \TYPO3\FLOW3\Http\Client\Browser();
+		$this->browser->setRequestEngine(new \TYPO3\FLOW3\Http\Client\InternalRequestEngine());
 		$this->router = $this->browser->getRequestEngine()->getRouter();
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();

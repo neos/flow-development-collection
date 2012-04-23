@@ -30,6 +30,77 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Data provider
+	 */
+	public function rawResponses() {
+		return array(
+			array(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'),
+				array(
+					'Server' => 'Apache/2.2.17 (Ubuntu)',
+					'X-Powered-By' => 'PHP/5.3.5-1ubuntu7.2',
+					'X-FLOW3-Powered' => 'FLOW3/1.2',
+					'Cache-Control' => 'public, s-maxage=600',
+					'Vary' => 'Accept-Encoding',
+					'Content-Encoding' => 'gzip',
+					'Content-Type' => 'text/html; charset=UTF-8',
+					'Content-Length' => 3795,
+					'Date' => \DateTime::createFromFormat(DATE_RFC2822, 'Wed, 29 Aug 2012 09:03:49 GMT'),
+					'Age' => 550,
+					'Via' => '1.1 varnish',
+					'Connection' => 'keep-alive'
+				)
+			, 200),
+			array(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-2.txt'),
+				array(
+					'Server' => 'Apache/2.2.17 (Ubuntu)',
+					'Location' => 'http://flow3.typo3.org/',
+					'Vary' => 'Accept-Encoding',
+					'Content-Encoding' => 'gzip',
+					'Content-Type' => 'text/html; charset=iso-8859-1',
+					'Content-Length' => 243,
+					'Date' => \DateTime::createFromFormat(DATE_RFC2822, 'Wed, 29 Aug 2012 09:03:46 GMT'),
+					'X-Varnish' => 1792566338,
+					'Age' => 0,
+					'Via' => '1.1 varnish',
+					'Connection' => 'keep-alive'
+				)
+			, 301)
+		);
+	}
+
+	/**
+	 * @param $rawResponse
+	 * @param $expectedHeaders
+	 * @param $expectedStatusCode
+	 * @test
+	 * @dataProvider rawResponses
+	 */
+	public function createFromRawSetsHeadersAndStatusCodeCorrectly($rawResponse, $expectedHeaders, $expectedStatusCode) {
+		$response = Response::createFromRaw($rawResponse);
+
+		foreach ($expectedHeaders as $fieldName => $fieldValue) {
+			$this->assertTrue($response->hasHeader($fieldName), sprintf('Response does not have expected header %s', $fieldName));
+			$this->assertEquals($fieldValue, $response->getHeader($fieldName));
+		}
+		foreach ($response->getHeaders()->getAll() as $fieldName => $fieldValue) {
+			$this->assertTrue(isset($expectedHeaders[$fieldName]), sprintf('Response has unexpected header %s', $fieldName));
+		}
+
+		$this->assertEquals($expectedStatusCode, $response->getStatusCode());
+
+		$expectedContent = "<!DOCTYPE html>\n<html>\nthe body\n</html>";
+		$this->assertEquals($expectedContent, $response->getContent());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function createFromRawThrowsExceptionOnFirstLine() {
+		Response::createFromRaw('No valid response');
+	}
+
+	/**
 	 * @test
 	 */
 	public function itIsPossibleToSetTheHttpStatusCodeAndMessage() {

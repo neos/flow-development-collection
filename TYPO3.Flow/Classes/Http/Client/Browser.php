@@ -40,10 +40,19 @@ class Browser {
 	protected $cookies = array();
 
 	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Http\Client\RequestEngineInterface
 	 */
 	protected $requestEngine;
+
+	/**
+	 * Inject the request engine
+	 *
+	 * @param \TYPO3\FLOW3\Http\Client\RequestEngineInterface $requestEngine
+	 * @return void
+	 */
+	public function setRequestEngine(RequestEngineInterface $requestEngine) {
+		$this->requestEngine = $requestEngine;
+	}
 
 	/**
 	 * Requests the given URI with the method and other parameters as specified.
@@ -94,6 +103,16 @@ class Browser {
 	 */
 	public function getLastResponse() {
 		return $this->lastResponse;
+	}
+
+	/**
+	 * Returns the last request executed.
+	 *
+	 * @return \TYPO3\FLOW3\Http\Request The HTTP request or NULL if there wasn't a request yet
+	 * @api
+	 */
+	public function getLastRequest() {
+		return $this->lastRequest;
 	}
 
 	/**

@@ -97,7 +97,7 @@ class Request extends Message {
 	 *
 	 * @param \TYPO3\FLOW3\Http\Uri $uri The request URI
 	 * @param string $method Request method, for example "GET"
-	 * @param array $arguments
+	 * @param array $arguments Arguments to send in the request body
 	 * @param array $files
 	 * @param array $server
 	 * @return \TYPO3\FLOW3\Http\Request

@@ -1,0 +1,17 @@
+HTTP/1.1 301 Moved Permanently
+Server: Apache/2.2.17 (Ubuntu)
+Location: http://flow3.typo3.org/
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Type: text/html; charset=iso-8859-1
+Content-Length: 243
+Date: Wed, 29 Aug 2012 09:03:46 GMT
+X-Varnish: 1792566338
+Age: 0
+Via: 1.1 varnish
+Connection: keep-alive
+
+<!DOCTYPE html>
+<html>
+the body
+</html>

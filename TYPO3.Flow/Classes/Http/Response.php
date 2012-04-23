@@ -122,6 +122,50 @@ class Response extends Message implements ResponseInterface {
 	}
 
 	/**
+	 * Creates a response from the given raw, that is plain text, HTTP response.
+	 *
+	 * @param string $rawResponse
+	 * @param \TYPO3\FLOW3\Http\Response $parentResponse Parent response, if called recursively
+	 *
+	 * @throws \InvalidArgumentException
+	 * @return \TYPO3\FLOW3\Http\Response
+	 */
+	static public function createFromRaw($rawResponse, Response $parentResponse = NULL) {
+		$response = new static($parentResponse);
+
+		$lines = explode(chr(10), $rawResponse);
+		$firstLine = array_shift($lines);
+
+		if (substr($firstLine, 0, 5) !== 'HTTP/') {
+			throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
+		}
+		list(, $statusCode, $statusMessage) = explode(' ', $firstLine, 3);
+		$response->setStatus((integer)$statusCode, trim($statusMessage));
+
+		$parsingHeader = TRUE;
+		$contentLines = array();
+		$headers = new Headers();
+		foreach ($lines as $line) {
+			if ($parsingHeader) {
+				if (trim($line) === '') {
+					$parsingHeader = FALSE;
+					continue;
+				}
+				$fieldName = trim(substr($line, 0, strpos($line, ':')));
+				$fieldValue = trim(substr($line, strlen($fieldName) + 1));
+				$headers->set($fieldName, $fieldValue, FALSE);
+			} else {
+				$contentLines[] = $line;
+			}
+		}
+		$content = implode(chr(10), $contentLines);
+
+		$response->setHeaders($headers);
+		$response->setContent($content);
+		return $response;
+	}
+
+	/**
 	 * Return the parent response or NULL if none exists.
 	 *
 	 * @return \TYPO3\FLOW3\Http\Response the parent response, or NULL if none
@@ -191,6 +235,17 @@ class Response extends Message implements ResponseInterface {
 	 */
 	public function getStatusCode() {
 		return $this->statusCode;
+	}
+
+	/**
+	 * Replaces all possibly existing HTTP headers with the ones specified
+	 *
+	 * @param \TYPO3\FLOW3\Http\Headers
+	 * @return void
+	 * @api
+	 */
+	public function setHeaders(Headers $headers) {
+		$this->headers = $headers;
 	}
 
 	/**
