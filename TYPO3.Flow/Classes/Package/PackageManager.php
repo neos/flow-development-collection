@@ -560,14 +560,14 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			// sort longer package keys first, to find specific matches before generic ones
 		uksort($this->packageStatesConfiguration['packages'], function($a, $b) {
 			if (strlen($a) === strlen($b)) {
-				return 0;
+				return strcmp($a, $b);
 			}
 			return (strlen($a) > strlen($b)) ? -1 : 1;
 		});
 
 		$this->packageStatesConfiguration['version'] = 2;
 
-		if ($this->packageStatesConfiguration !== $previousPackageStatesConfiguration) {
+		if ($this->packageStatesConfiguration != $previousPackageStatesConfiguration) {
 			$this->savePackageStates();
 		}
 	}
