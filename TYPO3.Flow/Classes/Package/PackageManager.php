@@ -332,7 +332,13 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			throw new \TYPO3\FLOW3\Package\Exception\PackageRepositoryException('Could not clone the remote package.' . PHP_EOL . 'git ' . $gitCommand, 1315223852);
 		}
 
-		return new Package($packageKey, $packagePath);
+		$package = new Package($packageKey, $packagePath);
+
+		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'inactive';
+		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $package->getPackagePath();
+		$this->savePackageStates();
+
+		return $package;
 	}
 
 	/**
