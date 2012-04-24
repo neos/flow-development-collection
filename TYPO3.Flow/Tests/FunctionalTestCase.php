@@ -203,45 +203,26 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @deprecated since 1.1
 	 */
 	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
-		if (!getenv('FLOW3_REWRITEURLS')) {
-				// Simulate the use of mod_rewrite for the test.
-			putenv('FLOW3_REWRITEURLS=1');
-		}
+		$this->setupHttp();
 
-			// Initialize the routes
-		$configurationManager = $this->objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager');
-		$routesConfiguration = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-		$router = $this->objectManager->get('TYPO3\FLOW3\Mvc\Routing\Router');
-		$router->setRoutesConfiguration($routesConfiguration);
+		$route = new \TYPO3\FLOW3\Mvc\Routing\Route();
+		$route->setName('sendWebRequest Route');
 
-			// Build up Mock request behaving like the real one.
-		$controller = $this->objectManager->get(str_replace('.', '\\', $controllerPackageKey) . '\\Controller\\' . $controllerName . 'Controller');
+		$uriPattern = 'test/' . uniqid();
+		$route->setUriPattern($uriPattern);
+		$route->setDefaults(array(
+			'@package' => $controllerPackageKey,
+			'@controller' => $controllerName,
+			'@action' => $controllerActionName,
+			'@format' => $format
+		));
+		$route->setAppendExceedingArguments(TRUE);
+		$this->router->addRoute($route);
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($controllerPackageKey));
-		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
-		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue($arguments));
-		$mockRequest->expects($this->any())->method('getArgument')->will($this->returnCallback(function($argumentName) use ($arguments) {
-			return $arguments[$argumentName];
-		}));
-		$mockRequest->expects($this->any())->method('hasArgument')->will($this->returnCallback(function($argumentName) use ($arguments) {
-			return isset($arguments[$argumentName]);
-		}));
-		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
-		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('http://baseUri/'));
+		$uri = new \TYPO3\FLOW3\Http\Uri('http://baseuri/' . $uriPattern);
+		$response = $this->browser->request($uri, 'POST', $arguments);
 
-			// Build up Mock response collecting the output.
-		$mockResponse = $this->getMock('TYPO3\FLOW3\Http\Response', array(), array(), '', FALSE);
-
-		$content = '';
-		$mockResponse->expects($this->any())->method('appendContent')->will($this->returnCallback(function($newContent) use(&$content) {
-			$content .= $newContent;
-		}));
-
-		$controller->processRequest($mockRequest, $mockResponse);
-
-		return $content;
+		return $response->getContent();
 	}
 
 	/**
@@ -264,6 +245,9 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$this->testingProvider->setAccount($account);
 
 		$this->securityContext->clearContext();
+		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
+		$actionRequest = $request->createActionRequest();
+		$this->securityContext->injectRequest($actionRequest);
 
 		$authenticationProviderManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
 		$authenticationProviderManager->authenticate();
@@ -286,7 +270,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 *
 	 * @return void
 	 */
-	private function setupSecurity() {
+	protected function setupSecurity() {
 		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$this->accessDecisionManager->setOverrideDecision(NULL);
 
@@ -306,9 +290,16 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 *
 	 * @return void
 	 */
-	private function tearDownSecurity() {
-		$this->accessDecisionManager->reset();
-		$this->testingProvider->reset();
+	protected function tearDownSecurity() {
+		if ($this->accessDecisionManager !== NULL) {
+			$this->accessDecisionManager->reset();
+		}
+		if ($this->testingProvider !== NULL) {
+			$this->testingProvider->reset();
+		}
+		if ($this->securityContext !== NULL) {
+			$this->securityContext->clearContext();
+		}
 	}
 
 	/**
