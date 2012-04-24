@@ -52,12 +52,6 @@ class Request {
 	protected $cookies;
 
 	/**
-	 * @var \TYPO3\FLOW3\Session\SessionInterface
-	 * @FLOW3\Inject
-	 */
-	protected $session;
-
-	/**
 	 * Data similar to that which is typically provided by $_SERVER
 	 *
 	 * @var array
