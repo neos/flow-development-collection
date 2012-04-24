@@ -64,6 +64,11 @@ class Scripts {
 		$bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager')->flushCaches();
 		$environment = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Utility\Environment');
 		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
+
+		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
+		$settings = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($settings['reflection']['precompiledReflectionStoragePath']);
+
 		echo "Force-flushed caches." . PHP_EOL;
 		exit(0);
 	}
