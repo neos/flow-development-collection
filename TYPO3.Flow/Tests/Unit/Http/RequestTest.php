@@ -71,6 +71,21 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function createFromEnvironmentWithEmptyServerVariableWorks() {
+		$_GET = array();
+		$_POST = array();
+		$_COOKIE = array();
+		$_FILES = array();
+		$_SERVER = array();
+
+		$request = Request::createFromEnvironment();
+
+		$this->assertEquals('http://localhost/', (string)$request->getUri());
+	}
+
+	/**
+	 * @test
+	 */
 	public function constructRecognizesSslSessionIdAsIndicatorForSsl() {
 		$get = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
 		$post = array();
