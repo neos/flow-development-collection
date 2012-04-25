@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A PDO database cache backend
  *
  * @api
+ * @FLOW3\Proxy(false)
  */
-class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
+class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 
 	/**
 	 * @var string
@@ -242,6 +244,9 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 			$this->pdoDriver = $splitdsn[0];
 
 			if ($this->pdoDriver === 'sqlite' && !file_exists($splitdsn[1])) {
+				if (!file_exists(dirname($splitdsn[1]))) {
+					\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($splitdsn[1]));
+				}
 				$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 				$this->createCacheTables();
 			} else {
@@ -252,7 +257,9 @@ class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 			if ($this->pdoDriver === 'mysql') {
 				$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
 			}
-		} catch (\PDOException $e) {}
+		} catch (\PDOException $e) {
+			throw new \TYPO3\FLOW3\Persistence\Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1334736164);
+		}
 	}
 
 	/**

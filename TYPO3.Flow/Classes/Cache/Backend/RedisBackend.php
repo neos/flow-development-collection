@@ -56,7 +56,7 @@ namespace TYPO3\FLOW3\Cache\Backend;
  *
  * @api
  */
-class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
+class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 
 	/**
 	 * Faked unlimited lifetime = 31536000 (1 Year).

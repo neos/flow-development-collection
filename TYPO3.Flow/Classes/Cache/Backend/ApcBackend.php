@@ -36,7 +36,7 @@ namespace TYPO3\FLOW3\Cache\Backend;
  *
  * @api
  */
-class ApcBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
+class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 
 	/**
 	 * A prefix to seperate stored data from other data possible stored in the APC

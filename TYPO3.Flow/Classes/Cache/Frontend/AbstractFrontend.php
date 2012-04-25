@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Cache\Frontend;
  *                                                                        */
 
 use TYPO3\FLOW3\Cache\CacheManager;
-
+use TYPO3\FLOW3\Cache\Backend\TaggableBackendInterface;
 
 /**
  * An abstract cache
@@ -40,7 +40,9 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
 	 */
 	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend) {
-		if (!preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier)) throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
+		if (!preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier)) {
+			throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
+		}
 		$this->identifier = $identifier;
 		$this->backend = $backend;
 		$this->backend->setCache($this);
@@ -75,7 +77,9 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * @api
 	 */
 	public function has($entryIdentifier) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058486);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058486);
+		}
 
 		return $this->backend->has($entryIdentifier);
 	}
@@ -89,7 +93,9 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058495);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058495);
+		}
 
 		return $this->backend->remove($entryIdentifier);
 	}
@@ -113,9 +119,12 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * @api
 	 */
 	public function flushByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057359);
-
-		$this->backend->flushByTag($tag);
+		if (!$this->isValidTag($tag)) {
+			throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057359);
+		}
+		if ($this->backend instanceof TaggableBackendInterface) {
+			$this->backend->flushByTag($tag);
+		}
 	}
 
 	/**

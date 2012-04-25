@@ -19,14 +19,6 @@ namespace TYPO3\FLOW3\Cache\Backend;
 interface BackendInterface {
 
 	/**
-	 * Injects the Environment object
-	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
-	 * @return void
-	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment);
-
-	/**
 	 * Sets a reference to the cache frontend which uses this backend
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
@@ -40,7 +32,7 @@ interface BackendInterface {
 	 *
 	 * @param string $entryIdentifier An identifier for this specific cache entry
 	 * @param string $data The data to be stored
-	 * @param array $tags Tags to associate with this cache entry
+	 * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
@@ -86,25 +78,6 @@ interface BackendInterface {
 	 * @api
 	 */
 	public function flush();
-
-	/**
-	 * Removes all cache entries of this cache which are tagged by the specified tag.
-	 *
-	 * @param string $tag The tag the entries must have
-	 * @return void
-	 * @api
-	 */
-	public function flushByTag($tag);
-
-	/**
-	 * Finds and returns all cache entry identifiers which are tagged by the
-	 * specified tag.
-	 *
-	 * @param string $tag The tag to search for
-	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
-	 * @api
-	 */
-	public function findIdentifiersByTag($tag);
 
 	/**
 	 * Does garbage collection
