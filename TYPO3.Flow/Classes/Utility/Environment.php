@@ -409,14 +409,12 @@ class Environment {
 	 * @api
 	 */
 	public function getPathToTemporaryDirectory() {
-		if ($this->temporaryDirectory !== NULL) return $this->temporaryDirectory;
-
-		try {
-			$this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
-		} catch (\TYPO3\FLOW3\Utility\Exception $exception) {
-			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR === '/') ? '/tmp' : '\\WINDOWS\\TEMP';
-			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
+		if ($this->temporaryDirectory !== NULL) {
+			return $this->temporaryDirectory;
 		}
+
+		$this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
+
 		return $this->temporaryDirectory;
 	}
 
@@ -528,18 +526,21 @@ class Environment {
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
 		$temporaryDirectoryBase = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
-		if (substr($temporaryDirectoryBase, -1, 1) !== '/') $temporaryDirectoryBase .= '/';
+		if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
+			$temporaryDirectoryBase .= '/';
+		}
 		$temporaryDirectory = $temporaryDirectoryBase . $this->context . '/';
 
 		if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
 			try {
 				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
 			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
+				throw new \TYPO3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created. Please make sure permissions are correct for this path or define another temporary directory in your Settings.yaml with the path "TYPO3.FLOW3.utility.environment.temporaryDirectoryBase".', 1335382361);
 			}
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new \TYPO3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writable. Please make this directory writable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
+			throw new \TYPO3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" is not writable. Please make this directory writable or define another temporary directory in your Settings.yaml with the path "TYPO3.FLOW3.utility.environment.temporaryDirectoryBase".', 1216287176);
 		}
 
 		return $temporaryDirectory;
