@@ -132,10 +132,6 @@ TYPO3:
       # of @param annotations in the default log.
       logIncorrectDocCommentHints: FALSE
 
-      # Directory to use for storing precompiled reflection data of frozen packages.
-      # This data is not flushed on regular cache:flush operations.
-      precompiledReflectionStoragePath: %FLOW3_PATH_DATA%Temporary/PrecompiledReflectionData/
-
     resource:
       publishing:
 

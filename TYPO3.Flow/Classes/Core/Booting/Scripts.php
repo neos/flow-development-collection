@@ -67,7 +67,6 @@ class Scripts {
 
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($settings['reflection']['precompiledReflectionStoragePath']);
 
 		echo "Force-flushed caches." . PHP_EOL;
 		exit(0);
@@ -318,6 +317,7 @@ class Scripts {
 		$reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ReflectionDataRuntimeCache'));
 		$reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('FLOW3_Reflection_ClassSchemataRuntimeCache'));
 		$reflectionService->injectSettings($configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3'));
+		$reflectionService->injectEnvironment($bootstrap->getEarlyInstance('TYPO3\FLOW3\Utility\Environment'));
 
 		$reflectionService->initialize($bootstrap);
 

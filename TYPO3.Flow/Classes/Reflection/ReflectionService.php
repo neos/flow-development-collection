@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Reflection;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * A service for acquiring reflection based information in a performant way.
@@ -100,6 +101,11 @@ class ReflectionService {
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
+
+	/**
+	 * @var \TYPO3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
 
 	/**
 	 * @var boolean
@@ -224,6 +230,14 @@ class ReflectionService {
 	 */
 	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 */
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
@@ -1456,7 +1470,7 @@ class ReflectionService {
 				$useIgBinary = extension_loaded('igbinary');
 				foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
 					if ($this->packageManager->isPackageFrozen($packageKey)) {
-						$pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'] . $packageKey . '.dat';
+						$pathAndFilename = $this->getPrecompiledReflectionStoragePath() . $packageKey . '.dat';
 						if (file_exists($pathAndFilename)) {
 							$data = ($useIgBinary ? igbinary_unserialize(file_get_contents($pathAndFilename)) : unserialize(file_get_contents($pathAndFilename)));
 							foreach ($data as $propertyName => $propertyValue) {
@@ -1548,11 +1562,11 @@ class ReflectionService {
 			}
 		}
 
-		$path = $pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'];
-		if (!is_dir($path)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($path);
+		$precompiledReflectionStoragePath = $this->getPrecompiledReflectionStoragePath();
+		if (!is_dir($precompiledReflectionStoragePath)) {
+			Files::createDirectoryRecursively($precompiledReflectionStoragePath);
 		}
-		$pathAndFilename = $path . $packageKey . '.dat';
+		$pathAndFilename = $precompiledReflectionStoragePath . $packageKey . '.dat';
 		file_put_contents($pathAndFilename, extension_loaded('igbinary') ? igbinary_serialize($reflectionData) : serialize($reflectionData));
 	}
 
@@ -1565,7 +1579,7 @@ class ReflectionService {
 	 * @return void
 	 */
 	public function unfreezePackageReflection($packageKey) {
-		$pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'] . $packageKey . '.dat';
+		$pathAndFilename = $this->getPrecompiledReflectionStoragePath() . $packageKey . '.dat';
 		if (file_exists($pathAndFilename)) {
 			unlink($pathAndFilename);
 		}
@@ -1629,7 +1643,7 @@ class ReflectionService {
 			$this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LOG_INFO);
 		} elseif ($this->settings['core']['context'] === 'Development') {
 			foreach (array_keys($this->packageManager->getFrozenPackages()) as $packageKey) {
-				$pathAndFilename = $this->settings['reflection']['precompiledReflectionStoragePath'] . $packageKey . '.dat';
+				$pathAndFilename = $this->getPrecompiledReflectionStoragePath() . $packageKey . '.dat';
 				if (!file_exists($pathAndFilename)) {
 					$this->log(sprintf('Rebuilding precompiled reflection data for frozen package %s.', $packageKey), LOG_INFO);
 					$this->freezePackageReflection($packageKey);
@@ -1650,6 +1664,15 @@ class ReflectionService {
 		if (is_object($this->systemLogger)) {
 			$this->systemLogger->log($message, $severity, $additionalData);
 		}
+	}
+
+	/**
+	 * Determines the path to the precompiled reflection data.
+	 *
+	 * @return string
+	 */
+	protected function getPrecompiledReflectionStoragePath() {
+		return Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'PrecompiledReflectionData/')) . '/';
 	}
 
 }
