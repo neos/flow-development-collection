@@ -15,7 +15,24 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Utility\Files;
 
 /**
- * A service for acquiring reflection based information in a performant way.
+ * A service for acquiring reflection based information in a performant way. This
+ * service also builds up class schema information which is used by the FLOW3's
+ * persistence layer.
+ *
+ * Reflection of classes of all active packages is triggered through the bootstrap's
+ * initializeReflectionService() method. In a development context, single classes
+ * may be re-reflected once files are modified whereas in a production context
+ * reflection is done once and successive requests read from the frozen caches for
+ * performance reasons.
+ *
+ * The list of available classes is determined by the CompiletimeObjectManager which
+ * also triggers the initial build of reflection data in this service.
+ *
+ * The invalidation of reflection cache entries is done by the CacheManager which
+ * in turn is triggered by signals sent by the file monitor.
+ *
+ * The internal representation of cache data is optimized for memory consumption and
+ * speed by using constants which have an integer value.
  *
  * @api
  * @FLOW3\Scope("singleton")
@@ -113,6 +130,7 @@ class ReflectionService {
 	protected $runsInProductionContext;
 
 	/**
+	 * In Production context, with frozen caches, this flag will be TRUE
 	 * @var boolean
 	 */
 	protected $loadFromClassSchemaRuntimeCache = FALSE;
@@ -241,7 +259,9 @@ class ReflectionService {
 	}
 
 	/**
-	 * Initializes this service after dependencies have been injected.
+	 * Initializes this service.
+	 *
+	 * This method must be run only after all dependencies have been injected.
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
@@ -267,7 +287,10 @@ class ReflectionService {
 	/**
 	 * Builds the reflection data cache during compile time.
 	 *
-	 * @param array $availableClassNames
+	 * This method is called by the CompiletimeObjectManager which also determines
+	 * the list of classes to consider for reflection.
+	 *
+	 * @param array $availableClassNames List of all class names to consider for reflection
 	 * @return void
 	 */
 	public function buildReflectionData(array $availableClassNames) {
@@ -1458,7 +1481,15 @@ class ReflectionService {
 	}
 
 	/**
-	 * Tries to load the reflection data from this service's cache.
+	 * Tries to load the reflection data from the compile time cache.
+	 *
+	 * The compile time cache is only supported for Development context and thus
+	 * this function will return in any other context.
+	 *
+	 * If no reflection data was found, this method will at least load the precompiled
+	 * reflection data of any possible frozen package. Even if precompiled reflection
+	 * data could be loaded, FALSE will be returned in order to signal that other
+	 * packages still need to be reflected.
 	 *
 	 * @return boolean TRUE if reflection data could be loaded, otherwise FALSE
 	 */
@@ -1493,7 +1524,14 @@ class ReflectionService {
 	/**
 	 * Loads reflection data from the cache or reflects the class if needed.
 	 *
-	 * @param string $className
+	 * If the class is completely unknown, this method won't try to load or reflect
+	 * it. If it is known and reflection data has been loaded already, it won't be
+	 * loaded again.
+	 *
+	 * In Production context, with frozen caches, this method will load reflection
+	 * data for the specified class from the runtime cache.
+	 *
+	 * @param string $className Name of the class to load data for
 	 * @return void
 	 */
 	protected function loadOrReflectClassIfNecessary($className) {
@@ -1590,6 +1628,13 @@ class ReflectionService {
 	 *
 	 * This method is triggered by a signal which is connected to the bootstrap's
 	 * shutdown sequence.
+	 *
+	 * If the reflection data has previously been loaded from the runtime cache,
+	 * saving it is ommitted as changes are not expected.
+	 *
+	 * In Production context the whole cache is written at once and then frozen in
+	 * order to be consistent. Frozen cache data in Development is only produced for
+	 * classes contained in frozen packages.
 	 *
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Reflection\Exception if no cache has been injected

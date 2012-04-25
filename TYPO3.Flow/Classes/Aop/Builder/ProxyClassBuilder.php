@@ -170,10 +170,17 @@ class ProxyClassBuilder {
 	/**
 	 * Builds proxy class code which weaves advices into the respective target classes.
 	 *
-	 * The object configurations provided by the Compiler is searched for possible aspect
+	 * The object configurations provided by the Compiler are searched for possible aspect
 	 * annotations. If an aspect class is found, the poincut expressions are parsed and
 	 * a new aspect with one or more advisors is added to the aspect registry of the AOP framework.
 	 * Finally all advices are woven into their target classes by generating proxy classes.
+	 *
+	 * In general, the command typo3.flow3:core:compile is responsible for compilation
+	 * and calls this method to do so.
+	 *
+	 * In order to distinguish between an emerged / changed possible target class and
+	 * a class which has been matched previously but just didn't have to be proxied,
+	 * the latter are kept track of by an "unproxiedClass-*" cache entry.
 	 *
 	 * @return void
 	 */

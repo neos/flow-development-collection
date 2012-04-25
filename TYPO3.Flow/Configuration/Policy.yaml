@@ -6,9 +6,6 @@
 # to the Policy.yaml file in the in global Configuration/ directory      #
 # instead.                                                               #
 
-# @package FLOW3
-
-
 # The security policy resources configuration. Note: As a convention you have to prefix
 # your package's namespace for your resource definitions!
 #

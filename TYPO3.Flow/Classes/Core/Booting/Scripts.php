@@ -325,8 +325,13 @@ class Scripts {
 	}
 
 	/**
-	 * Checks if classes (ie. php files containing classes) have been altered and if so flushes
-	 * the related caches.
+	 * Checks if classes (i.e. php files containing classes), Policy.yaml, Objects.yaml
+	 * or localization files have been altered and if so flushes the related caches.
+	 *
+	 * This function only triggers the detection of changes in the file monitors.
+	 * The actual cache flushing is handled by other functions which are triggered
+	 * by the file monitor through a signal. For FLOW3, those signal-slot connections
+	 * are defined in the class \TYPO3\FLOW3\Package.
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
