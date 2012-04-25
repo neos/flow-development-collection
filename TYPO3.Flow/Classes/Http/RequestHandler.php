@@ -23,7 +23,7 @@ use TYPO3\FLOW3\Security\Exception\AccessDeniedException;
  * @FLOW3\Scope("singleton")
  * @FLOW3\Proxy("disable")
  */
-class RequestHandler implements RequestHandlerInterface {
+class RequestHandler implements HttpRequestHandlerInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
@@ -49,6 +49,12 @@ class RequestHandler implements RequestHandlerInterface {
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
+
+	/**
+	 * @var \TYPO3\FLOW3\Http\Request
+	 */
+	protected $request;
+
 
 	/**
 	 * Make exit() a closure so it can be manipulated during tests
@@ -92,14 +98,16 @@ class RequestHandler implements RequestHandlerInterface {
 	 * @return void
 	 */
 	public function handleRequest() {
+			// Create the request very early so the Resource Management has a chance to grab it:
+		$this->request = Request::createFromEnvironment();
+
 		$this->boot();
 		$this->resolveDependencies();
 
-		$request = Request::createFromEnvironment();
 		$response = new Response();
 
 		$this->router->setRoutesConfiguration($this->routesConfiguration);
-		$actionRequest = $this->router->route($request);
+		$actionRequest = $this->router->route($this->request);
 
 		$this->securityContext->injectRequest($actionRequest);
 
@@ -109,6 +117,15 @@ class RequestHandler implements RequestHandlerInterface {
 
 		$this->bootstrap->shutdown('Runtime');
 		$this->exit->__invoke();
+	}
+
+	/**
+	 * Returns the currently handled HTTP request
+	 *
+	 * @return \TYPO3\FLOW3\Http\Request
+	 */
+	public function getHttpRequest() {
+		return $this->request;
 	}
 
 	/**
@@ -133,6 +150,7 @@ class RequestHandler implements RequestHandlerInterface {
 		$this->dispatcher = $objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher');
 
 		$configurationManager = $objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager');
+
 		$this->routesConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router = $objectManager->get('TYPO3\FLOW3\Mvc\Routing\Router');
 
