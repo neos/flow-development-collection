@@ -202,6 +202,8 @@ TYPO3:
         #
         #  AdminInterfaceProvider:
         #    provider: 'PersistedUsernamePasswordProvider'
+        #    requestPatterns:
+        #      controllerObjectName: 'TYPO3\Admin\Controller\.*'
         #    entryPoint: 'WebRedirect'
         #    entryPointOptions:
         #      uri: 'login/form/action'
