@@ -14,6 +14,8 @@ namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
  * Public License for more details.                                       *
  *                                                                        */
 
+use TYPO3\FLOW3\Monitor\FileMonitor;
+
 /**
  * Contract for a change detection strategy
  *
@@ -34,6 +36,21 @@ interface ChangeDetectionStrategyInterface {
 	 * @api
 	 */
 	public function getFileStatus($pathAndFilename);
+
+	/**
+	 * Creates a link to the file monitor using the strategy
+	 *
+	 * @param \TYPO3\FLOW3\Monitor\FileMonitor $fileMonitor
+	 * @return mixed
+	 */
+	public function setFileMonitor(FileMonitor $fileMonitor);
+
+	/**
+	 * Commit any necessary data, like the current modification time.
+	 *
+	 * @return void
+	 */
+	public function shutdownObject();
 
 }
 ?>

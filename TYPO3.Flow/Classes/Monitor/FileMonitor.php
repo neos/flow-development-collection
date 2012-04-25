@@ -84,6 +84,7 @@ class FileMonitor {
 	 */
 	public function injectChangeDetectionStrategy(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
+		$this->changeDetectionStrategy->setFileMonitor($this);
 	}
 
 	/**
@@ -123,9 +124,18 @@ class FileMonitor {
 	 * @return void
 	 */
 	public function initializeObject() {
-		if ($this->cache->has('directoriesAndFiles')) {
-			$this->directoriesAndFiles = $this->cache->get('directoriesAndFiles');
+		if ($this->cache->has($this->identifier . '_directoriesAndFiles')) {
+			$this->directoriesAndFiles = $this->cache->get($this->identifier . '_directoriesAndFiles');
 		}
+	}
+
+	/**
+	 * Returns the identifier of this monitor
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
 	/**
@@ -221,7 +231,7 @@ class FileMonitor {
 		if (count($changedDirectories) > 0) {
 			$this->emitDirectoriesHaveChanged($this->identifier, $changedDirectories);
 		}
-		if (count($changedFiles) > 0 || count($changedDirectories) > 0) $this->systemLogger->log(sprintf('File Monitor detected %s changed files and %s changed directories.', count($changedFiles), count($changedDirectories)), LOG_INFO);
+		if (count($changedFiles) > 0 || count($changedDirectories) > 0) $this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, count($changedFiles), count($changedDirectories)), LOG_INFO);
 	}
 
 	/**
@@ -274,8 +284,9 @@ class FileMonitor {
 	 */
 	public function shutdownObject() {
 		if ($this->directoriesChanged === TRUE) {
-			$this->cache->set('directoriesAndFiles', $this->directoriesAndFiles);
+			$this->cache->set($this->identifier . '_directoriesAndFiles', $this->directoriesAndFiles);
 		}
+		$this->changeDetectionStrategy->shutdownObject();
 	}
 }
 ?>

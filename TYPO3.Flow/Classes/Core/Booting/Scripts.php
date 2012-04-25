@@ -338,7 +338,6 @@ class Scripts {
 
 		$changeDetectionStrategy = new \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
 		$changeDetectionStrategy->injectCache($cacheManager->getCache('FLOW3_Monitor'));
-		$changeDetectionStrategy->initializeObject();
 
 		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_ClassFiles');
 		$monitor->injectCache($cacheManager->getCache('FLOW3_Monitor'));
@@ -346,6 +345,8 @@ class Scripts {
 		$monitor->injectSignalDispatcher($signalSlotDispatcher);
 		$monitor->injectSystemLogger($systemLogger);
 		$monitor->initializeObject();
+
+		$changeDetectionStrategy->setFileMonitor($monitor);
 
 		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
 			if ($packageManager->isPackageFrozen($packageKey)) {
