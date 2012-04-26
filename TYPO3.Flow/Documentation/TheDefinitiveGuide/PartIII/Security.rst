@@ -920,17 +920,39 @@ Content security
 Security for persisted objects
 ------------------------------
 
-Explain resource definition...
+*FIXME: This section is not complete yet*
 
 .. code-block:: yaml
 
 	resources:
 	  entities:
-	    F3_EmployeePortal_Model_Employee:
-	      MyEmployees: this.boss contains current.party
+	    Acme_MyPackage_Domain_Model_Customer:
+	      Acme_MyPackage_Customers_All: 'ANY'
+	      Acme_MyPackage_Customers_Vip: 'this.vip == TRUE'
+	      Acme_MyPackage_Customers_Me: 'current.securityContext.account != this.account && this.account != NULL'
 
-Explain query rewriting via aspect to the persistence layer
--> not working for DQL queries currently (only QOM!)
+The ``Acme_MyPacakge_Customer_All`` resource will match any customer object.
+The ``Acme_MyPacakge_Customer_Vip`` resource matches all customer's which have their
+``vip`` attribute set.
+The ``Acme_MyPackage_Customer_Me`` resource matches any customer object whose account
+property matches the currently logged in account.
+
+* if an entity resource is defined, access is denied automatically to all who don't
+  have access granted to that new resource explictly defined in the ACLs.
+* if there is no ``ANY`` resource defined, only objects explicitly matched by one of
+  the other resources are denied by default.
+* if there is a ``ANY`` resource define, all objects of this type will be denied for
+  all users not have a grant privilege for this ``ANY`` resource.
+* The key ``Acme_MyPackage_Domain_Model_Customer`` has to reflect the full qualified
+  class name of your entity, while '\' is replaced by '_' due to YAML syntax
+  constraints.
+* The ``DENY`` privilege works the same as for methods. If it is set for one of the
+  resources you will never see entities matched by this resource, no matter how many
+  ``GRANT`` privileges there might be set for other roles you also have.
+
+* TODO: Explain query rewriting via aspect to the persistence layer
+* NOTE: not working for DQL queries currently (only QOM!)
+
 
 Security for files aka secure downloads
 ---------------------------------------
