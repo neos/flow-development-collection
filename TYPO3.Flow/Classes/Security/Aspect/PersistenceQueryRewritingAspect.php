@@ -109,7 +109,9 @@ class PersistenceQueryRewritingAspect {
 		$authenticatedRoles = $this->securityContext->getRoles();
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
-			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) return new \TYPO3\FLOW3\Persistence\EmptyQueryResult($query);
+			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) {
+				return ($joinPoint->getMethodName() === 'count') ? 0 : new \TYPO3\FLOW3\Persistence\EmptyQueryResult($query);
+			}
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
 			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
 
