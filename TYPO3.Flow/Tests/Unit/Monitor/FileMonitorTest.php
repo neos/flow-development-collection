@@ -14,9 +14,10 @@ namespace TYPO3\FLOW3\Tests\Unit\Monitor;
  * Public License for more details.                                       *
  *                                                                        */
 
+use \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+
 /**
  * Testcase for the File Monitor class
- *
  */
 class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -48,12 +49,16 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function fileMonitorCachesTheListOfKnownDirectoriesAndFiles() {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with('directoriesAndFiles')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->once())->method('get')->with('directoriesAndFiles')->will($this->returnValue(array('foo' => 'bar')));
-		$mockCache->expects($this->once())->method('set')->with('directoriesAndFiles', array('baz' => 'quux'));
+		$mockCache->expects($this->once())->method('has')->with('FLOW3_Test_directoriesAndFiles')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->once())->method('get')->with('FLOW3_Test_directoriesAndFiles')->will($this->returnValue(array('foo' => 'bar')));
+		$mockCache->expects($this->once())->method('set')->with('FLOW3_Test_directoriesAndFiles', array('baz' => 'quux'));
+
+		$mockStrategy = $this->getMock('TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
+		$mockStrategy->expects($this->once())->method('shutdownObject');
 
 		$mockMonitor = $this->getAccessibleMock('TYPO3\FLOW3\Monitor\FileMonitor', array('dummy'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->injectCache($mockCache);
+		$mockMonitor->injectChangeDetectionStrategy($mockStrategy);
 		$mockMonitor->initializeObject();
 
 		$this->assertSame(array('foo' => 'bar'), $mockMonitor->_get('directoriesAndFiles'));
@@ -126,8 +131,8 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$monitoredFiles = array(__FILE__ . '1', __FILE__ . '2', __FILE__ . '3');
 
 		$expectedChangedFiles = array();
-		$expectedChangedFiles[$this->unixStylePathAndFilename . '1'] = \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
-		$expectedChangedFiles[$this->unixStylePathAndFilename . '3'] = \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
+		$expectedChangedFiles[$this->unixStylePathAndFilename . '1'] = ChangeDetectionStrategyInterface::STATUS_CREATED;
+		$expectedChangedFiles[$this->unixStylePathAndFilename . '3'] = ChangeDetectionStrategyInterface::STATUS_DELETED;
 
 		$mockMonitor = $this->getAccessibleMock('TYPO3\FLOW3\Monitor\FileMonitor', array('detectChangedFiles', 'emitFilesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->expects($this->once())->method('detectChangedFiles')->with($monitoredFiles)->will($this->returnValue($expectedChangedFiles));
@@ -208,7 +213,7 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function detectChangesEmitsDirectoryChangedSignalAndMemorizesDirectoryIfDirectoryHasNotBeenMonitoredPreviously() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
-		$expectedChangedDirectories = array($this->unixStylePath => \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED);
+		$expectedChangedDirectories = array($this->unixStylePath => ChangeDetectionStrategyInterface::STATUS_CREATED);
 
 		$mockMonitor = $this->getAccessibleMock('TYPO3\FLOW3\Monitor\FileMonitor', array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->expects($this->any())->method('detectChangedFiles')->will($this->returnValue(array()));
@@ -230,7 +235,7 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function detectChangesEmitsDirectoryChangedSignalIfDirectoryHasBeenRemoved() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
-		$expectedChangedDirectories = array(\vfsStream::url('testDirectory') . '/bar' => \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
+		$expectedChangedDirectories = array(\vfsStream::url('testDirectory') . '/bar' => ChangeDetectionStrategyInterface::STATUS_DELETED);
 
 		$mockMonitor = $this->getAccessibleMock('TYPO3\FLOW3\Monitor\FileMonitor', array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->expects($this->any())->method('detectChangedFiles')->will($this->returnValue(array()));
@@ -247,14 +252,13 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function detectChangedFilesFetchesTheStatusOfGivenFilesAndReturnsAListOfChangeFilesAndTheirStatus() {
 		$mockStrategy = $this->getMock('TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
-		$mockStrategy->expects($this->at(0))->method('getFileStatus')->with(__FILE__ . '1')->will($this->returnValue(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED));
-		$mockStrategy->expects($this->at(1))->method('getFileStatus')->with(__FILE__ . '2')->will($this->returnValue(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED));
+		$mockStrategy->expects($this->exactly(2))->method('getFileStatus')->will($this->onConsecutiveCalls(ChangeDetectionStrategyInterface::STATUS_CREATED, ChangeDetectionStrategyInterface::STATUS_UNCHANGED));
 
 		$mockMonitor = $this->getAccessibleMock('TYPO3\FLOW3\Monitor\FileMonitor', array('dummy'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->injectChangeDetectionStrategy($mockStrategy);
 		$result = $mockMonitor->_call('detectChangedFiles', array(__FILE__ . '1', __FILE__ . '2'));
 
-		$this->assertSame(array(__FILE__ . '1' => \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED), $result);
+		$this->assertEquals(array(__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED), $result);
 	}
 }
 ?>

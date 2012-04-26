@@ -197,8 +197,7 @@ class ProxyClassBuilder {
 		if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === FALSE) {
 			$rebuildEverything = TRUE;
 			$this->systemLogger->log('Aspects have been modified, therefore rebuilding all target classes.', LOG_INFO);
-			$tags = array_map(function ($aspectClassName) { return \TYPO3\FLOW3\Cache\CacheManager::getClassTag($aspectClassName); }, $actualAspectClassNames);
-			$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE, $tags);
+			$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE);
 		}
 
 		$possibleTargetClassNameIndex = new ClassNameIndex();
@@ -219,9 +218,9 @@ class ProxyClassBuilder {
 					if ($isUnproxied) {
 						$this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
 					}
-					$this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_INFO);
+					$this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_DEBUG);
 				} else {
-					$this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), TRUE, array(\TYPO3\FLOW3\Cache\CacheManager::getClassTag($targetClassName)));
+					$this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), TRUE);
 				}
 			}
 		}

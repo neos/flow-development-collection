@@ -29,6 +29,11 @@ class CacheManager {
 	protected $cacheFactory;
 
 	/**
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var array
 	 */
 	protected $caches = array();
@@ -43,6 +48,14 @@ class CacheManager {
 			'backendOptions' => array()
 		)
 	);
+
+	/**
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 */
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
 
 	/**
 	 * @param \TYPO3\FLOW3\Cache\CacheFactory $cacheFactory
@@ -150,51 +163,91 @@ class CacheManager {
 
 	/**
 	 * Flushes entries tagged with class names if their class source files have changed.
+	 * Also flushes AOP proxy caches if a policy was modified.
 	 *
-	 * This method is used as a slot for a signal sent by the class file monitor defined
-	 * in the bootstrap.
+	 * This method is used as a slot for a signal sent by the system file monitor
+	 * defined in the bootstrap scripts.
 	 *
-	 * @param string $fileMonitorIdentifier Identifier of the File Monitor (must be "FLOW3_ClassFiles")
+	 * Note: Policy configuration handling is implemented here as well as other parts
+	 *       of FLOW3 (like the security framework) are not fully initialized at the
+	 *       time needed.
+	 *
+	 * @param string $fileMonitorIdentifier Identifier of the File Monitor
 	 * @param array $changedFiles A list of full paths to changed files
 	 * @return void
 	 */
-	public function flushClassFileCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
-		if ($fileMonitorIdentifier !== 'FLOW3_ClassFiles') {
-			return;
-		}
+	public function flushSystemCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
+		$modifiedClassNamesWithUnderscores = array();
 
-		$this->flushCachesByTag(self::getClassTag());
-		foreach ($changedFiles as $pathAndFilename => $status) {
-			$pathAndFilename = str_replace(FLOW3_PATH_PACKAGES, '', $pathAndFilename);
-			$matches = array();
-			if (1 === preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches)) {
-				$className = str_replace('/', '\\', $matches[1] . '\\' . ($matches[2] === 'Tests' ? 'Tests\\' : '') . $matches[3]);
-				$className = str_replace('.', '\\', $className);
-				$this->flushCachesByTag(self::getClassTag($className));
-			}
-		}
-	}
+		$objectClassesCache = $this->getCache('FLOW3_Object_Classes');
+		$objectConfigurationCache = $this->getCache('FLOW3_Object_Configuration');
 
-	/**
-	 * Marks Doctrine proxy classes as outdated when Model classes have been changed
-	 *
-	 * This method is used as a slot for a signal sent by the class file monitor defined
-	 * in the bootstrap.
-	 *
-	 * @param string $fileMonitorIdentifier Identifier of the File Monitor (must be "FLOW3_ClassFiles")
-	 * @param array $changedFiles A list of full paths to changed files
-	 * @return void
-	 */
-	public function markDoctrineProxyCodeOutdatedByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
-		if ($fileMonitorIdentifier !== 'FLOW3_ClassFiles') {
-			return;
-		}
+		switch ($fileMonitorIdentifier) {
+			case 'FLOW3_ClassFiles' :
+				$modifiedAspectClassNamesWithUnderscores = array();
+				foreach ($changedFiles as $pathAndFilename => $status) {
+					$pathAndFilename = str_replace(FLOW3_PATH_PACKAGES, '', $pathAndFilename);
+					$matches = array();
+					if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches) === 1) {
+						$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
+						$classNameWithUnderscores = str_replace('.', '_', $classNameWithUnderscores);
+						$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
 
-		foreach ($changedFiles as $pathAndFilename => $status) {
-			if (1 === preg_match('/\/Domain\/Model\/(.+)\.php/', $pathAndFilename)) {
-				$this->getCache('FLOW3_Object_Configuration')->remove('doctrineProxyCodeUpToDate');
-				break;
-			}
+							// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
+						if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
+							$modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
+						}
+							// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
+						if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
+							$objectClassesCache->remove($classNameWithUnderscores);
+						}
+					}
+				}
+				$flushDoctrineProxyCache = FALSE;
+				if (count($modifiedClassNamesWithUnderscores) > 0) {
+					$reflectionStatusCache = $this->getCache('FLOW3_Reflection_Status');
+					foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
+						$reflectionStatusCache->remove($classNameWithUnderscores);
+						if ($flushDoctrineProxyCache === FALSE && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
+							$flushDoctrineProxyCache = TRUE;
+						}
+					}
+					$objectConfigurationCache->remove('allCompiledCodeUpToDate');
+				}
+				if (count($modifiedAspectClassNamesWithUnderscores) > 0) {
+					$this->systemLogger->log('Aspect classes have been modified, flushing the whole proxy classes cache.', LOG_INFO);
+					$objectClassesCache->flush();
+				}
+				if ($flushDoctrineProxyCache === TRUE) {
+					$this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
+					$objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
+				}
+			break;
+			case 'FLOW3_ConfigurationFiles' :
+				$flushPolicyCaches = FALSE;
+				foreach (array_keys($changedFiles) as $pathAndFilename) {
+					if (basename($pathAndFilename) === 'Policy.yaml') {
+						$this->systemLogger->log('The security policies have changed, flushing the policy cache.', LOG_INFO);
+						$this->getCache('FLOW3_Security_Policy')->flush();
+						break;
+					}
+				}
+
+				$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO, $changedFiles);
+				$objectConfigurationCache->remove('allAspectClassesUpToDate');
+				$objectConfigurationCache->remove('allCompiledCodeUpToDate');
+				$objectClassesCache->flush();
+			break;
+			case 'FLOW3_TranslationFiles' :
+				foreach ($changedFiles as $pathAndFilename => $status) {
+					$matches = array();
+					if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename, $matches) === 1) {
+						$this->systemLogger->log('The localization files have changed, thus flushing the I18n XML model cache.', LOG_INFO);
+						$this->getCache('FLOW3_I18n_XmlModelCache')->flush();
+						break;
+					}
+				}
+			break;
 		}
 	}
 

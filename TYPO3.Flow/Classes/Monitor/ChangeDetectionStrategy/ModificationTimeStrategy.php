@@ -14,14 +14,20 @@ namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
  * Public License for more details.                                       *
  *                                                                        */
 
+use TYPO3\FLOW3\Cache\Frontend\VariableFrontend;
+use TYPO3\FLOW3\Monitor\FileMonitor;
+
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A change detection strategy based on modification times
- *
- * @FLOW3\Scope("singleton")
  */
-class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface {
+class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
+
+	/**
+	 * @var \TYPO3\FLOW3\Monitor\FileMonitor
+	 */
+	protected $fileMonitor;
 
 	/**
 	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
@@ -45,7 +51,7 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -54,8 +60,9 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 *
 	 * @return void
 	 */
-	public function initializeObject() {
-		$this->filesAndModificationTimes = $this->cache->get('filesAndModificationTimes');
+	public function setFileMonitor(FileMonitor $fileMonitor) {
+		$this->fileMonitor = $fileMonitor;
+		$this->filesAndModificationTimes = $this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes');
 	}
 
 	/**
@@ -98,7 +105,7 @@ class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionSt
 	 */
 	public function shutdownObject() {
 		if ($this->modificationTimesChanged === TRUE) {
-			$this->cache->set('filesAndModificationTimes', $this->filesAndModificationTimes);
+			$this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', $this->filesAndModificationTimes);
 		}
 	}
 }

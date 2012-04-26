@@ -156,7 +156,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$classCount = $this->proxyClassCompiler->compile();
 
-		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array(\TYPO3\FLOW3\Cache\CacheManager::getClassTag()));
+		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE);
 
 		$classesCacheBackend = $classesCache->getBackend();
 		if ($this->bootstrap->getContext() === 'Production' && $classesCacheBackend instanceof FreezableBackendInterface) {

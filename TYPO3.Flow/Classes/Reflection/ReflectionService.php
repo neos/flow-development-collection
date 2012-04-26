@@ -186,6 +186,7 @@ class ReflectionService {
 	 */
 	public function setStatusCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
 		$this->statusCache = $cache;
+		$this->statusCache->getBackend()->initializeObject();
 	}
 
 	/**
@@ -1535,11 +1536,7 @@ class ReflectionService {
 	 * @return void
 	 */
 	protected function loadOrReflectClassIfNecessary($className) {
-		if (!isset($this->classReflectionData[$className])) {
-			return;
-		}
-
-		if (is_array($this->classReflectionData[$className])) {
+		if (!isset($this->classReflectionData[$className]) || is_array($this->classReflectionData[$className])) {
 			return;
 		}
 
@@ -1652,7 +1649,7 @@ class ReflectionService {
 			$this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LOG_DEBUG);
 
 			foreach (array_keys($this->updatedReflectionData) as $className) {
-				$this->statusCache->set(str_replace('\\', '_', $className), '', array(\TYPO3\FLOW3\Cache\CacheManager::getClassTag($className)));
+				$this->statusCache->set(str_replace('\\', '_', $className), '');
 			}
 
 			$data = array();

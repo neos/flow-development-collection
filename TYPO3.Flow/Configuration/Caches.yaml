@@ -23,36 +23,78 @@ Default:
 # Definition of caches used by FLOW3:
 #
 FLOW3_Cache_ResourceFiles: []
-FLOW3_Configuration: []
+
+# FLOW3_Core
+#
+# This cache is used by the Bootstrap to communicate between main and sub process
+# about Doctrine proxy class building.
 FLOW3_Core:
   frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
+  backend: TYPO3\FLOW3\Cache\Backend\SimpleFileBackend
+
+# FLOW3_I18n_*
+#
+# These caches contain precompiled data from the CLDR and information about available
+# locales and translations.
 FLOW3_I18n_AvailableLocalesCache: []
 FLOW3_I18n_XmlModelCache: []
 FLOW3_I18n_Cldr_CldrModelCache: []
 FLOW3_I18n_Cldr_Reader_DatesReaderCache: []
 FLOW3_I18n_Cldr_Reader_NumbersReaderCache: []
 FLOW3_I18n_Cldr_Reader_PluralsReaderCache: []
-FLOW3_Monitor: []
-FLOW3_MVC_Web_Routing_FindMatchResults:
+
+# FLOW3_Monitor
+FLOW3_Monitor:
+  backend: TYPO3\FLOW3\Cache\Backend\SimpleFileBackend
+
+# FLOW3_Mvc_Routing_*
+#
+# These caches contain request patterns and their matches and the opposite direction –
+# action request patterns and their resolved URL.
+FLOW3_Mvc_Routing_FindMatchResults:
   backend: TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend
   backendOptions:
     defaultLifetime: 0
-FLOW3_MVC_Web_Routing_Resolve:
+FLOW3_Mvc_Routing_Resolve:
   frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
   backend: TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend
   backendOptions:
     defaultLifetime: 0
+
+# FLOW3_Object_Classes
+#
+# This is the main code cache. It contains copies of the original classes and proxy
+# classes built by AOP and the Dependency Injection builder.
 FLOW3_Object_Classes:
   frontend: TYPO3\FLOW3\Cache\Frontend\PhpFrontend
-  backend: TYPO3\FLOW3\Cache\Backend\FileBackend
-FLOW3_Object_Configuration: []
-FLOW3_ReflectionStatus:
+  backend: TYPO3\FLOW3\Cache\Backend\SimpleFileBackend
+
+# FLOW3_Object_Configuration
+#
+# This cache contains meta and status information for all code building mechanisms
+# of FLOW3. It states if certain code caches are up to date and stores previously
+# built object configurations.
+FLOW3_Object_Configuration:
+  backend: TYPO3\FLOW3\Cache\Backend\SimpleFileBackend
+
+# FLOW3_Reflection*
+#
+#
+FLOW3_Reflection_Status:
   frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
-FLOW3_ReflectionData: []
-FLOW3_Reflection_ReflectionDataRuntimeCache: []
-FLOW3_Reflection_ClassSchemataRuntimeCache: []
+  backend: TYPO3\FLOW3\Cache\Backend\SimpleFileBackend
+FLOW3_Reflection_CompiletimeData:
+  backend: TYPO3\FLOW3\Cache\Backend\SimpleFileBackend
+FLOW3_Reflection_RuntimeData: []
+FLOW3_Reflection_RuntimeClassSchemata: []
+
+# FLOW3_Resource_Status
+#
+# Stores the publication status of static and persistent resources
 FLOW3_Resource_Status:
   frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
+
+# FLOW3_Security_*
 FLOW3_Security_Policy: []
 FLOW3_Security_Cryptography_RSAWallet:
   backendOptions:

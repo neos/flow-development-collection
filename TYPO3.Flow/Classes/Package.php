@@ -55,9 +55,7 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', 'TYPO3\FLOW3\Session\SessionInterface', 'renewId');
 		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'loggedOut', 'TYPO3\FLOW3\Session\SessionInterface', 'destroy');
 
-		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'flushClassFileCachesByChangedFiles');
-		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'markDoctrineProxyCodeOutdatedByChangedFiles');
-
+		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'flushSystemCachesByChangedFiles');
 	}
 }
 

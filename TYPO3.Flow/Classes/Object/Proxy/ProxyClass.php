@@ -70,13 +70,6 @@ class ProxyClass {
 	protected $properties = array();
 
 	/**
-	 * A list of tags to attach to the cache entry this proxy class will be stored in
-	 *
-	 * @var array
-	 */
-	protected $cacheTags = array();
-
-	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -94,10 +87,6 @@ class ProxyClass {
 			$this->originalClassName = substr($fullOriginalClassName, strlen($this->namespace) + 1);
 		}
 		$this->fullOriginalClassName = $fullOriginalClassName;
-		$this->addClassDependency($fullOriginalClassName);
-		foreach (class_parents($fullOriginalClassName) as $parentClassName) {
-			$this->addClassDependency($parentClassName);
-		}
 	}
 
 	/**
@@ -179,38 +168,6 @@ class ProxyClass {
 	 */
 	public function addInterfaces(array $interfaceNames) {
 		$this->interfaces = array_merge($this->interfaces, $interfaceNames);
-		$this->addClassDependencies($interfaceNames);
-	}
-
-	/**
-	 * Adds a class or interface name as a dependency.
-	 *
-	 * @param string $className Class name this proxy class depends on
-	 * @return void
-	 */
-	public function addClassDependency($className) {
-		$this->cacheTags[] = CacheManager::getClassTag($className);
-	}
-
-	/**
-	 * Adds multiple classes or interfaces dependencies.
-	 *
-	 * @param array $classNames Class names this proxy class depends on
-	 * @return void
-	 */
-	public function addClassDependencies(array $classNames) {
-		foreach ($classNames as $className) {
-			$this->cacheTags[] = CacheManager::getClassTag($className);
-		}
-	}
-
-	/**
-	 * Returns a list of cache tags for the cache entry of this proxy class
-	 *
-	 * @return array
-	 */
-	public function getCacheTags() {
-		return array_unique($this->cacheTags);
 	}
 
 	/**

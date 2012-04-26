@@ -170,6 +170,31 @@ class Bootstrap {
 	}
 
 	/**
+	 * Returns the request handler (if any) which is currently handling the request.
+	 *
+	 * @return \TYPO3\FLOW3\Core\RequestHandlerInterface
+	 */
+	public function getActiveRequestHandler() {
+		return $this->activeRequestHandler;
+	}
+
+	/**
+	 * Explicitly sets the active request handler.
+	 *
+	 * This method makes only sense to use during functional tests. During a functional
+	 * test run the active request handler chosen by the bootstrap will be a command
+	 * line request handler specialized on running functional tests. A functional
+	 * test case can then set the active request handler to one which simulates, for
+	 * example, an HTTP request.
+	 *
+	 * @param \TYPO3\FLOW3\Core\RequestHandlerInterface $requestHandler
+	 * @return void
+	 */
+	public function setActiveRequestHandler(\TYPO3\FLOW3\Core\RequestHandlerInterface $requestHandler) {
+		$this->activeRequestHandler = $requestHandler;
+	}
+
+	/**
 	 * Registers a command specified by the given identifier to be called during
 	 * compiletime (versus runtime). The related command controller must be totally
 	 * aware of the limited functionality FLOW3 provides at compiletime.
@@ -219,33 +244,7 @@ class Bootstrap {
 				}
 			}
 		}
-
 		return FALSE;
-	}
-
-	/**
-	 * Returns the request handler (if any) which is currently handling the request.
-	 *
-	 * @return \TYPO3\FLOW3\Core\RequestHandlerInterface
-	 */
-	public function getActiveRequestHandler() {
-		return $this->activeRequestHandler;
-	}
-
-	/**
-	 * Explicitly sets the active request handler.
-	 *
-	 * This method makes only sense to use during functional tests. During a functional
-	 * test run the active request handler chosen by the bootstrap will be a command
-	 * line request handler specialized on running functional tests. A functional
-	 * test case can then set the active request handler to one which simulates, for
-	 * example, an HTTP request.
-	 *
-	 * @param \TYPO3\FLOW3\Core\RequestHandlerInterface $requestHandler
-	 * @return void
-	 */
-	public function setActiveRequestHandler(\TYPO3\FLOW3\Core\RequestHandlerInterface $requestHandler) {
-		$this->activeRequestHandler = $requestHandler;
 	}
 
 	/**
@@ -288,7 +287,7 @@ class Bootstrap {
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:compiletime:create', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeCreate')), 'typo3.flow3:systemlogger');
 		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:objectmanagement:compiletime:create');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:compiletime:finalize', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeFinalize')), 'typo3.flow3:reflectionservice');
-		$sequence->addStep(new Step('typo3.flow3:classfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassFileMonitor')), 'typo3.flow3:objectmanagement:compiletime:finalize');
+		$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:compiletime:finalize');
 		return $sequence;
 	}
 
@@ -307,7 +306,7 @@ class Bootstrap {
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:reflectionservice');
 
 		if ($this->context !== 'Production') {
-			$sequence->addStep(new Step('typo3.flow3:classfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
+			$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
 		}
 
 		$sequence->addStep(new Step('typo3.flow3:persistence', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow3:objectmanagement:runtime');

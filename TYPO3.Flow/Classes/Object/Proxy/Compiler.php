@@ -167,7 +167,7 @@ class Compiler {
 				if (isset($this->proxyClasses[$fullOriginalClassName])) {
 					$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
 					if ($proxyClassCode !== '') {
-						$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode, $this->proxyClasses[$fullOriginalClassName]->getCacheTags());
+						$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode);
 
 						$class = new \ReflectionClass($fullOriginalClassName);
 						$classPathAndFilename = $class->getFileName();
@@ -195,7 +195,7 @@ class Compiler {
 
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
-		$this->classesCache->set(str_replace('\\', '_', $className . self::ORIGINAL_CLASSNAME_SUFFIX), $classCode, array(CacheManager::getClassTag($className)));
+		$this->classesCache->set(str_replace('\\', '_', $className . self::ORIGINAL_CLASSNAME_SUFFIX), $classCode);
 	}
 
 
