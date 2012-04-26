@@ -70,10 +70,10 @@ class AbstractFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function flushByTagCallsBackend() {
+	public function flushByTagCallsBackendIfItIsATaggableBackend() {
 		$tag = 'sometag';
 		$identifier = 'someCacheIdentifier';
-		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\TaggableBackendInterface', array('setCache', 'get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('flushByTag')->with($tag);
 
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));

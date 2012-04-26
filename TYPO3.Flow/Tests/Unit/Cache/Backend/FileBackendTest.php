@@ -13,7 +13,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
 
 /**
  * Testcase for the cache to file backend
- *
  */
 class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -49,6 +48,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 
 			// We need to create the directory here because vfs doesn't support touch() which is used by
 			// createDirectoryRecursively() in the setCache method.
@@ -67,6 +67,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function aDedicatedCacheDirectoryIsUsedForCodeCaches() {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 
 			// We need to create the directory here because vfs doesn't support touch() which is used by
 			// createDirectoryRecursively() in the setCache method.
@@ -89,6 +90,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
 		$backend->injectEnvironment($mockEnvironment);

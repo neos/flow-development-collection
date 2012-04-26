@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A caching backend which stores cache entries in files
  *
  * @api
+ * @FLOW3\Proxy(false)
  */
-class FileBackend extends AbstractBackend implements PhpCapableBackendInterface, FreezableBackendInterface {
+class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterface, FreezableBackendInterface, TaggableBackendInterface {
 
 	const SEPARATOR = '^';
 
@@ -25,13 +27,6 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	const EXPIRYTIME_LENGTH = 14;
 
 	const DATASIZE_DIGITS = 10;
-
-	/**
-	 * Directory where the files are stored.
-	 *
-	 * @var string
-	 */
-	protected $cacheDirectory = '';
 
 	/**
 	 * A file extension to use for each cache entry.
@@ -49,23 +44,6 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	 * @var boolean
 	 */
 	protected $frozen = FALSE;
-
-	/**
-	 * If the extension "igbinary" is installed, use it for increased performance.
-	 * Caching the result of extension_loaded() here is faster than calling extension_loaded() multiple times.
-	 *
-	 * @var boolean
-	 */
-	protected $useIgBinary = FALSE;
-
-	/**
-	 * Initializes this cache frontend
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$this->useIgBinary = extension_loaded('igbinary');
-	}
 
 	/**
 	 * Freezes this cache backend.
@@ -131,21 +109,6 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		$codeOrData = ($cache instanceof \TYPO3\FLOW3\Cache\Frontend\PhpFrontend) ? 'Code' : 'Data';
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
-		if (!is_writable($cacheDirectory)) {
-			try {
-				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($cacheDirectory);
-			} catch (\TYPO3\FLOW3\Utility\Exception $exception) {
-				throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
-			}
-		}
-		if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-		if (!is_writable($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
-
-		$this->cacheDirectory = $cacheDirectory;
-		$this->cacheEntryFileExtension = ($cache instanceof \TYPO3\FLOW3\Cache\Frontend\PhpFrontend) ? '.php' : '';
-
 		if (file_exists($this->cacheDirectory . 'FrozenCache.data')) {
 			$this->frozen = TRUE;
 			if ($this->useIgBinary === TRUE) {
@@ -154,16 +117,6 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 				$this->cacheEntryIdentifiers = unserialize(file_get_contents($this->cacheDirectory . 'FrozenCache.data'));
 			}
 		}
-	}
-
-	/**
-	 * Returns the directory where the cache files are stored
-	 *
-	 * @return string Full path of the cache directory
-	 * @api
-	 */
-	public function getCacheDirectory() {
-		return $this->cacheDirectory;
 	}
 
 	/**
@@ -189,10 +142,6 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 		$this->remove($entryIdentifier);
 
 		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . uniqid() . '.temp';
-		if (strlen($temporaryCacheEntryPathAndFilename) > $this->environment->getMaximumPathLength()) {
-			throw new \TYPO3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $temporaryCacheEntryPathAndFilename . '" is ' . strlen($temporaryCacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->environment->getMaximumPathLength() . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
-		}
-
 		$lifetime = $lifetime === NULL ? $this->defaultLifetime : $lifetime;
 		$expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
 		$metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
@@ -341,8 +290,8 @@ class FileBackend extends AbstractBackend implements PhpCapableBackendInterface,
 		if (file_exists($cacheEntryPathAndFilename) === FALSE) return TRUE;
 
 		$index = (integer) file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
-		$expiryTime = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index, self::EXPIRYTIME_LENGTH);
-		return ($expiryTime != 0 && $expiryTime < time());
+		$expiryTime = intval(file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index, self::EXPIRYTIME_LENGTH));
+		return ($expiryTime !== 0 && $expiryTime < time());
 	}
 
 	/**

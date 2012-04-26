@@ -39,7 +39,7 @@ namespace TYPO3\FLOW3\Cache\Backend;
  *
  * @api
  */
-class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
+class MemcachedBackend extends AbstractBackend implements TaggableBackendInterface {
 
 	/**
 	 * Max bucket size, (1024*1024)-42 bytes
