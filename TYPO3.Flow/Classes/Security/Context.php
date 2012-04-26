@@ -501,6 +501,10 @@ class Context {
 	 * @return void
 	 */
 	protected function separateActiveAndInactiveTokens() {
+		if ($this->request === NULL) {
+			return;
+		}
+
 		foreach ($this->tokens as $token) {
 			if ($token->hasRequestPatterns()) {
 
