@@ -724,7 +724,7 @@ EOT;
 			if (isset($this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
 				$groupedAdvices = $this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName];
 				if (isset($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AroundAdvice'])) {
-					$this->FLOW3_Aop_Proxy_groupedAdviceChains[$methodName]['TYPO3\FLOW3\Aop\Advice\AroundAdvice'] = new \TYPO3\FLOW3\Aop\Advice\AdviceChain($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AroundAdvice'], $this);
+					$this->FLOW3_Aop_Proxy_groupedAdviceChains[$methodName]['TYPO3\FLOW3\Aop\Advice\AroundAdvice'] = new \TYPO3\FLOW3\Aop\Advice\AdviceChain($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AroundAdvice']);
 					$adviceChains = $this->FLOW3_Aop_Proxy_groupedAdviceChains[$methodName];
 				}
 			}
