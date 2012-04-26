@@ -52,6 +52,12 @@ class PersistenceQueryRewritingAspect {
 	protected $persistenceManager;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * Array of registered global objects that can be accessed as operands
 	 * @var array
 	 */
@@ -303,16 +309,22 @@ class PersistenceQueryRewritingAspect {
 		if ($referenceToThisFound === FALSE) throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
-					&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
-					&& $this->reflectionService->isClassAnnotatedWith($leftOperand, 'TYPO3\FLOW3\Annotations\Entity')) {
-
+			&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
+			&& (
+				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'TYPO3\FLOW3\Annotations\Entity')
+					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'Doctrine\ORM\Mapping\Entity')
+			)
+		) {
 			$leftOperand = $this->persistenceManager->getIdentifierByObject($leftOperand);
-
 		}
-		if (is_object($rightOperand)
-					&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
-					&& $this->reflectionService->isClassAnnotatedWith($rightOperand, 'TYPO3\FLOW3\Annotations\Entity')) {
 
+		if (is_object($rightOperand)
+			&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
+			&& (
+				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'TYPO3\FLOW3\Annotations\Entity')
+					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'Doctrine\ORM\Mapping\Entity')
+			)
+		) {
 			$rightOperand = $this->persistenceManager->getIdentifierByObject($rightOperand);
 		}
 
@@ -372,8 +384,9 @@ class PersistenceQueryRewritingAspect {
 			return NULL;
 		} else if (strpos($expression, 'current.') === 0) {
 			$objectAccess = explode('.', $expression, 3);
-			eval('$globalObject = ' . $this->globalObjects[$objectAccess[1]]);
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObject, $objectAccess[2]);
+			$globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
+			$globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
+			return $this->getObjectValueByPath($globalObject, $objectAccess[2]);
 		} else {
 			return trim($expression, '"\'');
 		}
