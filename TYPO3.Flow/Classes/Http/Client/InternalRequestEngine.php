@@ -27,6 +27,7 @@ use TYPO3\FLOW3\Mvc\Routing\Route;
 class InternalRequestEngine implements RequestEngineInterface {
 
 	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
@@ -72,6 +73,11 @@ class InternalRequestEngine implements RequestEngineInterface {
 	 * @api
 	 */
 	public function sendRequest(Request $request) {
+		$requestHandler = $this->bootstrap->getActiveRequestHandler();
+		if (!$requestHandler instanceof \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler) {
+			throw new \TYPO3\FLOW3\Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
+		}
+		$this->bootstrap->getActiveRequestHandler()->setHttpRequest($request);
 		$response = new Response();
 		$actionRequest = $this->router->route($request);
 		$this->securityContext->injectRequest($actionRequest);

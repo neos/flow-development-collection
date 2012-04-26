@@ -18,15 +18,30 @@ use TYPO3\FLOW3\Core\Bootstrap;
  * A request handler which boots up FLOW3 into a basic runtime level and then returns
  * without actually further handling command line commands.
  *
+ * As this request handler will be the "active" request handler returned by
+ * the bootstrap's getActiveRequestHandler() method, it also needs some support
+ * for HTTP request testing scenarios. For that reason it features a setRequest()
+ * method which is used by the FunctionalTestCase for setting the current HTTP
+ * request. That way, the request handler acts pretty much like the Http\RequestHandler
+ * from a client code perspective.
+ *
+ * The virtual browser's InternalRequestEngine will also set the current request
+ * via the setRequest() method.
+ *
  * @FLOW3\Proxy(false)
  * @FLOW3\Scope("singleton")
  */
-class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandlerInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
+
+	/**
+	 * @var \TYPO3\FLOW3\Http\Request
+	 */
+	protected $httpRequest;
 
 	/**
 	 * Constructor
@@ -68,6 +83,27 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerIn
 	public function handleRequest() {
 		$sequence = $this->bootstrap->buildRuntimeSequence();
 		$sequence->invoke($this->bootstrap);
+	}
+
+	/**
+	 * Returns the currently processed HTTP request
+	 *
+	 * @return \TYPO3\FLOW3\Http\Request
+	 */
+	public function getHttpRequest() {
+		return $this->httpRequest;
+	}
+
+	/**
+	 * Allows to set the currently processed HTTP request by the base functional
+	 * test case.
+	 *
+	 * @param \TYPO3\FLOW3\Http\Request $request
+	 * @return void
+	 * @see InternalRequestEngine::sendRequest()
+	 */
+	public function setHttpRequest(\TYPO3\FLOW3\Http\Request $request) {
+		$this->httpRequest = $request;
 	}
 }
 

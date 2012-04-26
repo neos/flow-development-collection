@@ -185,8 +185,8 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$this->securityContext->clearContext();
 		$this->securityContext->refreshTokens();
 
-		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
-		$actionRequest = $request->createActionRequest();
+		$requestHandler = self::$bootstrap->getActiveRequestHandler();
+		$actionRequest = $requestHandler->getHttpRequest()->createActionRequest();
 		$this->securityContext->injectRequest($actionRequest);
 	}
 
@@ -292,7 +292,9 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		$this->securityContext->clearContext();
 
-		$request = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost'));
+		$requestHandler = self::$bootstrap->getActiveRequestHandler();
+		$request = $requestHandler->getHttpRequest();
+
 		$actionRequest = $request->createActionRequest();
 		$this->securityContext->injectRequest($actionRequest);
 		$this->authenticationManager->authenticate();
@@ -358,6 +360,9 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		$this->browser = new \TYPO3\FLOW3\Http\Client\Browser();
 		$this->router = $this->browser->getRequestEngine()->getRouter();
+
+		$requestHandler = self::$bootstrap->getActiveRequestHandler();
+		$requestHandler->setHttpRequest(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost')));
 	}
 
 }
