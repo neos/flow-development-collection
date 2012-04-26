@@ -106,6 +106,9 @@ class PersistenceMagicAspect {
 	/**
 	 * Mark object as cloned after cloning.
 	 *
+	 * Note: this is not used by anything in the FLOW3 base distribution,
+	 * but might be needed by custom backends (like TYPO3.CouchDB).
+	 *
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
 	 * @return void
 	 * @FLOW3\AfterReturning("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
