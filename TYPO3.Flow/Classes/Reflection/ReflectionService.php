@@ -504,6 +504,7 @@ class ReflectionService {
 			$interfaceName = substr($interfaceName, 1);
 		}
 		$this->loadOrReflectClassIfNecessary($className);
+		$this->loadOrReflectClassIfNecessary($interfaceName);
 		if (!isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
 			return FALSE;
 		}
