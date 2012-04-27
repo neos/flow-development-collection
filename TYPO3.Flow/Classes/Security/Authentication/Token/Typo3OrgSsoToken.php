@@ -39,7 +39,7 @@ class Typo3OrgSsoToken extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	 * @return void
 	 */
 	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
-		$getArguments = $this->environment->getRawGetArguments();
+		$getArguments = $request->getArguments();
 
 		if (!empty($getArguments['user'])
 			&& !empty($getArguments['signature'])
