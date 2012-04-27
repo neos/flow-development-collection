@@ -101,10 +101,12 @@ interface SessionInterface {
 	/**
 	 * Explicitly destroys all session data
 	 *
+	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Session\Exception
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
-	public function destroy();
+	public function destroy($reason = NULL);
 
 }
 

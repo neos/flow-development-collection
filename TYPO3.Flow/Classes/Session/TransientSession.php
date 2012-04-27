@@ -154,10 +154,12 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	/**
 	 * Explicitly destroys all session data
 	 *
+	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Session\Exception
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
-	public function destroy() {
+	public function destroy($reason = NULL) {
 		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
 		$this->data = array();
 	}

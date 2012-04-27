@@ -157,15 +157,15 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 			$this->persistenceManager = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		}
 
+			// HTTP must be initialized before security because security relies on an
+			// HTTP request being available via the request handler:
+		if ($this->testableHttpEnabled === TRUE || $this->testableSecurityEnabled === TRUE) {
+			$this->setupHttp();
+		}
 		if ($this->testableSecurityEnabled === TRUE) {
 			$this->setupSecurity();
 		}
-
-		if ($this->testableHttpEnabled === TRUE) {
-			$this->setupHttp();
-		}
 	}
-
 
 	/**
 	 * Sets up security test requirements
@@ -217,6 +217,11 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
+		}
+
+		$session = self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Session\SessionInterface');
+		if ($session->isStarted()) {
+			$session->destroy(sprintf('tearDown() method of functional test %s.', get_class($this) . '::' . $this->getName()));
 		}
 	}
 
