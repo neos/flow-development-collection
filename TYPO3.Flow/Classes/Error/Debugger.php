@@ -193,7 +193,7 @@ class Debugger {
 
 		if (property_exists($object, 'FLOW3_Persistence_Identifier')) {
 			$identifier = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
-			$persistenceType = 'entity or value object (FIXME)';
+			$persistenceType = 'persistable';
 		} else {
 			$identifier = 'unknown';
 			$persistenceType = 'object';
