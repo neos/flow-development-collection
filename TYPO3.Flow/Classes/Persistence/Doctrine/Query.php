@@ -25,6 +25,11 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	protected $entityClassName;
 
 	/**
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var \Doctrine\ORM\QueryBuilder
 	 */
 	protected $queryBuilder;
@@ -77,6 +82,14 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 */
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
 	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
 	 * @return void
 	 */
@@ -112,12 +125,12 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * This should only ever be executed from the QueryResult class.
 	 *
 	 * @return array result set
-	 * @todo improve try/catch block, at least we should log if something goes wrong here
 	 */
 	public function getResult() {
 		try {
 			return $this->queryBuilder->getQuery()->getResult();
-		} catch (\Doctrine\ORM\ORMException $e) {
+		} catch (\Doctrine\ORM\ORMException $ormException) {
+			$this->systemLogger->logException($ormException);
 			return array();
 		}
 	}
@@ -136,7 +149,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 			$dqlQuery->setParameters($originalQuery->getParameters());
 			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('TYPO3\FLOW3\Persistence\Doctrine\CountWalker'));
 			return (int)$dqlQuery->getSingleScalarResult();
-		} catch (\Doctrine\ORM\ORMException $e) {
+		} catch (\Doctrine\ORM\ORMException $ormException) {
+			$this->systemLogger->logException($ormException);
 			return 0;
 		}
 	}
