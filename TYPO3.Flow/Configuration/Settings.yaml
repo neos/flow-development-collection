@@ -242,7 +242,14 @@ TYPO3:
       cryptography:
 
         hashingStrategies:
+
+          # The default strategy will be used to hash or validate passwords if no specific strategy is given
           default: bcrypt
+
+          # If a fallback strategy is configured, it will be used to validate passwords without a strategy identifier.
+          # This should be configured to the hashing strategy that was used before strategy identifiers were introduced
+          # with FLOW3 1.1 (pbkdf2 by default) to allow for a seamless migration.
+          fallback: pbkdf2
 
           pbkdf2: TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy
           bcrypt: TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy

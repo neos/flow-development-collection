@@ -127,7 +127,7 @@ class HashService {
 	 * @api
 	 */
 	public function hashPassword($password, $strategyIdentifier = 'default') {
-		list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
+		list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier, FALSE);
 		$hashedPasswordAndSalt = $passwordHashingStrategy->hashPassword($password, $this->getEncryptionKey());
 		return $strategyIdentifier . '=>' . $hashedPasswordAndSalt;
 	}
@@ -146,7 +146,7 @@ class HashService {
 			list($strategyIdentifier, $hashedPasswordAndSalt) = explode('=>', $hashedPasswordAndSalt, 2);
 		}
 
-		list($passwordHashingStrategy, ) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
+		list($passwordHashingStrategy, ) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier, TRUE);
 		return $passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->getEncryptionKey());
 	}
 
@@ -154,19 +154,24 @@ class HashService {
 	 * Get a password hashing strategy
 	 *
 	 * @param string $strategyIdentifier
+	 * @param boolean $validating TRUE if the password is validated, FALSE if the password is hashed
 	 * @return array Array of \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface and string
 	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
-	protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default') {
+	protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default', $validating) {
 		if (isset($this->passwordHashingStrategies[$strategyIdentifier])) {
 			return array($this->passwordHashingStrategies[$strategyIdentifier], $strategyIdentifier);
 		}
 
 		if ($strategyIdentifier === 'default') {
-			if (!isset($this->strategySettings['default'])) {
-				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No default hashing strategy configured', 1320758427);
+			if ($validating && isset($this->strategySettings['fallback'])) {
+				$strategyIdentifier = $this->strategySettings['fallback'];
+			} else {
+				if (!isset($this->strategySettings['default'])) {
+					throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No default hashing strategy configured', 1320758427);
+				}
+				$strategyIdentifier = $this->strategySettings['default'];
 			}
-			$strategyIdentifier = $this->strategySettings['default'];
 		}
 
 		if (!isset($this->strategySettings[$strategyIdentifier])) {
