@@ -23,9 +23,11 @@ TYPO3:
 
     log:
       systemLogger:
-        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/System_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/System_Testing.log, createParentDirectories: TRUE, severityThreshold: %LOG_DEBUG% }
       securityLogger:
-        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: TRUE, severityThreshold: %LOG_DEBUG% }
+      sqlLogger:
+        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Query_Testing.log, createParentDirectories: TRUE, severityThreshold: %LOG_DEBUG% }
 
     object:
       registerFunctionalTestClasses: true
