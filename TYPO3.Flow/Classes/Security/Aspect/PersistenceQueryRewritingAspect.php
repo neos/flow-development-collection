@@ -53,7 +53,7 @@ class PersistenceQueryRewritingAspect {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -90,7 +90,7 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
-	 * @return void
+	 * @return mixed
 	 */
 	public function rewriteQomQuery(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
@@ -201,6 +201,8 @@ class PersistenceQueryRewritingAspect {
 
 		if (count($resourceConstraintObjects) > 1) {
 			return $query->logicalAnd($resourceConstraintObjects);
+		} elseif (count($resourceConstraintObjects) === 1) {
+			return current($resourceConstraintObjects);
 		} else {
 			return NULL;
 		}
