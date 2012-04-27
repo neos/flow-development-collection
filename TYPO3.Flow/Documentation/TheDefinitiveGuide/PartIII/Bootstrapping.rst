@@ -11,6 +11,55 @@ to initialize vital parts of the framework and the application. It explains
 the built-in request handlers which effectively control the boot sequence and
 demonstrates how custom request handlers can be developed and registered.
 
+The FLOW3 Application Context
+=============================
+
+Each request, no matter if it runs from the command line or through HTTP,
+runs in a specific *application context*. FLOW3 provides exactly three built-in
+contexts:
+
+* ``Development`` (default) - used for development
+* ``Production`` - should be used for a live site
+* ``Testing`` - is used for functional tests
+
+The context FLOW3 runs in is specified through the environment variable
+``FLOW3_CONTEXT``. It can be set per command at the command line or be part of the
+webserver configuration:
+
+	# run the FLOW3 CLI commands in production context
+	FLOW3_CONTEXT=Production ./flow3 help
+
+	# In your Apache configuration, you usually use:
+	SetEnv FLOW3_CONTEXT Production
+
+Custom Contexts
+---------------
+
+In certain situations, more specific contexts are desirable:
+
+* a staging system may run in a Production context, but requires a different set of
+  credentials than the production server.
+* developers working on a project may need different application specific settings
+  but prefer to maintain all configuration files in a common Git repository.
+
+By defining custom contexts which inherit from one of the three base contexts,
+more specific configuration sets can be realized.
+
+While it is not possible to add new "top-level" contexts at the same level like
+*Production* and *Testing*, you can create arbitrary *sub-contexts*, just by
+specifying them like ``<MainContext>/<SubContext>``.
+
+For a staging environment a custom context ``Production/Staging`` may provide the
+necessary settings while the ``Production/Live`` context is used on the live instance.
+
+Each sub context inherits the configuration from the parent context, which is
+explained in full detail inside the *Configuration* chapter.
+
+.. note:: This even works recursively, so if you have a multiple-server staging
+          setup, you could use the context Production/Staging/Server1 and
+          Production/Staging/Server2 if both staging servers needed different
+          configuration.
+
 Boot Sequence
 =============
 

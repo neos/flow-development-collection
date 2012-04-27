@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Core\ApplicationContext;
+
 /**
  * Testcase for the Transient Memory Backend
  *
@@ -22,7 +24,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
@@ -34,7 +36,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'Some data';
@@ -49,7 +51,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function itIsPossibleToSetAndGetEntry() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'Some data';
@@ -64,7 +66,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'Some data';
@@ -80,7 +82,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'Some data';
@@ -97,7 +99,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'Some data';
@@ -116,7 +118,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$identifier = 'NonExistingIdentifier';
@@ -129,7 +131,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$identifier = 'NonExistingIdentifier';
@@ -142,7 +144,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'some data' . microtime();
@@ -162,7 +164,7 @@ class TransientMemoryBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function flushRemovesAllCacheEntries() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend(new ApplicationContext('Testing'));
 		$backend->setCache($cache);
 
 		$data = 'some data' . microtime();

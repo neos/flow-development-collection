@@ -79,11 +79,11 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	/**
 	 * Constructs this backend
 	 *
-	 * @param string $context FLOW3's application context
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
 	 * @param array $options Configuration options - depends on the actual backend
 	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
-	public function __construct($context, array $options = array()) {
+	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
 		if (!extension_loaded('memcache')) throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "memcache" must be installed and loaded in order to use the Memcached backend.', 1213987706);
 		parent::__construct($context, $options);
 	}

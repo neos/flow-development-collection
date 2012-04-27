@@ -12,6 +12,8 @@ namespace TYPO3\FLOW3\Core;
  *                                                                        */
 
 	// Those are needed before the autoloader is active
+require_once(__DIR__ . '/ApplicationContext.php');
+require_once(__DIR__ . '/../Exception.php');
 require_once(__DIR__ . '/../Utility/Files.php');
 require_once(__DIR__ . '/../Package/PackageInterface.php');
 require_once(__DIR__ . '/../Package/Package.php');
@@ -40,7 +42,7 @@ class Bootstrap {
 
 	/**
 	 * The application context
-	 * @var string
+	 * @var TYPO3\FLOW3\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -85,8 +87,8 @@ class Bootstrap {
 		$this->defineConstants();
 		$this->ensureRequiredEnvironment();
 
-		$this->context = $context;
-		if ($this->context === 'Testing') {
+		$this->context = new ApplicationContext($context);
+		if ($this->context->isTesting()) {
 			require_once('PHPUnit/Autoload.php');
 			require_once(FLOW3_PATH_FLOW3 . 'Tests/BaseTestCase.php');
 			require_once(FLOW3_PATH_FLOW3 . 'Tests/FunctionalTestCase.php');
@@ -137,7 +139,7 @@ class Bootstrap {
 	/**
 	 * Returns the context this bootstrap was started in.
 	 *
-	 * @return string The context, for example "Development"
+	 * @return TYPO3\FLOW3\Core\ApplicationContext The context encapsulated in an object, for example "Development" or "Development/MyDeployment"
 	 * @api
 	 */
 	public function getContext() {
@@ -259,7 +261,7 @@ class Bootstrap {
 		$sequence->addStep(new Step('typo3.flow3:configuration', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeConfiguration')));
 		$sequence->addStep(new Step('typo3.flow3:systemlogger', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemLogger')), 'typo3.flow3:configuration');
 
-		if ($this->context === 'Production') {
+		if ($this->context->isProduction()) {
 			$sequence->addStep(new Step('typo3.flow3:lockmanager', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeLockManager')), 'typo3.flow3:systemlogger');
 		}
 
@@ -278,7 +280,7 @@ class Bootstrap {
 	public function buildCompiletimeSequence() {
 		$sequence = $this->buildEssentialsSequence();
 
-		if ($this->context === 'Production') {
+		if ($this->context->isProduction()) {
 			$bootstrap = $this;
 			$sequence->addStep(new Step('typo3.flow3:lockmanager:locksiteorexit', function() use ($bootstrap) { $bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\LockManager')->lockSiteOrExit(); } ), 'typo3.flow3:systemlogger');
 		}
@@ -305,7 +307,7 @@ class Bootstrap {
 		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:classloader:cache');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:reflectionservice');
 
-		if ($this->context !== 'Production') {
+		if (!$this->context->isProduction()) {
 			$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
 		}
 

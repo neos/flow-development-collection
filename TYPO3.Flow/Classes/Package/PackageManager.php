@@ -497,7 +497,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			}
 			$this->packageStatesConfiguration = array();
 		}
-		if ($this->packageStatesConfiguration === array() || $this->bootstrap->getContext() !== 'Production') {
+		if ($this->packageStatesConfiguration === array() || !$this->bootstrap->getContext()->isProduction()) {
 			$this->scanAvailablePackages();
 		} else {
 			foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {

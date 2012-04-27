@@ -59,7 +59,7 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	 * @return boolean If the request is a CLI request, TRUE otherwise FALSE
 	 */
 	public function canHandleRequest() {
-		return (PHP_SAPI === 'cli' && $this->bootstrap->getContext() === 'Testing');
+		return (PHP_SAPI === 'cli' && $this->bootstrap->getContext()->isTesting());
 	}
 
 	/**

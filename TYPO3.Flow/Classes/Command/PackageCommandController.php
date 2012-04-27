@@ -32,11 +32,23 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $settings;
 
 	/**
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 */
+	protected $bootstrap;
+
+	/**
 	 * @param array $settings The FLOW3 settings
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 */
+	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		$this->bootstrap = $bootstrap;
 	}
 
 	/**
@@ -150,7 +162,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$inactivePackages = array();
 		$frozenPackages = array();
 		$longestPackageKey = 0;
-		$freezeSupported = $this->settings['core']['context'] === 'Development';
+		$freezeSupported = $this->bootstrap->getContext()->isDevelopment();
 
 		foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
 			if (strlen($packageKey) > $longestPackageKey) {
@@ -240,7 +252,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @see typo3.flow3:package:refreeze
 	 */
 	public function freezeCommand($packageKey) {
-		if ($this->settings['core']['context'] !== 'Development') {
+		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
 			$this->quit(3);
 		}
@@ -301,7 +313,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @see typo3.flow3:cache:flush
 	 */
 	public function unfreezeCommand($packageKey) {
-		if ($this->settings['core']['context'] !== 'Development') {
+		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
 			$this->quit(3);
 		}
@@ -358,7 +370,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @see typo3.flow3:cache:flush
 	 */
 	public function refreezeCommand($packageKey) {
-		if ($this->settings['core']['context'] !== 'Development') {
+		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
 			$this->quit(3);
 		}

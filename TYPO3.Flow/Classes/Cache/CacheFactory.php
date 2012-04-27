@@ -26,7 +26,7 @@ class CacheFactory {
 	/**
 	 * The current FLOW3 context ("Production", "Development" etc.)
 	 *
-	 * @var string
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -45,11 +45,11 @@ class CacheFactory {
 	/**
 	 * Constructs this cache factory
 	 *
-	 * @param string $context The current FLOW3 context
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context The current FLOW3 context
 	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 */
-	public function __construct($context, \TYPO3\FLOW3\Cache\CacheManager $cacheManager, \TYPO3\FLOW3\Utility\Environment $environment) {
+	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, \TYPO3\FLOW3\Cache\CacheManager $cacheManager, \TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->context = $context;
 		$this->cacheManager = $cacheManager;
 		$this->cacheManager->injectCacheFactory($this);

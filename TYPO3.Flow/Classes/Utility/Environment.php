@@ -23,9 +23,9 @@ use TYPO3\FLOW3\Mvc\ActionRequest;
 class Environment {
 
 	/**
-	 * @var string
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
-	protected $context = '';
+	protected $context;
 
 	/**
 	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
@@ -46,9 +46,9 @@ class Environment {
 	/**
 	 * Initializes the environment instance.
 	 *
-	 * @param string $context The FLOW3 context
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context The FLOW3 context
 	 */
-	public function __construct($context) {
+	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context) {
 		$this->context = $context;
 	}
 
@@ -104,6 +104,10 @@ class Environment {
 	 * Creates FLOW3's temporary directory - or at least asserts that it exists and is
 	 * writable.
 	 *
+	 * For each FLOW3 Application Context, we create an extra temporary folder,
+	 * and for nested contexts, the folders are prefixed with "SubContext" to
+	 * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
+	 *
 	 * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
 	 * @return string The full path to the temporary directory
 	 * @throws \TYPO3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
@@ -113,7 +117,7 @@ class Environment {
 		if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
 			$temporaryDirectoryBase .= '/';
 		}
-		$temporaryDirectory = $temporaryDirectoryBase . $this->context . '/';
+		$temporaryDirectory = $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$this->context) . '/';
 
 		if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
 			try {

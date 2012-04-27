@@ -34,7 +34,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 
 	/**
 	 * The current application context
-	 * @var string
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -52,12 +52,12 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	/**
 	 * Constructs this backend
 	 *
-	 * @param string $context FLOW3's application context
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
 	 * @param array $options Configuration options - depends on the actual backend
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
-	public function __construct($context, array $options = array()) {
+	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
 		$this->context = $context;
 		if (is_array($options) || $options instanceof \ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {

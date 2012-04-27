@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Core\ApplicationContext;
+
 /**
  * Testcase for the APC cache backend
  *
@@ -43,7 +45,7 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
-		$backend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($this->mockEnvironment);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
@@ -237,7 +239,7 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected function setUpBackend() {
 		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->setCache($cache);
 		return $backend;

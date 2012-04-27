@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Core\ApplicationContext;
+
 /**
  * Testcase for the cache to memcached backend
  *
@@ -49,7 +51,7 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
-		$backend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
+		$backend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
 		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->initializeObject();
 		$data = 'Some data';
@@ -62,7 +64,7 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured() {
-		$backend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'));
 		$backend->initializeObject();
 	}
 
@@ -271,7 +273,7 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		if ($backendOptions == array()) {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
-		$backend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
+		$backend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
 		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->setCache($cache);
 		$backend->initializeObject();

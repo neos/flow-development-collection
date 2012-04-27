@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Object;
 
 use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
+use TYPO3\FLOW3\Core\ApplicationContext;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
@@ -26,7 +27,9 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ObjectManager implements ObjectManagerInterface {
 
 	/**
-	 * @var string The configuration context for this FLOW3 run
+	 * The configuration context for this FLOW3 run
+	 *
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -73,9 +76,9 @@ class ObjectManager implements ObjectManagerInterface {
 	/**
 	 * Constructor for this Object Container
 	 *
-	 * @param string $context The configuration context for this FLOW3 run
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context The configuration context for this FLOW3 run
 	 */
-	public function __construct($context) {
+	public function __construct(ApplicationContext $context) {
 		$this->context = $context;
 		$this->shutdownObjects = new \SplObjectStorage;
 	}
@@ -106,7 +109,7 @@ class ObjectManager implements ObjectManagerInterface {
 	/**
 	 * Returns the context FLOW3 is running in.
 	 *
-	 * @return string The context, for example "Development" or "Production"
+	 * @return \TYPO3\FLOW3\Core\ApplicationContext The context, for example "Development" or "Production"
 	 */
 	public function getContext() {
 		return $this->context;

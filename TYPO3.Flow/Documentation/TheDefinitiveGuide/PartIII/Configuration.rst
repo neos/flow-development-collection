@@ -15,7 +15,8 @@ File Locations
 
 There are several locations where configuration files may be placed. All of them are
 scanned by the configuration manager during initialization and cascaded into a single
-configuration tree. The following locations exist (listed in the order they are loaded):
+configuration tree. The following locations exist (listed in the order they are loaded,
+i.e. later values override prior ones):
 
 * */Packages/<PackageDirectoryAndName>/Configuration/*
 	The *Configuration* directory of each package is scanned first. Only at this stage new
@@ -23,10 +24,15 @@ configuration tree. The following locations exist (listed in the order they are 
 * */Configuration/*
 	Configuration in the global *Configuration* directory override the default settings
 	which were defined in the package's configuration directories.
+* */Packages/<PackageDirectoryAndName>/Configuration/<ApplicationContext>/*
 * */Configuration/<ApplicationContext>/*
 	There may exist a subdirectory for each application context (see FLOW3 Bootstrap
 	section). This configuration is only loaded if FLOW3 runs in the respective
 	application context.
+
+The configuration manager also considers custom contexts, such as ``Production/Live``.
+First, the base configuration is loaded, folled by the context specific configuration
+for ``Production`` and ``Production/Live``.
 
 Configuration Files
 ===================
