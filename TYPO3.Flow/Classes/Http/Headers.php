@@ -45,7 +45,7 @@ class Headers {
 	 * @param array $server An array similar or equal to $_SERVER, containing headers in the form of "HTTP_FOO_BAR"
 	 * @return \TYPO3\FLOW3\Http\Headers
 	 */
-	public static function createFromServer(array $server) {
+	static public function createFromServer(array $server) {
 		$headerFields = array();
 		if (isset($server['PHP_AUTH_USER']) && isset($server['PHP_AUTH_PW'])) {
 			$headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
