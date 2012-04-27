@@ -27,8 +27,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->atLeastOnce())->method('getConstraint')->will($this->returnValue('existingConstraint'));
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
-		$mockQuery->expects($this->once())->method('logicalNot')->with('newConstraints')->will($this->returnValue('newConstraintsNegated'));
-		$mockQuery->expects($this->once())->method('logicalAnd')->with('existingConstraint', 'newConstraintsNegated')->will($this->returnValue('mergedResultConstraints'));
+		$mockQuery->expects($this->once())->method('logicalAnd')->with('existingConstraint', 'newConstraints')->will($this->returnValue('mergedResultConstraints'));
 		$mockQuery->expects($this->once())->method('matching')->with('mergedResultConstraints');
 
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
@@ -48,6 +47,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
 		$rewritingAspect->_set('policyService', $mockPolicyService);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
@@ -61,9 +61,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->atLeastOnce())->method('getConstraint')->will($this->returnValue(NULL));
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
-		$mockQuery->expects($this->once())->method('logicalNot')->with('newConstraints')->will($this->returnValue('newConstraintsNegated'));
 		$mockQuery->expects($this->never())->method('logicalAnd');
-		$mockQuery->expects($this->once())->method('matching')->with('newConstraintsNegated');
+		$mockQuery->expects($this->once())->method('matching')->with('newConstraints');
 
 		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface');
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
@@ -82,6 +81,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
 		$rewritingAspect->_set('policyService', $mockPolicyService);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
@@ -113,6 +113,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue(NULL));
 		$rewritingAspect->_set('policyService', $mockPolicyService);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
@@ -128,6 +129,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
@@ -154,57 +156,9 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('policyService', $mockPolicyService);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getQomConstraintForConstraintDefinitionsWorks() {
-		$parsedConstraints = array(
-			'resource' => array(
-				'&&' => array(
-					array('firstConstraint'),
-					'subConstraints' => array(
-						'&&' => array(
-							array('thirdConstraint')
-						)
-					),
-					array('fourthConstraint')
-				),
-				'||' => array(
-					array('secondConstraint')
-				),
-				'&&!' => array(
-					array('fifthConstraint')
-				),
-				'||!' => array(
-					array('sixthConstraint')
-				)
-			)
-		);
-
-		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->at(0))->method('logicalAnd')->with('firstConstraintResult', 'thirdConstraintResult')->will($this->returnValue('firstAndThird'));
-		$mockQuery->expects($this->at(1))->method('logicalAnd')->with('firstAndThird', 'fourthConstraintResult')->will($this->returnValue('firstAndThirdAndFourth'));
-		$mockQuery->expects($this->at(2))->method('logicalOr')->with('firstAndThirdAndFourth', 'secondConstraintResult')->will($this->returnValue('firstAndThirdAndFourthOrSecond'));
-		$mockQuery->expects($this->at(3))->method('logicalNot')->with('fifthConstraintResult')->will($this->returnValue('notFifth'));
-		$mockQuery->expects($this->at(4))->method('logicalAnd')->with('firstAndThirdAndFourthOrSecond', 'notFifth')->will($this->returnValue('firstAndThirdAndFourthOrSecondAndNotFifth'));
-		$mockQuery->expects($this->at(5))->method('logicalNot')->with('sixthConstraintResult')->will($this->returnValue('notSixth'));
-		$mockQuery->expects($this->at(6))->method('logicalOr')->with('firstAndThirdAndFourthOrSecondAndNotFifth', 'notSixth')->will($this->returnValue('firstAndThirdAndFourthOrSecondAndNotFifthOrNotSixth'));
-
-		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForSingleConstraintDefinition'), array(), '', FALSE);
-		$rewritingAspect->expects($this->at(0))->method('getQomConstraintForSingleConstraintDefinition')->with(array('firstConstraint'), $mockQuery)->will($this->returnValue('firstConstraintResult'));
-		$rewritingAspect->expects($this->at(1))->method('getQomConstraintForSingleConstraintDefinition')->with(array('thirdConstraint'), $mockQuery)->will($this->returnValue('thirdConstraintResult'));
-		$rewritingAspect->expects($this->at(2))->method('getQomConstraintForSingleConstraintDefinition')->with(array('fourthConstraint'), $mockQuery)->will($this->returnValue('fourthConstraintResult'));
-		$rewritingAspect->expects($this->at(3))->method('getQomConstraintForSingleConstraintDefinition')->with(array('secondConstraint'), $mockQuery)->will($this->returnValue('secondConstraintResult'));
-		$rewritingAspect->expects($this->at(4))->method('getQomConstraintForSingleConstraintDefinition')->with(array('fifthConstraint'), $mockQuery)->will($this->returnValue('fifthConstraintResult'));
-		$rewritingAspect->expects($this->at(5))->method('getQomConstraintForSingleConstraintDefinition')->with(array('sixthConstraint'), $mockQuery)->will($this->returnValue('sixthConstraintResult'));
-
-		$result = $rewritingAspect->_call('getQomConstraintForConstraintDefinitions', $parsedConstraints, $mockQuery);
-
-		$this->assertEquals($result, 'firstAndThirdAndFourthOrSecondAndNotFifthOrNotSixth', 'The query constraints have not been created correctly.');
 	}
 
 	/**
@@ -526,7 +480,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$rewritingAspect->expects($this->at(4))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('fifthConstraint'), array())->will($this->returnValue(FALSE));
 		$rewritingAspect->expects($this->at(5))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('sixthConstraint'), array())->will($this->returnValue(FALSE));
 
-		$this->assertTrue($rewritingAspect->_call('checkConstraintDefinitionsOnResultObject', $parsedConstraints, array()));
+		$this->assertFalse($rewritingAspect->_call('checkConstraintDefinitionsOnResultObject', $parsedConstraints, array()));
 	}
 
 	/**
@@ -638,8 +592,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 			'rightValue' =>  'this.accounts.title'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
-		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
 	}
 
 	/**
@@ -665,8 +619,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 			'rightValue' =>  'this.party'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 	}
 
 	/**
@@ -692,8 +646,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 			'rightValue' =>  'this.party'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 	}
 
 	/**
@@ -719,8 +673,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 			'rightValue' =>  'this.party'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 	}
 
 	/**
@@ -737,7 +691,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 		$mockParty = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty', array(), array(), '', FALSE);
 
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
-		$mockPersistenceManager->expects($this->any())->method('isNewObject')->with($mockParty)->will($this->returnValue(FALSE));
 		$mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($mockParty)->will($this->returnValue('uuid'));
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
@@ -765,8 +718,8 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 			'rightValue' =>  'current.party'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
 	}
 }
 ?>

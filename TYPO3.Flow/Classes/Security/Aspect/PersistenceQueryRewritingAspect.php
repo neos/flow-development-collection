@@ -64,6 +64,11 @@ class PersistenceQueryRewritingAspect {
 	protected $globalObjects = array();
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $alreadyRewrittenQueries;
+
+	/**
 	 * Inject global settings, retrieves the registered global objects that might be used as operands
 	 *
 	 * @param array $settings The current FLOW3 settings
@@ -71,6 +76,13 @@ class PersistenceQueryRewritingAspect {
 	 */
 	public function injectSettings($settings) {
 		$this->globalObjects = $settings['aop']['globalObjects'];
+	}
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->alreadyRewrittenQueries = new \SplObjectStorage();
 	}
 
 	/**
@@ -86,6 +98,13 @@ class PersistenceQueryRewritingAspect {
 		}
 
 		$query = $joinPoint->getProxy();
+
+		if ($this->alreadyRewrittenQueries->contains($query)) {
+			return $joinPoint->getAdviceChain()->proceed($joinPoint);
+		} else {
+			$this->alreadyRewrittenQueries->attach($query);
+		}
+
 		$entityType = $query->getType();
 		$authenticatedRoles = $this->securityContext->getRoles();
 
@@ -94,9 +113,9 @@ class PersistenceQueryRewritingAspect {
 			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
 
 			if ($query->getConstraint() !== NULL && $additionalCalculatedConstraints !== NULL) {
-				$query->matching($query->logicalAnd($query->getConstraint(), $query->logicalNot($additionalCalculatedConstraints)));
+				$query->matching($query->logicalAnd($query->getConstraint(), $additionalCalculatedConstraints));
 			} elseif ($additionalCalculatedConstraints !== NULL) {
-				$query->matching($query->logicalNot($additionalCalculatedConstraints));
+				$query->matching($additionalCalculatedConstraints);
 			}
 		}
 	}
@@ -139,40 +158,46 @@ class PersistenceQueryRewritingAspect {
 	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint The build constraint object
 	 */
 	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
-		$compositeConstraint = NULL;
-		foreach ($constraintDefinitions as $resourceConstraints) {
-			foreach ($resourceConstraints as $operator => $policyConstraints) {
-				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
+		$resourceConstraintObjects = array();
+		foreach ($constraintDefinitions as $resourceConstraintsDefinition) {
+			$resourceConstraintObject = NULL;
+			foreach ($resourceConstraintsDefinition as $operator => $policyConstraintsDefinition) {
+				foreach ($policyConstraintsDefinition as $key => $singlePolicyConstraintDefinition) {
 					if ($key === 'subConstraints') {
-						$currentConstraint = $this->getQomConstraintForConstraintDefinitions(array($singlePolicyConstraint), $query);
+						$currentConstraint = $this->getQomConstraintForConstraintDefinitions(array($singlePolicyConstraintDefinition), $query);
 					} else {
-						$currentConstraint = $this->getQomConstraintForSingleConstraintDefinition($singlePolicyConstraint, $query);
+						$currentConstraint = $this->getQomConstraintForSingleConstraintDefinition($singlePolicyConstraintDefinition, $query);
 					}
 
-					if ($compositeConstraint === NULL) {
-						$compositeConstraint = $currentConstraint;
+					if ($resourceConstraintObject === NULL) {
+						$resourceConstraintObject = $currentConstraint;
 						continue;
 					}
 
 					switch ($operator) {
 						case '&&':
-							$compositeConstraint = $query->logicalAnd($compositeConstraint, $currentConstraint);
+							$resourceConstraintObject = $query->logicalAnd($resourceConstraintObject, $currentConstraint);
 							break;
 						case '&&!':
-							$compositeConstraint = $query->logicalAnd($compositeConstraint, $query->logicalNot($currentConstraint));
+							$resourceConstraintObject = $query->logicalAnd($resourceConstraintObject, $query->logicalNot($currentConstraint));
 							break;
 						case '||':
-							$compositeConstraint = $query->logicalOr($compositeConstraint, $currentConstraint);
+							$resourceConstraintObject = $query->logicalOr($resourceConstraintObject, $currentConstraint);
 							break;
 						case '||!':
-							$compositeConstraint = $query->logicalOr($compositeConstraint, $query->logicalNot($currentConstraint));
+							$resourceConstraintObject = $query->logicalOr($resourceConstraintObject, $query->logicalNot($currentConstraint));
 							break;
 					}
 				}
 			}
+			$resourceConstraintObjects[] = $query->logicalNot($resourceConstraintObject);
 		}
 
-		return $compositeConstraint;
+		if (count($resourceConstraintObjects) > 1) {
+			return $query->logicalAnd($resourceConstraintObjects);
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
@@ -247,36 +272,39 @@ class PersistenceQueryRewritingAspect {
 	 * @return boolean TRUE if the query result is valid for the given constraint
 	 */
 	protected function checkConstraintDefinitionsOnResultObject(array $constraintDefinitions, $result) {
-		$overallResult = TRUE;
-
-		foreach ($constraintDefinitions as $resourceConstraints) {
-			foreach ($resourceConstraints as $operator => $policyConstraints) {
-				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
+		foreach ($constraintDefinitions as $resourceConstraintsDefinition) {
+			$resourceResult = TRUE;
+			foreach ($resourceConstraintsDefinition as $operator => $policyConstraintsDefinition) {
+				foreach ($policyConstraintsDefinition as $key => $singlePolicyConstraintDefinition) {
 					if ($key === 'subConstraints') {
-						$currentResult = $this->checkConstraintDefinitionsOnResultObject(array($singlePolicyConstraint), $result);
+						$currentResult = $this->checkConstraintDefinitionsOnResultObject(array($singlePolicyConstraintDefinition), $result);
 					} else {
-						$currentResult = $this->checkSingleConstraintDefinitionOnResultObject($singlePolicyConstraint, $result);
+						$currentResult = $this->checkSingleConstraintDefinitionOnResultObject($singlePolicyConstraintDefinition, $result);
 					}
 
 					switch ($operator) {
 						case '&&':
-							$overallResult = $currentResult && $overallResult;
+							$resourceResult = $currentResult && $resourceResult;
 							break;
 						case '&&!':
-							$overallResult = (!$currentResult) && $overallResult;
+							$resourceResult = (!$currentResult) && $resourceResult;
 							break;
 						case '||':
-							$overallResult = $currentResult || $overallResult;
+							$resourceResult = $currentResult || $resourceResult;
 							break;
 						case '||!':
-							$overallResult = (!$currentResult) && $overallResult;
+							$resourceResult = (!$currentResult) && $resourceResult;
 							break;
 					}
 				}
 			}
+
+			if ($resourceResult === TRUE) {
+				return FALSE;
+			}
 		}
 
-		return $overallResult;
+		return TRUE;
 	}
 
 	/**
@@ -309,7 +337,6 @@ class PersistenceQueryRewritingAspect {
 		if ($referenceToThisFound === FALSE) throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
-			&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
 			&& (
 				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'TYPO3\FLOW3\Annotations\Entity')
 					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'Doctrine\ORM\Mapping\Entity')
@@ -319,7 +346,6 @@ class PersistenceQueryRewritingAspect {
 		}
 
 		if (is_object($rightOperand)
-			&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
 			&& (
 				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'TYPO3\FLOW3\Annotations\Entity')
 					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'Doctrine\ORM\Mapping\Entity')
@@ -330,31 +356,31 @@ class PersistenceQueryRewritingAspect {
 
 		switch ($constraintDefinition['operator']) {
 			case '!=':
-				return ($leftOperand === $rightOperand);
-				break;
-			case '==':
 				return ($leftOperand !== $rightOperand);
 				break;
+			case '==':
+				return ($leftOperand === $rightOperand);
+				break;
 			case '<':
-				return ($leftOperand >= $rightOperand);
-				break;
-			case '>':
-				return ($leftOperand <= $rightOperand);
-				break;
-			case '<=':
-				return ($leftOperand > $rightOperand);
-				break;
-			case '>=':
 				return ($leftOperand < $rightOperand);
 				break;
+			case '>':
+				return ($leftOperand > $rightOperand);
+				break;
+			case '<=':
+				return ($leftOperand <= $rightOperand);
+				break;
+			case '>=':
+				return ($leftOperand >= $rightOperand);
+				break;
 			case 'in':
-				return !in_array($leftOperand, $rightOperand);
+				return in_array($leftOperand, $rightOperand);
 				break;
 			case 'contains':
-				return !in_array($rightOperand, $leftOperand);
+				return in_array($rightOperand, $leftOperand);
 				break;
 			case 'matches':
-				return (count(array_intersect($leftOperand, $rightOperand)) === 0);
+				return (count(array_intersect($leftOperand, $rightOperand)) !== 0);
 				break;
 		}
 
