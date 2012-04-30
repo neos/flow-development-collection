@@ -73,7 +73,7 @@ class Arrays {
 		reset($secondArray);
 		while (list($key, $value) = each($secondArray)) {
 			if (array_key_exists($key, $firstArray) && is_array($firstArray[$key])) {
-				if (is_array($secondArray[$key])) {
+				if (is_array($secondArray[$key]) && (!$emptyValuesOverride || $secondArray[$key] !== array())) {
 					$firstArray[$key] = self::arrayMergeRecursiveOverrule($firstArray[$key], $secondArray[$key], $dontAddNewKeys, $emptyValuesOverride);
 				} else {
 					$firstArray[$key] = $secondArray[$key];
@@ -87,6 +87,8 @@ class Arrays {
 					}
 				} else {
 					if ($emptyValuesOverride || !empty($value)) {
+						$firstArray[$key] = $value;
+					} elseif ($value === array() && !array_key_exists($key, $firstArray)) {
 						$firstArray[$key] = $value;
 					}
 				}

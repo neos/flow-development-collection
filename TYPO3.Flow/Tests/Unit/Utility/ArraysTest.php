@@ -353,6 +353,79 @@ class ArraysTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					'k3' => 'v3'
 				)
 			),
+
+			'empty array should override array (k2)' => array(
+				'inputArray1' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+				),
+				'inputArray2' => array(
+					'k2' => array(),
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => TRUE, // default
+				'expected' => array(
+					'k2' => array()
+				)
+			),
+
+			'empty array without emptyValuesOverride should not override array (k2)' => array(
+				'inputArray1' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+				),
+				'inputArray2' => array(
+					'k2' => array(),
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => FALSE,
+				'expected' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					)
+				)
+			),
+
+			'empty array without emptyValuesOverride should add new key (k3)' => array(
+				'inputArray1' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+				),
+				'inputArray2' => array(
+					'k3' => array(),
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => FALSE,
+				'expected' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+					'k3' => array()
+				)
+			),
+
+			'empty array without emptyValuesOverride should not override existing key (k3)' => array(
+				'inputArray1' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+					'k3' => 'v3'
+				),
+				'inputArray2' => array(
+					'k3' => array(),
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => FALSE,
+				'expected' => array(
+					'k2' => array(
+						'k2.1' => 'v2.1'
+					),
+					'k3' => 'v3'
+				)
+			)
 		);
 	}
 
