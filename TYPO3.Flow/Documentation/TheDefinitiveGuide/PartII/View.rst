@@ -440,14 +440,14 @@ HTML code:
 
 Most of this should already look familiar. However, there is a tiny difference
 to the ``new`` form you created earlier: in this edit form you added
-``object="{blog}"`` to the ``<f:form>`` tag. This attribute binds the variable
-``{blog}`` to the form and it simplifies the further definition of the
+``object="{post}"`` to the ``<f:form>`` tag. This attribute binds the variable
+``{post}`` to the form and it simplifies the further definition of the
 form's elements. Each element – in our case the text box and the text
 area – comes with a ``property`` attribute declaring the name of the property
 which is supposed to be displayed and edited by the respective element.
 
 Because you specified ``property="title"`` for the text box, Fluid will fetch
-the value of the blog's ``title`` property and display it as the default value
+the value of the post's ``title`` property and display it as the default value
 for the rendered text box. The resulting ``input`` tag will also contain the
 name ``"title"`` due to the ``property`` attribute you defined. The ``id``
 attribute only serves as a target for the ``label`` tag and is not required
