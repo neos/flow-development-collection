@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Persistence;
  *
  * @api
  */
-class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
+abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface

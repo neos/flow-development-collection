@@ -1258,7 +1258,10 @@ class ReflectionService {
 		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassName) {
 				// need to be extra careful because this code could be called
 				// during a cache:flush run with corrupted reflection cache
-			if (class_exists($repositoryClassName)) {
+			if (class_exists($repositoryClassName) && !$this->isClassAbstract($repositoryClassName)) {
+				if (!$this->isClassAnnotatedWith($repositoryClassName, 'TYPO3\FLOW3\Annotations\Scope') || $this->getClassAnnotation($repositoryClassName, 'TYPO3\FLOW3\Annotations\Scope')->value !== 'singleton') {
+					throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
+				}
 				$claimedObjectType = $repositoryClassName::ENTITY_CLASSNAME;
 				if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
 					$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassName);

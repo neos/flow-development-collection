@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
 
 /**
  * A repository for comments
+ * @TYPO3\FLOW3\Annotations\Scope("singleton")
  */
 class RestrictableEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
 

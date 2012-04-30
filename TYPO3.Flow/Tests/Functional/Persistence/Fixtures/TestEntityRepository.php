@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
 
 /**
  * A repository for the test entities
+ * @TYPO3\FLOW3\Annotations\Scope("singleton")
  */
 class TestEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
