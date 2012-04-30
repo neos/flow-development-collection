@@ -24,7 +24,6 @@ class Resource {
 	/**
 	 * @var \TYPO3\FLOW3\Resource\ResourcePointer
 	 * @ORM\ManyToOne
-	 * @FLOW3\Identity
 	 */
 	protected $resourcePointer;
 
@@ -36,14 +35,12 @@ class Resource {
 	/**
 	 * @var string
 	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=100 })
-	 * @FLOW3\Identity
 	 */
 	protected $filename = '';
 
 	/**
 	 * @var string
 	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=100 })
-	 * @FLOW3\Identity
 	 */
 	protected $fileExtension = '';
 
