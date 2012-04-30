@@ -19,6 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Entity
  * @ORM\HasLifecycleCallbacks
+ * @ORM\InheritanceType("JOINED")
  */
 class Post {
 

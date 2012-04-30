@@ -47,6 +47,16 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function inheritanceTypeIsSetToNoneIfNoSubclassesExist() {
+		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
+		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$this->assertSame($classMetadata->inheritanceType, \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE);
+	}
+
+	/**
 	 * Makes sure that
 	 * - thumbnail and image (same type) do get distinct column names
 	 * - simple properties get mapped to their name
