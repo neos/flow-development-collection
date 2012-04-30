@@ -331,18 +331,19 @@ class ConfigurationManager {
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
+				$emptyValuesOverride = ($configurationType !== self::CONFIGURATION_TYPE_POLICY);
 				$this->configurations[$configurationType] = array();
 				/** @var $package \TYPO3\Flow\Package\PackageInterface */
 				foreach ($packages as $package) {
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType), FALSE, $emptyValuesOverride);
 				}
-				$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
+				$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType), FALSE, $emptyValuesOverride);
 
 				foreach ($this->orderedListOfContextNames as $contextName) {
 					foreach ($packages as $package) {
-						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType));
+						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType), FALSE, $emptyValuesOverride);
 					}
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType), FALSE, $emptyValuesOverride);
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
