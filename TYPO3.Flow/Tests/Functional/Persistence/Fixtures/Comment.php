@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A sample entity for tests
@@ -27,6 +28,7 @@ class Comment {
 
 	/**
 	 * @return string
+	 * @ORM\PrePersist
 	 */
 	public function getContent() {
 		return $this->content;

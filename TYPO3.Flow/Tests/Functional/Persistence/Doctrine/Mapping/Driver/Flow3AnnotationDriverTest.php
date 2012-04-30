@@ -27,6 +27,16 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacks() {
+		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment');
+		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment', $classMetadata);
+		$this->assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
+	}
+
+	/**
 	 * Makes sure that
 	 * - thumbnail and image (same type) do get distinct column names
 	 * - simple properties get mapped to their name
