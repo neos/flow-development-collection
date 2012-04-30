@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * A simple value object for persistence tests
  *
  * @FLOW3\ValueObject
- * @ORM\Table(name="Persistence_TestValueObject")
+ * @ORM\Table(name="persistence_testvalueobject")
  */
 class TestValueObject {
 

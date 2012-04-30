@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * A simple entity for persistence tests
  *
  * @FLOW3\Entity
- * @ORM\Table(name="Persistence_TestEntity")
+ * @ORM\Table(name="persistence_testentity")
  */
 class TestEntity {
 
