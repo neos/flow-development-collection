@@ -14,6 +14,8 @@ namespace TYPO3\FLOW3\Http\Client;
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Http\Uri;
 use TYPO3\FLOW3\Http\Request;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * An HTTP client simulating a web browser
@@ -21,6 +23,11 @@ use TYPO3\FLOW3\Http\Request;
  * @api
  */
 class Browser {
+
+	/**
+	 * @var \TYPO3\FLOW3\Http\Request
+	 */
+	protected $lastRequest;
 
 	/**
 	 * @var \TYPO3\FLOW3\Http\Response
@@ -59,10 +66,12 @@ class Browser {
 		}
 
 		$request = Request::create($uri, $method, $arguments, $this->cookies, $files, $server);
-		// setContent();
+
+			// TODO: implement setContent() here for POST / PUT requests
+
+		$this->lastRequest = $request;
 		$this->lastResponse = $this->requestEngine->sendRequest($request);
 		return $this->lastResponse;
-
 	}
 
 	/**
@@ -83,6 +92,47 @@ class Browser {
 	 */
 	public function getRequestEngine() {
 		return $this->requestEngine;
+	}
+
+	/**
+	 * Returns the DOM crawler which can be used to interact with the web page
+	 * structure, submit forms, click links or fetch specific parts of the
+	 * website's contents.
+	 *
+	 * The returned DOM crawler is bound to the response of the last executed
+	 * request.
+	 *
+	 * @return \Symfony\Component\DomCrawler\Crawler
+	 * @api
+	 */
+	public function getCrawler() {
+		$crawler = new Crawler(NULL, $this->lastRequest->getBaseUri());
+		$crawler->addContent($this->lastResponse->getContent(), $this->lastResponse->getHeader('Content-Type'));
+
+		return $crawler;
+	}
+
+	/**
+	 * Get the form specified by $xpath. If no $xpath given, return the first form
+	 * on the page.
+	 *
+	 * @param string $xpath
+	 * @return \Symfony\Component\DomCrawler\Form
+	 * @api
+	 */
+	public function getForm($xpath = '//form') {
+		return $this->getCrawler()->filterXPath($xpath)->form();
+	}
+
+	/**
+	 * Submit a form
+	 *
+	 * @param \Symfony\Component\DomCrawler\Form $form
+	 * @return \TYPO3\FLOW3\Http\Response
+	 * @api
+	 */
+	public function submit(Form $form) {
+		return $this->request($form->getUri(), $form->getMethod(), $form->getPhpValues(), $form->getPhpFiles());
 	}
 }
 
