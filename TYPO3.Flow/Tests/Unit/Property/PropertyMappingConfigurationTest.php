@@ -21,11 +21,13 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
 class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 *
 	 * @var \TYPO3\FLOW3\Property\PropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
 
+	/**
+	 * Initialization
+	 */
 	public function setUp() {
 		$this->propertyMappingConfiguration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
 	}
@@ -43,17 +45,41 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
 	 */
-	public function shouldMapReturnsTrueByDefault() {
+	public function shouldMapReturnsFalseByDefault() {
+		$this->assertFalse($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
+		$this->assertFalse($this->propertyMappingConfiguration->shouldMap('someOtherSourceProperty'));
+	}
+
+	/**
+	 * @test
+	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
+	 */
+	public function shouldMapReturnsTrueIfConfigured() {
+		$this->propertyMappingConfiguration->allowAllProperties();
 		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
 		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someOtherSourceProperty'));
 	}
 
 	/**
 	 * @test
+	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
 	 */
-	public function shouldMapReturnsFalseForUnmappedProperties() {
-		$this->propertyMappingConfiguration->doNotMapProperty('someSourceProperty');
+	public function shouldMapReturnsTrueForAllowedProperties() {
+		$this->propertyMappingConfiguration->allowProperties('someSourceProperty', 'someOtherProperty');
+		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
+		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someOtherProperty'));
+	}
+
+	/**
+	 * @test
+	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
+	 */
+	public function shouldMapReturnsFalseForBlacklistedProperties() {
+		$this->propertyMappingConfiguration->allowAllPropertiesExcept('someSourceProperty', 'someOtherProperty');
 		$this->assertFalse($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
+		$this->assertFalse($this->propertyMappingConfiguration->shouldMap('someOtherProperty'));
+
+		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someOtherPropertyWhichHasNotBeenConfigured'));
 	}
 
 	/**

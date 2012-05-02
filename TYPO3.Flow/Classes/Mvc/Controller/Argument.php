@@ -11,6 +11,7 @@ namespace TYPO3\FLOW3\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A controller argument
@@ -74,6 +75,7 @@ class Argument {
 	protected $validationResults = NULL;
 
 	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
@@ -110,23 +112,6 @@ class Argument {
 	 */
 	public function injectPropertyMapper(\TYPO3\FLOW3\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
-	 * @return void
-	 */
-	public function injectPropertyMappingConfigurationBuilder(\TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder) {
-		$this->propertyMappingConfigurationBuilder = $propertyMappingConfigurationBuilder;
-	}
-
-	/**
-	 * Initializer.
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$this->propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build('TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration');
 	}
 
 	/**

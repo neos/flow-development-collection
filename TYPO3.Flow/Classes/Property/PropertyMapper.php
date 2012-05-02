@@ -156,7 +156,9 @@ class PropertyMapper {
 		$convertedChildProperties = array();
 		foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
 			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
-			if (!$configuration->shouldMap($targetPropertyName)) continue;
+			if (!$configuration->shouldMap($targetPropertyName)) {
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1335969887);
+			}
 
 			$targetPropertyType = $typeConverter->getTypeOfChildProperty($targetType, $targetPropertyName, $configuration);
 

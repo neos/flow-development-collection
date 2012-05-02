@@ -36,6 +36,12 @@ class ActionController extends AbstractController {
 	protected $reflectionService;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService
+	 */
+	protected $mvcPropertyMappingConfigurationService;
+
+	/**
 	 * An array of formats (such as "html", "txt", "json" ...) which are supported
 	 * by this controller. If none is specified, this controller will default to "html".
 	 *
@@ -124,6 +130,7 @@ class ActionController extends AbstractController {
 
 		$this->initializeActionMethodArguments();
 		$this->initializeActionMethodValidators();
+		$this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
 		$this->initializeAction();
 		$actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);

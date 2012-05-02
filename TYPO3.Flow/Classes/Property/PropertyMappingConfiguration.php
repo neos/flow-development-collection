@@ -49,33 +49,93 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	protected $typeConverter = NULL;
 
 	/**
+	 * List of allowed property names to be converted
+	 *
 	 * @var array
 	 */
-	protected $notMappedProperties = array();
+	protected $propertiesToBeMapped = array();
 
 	/**
+	 * List of disallowed property names which will be ignored while property mapping
+	 *
+	 * @var array
+	 */
+	protected $propertiesNotToBeMapped = array();
+
+	/**
+	 * If TRUE, unknown properties will be mapped.
+	 *
+	 * @var boolean
+	 */
+	protected $mapUnknownProperties = FALSE;
+
+	/**
+	 * The behavior is as follows:
+	 *
+	 * - if a property has been explicitely forbidden using allowAllPropertiesExcept(...), it is directly rejected
+	 * - if a property has been allowed using allowProperties(...), it is directly allowed.
+	 * - if allowAllProperties* has been called, we allow unknown properties
+	 * - else, return FALSE.
+	 *
 	 * @param string $propertyName
 	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
-	 * @api
 	 */
 	public function shouldMap($propertyName) {
-		if (array_key_exists($propertyName, $this->notMappedProperties)) {
+		if (isset($this->propertiesNotToBeMapped[$propertyName])) {
 			return FALSE;
-		} else {
+		}
+
+		if (isset($this->propertiesToBeMapped[$propertyName])) {
 			return TRUE;
+		}
+
+		return $this->mapUnknownProperties;
+	}
+
+	/**
+	 * Allow all properties in property mapping, even unknown ones.
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function allowAllProperties() {
+		$this->mapUnknownProperties = TRUE;
+	}
+
+	/**
+	 * Allow a list of specific properties. All arguments of
+	 * allowProperties are used here (varargs).
+	 *
+	 * Example: allowProperties('title', 'content', 'author')
+	 *
+	 * @param string $propertyName1
+	 * @param string $propertyName2
+	 * @param string $propertyName3 ...
+	 * @return void
+	 * @api
+	 */
+	public function allowProperties() {
+		foreach (func_get_args() as $propertyName) {
+			$this->propertiesToBeMapped[$propertyName] = $propertyName;
 		}
 	}
 
 	/**
-	 * Mark property as not to be mapped
+	 * Allow all properties during property mapping, but reject a few
+	 * selected ones (blacklist).
 	 *
-	 * @param string $propertyName
+	 * Example: allowAllPropertiesExcept('password', 'userGroup')
+	 *
 	 * @return void
+	 * @api
 	 */
-	public function doNotMapProperty($propertyName) {
-		$this->notMappedProperties[$propertyName] = TRUE;
-	}
+	public function allowAllPropertiesExcept() {
+		$this->mapUnknownProperties = TRUE;
 
+		foreach (func_get_args() as $propertyName) {
+			$this->propertiesNotToBeMapped[$propertyName] = $propertyName;
+		}
+	}
 
 	/**
 	 * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!

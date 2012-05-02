@@ -33,6 +33,7 @@ class PropertyMappingConfigurationBuilder {
 			\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE,
 			\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => TRUE
 		));
+		$configuration->allowAllProperties();
 
 		return $configuration;
 	}

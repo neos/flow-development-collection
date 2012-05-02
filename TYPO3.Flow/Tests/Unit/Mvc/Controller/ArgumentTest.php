@@ -29,7 +29,7 @@ class ArgumentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $objectArgument;
 
 	protected $mockPropertyMapper;
-	protected $mockConfigurationBuilder;
+
 	protected $mockConfiguration;
 
 	/**
@@ -42,15 +42,10 @@ class ArgumentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->simpleValueArgument->injectPropertyMapper($this->mockPropertyMapper);
 		$this->objectArgument->injectPropertyMapper($this->mockPropertyMapper);
 
-		$this->mockConfigurationBuilder = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder');
-		$this->mockConfiguration = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface');
-		$this->mockConfigurationBuilder->expects($this->any())->method('build')->with('TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration')->will($this->returnValue($this->mockConfiguration));
+		$this->mockConfiguration = new \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration();
 
-		$this->simpleValueArgument->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
-		$this->objectArgument->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
-
-		$this->simpleValueArgument->initializeObject();
-		$this->objectArgument->initializeObject();
+		$this->inject($this->simpleValueArgument, 'propertyMappingConfiguration', $this->mockConfiguration);
+		$this->inject($this->objectArgument, 'propertyMappingConfiguration', $this->mockConfiguration);
 	}
 
 	/**
@@ -222,8 +217,9 @@ class ArgumentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function defaultPropertyMappingConfigurationShouldBeFetchable() {
-		$this->assertSame($this->mockConfiguration, $this->simpleValueArgument->getPropertyMappingConfiguration());
+	public function defaultPropertyMappingConfigurationDoesNotAllowCreationOrModificationOfObjects() {
+		$this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 	}
 
 	/**

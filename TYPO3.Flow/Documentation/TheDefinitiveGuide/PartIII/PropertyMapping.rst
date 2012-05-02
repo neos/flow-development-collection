@@ -148,7 +148,7 @@ If no ``PropertyMappingConfiguration`` is specified, the ``PropertyMappingConfig
 automatically creates a default ``PropertyMappingConfiguration``.
 
 In most cases, you should use the ``PropertyMappingConfigurationBuilder`` to create a new
-PropertyMappingConfiguration, so that you get a safe-by-default configuration::
+PropertyMappingConfiguration, so that you get a convenient default configuration::
 
 	// $propertyMappingConfigurationBuilder instanceof TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
 	$propertyMappingConfiguration = $propertyMappingConfigurationBuilder->build();
@@ -185,6 +185,15 @@ The following configuration options exist:
   to set multiple configuration options for the given ``TypeConverter``. This overrides
   all previously set configuration options for the ``TypeConverter``.
 
+* ``allowProperties($propertyName1, $propertyName2, ...)`` specifies the allowed
+  property names which should be converted on the current level.
+
+* ``allowAllProperties()`` allows *all* properties on the current level.
+
+* ``allowAllPropertiesExcept($propertyName1, $propertyName2)`` effectively *inverts*
+  the behavior: all properties on the current level are allowed, except the ones
+  specified as arguments to this method.
+
 All the configuration options work only for the current level, i.e. all of the
 above converter options would only work for the toplevel type converter. However,
 it is also possible to specify configuration options for lower levels, using
@@ -205,11 +214,12 @@ configures the ``DateTime`` converter for the birthDate property::
 ``forProperty()`` also supports more than one nesting level using the dot notation,
 so writing something like ``forProperty('mother.birthDate')`` is possible.
 
-Default Configuration - Security Considerations
------------------------------------------------
+
+Security Considerations
+-----------------------
 
 The property mapping process can be security-relevant, as a small example should
-show: Suppose there is a form where a person can create a new account, and assign
+show: Suppose there is a REST API where a person can create a new account, and assign
 a role to this account (from a pre-defined list). This role controls the access
 permissions the user has. The data which is sent to the server might look like this::
 
@@ -233,17 +243,48 @@ following::
 As the property mapper works recursively, it would create a new ``Role`` object with the
 admin flag set to ``TRUE``, which might compromise the security in the system.
 
-That's why the PersistentObjectConverter has two options, ``CONFIGURATION_MODIFICATION_ALLOWED``
-and ``CONFIGURATION_CREATION_ALLOWED``, which must be used to explicitely activate
-the modification or creation of objects. By default, the ``PersistentObjectConverter``
-does only fetch objects from the persistence, but does not create new ones or modifies
-existing ones.
+That's why two parts need to be configured for enabling the recursive behavior: First, you need
+to specify the allowed properties using one of the ``allowProperties(), allowAllProperties()``
+or ``allowAllPropertiesExcept()`` methods.
 
-However, in the most-common use case, you want to use this magic functionality at
-least for the top-level object which is being submitted. That's why the default
-configuration (which is created by the ``PropertyMappingConfigurationBuilder``)
-enables creation and modification for the top-level object, and disables it for
-all sub objects by default.
+Second, you need to configure the the PersistentObjectConverter using the two options
+``CONFIGURATION_MODIFICATION_ALLOWED`` and ``CONFIGURATION_CREATION_ALLOWED``. They
+must be used to explicitely activate the modification or creation of objects. By
+default, the ``PersistentObjectConverter`` does only fetch objects from the persistence,
+but does not create new ones or modifies existing ones.
+
+
+Default Configuration
+---------------------
+
+If the Property Mapper is called without any ``PropertyMappingConfiguration``, the
+``PropertyMappingConfigurationBuilder`` supplies a default configuration.
+
+It allows *all changes* for the *top-level object*, but does not allow anything
+for nested objects.
+
+
+The Common Case: Fluid Forms
+----------------------------
+
+The Property Mapper is used to convert incoming values into objects inside the MVC stack.
+
+Most commonly, these incoming values are created using HTML form elements inside
+Fluid. That is why we want to make sure that only fields which are part of the
+form are accepted for type conversion, and it should neither be possible to create
+new objects nor to modify existing ones if that was not intended.
+
+Because of that, the ``PropertyMappingConfiguration`` inside the MVC stack is
+configured as restrictive as possible, not allowing any modifications of any
+objects at all.
+
+Furthermore, Fluid forms render an additional hidden form field containing a
+secure list of all properties being transmitted; and this list is used to build
+up the correct ``PropertyMappingConfiguration``.
+
+As a result, it is not possible to manipulate the request on the client side,
+but as long as Fluid forms are used, no extra work has to be done by the developer.
+
 
 Reference of TypeConverters
 ===========================
