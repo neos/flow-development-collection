@@ -89,7 +89,7 @@ class PersistenceQueryRewritingAspect {
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
 	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed
 	 */
 	public function rewriteQomQuery(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {

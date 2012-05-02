@@ -126,7 +126,7 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException
+	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\AmbiguousCommandIdentifierException
 	 */
 	public function getCommandByIdentifierThrowsExceptionIfOnlyPackageKeyIsSpecifiedAndContainsMoreThanOneCommand() {
 		$mockCommand1 = $this->getMock('TYPO3\FLOW3\Cli\Command', array(), array(), '', FALSE);
