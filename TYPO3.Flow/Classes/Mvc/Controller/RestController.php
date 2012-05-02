@@ -51,7 +51,7 @@ class RestController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected function resolveActionMethodName() {
 		if ($this->request->getControllerActionName() === 'index') {
 			$actionName = 'index';
-			switch ($this->request->getMethod()) {
+			switch ($this->request->getHttpRequest()->getMethod()) {
 				case 'HEAD':
 				case 'GET' :
 					$actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
