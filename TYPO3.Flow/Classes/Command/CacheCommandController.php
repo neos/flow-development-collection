@@ -98,21 +98,21 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->lockManager->unlockSite();
 		}
 
-		$numberOfFrozenPackages = 0;
+		$frozenPackages = array();
 		foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
 			if ($this->packageManager->isPackageFrozen($packageKey)) {
-				$numberOfFrozenPackages ++;
+				$frozenPackages[] = $packageKey;
 			}
 		}
-		if ($numberOfFrozenPackages > 0) {
-			$this->outputLine();
-			$this->output('NOTE: ');
-			if ($numberOfFrozenPackages === 1) {
-				$this->output('There is one frozen package. ');
-			} else {
-				$this->output('There are %d frozen packages. ', array($numberOfFrozenPackages));
-			}
-			$this->outputLine('Make sure to call typo3.flow3:package:refreeze or specify the --force option of the cache:flush command in order to recreate precompiled reflection data for frozen packages.');
+		if ($frozenPackages !== array()) {
+			$this->outputFormatted(PHP_EOL . 'Please note that the following package' . (count($frozenPackages) === 1 ? ' is' : 's are') . ' currently frozen: ' . PHP_EOL);
+			$this->outputFormatted(implode(PHP_EOL, $frozenPackages) . PHP_EOL, array(), 2);
+
+			$message = 'As code and configuration changes in these packages are not detected, the application may respond ';
+			$message .= 'unexpectedly if modifications were done anyway or the remaining code relies on these changes.' . PHP_EOL . PHP_EOL;
+			$message .= 'You may call <b>package:refreeze all</b> in order to refresh frozen packages or use the <b>--force</b> ';
+			$message .= 'option of this <b>cache:flush</b> command to flush caches if FLOW3 becomes unresponsive.' . PHP_EOL;
+			$this->outputFormatted($message, array($frozenPackages));
 		}
 
 		$this->sendAndExit(0);
