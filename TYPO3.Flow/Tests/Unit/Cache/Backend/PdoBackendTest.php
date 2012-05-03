@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Core\ApplicationContext;
+
 /**
  * Testcase for the PDO cache backend
  *
@@ -46,7 +48,7 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
-		$backend = new \TYPO3\FLOW3\Cache\Backend\PdoBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
@@ -221,7 +223,7 @@ class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-		$backend = new \TYPO3\FLOW3\Cache\Backend\PdoBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\PdoBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 		$backend->setDataSourceName('sqlite::memory:');

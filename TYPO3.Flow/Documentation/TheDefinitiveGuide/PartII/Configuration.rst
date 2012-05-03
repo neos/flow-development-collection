@@ -33,8 +33,8 @@ different host name, port or passing special arguments.
 	methods. What you do in this case is sharing most of the configuration and
 	define the difference in dedicated contexts.
 
-By default FLOW3 provides configuration for the Production and Development
-context. In the standard distribution a reasonable configuration is defined for
+FLOW3 provides configuration for the Production and Development context.
+In the standard distribution a reasonable configuration is defined for
 each context:
 
 *	In the **Production context** all caches are enabled, logging is reduced to

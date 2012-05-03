@@ -125,9 +125,9 @@ class ReflectionService {
 	protected $environment;
 
 	/**
-	 * @var boolean
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
-	protected $runsInProductionContext;
+	protected $context;
 
 	/**
 	 * In Production context, with frozen caches, this flag will be TRUE
@@ -268,9 +268,9 @@ class ReflectionService {
 	 * @return void
 	 */
 	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		$this->runsInProductionContext = $bootstrap->getContext() === 'Production';
+		$this->context = $bootstrap->getContext();
 
-		if ($this->runsInProductionContext && $this->reflectionDataRuntimeCache->getBackend()->isFrozen()) {
+		if ($this->context->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen()) {
 			$this->classReflectionData = $this->reflectionDataRuntimeCache->get('__classNames');
 			$this->annotatedClasses = $this->reflectionDataRuntimeCache->get('__annotatedClasses');
 			$this->loadFromClassSchemaRuntimeCache = TRUE;
@@ -1502,7 +1502,7 @@ class ReflectionService {
 		$data = $this->reflectionDataCompiletimeCache->get('ReflectionData');
 
 		if ($data === FALSE) {
-			if ($this->settings['core']['context'] === 'Development') {
+			if ($this->context->isDevelopment()) {
 				$useIgBinary = extension_loaded('igbinary');
 				foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
 					if ($this->packageManager->isPackageFrozen($packageKey)) {
@@ -1669,7 +1669,7 @@ class ReflectionService {
 			$this->reflectionDataCompiletimeCache->set('ReflectionData', $data);
 		}
 
-		if ($this->runsInProductionContext) {
+		if ($this->context->isProduction()) {
 			$this->reflectionDataRuntimeCache->flush();
 
 			$classNames = array();
@@ -1687,7 +1687,7 @@ class ReflectionService {
 			$this->classSchemataRuntimeCache->getBackend()->freeze();
 
 			$this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LOG_INFO);
-		} elseif ($this->settings['core']['context'] === 'Development') {
+		} elseif ($this->context->isDevelopment()) {
 			foreach (array_keys($this->packageManager->getFrozenPackages()) as $packageKey) {
 				$pathAndFilename = $this->getPrecompiledReflectionStoragePath() . $packageKey . '.dat';
 				if (!file_exists($pathAndFilename)) {

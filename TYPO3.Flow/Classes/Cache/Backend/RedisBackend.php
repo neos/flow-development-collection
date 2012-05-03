@@ -142,11 +142,11 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	/**
 	 * Construct this backend
 	 *
-	 * @param string $context FLOW3's application context
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
 	 * @param array $options Configuration options
 	 * @throws \TYPO3\FLOW3\Cache\Exception if php redis module is not loaded
 	 */
-	public function __construct($context, array $options = array()) {
+	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
 		if (!extension_loaded('redis')) {
 			throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "redis" must be installed and loaded in order to use the phpredis redis backend.', 1279462933);
 		}

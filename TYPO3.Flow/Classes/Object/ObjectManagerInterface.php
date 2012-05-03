@@ -22,9 +22,9 @@ interface ObjectManagerInterface {
 	const INITIALIZATIONCAUSE_RECREATED = 2;
 
 	/**
-	 * Returns the name of the currently set context.
+	 * Returns the currently set context.
 	 *
-	 * @return  string Name of the current context
+	 * @return \TYPO3\FLOW3\Core\ApplicationContext the current context
 	 * @api
 	 */
 	public function getContext();

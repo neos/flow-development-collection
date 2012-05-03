@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Core\ApplicationContext;
+
 /**
  * Testcase for the cache to redis backend
  *
@@ -70,7 +72,7 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-		$this->backend = new \TYPO3\FLOW3\Cache\Backend\RedisBackend('Testing', $backendOptions);
+		$this->backend = new \TYPO3\FLOW3\Cache\Backend\RedisBackend(new ApplicationContext('Testing'), $backendOptions);
 		$this->backend->setCache($mockCache);
 		$this->backend->initializeObject();
 	}

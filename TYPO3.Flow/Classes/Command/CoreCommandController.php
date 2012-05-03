@@ -159,7 +159,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE);
 
 		$classesCacheBackend = $classesCache->getBackend();
-		if ($this->bootstrap->getContext() === 'Production' && $classesCacheBackend instanceof FreezableBackendInterface) {
+		if ($this->bootstrap->getContext()->isProduction() && $classesCacheBackend instanceof FreezableBackendInterface) {
 			$classesCache->getBackend()->freeze();
 		}
 

@@ -204,7 +204,7 @@ class Scripts {
 
 			// In Production context, the compile sub command will only be run if the
 			// code cache is completely empty:
-		if ($bootstrap->getContext() !== 'Production' || $objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
+		if (!$bootstrap->getContext()->isProduction() || $objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			self::executeCommand('typo3.flow3:core:compile', $settings);
 			if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === TRUE) {
 				self::compileDoctrineProxies($bootstrap);
@@ -347,7 +347,7 @@ class Scripts {
 			self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ClassFiles'], $package->getClassesPath());
 			self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ConfigurationFiles'], $package->getConfigurationPath());
 			self::monitorDirectoryIfItExists($fileMonitors['FLOW3_TranslationFiles'], $package->getResourcesPath() . 'Private/Translations/');
-			if ($context === 'Testing') {
+			if ($context->isTesting()) {
 				self::monitorDirectoryIfItExists($fileMonitors['FLOW3_ClassFiles'], $package->getFunctionalTestsPath());
 			}
 		}

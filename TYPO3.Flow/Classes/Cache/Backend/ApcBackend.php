@@ -47,11 +47,11 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	/**
 	 * Constructs this backend
 	 *
-	 * @param string $context FLOW3's application context
+	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
 	 * @param array $options Configuration options - unused here
 	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
-	public function __construct($context, array $options = array()) {
+	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
 		if (!extension_loaded('apc')) {
 			throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
 		}

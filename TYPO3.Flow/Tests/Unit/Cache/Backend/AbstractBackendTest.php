@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Core\ApplicationContext;
+
 /**
  * Testcase for the abstract cache backend
  *
@@ -45,7 +47,7 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				}
 			}
 		');
-		$this->backend = new $className('Testing');
+		$this->backend = new $className(new ApplicationContext('Testing'));
 	}
 
 	/**
@@ -53,7 +55,7 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
 		$className = get_class($this->backend);
-		$backend = new $className('Testing', array('someOption' => 'someValue'));
+		$backend = new $className(new ApplicationContext('Testing'), array('someOption' => 'someValue'));
 		$this->assertSame('someValue', $backend->getSomeOption());
 	}
 }

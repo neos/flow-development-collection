@@ -470,3 +470,10 @@ all possible combinations.
 		{node}.html                               TYPO3 :: Frontend content with (HTML) format
 		({node})                                  TYPO3 :: Frontend content without a specified format
 		                                          TYPO3 :: Fallback rule – for when no site has been defined yet
+
+
+Route Loading Order and the FLOW3 Application Context
+=====================================================
+
+- routes inside more specific contexts are loaded *first*, and after that, global ones
+- so you can specify context-specific routes
