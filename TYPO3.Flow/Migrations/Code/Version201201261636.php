@@ -37,17 +37,22 @@ class Version201201261636 extends AbstractMigration {
 		$this->showNote('\TYPO3\FLOW3\MVC\Web\RequestBuilder does not exist anymore. If you need to create requests, do "new ActionRequest($parentRequest)".');
 		$this->showNote('\TYPO3\FLOW3\MVC\Web\SubRequestBuilder does not exist anymore. If you need to create sub requests, do "new ActionRequest($parentRequest)".');
 		$this->showNote('\TYPO3\FLOW3\MVC\RequestInterface has been removed, use \TYPO3\FLOW3\Http\Request instead - e.g. if you implemented your own token.');
+		$this->showNote('Handling of NULL values in the database has changed, add "@ORM\Column(nullable=true)" to properties that need to be nullable or give them a non-NULL default.');
+		$this->showNote('All persistence repositories must be of scope "singleton", this is now enforced. Add "@FLOW3\Scope("singleton")" if not already present.');
 		$this->showNote('$supportedRequestTypes are not needed anymore in a controller.');
-		$this->showNote('In Settings.yaml "providerClass" is deprecated, use "provider" instead. Also change entryPoint configuration from:
-entryPoint:
-  WebRedirect:
-    uri: login.html
-to
-entryPoint: \'WebRedirect\'
-entryPointOptions:
-  uri: \'login.html\'');
+		$this->showNote('Settings.yaml: The previously shipped "DefaultProvider" authentication provider configuration has been removed, you must configure all providers yourself now.');
+		$this->showNote('Settings.yaml: "providerClass" is deprecated, use "provider" instead. Provider options are now given in "providerOptions".');
+		$this->showNote('Settings.yaml: Authentication "entryPoint" configuration needs to be changed from:
+ entryPoint:
+   WebRedirect:
+     uri: login.html
+to:
+ entryPoint: \'WebRedirect\'
+ entryPointOptions:
+   uri: \'login.html\'');
+		$this->showNote('Routes.yaml: Widget configuration needs to be adjusted to refer to the correct widget id, see upgrading instructions.');
 
-		$this->showWarning('Class names in pointcut expressions might not be fully qualified, check manually if needed.');
+		$this->showWarning('Class names in pointcut expressions might not be fully qualified, check manually whether (more) adjustments are needed.');
 	}
 
 }
