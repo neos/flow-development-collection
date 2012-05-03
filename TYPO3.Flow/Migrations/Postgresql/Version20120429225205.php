@@ -17,7 +17,6 @@ class Version20120429225205 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("CREATE UNIQUE INDEX flow3_identity_typo3_flow3_security_account ON typo3_flow3_security_account (accountidentifier, authenticationprovidername)");
-		$this->addSql("CREATE UNIQUE INDEX flow3_identity_typo3_flow3_security_policy_role ON typo3_flow3_security_policy_role (identifier)");
 	}
 
 	/**
@@ -28,7 +27,6 @@ class Version20120429225205 extends AbstractMigration {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("DROP INDEX flow3_identity_typo3_flow3_security_account");
-		$this->addSql("DROP INDEX flow3_identity_typo3_flow3_security_policy_role");
 	}
 }
 
