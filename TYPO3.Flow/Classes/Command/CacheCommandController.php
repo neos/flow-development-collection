@@ -35,6 +35,11 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $lockManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * Injects the cache manager
 	 *
 	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
@@ -52,6 +57,14 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function injectLockManager(\TYPO3\FLOW3\Core\LockManager $lockManager) {
 		$this->lockManager = $lockManager;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @return void
+	 */
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+		$this->packageManager =  $packageManager;
 	}
 
 	/**
@@ -84,6 +97,24 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();
 		}
+
+		$numberOfFrozenPackages = 0;
+		foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+			if ($this->packageManager->isPackageFrozen($packageKey)) {
+				$numberOfFrozenPackages ++;
+			}
+		}
+		if ($numberOfFrozenPackages > 0) {
+			$this->outputLine();
+			$this->output('NOTE: ');
+			if ($numberOfFrozenPackages === 1) {
+				$this->output('There is one frozen package. ');
+			} else {
+				$this->output('There are %d frozen packages. ', array($numberOfFrozenPackages));
+			}
+			$this->outputLine('Make sure to call typo3.flow3:package:refreeze or specify the --force option of the cache:flush command in order to recreate precompiled reflection data for frozen packages.');
+		}
+
 		$this->sendAndExit(0);
 	}
 
