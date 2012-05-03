@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  *
  * @api
  */
-class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
+abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface

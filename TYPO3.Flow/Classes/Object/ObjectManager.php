@@ -184,7 +184,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 * Returns the scope of the specified object.
 	 *
 	 * @param string $objectName The object name
-	 * @return integer One of the ObjectConfiguration::SCOPE_ constants
+	 * @return integer One of the Configuration::SCOPE_ constants
 	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 * @api
 	 */

@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
 
 /**
  * A repository for comments
+ * @TYPO3\FLOW3\Annotations\Scope("singleton")
  */
 class CommentRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
