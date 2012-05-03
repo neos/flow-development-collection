@@ -237,9 +237,28 @@ class CommandController implements ControllerInterface {
 	 * @param array $arguments Optional arguments to use for sprintf
 	 * @return void
 	 * @see output()
+	 * @see outputLines()
 	 */
 	protected function outputLine($text = '', array $arguments = array()) {
 		$this->output($text . PHP_EOL, $arguments);
+	}
+
+	/**
+	 * Formats the given text to fit into MAXIMUM_LINE_LENGTH and outputs it to the
+	 * console window
+	 *
+	 * @param string $text Text to output
+	 * @param array $arguments Optional arguments to use for sprintf
+	 * @param integer $leftPadding The number of spaces to use for indentation
+	 * @return void
+	 * @see outputLine()
+	 */
+	protected function outputFormatted($text = '', array $arguments = array(), $leftPadding = 0) {
+		$lines = explode(PHP_EOL, $text);
+		foreach ($lines as $line) {
+			$formattedText = str_repeat(' ', $leftPadding) . wordwrap($line, self::MAXIMUM_LINE_LENGTH - $leftPadding, PHP_EOL . str_repeat(' ', $leftPadding), TRUE);
+			$this->outputLine($formattedText, $arguments);
+		}
 	}
 
 	/**
