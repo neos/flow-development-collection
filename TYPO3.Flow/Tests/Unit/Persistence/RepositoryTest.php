@@ -23,7 +23,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function abstractRepositoryImplementsRepositoryInterface() {
-		$repository = new \TYPO3\FLOW3\Persistence\Repository;
+		$repository = $this->getMock('TYPO3\FLOW3\Persistence\Repository');
 		$this->assertTrue($repository instanceof \TYPO3\FLOW3\Persistence\RepositoryInterface);
 	}
 
