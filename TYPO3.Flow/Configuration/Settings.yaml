@@ -202,6 +202,8 @@ TYPO3:
         #
         #  AdminInterfaceProvider:
         #    provider: 'PersistedUsernamePasswordProvider'
+        #    providerOptions:
+        #      fooBar: 'baz'
         #    requestPatterns:
         #      controllerObjectName: 'TYPO3\Admin\Controller\.*'
         #    entryPoint: 'WebRedirect'
