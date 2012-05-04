@@ -416,6 +416,29 @@ The corresponding XLIFF files will contain placeholders in the source and target
 
 As you can see, placeholders may be reordered in translations if needed.
 
+Plural forms in XLIFF files
+---------------------------
+
+Plural forms are also supported in XLIFF. The following example defines a string
+in two forms that will be used depending on the count:
+
+.. code-block:: xml
+
+	<group id="some.label" restype="x-gettext-plurals">
+		<trans-unit id="some.label[0]">
+			<source>This is only {0} item.</source>
+			<target>Dies ist nur {0} Element.</target>
+		</trans-unit>
+		<trans-unit  id="some.label[1]">
+			<source>These are {0} items.</source>
+			<target>Dies sind {0} Elemente.</target>
+		</trans-unit>
+	</group>
+
+Please be aware that the number of the available plural forms depends on the language!
+If you want to find out which plural forms are available for a locale you can have a
+look at *TYPO3.FLOW3/Resources/Private/I18n/CLDR/Sources/supplemental/plurals.xml*
+
 XLIFF file translation
 ----------------------
 
