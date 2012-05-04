@@ -11,6 +11,7 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A model representing data from one XLIFF file.
@@ -54,6 +55,12 @@ class XliffModel {
 	 * @var \TYPO3\FLOW3\I18n\Locale
 	 */
 	protected $locale;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Parsed data (structure depends on concrete model).
@@ -115,11 +122,12 @@ class XliffModel {
 	public function getTargetBySource($source, $pluralFormIndex = 0) {
 		foreach ($this->xmlParsedData['translationUnits'] as $translationUnit) {
 				// $source is always singular (or only) form, so compare with index 0
-			if ($translationUnit[0]['source'] !== $source) {
+			if (!isset($translationUnit[0]) || $translationUnit[0]['source'] !== $source) {
 				continue;
 			}
 
 			if (count($translationUnit) <= $pluralFormIndex) {
+				$this->systemLogger->log('The plural form index "' . $pluralFormIndex . '" for the source translation "' . $source . '"  in ' . $this->sourcePath . ' is not available.', LOG_WARNING);
 				return FALSE;
 			}
 
@@ -140,10 +148,12 @@ class XliffModel {
 	 */
 	public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0) {
 		if (!isset($this->xmlParsedData['translationUnits'][$transUnitId])) {
+			$this->systemLogger->log('No trans-unit element with the id "' . $transUnitId . '" was found in ' . $this->sourcePath . '. Either this translation has been removed or the id in the code or template referring to the translation is wrong.', LOG_WARNING);
 			return FALSE;
 		}
 
-		if (count($this->xmlParsedData['translationUnits'][$transUnitId]) <= $pluralFormIndex) {
+		if (!isset($this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex])) {
+			$this->systemLogger->log('The plural form index "' . $pluralFormIndex . '" for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->sourcePath . ' is not available.', LOG_WARNING);
 			return FALSE;
 		}
 
@@ -152,6 +162,7 @@ class XliffModel {
 		} elseif ($this->locale->getLanguage() === $this->xmlParsedData['sourceLocale']->getLanguage()) {
 			return $this->xmlParsedData['translationUnits'][$transUnitId][$pluralFormIndex]['source'] ?: FALSE;
 		} else {
+			$this->systemLogger->log('The target translation was empty and the source translation language (' . $this->xmlParsedData['sourceLocale']->getLanguage() . ') does not match the current locale (' . $this->locale->getLanguage() . ') for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->sourcePath, LOG_WARNING);
 			return FALSE;
 		}
 	}

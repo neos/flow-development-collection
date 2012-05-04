@@ -38,6 +38,7 @@ class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->model = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($mockFilename, new \TYPO3\FLOW3\I18n\Locale('de'));
 		$this->model->injectCache($this->mockCache);
 		$this->model->injectParser($this->mockXliffParser);
+		$this->inject($this->model, 'systemLogger', $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface', array(), array(), '', FALSE));
 		$this->model->initializeObject();
 	}
 
