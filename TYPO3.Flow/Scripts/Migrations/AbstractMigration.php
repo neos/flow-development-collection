@@ -69,6 +69,15 @@ abstract class AbstractMigration {
 	}
 
 	/**
+	 * Returns the identifier of this migration, e.g. 'FLOW3-201201261636'.
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return $this->packageKey . '-' . substr(get_class($this), -12);
+	}
+
+	/**
 	 * Anything that needs to be done in the migration when migrating
 	 * into the "up" direction needs to go into this method.
 	 *
@@ -94,13 +103,16 @@ abstract class AbstractMigration {
 	 */
 	public function outputNotesAndWarnings() {
 		foreach (array('notes', 'warnings') as $type) {
+			if ($this->$type === array()) {
+				continue;
+			}
+
 			$this->outputLine();
 			$this->outputLine('  ' . str_repeat('-', self::MAXIMUM_LINE_LENGTH));
 			$this->outputLine('   ' . ucfirst($type));
 			$this->outputLine('  ' . str_repeat('-', self::MAXIMUM_LINE_LENGTH));
 			foreach ($this->$type as $note) {
-				$note = wordwrap('   * ' . $note, self::MAXIMUM_LINE_LENGTH, PHP_EOL . '     ', TRUE);
-				$this->outputLine($note);
+				$this->outputLine('  * ' . $this->wrapAndPrefix($note));
 			}
 			$this->outputLine('  ' . str_repeat('-', self::MAXIMUM_LINE_LENGTH));
 		}
@@ -221,6 +233,19 @@ abstract class AbstractMigration {
 				Tools::searchAndReplace($operation[0], $operation[1], $pathAndFilename);
 			}
 		}
+	}
+
+	/**
+	 * The given text is word-wrapped and each line after the first one is
+	 * prefixed with $prefix.
+	 *
+	 * @param string $text
+	 * @param string $prefix
+	 * @return string
+	 */
+	protected function wrapAndPrefix($text, $prefix = '    ') {
+		$text = explode(chr(10), wordwrap($text, self::MAXIMUM_LINE_LENGTH, chr(10), TRUE));
+		return implode(PHP_EOL . $prefix, $text);
 	}
 
 	/**

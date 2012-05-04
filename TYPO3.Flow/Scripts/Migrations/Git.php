@@ -110,7 +110,7 @@ class Git {
 	 *
 	 * @param string $packagePath
 	 * @param string $migrationIdentifier
-	 * @return void
+	 * @return string
 	 */
 	static public function commitMigration($packagePath, $migrationIdentifier) {
 		$message = '[TASK] Apply migration ' . $migrationIdentifier . '
@@ -123,7 +123,9 @@ Migration: ' . $migrationIdentifier;
 
 		list ($returnCode, $output) = self::commitAll($packagePath, $message);
 		if ($returnCode === 0) {
-			echo '   ' . implode(PHP_EOL . '   ', $output) . PHP_EOL;
+			return '    ' . implode(PHP_EOL . '    ', $output) . PHP_EOL;
+		} else {
+			return '    No changes were committed.' . PHP_EOL;
 		}
 	}
 }

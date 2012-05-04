@@ -77,7 +77,7 @@ class Manager {
 
 	/**
 	 * This iterates over available migrations and applies them to
-	 *the existing packages if
+	 * the existing packages if
 	 * - the package needs the migration
 	 * - is a clean git working copy
 	 *
@@ -87,35 +87,48 @@ class Manager {
 	public function migrate() {
 		$this->initialize();
 
-		foreach ($this->migrations as $versionInstance) {
-			$versionInstance->up();
+		foreach ($this->migrations as $migrationInstance) {
+			$migrationInstance->up();
 		}
 
-		foreach ($this->migrations as $versionNumber => $versionInstance) {
-			$migrationIdentifier = $versionInstance->getPackageKey() . '-' . $versionNumber;
-
-			echo 'Applying ' . $migrationIdentifier . PHP_EOL;
+		foreach ($this->migrations as $migrationInstance) {
+			echo 'Applying ' . $migrationInstance->getIdentifier() . PHP_EOL;
 			foreach ($this->packagesData as $packageKey => $packageData) {
-				if (Git::isWorkingCopyClean($packageData['path'])) {
-					echo '  Migrating ' . $packageKey . PHP_EOL;
-					if (Git::hasMigrationApplied($packageData['path'], $migrationIdentifier)) {
-						echo '    Skipping ' . $packageKey . ', the migration is already applied.' . PHP_EOL;
-						continue;
-					}
-					try {
-						$versionInstance->execute($packageData);
-						Git::commitMigration($packageData['path'], $migrationIdentifier);
-					} catch (\Exeption $exception) {
-						throw new \RuntimeException('Applying migration "' .$versionInstance->getPackageKey() . '-' . $versionNumber . '" to "' . $packageKey . '" failed.', 0, $exception);
-					}
-				} else {
-					echo '    Skipping ' . $packageKey . ', the working copy is dirty.' . PHP_EOL;
-				}
+				$this->migratePackage($packageKey, $packageData, $migrationInstance);
 			}
-			$versionInstance->outputNotesAndWarnings();
-			echo 'Done with ' . $versionNumber . ' (' . $versionInstance->getPackageKey() . ')' . PHP_EOL;
+			$migrationInstance->outputNotesAndWarnings();
+			echo 'Done with ' . $migrationInstance->getIdentifier() . PHP_EOL . PHP_EOL;
 		}
 	}
+
+	/**
+	 * Apply the given migration to the package and commit the result.
+	 *
+	 * @param string $packageKey
+	 * @param array $packageData
+	 * @param string $migrationIdentifier
+	 * @param AbstractMigration $migration
+	 * @return void
+	 * @throws \RuntimeException
+	 */
+	protected function migratePackage($packageKey, array $packageData, AbstractMigration $migration) {
+		if (Git::isWorkingCopyClean($packageData['path'])) {
+			echo '  Migrating ' . $packageKey . PHP_EOL;
+			if (Git::hasMigrationApplied($packageData['path'], $migration->getIdentifier())) {
+				echo '    Skipping ' . $packageKey . ', the migration is already applied.' . PHP_EOL;
+			} else {
+				try {
+					$migration->execute($packageData);
+					echo Git::commitMigration($packageData['path'], $migration->getIdentifier());
+				} catch (\Exeption $exception) {
+					throw new \RuntimeException('Applying migration "' .$migration->getIdentifier() . '" to "' . $packageKey . '" failed.', 0, $exception);
+				}
+			}
+		} else {
+			echo '    Skipping ' . $packageKey . ', the working copy is dirty.' . PHP_EOL;
+		}
+	}
+
 
 	/**
 	 * Initialize the manager: read package information and register migrations.
