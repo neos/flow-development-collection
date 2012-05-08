@@ -40,8 +40,16 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $packageManager;
 
 	/**
-	 * Injects the cache manager
-	 *
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 */
+	protected $bootstrap;
+
+	/**
+	 * @var \TYPO3\FLOW3\Object\ObjectManager
+	 */
+	protected $objectManager;
+
+	/**
 	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @return void
 	 */
@@ -50,8 +58,6 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	}
 
 	/**
-	 * Injects the Lock Manager
-	 *
 	 * @param \TYPO3\FLOW3\Core\LockManager $lockManager
 	 * @return void
 	 */
@@ -68,10 +74,26 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return void
+	 */
+	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		$this->bootstrap = $bootstrap;
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
+	 */
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
 	 * Flush all caches
 	 *
-	 * The flush command flushes all caches, including code caches, which have been
-	 * registered with FLOW3's Cache Manager.
+	 * The flush command flushes all caches (including code caches) which have been
+	 * registered with FLOW3's Cache Manager. It also removes any session data.
 	 *
 	 * If fatal errors caused by a package prevent the compile time bootstrap
 	 * from running, the removal of any temporary data can be forced by specifying
@@ -92,8 +114,18 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			// bootstrap in order to reliably flush the temporary data before any
 			// other code can cause fatal errors.
 
+		$currentSessionImplementation = $this->objectManager->getClassNameByObjectName('TYPO3\FLOW3\Session\SessionInterface');
+		$result = $currentSessionImplementation::destroyAll($this->bootstrap);
+		if ($result === NULL) {
+			$sessionDestroyMessage = ' and removed all potentially existing session data.';
+		} elseif ($result > 0) {
+			$sessionDestroyMessage = sprintf(' and removed data of %s.', ($result === 1 ? 'the one existing session' : 'the ' . $result . ' existing sessions'));
+		} else {
+			$sessionDestroyMessage = '.';
+		}
+
 		$this->cacheManager->flushCaches();
-		$this->outputLine('Flushed all caches.');
+		$this->outputLine('Flushed all caches' . $sessionDestroyMessage);
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();
 		}
