@@ -81,10 +81,11 @@ class Manager {
 	 * - the package needs the migration
 	 * - is a clean git working copy
 	 *
+	 * @param string $packageKey
 	 * @return void
 	 * @throws \RuntimeException
 	 */
-	public function migrate() {
+	public function migrate($packageKey = NULL) {
 		$this->initialize();
 
 		foreach ($this->migrations as $migrationInstance) {
@@ -93,8 +94,19 @@ class Manager {
 
 		foreach ($this->migrations as $migrationInstance) {
 			echo 'Applying ' . $migrationInstance->getIdentifier() . PHP_EOL;
-			foreach ($this->packagesData as $packageKey => $packageData) {
-				$this->migratePackage($packageKey, $packageData, $migrationInstance);
+			if ($packageKey !== NULL) {
+				if (array_key_exists($packageKey, $this->packagesData)) {
+					$this->migratePackage($packageKey, $this->packagesData[$packageKey], $migrationInstance);
+				} else {
+					echo '  Package "' . $packageKey . '" was not found.' . PHP_EOL;
+				}
+			} else {
+				foreach ($this->packagesData as $packageKey => $packageData) {
+					if ($packageData['category'] === 'Framework') {
+						continue;
+					}
+					$this->migratePackage($packageKey, $packageData, $migrationInstance);
+				}
 			}
 			$migrationInstance->outputNotesAndWarnings();
 			echo 'Done with ' . $migrationInstance->getIdentifier() . PHP_EOL . PHP_EOL;

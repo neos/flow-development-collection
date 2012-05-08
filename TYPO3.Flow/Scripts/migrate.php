@@ -58,7 +58,7 @@ if (flagIsSet('status')) {
 	exit(0);
 }
 
-$migrationsManager->migrate();
+$migrationsManager->migrate(getFlagValue('package-key'));
 
 /**
  * Check if the given flag is in $GLOBALS['argv'].
