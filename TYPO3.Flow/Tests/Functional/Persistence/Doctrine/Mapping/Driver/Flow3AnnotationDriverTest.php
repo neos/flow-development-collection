@@ -17,6 +17,16 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
 class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+			$this->markTestSkipped('Doctrine persistence is not enabled');
+		}
+	}
+
+	/**
 	 * @test
 	 */
 	public function lifecycleEventAnnotationsAreDetected() {
