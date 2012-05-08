@@ -436,7 +436,7 @@ namespace TYPO3\FLOW3;
 function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) {
 	if ($plaintext === NULL) {
 		$plaintext = (FLOW3_SAPITYPE === 'CLI');
-		$ansiColors = $plaintext;
+		$ansiColors = $plaintext && DIRECTORY_SEPARATOR === '/';
 	} else {
 		$ansiColors = FALSE;
 	}
