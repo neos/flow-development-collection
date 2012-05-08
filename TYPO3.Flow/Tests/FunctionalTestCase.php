@@ -146,6 +146,11 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	public function setUp() {
 		$this->objectManager = self::$bootstrap->getObjectManager();
 
+		$session = $this->objectManager->get('TYPO3\FLOW3\Session\SessionInterface');
+		if ($session->isStarted()) {
+			$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
+		}
+
 		if (static::$testablePersistenceEnabled === TRUE) {
 			self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
 			if (is_callable(array(self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
@@ -217,11 +222,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
-		}
-
-		$session = self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Session\SessionInterface');
-		if ($session->isStarted()) {
-			$session->destroy(sprintf('tearDown() method of functional test %s.', get_class($this) . '::' . $this->getName()));
 		}
 	}
 

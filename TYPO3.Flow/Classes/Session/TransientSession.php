@@ -162,6 +162,7 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	public function destroy($reason = NULL) {
 		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
 		$this->data = array();
+		$this->started = FALSE;
 	}
 
 }
