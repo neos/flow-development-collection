@@ -492,6 +492,7 @@ class Context {
 		$this->inactiveTokens = array();
 		$this->request = NULL;
 		$this->csrfTokens = array();
+		$this->interceptedRequest = NULL;
 		$this->initialized = FALSE;
 	}
 
