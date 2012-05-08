@@ -51,6 +51,8 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * If enabled, this test case will modify the behavior of the security framework
 	 * in a way which allows for easy simulation of roles and authentication.
 	 *
+	 * Note: this will implicitly enable testable HTTP as well.
+	 *
 	 * @var boolean
 	 * @api
 	 */
@@ -59,6 +61,8 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * If enabled, this test case will automatically provide a virtual browser
 	 * for sending HTTP requests to FLOW3's request handler and MVC framework.
+	 *
+	 * Note: testable security will implicitly enable this as well.
 	 *
 	 * @var boolean
 	 * @api
