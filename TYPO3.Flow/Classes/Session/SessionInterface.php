@@ -108,6 +108,19 @@ interface SessionInterface {
 	 */
 	public function destroy($reason = NULL);
 
+	/**
+	 * Explicitly destroy all session data of all sessions with one specific implementation.
+	 *
+	 * Note: The implementation of this method must work from the command line and
+	 *       during compile time as it will be invoked by the typo3.flow3:cache:flush
+	 *       command. It is also not designed to be called from a regular runtime
+	 *       context as it is unclear what happens to any possible active action.
+	 *
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return integer|NULL Optional: The number of sessions which have been destroyed
+	 */
+	static public function destroyAll(\TYPO3\FLOW3\Core\Bootstrap $bootstrap);
+
 }
 
 ?>
