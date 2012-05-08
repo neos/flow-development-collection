@@ -28,11 +28,10 @@ class DisjunctionValidator extends AbstractCompositeValidator {
 	 * If all validators fail, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
 	 * @return \TYPO3\FLOW3\Error\Result
 	 * @api
 	 */
-	public function validate($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
+	public function validate($value) {
 		$result = new \TYPO3\FLOW3\Error\Result();
 
 		$oneWithoutErrors = FALSE;
