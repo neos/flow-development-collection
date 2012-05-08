@@ -80,9 +80,9 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$context = $this->bootstrap->getContext();
 
 		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
-		$this->outputLine('<i>usage: ./flow3 <command identifier></i>');
+		$this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlow3Command()));
 		$this->outputLine();
-		$this->outputLine('See \'./flow3 help\' for a list of all available commands.');
+		$this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlow3Command()));
 		$this->outputLine();
 	}
 
@@ -122,7 +122,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$context = $this->bootstrap->getContext();
 
 		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
-		$this->outputLine('<i>usage: ./flow3 <command identifier></i>');
+		$this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlow3Command()));
 		$this->outputLine();
 		$this->outputLine('The following commands are currently available:');
 
@@ -142,7 +142,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		}
 		$this->outputLine('* = compile time command');
 		$this->outputLine();
-		$this->outputLine('See \'./flow3 help <commandidentifier>\' for more information about a specific command.');
+		$this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', array($this->getFlow3Command()));
 		$this->outputLine();
 	}
 
@@ -172,11 +172,11 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			}
 		}
 
-		$usage = './flow3 ' . $this->commandManager->getShortestIdentifierForCommand($command) . ($hasOptions ? ' [<options>]' : '') . $usage;
+		$usage = $this->commandManager->getShortestIdentifierForCommand($command) . ($hasOptions ? ' [<options>]' : '') . $usage;
 
 		$this->outputLine();
 		$this->outputLine('<b>USAGE:</b>');
-		$this->outputLine('  ' . $usage);
+		$this->outputLine('  %s %s', array($this->getFlow3Command(), $usage));
 
 		$argumentDescriptions = array();
 		$optionDescriptions = array();
@@ -251,8 +251,8 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			}
 		}
 		$this->outputLine('');
-		$this->outputLine('Enter "./flow3 help" for an overview of all available commands');
-		$this->outputLine('or "./flow3 help <commandIdentifier>" for a detailed description of the corresponding command.');
+		$this->outputLine('Enter "%s help" for an overview of all available commands', array($this->getFlow3Command()));
+		$this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', array($this->getFlow3Command()));
 	}
 
 	/**
