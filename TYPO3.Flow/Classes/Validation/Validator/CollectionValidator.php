@@ -38,6 +38,10 @@ class CollectionValidator extends GenericObjectValidator {
 			return;
 		}
 
+		if (is_object($value) && $this->isValidatedAlready($value)) {
+			return;
+		}
+
 		if ((is_object($value) && !\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
 			$this->addError('The given subject was not a collection.', 1317204797);
 			return;
@@ -54,6 +58,9 @@ class CollectionValidator extends GenericObjectValidator {
 				}
 			} else {
 				return;
+			}
+			if ($collectionElementValidator instanceof ObjectValidatorInterface) {
+				$collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
 			}
 			$this->result->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
 		}

@@ -11,13 +11,12 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
 /**
  * A generic object validator which allows for specifying property validators
  *
  * @api
  */
-class GenericObjectValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class GenericObjectValidator extends AbstractValidator implements ObjectValidatorInterface {
 
 	/**
 	 * @var array
@@ -25,10 +24,20 @@ class GenericObjectValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 	protected $propertyValidators = array();
 
 	/**
-	 *
 	 * @var \SplObjectStorage
 	 */
-	static protected $instancesCurrentlyUnderValidation;
+	protected $validatedInstancesContainer;
+
+	/**
+	 * Allows to set a container to keep track of validated instances.
+	 *
+	 * @param \SplObjectStorage $validatedInstancesContainer A container to keep track of validated instances
+	 * @return void
+	 * @api
+	 */
+	public function setValidatedInstancesContainer(\SplObjectStorage $validatedInstancesContainer) {
+		$this->validatedInstancesContainer = $validatedInstancesContainer;
+	}
 
 	/**
 	 * Checks if the given value is valid according to the property validators
@@ -39,18 +48,13 @@ class GenericObjectValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 	 * @api
 	 */
 	protected function isValid($object) {
-		if (self::$instancesCurrentlyUnderValidation === NULL) {
-			self::$instancesCurrentlyUnderValidation = new \SplObjectStorage();
-		}
 		if (!is_object($object)) {
 			$this->addError('Object expected, %1$s given.', 1241099149, array(gettype($object)));
 			return;
 		}
 
-		if (self::$instancesCurrentlyUnderValidation->contains($object)) {
+		if ($this->isValidatedAlready($object)) {
 			return;
-		} else {
-			self::$instancesCurrentlyUnderValidation->attach($object);
 		}
 
 		$messages = new \TYPO3\FLOW3\Error\Result();
@@ -60,8 +64,23 @@ class GenericObjectValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 		}
 		$this->result = $messages;
 
-		self::$instancesCurrentlyUnderValidation->detach($object);
 		return;
+	}
+
+	/**
+	 * @param object $object
+	 * @return boolean
+	 */
+	protected function isValidatedAlready($object) {
+		if ($this->validatedInstancesContainer === NULL) {
+			$this->validatedInstancesContainer = new \SplObjectStorage();
+		}
+		if ($this->validatedInstancesContainer->contains($object)) {
+			return TRUE;
+		} else {
+			$this->validatedInstancesContainer->attach($object);
+			return FALSE;
+		}
 	}
 
 	/**
@@ -98,6 +117,9 @@ class GenericObjectValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractV
 	 */
 	protected function checkProperty($value, $validators, \TYPO3\FLOW3\Error\Result $messages) {
 		foreach ($validators as $validator) {
+			if ($validator instanceof ObjectValidatorInterface) {
+				$validator->setValidatedInstancesContainer($this->validatedInstancesContainer);
+			}
 			$messages->merge($validator->validate($value));
 		}
 	}

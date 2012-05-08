@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
+abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \Countable {
 
 	/**
 	 * @var array
@@ -28,6 +28,11 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 * @var \SplObjectStorage
 	 */
 	protected $validators;
+
+	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $validatedInstancesContainer;
 
 	/**
 	 * Constructs the composite validator and sets validation options
@@ -41,6 +46,17 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	}
 
 	/**
+	 * Allows to set a container to keep track of validated instances.
+	 *
+	 * @param \SplObjectStorage $validatedInstancesContainer A container to keep track of validated instances
+	 * @return void
+	 * @api
+	 */
+	public function setValidatedInstancesContainer(\SplObjectStorage $validatedInstancesContainer) {
+		$this->validatedInstancesContainer = $validatedInstancesContainer;
+	}
+
+	/**
 	 * Adds a new validator to the conjunction.
 	 *
 	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
@@ -48,6 +64,9 @@ abstract class AbstractCompositeValidator implements \TYPO3\FLOW3\Validation\Val
 	 * @api
 	 */
 	public function addValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+		if ($validator instanceof ObjectValidatorInterface) {
+			$validator->setValidatedInstancesContainer = $this->validatedInstancesContainer;
+		}
 		$this->validators->attach($validator);
 	}
 

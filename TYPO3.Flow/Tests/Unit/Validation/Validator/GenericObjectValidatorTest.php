@@ -164,6 +164,28 @@ class GenericObjectValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Vali
 
 		$this->assertSame(array('b.uuid' => array($error1), 'uuid' => array($error1)), $aValidator->validate($A)->getFlattenedErrors());
 	}
+
+	/**
+	 * @test
+	 */
+	public function objectsAreValidatedOnlyOnce() {
+		$className = 'A' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $className . '{ public $integer = 1; }');
+		$object = new $className();
+
+		$integerValidator = $this->getAccessibleMock('TYPO3\FLOW3\Validation\Validator\IntegerValidator');
+		$matcher = $this->any();
+		$integerValidator->expects($matcher)->method('validate')->with(1)->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
+
+		$validator = $this->getValidator();
+		$validator->addPropertyValidator('integer', $integerValidator);
+
+			// Call the validation twice
+		$validator->validate($object);
+		$validator->validate($object);
+
+		$this->assertEquals(1, $matcher->getInvocationCount());
+	}
 }
 
 ?>
