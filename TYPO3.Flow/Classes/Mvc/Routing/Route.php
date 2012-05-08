@@ -427,7 +427,7 @@ class Route {
 			}
 			$queryString = http_build_query($routeValues, NULL, '&');
 			if ($queryString !== '') {
-				$matchingUri .= '?' . $queryString;
+				$matchingUri .= strpos($matchingUri, '?') !== FALSE ? '&' . $queryString : '?' . $queryString;
 			}
 		}
 		$this->matchingUri = $matchingUri;
