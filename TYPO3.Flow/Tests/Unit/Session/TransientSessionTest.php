@@ -61,6 +61,7 @@ class TransientSessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$session->start();
 		$session->putData('theKey', 'some data');
 		$session->destroy();
+		$session->start();
 		$this->assertNull($session->getData('theKey'));
 	}
 
