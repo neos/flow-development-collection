@@ -237,7 +237,10 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * @return array Array of all configured roles
 	 */
 	public function getRoles() {
-		$roles = array();
+		$roles = array(
+			new \TYPO3\FLOW3\Security\Policy\Role('Everybody'),
+			new \TYPO3\FLOW3\Security\Policy\Role('Anonymous')
+		);
 		foreach ($this->policy['roles'] as $roleIdentifier => $parentRoles) {
 			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
 		}

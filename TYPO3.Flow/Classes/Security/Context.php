@@ -294,22 +294,24 @@ class Context {
 		}
 
 		$roles = array(new Role('Everybody'));
-		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated()) {
-				$tokenRoles = $token->getRoles();
-				foreach ($tokenRoles as $currentRole) {
-					if (!in_array($currentRole, $roles)) $roles[] = $currentRole;
-					foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
-						if (!in_array($currentParentRole, $roles)) $roles[] = $currentParentRole;
+
+		if ($this->authenticationManager->isAuthenticated() === FALSE) {
+			$roles[] = new Role('Anonymous');
+		} else {
+			foreach ($this->getAuthenticationTokens() as $token) {
+				if ($token->isAuthenticated()) {
+					$tokenRoles = $token->getRoles();
+					foreach ($tokenRoles as $currentRole) {
+						if (!in_array($currentRole, $roles)) $roles[] = $currentRole;
+						foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
+							if (!in_array($currentParentRole, $roles)) $roles[] = $currentParentRole;
+						}
 					}
 				}
 			}
+			$roles = array_intersect($roles, $this->policyService->getRoles());
 		}
-
-		return array_intersect(
-			$roles,
-			$this->policyService->getRoles()
-		);
+		return $roles;
 	}
 
 	/**
@@ -322,6 +324,9 @@ class Context {
 	public function hasRole($roleName) {
 		if ($roleName === 'Everybody') {
 			return TRUE;
+		}
+		if ($roleName === 'Anonymous') {
+			return (!$this->authenticationManager->isAuthenticated());
 		}
 
 		$roles = $this->getRoles();
