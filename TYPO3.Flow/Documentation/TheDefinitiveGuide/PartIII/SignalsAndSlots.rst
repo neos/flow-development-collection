@@ -115,7 +115,8 @@ The signal is identified by the class name and the signal name, which is the met
 ``emit``. In the above example, the method which triggers the ``commentCreated`` signal is called
 ``emitCommentCreated()``.
 
-The slot is identified by the class name and method name which should be called.
+The slot is identified by the class name and method name which should be called. If the
+method name starts with ``::`` the slot will be called statically.
 
 An alternative way of specifying the slot is to give an object instead of a classname to
 the ``connect`` method. This can also be used to pass a ``Closure`` instance to react to

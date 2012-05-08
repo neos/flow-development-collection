@@ -86,6 +86,49 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod() {
+		$arguments = array();
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('TYPO3\FLOW3\Tests\Unit\SignalSlot\DispatcherTest')->will($this->returnValue('TYPO3\FLOW3\Tests\Unit\SignalSlot\DispatcherTest'));
+
+		$dispatcher = new \TYPO3\FLOW3\SignalSlot\Dispatcher();
+		$dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', FALSE);
+		$dispatcher->injectObjectManager($mockObjectManager);
+
+		$dispatcher->dispatch('Foo', 'bar', array('foo' => 'bar', 'baz' => 'quux'));
+		$this->assertSame(array('bar', 'quux'), self::$arguments);
+	}
+
+	/**
+	 * @test
+	 */
+	public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethodIfNoObjectmanagerIsAvailable() {
+		$dispatcher = new \TYPO3\FLOW3\SignalSlot\Dispatcher();
+		$dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', FALSE);
+
+		$dispatcher->dispatch('Foo', 'bar', array('no' => 'object', 'manager' => 'exists'));
+		$this->assertSame(array('object', 'exists'), self::$arguments);
+	}
+
+	/**
+	 * A variable used in the above two tests.
+	 * @var array
+	 */
+	static protected $arguments = array();
+
+	/**
+	 * A slot used in the above two tests.
+	 *
+	 * @return void
+	 */
+	static public function staticSlot() {
+		self::$arguments = func_get_args();
+	}
+
+	/**
+	 * @test
+	 */
 	public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified() {
 		$slotClassName = 'Mock_' . md5(uniqid(mt_rand(), TRUE));
 		eval ('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
