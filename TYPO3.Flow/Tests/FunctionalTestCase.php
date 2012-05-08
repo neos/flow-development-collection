@@ -184,7 +184,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$this->authenticationManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
 
 		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
-		$this->testingProvider->setName('DefaultProvider');
+		$this->testingProvider->setName('TestingProvider');
 
 		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
 		$this->securityContext->clearContext();

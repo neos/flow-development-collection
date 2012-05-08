@@ -23,7 +23,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController
+	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController
 	 */
 	protected $restrictedController;
 
@@ -32,7 +32,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->restrictedController = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController');
+		$this->restrictedController = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController');
 	}
 
 	/**

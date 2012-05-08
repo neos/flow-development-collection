@@ -466,6 +466,7 @@ class Context {
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $interceptedRequest
 	 * @return void
+	 * @FLOW3\Session(autoStart=true)
 	 */
 	public function setInterceptedRequest(ActionRequest $interceptedRequest = NULL) {
 		$this->interceptedRequest = $interceptedRequest;
@@ -492,6 +493,7 @@ class Context {
 		$this->inactiveTokens = array();
 		$this->request = NULL;
 		$this->csrfTokens = array();
+		$this->interceptedRequest = NULL;
 		$this->initialized = FALSE;
 	}
 

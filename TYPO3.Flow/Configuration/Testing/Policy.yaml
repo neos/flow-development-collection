@@ -8,8 +8,8 @@
 
 resources:
   methods:
-    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->customerAction())"
-    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->adminAction())"
+    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())"
+    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())"
   entities:
     TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictableEntity:
       TYPO3_FLOW3_allEntities: "ANY"

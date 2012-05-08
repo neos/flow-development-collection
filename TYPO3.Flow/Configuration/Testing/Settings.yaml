@@ -44,7 +44,7 @@ TYPO3:
         authenticationStrategy: anyToken
 
         providers:
-          DefaultProvider:
+          TestingProvider:
             provider: 'TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider'
             entryPoint: 'WebRedirect'
             entryPointOptions:
