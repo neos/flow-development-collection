@@ -228,8 +228,7 @@ class ConfigurationManager {
 				if (isset($packages['TYPO3.FLOW3'])) {
 					$flow3Package = $packages['TYPO3.FLOW3'];
 					unset($packages['TYPO3.FLOW3']);
-					$packages['TYPO3.FLOW3'] = $flow3Package;
-					$packages = array_reverse($packages, TRUE);
+					$packages = array_merge(array('TYPO3.FLOW3' => $flow3Package), $packages);
 					unset($flow3Package);
 				}
 
