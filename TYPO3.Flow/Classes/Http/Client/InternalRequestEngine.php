@@ -77,12 +77,26 @@ class InternalRequestEngine implements RequestEngineInterface {
 		if (!$requestHandler instanceof \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler) {
 			throw new \TYPO3\FLOW3\Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
 		}
+
 		$this->bootstrap->getActiveRequestHandler()->setHttpRequest($request);
 		$response = new Response();
-		$actionRequest = $this->router->route($request);
-		$this->securityContext->injectRequest($actionRequest);
-		$this->dispatcher->dispatch($actionRequest, $response);
 
+		try {
+			$actionRequest = $this->router->route($request);
+			$this->securityContext->injectRequest($actionRequest);
+
+			$this->dispatcher->dispatch($actionRequest, $response);
+		} catch (\Exception $exception) {
+			$pathPosition = strpos($exception->getFile(), 'Packages/');
+			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
+			$content = PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
+			$content .= 'thrown in file ' . $filePathAndName . PHP_EOL;
+			$content .= 'in line ' . $exception->getLine() . PHP_EOL;
+
+			$response->setStatus(500);
+			$response->setContent($content);
+		}
 		return $response;
 	}
 
