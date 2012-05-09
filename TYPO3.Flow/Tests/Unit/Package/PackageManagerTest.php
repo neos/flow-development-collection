@@ -43,7 +43,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application', 0700, TRUE);
 		mkdir('vfs://Test/Configuration');
 
-		$mockClassLoader = $this->getMock('TYPO3\FLOW3\Core\ClassLoader', array(), array(), '', FALSE);
+		$mockClassLoader = $this->getMock('TYPO3\FLOW3\Core\ClassLoader');
 
 		$this->packageManager->injectClassLoader($mockClassLoader);
 		$this->packageManager->initialize($mockBootstrap, 'vfs://Test/Packages/', 'vfs://Test/Configuration/PackageStates.php');
@@ -77,30 +77,18 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
 		$packageManager->_set('packageKeys', array('acme.testpackage' => 'Acme.TestPackage'));
 		$this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
 	}
 
 	/**
-	 * Data Provider returning valid package keys and the corresponding path
-	 *
-	 * @return array
-	 */
-	public function packageKeysAndPaths() {
-		return array(
-			array('TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/'),
-			array('RobertLemke.FLOW3.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.FLOW3.NothingElse/')
-		);
-	}
-
-	/**
 	 * @test
-	 * @dataProvider packageKeysAndPaths
 	 */
 	public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds() {
 		$packageKeys = array(
 			'TYPO3.FLOW3' . md5(uniqid(mt_rand(), TRUE)),
+			'TYPO3.FLOW3.Test' . md5(uniqid(mt_rand(), TRUE)),
 			'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), TRUE)),
 			'RobertLemke.FLOW3.NothingElse' . md5(uniqid(mt_rand(), TRUE))
 		);
@@ -120,12 +108,15 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
 		}
 
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
 		$packageManager->_set('packages', array());
 		$packageManager->_call('scanAvailablePackages');
+
+		$packageStates = require('vfs://Test/Configuration/PackageStates.php');
+		$this->assertEquals($packageKeys, array_keys($packageStates['packages']));
 	}
 
 	/**
@@ -143,12 +134,24 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 		$packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
 
 		$packageManager->_call('registerPackages');
+	}
+
+	/**
+	 * Data Provider returning valid package keys and the corresponding path
+	 *
+	 * @return array
+	 */
+	public function packageKeysAndPaths() {
+		return array(
+			array('TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/'),
+			array('RobertLemke.FLOW3.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.FLOW3.NothingElse/')
+		);
 	}
 
 	/**
