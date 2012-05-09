@@ -45,10 +45,10 @@ class CsrfProtectionAspect {
 	protected $policyService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
-	protected $environment;
+	protected $bootstrap;
 
 	/**
 	 * Adds a CSRF token as argument in the URI builder
@@ -89,16 +89,19 @@ class CsrfProtectionAspect {
 	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
 	 */
 	public function transferCsrfTokenToExtDirectRequests(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
-		$arguments = $this->environment->getRequestUri()->getArguments();
-		$request = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		$extDirectRequest = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		if (isset($arguments['__csrfToken'])) {
-			$requestArguments = $request->getArguments();
-			$requestArguments['__csrfToken'] = $arguments['__csrfToken'];
-			$request->setArguments($requestArguments);
+		$requestHandler = $this->bootstrap->getActiveRequestHandler();
+		if ($requestHandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
+			$arguments = $requestHandler->getHttpRequest()->getArguments();
+			if (isset($arguments['__csrfToken'])) {
+				$requestArguments = $extDirectRequest->getArguments();
+				$requestArguments['__csrfToken'] = $arguments['__csrfToken'];
+				$extDirectRequest->setArguments($requestArguments);
+			}
 		}
 
-		return $request;
+		return $extDirectRequest;
 	}
 }
 
