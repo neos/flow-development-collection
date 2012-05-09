@@ -42,7 +42,7 @@ class Bootstrap {
 
 	/**
 	 * The application context
-	 * @var TYPO3\FLOW3\Core\ApplicationContext
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -139,7 +139,7 @@ class Bootstrap {
 	/**
 	 * Returns the context this bootstrap was started in.
 	 *
-	 * @return TYPO3\FLOW3\Core\ApplicationContext The context encapsulated in an object, for example "Development" or "Development/MyDeployment"
+	 * @return \TYPO3\FLOW3\Core\ApplicationContext The context encapsulated in an object, for example "Development" or "Development/MyDeployment"
 	 * @api
 	 */
 	public function getContext() {
