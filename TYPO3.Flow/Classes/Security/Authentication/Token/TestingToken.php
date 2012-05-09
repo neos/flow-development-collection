@@ -20,10 +20,10 @@ class TestingToken extends \TYPO3\FLOW3\Security\Authentication\Token\AbstractTo
 	/**
 	 * Simply sets the authentication status to AUTHENTICATION_NEEDED
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The current request instance
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $actionRequest The current action request instance
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
+	public function updateCredentials(\TYPO3\FLOW3\Mvc\ActionRequest $actionRequest) {
 		$this->authenticationStatus = self::AUTHENTICATION_NEEDED;
 	}
 
