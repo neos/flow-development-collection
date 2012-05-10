@@ -22,6 +22,7 @@
 			<system minVersion="1.2.0" type="PHPExtension">json</system>
 			<system type="PHPExtension">session</system>
 			<package>TYPO3.Fluid</package>
+			<package>Doctrine.ORM</package>
 			<package>Symfony.Component.Yaml</package>
 		</depends>
 		<conflicts>
