@@ -12,10 +12,13 @@ namespace TYPO3\FLOW3\Core\Migrations;
  *                                                                        */
 
 /**
- *
+ * Adjust to the major changes in FLOW3 1.1 when coming from 1.0.
  */
 class Version201201261636 extends AbstractMigration {
 
+	/**
+	 * @return void
+	 */
 	public function up() {
 		$this->searchAndReplace('TYPO3\FLOW3\MVC\CLI', 'TYPO3\FLOW3\Cli');
 		$this->searchAndReplace('TYPO3\FLOW3\MVC\Web\Routing', 'TYPO3\FLOW3\Mvc\Routing');

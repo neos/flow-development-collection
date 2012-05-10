@@ -23,7 +23,8 @@ class Git {
 	 */
 	static public function isGitAvailable() {
 		$result = 255;
-		system('git --version > /dev/null', $result);
+		$output = array();
+		exec('git --version', $output, $result);
 		return $result === 0;
 	}
 
