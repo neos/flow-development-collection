@@ -15,7 +15,6 @@ use TYPO3\FLOW3\Package\MetaData\XmlWriter as PackageMetaDataWriter;
 use TYPO3\FLOW3\Package\Package;
 use TYPO3\FLOW3\Package\PackageInterface;
 use TYPO3\FLOW3\Utility\Files;
-
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
@@ -164,7 +163,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * A package is available, if the package directory contains valid MetaData information.
 	 *
 	 * @param string $packageKey
-	 * @return \TYPO3\FLOW3\Package The requested package object
+	 * @return \TYPO3\FLOW3\Package\PackageInterface The requested package object
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException if the specified package is not known
 	 * @api
 	 */
@@ -179,7 +178,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * Returns an array of \TYPO3\FLOW3\Package objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package
+	 * @return array Array of \TYPO3\FLOW3\Package\PackageInterface
 	 * @api
 	 */
 	public function getAvailablePackages() {
@@ -191,7 +190,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * A package is active, if it is available and has been activated in the package
 	 * manager settings.
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package
+	 * @return array Array of \TYPO3\FLOW3\Package\PackageInterface
 	 * @api
 	 */
 	public function getActivePackages() {
@@ -200,10 +199,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 	/**
 	 * Returns an array of \TYPO3\FLOW3\Package objects of all frozen packages.
-	 * A frozen package is not considered by file montoring and provides some
+	 * A frozen package is not considered by file monitoring and provides some
 	 * precompiled reflection data in order to improve performance.
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package
+	 * @return array Array of \TYPO3\FLOW3\Package\PackageInterface
 	 */
 	public function getFrozenPackages() {
 		$frozenPackages = array();
@@ -247,7 +246,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param string $packageKey The package key of the new package
 	 * @param \TYPO3\FLOW3\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
 	 * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
-	 * @return \TYPO3\FLOW3\Package\Package The newly created package
+	 * @return \TYPO3\FLOW3\Package\Package\PackageInterface The newly created package
 	 * @throws \TYPO3\FLOW3\Package\Exception
 	 * @throws \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException
@@ -307,7 +306,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * Currently only packages located at forge.typo3.org are supported. Note that the git binary must be available.
 	 *
 	 * @param string $packageKey The package key of the package to import.
-	 * @return \TYPO3\FLOW3\Package\Package The imported package
+	 * @return \TYPO3\FLOW3\Package\PackageInterface The imported package
 	 * @throws \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
 	 * @throws \TYPO3\FLOW3\Package\Exception\PackageRepositoryException
 	 */
@@ -587,7 +586,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @param array $collectedPackagePaths
 	 * @return array
 	 */
-	protected function scanPackagesInPath($startPath, &$collectedPackagePaths = array()) {
+	protected function scanPackagesInPath($startPath, array &$collectedPackagePaths = array()) {
 		foreach (new \DirectoryIterator($startPath) as $fileInfo) {
 			$filename = $fileInfo->getFilename();
 			if ($filename[0] !== '.') {
