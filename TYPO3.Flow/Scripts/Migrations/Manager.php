@@ -175,7 +175,7 @@ class Manager {
 		foreach ($migrationFilenames as $filenameAndPath) {
 			require_once($filenameAndPath);
 			$baseFilename = basename($filenameAndPath, '.php');
-			$version = (int)substr($baseFilename, 7);
+			$version = substr($baseFilename, 7);
 			$classname = 'TYPO3\FLOW3\Core\Migrations\\' . $baseFilename;
 			$this->migrations[$version] = new $classname($this, $packageKey);
 		}
