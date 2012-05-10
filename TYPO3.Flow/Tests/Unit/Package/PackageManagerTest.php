@@ -86,14 +86,14 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds() {
-		$packageKeys = array(
+		$expectedPackageKeys = array(
 			'TYPO3.FLOW3' . md5(uniqid(mt_rand(), TRUE)),
 			'TYPO3.FLOW3.Test' . md5(uniqid(mt_rand(), TRUE)),
 			'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), TRUE)),
 			'RobertLemke.FLOW3.NothingElse' . md5(uniqid(mt_rand(), TRUE))
 		);
 
-		foreach ($packageKeys as $packageKey) {
+		foreach ($expectedPackageKeys as $packageKey) {
 			$packageNamespace = str_replace('.', '\\', $packageKey);
 			$packagePath = 'vfs://Test/Packages/Application/' . str_replace('.', '/', $packageNamespace) . '/';
 			$packageClassCode = '<?php
@@ -116,7 +116,8 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$packageManager->_call('scanAvailablePackages');
 
 		$packageStates = require('vfs://Test/Configuration/PackageStates.php');
-		$this->assertEquals($packageKeys, array_keys($packageStates['packages']));
+		$actualPackageKeys = array_keys($packageStates['packages']);
+		$this->assertEquals(sort($expectedPackageKeys), sort($actualPackageKeys));
 	}
 
 	/**
