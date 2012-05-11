@@ -196,7 +196,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 							$policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							\TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+							throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
 					}
 
 					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
@@ -380,7 +380,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * Checks if the given entity type has a policy entry for at least one of the given roles
 	 *
 	 * @param string $entityType The entity type (object name) to be checked
-     * @param array $roles The roles to be checked
+	 * @param array $roles The roles to be checked
 	 * @return boolean TRUE if the given entity type has a policy entry
 	 */
 	public function hasPolicyEntryForEntityType($entityType, array $roles) {
@@ -451,24 +451,24 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 			return FALSE;
 		}
 
-		$filtersForResource = array();
+		$parsedMethodResources = array();
 
 		foreach ($this->policy['acls'] as $role => $acl) {
 			if (!isset($acl['methods'])) {
 				continue;
 			}
 			if (!is_array($acl['methods'])) {
-				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The ACL configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
 			}
-
 			foreach ($acl['methods'] as $resource => $privilege) {
-				if (!isset($filtersForResource[$resource])) {
+				if (!isset($parsedMethodResources[$resource])) {
 					$resourceTrace = array();
-					$filtersForResource[$resource] = $this->policyExpressionParser->parseMethodResources($resource, $this->policy['resources']['methods'], $resourceTrace);
+					$parsedMethodResources[$resource]['filters'] = $this->policyExpressionParser->parseMethodResources($resource, $this->policy['resources']['methods'], $resourceTrace);
+					$parsedMethodResources[$resource]['trace'] = $resourceTrace;
 				}
-				$this->filters[$role][$resource] = $filtersForResource[$resource];
+				$this->filters[$role][$resource] = $parsedMethodResources[$resource]['filters'];
 
-				foreach ($resourceTrace as $currentResource) {
+				foreach ($parsedMethodResources[$resource]['trace'] as $currentResource) {
 					$policyForResource = array();
 					switch ($privilege) {
 						case 'GRANT':
@@ -481,7 +481,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 							$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+							throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got "' . $privilege . '" for role "' . $role . '" and resource "' . $resource . '"', 1267311437);
 					}
 
 					if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
