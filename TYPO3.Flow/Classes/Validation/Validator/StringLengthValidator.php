@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class StringLengthValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class StringLengthValidator extends AbstractValidator {
 
 	/**
 	 * Checks if the given $value is a valid string and its length is between 'minimum' (defaults to 0 if not specified)

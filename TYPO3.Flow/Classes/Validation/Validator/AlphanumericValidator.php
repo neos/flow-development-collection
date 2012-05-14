@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class AlphanumericValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class AlphanumericValidator extends AbstractValidator {
 
 	/**
 	 * The given $value is valid if it is an alphanumeric string, which is defined as [a-zA-Z0-9]

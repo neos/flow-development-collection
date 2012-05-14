@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class LocaleIdentifierValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class LocaleIdentifierValidator extends AbstractValidator {
 
 	/**
 	 * Is valid if the given property ($propertyValue) is empty or a valid "locale identifier".

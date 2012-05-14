@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
+abstract class AbstractValidator implements ValidatorInterface {
 
 	/**
 	 * Specifies whether this validator accepts empty values.

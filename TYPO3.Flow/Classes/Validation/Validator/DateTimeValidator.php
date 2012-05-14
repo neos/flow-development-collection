@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class DateTimeValidator extends AbstractValidator {
 
 	/**
 	 * @var \TYPO3\FLOW3\I18n\Service

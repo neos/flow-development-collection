@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @api
  */
-class CollectionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class CollectionValidator extends GenericObjectValidator {
 
 	/**
 	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver

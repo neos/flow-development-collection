@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class NumberRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class NumberRangeValidator extends AbstractValidator {
 
 	/**
 	 * The given $value is valid if it is a number in the specified range.

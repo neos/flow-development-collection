@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class CountValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class CountValidator extends AbstractValidator {
 
 	/**
 	 * The given $value is valid if it is an array or \Countable that contains the specified amount of elements.

@@ -19,7 +19,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  *
  * @api
  */
-class RegularExpressionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class RegularExpressionValidator extends AbstractValidator {
 
 	/**
 	 * Checks if the given value matches the specified regular expression.
