@@ -182,7 +182,7 @@ class ActionRequest implements RequestInterface {
 	 * explictly set through the corresponding internal argument "__referrer".
 	 * This mechanism is used by FLOW3's form and validation mechanisms.
 	 *
-	 * @return Request the referring request, or NULL if no referrer found
+	 * @return \TYPO3\FLOW3\Mvc\ActionRequest the referring request, or NULL if no referrer found
 	 */
 	public function getReferringRequest() {
 		if ($this->referringRequest !== NULL) {

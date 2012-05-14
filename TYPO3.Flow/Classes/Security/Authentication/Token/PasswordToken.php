@@ -38,15 +38,15 @@ class PasswordToken extends \TYPO3\FLOW3\Security\Authentication\Token\AbstractT
 	 * Note: You need to send the password in this POST parameter:
 	 *       __authentication[TYPO3][FLOW3][Security][Authentication][Token][PasswordToken][password]
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The original HTTP request
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $actionRequest The current action request
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
-		if ($request->getMethod() !== 'POST') {
+	public function updateCredentials(\TYPO3\FLOW3\Mvc\ActionRequest $actionRequest) {
+		if ($actionRequest->getHttpRequest()->getMethod() !== 'POST') {
 			return;
 		}
 
-		$postArguments = $request->getArguments();
+		$postArguments = $actionRequest->getInternalArguments();
 		$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.PasswordToken.password');
 
 		if (!empty($password)) {

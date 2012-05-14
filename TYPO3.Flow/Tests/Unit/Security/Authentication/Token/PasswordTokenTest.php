@@ -29,10 +29,10 @@ class PasswordTokenTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
 
 		$token = new PasswordToken();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$expectedCredentials = array('password' => 'verysecurepassword');
 		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
@@ -45,10 +45,10 @@ class PasswordTokenTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
 
 		$token = new PasswordToken();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}
@@ -60,14 +60,14 @@ class PasswordTokenTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
 		$token = new PasswordToken();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 		$this->assertEquals(array('password' => 'verysecurepassword'), $token->getCredentials());
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'GET', $arguments);
+		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'GET', $arguments)->createActionRequest();
 		$token = new PasswordToken();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 		$this->assertEquals(array('password' => ''), $token->getCredentials());
 	}
 }
