@@ -275,6 +275,29 @@ class Request {
 	}
 
 	/**
+	 * Checks if an argument of the given name exists in this request.
+	 * Applies to GET, POST and PUT arguments similarly.
+	 *
+	 * @param string $name Name of the argument
+	 * @return boolean
+	 * @api
+	 */
+	public function hasArgument($name) {
+		return isset($this->arguments[$name]);
+	}
+
+	/**
+	 * Returns the value of the specified GET / POST / PUT argument.
+	 *
+	 * @param string $name Name of the argument
+	 * @return mixed Value of the specified argument or NULL if it does not exist
+	 * @api
+	 */
+	public function getArgument($name) {
+		return (isset($this->arguments[$name]) ? $this->arguments[$name] : NULL);
+	}
+
+	/**
 	 * Returns the HTTP headers of this request
 	 *
 	 * @return \TYPO3\FLOW3\Http\Headers

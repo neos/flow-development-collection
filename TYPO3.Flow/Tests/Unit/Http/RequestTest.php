@@ -372,9 +372,20 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider variousArguments
 	 */
-	public function getArgumentsReturnsGetQueryArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments) {
+	public function getArgumentsReturnsGetPostAndPutArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments) {
 		$request = Request::create(new Uri($uriString), $method, $postArguments, array(), $filesArguments);
 		$this->assertEquals($expectedArguments, $request->getArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function singleArgumentsCanBeCheckedAndRetrieved() {
+		$request = Request::create(new Uri('http://dev.blog.rob/foo/bar?baz=quux&coffee=due'));
+		$this->assertTrue($request->hasArgument('baz'));
+		$this->assertEquals('quux', $request->getArgument('baz'));
+		$this->assertFalse($request->hasArgument('tea'));
+		$this->assertNull($request->getArgument('tea'));
 	}
 
 	/**
