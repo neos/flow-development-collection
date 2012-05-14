@@ -32,8 +32,9 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), array(), $serverEnvironment);
+		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePasswordHttpBasic();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$expectedCredentials = array ('username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)');
 		$this->assertEquals($expectedCredentials, $token->getCredentials());
@@ -51,8 +52,9 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), array(), $serverEnvironment);
+		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePasswordHttpBasic();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$this->assertEquals($expectedCredentials, $token->getCredentials());
 		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
@@ -63,9 +65,10 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived() {
 		$request = Request::create(new Uri('http://foo.com'));
+		$actionRequest = $request->createActionRequest();
 
 		$token = new UsernamePasswordHttpBasic();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
 	}

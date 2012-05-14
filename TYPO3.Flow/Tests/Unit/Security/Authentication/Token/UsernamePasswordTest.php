@@ -31,9 +31,10 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = $request->createActionRequest();
 
 		$token = new UsernamePassword();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$expectedCredentials = array ('username' => 'johndoe', 'password' => 'verysecurepassword');
 		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
@@ -48,9 +49,10 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = $request->createActionRequest();
 
 		$token = new UsernamePassword();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}
@@ -64,13 +66,15 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePassword();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 		$this->assertEquals(array('username' => 'TYPO3.FLOW3', 'password' => 'verysecurepassword'), $token->getCredentials());
 
 		$request = Request::create(new Uri('http://robertlemke.com/login'), 'GET', $arguments);
+		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePassword();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 		$this->assertEquals(array('username' => '', 'password' => ''), $token->getCredentials());
 	}
 
@@ -83,8 +87,9 @@ class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
+		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePassword();
-		$token->updateCredentials($request);
+		$token->updateCredentials($actionRequest);
 
 		$this->assertEquals('Username: "TYPO3.FLOW3"', (string)$token);
 	}

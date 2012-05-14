@@ -26,12 +26,6 @@ class UsernamePassword extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\AccountRepository
-	 * @FLOW3\Inject
-	 */
-	protected $accountRepository;
-
-	/**
 	 * Updates the username and password credentials from the POST vars, if the POST parameters
 	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
@@ -39,15 +33,16 @@ class UsernamePassword extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	 *       __authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]
 	 *   and __authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The original HTTP request
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $actionRequest The current action request
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
-		if ($request->getMethod() !== 'POST') {
+	public function updateCredentials(\TYPO3\FLOW3\Mvc\ActionRequest $actionRequest) {
+		$httpRequest = $actionRequest->getHttpRequest();
+		if ($httpRequest->getMethod() !== 'POST') {
 			return;
 		}
 
-		$arguments = $request->getArguments();
+		$arguments = $actionRequest->getInternalArguments();
 		$username = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
 		$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($arguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
 

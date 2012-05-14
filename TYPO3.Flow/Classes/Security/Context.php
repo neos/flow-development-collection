@@ -573,7 +573,7 @@ class Context {
 	protected function updateTokens(array $tokens) {
 		if ($this->request !== NULL) {
 			foreach ($tokens as $token) {
-				$token->updateCredentials($this->request->getHttpRequest());
+				$token->updateCredentials($this->request);
 			}
 		}
 	}

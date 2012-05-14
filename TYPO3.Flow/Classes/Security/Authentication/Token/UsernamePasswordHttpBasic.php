@@ -22,11 +22,11 @@ class UsernamePasswordHttpBasic extends UsernamePassword {
 	 * Sets the authentication status to AUTHENTICATION_NEEDED, if the header has been
 	 * sent, to NO_CREDENTIALS_GIVEN if no authorization header was there.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The current request instance
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $actionRequest The current action request instance
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\Http\Request $request) {
-		$authorizationHeader = $request->getHeaders()->get('Authorization');
+	public function updateCredentials(\TYPO3\FLOW3\Mvc\ActionRequest $actionRequest) {
+		$authorizationHeader = $actionRequest->getHttpRequest()->getHeaders()->get('Authorization');
 		if (substr($authorizationHeader, 0, 5) === 'Basic') {
 			$credentials = base64_decode(substr($authorizationHeader, 6));
 			$this->credentials['username'] = substr($credentials, 0, strpos($credentials, ':'));
