@@ -28,8 +28,6 @@ class PolicyTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function nonAuthenticatedUsersHaveTheEverybodyAndAnonymousRole() {
-#		$this->testingProvider->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-
 		$hasEverybodyRole = FALSE;
 		$hasAnonymousRole = FALSE;
 
