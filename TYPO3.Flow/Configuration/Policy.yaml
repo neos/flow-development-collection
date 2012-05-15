@@ -13,9 +13,9 @@
 #
 # resources:
 #   methods:
-#     TYPO3_FooPackage_PropertySetter:  "method(TYPO3\FooPackage\SomeClass->setSomeProperty())"
-#     TYPO3_FooPackage_BasicValidator: "method(TYPO3\FooPackage\BasicClassValidator->.*())"
-#     TYPO3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
+#     TYPO3_FooPackage_PropertySetter:  'method(TYPO3\FooPackage\SomeClass->setSomeProperty())'
+#     TYPO3_FooPackage_BasicValidator: 'method(TYPO3\FooPackage\BasicClassValidator->.*())'
+#     TYPO3_FooPackage_CombinedResource: 'theOneAndOnlyResource || theOtherLonelyResource'
 #
 #   entities:
 #     TYPO3_FooPackage_Model_MyModelClass:

@@ -8,13 +8,13 @@
 
 resources:
   methods:
-    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())"
-    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())"
+    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: 'method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())'
+    TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: 'method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
   entities:
     TYPO3_FLOW3_Tests_Functional_Security_Fixtures_RestrictableEntity:
-      TYPO3_FLOW3_allEntities: "ANY"
-      TYPO3_FLOW3_hiddenEntities: "this.hidden == TRUE"
-      TYPO3_FLOW3_othersEntities: "current.securityContext.account != this.ownerAccount && this.ownerAccount != NULL"
+      TYPO3_FLOW3_allEntities: 'ANY'
+      TYPO3_FLOW3_hiddenEntities: 'this.hidden == TRUE'
+      TYPO3_FLOW3_othersEntities: 'current.securityContext.account != this.ownerAccount && this.ownerAccount != NULL'
 
 
 roles:
