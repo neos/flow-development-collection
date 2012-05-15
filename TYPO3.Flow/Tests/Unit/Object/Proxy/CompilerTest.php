@@ -56,6 +56,10 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "minimum"=2 })'
 			),
 			array(
+				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => array('bar' => 'baz')))),
+				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"={ "bar"="baz" } })'
+			),
+			array(
 				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba', 'bar' => TRUE))),
 				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba", "bar"=true })'
 			),

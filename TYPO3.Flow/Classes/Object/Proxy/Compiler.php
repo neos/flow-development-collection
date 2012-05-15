@@ -222,24 +222,7 @@ class Compiler {
 			} elseif (is_scalar($optionValue)) {
 				$optionValueAsString = $optionValue;
 			} elseif (is_array($optionValue)) {
-				$values = array();
-				foreach ($optionValue as $k => $v) {
-					$value = '';
-					if (is_string($k)) {
-						$value .= '"' . $k . '"=';
-					}
-					if (is_object($v)) {
-						$value .= self::renderAnnotation($v);
-					} elseif (is_scalar($v) && is_string($v)) {
-						$value .= '"' . $v . '"';
-					} elseif (is_bool($v)) {
-						$value .= $v ? 'true' : 'false';
-					} elseif (is_scalar($v)) {
-						$value .= $v;
-					}
-					$values[] = $value;
-				}
-				$optionValueAsString = '{ ' . implode(', ', $values) . ' }';
+				$optionValueAsString = self::renderOptionArrayValueAsString($optionValue);
 			}
 			switch ($optionName) {
 				case 'value':
@@ -255,6 +238,34 @@ class Compiler {
 		return $annotationAsString . ($optionsAsStrings !== array() ? '(' . implode(', ', $optionsAsStrings) . ')' : '');
 	}
 
+	/**
+	 * Render an array value as string for an annotation.
+	 *
+	 * @param array $optionValue
+	 * @return string
+	 */
+	static protected function renderOptionArrayValueAsString(array $optionValue) {
+		$values = array();
+		foreach ($optionValue as $k => $v) {
+			$value = '';
+			if (is_string($k)) {
+				$value .= '"' . $k . '"=';
+			}
+			if (is_object($v)) {
+				$value .= self::renderAnnotation($v);
+			} elseif (is_array($v)) {
+				$value .= self::renderOptionArrayValueAsString($v);
+			} elseif (is_scalar($v) && is_string($v)) {
+				$value .= '"' . $v . '"';
+			} elseif (is_bool($v)) {
+				$value .= $v ? 'true' : 'false';
+			} elseif (is_scalar($v)) {
+				$value .= $v;
+			}
+			$values[] = $value;
+		}
+		return '{ ' . implode(', ', $values) . ' }';
+	}
 }
 
 ?>
