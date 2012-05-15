@@ -233,11 +233,11 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$policy = array(
 			'acls' => array('TheRole' => array(
-                'methods' => array(
-                    'FirstResource' => 'GRANT',
-                    'SecondResource' => 'DENY',
-                    'ThirdResource' => 'DENY'
-                )
+				'methods' => array(
+					'FirstResource' => 'GRANT',
+					'SecondResource' => 'DENY',
+					'ThirdResource' => 'DENY'
+				)
 			))
 		);
 
@@ -343,8 +343,8 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'theRole' => array(
 					'theResource' => array (
 						'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
-                        'runtimeEvaluationsClosureCode' => FALSE
-                    )
+						'runtimeEvaluationsClosureCode' => FALSE
+					)
 				)
 			)
 		);
@@ -548,7 +548,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function initializeObjectCallsThePolicyExpressionPraserAndBuildsTheEntityConstraintsIfTheCacheIsEmpty() {
+	public function initializeObjectCallsThePolicyExpressionParserAndBuildsTheEntityConstraintsIfTheCacheIsEmpty() {
 		$policy = array(
 			'resources' => array(
 				'methods' => array(),
@@ -690,7 +690,7 @@ class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			),
 			'resource3' => array(
 				'Customer' => array(
-                    'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN
 				),
 			)
 		);

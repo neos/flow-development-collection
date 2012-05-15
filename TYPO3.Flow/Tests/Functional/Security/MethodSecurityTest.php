@@ -40,6 +40,8 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function publicActionIsGrantedForEverybody() {
 		$this->restrictedController->publicAction();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -48,6 +50,8 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function publicActionIsGrantedForCustomer() {
 		$this->authenticateRoles(array('Customer'));
 		$this->restrictedController->publicAction();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -56,6 +60,8 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function publicActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('Administrator'));
 		$this->restrictedController->publicAction();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -72,6 +78,8 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function customerActionIsGrantedForCustomer() {
 		$this->authenticateRoles(array('Customer'));
 		$this->restrictedController->customerAction();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -80,6 +88,8 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function customerActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('Administrator'));
 		$this->restrictedController->customerAction();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -105,6 +115,8 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function adminActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('Administrator'));
 		$this->restrictedController->adminAction();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 }
 ?>

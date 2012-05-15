@@ -96,7 +96,7 @@ class PolicyExpressionParser extends \TYPO3\FLOW3\Aop\Pointcut\PointcutExpressio
 	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite, array &$trace = array()) {
-		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
+		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given resource was not defined: "' . $pointcutExpression . '".', 1222014591);
 
 		$pointcutFilterComposite->addFilter($operator, $this->parseMethodResources($this->methodResourcesTree[$pointcutExpression], array(), $trace));
 	}

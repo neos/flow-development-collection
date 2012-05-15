@@ -39,5 +39,3 @@ acls:
       TYPO3_FLOW3_allEntities: GRANT
       TYPO3_FLOW3_hiddenEntities: GRANT
       TYPO3_FLOW3_othersEntities: GRANT
-
-
