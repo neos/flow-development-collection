@@ -379,6 +379,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->activePackages[$packageKey] = $package;
 		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'active';
 		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $package->getPackagePath();
+		$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = Package::DIRECTORY_CLASSES;
 		$this->sortAndSavePackageStates();
 	}
 
