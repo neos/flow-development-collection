@@ -24,6 +24,7 @@
 			<package>TYPO3.Fluid</package>
 			<package>Doctrine.ORM</package>
 			<package>Symfony.Component.Yaml</package>
+			<package>Symfony.Component.DomCrawler</package>
 		</depends>
 		<conflicts>
 			<system maxVersion="0.9.4" type="PHPExtension">eAccelerator</system>
