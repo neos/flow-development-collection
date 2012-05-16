@@ -1050,7 +1050,7 @@ class ReflectionService {
 		if ($class->isAbstract()) $this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT] = TRUE;
 		if ($class->isFinal()) $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = TRUE;
 
-		foreach($this->getParentClasses($class) as $parentClass) {
+		foreach ($this->getParentClasses($class) as $parentClass) {
 			$parentClassName = $parentClass->getName();
 			if (!isset($this->classReflectionData[$parentClassName])) {
 				$this->reflectClass($parentClassName);

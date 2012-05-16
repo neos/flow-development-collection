@@ -87,7 +87,7 @@ class PropertyMapper {
 	 * @throws \TYPO3\FLOW3\Property\Exception\DuplicateTypeConverterException
 	 */
 	public function initializeObject() {
-		foreach($this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Property\TypeConverterInterface') as $typeConverterClassName) {
+		foreach ($this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Property\TypeConverterInterface') as $typeConverterClassName) {
 			$typeConverter = $this->objectManager->get($typeConverterClassName);
 			foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
 				if (isset($this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()])) {

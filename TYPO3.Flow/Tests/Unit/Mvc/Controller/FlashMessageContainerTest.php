@@ -46,7 +46,7 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(count($returnedFlashMessages), 2);
 
 		$i = 0;
-		foreach($returnedFlashMessages as $flashMessage) {
+		foreach ($returnedFlashMessages as $flashMessage) {
 			$this->assertEquals($flashMessage, $messages[$i++]);
 		}
 	}
@@ -76,7 +76,7 @@ class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(count($returnedFlashMessages), 2);
 
 		$i = 0;
-		foreach($returnedFlashMessages as $flashMessage) {
+		foreach ($returnedFlashMessages as $flashMessage) {
 			$this->assertEquals($flashMessage, $messages[$i++]);
 		}
 

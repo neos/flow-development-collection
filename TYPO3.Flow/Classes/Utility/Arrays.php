@@ -127,7 +127,7 @@ class Arrays {
 	 */
 	static public function array_reduce(array $array, $function, $initial = NULL) {
 		$accumlator = $initial;
-		foreach($array as $value) {
+		foreach ($array as $value) {
 			$accumlator = $function($accumlator, $value);
 		}
 		return $accumlator;
@@ -224,7 +224,7 @@ class Arrays {
 	 * @see asort()
 	 */
 	static public function sortKeysRecursively(array &$array, $sortFlags = NULL) {
-		foreach($array as &$value) {
+		foreach ($array as &$value) {
 			if (is_array($value)) {
 				if (self::sortKeysRecursively($value, $sortFlags) === FALSE) {
 					return FALSE;
@@ -264,7 +264,7 @@ class Arrays {
 	 */
 	static public function removeEmptyElementsRecursively(array $array) {
 		$result = $array;
-		foreach($result as $key => $value) {
+		foreach ($result as $key => $value) {
 			if (is_array($value)) {
 				$result[$key] = self::removeEmptyElementsRecursively($value);
 				if ($result[$key] === array()) {

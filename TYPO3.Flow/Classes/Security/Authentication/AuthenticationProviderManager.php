@@ -265,7 +265,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 
 			if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
 				$requestPatterns = array();
-				foreach($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
+				foreach ($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
 					$patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
 					$requestPattern = new $patternClassName;
 					$requestPattern->setPattern($patternConfiguration);

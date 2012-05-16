@@ -446,7 +446,7 @@ class Request {
 			foreach ($structure as $key => $subStructure) {
 				$fieldPath = ($firstLevelFieldName !== NULL ? $firstLevelFieldName . '/' : '') . $key;
 				if (is_array($subStructure)) {
-					foreach($this->calculateFieldPaths($subStructure) as $subFieldPath) {
+					foreach ($this->calculateFieldPaths($subStructure) as $subFieldPath) {
 						$fieldPaths[] = $fieldPath . '/' . $subFieldPath;
 					}
 				} else {

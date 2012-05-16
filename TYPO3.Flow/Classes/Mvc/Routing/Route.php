@@ -474,7 +474,7 @@ class Route {
 	 */
 	protected function extractInternalArguments(array &$arguments) {
 		$internalArguments = array();
-		foreach($arguments as $argumentKey => &$argumentValue) {
+		foreach ($arguments as $argumentKey => &$argumentValue) {
 			if (substr($argumentKey, 0, 2) === '__') {
 				$internalArguments[$argumentKey] = $argumentValue;
 				unset($arguments[$argumentKey]);

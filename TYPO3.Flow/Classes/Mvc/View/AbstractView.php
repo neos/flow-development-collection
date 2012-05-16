@@ -53,7 +53,7 @@ abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	 * @api
 	 */
 	public function assignMultiple(array $values) {
-		foreach($values as $key => $value) {
+		foreach ($values as $key => $value) {
 			$this->assign($key, $value);
 		}
 		return $this;
