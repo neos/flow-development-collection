@@ -392,7 +392,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
-	public function contains($propertyName, $operand){
+	public function contains($propertyName, $operand) {
 		if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
 			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276781026);
 		}
