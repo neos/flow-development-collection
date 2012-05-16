@@ -142,7 +142,7 @@ class Service {
 	 */
 	public function runDql($dql, $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, $firstResult = NULL, $maxResult = NULL) {
 		$query = $this->entityManager->createQuery($dql);
-		if ($firstResult !== NULL){
+		if ($firstResult !== NULL) {
 			$query->setFirstResult($firstResult);
 		}
 		if ($maxResult !== NULL) {

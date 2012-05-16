@@ -40,12 +40,12 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 	 */
 	public function showCommand($type = NULL, $path = NULL) {
 		$availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
-		if (in_array($type, $availableConfigurationTypes)){
+		if (in_array($type, $availableConfigurationTypes)) {
 			$configuration = $this->configurationManager->getConfiguration($type);
-			if ($path !== NULL){
+			if ($path !== NULL) {
 				$configuration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($configuration, $path);
 			}
-			if ($configuration === NULL){
+			if ($configuration === NULL) {
 				$this->outputLine('<b>Configuration "' . $type . ($path ? ': ' . $path : '') . '" was empty!</b>');
 			} else {
 				$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99);
@@ -54,11 +54,11 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 				$this->output($yaml . chr(10));
 			}
 		} else {
-			if ($type !== NULL){
+			if ($type !== NULL) {
 				$this->outputLine('<b>Configuration type "' . $type . '" was not found!</b>');
 			}
 			$this->outputLine('<b>Available configuration types:</b>');
-			foreach ($availableConfigurationTypes as $availableConfigurationType){
+			foreach ($availableConfigurationTypes as $availableConfigurationType) {
 				$this->outputLine('  ' . $availableConfigurationType);
 			}
 			$this->outputLine();
