@@ -39,7 +39,7 @@ class Version201201261636 extends AbstractMigration {
 
 		$this->showNote('\TYPO3\FLOW3\MVC\Web\RequestBuilder does not exist anymore. If you need to create requests, do "new ActionRequest($parentRequest)".');
 		$this->showNote('\TYPO3\FLOW3\MVC\Web\SubRequestBuilder does not exist anymore. If you need to create sub requests, do "new ActionRequest($parentRequest)".');
-		$this->showNote('\TYPO3\FLOW3\MVC\RequestInterface has been removed, use \TYPO3\FLOW3\Http\Request instead - e.g. if you implemented your own token.');
+		$this->showNote('\TYPO3\FLOW3\MVC\RequestInterface has been removed, use \TYPO3\FLOW3\Mvc\ActionRequest instead - e.g. if you implemented your own token.');
 		$this->showNote('Handling of NULL values in the database has changed, add "@ORM\Column(nullable=true)" to properties that need to be nullable or give them a non-NULL default.');
 		$this->showNote('All persistence repositories must be of scope "singleton", this is now enforced. Add "@FLOW3\Scope("singleton")" if not already present.');
 		$this->showNote('$supportedRequestTypes are not needed anymore in a controller.');
