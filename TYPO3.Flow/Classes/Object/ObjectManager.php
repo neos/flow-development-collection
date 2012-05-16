@@ -326,7 +326,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 */
 	public function getSessionInstances() {
 		$sessionObjects = array();
-		foreach($this->objects as $information) {
+		foreach ($this->objects as $information) {
 			if (isset($information['i']) && $information['s'] === ObjectConfiguration::SCOPE_SESSION) {
 				$sessionObjects[] = $information['i'];
 			}

@@ -161,7 +161,7 @@ class JsonView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 			$configuration = isset($this->configuration[$variableName]) ? $this->configuration[$variableName] : array();
 		} else {
 			$valueToRender = array();
-			foreach($this->variablesToRender as $variableName) {
+			foreach ($this->variablesToRender as $variableName) {
 				$valueToRender[$variableName] = isset($this->variables[$variableName]) ? $this->variables[$variableName] : NULL;
 			}
 			$configuration = $this->configuration;

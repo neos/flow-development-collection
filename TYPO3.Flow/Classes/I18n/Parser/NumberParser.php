@@ -240,7 +240,7 @@ class NumberParser {
 		$positionOfLastDigit = NULL;
 
 		$charactersOfNumberString = str_split($numberToParse);
-		foreach($charactersOfNumberString as $position => $character) {
+		foreach ($charactersOfNumberString as $position => $character) {
 			if (ord($character) >= 48 && ord($character) <= 57) {
 				$positionOfFirstDigit = $position;
 				break;
@@ -252,7 +252,7 @@ class NumberParser {
 		}
 
 		krsort($charactersOfNumberString);
-		foreach($charactersOfNumberString as $position => $character) {
+		foreach ($charactersOfNumberString as $position => $character) {
 			if (ord($character) >= 48 && ord($character) <= 57) {
 				$positionOfLastDigit = $position;
 				break;

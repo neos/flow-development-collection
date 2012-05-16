@@ -64,7 +64,7 @@ class Headers {
 			$headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
 		}
 
-		foreach($server as $name => $value) {
+		foreach ($server as $name => $value) {
 			if (strpos($name, 'HTTP_') === 0) {
 				$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
 				$headerFields[$name] = $value;

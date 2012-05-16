@@ -508,7 +508,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 			}
 		}
 		if (is_array($this->joins)) {
-			foreach($this->joins as $joinAlias => $join) {
+			foreach ($this->joins as $joinAlias => $join) {
 				$this->queryBuilder->leftJoin($join, $joinAlias);
 			}
 		}

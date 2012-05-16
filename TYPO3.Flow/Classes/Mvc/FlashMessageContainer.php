@@ -51,7 +51,7 @@ class FlashMessageContainer {
 		}
 
 		$messages = array();
-		foreach($this->messages as $message) {
+		foreach ($this->messages as $message) {
 			if ($message->getSeverity() === $severity) {
 				$messages[] = $message;
 			}
@@ -71,7 +71,7 @@ class FlashMessageContainer {
 		if ($severity === NULL) {
 			$this->messages = array();
 		} else {
-			foreach($this->messages as $index => $message) {
+			foreach ($this->messages as $index => $message) {
 				if ($message->getSeverity() === $severity) {
 					unset($this->messages[$index]);
 				}

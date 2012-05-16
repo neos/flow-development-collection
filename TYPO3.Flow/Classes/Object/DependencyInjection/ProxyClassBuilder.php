@@ -220,12 +220,12 @@ class ProxyClassBuilder {
 	\$reflectionService = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Reflection\\ReflectionService');
 	\$reflectedClass = new \\ReflectionClass('".$className."');
 	\$allReflectedProperties = \$reflectedClass->getProperties();
-	foreach(\$allReflectedProperties as \$reflectionProperty) {
+	foreach (\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices', 'FLOW3_Aop_Proxy_groupedAdviceChains', 'FLOW3_Aop_Proxy_methodIsInAdviceMode'))) continue;
 		if (\$reflectionService->isPropertyTaggedWith('".$className."', \$propertyName, 'transient')) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
-			foreach(\$this->\$propertyName as \$key => \$value) {
+			foreach (\$this->\$propertyName as \$key => \$value) {
 				\$this->searchForEntitiesAndStoreIdentifierArray((string)\$key, \$value, \$propertyName);
 			}
 		}
@@ -270,7 +270,7 @@ class ProxyClassBuilder {
 	protected function buildSearchForEntitiesAndStoreIdentifierArrayCode() {
 		$code = "
 		if (is_array(\$propertyValue) || (is_object(\$propertyValue) && (\$propertyValue instanceof \\ArrayObject || \$propertyValue instanceof \\SplObjectStorage))) {
-			foreach(\$propertyValue as \$key => \$value) {
+			foreach (\$propertyValue as \$key => \$value) {
 				\$this->searchForEntitiesAndStoreIdentifierArray(\$path . '.' . \$key, \$value, \$originalPropertyName);
 			}
 		} elseif (\$propertyValue instanceof \\TYPO3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface')->isNewObject(\$propertyValue) || \$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
@@ -362,7 +362,7 @@ class ProxyClassBuilder {
 		$code = count($assignments) > 0 ? "\n\t\t" . implode(";\n\t\t", $assignments) . ";\n" : '';
 
 		$index = 0;
-		foreach($constructorParameterInfo as $parameterName => $parameterInfo) {
+		foreach ($constructorParameterInfo as $parameterName => $parameterInfo) {
 			if ($parameterInfo['optional'] === TRUE) {
 				break;
 			}

@@ -398,7 +398,7 @@ EOD;
 				continue;
 			}
 			$mergedSubRoutesConfiguration = array($routeConfiguration);
-			foreach($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
+			foreach ($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
 				if (!isset($subRouteOptions['package']) || !isset($subRoutesConfiguration[$subRouteOptions['package']])) {
 					throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('Missing package configuration for SubRoute "' . (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route') . '".', 1318414040);
 				}
@@ -421,8 +421,8 @@ EOD;
 	 */
 	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
 		$mergedSubRoutesConfigurations = array();
-		foreach($subRoutesConfiguration as $subRouteConfiguration) {
-			foreach($routesConfiguration as $routeConfiguration) {
+		foreach ($subRoutesConfiguration as $subRouteConfiguration) {
+			foreach ($routesConfiguration as $routeConfiguration) {
 				$subRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
 				if (!isset($subRouteConfiguration['uriPattern'])) {
 					throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $subRouteConfiguration['name'] . '".', 1274197615);
