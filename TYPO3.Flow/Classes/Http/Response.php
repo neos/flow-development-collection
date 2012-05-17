@@ -113,6 +113,7 @@ class Response implements ResponseInterface{
 	public function __construct(Response $parentResponse = NULL) {
 		$this->headers = new Headers();
 		$this->headers->set('X-FLOW3-Powered', 'FLOW3/' . FLOW3_VERSION_BRANCH);
+		$this->headers->set('Content-Type', 'text/html; charset=' . $this->charset);
 		$this->parentResponse = $parentResponse;
 	}
 
@@ -169,9 +170,12 @@ class Response implements ResponseInterface{
 		if ($this->parentResponse !== NULL) {
 			$this->parentResponse->setStatus($code, $message);
 		} else {
-			if (!is_int($code)) throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
-			if ($message === NULL && !isset($this->statusMessages[$code])) throw new \InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
-
+			if (!is_int($code)) {
+				throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
+			}
+			if ($message === NULL && !isset($this->statusMessages[$code])) {
+				throw new \InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
+			}
 			$this->statusCode = $code;
 			$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
 		}
@@ -191,6 +195,56 @@ class Response implements ResponseInterface{
 	}
 
 	/**
+	 * Returns the status code.
+	 *
+	 * @return integer The status code, eg. 404
+	 * @api
+	 */
+	public function getStatusCode() {
+		if ($this->parentResponse !== NULL) {
+			return $this->parentResponse->getStatusCode();
+		}
+		return $this->statusCode;
+	}
+
+	/**
+	 * Sets the character set for this response.
+	 *
+	 * If the content type of this response is a text/* media type, the character
+	 * set in the respective Content-Type header will be updated by this method.
+	 *
+	 * @param string $charset A valid IANA character set identifier
+	 * @return void
+	 * @see http://www.iana.org/assignments/character-sets
+	 * @api
+	 */
+	public function setCharset($charset) {
+		$this->charset = $charset;
+
+		$contentType = $this->getHeader('Content-Type');
+		if (stripos($contentType, 'text/') === 0) {
+			$matches = array();
+			if (preg_match('/(?P<contenttype>.*); ?charset[^;]+(?P<extra>;.*)?/iu', $contentType, $matches)) {
+				$contentType = $matches['contenttype'];
+			}
+			$contentType .= '; charset=' . $this->charset . (isset($matches['extra']) ? $matches['extra'] : '');
+			$this->setHeader('Content-Type', $contentType, TRUE);
+		}
+	}
+
+	/**
+	 * Returns the character set of this response.
+	 *
+	 * Note that the default character in FLOW3 is UTF-8.
+	 *
+	 * @return string An IANA character set identifier
+	 * @api
+	 */
+	public function getCharset() {
+		return $this->charset;
+	}
+
+	/**
 	 * Sets the specified HTTP header
 	 *
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
@@ -201,10 +255,18 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
+		switch ($name) {
+			case 'Content-Type' :
+				if (stripos($value, 'charset') === FALSE && stripos($value, 'text/') === 0) {
+					$value .= '; charset=' . $this->charset;
+				}
+			break;
+		}
+
 		if ($this->parentResponse !== NULL) {
 			$this->parentResponse->setHeader($name, $value, $replaceExistingHeader);
 		} else {
-			if (strtoupper(substr($name, 0, 4)) === 'HTTP') throw new \InvalidArgumentException('The HTTP status header must be set via setStatus().', 1220541963);
+			if (strtoupper(substr($name, 0, 4)) === 'HTTP') throw new \InvalidArgumentException('The "HTTP" status header must be set via setStatus().', 1220541963);
 			$this->headers->set($name, $value, $replaceExistingHeader);
 		}
 	}
@@ -221,15 +283,6 @@ class Response implements ResponseInterface{
 		}
 		$preparedHeaders = array();
 		$statusHeader = 'HTTP/1.1 ' . $this->statusCode . ' ' . $this->statusMessage;
-
-		if (!$this->headers->has('Content-Type')) {
-			$this->headers->set('Content-Type', 'text/html; charset=' . $this->charset);
-		} else {
-			$contentType = $this->headers->get('Content-Type');
-			if (strpos($contentType, 'charset') === FALSE && strpos($contentType, 'text/') === 0) {
-				$this->headers->set('Content-Type', $contentType . '; charset=' . $this->charset);
-			}
-		}
 
 		$preparedHeaders[] = $statusHeader;
 		foreach ($this->headers->getAll() as $name => $values) {
@@ -253,6 +306,9 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function getHeader($name) {
+		if ($this->parentResponse !== NULL) {
+			return $this->parentResponse->getHeader($name);
+		}
 		return $this->headers->get($name);
 	}
 
@@ -262,6 +318,7 @@ class Response implements ResponseInterface{
 	 * If headers have been sent previously, this method fails silently.
 	 *
 	 * @return void
+	 * @codeCoverageIgnore
 	 * @api
 	 */
 	public function sendHeaders() {
@@ -284,6 +341,7 @@ class Response implements ResponseInterface{
 	 * Renders and sends the whole web response
 	 *
 	 * @return void
+	 * @codeCoverageIgnore
 	 * @api
 	 */
 	public function send() {
@@ -297,16 +355,5 @@ class Response implements ResponseInterface{
 		}
 	}
 
-	/**
-	/**
-	 * Returns the content of the response.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function __toString() {
-		return $this->getContent();
-	}
 }
-
 ?>
