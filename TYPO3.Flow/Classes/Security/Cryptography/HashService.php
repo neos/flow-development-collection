@@ -64,7 +64,7 @@ class HashService {
 			throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
 		}
 
-		return hash_hmac('sha1', $string, $this->encryptionKey);
+		return hash_hmac('sha1', $string, $this->getEncryptionKey());
 	}
 
 	/**
