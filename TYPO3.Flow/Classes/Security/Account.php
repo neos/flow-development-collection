@@ -40,6 +40,7 @@ class Account {
 
 	/**
 	 * @var string
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $credentialsSource;
 
@@ -66,7 +67,7 @@ class Account {
 	protected $roles = array();
 
 	/**
-	 *
+	 * Upon creation the creationDate property is initialized.
 	 */
 	public function __construct() {
 		$this->creationDate = new \DateTime();
