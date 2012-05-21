@@ -484,23 +484,23 @@ Matches all classes which are tagged with a custom annotation:
 
 -----
 
-methodAnnotatededWith()
+methodAnnotatedWith()
 ***********************
 
-The ``methodAnnotatededWith()`` designator matches on methods which are annotated
+The ``methodAnnotatedWith()`` designator matches on methods which are annotated
 with a certain annotation.  Currently only the actual annotation class name can be
 matched, arguments of the annotation cannot be specified. The syntax of this
 designator is as follows:
 
-``methodAnnotatededWith(annotation)``
+``methodAnnotatedWith(annotation)``
 
-*Example: methodAnnotatededWith() pointcut designator*
+*Example: methodAnnotatedWith() pointcut designator*
 
 -----
 
 Matches all method which are annotated with a ``Special`` annotation:
 
-``methodAnnotatededWith(Acme\Demo\Annotations\Special)``
+``methodAnnotatedWith(Acme\Demo\Annotations\Special)``
 
 -----
 
