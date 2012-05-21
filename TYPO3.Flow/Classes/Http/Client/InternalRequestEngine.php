@@ -84,6 +84,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 
 		try {
 			$actionRequest = $this->router->route($request);
+			$this->securityContext->clearContext();
 			$this->securityContext->injectRequest($actionRequest);
 
 			$this->dispatcher->dispatch($actionRequest, $response);
@@ -98,6 +99,8 @@ class InternalRequestEngine implements RequestEngineInterface {
 
 			$response->setStatus(500);
 			$response->setContent($content);
+			$response->setHeader('X-FLOW3-ExceptionCode', $exceptionCodeNumber);
+			$response->setHeader('X-FLOW3-ExceptionMessage', $exception->getMessage());
 		}
 		return $response;
 	}
