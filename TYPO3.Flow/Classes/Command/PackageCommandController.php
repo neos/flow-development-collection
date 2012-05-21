@@ -99,7 +99,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		}
 		$this->packageManager->deletePackage($packageKey);
 		$this->outputLine('Deleted package "%s".', array($packageKey));
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 
@@ -121,7 +121,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$this->packageManager->activatePackage($packageKey);
 		$this->outputLine('Activated package "%s".', array($packageKey));
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 
@@ -143,7 +143,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$this->packageManager->deactivatePackage($packageKey);
 		$this->outputLine('Deactivated package "%s".', array($packageKey));
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 
@@ -222,7 +222,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		try {
 			$this->packageManager->importPackage($packageKey);
 			$this->outputLine('Imported package %s.', array($packageKey));
-			Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
+			Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
 			$this->sendAndExit(0);
 		} catch (\TYPO3\FLOW3\Package\Exception $exception) {
 			$this->outputLine($exception->getMessage());
@@ -409,7 +409,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->outputLine('Refroze package "%s".', array($packageKey));
 		}
 
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings);
+		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 }
