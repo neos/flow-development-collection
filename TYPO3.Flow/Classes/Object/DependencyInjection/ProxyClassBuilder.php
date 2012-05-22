@@ -141,10 +141,13 @@ class ProxyClassBuilder {
 
 			$injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
 			if ($injectPropertiesCode !== '') {
-				$constructorPostCode .= '		$this->FLOW3_Proxy_injectProperties();' . "\n";
 				$proxyClass->getMethod('FLOW3_Proxy_injectProperties')->addPreParentCallCode($injectPropertiesCode);
 				$proxyClass->getMethod('FLOW3_Proxy_injectProperties')->overrideMethodVisibility('private');
 				$wakeupMethod->addPreParentCallCode("		\$this->FLOW3_Proxy_injectProperties();\n");
+
+				$constructorPostCode .= '		if (\'' . $className . '\' === get_class($this)) {' . "\n";
+				$constructorPostCode .= '			$this->FLOW3_Proxy_injectProperties();' . "\n";
+				$constructorPostCode .= '		}' . "\n";
 			}
 
 			$constructorPostCode .= $this->buildLifecycleInitializationCode($objectConfiguration, \TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);

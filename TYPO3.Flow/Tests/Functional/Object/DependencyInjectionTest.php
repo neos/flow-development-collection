@@ -90,5 +90,12 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame('value defined in Objects.yaml', $objectD->prototypeClassA->getSomeProperty());
 	}
 
+	/**
+	 * @test
+	 */
+	public function injectionInParentClassIsDoneOnlyOnceOnCreationOfObject() {
+		$prototypeDsub = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassDsub');
+		$this->assertSame(1, $prototypeDsub->injectionRuns);
+	}
 }
 ?>
