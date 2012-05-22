@@ -53,6 +53,12 @@ class Response implements ResponseInterface{
 	protected $charset = 'UTF-8';
 
 	/**
+	 * The current point in time, used for comparisons
+	 * @var \DateTime
+	 */
+	protected $now;
+
+	/**
 	 * The standardized and other important HTTP Status messages
 	 *
 	 * @var array
@@ -245,6 +251,55 @@ class Response implements ResponseInterface{
 	}
 
 	/**
+	 * Sets the current point in time.
+	 *
+	 * This date / time is used internally for comparisons in order to determine the
+	 * freshness of this response. By default this DateTime object is set automatically
+	 * through dependency injection, configured in the Objects.yaml of the FLOW3 package.
+	 *
+	 * Unless you are mocking the current time in a test, there is probably no need
+	 * to use this function. Also noted that this method must be called before any
+	 * of the Response methods are used and it must not be called a second time.
+	 *
+	 * @param \DateTime $now The current point in time
+	 * @return
+	 * @api
+	 */
+	public function setNow(\DateTime $now) {
+		$this->now = clone $now;
+		$this->now->setTimezone(new \DateTimeZone('UTC'));
+		if ($this->parentResponse !== NULL) {
+			$this->parentResponse->setNow($now);
+		}
+		$this->headers->set('Date', $this->now);
+	}
+
+	/**
+	 * Returns the age of this responds in seconds.
+	 *
+	 * The age is determined either by an explicitly set Age header or by the
+	 * difference between Date and "now".
+	 *
+	 * Note that, according to RFC 2616 / 13.2.3, the presence of an Age header implies
+	 * that the response is not first-hand. You should therefore only explicitly set
+	 * an Age header if this is the case.
+	 *
+	 * @return integer The age in seconds
+	 * @api
+	 */
+	public function getAge() {
+		$response = ($this->parentResponse !== NULL) ? $this->parentResponse : $this;
+
+		if ($response->hasHeader('Age')) {
+			return $response->getHeader('Age');
+		} else {
+			$dateTimestamp = $response->getHeader('Date')->getTimestamp();
+			$nowTimestamp = $this->now->getTimestamp();
+			return ($nowTimestamp > $dateTimestamp) ? ($nowTimestamp - $dateTimestamp) : 0;
+		}
+	}
+
+	/**
 	 * Sets the specified HTTP header
 	 *
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
@@ -310,6 +365,20 @@ class Response implements ResponseInterface{
 			return $this->parentResponse->getHeader($name);
 		}
 		return $this->headers->get($name);
+	}
+
+	/**
+	 * Checks if the specified header exists.
+	 *
+	 * @param $name Name of the HTTP header
+	 * @return boolean
+	 * @api
+	 */
+	public function hasHeader($name) {
+		if ($this->parentResponse !== NULL) {
+			return $this->parentResponse->hasHeader($name);
+		}
+		return $this->headers->has($name);
 	}
 
 	/**
