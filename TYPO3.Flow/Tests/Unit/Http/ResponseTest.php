@@ -283,6 +283,64 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setNowSetsTheTimeReferenceInUtcForResponseAndParentResponse() {
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
+
+		$parentResponse = new Response();
+		$parentResponse->setNow(new \DateTime());
+
+		$subResponse = new Response($parentResponse);
+		$subResponse->setNow(new \DateTime());
+
+		$subResponse->setNow($now);
+
+		$this->assertEquals('Tue, 22 May 2012 10:00:00 +0000', $parentResponse->getHeader('Date')->format(DATE_RFC2822));
+	}
+
+	/**
+	 * (RFC 2616 / 13.2.3, 14.18)
+	 *
+	 * @test
+	 */
+	public function responseMustContainDateHeaderAndThusHasOneByDefault() {
+		$now = new \DateTime();
+		$response = new Response();
+		$response->setNow($now);
+
+		$date = $response->getHeader('Date');
+		$this->assertEquals($now->getTimestamp(), $date->getTimestamp());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getAgeReturnsTheTimePassedSinceTimeSpecifiedInDateHeader() {
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0000');
+		$sixtySecondsAgo = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 11:59:00 +0000');
+
+		$response = new Response();
+		$response->setNow($now);
+		$response->setHeader('Date', $sixtySecondsAgo);
+
+		$this->assertEquals(60, $response->getAge());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getAgeReturnsTimeSpecifiedInAgeHeaderIfExists() {
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
+
+		$response = new Response();
+		$response->setNow($now);
+		$response->setHeader('Age', 123);
+
+		$this->assertSame(123, $response->getAge());
+	}
+
+	/**
+	 * @test
+	 */
 	public function getParentResponseReturnsResponseSetInConstructor() {
 		$parentResponse = new Response();
 
