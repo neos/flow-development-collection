@@ -481,16 +481,21 @@ class Scripts {
 	 *
 	 * @param string $commandIdentifier E.g. typo3.flow3:cache:flush
 	 * @param array $settings The FLOW3 settings
+	 * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 */
-	static public function executeCommand($commandIdentifier, array $settings) {
+	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE) {
 		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
 		if (DIRECTORY_SEPARATOR === '/') {
 			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . escapeshellarg(FLOW3_PATH_ROOT) . ' ' . 'FLOW3_CONTEXT=' . escapeshellarg($settings['core']['context']) . ' "' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
 		} else {
 			$command = 'SET FLOW3_ROOTPATH=' . escapeshellarg(FLOW3_PATH_ROOT) . '&' . 'SET FLOW3_CONTEXT=' . escapeshellarg($settings['core']['context']) . '&"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
 		}
-		system($command, $result);
+		$output = array();
+		exec($command, $output, $result);
+		if ($outputResults || $result !== 0) {
+			echo implode(PHP_EOL, $output);
+		}
 		return $result === 0;
 	}
 
