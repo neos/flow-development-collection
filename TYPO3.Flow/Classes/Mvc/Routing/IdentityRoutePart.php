@@ -123,7 +123,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 		if ($objectPathMapping === NULL) {
 			return FALSE;
 		}
-		$this->value = $objectPathMapping->getIdentifier();
+		$this->value = array('__identity' => $objectPathMapping->getIdentifier());
 		return TRUE;
 	}
 
