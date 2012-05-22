@@ -134,7 +134,7 @@ class ConfigurationManager {
 	 *
 	 * @return array<string> array of configuration-type identifier strings
 	 */
-	public function getAvailableConfigurationTypes(){
+	public function getAvailableConfigurationTypes() {
 		return array(
 			self::CONFIGURATION_TYPE_CACHES,
 			self::CONFIGURATION_TYPE_OBJECTS,
