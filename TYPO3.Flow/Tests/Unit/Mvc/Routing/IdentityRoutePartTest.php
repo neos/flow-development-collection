@@ -117,7 +117,9 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
 
 		$this->assertTrue($this->identityRoutePart->_call('matchValue', 'TheRoutePath'));
-		$this->assertSame('TheIdentifier', $this->identityRoutePart->getValue());
+		$expectedResult = array('__identity' => 'TheIdentifier');
+		$actualResult = $this->identityRoutePart->getValue();
+		$this->assertSame($expectedResult, $actualResult);
 	}
 
 	/**
