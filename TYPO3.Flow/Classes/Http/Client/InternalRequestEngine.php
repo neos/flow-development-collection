@@ -92,7 +92,8 @@ class InternalRequestEngine implements RequestEngineInterface {
 			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 			$content = PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 			$content .= 'thrown in file ' . $filePathAndName . PHP_EOL;
-			$content .= 'in line ' . $exception->getLine() . PHP_EOL;
+			$content .= 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
+			$content .= \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE, TRUE) . PHP_EOL;
 
 			$response->setStatus(500);
 			$response->setContent($content);

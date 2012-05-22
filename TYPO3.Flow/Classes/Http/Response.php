@@ -355,5 +355,15 @@ class Response implements ResponseInterface{
 		}
 	}
 
+	/**
+	 * Cast the response to a string: return the content part of this response
+	 *
+	 *	@return string The same as getContent()
+	 *	@api
+	 */
+	public function __toString() {
+		return $this->getContent();
+	}
+
 }
 ?>
