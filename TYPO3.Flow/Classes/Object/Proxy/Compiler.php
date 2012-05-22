@@ -98,8 +98,10 @@ class Compiler {
 	 * If no such proxy class has been created yet by this renderer,
 	 * this function will create one and register it for later use.
 	 *
+	 * If the class is not proxable, FALSE will be returned
+	 *
 	 * @param string $fullClassName Name of the original class
-	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyClass
+	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyClass|boolean
 	 */
 	public function getProxyClass($fullClassName) {
 		if (interface_exists($fullClassName) || in_array('TYPO3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
@@ -194,7 +196,7 @@ class Compiler {
 	 * @return string
 	 */
 	static public function renderAnnotation($annotation) {
-		$annotationAsString = '@' . get_class($annotation);
+		$annotationAsString = '@\\' . get_class($annotation);
 
 		$optionNames = get_class_vars(get_class($annotation));
 		$optionsAsStrings = array();
@@ -207,6 +209,8 @@ class Compiler {
 				$optionValueAsString = '"' . $optionValue . '"';
 			} elseif (is_bool($optionValue)) {
 				$optionValueAsString = $optionValue ? 'true' : 'false';
+			} elseif (is_scalar($optionValue)) {
+				$optionValueAsString = $optionValue;
 			} elseif (is_array($optionValue)) {
 				$values = array();
 				foreach ($optionValue as $k => $v) {
