@@ -18,17 +18,7 @@ use TYPO3\FLOW3\Mvc\ResponseInterface;
  *
  * @api
  */
-class Response implements ResponseInterface{
-
-	/**
-	 * @var \TYPO3\FLOW3\Http\Headers
-	 */
-	protected $headers;
-
-	/**
-	 * @var string
-	 */
-	protected $content;
+class Response extends Message implements ResponseInterface{
 
 	/**
 	 * @var \TYPO3\FLOW3\Http\Response
@@ -46,11 +36,6 @@ class Response implements ResponseInterface{
 	 * @var string
 	 */
 	protected $statusMessage = 'OK';
-
-	/**
-	 * @var string
-	 */
-	protected $charset = 'UTF-8';
 
 	/**
 	 * The current point in time, used for comparisons
@@ -133,17 +118,6 @@ class Response implements ResponseInterface{
 	}
 
 	/**
-	 * Overrides and sets the content of the response
-	 *
-	 * @param string $content The response content
-	 * @return void
-	 * @api
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
-	/**
 	 * Appends content to the already existing content.
 	 *
 	 * @param string $content More response content
@@ -163,6 +137,7 @@ class Response implements ResponseInterface{
 	public function getContent() {
 		return $this->content;
 	}
+
 	/**
 	 * Sets the HTTP status code and (optionally) a customized message.
 	 *
@@ -204,43 +179,6 @@ class Response implements ResponseInterface{
 	}
 
 	/**
-	 * Sets the character set for this response.
-	 *
-	 * If the content type of this response is a text/* media type, the character
-	 * set in the respective Content-Type header will be updated by this method.
-	 *
-	 * @param string $charset A valid IANA character set identifier
-	 * @return void
-	 * @see http://www.iana.org/assignments/character-sets
-	 * @api
-	 */
-	public function setCharset($charset) {
-		$this->charset = $charset;
-
-		$contentType = $this->getHeader('Content-Type');
-		if (stripos($contentType, 'text/') === 0) {
-			$matches = array();
-			if (preg_match('/(?P<contenttype>.*); ?charset[^;]+(?P<extra>;.*)?/iu', $contentType, $matches)) {
-				$contentType = $matches['contenttype'];
-			}
-			$contentType .= '; charset=' . $this->charset . (isset($matches['extra']) ? $matches['extra'] : '');
-			$this->setHeader('Content-Type', $contentType, TRUE);
-		}
-	}
-
-	/**
-	 * Returns the character set of this response.
-	 *
-	 * Note that the default character in FLOW3 is UTF-8.
-	 *
-	 * @return string An IANA character set identifier
-	 * @api
-	 */
-	public function getCharset() {
-		return $this->charset;
-	}
-
-	/**
 	 * Sets the current point in time.
 	 *
 	 * This date / time is used internally for comparisons in order to determine the
@@ -248,7 +186,7 @@ class Response implements ResponseInterface{
 	 * through dependency injection, configured in the Objects.yaml of the FLOW3 package.
 	 *
 	 * Unless you are mocking the current time in a test, there is probably no need
-	 * to use this function. Also noted that this method must be called before any
+	 * to use this function. Also note that this method must be called before any
 	 * of the Response methods are used and it must not be called a second time.
 	 *
 	 * @param \DateTime $now The current point in time
@@ -285,42 +223,12 @@ class Response implements ResponseInterface{
 	}
 
 	/**
-	 * Sets the specified HTTP header
-	 *
-	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-	 * @param mixed $value The value of the given header
-	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 * @api
-	 */
-	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
-		switch ($name) {
-			case 'Content-Type' :
-				if (stripos($value, 'charset') === FALSE && stripos($value, 'text/') === 0) {
-					$value .= '; charset=' . $this->charset;
-				}
-			break;
-		}
-
-		if ($this->parentResponse !== NULL) {
-			$this->parentResponse->setHeader($name, $value, $replaceExistingHeader);
-		} else {
-			if (strtoupper(substr($name, 0, 4)) === 'HTTP') throw new \InvalidArgumentException('The "HTTP" status header must be set via setStatus().', 1220541963);
-			$this->headers->set($name, $value, $replaceExistingHeader);
-		}
-	}
-
-	/**
-	 * Returns the HTTP headers - including the status header - of this web response
+	 * Renders the HTTP headers - including the status header - of this response
 	 *
 	 * @return array The HTTP headers
 	 * @api
 	 */
-	public function getHeaders() {
-		if ($this->parentResponse !== NULL) {
-			return $this->parentResponse->getHeaders();
-		}
+	public function renderHeaders() {
 		$preparedHeaders = array();
 		$statusHeader = 'HTTP/1.1 ' . $this->statusCode . ' ' . $this->statusMessage;
 
@@ -332,38 +240,6 @@ class Response implements ResponseInterface{
 		}
 
 		return $preparedHeaders;
-	}
-
-	/**
-	 * Returns the value(s) of the specified header
-	 *
-	 * If one such header exists, the value is returned as a single string.
-	 * If multiple headers of that name exist, the values are returned as an array.
-	 * If no such header exists, NULL is returned.
-	 *
-	 * @param string $name Name of the header
-	 * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
-	 * @api
-	 */
-	public function getHeader($name) {
-		if ($this->parentResponse !== NULL) {
-			return $this->parentResponse->getHeader($name);
-		}
-		return $this->headers->get($name);
-	}
-
-	/**
-	 * Checks if the specified header exists.
-	 *
-	 * @param $name Name of the HTTP header
-	 * @return boolean
-	 * @api
-	 */
-	public function hasHeader($name) {
-		if ($this->parentResponse !== NULL) {
-			return $this->parentResponse->hasHeader($name);
-		}
-		return $this->headers->has($name);
 	}
 
 	/**
@@ -379,7 +255,7 @@ class Response implements ResponseInterface{
 		if (headers_sent() === TRUE) {
 			return;
 		}
-		foreach ($this->getHeaders() as $header) {
+		foreach ($this->renderHeaders() as $header) {
 			header($header);
 		}
 		foreach ($this->headers->getCookies() as $cookie) {
