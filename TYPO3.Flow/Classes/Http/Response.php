@@ -173,18 +173,14 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function setStatus($code, $message = NULL) {
-		if ($this->parentResponse !== NULL) {
-			$this->parentResponse->setStatus($code, $message);
-		} else {
-			if (!is_int($code)) {
-				throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
-			}
-			if ($message === NULL && !isset($this->statusMessages[$code])) {
-				throw new \InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
-			}
-			$this->statusCode = $code;
-			$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
+		if (!is_int($code)) {
+			throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
 		}
+		if ($message === NULL && !isset($this->statusMessages[$code])) {
+			throw new \InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
+		}
+		$this->statusCode = $code;
+		$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
 	}
 
 	/**
@@ -194,9 +190,6 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function getStatus() {
-		if ($this->parentResponse !== NULL) {
-			return $this->parentResponse->getStatus();
-		}
 		return $this->statusCode . ' ' . $this->statusMessage;
 	}
 
@@ -207,9 +200,6 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function getStatusCode() {
-		if ($this->parentResponse !== NULL) {
-			return $this->parentResponse->getStatusCode();
-		}
 		return $this->statusCode;
 	}
 
@@ -268,9 +258,6 @@ class Response implements ResponseInterface{
 	public function setNow(\DateTime $now) {
 		$this->now = clone $now;
 		$this->now->setTimezone(new \DateTimeZone('UTC'));
-		if ($this->parentResponse !== NULL) {
-			$this->parentResponse->setNow($now);
-		}
 		$this->headers->set('Date', $this->now);
 	}
 
@@ -288,12 +275,10 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function getAge() {
-		$response = ($this->parentResponse !== NULL) ? $this->parentResponse : $this;
-
-		if ($response->hasHeader('Age')) {
-			return $response->getHeader('Age');
+		if ($this->headers->has('Age')) {
+			return $this->headers->get('Age');
 		} else {
-			$dateTimestamp = $response->getHeader('Date')->getTimestamp();
+			$dateTimestamp = $this->headers->get('Date')->getTimestamp();
 			$nowTimestamp = $this->now->getTimestamp();
 			return ($nowTimestamp > $dateTimestamp) ? ($nowTimestamp - $dateTimestamp) : 0;
 		}
@@ -391,10 +376,6 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function sendHeaders() {
-		if ($this->parentResponse !== NULL) {
-			$this->sendHeaders();
-			return;
-		}
 		if (headers_sent() === TRUE) {
 			return;
 		}
@@ -414,10 +395,6 @@ class Response implements ResponseInterface{
 	 * @api
 	 */
 	public function send() {
-		if ($this->parentResponse !== NULL) {
-			$this->parentResponse->send();
-			return;
-		}
 		$this->sendHeaders();
 		if ($this->content !== NULL) {
 			echo $this->getContent();
