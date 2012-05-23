@@ -53,5 +53,14 @@ class ActionControllerTestAController extends \TYPO3\FLOW3\Mvc\Controller\Action
 	public function fourthAction($emailAddress) {
 		$this->view->assign('emailAddress', $emailAddress);
 	}
+
+	/**
+	 * @param string $putArgument
+	 * @param string $getArgument
+	 * @return string
+	 */
+	public function putAction($putArgument, $getArgument) {
+		return "putAction-$putArgument-$getArgument";
+	}
 }
 ?>

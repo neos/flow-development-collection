@@ -57,6 +57,9 @@ class Headers {
 				$headerFields[$name] = $value;
 			} elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
 				$headerFields['Authorization'] = $value;
+			} elseif (in_array($name, array('CONTENT_TYPE', 'CONTENT_LENGTH'))) {
+				$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
+				$headerFields[$name] = $value;
 			}
 		}
 		return new self($headerFields);

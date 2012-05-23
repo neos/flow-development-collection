@@ -13,6 +13,9 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc;
 
 use TYPO3\FLOW3\Http\Client\Browser;
 use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\FLOW3\Http\Request;
+use TYPO3\FLOW3\Http\Response;
+use TYPO3\FLOW3\Http\Uri;
 
 /**
  * Functional tests for the ActionController
@@ -92,5 +95,32 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals('Fourth action <b>example@typo3.org</b>', $response->getContent());
 	}
 
+	/**
+	 * Bug #36913
+	 *
+	 * @test
+	 */
+	public function argumentsOfPutRequestArePassedToAction() {
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
+		$request->setContent("putArgument=first value");
+		$request->setHeader('Content-Type', 'application/x-www-form-urlencoded');
+		$request->setHeader('Content-Length', 54);
+
+		$response = $this->browser->sendRequest($request);
+		$this->assertEquals('putAction-first value-getValue', $response->getContent());
+	}
+
+	/**
+	 * @test
+	 */
+	public function argumentsOfPutRequestWithJsonOrXmlTypeAreAlsoPassedToAction() {
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
+		$request->setHeader('Content-Type', 'application/json');
+		$request->setHeader('Content-Length', 29);
+		$request->setContent('{"putArgument":"first value"}');
+
+		$response = $this->browser->sendRequest($request);
+		$this->assertEquals('putAction-first value-getValue', $response->getContent());
+	}
 }
 ?>
