@@ -364,7 +364,6 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array(), array(), array('baz' => 'quux', 'coffee' => 'due')),
 			array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('ignore' => 'me'), array(), array('baz' => 'quux', 'coffee' => 'due')),
 			array('POST', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('dontignore' => 'me'), array(), array('baz' => 'quux', 'coffee' => 'due', 'dontignore' => 'me')),
-			array('PUT', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('dontignore' => 'me'), array(), array('baz' => 'quux', 'coffee' => 'due', 'dontignore' => 'me')),
 		);
 	}
 
@@ -372,7 +371,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider variousArguments
 	 */
-	public function getArgumentsReturnsGetPostAndPutArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments) {
+	public function getArgumentsReturnsGetAndPostArguments($method, $uriString, $postArguments, $filesArguments, $expectedArguments) {
 		$request = Request::create(new Uri($uriString), $method, $postArguments, array(), $filesArguments);
 		$this->assertEquals($expectedArguments, $request->getArguments());
 	}
@@ -386,6 +385,35 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals('quux', $request->getArgument('baz'));
 		$this->assertFalse($request->hasArgument('tea'));
 		$this->assertNull($request->getArgument('tea'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setContentRebuildsUnifiedArgumentsToIntegratePutArguments() {
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
+		$request->setContent('putArgument=first value');
+		$this->assertEquals('first value', $request->getArgument('putArgument'));
+		$this->assertEquals('bar', $request->getArgument('foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function jsonAndXmlArgumentsAreDecodedForPutRequests() {
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
+		$request->setHeader('Content-Type', 'application/json');
+		$request->setContent('{"putArgument":"first value"}');
+
+		$this->assertEquals('first value', $request->getArgument('putArgument'));
+		$this->assertEquals('bar', $request->getArgument('foo'));
+
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
+		$request->setHeader('Content-Type', 'application/xml');
+		$request->setContent('<root><putArgument>first value</putArgument></root>');
+
+		$this->assertEquals('first value', $request->getArgument('putArgument'));
+		$this->assertEquals('bar', $request->getArgument('foo'));
 	}
 
 	/**

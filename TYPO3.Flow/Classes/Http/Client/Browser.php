@@ -66,9 +66,20 @@ class Browser {
 		}
 
 		$request = Request::create($uri, $method, $arguments, $this->cookies, $files, $server);
+		if ($content !== NULL) {
+			$request->setContent($content);
+		}
+		return $this->sendRequest($request);
+	}
 
-			// TODO: implement setContent() here for POST / PUT requests
-
+	/**
+	 * Sends a prepared request and returns the respective response.
+	 *
+	 * @param \TYPO3\FLOW3\Http\Request $request
+	 * @return \TYPO3\FLOW3\Http\Response
+	 * @api
+	 */
+	public function sendRequest(Request $request) {
 		$this->lastRequest = $request;
 		$this->lastResponse = $this->requestEngine->sendRequest($request);
 		return $this->lastResponse;

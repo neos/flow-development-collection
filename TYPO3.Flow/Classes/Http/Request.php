@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Http;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Utility\Arrays;
 
 /**
  * Represents a HTTP request
@@ -371,16 +372,52 @@ class Request extends Message {
 	 * can be retrieved by the getArgument(s) method, no matter if they
 	 * have been GET, POST or PUT arguments before.
 	 *
-	 * @param array $getArguments
-	 * @param array $postArguments
-	 * @param array $uploadArguments
+	 * @param array $getArguments Arguments as found in $_GET
+	 * @param array $postArguments Arguments as found in $_POST
+	 * @param array $uploadArguments Arguments as found in $_FILES
 	 * @return array the unified arguments
 	 */
 	protected function buildUnifiedArguments(array $getArguments, array $postArguments, array $uploadArguments) {
 		$arguments = $getArguments;
-		if ($this->method === 'POST' || $this->method === 'PUT') {
-			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
-			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
+		$contentArguments = NULL;
+
+		if ($this->method === 'POST') {
+			$contentArguments = ($postArguments !== array()) ? $postArguments : $this->decodeBodyArguments($this->getContent(), $this->headers->get('Content-Type'));
+		} elseif ($this->method === 'PUT') {
+			$contentArguments = $this->decodeBodyArguments($this->getContent(), $this->headers->get('Content-Type'));
+		}
+
+		if ($contentArguments !== NULL) {
+			$arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $contentArguments);
+		}
+		$arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
+		return $arguments;
+	}
+
+	/**
+	 * Decodes the given request body, depending on the given content type
+	 *
+	 * @param string $body The request body
+	 * @param string $mediaType The IANA Media Type
+	 * @return array The decoded body or NULL if an error occurred
+	 */
+	protected function decodeBodyArguments($body, $mediaType) {
+		switch ($mediaType) {
+			case 'application/json':
+				$arguments = json_decode($body, TRUE);
+			break;
+			case 'application/xml':
+				try {
+					$xmlElement = new \SimpleXMLElement(urldecode($body));
+				} catch (\Exception $e) {
+					return NULL;
+				}
+				$arguments = Arrays::convertObjectToArray($xmlElement);
+			break;
+			case 'application/x-www-form-urlencoded':
+			default:
+				parse_str($body, $arguments);
+			break;
 		}
 		return $arguments;
 	}
@@ -415,10 +452,10 @@ class Request extends Message {
 			} else {
 				$fileInformation = array();
 				foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
-					$fileInformation[$key] = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
+					$fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
 				}
 			}
-			$untangledFiles = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
+			$untangledFiles = Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
 		}
 		return $untangledFiles;
 	}
