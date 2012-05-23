@@ -39,17 +39,6 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 */
-	public function setStatusSetsTheHttpStatusInParentResponse() {
-		$parentResponse = new Response();
-		$response = new Response($parentResponse);
-
-		$response->setStatus(418, 'I\'m a bad coffee machine');
-		$this->assertEquals('418 I\'m a bad coffee machine', $parentResponse->getStatus());
-	}
-
-	/**
-	 * @test
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function setStatusThrowsExceptionOnInvalidCode() {
@@ -69,23 +58,19 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getStatusCodeSolelyReturnsTheStatusCode() {
+	public function getStatusReturnsTheStatusCodeAndMessage() {
 		$response = new Response();
-
 		$response->setStatus(418);
-		$this->assertEquals(418, $response->getStatusCode());
+		$this->assertEquals('418 Sono Vibiemme', $response->getStatus());
 	}
 
 	/**
 	 * @test
 	 */
-	public function getStatusReturnsTheHttpStatusFromParentResponse() {
-		$parentResponse = new Response();
-		$response = new Response($parentResponse);
+	public function getStatusCodeSolelyReturnsTheStatusCode() {
+		$response = new Response();
 
-		$parentResponse->setStatus(418, 'I\'m a bad coffee machine');
-
-		$this->assertEquals('418 I\'m a bad coffee machine', $response->getStatus());
+		$response->setStatus(418);
 		$this->assertEquals(418, $response->getStatusCode());
 	}
 
@@ -283,18 +268,13 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setNowSetsTheTimeReferenceInUtcForResponseAndParentResponse() {
+	public function setNowSetsTheTimeReferenceInUtc() {
 		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
 
-		$parentResponse = new Response();
-		$parentResponse->setNow(new \DateTime());
+		$response = new Response();
+		$response->setNow($now);
 
-		$subResponse = new Response($parentResponse);
-		$subResponse->setNow(new \DateTime());
-
-		$subResponse->setNow($now);
-
-		$this->assertEquals('Tue, 22 May 2012 10:00:00 +0000', $parentResponse->getHeader('Date')->format(DATE_RFC2822));
+		$this->assertEquals('Tue, 22 May 2012 10:00:00 +0000', $response->getHeader('Date')->format(DATE_RFC2822));
 	}
 
 	/**
