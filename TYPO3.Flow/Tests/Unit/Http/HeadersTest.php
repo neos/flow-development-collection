@@ -18,7 +18,6 @@ use TYPO3\FLOW3\Http\Uri;
 
 /**
  * Testcase for the Http Headers class
- *
  */
 class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

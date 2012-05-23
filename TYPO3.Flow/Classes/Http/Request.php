@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Mvc\ActionRequest;
  *
  * @api
  */
-class Request {
+class Request extends Message {
 
 	/**
 	 * @var string
@@ -35,11 +35,6 @@ class Request {
 	 * @var \TYPO3\FLOW3\Http\Uri
 	 */
 	protected $baseUri;
-
-	/**
-	 * @var \TYPO3\FLOW3\Http\Headers
-	 */
-	protected $headers;
 
 	/**
 	 * @var array
@@ -64,13 +59,6 @@ class Request {
 	 * @var array
 	 */
 	protected $settings;
-
-	/**
-	 * Cached entity body content of this request
-	 *
-	 * @var string
-	 */
-	protected $content;
 
 	/**
 	 * URI for the "input" stream wrapper which can be modified for testing purposes
@@ -298,13 +286,15 @@ class Request {
 	}
 
 	/**
-	 * Returns the HTTP headers of this request
+	 * Explicitly sets the content of the request body
 	 *
-	 * @return \TYPO3\FLOW3\Http\Headers
+	 * @param string $content The body content, for example arguments of a PUT request
+	 * @return void
 	 * @api
 	 */
-	public function getHeaders() {
-		return $this->headers;
+	public function setContent($content) {
+		parent::setContent($content);
+		$this->arguments = $this->buildUnifiedArguments($this->arguments, array(), array());
 	}
 
 	/**

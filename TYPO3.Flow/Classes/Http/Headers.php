@@ -69,9 +69,14 @@ class Headers {
 	 * @param array|string|\DateTime $values An array of values or a single value for the specified header field
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function set($name, $values, $replaceExistingHeader = TRUE) {
+		if (strtoupper(substr($name, 0, 4)) === 'HTTP') {
+			throw new \InvalidArgumentException('The "HTTP" status header must be set via setStatus().', 1220541963);
+		}
+
 		if ($values instanceof \DateTime) {
 			$values = array($values->format(DATE_RFC2822));
 		} else {
