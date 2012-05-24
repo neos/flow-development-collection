@@ -243,6 +243,32 @@ class Response extends Message implements ResponseInterface{
 	}
 
 	/**
+	 * Sets the respective directive in the Cache-Control header.
+	 *
+	 * A response flagged as "public" may be cached by any cache, even if it normally
+	 * wouldn't be cacheable in a shared cache.
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function setPublic() {
+		$this->headers->setCacheControlDirective('public');
+	}
+
+	/**
+	 * Sets the respective directive in the Cache-Control header.
+	 *
+	 * A response flagged as "private" tells that it is intended for a specific
+	 * user and must not be cached by a shared cache.
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function setPrivate() {
+		$this->headers->setCacheControlDirective('private');
+	}
+
+	/**
 	 * Sends the HTTP headers.
 	 *
 	 * If headers have been sent previously, this method fails silently.

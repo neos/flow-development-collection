@@ -107,7 +107,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setNowSetsTheTimeReferenceInUtc() {
+	public function setNowSetsTheTimeReferenceInGmt() {
 		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
 
 		$response = new Response();
@@ -134,8 +134,8 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAgeReturnsTheTimePassedSinceTimeSpecifiedInDateHeader() {
-		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0000');
-		$sixtySecondsAgo = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 11:59:00 +0000');
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
+		$sixtySecondsAgo = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 11:59:00 GMT');
 
 		$response = new Response();
 		$response->setNow($now);
@@ -148,13 +148,39 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAgeReturnsTimeSpecifiedInAgeHeaderIfExists() {
-		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
 
 		$response = new Response();
 		$response->setNow($now);
 		$response->setHeader('Age', 123);
 
 		$this->assertSame(123, $response->getAge());
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.1)
+	 *
+	 * @test
+	 */
+	public function setPublicSetsTheRespectiveCacheControlDirective() {
+		$response = new Response();
+		$response->setNow(new \DateTime());
+
+		$response->setPublic();
+		$this->assertEquals('public', $response->getHeader('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.1)
+	 *
+	 * @test
+	 */
+	public function setPrivateSetsTheRespectiveCacheControlDirective() {
+		$response = new Response();
+		$response->setNow(new \DateTime());
+
+		$response->setPrivate();
+		$this->assertEquals('private', $response->getHeader('Cache-Control'));
 	}
 
 	/**
