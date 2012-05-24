@@ -297,7 +297,19 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleName);
 		}
 		$account->setRoles($roles);
+		$this->authenticateAccount($account);
 
+		return $account;
+	}
+
+	/**
+	 * Prepares the environment for and conducts an account authentication
+	 *
+	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @return void
+	 * @api
+	 */
+	protected function authenticateAccount(\TYPO3\FLOW3\Security\Account $account) {
 		$this->testingProvider->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 		$this->testingProvider->setAccount($account);
 
@@ -309,8 +321,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$actionRequest = $request->createActionRequest();
 		$this->securityContext->injectRequest($actionRequest);
 		$this->authenticationManager->authenticate();
-
-		return $account;
 	}
 
 	/**
