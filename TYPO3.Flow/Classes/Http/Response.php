@@ -99,7 +99,7 @@ class Response extends Message implements ResponseInterface{
 	/**
 	 * Construct this Response
 	 *
-	 * @param Response $parentResponse
+	 * @param \TYPO3\FLOW3\Http\Response $parentResponse
 	 */
 	public function __construct(Response $parentResponse = NULL) {
 		$this->headers = new Headers();
@@ -111,7 +111,7 @@ class Response extends Message implements ResponseInterface{
 	/**
 	 * Return the parent response or NULL if none exists.
 	 *
-	 * @return Response the parent response, or NULL if none
+	 * @return \TYPO3\FLOW3\Http\Response the parent response, or NULL if none
 	 */
 	public function getParentResponse() {
 		return $this->parentResponse;
@@ -121,11 +121,12 @@ class Response extends Message implements ResponseInterface{
 	 * Appends content to the already existing content.
 	 *
 	 * @param string $content More response content
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function appendContent($content) {
 		$this->content .= $content;
+		return $this;
 	}
 
 	/**
@@ -143,7 +144,7 @@ class Response extends Message implements ResponseInterface{
 	 *
 	 * @param integer $code The status code
 	 * @param string $message If specified, this message is sent instead of the standard message
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
 	 * @throws \InvalidArgumentException if the specified status code is not valid
 	 * @api
 	 */
@@ -156,6 +157,7 @@ class Response extends Message implements ResponseInterface{
 		}
 		$this->statusCode = $code;
 		$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
+		return $this;
 	}
 
 	/**
@@ -361,11 +363,12 @@ class Response extends Message implements ResponseInterface{
 	 * A response flagged as "public" may be cached by any cache, even if it normally
 	 * wouldn't be cacheable in a shared cache.
 	 *
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setPublic() {
 		$this->headers->setCacheControlDirective('public');
+		return $this;
 	}
 
 	/**
@@ -374,11 +377,12 @@ class Response extends Message implements ResponseInterface{
 	 * A response flagged as "private" tells that it is intended for a specific
 	 * user and must not be cached by a shared cache.
 	 *
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setPrivate() {
 		$this->headers->setCacheControlDirective('private');
+		return $this;
 	}
 
 	/**
