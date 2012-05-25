@@ -133,6 +133,34 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setDateAndGetDateSetAndGetTheDateHeader() {
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
+		$response = new Response();
+
+		$response->setDate($now);
+		$this->assertEquals($now, $response->getDate());
+
+		$response->setDate('Tue, 22 May 2012 12:00:00 GMT');
+		$this->assertEquals($now, $response->getDate());
+	}
+
+	/**
+	 * @test
+	 */
+	public function setAndGetLastModifiedSetsTheLastModifiedHeader() {
+		$date = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
+		$fig = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 21 May 2012 12:00:00 GMT');
+		$response = new Response();
+		$response->setNow($date);
+
+		$this->assertNull($response->getLastModified());
+		$response->setLastModified($fig);
+		$this->assertEquals($fig, $response->getLastModified());
+	}
+
+	/**
+	 * @test
+	 */
 	public function getAgeReturnsTheTimePassedSinceTimeSpecifiedInDateHeader() {
 		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
 		$sixtySecondsAgo = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 11:59:00 GMT');
@@ -181,6 +209,34 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$response->setPrivate();
 		$this->assertEquals('private', $response->getHeader('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.4)
+	 *
+	 * @test
+	 */
+	public function setAndGetMaximumAgeSetsAndReturnsTheMaxAgeCacheControlDirective() {
+		$response = new Response();
+		$response->setNow(new \DateTime());
+
+		$response->setMaximumAge(60);
+		$this->assertEquals('max-age=60', $response->getHeader('Cache-Control'));
+		$this->assertEquals(60, $response->getMaximumAge());
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.4)
+	 *
+	 * @test
+	 */
+	public function setAndGetSharedMaximumAgeSetsAndReturnsTheSMaxAgeCacheControlDirective() {
+		$response = new Response();
+		$response->setNow(new \DateTime());
+
+		$response->setSharedMaximumAge(60);
+		$this->assertEquals('s-maxage=60', $response->getHeader('Cache-Control'));
+		$this->assertEquals(60, $response->getSharedMaximumAge());
 	}
 
 	/**
