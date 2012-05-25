@@ -97,7 +97,7 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	public function remove($object) {
 		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
 			$type = (is_object($object) ? get_class($object) : gettype($object));
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403442);
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
 		}
 		$this->persistenceManager->remove($object);
 	}
