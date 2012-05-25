@@ -97,7 +97,7 @@ class Message {
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
 	 * @param array|string|\DateTime $values An array of values or a single value for the specified header field
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Message This message, for method chaining
 	 * @api
 	 */
 	public function setHeader($name, $values, $replaceExistingHeader = TRUE) {
@@ -110,17 +110,19 @@ class Message {
 		}
 
 		$this->headers->set($name, $values, $replaceExistingHeader);
+		return $this;
 	}
 
 	/**
 	 * Explicitly sets the content of the message body
 	 *
 	 * @param string $content The body content
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Message This message, for method chaining
 	 * @api
 	 */
 	public function setContent($content) {
 		$this->content = $content;
+		return $this;
 	}
 
 	/**
@@ -140,7 +142,7 @@ class Message {
 	 * set in the respective Content-Type header will be updated by this method.
 	 *
 	 * @param string $charset A valid IANA character set identifier
-	 * @return void
+	 * @return \TYPO3\FLOW3\Http\Message This message, for method chaining
 	 * @see http://www.iana.org/assignments/character-sets
 	 * @api
 	 */
@@ -158,6 +160,7 @@ class Message {
 				$this->setHeader('Content-Type', $contentType, TRUE);
 			}
 		}
+		return $this;
 	}
 
 	/**
