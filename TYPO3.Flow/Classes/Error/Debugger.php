@@ -108,6 +108,8 @@ class Debugger {
 			$dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
 		} elseif (is_null($variable) || is_resource($variable)) {
 			$dump = gettype($variable);
+		} else {
+			$dump = '[unhandled type]';
 		}
 		return $dump;
 	}
@@ -148,6 +150,10 @@ class Debugger {
 
 		if (preg_match(self::$blacklistedClassNames, get_class($object)) !== 0) {
 			$renderProperties = FALSE;
+		}
+
+		if ($object instanceof \Doctrine\Common\Collections\Collection) {
+			return \Doctrine\Common\Util\Debug::export($object, 12);
 		}
 
 		if (self::$objectManager !== NULL) {
