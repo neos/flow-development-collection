@@ -28,6 +28,14 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface {
 	 */
 	public function getHttpRequest();
 
+	/**
+	 * Returns the HTTP response corresponding to the currently handled request
+	 *
+	 * @return \TYPO3\FLOW3\Http\Response
+	 * @api
+	 */
+	public function getHttpResponse();
+
 }
 
 ?>
