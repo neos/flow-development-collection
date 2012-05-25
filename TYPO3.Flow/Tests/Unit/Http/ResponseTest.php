@@ -11,7 +11,9 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Http\Request;
 use TYPO3\FLOW3\Http\Response;
+use TYPO3\FLOW3\Http\Uri;
 
 /**
  * Testcase for the Http Response class
@@ -252,6 +254,179 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$response->setSharedMaximumAge(60);
 		$this->assertEquals('s-maxage=60', $response->getHeader('Cache-Control'));
 		$this->assertSame(60, $response->getSharedMaximumAge());
+	}
+
+	/**
+	 * RFC 2616 / 14.9.4
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantRemovesMaxAgeIfNoCacheExists() {
+		$request = Request::create(new Uri('http://localhost'));
+		$response = new Response();
+
+		$response->setHeader('Cache-Control', 'no-cache, max-age=240');
+		$response->makeStandardsCompliant($request);
+		$this->assertEquals('no-cache', $response->getHeader('Cache-Control'));
+	}
+
+	/**
+	 * RFC 2616 / 4.3 (Message Body)
+	 *
+	 * 10.1.1 (100 Continue)
+	 * 10.1.2 (101 Switching Protocols)
+	 * 10.2.5 (204 No Content)
+	 * 10.3.5 (304 Not Modified)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantRemovesBodyContentIfStatusCodeImpliesIt() {
+		$request = Request::create(new Uri('http://localhost'));
+		$response = new Response();
+
+		foreach (array(100, 101, 204, 304) as $statusCode) {
+			$response->setStatus($statusCode);
+			$response->setContent('Body Language');
+			$response->makeStandardsCompliant($request);
+			$this->assertEquals('', $response->getContent());
+		}
+	}
+
+	/**
+	 * RFC 2616 / 4.4 (Message Length)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantRemovesTheContentLengthHeaderIfTransferLengthIsDifferent() {
+		$request = Request::create(new Uri('http://localhost'));
+		$response = new Response();
+
+		$content = 'Pat grabbed her hat';
+
+		$response->setContent($content);
+		$response->setHeader('Transfer-Encoding', 'chunked');
+		$response->setHeader('Content-Length', strlen($content));
+		$response->makeStandardsCompliant($request);
+		$this->assertFalse($response->hasHeader('Content-Length'));
+	}
+
+	/**
+	 * RFC 2616 / 4.4 (Message Length)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantSetsAContentLengthHeaderIfNotPresent() {
+		$request = Request::create(new Uri('http://localhost'));
+		$response = new Response();
+
+		$content = '
+			Pat grabbed her hat
+			and her fat, wooden bat
+			When her friends couldn\'t play,
+			Pat yelled out, "Drat!"
+			But then she hit balls
+			to her dog and _-at.
+		';
+
+		$response->setContent($content);
+		$response->makeStandardsCompliant($request);
+		$this->assertEquals(strlen($content), $response->getHeader('Content-Length'));
+	}
+
+	/**
+	 * RFC 2616 / 4.4 (Message Length)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantSetsBodyAndContentLengthForHeadRequests() {
+		$request = Request::create(new Uri('http://localhost'), 'HEAD');
+
+		$content = '
+			Pat grabbed her hat
+			and her fat, wooden bat
+			When her friends couldn\'t play,
+			Pat yelled out, "Drat!"
+			But then she hit balls
+			to her dog and _-at.
+		';
+
+		$response = new Response();
+		$response->setContent($content);
+		$response->makeStandardsCompliant($request);
+		$this->assertEquals('', $response->getContent());
+		$this->assertEquals(strlen($content), $response->getHeader('Content-Length'));
+
+		$response = new Response();
+		$response->setHeader('Content-Length', 275);
+		$response->makeStandardsCompliant($request);
+		$this->assertEquals(275, $response->getHeader('Content-Length'));
+	}
+
+	/**
+	 * RFC 2616 / 14.21 (Expires)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantRemovesMaxAgeDireciveIfExpiresHeaderIsPresent() {
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
+		$later = \DateTime::createFromFormat(DATE_RFC2822, 'Wed, 23 May 2012 12:00:00 GMT');
+
+		$request = Request::create(new Uri('http://localhost'));
+		$response = new Response();
+		$response->setNow($now);
+
+		$response->setMaximumAge(60);
+		$response->setExpires($later);
+		$response->makeStandardsCompliant($request);
+		$this->assertSame(NULL, $response->getHeaders()->getCacheControlDirective('max-age'));
+		$this->assertEquals($later, $response->getExpires());
+	}
+
+	/**
+	 * RFC 2616 / 14.25 (If-Modified-Since)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantReturns304ResponseIfResourceWasNotModified() {
+		$modifiedSince = \DateTime::createFromFormat(DATE_RFC2822, 'Sun, 20 May 2012 12:00:00 GMT');
+		$lastModified = \DateTime::createFromFormat(DATE_RFC2822, 'Fr, 18 May 2012 12:00:00 GMT');
+
+		$request = Request::create(new Uri('http://localhost'));
+		$response = new Response();
+
+		$request->setHeader('If-Modified-Since', $modifiedSince);
+		$response->setLastModified($lastModified);
+		$response->setContent('Some Content');
+		$response->makeStandardsCompliant($request);
+
+		$this->assertSame(304, $response->getStatusCode());
+		$this->assertSame('', $response->getContent());
+	}
+
+	/**
+	 * RFC 2616 / 14.28 (If-Unmodified-Since)
+	 *
+	 * @test
+	 */
+	public function makeStandardsCompliantReturns412StatusIfUnmodifiedSinceDoesNotMatch() {
+		$request = Request::create(new Uri('http://localhost'));
+
+		$response = new Response();
+		$unmodifiedSince = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 15 May 2012 09:00:00 GMT');
+		$lastModified = \DateTime::createFromFormat(DATE_RFC2822, 'Sun, 20 May 2012 08:00:00 UTC');
+		$request->setHeader('If-Unmodified-Since', $unmodifiedSince);
+		$response->setHeader('Last-Modified', $lastModified);
+		$response->makeStandardsCompliant($request);
+		$this->assertSame(412, $response->getStatusCode());
+
+		$response = new Response();
+		$unmodifiedSince = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 15 May 2012 09:00:00 GMT');
+		$lastModified = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 15 May 2012 08:00:00 UTC');
+		$request->setHeader('If-Unmodified-Since', $unmodifiedSince);
+		$response->setHeader('Last-Modified', $lastModified);
+		$response->makeStandardsCompliant($request);
+
+		$this->assertSame(200, $response->getStatusCode());
 	}
 
 	/**
