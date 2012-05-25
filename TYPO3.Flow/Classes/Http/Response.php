@@ -350,7 +350,7 @@ class Response extends Message implements ResponseInterface{
 	 *
 	 * This method sets the "s-maxage" directive in the Cache-Control header.
 	 *
-	 * @param integer The maximum age in seconds
+	 * @param integer $maximumAge The maximum age in seconds
 	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
 	 * @api
 	 */
@@ -419,6 +419,60 @@ class Response extends Message implements ResponseInterface{
 	public function setPrivate() {
 		$this->headers->setCacheControlDirective('private');
 		return $this;
+	}
+
+	/**
+	 * Analyzes this response, considering the given request and makes additions
+	 * or removes certain headers in order to make the response compliant to
+	 * RFC 2616 and related standards.
+	 *
+	 * It is recommended to call this method before the response is sent and FLOW3
+	 * does so by default in its built-in HTTP request handler.
+	 *
+	 * @param \TYPO3\FLOW3\Http\Request $request The corresponding request
+	 * @return void
+	 * @api
+	 */
+	public function makeStandardsCompliant(Request $request) {
+		if ($request->hasHeader('If-Modified-Since') && $this->headers->has('Last-Modified') && $this->statusCode === 200) {
+			$ifModifiedSinceDate = $request->getHeader('If-Modified-Since');
+			$lastModifiedDate = $this->headers->get('Last-Modified');
+			if ($lastModifiedDate <= $ifModifiedSinceDate) {
+				$this->setStatus(304);
+				$this->content = '';
+			}
+		} elseif ($request->hasHeader('If-Unmodified-Since') && $this->headers->has('Last-Modified')
+				&& (($this->statusCode >= 200 && $this->statusCode <= 299) || $this->statusCode === 412)) {
+			$unmodifiedSinceDate = $request->getHeader('If-Unmodified-Since');
+			$lastModifiedDate = $this->headers->get('Last-Modified');
+			if ($lastModifiedDate > $unmodifiedSinceDate) {
+				$this->setStatus(412);
+			}
+		}
+
+		if (in_array($this->statusCode, array(100, 101, 204, 304))) {
+			$this->content = '';
+		}
+
+		if ($this->headers->getCacheControlDirective('no-cache') !== NULL
+				|| $this->headers->has('Expires')) {
+			$this->headers->removeCacheControlDirective('max-age');
+		}
+
+		if ($request->getMethod() === 'HEAD') {
+			if (!$this->headers->has('Content-Length')) {
+				$this->headers->set('Content-Length', strlen($this->content));
+			}
+			$this->content = '';
+		}
+
+		if (!$this->headers->has('Content-Length')) {
+			$this->headers->set('Content-Length', strlen($this->content));
+		}
+
+		if ($this->headers->has('Transfer-Encoding')) {
+			$this->headers->remove('Content-Length');
+		}
 	}
 
 	/**

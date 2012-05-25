@@ -120,6 +120,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 
 		$this->dispatcher->dispatch($actionRequest, $response);
 
+		$response->makeStandardsCompliant($this->request);
 		$response->send();
 
 		$this->bootstrap->shutdown('Runtime');
