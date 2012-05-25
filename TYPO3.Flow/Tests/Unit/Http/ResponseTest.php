@@ -117,7 +117,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * (RFC 2616 / 13.2.3, 14.18)
+	 * RFC 2616 / 13.2.3, 14.18
 	 *
 	 * @test
 	 */
@@ -159,6 +159,21 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * RFC 2616 / 14.21 (Expires)
+	 *
+	 * @test
+	 */
+	public function setAndGetExpiresSetsAndRetrievesTheExpiresHeader() {
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 GMT');
+		$later = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 23 May 2012 12:00:00 GMT');
+
+		$response = new Response();
+		$response->setNow($now);
+		$response->setExpires($later);
+		$this->assertEquals($later, $response->getExpires());
+	}
+
+	/**
 	 * @test
 	 */
 	public function getAgeReturnsTheTimePassedSinceTimeSpecifiedInDateHeader() {
@@ -186,7 +201,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * (RFC 2616 / 14.9.1)
+	 * RFC 2616 / 14.9.1
 	 *
 	 * @test
 	 */
@@ -199,7 +214,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * (RFC 2616 / 14.9.1)
+	 * RFC 2616 / 14.9.1
 	 *
 	 * @test
 	 */
@@ -212,7 +227,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * (RFC 2616 / 14.9.4)
+	 * RFC 2616 / 14.9.4
 	 *
 	 * @test
 	 */
@@ -222,11 +237,11 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$response->setMaximumAge(60);
 		$this->assertEquals('max-age=60', $response->getHeader('Cache-Control'));
-		$this->assertEquals(60, $response->getMaximumAge());
+		$this->assertSame(60, $response->getMaximumAge());
 	}
 
 	/**
-	 * (RFC 2616 / 14.9.4)
+	 * RFC 2616 / 14.9.4
 	 *
 	 * @test
 	 */
@@ -236,7 +251,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$response->setSharedMaximumAge(60);
 		$this->assertEquals('s-maxage=60', $response->getHeader('Cache-Control'));
-		$this->assertEquals(60, $response->getSharedMaximumAge());
+		$this->assertSame(60, $response->getSharedMaximumAge());
 	}
 
 	/**
@@ -280,6 +295,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				->setMaximumAge(60)
 				->setSharedMaximumAge(60)
 				->setLastModified(new \DateTime())
+				->setExpires(new \DateTime())
 		);
 	}
 }

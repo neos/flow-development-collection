@@ -259,6 +259,42 @@ class Response extends Message implements ResponseInterface{
 	}
 
 	/**
+	 * Sets the Expires header.
+	 *
+	 * The given date must either be an RFC2822 parseable date string or a DateTime
+	 * object. The timezone will be converted to GMT internally, but the point in
+	 * time remains the same.
+	 *
+	 * In order to signal that the response has already expired, the date should
+	 * be set to the same date as the Date header (that is, $now). To communicate
+	 * an infinite expiration time, the date should be set to one year in the future.
+	 *
+	 * Expiration times should not be more than one year in the future, according
+	 * to RFC 2616 / 14.21
+	 *
+	 * @param string|\DateTime $date
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @api
+	 */
+	public function setExpires($date) {
+		$this->headers->set('Expires', $date);
+		return $this;
+	}
+
+	/**
+	 * Returns the date from the Expires header or NULL if no such header
+	 * is present.
+	 *
+	 * The returned date is configured to be in the GMT timezone.
+	 *
+	 * @return \DateTime The expiration date or NULL
+	 * @api
+	 */
+	public function getExpires() {
+		return $this->headers->get('Expires');
+	}
+
+	/**
 	 * Returns the age of this responds in seconds.
 	 *
 	 * The age is determined either by an explicitly set Age header or by the
