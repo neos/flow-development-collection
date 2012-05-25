@@ -159,6 +159,16 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$message->setContent('Two households, both alike in dignity, In fair Verona, where we lay our scene');
 		$this->assertEquals('Two households, both alike in dignity, In fair Verona, where we lay our scene', $message->getContent());
 	}
+
+	/**
+	 * @test
+	 */
+	public function setterMethodsAreChainable() {
+		$message = new Message();
+		$this->assertSame($message,
+			$message->setContent('Foo')->setCharset('UTF-8')->setHeader('X-Foo', 'Bar')
+		);
+	}
 }
 
 ?>
