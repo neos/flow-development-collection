@@ -262,7 +262,9 @@ class ActionController extends AbstractController {
 			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
 				if (!$subValidationResult->hasErrors()) continue;
 
-				if (array_search('$' . $argumentName, $ignoredArguments) !== FALSE) continue;
+				if (array_search($argumentName, $ignoredArguments) !== FALSE) {
+					continue;
+				}
 
 				$shouldCallActionMethod = FALSE;
 			}

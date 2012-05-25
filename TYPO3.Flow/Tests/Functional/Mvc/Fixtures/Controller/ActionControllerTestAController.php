@@ -69,5 +69,17 @@ class ActionControllerTestAController extends ActionController {
 	public function putAction($putArgument, $getArgument) {
 		return "putAction-$putArgument-$getArgument";
 	}
+
+	/**
+	 * @FLOW3\Validate("brokenArgument1", type="StringLength", options={"maximum": 3})
+	 * @FLOW3\Validate("brokenArgument2", type="StringLength", options={"minimum": 100})
+	 * @FLOW3\IgnoreValidation("brokenArgument1")
+	 * @FLOW3\IgnoreValidation("$brokenArgument2")
+	 * @param string $brokenArgument1
+	 * @param string $brokenArgument2
+	 */
+	public function ignoreValidationAction($brokenArgument1, $brokenArgument2) {
+		return 'action was called';
+	}
 }
 ?>
