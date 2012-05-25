@@ -58,7 +58,7 @@ class Command {
 
 		$matchCount = preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)*)\\\\Command\\\\(?P<ControllerName>\w+)CommandController$/', $controllerClassName, $matches);
 		if ($matchCount !== 1) {
-			throw new \InvalidArgumentException('Invalid controller class name "' . $controllerClassName . '"', 1305100019);
+			throw new \InvalidArgumentException('Invalid controller class name "' . $controllerClassName . '". Make sure your controller is in a folder named "Command" and it\'s name ends in "CommandController"', 1305100019);
 		}
 
 		$this->commandIdentifier = strtolower(str_replace('\\', '.', $matches['PackageNamespace']) . ':' . $matches['ControllerName'] . ':' . $controllerCommandName);
