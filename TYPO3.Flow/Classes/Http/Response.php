@@ -200,6 +200,63 @@ class Response extends Message implements ResponseInterface{
 	}
 
 	/**
+	 * Sets the Date header.
+	 *
+	 * The given date must either be an RFC2822 parseable date string or a DateTime
+	 * object. The timezone will be converted to GMT internally, but the point in
+	 * time remains the same.
+	 *
+	 * @param string|\DateTime $date
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @api
+	 */
+	public function setDate($date) {
+		$this->headers->set('Date', $date);
+		return $this;
+	}
+
+	/**
+	 * Returns the date from the Date header.
+	 *
+	 * The returned date is configured to be in the GMT timezone.
+	 *
+	 * @return \DateTime The date of this response
+	 * @api
+	 */
+	public function getDate() {
+		return $this->headers->get('Date');
+	}
+
+	/**
+	 * Sets the Last-Modified header.
+	 *
+	 * The given date must either be an RFC2822 parseable date string or a DateTime
+	 * object. The timezone will be converted to GMT internally, but the point in
+	 * time remains the same.
+	 *
+	 * @param string|\DateTime $date
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @api
+	 */
+	public function setLastModified($date) {
+		$this->headers->set('Last-Modified', $date);
+		return $this;
+	}
+
+	/**
+	 * Returns the date from the Last-Modified header or NULL if no such header
+	 * is present.
+	 *
+	 * The returned date is configured to be in the GMT timezone.
+	 *
+	 * @return \DateTime The last modification date or NULL
+	 * @api
+	 */
+	public function getLastModified() {
+		return $this->headers->get('Last-Modified');
+	}
+
+	/**
 	 * Returns the age of this responds in seconds.
 	 *
 	 * The age is determined either by an explicitly set Age header or by the
@@ -220,6 +277,62 @@ class Response extends Message implements ResponseInterface{
 			$nowTimestamp = $this->now->getTimestamp();
 			return ($nowTimestamp > $dateTimestamp) ? ($nowTimestamp - $dateTimestamp) : 0;
 		}
+	}
+
+	/**
+	 * Sets the maximum age in seconds before this response becomes stale.
+	 *
+	 * This method sets the "max-age" directive in the Cache-Control header.
+	 *
+	 * @param integer $age The maximum age in seconds
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @api
+	 */
+	public function setMaximumAge($age) {
+		$this->headers->setCacheControlDirective('max-age', $age);
+		return $this;
+	}
+
+	/**
+	 * Returns the maximum age in seconds before this response becomes stale.
+	 *
+	 * This method returns the value from the "max-age" directive in the
+	 * Cache-Control header.
+	 *
+	 * @return integer The maximum age in seconds, or NULL if none has been defined
+	 * @api
+	 */
+	public function getMaximumAge() {
+		return $this->headers->getCacheControlDirective('max-age');
+	}
+
+	/**
+	 * Sets the maximum age in seconds before this response becomes stale in shared
+	 * caches, such as proxies.
+	 *
+	 * This method sets the "s-maxage" directive in the Cache-Control header.
+	 *
+	 * @param integer The maximum age in seconds
+	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @api
+	 */
+	public function setSharedMaximumAge($maximumAge) {
+		$this->headers->setCacheControlDirective('s-maxage', $maximumAge);
+		return $this;
+	}
+
+	/**
+	 * Returns the maximum age in seconds before this response becomes stale in shared
+	 * caches, such as proxies.
+	 *
+	 * This method returns the value from the "s-maxage" directive in the
+	 * Cache-Control header.
+	 *
+	 * @return integer The maximum age in seconds, or NULL if none has been defined
+	 * @api
+	 */
+	public function getSharedMaximumAge() {
+		return $this->headers->getCacheControlDirective('s-maxage');
 	}
 
 	/**
