@@ -43,6 +43,7 @@ class Version201201261636 extends AbstractMigration {
 		$this->showNote('Handling of NULL values in the database has changed, add "@ORM\Column(nullable=true)" to properties that need to be nullable or give them a non-NULL default.');
 		$this->showNote('All persistence repositories must be of scope "singleton", this is now enforced. Add "@FLOW3\Scope("singleton")" if not already present.');
 		$this->showNote('$supportedRequestTypes are not needed anymore in a controller.');
+		$this->showNote('Validators now accept empty values by default, if you need the previous behavior, add "@FLOW3\Validate(type="NotEmpty")" where needed.');
 		$this->showNote('Settings.yaml: The previously shipped "DefaultProvider" authentication provider configuration has been removed, you must configure all providers yourself now.');
 		$this->showNote('Settings.yaml: "providerClass" is deprecated, use "provider" instead. Provider options are now given in "providerOptions".');
 		$this->showNote('Settings.yaml: Authentication "entryPoint" configuration needs to be changed from:
