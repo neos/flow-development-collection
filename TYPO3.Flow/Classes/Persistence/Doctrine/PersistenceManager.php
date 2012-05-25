@@ -154,6 +154,8 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		if ($this->entityManager->isOpen()) {
 			$this->entityManager->flush();
 			$this->emitAllObjectsPersisted();
+		} else {
+			$this->systemLogger->log('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LOG_ERR);
 		}
 	}
 
