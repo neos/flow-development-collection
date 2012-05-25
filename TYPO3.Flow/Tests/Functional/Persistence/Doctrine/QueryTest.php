@@ -92,7 +92,7 @@ class QueryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$testEntity2 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
 		$testEntity2->setName('some');
-		$testEntityRepository->add($testEntity1);
+		$testEntityRepository->add($testEntity2);
 
 		$this->persistenceManager->persistAll();
 

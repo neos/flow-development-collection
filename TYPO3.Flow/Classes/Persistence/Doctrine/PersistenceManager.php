@@ -250,10 +250,20 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The object to add
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\KnownObjectException if the given $object is not new
+	 * @throws \TYPO3\FLOW3\Persistence\Exception if another error occurs
 	 * @api
 	 */
 	public function add($object) {
-		$this->entityManager->persist($object);
+		if (!$this->isNewObject($object)) {
+			throw new \TYPO3\FLOW3\Persistence\Exception\KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
+		} else {
+			try {
+				$this->entityManager->persist($object);
+			} catch (\Exception $exception) {
+				throw new \TYPO3\FLOW3\Persistence\Exception('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
+			}
+		}
 	}
 
 	/**
@@ -272,13 +282,13 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The modified object
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
-	 * @throws \TYPO3\FLOW3\Persistence\Exception
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if the given $object is new
+	 * @throws \TYPO3\FLOW3\Persistence\Exception if another error occurs
 	 * @api
 	 */
 	public function update($object) {
 		if ($this->isNewObject($object)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1313663277);
+			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
 		}
 		try {
 			$this->entityManager->persist($object);
