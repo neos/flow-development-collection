@@ -63,6 +63,8 @@ class Message {
 	 * If multiple headers of that name exist, the values are returned as an array.
 	 * If no such header exists, NULL is returned.
 	 *
+	 * Dates are returned as DateTime objects with the timezone set to GMT.
+	 *
 	 * @param string $name Name of the header
 	 * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
 	 * @api
@@ -84,6 +86,13 @@ class Message {
 
 	/**
 	 * Sets the specified HTTP header
+	 *
+	 * DateTime objects will be converted to a string representation internally but
+	 * will be returned as DateTime objects on calling getHeader().
+	 *
+	 * Please note that dates are normalized to GMT internally, so that getHeader() will return
+	 * the same point in time, but not necessarily in the same timezone, if it was not
+	 * GMT previously. GMT is used synonymously with UTC as per RFC 2616 3.3.1.
 	 *
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
 	 * @param array|string|\DateTime $values An array of values or a single value for the specified header field

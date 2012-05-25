@@ -29,6 +29,19 @@ class Headers {
 	protected $cookies = array();
 
 	/**
+	 * @var array
+	 */
+	protected $cacheDirectives = array(
+		'visibility' => '',
+		'max-age' => '',
+		's-maxage' => '',
+		'must-revalidate' => '',
+		'proxy-revalidate' => '',
+		'no-store' => '',
+		'no-transform' => ''
+	);
+
+	/**
 	 * Constructs a new Headers object.
 	 *
 	 * @param array $fields Field names and their values (either as single value or array of values)
@@ -68,6 +81,13 @@ class Headers {
 	/**
 	 * Sets the specified HTTP header
 	 *
+	 * DateTime objects will be converted to a string representation internally but
+	 * will be returned as DateTime objects on calling get().
+	 *
+	 * Please note that dates are normalized to GMT internally, so that get() will return
+	 * the same point in time, but not necessarily in the same timezone, if it was not
+	 * GMT previously. GMT is used synonymously with UTC as per RFC 2616 3.3.1.
+	 *
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
 	 * @param array|string|\DateTime $values An array of values or a single value for the specified header field
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
@@ -81,25 +101,42 @@ class Headers {
 		}
 
 		if ($values instanceof \DateTime) {
-			$values = array($values->format(DATE_RFC2822));
+			$date = clone $values;
+			$date->setTimezone(new \DateTimeZone('GMT'));
+			$values = array($date->format('D, d M Y H:i:s') . ' GMT');
 		} else {
 			$values = (array) $values;
 		}
-		if ($replaceExistingHeader === TRUE || !isset($this->fields[$name])) {
-			$this->fields[$name] = $values;
-		} else {
-			$this->fields[$name] = array_merge($this->fields[$name], $values);
+
+		switch ($name) {
+			case 'Cache-Control':
+				if (count($values) !== 1) {
+					throw new \InvalidArgumentException('The "Cache-Control" header must be unique and thus only one field value may be specified.', 1337849415);
+				}
+				$this->setCacheControlDirectivesFromRawHeader(array_pop($values));
+			break;
+			default:
+				if ($replaceExistingHeader === TRUE || !isset($this->fields[$name])) {
+					$this->fields[$name] = $values;
+				} else {
+					$this->fields[$name] = array_merge($this->fields[$name], $values);
+				}
 		}
 	}
 
 	/**
 	 * Returns the specified HTTP header
 	 *
+	 * Dates are returned as DateTime objects with the timezone set to GMT.
+	 *
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
 	 * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
 	 * @api
 	 */
 	public function get($name) {
+		if ($name === 'Cache-Control') {
+			return $this->getCacheControlHeader();
+		}
 		if (!isset($this->fields[$name])) {
 			return NULL;
 		}
@@ -125,7 +162,12 @@ class Headers {
 	 * @api
 	 */
 	public function getAll() {
-		return $this->fields;
+		$fields = $this->fields;
+		$cacheControlHeader = $this->getCacheControlHeader();
+		if (!empty($cacheControlHeader)) {
+			$fields['Cache-Control'] = array($cacheControlHeader);
+		}
+		return $fields;
 	}
 
 	/**
@@ -215,6 +257,148 @@ class Headers {
 		$this->removeCookie($name);
 	}
 
+	/**
+	 * Sets a special directive for use in the Cache-Control header, according to
+	 * RFC 2616 / 14.9
+	 *
+	 * @param string $name Name of the directive, for example "max-age"
+	 * @param string $value An optional value
+	 * @return void
+	 * @api
+	 */
+	public function setCacheControlDirective($name, $value = NULL) {
+		switch ($name) {
+			case 'public':
+				$this->cacheDirectives['visibility'] = 'public';
+			break;
+			case 'private':
+			case 'no-cache':
+				$this->cacheDirectives['visibility'] = $name . (!empty($value) ? '="' . $value . '"' : '');
+			break;
+			case 'no-store':
+			case 'no-transform':
+			case 'must-revalidate':
+			case 'proxy-revalidate':
+				$this->cacheDirectives[$name] = $name;
+			break;
+			case 'max-age':
+			case 's-maxage':
+				$this->cacheDirectives[$name] = $name . '=' . $value;
+			break;
+		}
+	}
+
+	/**
+	 * Removes a special directive previously set for the Cache-Control header.
+	 *
+	 * @param string $name Name of the directive, for example "public"
+	 * @return void
+	 */
+	public function removeCacheControlDirective($name) {
+		switch ($name) {
+			case 'public':
+			case 'private':
+			case 'no-cache':
+				$this->cacheDirectives['visibility'] = '';
+			break;
+			case 'no-store':
+			case 'max-age':
+			case 's-maxage':
+			case 'no-transform':
+			case 'must-revalidate':
+			case 'proxy-revalidate':
+				$this->cacheDirectives[$name] = '';
+			break;
+		}
+	}
+
+	/**
+	 * Returns the value of the specified Cache-Control directive.
+	 *
+	 * If the cache directive is not present, NULL is returned. If the specified
+	 * directive is present but contains no value, this method returns TRUE. Finally,
+	 * if the directive is present and does contain a value, the value is returned.
+	 *
+	 * @param string $name Name of the cache directive, for example "max-age"
+	 * @return mixed
+	 * @api
+	 */
+	public function getCacheControlDirective($name) {
+		$value = NULL;
+
+		switch ($name) {
+			case 'public':
+				$value = ($this->cacheDirectives['visibility'] === 'public' ? TRUE : NULL);
+			break;
+			case 'private':
+			case 'no-cache':
+				preg_match('/^(' . $name . ')(?:="([^"]+)")?$/', $this->cacheDirectives['visibility'], $matches);
+				if (!isset($matches[1])) {
+					$value = NULL;
+				} else {
+					$value = (isset($matches[2]) ? $matches[2] : TRUE);
+				}
+			break;
+			case 'no-store':
+			case 'no-transform':
+			case 'must-revalidate':
+			case 'proxy-revalidate':
+				$value = ($this->cacheDirectives[$name] !== '' ? TRUE : NULL);
+			break;
+			case 'max-age':
+			case 's-maxage':
+				preg_match('/^(' . $name . ')=(.+)$/', $this->cacheDirectives[$name], $matches);
+				if (!isset($matches[1])) {
+					$value = NULL;
+				} else {
+					$value = (isset($matches[2]) ? intval($matches[2]) : TRUE);
+				}
+			break;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Internally sets the cache directives correctly by parsing the given
+	 * Cache-Control field value.
+	 *
+	 * @param $rawFieldValue The value of a specification compliant Cache-Control header
+	 * @return void
+	 * @see set()
+	 */
+	protected function setCacheControlDirectivesFromRawHeader($rawFieldValue) {
+		foreach (array_keys($this->cacheDirectives) as $key) {
+			$this->cacheDirectives[$key] = '';
+		}
+		preg_match_all('/([a-zA-Z][a-zA-Z_-]*)\s*(?:=\s*(?:"([^"]*)"|([^,;\s"]*)))?/', $rawFieldValue, $matches, PREG_SET_ORDER);
+		foreach ($matches as $match) {
+			if (isset($match[2]) && $match[2] !== '') {
+				$value = $match[2];
+			} elseif (isset($match[3]) && $match[3] !== '') {
+				$value = $match[3];
+			} else {
+				$value = NULL;
+			}
+			$this->setCacheControlDirective(strtolower($match[1]), $value);
+		}
+	}
+
+	/**
+	 * Renders and returns a Cache-Control header, based on the previously set
+	 * cache control directives.
+	 *
+	 * @return string Either the value of the header or NULL if it shall be omitted
+	 * @see get()
+	 */
+	protected function getCacheControlHeader() {
+		$cacheControl = '';
+		foreach ($this->cacheDirectives as $cacheDirective) {
+			$cacheControl .= ($cacheDirective !== '' ? $cacheDirective . ', ' : '');
+		}
+		$cacheControl = trim($cacheControl, ' ,');
+		return ($cacheControl === '' ? NULL : $cacheControl);
+	}
 }
 
 ?>
