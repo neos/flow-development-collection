@@ -145,7 +145,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function ignoreValidationAnnotationsAreHandledCorrectly() {
+	public function ignoreValidationAnnotationsAreObservedForPost() {
 		$arguments = array(
 			'argument' => array(
 				'name' => 'Foo',
@@ -156,6 +156,15 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$expectedResult = '-invalid-';
 		$this->assertEquals($expectedResult, $response->getContent());
+	}
+
+	/**
+	 * See http://forge.typo3.org/issues/37385
+	 * @test
+	 */
+	public function ignoreValidationAnnotationIsObservedWithAndWithoutDollarSign() {
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/ignorevalidation?brokenArgument1=toolong&brokenArgument2=tooshort');
+		$this->assertEquals('action was called', $response->getContent());
 	}
 
 	/**

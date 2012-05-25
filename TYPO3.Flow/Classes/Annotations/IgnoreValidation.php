@@ -32,7 +32,7 @@ final class IgnoreValidation {
 		if (!isset($values['value']) && !isset($values['argumentName'])) {
 			throw new \InvalidArgumentException('An IgnoreValidation annotation must be given an argument name.', 1318456607);
 		}
-		$this->argumentName = isset($values['argumentName']) ? $values['argumentName'] : $values['value'];
+		$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
 	}
 
 }
