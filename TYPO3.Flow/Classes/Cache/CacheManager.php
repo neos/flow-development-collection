@@ -224,7 +224,6 @@ class CacheManager {
 				}
 			break;
 			case 'FLOW3_ConfigurationFiles' :
-				$flushPolicyCaches = FALSE;
 				foreach (array_keys($changedFiles) as $pathAndFilename) {
 					if (basename($pathAndFilename) === 'Policy.yaml') {
 						$this->systemLogger->log('The security policies have changed, flushing the policy cache.', LOG_INFO);
@@ -233,7 +232,7 @@ class CacheManager {
 					}
 				}
 
-				$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO, $changedFiles);
+				$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
 				$objectConfigurationCache->remove('allAspectClassesUpToDate');
 				$objectConfigurationCache->remove('allCompiledCodeUpToDate');
 				$objectClassesCache->flush();
