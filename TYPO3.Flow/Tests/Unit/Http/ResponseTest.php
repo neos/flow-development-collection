@@ -264,5 +264,23 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals('For never was a story of more woe, Than this of Juliet and her Romeo.', $response->getContent());
 		$this->assertEquals('For never was a story of more woe, Than this of Juliet and her Romeo.', (string)$response);
 	}
+
+	/**
+	 * @test
+	 */
+	public function setterMethodsAreChainable() {
+		$response = new Response();
+		$this->assertSame($response,
+			$response->setContent('Foo')
+				->appendContent('Bar')
+				->setStatus(404)
+				->setPublic()
+				->setPrivate()
+				->setDate(new \DateTime())
+				->setMaximumAge(60)
+				->setSharedMaximumAge(60)
+				->setLastModified(new \DateTime())
+		);
+	}
 }
 ?>
