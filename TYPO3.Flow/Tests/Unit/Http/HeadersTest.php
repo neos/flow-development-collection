@@ -106,15 +106,39 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getAllAddsCacheControlHeaderIfCacheDirectivesHaveBeenSet() {
+		$expectedFields = array('Last-Modified' => array('Tue, 24 May 2012 12:00:00 +0000'));
+		$headers = new Headers($expectedFields);
+
+		$this->assertEquals($expectedFields, $headers->getAll());
+
+		$expectedFields['Cache-Control'] = array('public, max-age=60');
+		$headers->setCacheControlDirective('public');
+		$headers->setCacheControlDirective('max-age', 60);
+		$this->assertEquals($expectedFields, $headers->getAll());
+	}
+
+	/**
+	 * (RFC 2616 3.3.1)
+	 *
+	 * This checks if set() and get() convert DateTime to an RFC 822 compliant date /
+	 * time string and vice versa. Note that the date / time passed to set() is
+	 * normalized to GMT internally, so that get() will return the same point in time,
+	 * but not in the same timezone, if it was not GMT previously.
+	 *
+	 * @test
+	 */
 	public function setGetAndGetAllConvertDatesFromDateObjectsToStringAndViceVersa() {
-		$now = new \DateTime();
+		$now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
+		$nowInGmt = clone $now;
+		$nowInGmt->setTimezone(new \DateTimeZone('GMT'));
 		$headers = new Headers();
 
 		$headers->set('Last-Modified', $now);
-		$this->assertEquals($now->format(DATE_RFC2822), $headers->get('Last-Modified')->format(DATE_RFC2822));
+		$this->assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('Last-Modified')->format(DATE_RFC2822));
 
 		$headers->set('X-Test-Run-At', $now);
-		$this->assertEquals($now->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
+		$this->assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
 	}
 
 	/**
@@ -171,6 +195,199 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		unset($cookies['Coffee-Fudge-Mess']);
 
 		$this->assertEquals($cookies, $headers->getCookies());
+	}
+
+	/**
+	 * Data provider with valid cache control headers
+	 */
+	public function cacheControlHeaders() {
+		return array(
+			array('public', 'public'),
+			array('private', 'private'),
+			array('no-cache', 'no-cache'),
+			array('private="X-FLOW3-Powered"', 'private="X-FLOW3-Powered"'),
+			array('no-cache= "X-FLOW3-Powered" ', 'no-cache="X-FLOW3-Powered"'),
+			array('max-age = 3600, must-revalidate', 'max-age=3600, must-revalidate'),
+			array('private, max-age=0, must-revalidate', 'private, max-age=0, must-revalidate'),
+			array('max-age=60, private,  proxy-revalidate', 'private, max-age=60, proxy-revalidate')
+		);
+	}
+
+	/**
+	 * @dataProvider cacheControlHeaders
+	 * @test
+	 */
+	public function cacheControlHeaderPassedToSetIsParsedCorrectly($rawFieldValue, $renderedFieldValue) {
+		$headers = new Headers();
+
+		$headers->set('Cache-Control', $rawFieldValue);
+		$this->assertEquals($renderedFieldValue, $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setOverridesAnyPreviouslyDefinedCacheControlDirectives() {
+		$headers = new Headers();
+
+		$headers->setCacheControlDirective('public');
+		$headers->set('Cache-Control', 'max-age=600, must-revalidate');
+		$this->assertEquals('max-age=600, must-revalidate', $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.1)
+	 *
+	 * @test
+	 */
+	public function setCacheControlDirectiveSetsVisibilityCorrectly() {
+		$headers = new Headers();
+
+		$headers->setCacheControlDirective('public');
+		$this->assertEquals('public', $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('private');
+		$this->assertEquals('private', $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('private', 'X-FLOW3-Powered');
+		$this->assertEquals('private="X-FLOW3-Powered"', $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('no-cache', 'X-FLOW3-Powered');
+		$this->assertEquals('no-cache="X-FLOW3-Powered"', $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('no-cache');
+		$this->assertEquals('no-cache', $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.1)
+	 *
+	 * @test
+	 */
+	public function removeCacheControlDirectiveRemovesVisibilityCorrectly() {
+		$headers = new Headers();
+		$headers->setCacheControlDirective('public');
+
+		$headers->setCacheControlDirective('private');
+		$headers->removeCacheControlDirective('private');
+		$this->assertEquals(NULL, $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('public');
+		$headers->removeCacheControlDirective('public');
+		$this->assertEquals(NULL, $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('no-cache');
+		$headers->removeCacheControlDirective('no-cache');
+		$this->assertEquals(NULL, $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.2)
+	 *
+	 * @test
+	 */
+	public function noStoreCacheDirectiveCanBeSetAndRemoved() {
+		$headers = new Headers();
+
+		$headers->setCacheControlDirective('no-store');
+		$this->assertEquals('no-store', $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('public');
+		$this->assertEquals('public, no-store', $headers->get('Cache-Control'));
+
+		$headers->removeCacheControlDirective('no-store');
+		$this->assertEquals('public', $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.3)
+	 *
+	 * @test
+	 */
+	public function maxAgeAndSMaxAgeIsRenderedCorrectly() {
+		$headers = new Headers();
+
+		$headers->setCacheControlDirective('max-age', 120);
+		$this->assertEquals('max-age=120', $headers->get('Cache-Control'));
+
+		$headers->setCacheControlDirective('s-maxage', 60);
+		$this->assertEquals('max-age=120, s-maxage=60', $headers->get('Cache-Control'));
+
+		$headers->removeCacheControlDirective('max-age');
+		$this->assertEquals('s-maxage=60', $headers->get('Cache-Control'));
+
+		$headers->removeCacheControlDirective('s-maxage');
+		$this->assertEquals(NULL, $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.5)
+	 *
+	 * @test
+	 */
+	public function noTransformCacheDirectiveIsRenderedCorrectly() {
+		$headers = new Headers();
+
+		$headers->setCacheControlDirective('no-transform');
+		$headers->setCacheControlDirective('public');
+
+		$this->assertEquals('public, no-transform', $headers->get('Cache-Control'));
+
+		$headers->removeCacheControlDirective('no-transform');
+
+		$this->assertEquals('public', $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * (RFC 2616 / 14.9.4)
+	 *
+	 * @test
+	 */
+	public function mustRevalidateAndProxyRevalidateAreRenderedCorrectly() {
+		$headers = new Headers();
+
+		$headers->setCacheControlDirective('must-revalidate');
+		$this->assertEquals('must-revalidate', $headers->get('Cache-Control'));
+
+		$headers->removeCacheControlDirective('must-revalidate');
+		$headers->setCacheControlDirective('proxy-revalidate');
+		$this->assertEquals('proxy-revalidate', $headers->get('Cache-Control'));
+	}
+
+	/**
+	 * Data provider for the test below
+	 */
+	public function cacheDirectivesAndExampleValues() {
+		return array(
+			array('public', TRUE),
+			array('private', TRUE),
+			array('private', 'X-FLOW3'),
+			array('no-cache', TRUE),
+			array('no-cache', 'X-FLOW3'),
+			array('max-age', 60),
+			array('s-maxage', 120),
+			array('must-revalidate', TRUE),
+			array('proxy-revalidate', TRUE),
+			array('no-store', TRUE),
+			array('no-transform', TRUE),
+			array('must-revalidate', TRUE),
+			array('proxy-revalidate', TRUE)
+		);
+	}
+
+	/**
+	 * @dataProvider cacheDirectivesAndExampleValues
+	 * @test
+	 */
+	public function getCacheControlDirectiveReturnsTheSpecifiedDirectiveValueIfPresent($name, $value) {
+		$headers = new Headers();
+		$this->assertNull($headers->getCacheControlDirective($name));
+		if ($value === TRUE) {
+			$headers->setCacheControlDirective($name);
+		} else {
+			$headers->setCacheControlDirective($name, $value);
+		}
+		$this->assertEquals($value, $headers->getCacheControlDirective($name));
 	}
 }
 
