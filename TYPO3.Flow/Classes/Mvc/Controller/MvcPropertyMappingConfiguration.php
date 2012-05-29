@@ -24,32 +24,35 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	 * Allow creation of a certain sub property
 	 *
 	 * @param string $propertyPath
-	 * @return void
+	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowCreationForSubProperty($propertyPath) {
 		$this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		return $this;
 	}
 
 	/**
 	 * Allow modification for a given property path
 	 *
 	 * @param string $propertyPath
-	 * @return void
+	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowModificationForSubProperty($propertyPath) {
 		$this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+		return $this;
 	}
 
 	/**
 	 * Allow override of the target type through a special "__type" parameter
 	 *
-	 * @return void
+	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowOverrideTargetType() {
 		$this->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+		return $this;
 	}
 
 	/**
@@ -59,11 +62,12 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param string $propertyPath
 	 * @param string $targetType
-	 * @return void
+	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setTargetTypeForSubProperty($propertyPath, $targetType) {
 		$this->forProperty($propertyPath)->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, $targetType);
+		return $this;
 	}
 }
 ?>
