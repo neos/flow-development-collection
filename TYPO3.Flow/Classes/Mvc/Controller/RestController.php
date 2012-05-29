@@ -78,6 +78,28 @@ class RestController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Allow creation of resources in createAction()
+	 *
+	 * @return void
+	 */
+	public function initializeCreateAction() {
+		$propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]->getPropertyMappingConfiguration();
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->allowAllProperties();
+	}
+
+	/**
+	 * Allow modification of resources in updateAction()
+	 *
+	 * @return void
+	 */
+	public function initializeUpdateAction() {
+		$propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]->getPropertyMappingConfiguration();
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+		$propertyMappingConfiguration->allowAllProperties();
+	}
+
+	/**
 	 * Redirects the web request to another uri.
 	 *
 	 * NOTE: This method only supports web requests and will throw an exception
