@@ -47,7 +47,7 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.zip');
-		$this->assertSame('application/x-zip-compressed', $resource->getMimeType());
+		$this->assertSame('application/zip', $resource->getMimeType());
 
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.someunknownextension');
