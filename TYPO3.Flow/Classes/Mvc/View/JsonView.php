@@ -80,6 +80,29 @@ class JsonView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	 * include all array keys for the output. The configuration inside a
 	 * "_descendAll" will be applied to each array element.
 	 *
+	 *
+	 * Example 2: exposing object identifier
+	 *
+	 * array(
+	 *		'variableFoo' => array(
+	 *			'_exclude' => array('secretTitle'),
+	 *			'_descend' => array(
+	 *				'customer' => array(    // consider 'customer' being a persisted entity
+	 *					'_only' => array('firstName'),
+	 * 					'_exposeObjectIdentifier' => TRUE,
+	 * 					'_exposedObjectIdentifierKey' => 'guid'
+	 *				)
+	 *			)
+	 *		),
+	 *
+	 * Note for entity objects you are able to expose the object's identifier
+	 * also, just add an "_exposeObjectIdentifier" directive set to TRUE and
+	 * an additional property '__identity' will appear keeping the persistence
+	 * identifier. Renaming that property name instead of '__identity' is also
+	 * possible with the directive "_exposedObjectIdentifierKey".
+	 * Example 2 above would output (summarized):
+	 * {"customer":{"firstName":"John","guid":"892693e4-b570-46fe-af71-1ad32918fb64"}}
+	 *
 	 * @var array
 	 */
 	protected $configuration = array();
@@ -202,7 +225,12 @@ class JsonView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 				}
 			}
 			if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === TRUE) {
-				$propertiesToRender['__identity'] = $this->persistenceManager->getIdentifierByObject($object);
+				if (isset($configuration['_exposedObjectIdentifierKey']) && strlen($configuration['_exposedObjectIdentifierKey']) > 0) {
+					$identityKey = $configuration['_exposedObjectIdentifierKey'];
+				} else {
+					$identityKey = '__identity';
+				}
+				$propertiesToRender[$identityKey] = $this->persistenceManager->getIdentifierByObject($object);
 			}
 			return $propertiesToRender;
 		}
