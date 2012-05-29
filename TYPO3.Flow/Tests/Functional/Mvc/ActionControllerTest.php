@@ -128,6 +128,21 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * RFC 2616 / 10.4.7 (406 Not Acceptable)
+	 *
+	 * @test
+	 */
+	public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes() {
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta'), 'GET');
+		$request->setHeader('Content-Type', 'application/xml');
+		$request->setHeader('Accept', 'application/xml');
+		$request->setContent('<xml></xml>');
+
+		$response = $this->browser->sendRequest($request);
+		$this->assertSame(406, $response->getStatusCode());
+	}
+
+	/**
 	 * @test
 	 */
 	public function ignoreValidationAnnotationsAreHandledCorrectly() {
@@ -199,7 +214,8 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * data provider for argumentTests()
+	 * Data provider for argumentTests()
+	 *
 	 * @return array
 	 */
 	public function argumentTestsDataProvider() {
@@ -241,6 +257,8 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * Tut Dinge.
+	 *
 	 * @param string $action
 	 * @param mixed $argument
 	 * @param string $expectedResult
@@ -255,21 +273,6 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$uri = str_replace('{@action}', strtolower($action), 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
 		$response = $this->browser->request($uri, 'POST', $arguments);
 		$this->assertTrue(strpos(trim($response->getContent()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getContent()));
-	}
-
-	/**
-	 * RFC 2616 / 10.4.7 (406 Not Acceptable)
-	 *
-	 * @test
-	 */
-	public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes() {
-		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta'), 'GET');
-		$request->setHeader('Content-Type', 'application/xml');
-		$request->setHeader('Accept', 'application/xml');
-		$request->setContent('<xml></xml>');
-
-		$response = $this->browser->sendRequest($request);
-		$this->assertSame(406, $response->getStatusCode());
 	}
 
 }

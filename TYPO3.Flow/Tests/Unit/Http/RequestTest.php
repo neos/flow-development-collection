@@ -299,6 +299,48 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Data Provider
 	 */
+	public function serverEnvironmentsForClientIpAddresses() {
+		return array(
+			array(array(), '17.172.224.47'),
+			array(array('HTTP_CLIENT_IP' => '17.149.160.49'), '17.149.160.49'),
+			array(array('HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '17.149.160.49'),
+			array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '123.123.123.123'),
+			array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123', 'HTTP_X_FORWARDED' => '209.85.148.101'), '123.123.123.123'),
+			array(array('HTTP_X_FORWARDED_FOR' => '123.123.123', 'HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
+			array(array('HTTP_X_FORWARDED_FOR' => '192.168.178.1', 'HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
+			array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'), '123.123.123.123'),
+			array(array('HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'), '209.85.148.101'),
+			array(array('HTTP_FORWARDED_FOR' => '209.85.148.101'), '209.85.148.101'),
+			array(array('HTTP_FORWARDED' => '209.85.148.101'), '209.85.148.101'),
+			array(array('REMOTE_ADDR' => '127.0.0.1'), '127.0.0.1'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider serverEnvironmentsForClientIpAddresses
+	 */
+	public function getClientIpAddressReturnsTheIpAddressDerivedFromSeveralServerEnvironmentVariables(array $serverEnvironment, $expectedIpAddress) {
+		$defaultServerEnvironment = array(
+			'HTTP_USER_AGENT' => 'FLOW3/' . FLOW3_VERSION_BRANCH . '.x',
+			'HTTP_HOST' => 'flow3.typo3.org',
+			'SERVER_NAME' => 'typo3.org',
+			'SERVER_ADDR' => '217.29.36.55',
+			'SERVER_PORT' => 80,
+			'REMOTE_ADDR' => '17.172.224.47',
+			'SCRIPT_FILENAME' => FLOW3_PATH_WEB . 'index.php',
+			'SERVER_PROTOCOL' => 'HTTP/1.1',
+			'SCRIPT_NAME' => '/index.php',
+			'PHP_SELF' => '/index.php',
+		);
+
+		$request = Request::create(new Uri('http://flow3.typo3.org'), 'GET', array(), array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
+		$this->assertSame($expectedIpAddress, $request->getClientIpAddress());
+	}
+
+	/**
+	 * Data Provider
+	 */
 	public function acceptHeaderValuesAndCorrespondingListOfMediaTypes() {
 		return array(
 			array(NULL, array('*/*')),
