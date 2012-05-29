@@ -12,14 +12,21 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\View\ViewInterface;
+use TYPO3\FLOW3\Mvc\Controller\ActionController;
 
 /**
  * A controller fixture
  *
  * @FLOW3\Scope("singleton")
  */
-class ActionControllerTestAController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+class ActionControllerTestController extends ActionController {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedMediaTypes = array(
+		'text/html', 'application/json'
+	);
 
 	/**
 	 * @return string

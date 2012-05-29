@@ -40,18 +40,18 @@ class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getMimeTypeReturnsMimeTypeBasedOnFileExtension() {
+	public function getMediaTypeReturnsMediaTypeBasedOnFileExtension() {
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.jpg');
-		$this->assertSame('image/jpeg', $resource->getMimeType());
+		$this->assertSame('image/jpeg', $resource->getMediaType());
 
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.zip');
-		$this->assertSame('application/zip', $resource->getMimeType());
+		$this->assertSame('application/zip', $resource->getMediaType());
 
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.someunknownextension');
-		$this->assertSame('application/octet-stream', $resource->getMimeType());
+		$this->assertSame('application/octet-stream', $resource->getMediaType());
 	}
 
 	/**

@@ -76,7 +76,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function defaultActionSpecifiedInrouteIsCalledAndResponseIsReturned() {
-		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta');
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertest');
 		$this->assertEquals('First action was called', $response->getContent());
 		$this->assertEquals('200 OK', $response->getStatus());
 	}
@@ -88,7 +88,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function actionSpecifiedInActionRequestIsCalledAndResponseIsReturned() {
-		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/second');
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertest/second');
 		$this->assertEquals('Second action was called', $response->getContent());
 		$this->assertEquals('200 OK', $response->getStatus());
 	}
@@ -100,7 +100,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function queryStringOfAGetRequestIsParsedAndPassedToActionAsArguments() {
-		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/third?secondArgument=bar&firstArgument=foo&third=baz');
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertest/third?secondArgument=bar&firstArgument=foo&third=baz');
 		$this->assertEquals('thirdAction-foo-bar-baz-default', $response->getContent());
 	}
 
@@ -108,7 +108,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function defaultTemplateIsResolvedAndUsedAccordingToConventions() {
-		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/fourth?emailAddress=example@typo3.org');
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertest/fourth?emailAddress=example@typo3.org');
 		$this->assertEquals('Fourth action <b>example@typo3.org</b>', $response->getContent());
 	}
 
@@ -118,7 +118,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function argumentsOfPutRequestArePassedToAction() {
-		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertest/put?getArgument=getValue'), 'PUT');
 		$request->setContent("putArgument=first value");
 		$request->setHeader('Content-Type', 'application/x-www-form-urlencoded');
 		$request->setHeader('Content-Length', 54);
@@ -147,7 +147,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function argumentsOfPutRequestWithJsonOrXmlTypeAreAlsoPassedToAction() {
-		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'), 'PUT');
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertest/put?getArgument=getValue'), 'PUT');
 		$request->setHeader('Content-Type', 'application/json');
 		$request->setHeader('Content-Length', 29);
 		$request->setContent('{"putArgument":"first value"}');
@@ -256,5 +256,20 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$response = $this->browser->request($uri, 'POST', $arguments);
 		$this->assertTrue(strpos(trim($response->getContent()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getContent()));
 	}
+
+	/**
+	 * RFC 2616 / 10.4.7 (406 Not Acceptable)
+	 *
+	 * @test
+	 */
+	public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes() {
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertest'), 'GET');
+		$request->setHeader('Content-Type', 'application/xml');
+		$request->setHeader('Accept', 'application/xml');
+		$request->setContent('<xml></xml>');
+
+		$response = $this->browser->sendRequest($request);
+		$this->assertSame(406, $response->getStatusCode());
+
 }
 ?>
