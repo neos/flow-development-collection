@@ -297,6 +297,68 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Data Provider
+	 */
+	public function acceptHeaderValuesAndCorrespondingListOfMediaTypes() {
+		return array(
+			array(NULL, array('*/*')),
+			array('', array('*/*')),
+			array('text/html', array('text/html')),
+			array('application/json; q=0.5, application/json; charset=UTF-8', array('application/json; charset=UTF-8', 'application/json')),
+			array('audio/*; q=0.2, audio/basic', array('audio/basic', 'audio/*')),
+			array('text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c', array('text/html', 'text/x-c', 'text/x-dvi', 'text/plain')),
+			array('text/*, text/html, text/html;level=1, */*', array('text/html;level=1', 'text/html', 'text/*', '*/*')),
+			array('text/html;level=1, text/*, text/html, text/html;level=2, */*', array('text/html;level=1', 'text/html;level=2', 'text/html', 'text/*', '*/*')),
+		);
+	}
+
+	/**
+	 * RFC 2616 / 14.1 (Accept)
+	 *
+	 * @test
+	 * @dataProvider acceptHeaderValuesAndCorrespondingListOfMediaTypes
+	 */
+	public function getAcceptedMediaTypesReturnsAnOrderedListOfMediaTypesDefinedInTheAcceptHeader($rawValues, $expectedMediaTypes) {
+		$request = Request::create(new Uri('http://localhost'));
+		if ($rawValues !== NULL) {
+			$request->setHeader('Accept', $rawValues);
+		}
+		$this->assertSame($expectedMediaTypes, $request->getAcceptedMediaTypes());
+	}
+
+	/**
+	 * Data Provider
+	 */
+	public function preferedSupportedAndNegotiatedMediaTypes() {
+		return array(
+			array('text/html', array(), NULL),
+			array('text/plain', array('text/html', 'application/json'), NULL),
+			array('application/json; charset=UTF-8', array('text/html', 'application/json'), 'application/json'),
+			array(NULL, array('text/plain'), 'text/plain'),
+			array('', array('text/html', 'application/json'), 'text/html'),
+			array('application/flow3, application/json', array('text/html', 'application/json'), 'application/json'),
+		);
+	}
+
+	/**
+	 * RFC 2616 / 14.1 (Accept)
+	 *
+	 * @param string $preferredTypes
+	 * @param array $supportedTypes
+	 * @param string $negotiatedType
+	 * @test
+	 * @dataProvider preferedSupportedAndNegotiatedMediaTypes()
+	 */
+	public function getNegotiatedMediaTypeReturnsMediaTypeBasedOnContentNegotiation($preferredTypes, array $supportedTypes, $negotiatedType) {
+		$request = Request::create(new Uri('http://localhost'));
+		if ($preferredTypes !== NULL) {
+			$request->setHeader('Accept', $preferredTypes);
+		}
+		$this->assertSame($negotiatedType, $request->getNegotiatedMediaType($supportedTypes));
+	}
+
+
+	/**
 	 * @test
 	 */
 	public function getBaseUriReturnsTheDetectedBaseUri() {
@@ -398,22 +460,40 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @test
+	 * Data provider
 	 */
-	public function jsonAndXmlArgumentsAreDecodedForPutRequests() {
+	public function contentTypesBodiesAndExpectedUnifiedArguments() {
+		return array(
+			array('application/json', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
+			array('application/json', 'invalid json source code', array()),
+			array('application/json; charset=UTF-8', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
+			array('application/xml', '<root><xmlArgument>xmlValue</xmlArgument></root>', array('xmlArgument' => 'xmlValue')),
+			array('text/xml', '<root><xmlArgument>xmlValue</xmlArgument><!-- text/xml is, by the way, meant to be readable by "the casual user" --></root>', array('xmlArgument' => 'xmlValue')),
+			array('text/xml', '<invalid xml source code>', array()),
+			array('application/xml;charset=UTF8', '<root><xmlArgument>xmlValue</xmlArgument></root>', array('xmlArgument' => 'xmlValue')),
+
+			// the following media types are wrong (not registered at IANA), but still used by some out there:
+
+			array('application/x-javascript', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
+			array('text/javascript', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
+			array('text/x-javascript', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
+			array('text/x-json', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider contentTypesBodiesAndExpectedUnifiedArguments
+	 */
+	public function argumentsInBodyOfPutAndPostRequestsAreDecodedAccordingToContentType($contentType, $requestBody, array $expectedArguments) {
 		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
-		$request->setHeader('Content-Type', 'application/json');
-		$request->setContent('{"putArgument":"first value"}');
+		$request->setHeader('Content-Type', $contentType);
+		$request->setContent($requestBody);
 
-		$this->assertEquals('first value', $request->getArgument('putArgument'));
-		$this->assertEquals('bar', $request->getArgument('foo'));
-
-		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
-		$request->setHeader('Content-Type', 'application/xml');
-		$request->setContent('<root><putArgument>first value</putArgument></root>');
-
-		$this->assertEquals('first value', $request->getArgument('putArgument'));
-		$this->assertEquals('bar', $request->getArgument('foo'));
+		foreach ($expectedArguments as $name => $value) {
+			$this->assertSame($value, $request->getArgument($name));
+		}
+		$this->assertSame('bar', $request->getArgument('foo'));
 	}
 
 	/**
@@ -653,6 +733,105 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$result = $request->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);
+	}
+
+	/**
+	 * Data provider with valid quality value strings and the expected parse output
+	 *
+	 * @return array
+	 */
+	public function qualityValues() {
+		return array(
+			array('text/html', array('text/html')),
+			array('audio/*; q=0.2, audio/basic', array('audio/basic', 'audio/*')),
+			array('application/json; charset=UTF-8, text/html; q=0.8', array('application/json; charset=UTF-8', 'text/html')),
+			array('text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c', array('text/html', 'text/x-c', 'text/x-dvi', 'text/plain')),
+			array('text/html,application/xml;q=0.9,application/xhtml+xml,*/*;q=0.8', array('text/html', 'application/xhtml+xml', 'application/xml', '*/*')),
+			array('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', array('text/html', 'application/xhtml+xml', 'application/xml', '*/*')),
+		);
+	}
+
+	/**
+	 * @param string $rawValues The unparsed header field
+	 * @param array $expectedValues The expected parse result
+	 * @test
+	 * @dataProvider qualityValues
+	 */
+	public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues) {
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
+		$this->assertSame($expectedValues, $actualValues);
+	}
+
+	/**
+	 * Data provider with media types and their parsed counterparts
+	 */
+	public function mediaTypesAndParsedPieces() {
+		return array(
+			array('text/html', array('type' => 'text', 'subtype' => 'html', 'parameters' => array())),
+			array('application/json; charset=UTF-8', array('type' => 'application', 'subtype' => 'json', 'parameters' => array('charset' => 'UTF-8'))),
+			array('application/vnd.org.flow3.coffee+json; kind =Arabica;weight= 15g;  sugar =none', array('type' => 'application', 'subtype' => 'vnd.org.flow3.coffee+json', 'parameters' => array('kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none'))),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider mediaTypesAndParsedPieces
+	 */
+	public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType($mediaType, $expectedPieces) {
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$actualPieces = $request->_call('parseMediaType', $mediaType);
+		$this->assertSame($expectedPieces, $actualPieces);
+	}
+
+	/**
+	 * Data provider
+	 */
+	public function mediaRangesAndMatchingOrNonMatchingMediaTypes() {
+		return array(
+			array('invalid', 'text/html', FALSE),
+			array('text/html', 'text/html', TRUE),
+			array('text/html', 'text/plain', FALSE),
+			array('*/*', 'text/html', TRUE),
+			array('*/*', 'application/json', TRUE),
+			array('text/*', 'text/html', TRUE),
+			array('text/*', 'text/plain', TRUE),
+			array('text/*', 'application/xml', FALSE),
+			array('application/*', 'application/xml', TRUE),
+			array('text/x-dvi', 'text/x-dvi', TRUE),
+			array('-Foo.+/~Bar199', '-Foo.+/~Bar199', TRUE),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider mediaRangesAndMatchingOrNonMatchingMediaTypes
+	 */
+	public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType($mediaRange, $mediaType, $expectedResult) {
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$this->assertSame($expectedResult, $request->_call('mediaRangeMatches', $mediaRange, $mediaType));
+	}
+
+	/**
+	 * Data provider with media types and their trimmed versions
+	 */
+	public function mediaTypesWithAndWithoutParameters() {
+		return array(
+			array('text/html', 'text/html'),
+			array('application/json; charset=UTF-8', 'application/json'),
+			array('application/vnd.org.flow3.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow3.coffee+json'),
+			array('invalid', NULL),
+			array('invalid/', NULL),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider mediaTypesWithAndWithoutParameters
+	 */
+	public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters($mediaType, $trimmedMediaType) {
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$this->assertSame($trimmedMediaType, $request->_call('trimMediaType', $mediaType));
 	}
 
 }

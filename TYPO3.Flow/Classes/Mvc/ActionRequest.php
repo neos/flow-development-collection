@@ -92,7 +92,7 @@ class ActionRequest implements RequestInterface {
 	 * The requested representation format
 	 * @var string
 	 */
-	protected $format = 'html';
+	protected $format = NULL;
 
 	/**
 	 * If this request has been changed and needs to be dispatched again

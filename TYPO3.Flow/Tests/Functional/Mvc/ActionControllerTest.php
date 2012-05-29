@@ -256,5 +256,21 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$response = $this->browser->request($uri, 'POST', $arguments);
 		$this->assertTrue(strpos(trim($response->getContent()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getContent()));
 	}
+
+	/**
+	 * RFC 2616 / 10.4.7 (406 Not Acceptable)
+	 *
+	 * @test
+	 */
+	public function notAcceptableStatusIsReturnedIfMediaTypeDoesNotMatchSupportedMediaTypes() {
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertesta'), 'GET');
+		$request->setHeader('Content-Type', 'application/xml');
+		$request->setHeader('Accept', 'application/xml');
+		$request->setContent('<xml></xml>');
+
+		$response = $this->browser->sendRequest($request);
+		$this->assertSame(406, $response->getStatusCode());
+	}
+
 }
 ?>

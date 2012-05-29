@@ -16,7 +16,23 @@ use TYPO3\FLOW3\Mvc\ActionRequest;
 use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
 
 /**
- * A multi action controller
+ * An HTTP based multi-action controller.
+ *
+ * The action specified in the given ActionRequest is dispatched to a method in
+ * the concrete controller whose name ends with "*Action". If no matching action
+ * method is found, the action specified in $errorMethodName is invoked.
+ *
+ * This controller also takes care of mapping arguments found in the ActionRequest
+ * to the corresponding method arguments of the action method. It also invokes
+ * validation for these arguments by invoking the Property Mapper.
+ *
+ * By defining media types in $supportedMediaTypes, content negotiation based on
+ * the browser's Accept header and additional routing configuration is used to
+ * determine the output format the controller should return.
+ *
+ * Depending on the action being called, a fitting view - by default a Fluid template
+ * view - will be selected. By specifying patterns, custom view classes or an alternative
+ * controller / action to template path mapping can be defined.
  *
  * @FLOW3\Scope("singleton")
  * @api
@@ -40,14 +56,6 @@ class ActionController extends AbstractController {
 	 * @var \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService
 	 */
 	protected $mvcPropertyMappingConfigurationService;
-
-	/**
-	 * An array of formats (such as "html", "txt", "json" ...) which are supported
-	 * by this controller. If none is specified, this controller will default to "html".
-	 *
-	 * @var array
-	 */
-	protected $supportedFormats = array();
 
 	/**
 	 * The current view, as resolved by resolveView()

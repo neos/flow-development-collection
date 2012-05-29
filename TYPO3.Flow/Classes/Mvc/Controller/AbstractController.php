@@ -15,6 +15,7 @@ use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
 use TYPO3\FLOW3\Mvc\ActionRequest;
 use TYPO3\FLOW3\Error\Message;
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\MediaTypes;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -77,6 +78,14 @@ abstract class AbstractController implements ControllerInterface {
 	protected $persistenceManager;
 
 	/**
+	 * A list of IANA media types which are supported by this controller
+	 *
+	 * @var array
+	 * @see http://www.iana.org/assignments/media-types/index.html
+	 */
+	protected $supportedMediaTypes = array('text/html');
+
+	/**
 	 * Initializes the controller
 	 *
 	 * This method should be called by the concrete processRequest() method.
@@ -99,6 +108,14 @@ abstract class AbstractController implements ControllerInterface {
 
 		$this->arguments = new Arguments(array());
 		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
+
+		$mediaType = $request->getHttpRequest()->getNegotiatedMediaType($this->supportedMediaTypes);
+		if ($mediaType === NULL) {
+			$this->throwStatus(406);
+		}
+		if ($request->getFormat() === NULL) {
+			$this->request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
+		}
 	}
 
 	/**

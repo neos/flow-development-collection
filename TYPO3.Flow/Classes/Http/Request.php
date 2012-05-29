@@ -22,6 +22,9 @@ use TYPO3\FLOW3\Utility\Arrays;
  */
 class Request extends Message {
 
+	const PATTERN_SPLITMEDIARANGE = '/^(?P<type>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
+	const PATTERN_SPLITMEDIATYPE = '/^(?P<type>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
+
 	/**
 	 * @var string
 	 */
@@ -111,9 +114,6 @@ class Request extends Message {
 
 		$defaultServerEnvironment = array(
 			'HTTP_USER_AGENT' => 'FLOW3/' . FLOW3_VERSION_BRANCH . '.x',
-			'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-			'HTTP_ACCEPT_LANGUAGE' => 'en-us,en;q=0.5',
-			'HTTP_ACCEPT_CHARSET' => 'utf-8',
 			'HTTP_HOST' => $uri->getHost(),
 			'SERVER_NAME' => $uri->getHost(),
 			'SERVER_ADDR' => '127.0.0.1',
@@ -321,6 +321,51 @@ class Request extends Message {
 	}
 
 	/**
+	 * Returns an list of IANA media types defined in the Accept header.
+	 *
+	 * The list is ordered by user preference, after evaluating the Quality Values
+	 * specified in the header field value. First items in the list are the most
+	 * preferred.
+	 *
+	 * If no Accept header is present, the media type representing "any" media type
+	 * is returned.
+	 *
+	 * @return array A list of media types and sub types
+	 * @api
+	 */
+	public function getAcceptedMediaTypes() {
+		$rawValues = $this->headers->get('Accept');
+		if (empty($rawValues)) {
+			return array('*/*');
+		}
+		$acceptedMediaTypes = self::parseContentNegotiationQualityValues($rawValues);
+		return $acceptedMediaTypes;
+	}
+
+	/**
+	 * Returns the best fitting IANA media type after applying the content negotiation
+	 * rules on a possible Accept header.
+	 *
+	 * @param array $supportedMediaTypes A list of media types which are supported by the application / controller
+	 * @param boolean $trim If TRUE, only the type/subtype of the media type is returned. If FALSE, the full original media type string is returned.
+	 * @return string The media type and sub type which matched, NULL if none matched
+	 * @api
+	 */
+	public function getNegotiatedMediaType(array $supportedMediaTypes, $trim = TRUE) {
+		$negotiatedMediaType = NULL;
+		$acceptedMediaTypes = $this->getAcceptedMediaTypes();
+		foreach ($acceptedMediaTypes as $acceptedMediaType) {
+			foreach ($supportedMediaTypes as $supportedMediaType) {
+				if (self::mediaRangeMatches($acceptedMediaType, $supportedMediaType)) {
+					$negotiatedMediaType = $supportedMediaType;
+					break 2;
+				}
+			}
+		}
+		return ($trim ? self::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
+	}
+
+	/**
 	 * Returns the relative path (ie. relative to the web root) and name of the
 	 * script as it was accessed through the webserver.
 	 *
@@ -395,22 +440,40 @@ class Request extends Message {
 	}
 
 	/**
-	 * Decodes the given request body, depending on the given content type
+	 * Decodes the given request body, depending on the given content type.
+	 *
+	 * Currently JSON, XML and encoded forms are supported. The media types accepted
+	 * for choosing the respective decoding algorithm are rather broad. This method
+	 * does, for example, accept "text/x-json" although "application/json" is the
+	 * only valid (that is, IANA registered) media type for JSON.
+	 *
+	 * In future versions of FLOW3, this part maybe extensible by third-party code.
+	 * For the time being, only the mentioned media types are supported.
+	 *
+	 * Errors are silently ignored and result in an empty array.
 	 *
 	 * @param string $body The request body
 	 * @param string $mediaType The IANA Media Type
-	 * @return array The decoded body or NULL if an error occurred
+	 * @return array The decoded body
 	 */
 	protected function decodeBodyArguments($body, $mediaType) {
-		switch ($mediaType) {
+		switch (self::trimMediaType($mediaType)) {
 			case 'application/json':
+			case 'application/x-javascript':
+			case 'text/javascript':
+			case 'text/x-javascript':
+			case 'text/x-json':
 				$arguments = json_decode($body, TRUE);
+				if ($arguments === NULL) {
+					return array();
+				}
 			break;
+			case 'text/xml':
 			case 'application/xml':
 				try {
-					$xmlElement = new \SimpleXMLElement(urldecode($body));
+					$xmlElement = new \SimpleXMLElement(urldecode($body), LIBXML_NOERROR);
 				} catch (\Exception $e) {
-					return NULL;
+					return array();
 				}
 				$arguments = Arrays::convertObjectToArray($xmlElement);
 			break;
@@ -484,6 +547,116 @@ class Request extends Message {
 		return $fieldPaths;
 	}
 
+	/**
+	 * Parses a RFC 2616 content negotiation header field by evaluating the Quality
+	 * Values and splitting the options into an array list, ordered by user preference.
+	 *
+	 * @param string $rawValues The raw Accept* Header field value
+	 * @return array The parsed list of field values, ordered by user preference
+	 */
+	public static function parseContentNegotiationQualityValues($rawValues) {
+		$acceptedTypes = array_map(
+			function($acceptType) {
+					$typeAndQuality = preg_split('/;\s*q=/', $acceptType);
+					return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : ''));
+			}, preg_split('/,\s*/', $rawValues)
+		);
+
+		$flattenedAcceptedTypes = array();
+		$valuesWithoutQualityValue = array(array(), array(), array(), array());
+		foreach ($acceptedTypes as $typeAndQuality) {
+			if ($typeAndQuality[1] === '') {
+				$parsedType = Request::parseMediaType($typeAndQuality[0]);
+				if ($parsedType['type'] === '*') {
+					$valuesWithoutQualityValue[3][$typeAndQuality[0]] = TRUE;
+				} elseif ($parsedType['subtype'] === '*') {
+					$valuesWithoutQualityValue[2][$typeAndQuality[0]] = TRUE;
+				} elseif ($parsedType['parameters'] === array()) {
+					$valuesWithoutQualityValue[1][$typeAndQuality[0]] = TRUE;
+				} else {
+					$valuesWithoutQualityValue[0][$typeAndQuality[0]] = TRUE;
+				}
+			} else {
+				$flattenedAcceptedTypes[$typeAndQuality[0]] = $typeAndQuality[1];
+			}
+		}
+		$valuesWithoutQualityValue = array_merge(array_keys($valuesWithoutQualityValue[0]), array_keys($valuesWithoutQualityValue[1]), array_keys($valuesWithoutQualityValue[2]), array_keys($valuesWithoutQualityValue[3]));
+		arsort($flattenedAcceptedTypes);
+		$parsedValues = array_merge($valuesWithoutQualityValue, array_keys($flattenedAcceptedTypes));
+		return $parsedValues;
+	}
+
+	/**
+	 * Parses a RFC 2616 Media Type and returns its parts in an associative array.
+	 *
+	 * media-type = type "/" subtype *( ";" parameter)
+	 *
+	 * The media type "text/html; charset=UTF-8" would be parsed and returned with
+	 * the following array keys and values:
+	 *
+	 * "type" => the type as a string, "text"
+	 * "subtype" => the subtype as a string, "html"
+	 * "parameters" => an array of parameter names and values, array("charset" => "UTF-8")
+	 *
+	 * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
+	 * @return array An associative array with parsed information
+	 */
+	public static function parseMediaType($rawMediaType) {
+		preg_match(self::PATTERN_SPLITMEDIATYPE, $rawMediaType, $matches);
+		$result = array();
+		$result['type'] = isset($matches['type']) ? $matches['type'] : '';
+		$result['subtype'] = isset($matches['subtype']) ? $matches['subtype'] : '';
+		$result['parameters'] = array();
+
+		if (isset($matches['parameters'])) {
+			foreach (Arrays::trimExplode(';', $matches['parameters']) as $parameter) {
+				$pieces = explode('=', $parameter);
+				if (count($pieces) === 2) {
+					$name = trim($pieces[0]);
+					$result['parameters'][$name] = trim($pieces[1]);
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Checks if the given media range and the media type match.
+	 *
+	 * The pattern used by this function splits each into media type and subtype
+	 * and ignores possible additional parameters or extensions. The prepared types
+	 * and subtypes are then compared and wildcards are considered in this process.
+	 *
+	 * Media ranges are explained in RFC 2616, section 14.1. "Accept".
+	 *
+	 * @param string $mediaRange The media range, for example "text/*"
+	 * @param string $mediaType The media type to match against, for example "text/html"
+	 * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
+	 */
+	public static function mediaRangeMatches($mediaRange, $mediaType) {
+		preg_match(self::PATTERN_SPLITMEDIARANGE, $mediaRange, $mediaRangeMatches);
+		preg_match(self::PATTERN_SPLITMEDIATYPE, $mediaType, $mediaTypeMatches);
+		if ($mediaRangeMatches === array() || $mediaTypeMatches === array()) {
+			return FALSE;
+		}
+
+		$typeMatches = ($mediaRangeMatches['type'] === '*' || $mediaRangeMatches['type'] === $mediaTypeMatches['type']);
+		$subtypeMatches = ($mediaRangeMatches['subtype'] === '*' || $mediaRangeMatches['subtype'] === $mediaTypeMatches['subtype']);
+
+		return ($typeMatches && $subtypeMatches);
+	}
+
+	/**
+	 * Strips off any parameters from the given media type and returns just the type
+	 * and subtype in the format "type/subtype".
+	 *
+	 * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
+	 * @return string Just the type and subtype, for example "application/json"
+	 */
+	static public function trimMediaType($rawMediaType) {
+		$pieces = self::parseMediaType($rawMediaType);
+		return trim(sprintf('%s/%s', $pieces['type'], $pieces['subtype']), '/') ?: NULL;
+	}
 }
 
 ?>
