@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Resource;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\MediaTypes;
 
 /**
  * Model describing a resource
@@ -103,9 +104,20 @@ class Resource {
 	 * Returns the mime type for this resource
 	 *
 	 * @return string The mime type
+	 * @deprecated since 1.1.0
+	 * @see getMediaType()
 	 */
 	public function getMimeType() {
-		return \TYPO3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->getFileExtension());
+		return $this->getMediaType();
+	}
+
+	/**
+	 * Returns the Media Type for this resource
+	 *
+	 * @return string The IANA Media Type
+	 */
+	public function getMediaType() {
+		return MediaTypes::getMediaTypeFromFilename('x.' . $this->getFileExtension());
 	}
 
 	/**
