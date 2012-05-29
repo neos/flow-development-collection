@@ -49,7 +49,7 @@ class ApplicationContext {
 	/**
 	 * The parent context, or NULL if there is no parent context
 	 *
-	 * @var TYPO3\FLOW3\Core\ApplicationContext
+	 * @var \TYPO3\FLOW3\Core\ApplicationContext
 	 */
 	protected $parentContext;
 
@@ -121,7 +121,7 @@ class ApplicationContext {
 	/**
 	 * Returns the parent context object, if any
 	 *
-	 * @return TYPO3\FLOW3\Core\ApplicationContext the parent context or NULL, if there is none
+	 * @return \TYPO3\FLOW3\Core\ApplicationContext the parent context or NULL, if there is none
 	 * @api
 	 */
 	public function getParent() {
