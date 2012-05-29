@@ -321,6 +321,34 @@ class Request extends Message {
 	}
 
 	/**
+	 * Returns the best guess of the client's IP address.
+	 *
+	 * Note that, depending on the actual source used, IP addresses can be spoofed
+	 * and may not reliable. Although several kinds of proxy headers are taken into
+	 * account, certain combinations of ISPs and proxies might still produce wrong
+	 * results.
+	 *
+	 * Don't rely on the client IP address as the only security mesure!
+	 *
+	 * @return string The client's IP address
+	 * @api
+	 */
+	public function getClientIpAddress() {
+		$serverFields = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
+		foreach ($serverFields as $field) {
+			if (empty($this->server[$field])) {
+				continue;
+			}
+			$length = strpos($this->server[$field], ',');
+			$ipAddress = trim(($length === FALSE) ? $this->server[$field] : substr($this->server[$field], 0, $length));
+			if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== FALSE) {
+				return $ipAddress;
+			}
+		}
+		return (isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : NULL);
+	}
+
+	/**
 	 * Returns an list of IANA media types defined in the Accept header.
 	 *
 	 * The list is ordered by user preference, after evaluating the Quality Values

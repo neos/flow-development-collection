@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Mvc\Controller\ActionController;
  *
  * @FLOW3\Scope("singleton")
  */
-class ActionControllerTestController extends ActionController {
+class ActionControllerTestAController extends ActionController {
 
 	/**
 	 * @var array
