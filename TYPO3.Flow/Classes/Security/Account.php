@@ -62,7 +62,7 @@ class Account {
 	protected $expirationDate;
 
 	/**
-	 * @var array
+	 * @var array<\TYPO3\FLOW3\Security\Policy\Role>
 	 */
 	protected $roles = array();
 
@@ -152,14 +152,14 @@ class Account {
 	/**
 	 * Returns the roles this account has assigned
 	 *
-	 * @return array The assigned roles
+	 * @return array<\TYPO3\FLOW3\Security\Policy\Role> The assigned roles
 	 */
 	public function getRoles() {
-		$roleObjects = array();
+		$roles = array();
 		foreach ($this->roles as $role) {
-			$roleObjects[] = new \TYPO3\FLOW3\Security\Policy\Role($role);
+			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($role);
 		}
-		return $roleObjects;
+		return $roles;
 	}
 
 	/**
@@ -176,15 +176,24 @@ class Account {
 	}
 
 	/**
+	 * Return if the account has a certain role
+	 *
+	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
+	 * @return boolean
+	 */
+	public function hasRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
+		return in_array((string) $role, $this->roles, TRUE);
+	}
+
+	/**
 	 * Adds a role to this account
 	 *
 	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
 	 * @return void
 	 */
 	public function addRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
-		$roleIdentifier = (string)$role;
-		if (array_search($roleIdentifier, $this->roles, TRUE) === FALSE) {
-			$this->roles[] = $roleIdentifier;
+		if (!$this->hasRole($role)) {
+			$this->roles[] = (string)$role;
 		}
 	}
 
@@ -195,8 +204,7 @@ class Account {
 	 * @return void
 	 */
 	public function removeRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
-		$roleIdentifier = (string)$role;
-		if (($key = array_search($roleIdentifier, $this->roles, TRUE)) !== FALSE) {
+		if (($key = array_search((string)$role, $this->roles, TRUE)) !== FALSE) {
 			unset($this->roles[$key]);
 		}
 	}
