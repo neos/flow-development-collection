@@ -18,6 +18,11 @@ use \TYPO3\FLOW3\Core\ApplicationContext;
  */
 class ApplicationContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
+	/**
+	 * Data provider with allowed contexts.
+	 *
+	 * @return array
+	 */
 	public function allowedContexts() {
 		return array(
 			array('Production'),
@@ -39,6 +44,11 @@ class ApplicationContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame($allowedContext, (string)$context);
 	}
 
+	/**
+	 * Data provider with forbidden contexts.
+	 *
+	 * @return array
+	 */
 	public function forbiddenContexts() {
 		return array(
 			array('MySpecialContexz'),
@@ -57,6 +67,11 @@ class ApplicationContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		new ApplicationContext($forbiddenContext);
 	}
 
+	/**
+	 * Data provider with expected is*() values for various contexts.
+	 *
+	 * @return array
+	 */
 	public function isMethods() {
 		return array(
 			'Development' => array(
