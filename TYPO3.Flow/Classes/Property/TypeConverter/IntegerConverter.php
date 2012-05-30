@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Error\Error;
 
 /**
  * Converter which transforms a simple type to an integer, by simply casting it.
@@ -39,14 +40,20 @@ class IntegerConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeC
 	/**
 	 * Actually convert from $source to $targetType, in fact a noop here.
 	 *
-	 * @param integer $source
+	 * @param integer|string $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return integer
+	 * @return integer|\TYPO3\FLOW3\Error\Error
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		if ($source === NULL || strlen($source) === 0) {
+			return NULL;
+		}
+		if (!is_numeric($source)) {
+			return new Error('"%s" is no integer.' , 1332933658, array($source));
+		}
 		return (integer)$source;
 	}
 }
