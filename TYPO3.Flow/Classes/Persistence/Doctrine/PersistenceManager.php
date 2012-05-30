@@ -92,6 +92,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		$unitOfWork = $this->entityManager->getUnitOfWork();
 		$entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
+		$validatedInstancesContainer = new \SplObjectStorage();
 		$knownValueObjects = array();
 		foreach ($entityInsertions as $entity) {
 			if ($this->reflectionService->getClassSchema($entity)->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
@@ -105,13 +106,13 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 
 				$knownValueObjects[$className][$identifier] = TRUE;
 			}
-			$this->validateObject($entity);
+			$this->validateObject($entity, $validatedInstancesContainer);
 		}
 
 		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, TRUE);
 
 		foreach ($unitOfWork->getScheduledEntityUpdates() AS $entity) {
-			$this->validateObject($entity);
+			$this->validateObject($entity, $validatedInstancesContainer);
 		}
 	}
 
@@ -122,11 +123,12 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
 	 */
-	protected function validateObject($object) {
+	protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer) {
 		$className = $this->entityManager->getClassMetadata(get_class($object))->getName();
 		$validator = $this->validatorResolver->getBaseValidatorConjunction($className, array('Persistence', 'Default'));
 		if ($validator === NULL) return;
 
+		$validator->setValidatedInstancesContainer($validatedInstancesContainer);
 		$validationResult = $validator->validate($object);
 		if ($validationResult->hasErrors()) {
 			$errorMessages = '';
