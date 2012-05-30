@@ -248,7 +248,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The object to add
 	 * @return void
-	 * @throws \LogicException if the given $object is not new
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\KnownObjectException if the given $object is not new
 	 * @throws \TYPO3\FLOW3\Persistence\Exception if another error occurs
 	 * @api
 	 */
