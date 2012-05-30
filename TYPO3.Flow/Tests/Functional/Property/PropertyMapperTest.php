@@ -194,6 +194,20 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * Testcase for http://forge.typo3.org/issues/36988 - needed for Phoenix
+	 * editing
+	 *
+	 * @test
+	 */
+	public function ifTargetObjectTypeIsPassedAsArgumentDoNotConvertIt() {
+		$entity = new Fixtures\TestEntity();
+		$entity->setName('Egon Olsen');
+
+		$result = $this->propertyMapper->convert($entity, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$this->assertSame($entity, $result);
+	}
+
+	/**
 	 * Add and persist a test entity, and return the identifier of the newly created
 	 * entity.
 	 *

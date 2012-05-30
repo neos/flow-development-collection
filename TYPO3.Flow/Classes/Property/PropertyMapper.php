@@ -99,7 +99,9 @@ class PropertyMapper {
 	}
 
 	/**
-	 * Map $source to $targetType, and return the result
+	 * Map $source to $targetType, and return the result.
+	 *
+	 * If $source is an object and already is of type $targetType, we do return the unmodified object.
 	 *
 	 * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
 	 * @param string $targetType The type of the target; can be either a class name or a simple type.
@@ -109,6 +111,10 @@ class PropertyMapper {
 	 * @api
 	 */
 	public function convert($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		if (is_object($source) && ($source instanceof $targetType)) {
+			return $source;
+		}
+
 		if ($configuration === NULL) {
 			$configuration = $this->configurationBuilder->build();
 		}
