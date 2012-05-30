@@ -244,14 +244,14 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * respective package.
 	 *
 	 * By specifying <b>all</b> as a package key, all currently frozen packages are
-	 * frozen.
+	 * frozen (the default).
 	 *
 	 * @param string $packageKey Key of the package to freeze
 	 * @return void
 	 * @see typo3.flow3:package:unfreeze
 	 * @see typo3.flow3:package:refreeze
 	 */
-	public function freezeCommand($packageKey) {
+	public function freezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
 			$this->quit(3);
@@ -305,14 +305,14 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * enabled in the current context.
 	 *
 	 * By specifying <b>all</b> as a package key, all currently frozen packages are
-	 * unfrozen.
+	 * unfrozen (the default).
 	 *
 	 * @param string $packageKey Key of the package to unfreeze, or 'all'
 	 * @return void
 	 * @see typo3.flow3:package:freeze
 	 * @see typo3.flow3:cache:flush
 	 */
-	public function unfreezeCommand($packageKey) {
+	public function unfreezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
 			$this->quit(3);
@@ -362,14 +362,14 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * updated data.
 	 *
 	 * By specifying <b>all</b> as a package key, all currently frozen packages are
-	 * refrozen.
+	 * refrozen (the default).
 	 *
 	 * @param string $packageKey Key of the package to refreeze, or 'all'
 	 * @return void
 	 * @see typo3.flow3:package:freeze
 	 * @see typo3.flow3:cache:flush
 	 */
-	public function refreezeCommand($packageKey) {
+	public function refreezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
 			$this->quit(3);
