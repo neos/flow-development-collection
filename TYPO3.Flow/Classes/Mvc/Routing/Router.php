@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\Arrays;
 
 /**
  * The default web router
@@ -104,9 +105,9 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 		$routePath = substr($httpRequest->getUri()->getPath(), strlen($httpRequest->getBaseUri()->getPath()));
 		$matchResults = $this->findMatchResults($routePath);
 		if ($matchResults !== NULL) {
-			foreach ($matchResults as $argumentName => $argumentValue) {
-				$this->actionRequest->setArgument($argumentName, $argumentValue);
-			}
+			$requestArguments = $this->actionRequest->getArguments();
+			$mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
+			$this->actionRequest->setArguments($mergedArguments);
 		}
 		$this->setDefaultControllerAndActionNameIfNoneSpecified();
 		return $this->actionRequest;
