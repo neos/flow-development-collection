@@ -122,7 +122,12 @@ class PropertyMapper {
 		$currentPropertyPath = array();
 		$this->messages = new \TYPO3\FLOW3\Error\Result();
 		try {
-			return $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
+			$result = $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
+			if ($result instanceof \TYPO3\FLOW3\Error\Error) {
+				return NULL;
+			}
+
+			return $result;
 		} catch (\Exception $e) {
 			throw new \TYPO3\FLOW3\Property\Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $e->getMessage(), 1297759968, $e);
 		}
@@ -173,7 +178,7 @@ class PropertyMapper {
 			$currentPropertyPath[] = $targetPropertyName;
 			$targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
 			array_pop($currentPropertyPath);
-			if ($targetPropertyValue !== NULL) {
+			if (!($targetPropertyValue instanceof \TYPO3\FLOW3\Error\Error)) {
 				$convertedChildProperties[$targetPropertyName] = $targetPropertyValue;
 			}
 		}
@@ -181,7 +186,6 @@ class PropertyMapper {
 
 		if ($result instanceof \TYPO3\FLOW3\Error\Error) {
 			$this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
-			$result = NULL;
 		}
 
 		return $result;
