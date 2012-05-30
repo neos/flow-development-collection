@@ -516,7 +516,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		if (isset($this->packageStatesConfiguration['packages'])) {
 			foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $configuration) {
-				if (!file_exists($configuration['packagePath'])) {
+				if (!file_exists($this->packagesBasePath . $configuration['packagePath'])) {
 					unset($this->packageStatesConfiguration['packages'][$packageKey]);
 				}
 			}
