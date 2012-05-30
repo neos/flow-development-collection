@@ -78,8 +78,9 @@ class InternalRequestEngine implements RequestEngineInterface {
 			throw new \TYPO3\FLOW3\Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
 		}
 
-		$this->bootstrap->getActiveRequestHandler()->setHttpRequest($request);
 		$response = new Response();
+		$requestHandler->setHttpRequest($request);
+		$requestHandler->setHttpResponse($response);
 
 		try {
 			$actionRequest = $this->router->route($request);

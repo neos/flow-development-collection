@@ -83,6 +83,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 * This request handler can handle any web request.
 	 *
 	 * @return boolean If the request is a web request, TRUE otherwise FALSE
+	 * @api
 	 */
 	public function canHandleRequest() {
 		return (PHP_SAPI !== 'cli');
@@ -93,6 +94,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 * request.
 	 *
 	 * @return integer The priority of the request handler.
+	 * @api
 	 */
 	public function getPriority() {
 		return 100;
@@ -106,22 +108,21 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	public function handleRequest() {
 			// Create the request very early so the Resource Management has a chance to grab it:
 		$this->request = Request::createFromEnvironment();
+		$this->response = new Response();
 
 		$this->boot();
 		$this->resolveDependencies();
 		$this->request->injectSettings($this->settings);
-
-		$response = new Response();
 
 		$this->router->setRoutesConfiguration($this->routesConfiguration);
 		$actionRequest = $this->router->route($this->request);
 
 		$this->securityContext->injectRequest($actionRequest);
 
-		$this->dispatcher->dispatch($actionRequest, $response);
+		$this->dispatcher->dispatch($actionRequest, $this->response);
 
-		$response->makeStandardsCompliant($this->request);
-		$response->send();
+		$this->response->makeStandardsCompliant($this->request);
+		$this->response->send();
 
 		$this->bootstrap->shutdown('Runtime');
 		$this->exit->__invoke();
@@ -131,9 +132,20 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 * Returns the currently handled HTTP request
 	 *
 	 * @return \TYPO3\FLOW3\Http\Request
+	 * @api
 	 */
 	public function getHttpRequest() {
 		return $this->request;
+	}
+
+	/**
+	 * Returns the HTTP response corresponding to the currently handled request
+	 *
+	 * @return \TYPO3\FLOW3\Http\Response
+	 * @api
+	 */
+	public function getHttpResponse() {
+		return $this->response;
 	}
 
 	/**

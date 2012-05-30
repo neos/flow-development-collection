@@ -44,6 +44,11 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	protected $httpRequest;
 
 	/**
+	 * @var \TYPO3\FLOW3\Http\Response
+	 */
+	protected $httpResponse;
+
+	/**
 	 * Constructor
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
@@ -95,6 +100,16 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	}
 
 	/**
+	 * Returns the HTTP response corresponding to the currently handled request
+	 *
+	 * @return \TYPO3\FLOW3\Http\Response
+	 * @api
+	 */
+	public function getHttpResponse() {
+		return $this->httpResponse;
+	}
+
+	/**
 	 * Allows to set the currently processed HTTP request by the base functional
 	 * test case.
 	 *
@@ -104,6 +119,18 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	 */
 	public function setHttpRequest(\TYPO3\FLOW3\Http\Request $request) {
 		$this->httpRequest = $request;
+	}
+
+	/**
+	 * Allows to set the currently processed HTTP response by the base functional
+	 * test case.
+	 *
+	 * @param \TYPO3\FLOW3\Http\Response $response
+	 * @return void
+	 * @see InternalRequestEngine::sendRequest()
+	 */
+	public function setHttpResponse(\TYPO3\FLOW3\Http\Response $response) {
+		$this->httpResponse = $response;
 	}
 }
 
