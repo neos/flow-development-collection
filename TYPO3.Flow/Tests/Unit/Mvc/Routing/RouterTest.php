@@ -167,6 +167,75 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function routeSetsDefaultControllerAndActionNameIfNoRouteMatches() {
+		$mockUri = $this->getMockBuilder('TYPO3\FLOW3\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/requestPath'));
+
+		$mockBaseUri = $this->getMockBuilder('TYPO3\FLOW3\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/'));
+
+		$mockActionRequest = $this->getMockBuilder('TYPO3\FLOW3\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
+		$mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
+		$mockActionRequest->expects($this->once())->method('setControllerName')->with('Standard');
+		$mockActionRequest->expects($this->once())->method('setControllerActionName')->with('index');
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\FLOW3\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
+		$mockHttpRequest->expects($this->once())->method('getUri')->will($this->returnValue($mockUri));
+		$mockHttpRequest->expects($this->once())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+
+		$router = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Router')->setMethods(array('findMatchResults'))->getMock();
+		$router->expects($this->once())->method('findMatchResults')->with('requestPath')->will($this->returnValue(NULL));
+
+		$router->route($mockHttpRequest);
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeMergesRouteValuesOfMatchedRouteWithRequestArguments() {
+		$requestArguments = array(
+			'product' => array('__identity' => 'SomeUUID', 'name' => 'name from request'),
+			'toBeOverridden' => 'from request',
+			'toBeKept' => 'keep me'
+		);
+		$routeValues = array(
+			'product' => array('name' => 'Some product', 'price' => 123.45),
+			'toBeOverridden' => 'from route',
+			'newValue' => 'new value from route'
+		);
+		$expectedResult = array(
+			'product' => array('__identity' => 'SomeUUID', 'name' => 'Some product', 'price' => 123.45),
+			'toBeOverridden' => 'from route',
+			'toBeKept' => 'keep me',
+			'newValue' => 'new value from route'
+		);
+
+		$mockUri = $this->getMockBuilder('TYPO3\FLOW3\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/requestPath'));
+
+		$mockBaseUri = $this->getMockBuilder('TYPO3\FLOW3\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/'));
+
+		$mockActionRequest = $this->getMockBuilder('TYPO3\FLOW3\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->once())->method('getArguments')->will($this->returnValue($requestArguments));
+		$mockActionRequest->expects($this->once())->method('setArguments')->with($expectedResult);
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\FLOW3\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
+		$mockHttpRequest->expects($this->once())->method('getUri')->will($this->returnValue($mockUri));
+		$mockHttpRequest->expects($this->once())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+
+		$router = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Router')->setMethods(array('findMatchResults'))->getMock();
+		$router->expects($this->once())->method('findMatchResults')->with('requestPath')->will($this->returnValue($routeValues));
+
+		$router->route($mockHttpRequest);
+	}
+
+	/**
 	 * Data Provider
 	 *
 	 * @return array
