@@ -23,6 +23,8 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	protected $propertyMapper;
 
+	static protected $testablePersistenceEnabled = TRUE;
+
 	/**
 	 * @return void
 	 */
@@ -157,5 +159,58 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass', $configuration);
 	}
 
+	/**
+	 * @test
+	 */
+	public function mappingPersistentEntityOnlyChangesModifiedProperties() {
+		$entityIdentity = $this->createTestEntity();
+
+		$source = array(
+			'__identity' => $entityIdentity,
+			'averageNumberOfKids' => '5.5'
+		);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$this->assertSame('Egon Olsen', $result->getName());
+		$this->assertSame(42, $result->getAge());
+		$this->assertSame(5.5, $result->getAverageNumberOfKids());
+	}
+
+	/**
+	 * @test
+	 */
+	public function mappingPersistentEntityAllowsToSetValueToNull() {
+		$entityIdentity = $this->createTestEntity();
+
+		$source = array(
+			'__identity' => $entityIdentity,
+			'averageNumberOfKids' => ''
+		);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$this->assertSame('Egon Olsen', $result->getName());
+		$this->assertSame(42, $result->getAge());
+		$this->assertSame(NULL, $result->getAverageNumberOfKids());
+	}
+
+	/**
+	 * Add and persist a test entity, and return the identifier of the newly created
+	 * entity.
+	 *
+	 * @return string identifier of newly created entity
+	 */
+	protected function createTestEntity() {
+		$entity = new Fixtures\TestEntity();
+		$entity->setName('Egon Olsen');
+		$entity->setAge(42);
+		$entity->setAverageNumberOfKids(3.5);
+		$this->persistenceManager->add($entity);
+		$entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		return $entityIdentifier;
+	}
 }
 ?>
