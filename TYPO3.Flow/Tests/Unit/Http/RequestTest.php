@@ -302,6 +302,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function serverEnvironmentsForClientIpAddresses() {
 		return array(
 			array(array(), '17.172.224.47'),
+			array(array('HTTP_CLIENT_IP' => 'murks'), '17.172.224.47'),
 			array(array('HTTP_CLIENT_IP' => '17.149.160.49'), '17.149.160.49'),
 			array(array('HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '17.149.160.49'),
 			array(array('HTTP_X_FORWARDED_FOR' => '123.123.123.123'), '123.123.123.123'),

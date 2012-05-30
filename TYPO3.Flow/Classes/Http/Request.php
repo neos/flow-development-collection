@@ -328,7 +328,7 @@ class Request extends Message {
 	 * account, certain combinations of ISPs and proxies might still produce wrong
 	 * results.
 	 *
-	 * Don't rely on the client IP address as the only security mesure!
+	 * Don't rely on the client IP address as the only security measure!
 	 *
 	 * @return string The client's IP address
 	 * @api
@@ -341,7 +341,7 @@ class Request extends Message {
 			}
 			$length = strpos($this->server[$field], ',');
 			$ipAddress = trim(($length === FALSE) ? $this->server[$field] : substr($this->server[$field], 0, $length));
-			if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== FALSE) {
+			if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== FALSE) {
 				return $ipAddress;
 			}
 		}
