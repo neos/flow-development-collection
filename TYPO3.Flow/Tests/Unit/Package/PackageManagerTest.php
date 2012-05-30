@@ -144,6 +144,51 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function packageStatesConfigurationContainsRelativePaths() {
+		$packageKeys = array(
+			'RobertLemke.FLOW3.NothingElse' . md5(uniqid(mt_rand(), TRUE)),
+			'TYPO3.FLOW3' . md5(uniqid(mt_rand(), TRUE)),
+			'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), TRUE)),
+		);
+
+		foreach ($packageKeys as $packageKey) {
+			$packageNamespace = str_replace('.', '\\', $packageKey);
+			$packagePath = 'vfs://Test/Packages/Application/' . str_replace('.', '/', $packageNamespace) . '/';
+			$packageClassCode = '<?php
+namespace ' . $packageNamespace . ';
+class Package extends \TYPO3\FLOW3\Package\Package {}
+?>';
+
+			mkdir($packagePath, 0770, TRUE);
+			mkdir($packagePath . 'Classes');
+			mkdir($packagePath . 'Meta');
+			file_put_contents($packagePath . 'Classes/Package.php', $packageClassCode);
+			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
+		}
+
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
+		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
+		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+
+		$packageManager->_set('packages', array());
+		$packageManager->_call('scanAvailablePackages');
+
+		$expectedPackageStatesConfiguration = array();
+		foreach ($packageKeys as $packageKey) {
+			$expectedPackageStatesConfiguration[$packageKey] = array(
+				'state' => 'active',
+				'packagePath' => 'Application/' . str_replace('.', '/', $packageKey) . '/',
+				'classesPath' => 'Classes/'
+			);
+		}
+
+		$actualPackageStatesConfiguration = $packageManager->_get('packageStatesConfiguration');
+		$this->assertEquals($expectedPackageStatesConfiguration, $actualPackageStatesConfiguration['packages']);
+	}
+
+	/**
 	 * Data Provider returning valid package keys and the corresponding path
 	 *
 	 * @return array
