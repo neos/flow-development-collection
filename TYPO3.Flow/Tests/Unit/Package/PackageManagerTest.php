@@ -95,7 +95,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		foreach ($expectedPackageKeys as $packageKey) {
 			$packageNamespace = str_replace('.', '\\', $packageKey);
-			$packagePath = 'vfs://Test/Packages/Application/' . str_replace('.', '/', $packageNamespace) . '/';
+			$packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
 			$packageClassCode = '<?php
 					namespace ' . $packageNamespace . ';
 					class Package extends \TYPO3\FLOW3\Package\Package {}
@@ -118,6 +118,53 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$packageStates = require('vfs://Test/Configuration/PackageStates.php');
 		$actualPackageKeys = array_keys($packageStates['packages']);
 		$this->assertEquals(sort($expectedPackageKeys), sort($actualPackageKeys));
+	}
+
+	/**
+	 * @test
+	 */
+	public function scanAvailablePackagesKeepsExistingPackageConfiguration() {
+		$expectedPackageKeys = array(
+			'TYPO3.FLOW3' . md5(uniqid(mt_rand(), TRUE)),
+			'TYPO3.FLOW3.Test' . md5(uniqid(mt_rand(), TRUE)),
+			'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), TRUE)),
+			'RobertLemke.FLOW3.NothingElse' . md5(uniqid(mt_rand(), TRUE))
+		);
+
+		foreach ($expectedPackageKeys as $packageKey) {
+			$packageNamespace = str_replace('.', '\\', $packageKey);
+			$packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
+			$packageClassCode = '<?php
+					namespace ' . $packageNamespace . ';
+					class Package extends \TYPO3\FLOW3\Package\Package {}
+			?>';
+
+			mkdir($packagePath, 0770, TRUE);
+			mkdir($packagePath . 'Classes');
+			mkdir($packagePath . 'Meta');
+			file_put_contents($packagePath . 'Classes/Package.php', $packageClassCode);
+			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
+		}
+
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
+		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
+		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+
+		$packageManager->_set('packageStatesConfiguration', array(
+			'packages' => array(
+				$packageKey => array(
+					'state' => 'inactive',
+					'frozen' => FALSE,
+					'packagePath' => 'Application/' . $packageKey . '/',
+					'classesPath' => 'Classes/'
+				)
+			),
+			'version' => 2
+		));
+		$packageManager->_call('scanAvailablePackages');
+
+		$packageStates = require('vfs://Test/Configuration/PackageStates.php');
+		$this->assertEquals('inactive', $packageStates['packages'][$packageKey]['state']);
 	}
 
 	/**
