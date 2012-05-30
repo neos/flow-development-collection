@@ -93,9 +93,6 @@ class ConfigurationManager {
 		} while ($currentContext = $currentContext->getParent());
 		$this->orderedListOfContextNames = array_reverse($orderedListOfContextNames);
 
-		if (!is_dir(FLOW3_PATH_CONFIGURATION . (string)$context) && !is_link(FLOW3_PATH_CONFIGURATION . (string)$context)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(FLOW3_PATH_CONFIGURATION . (string)$context);
-		}
 		$this->includeCachedConfigurationsPathAndFilename = FLOW3_PATH_CONFIGURATION . (string)$context . '/IncludeCachedConfigurations.php';
 	}
 
@@ -353,6 +350,9 @@ return require '$cachePathAndFilename';
 ?>
 EOD;
 		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . '?>');
+		if (!is_dir(dirname($this->includeCachedConfigurationsPathAndFilename)) && !is_link(dirname($this->includeCachedConfigurationsPathAndFilename))) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($this->includeCachedConfigurationsPathAndFilename));
+		}
 		file_put_contents($this->includeCachedConfigurationsPathAndFilename, $includeCachedConfigurationsCode);
 		if (!file_exists($this->includeCachedConfigurationsPathAndFilename)) {
 			throw new \TYPO3\FLOW3\Configuration\Exception(sprintf('Could not write configuration cache file "%s". Check file permissions for the parent directory.', $this->includeCachedConfigurationsPathAndFilename), 1323339284);
