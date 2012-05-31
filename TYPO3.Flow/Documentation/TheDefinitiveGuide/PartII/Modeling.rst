@@ -95,7 +95,7 @@ a ``Blog`` object in an array or better in an
 from a given Blog all you need to do is calling the ``getPosts`` method of the
 Blog in question:
 
-.. code-blog:: php
+.. code-block:: php
 
 	$posts = $blog->getPosts();
 
