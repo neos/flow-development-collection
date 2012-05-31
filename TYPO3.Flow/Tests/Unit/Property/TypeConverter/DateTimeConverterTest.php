@@ -189,6 +189,23 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function convertFromProperlyConvertsArrayWithDateAsArray() {
+		$source = array('day' => '13', 'month' => '10', 'year' => '2010');
+		$mappingConfiguration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
+		$mappingConfiguration->setTypeConverterOption(
+				'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
+				\TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+				'Y-m-d'
+		);
+
+		$date = $this->converter->convertFrom($source, 'DateTime', array(), $mappingConfiguration);
+		$actualResult = $date->format('Y-m-d');
+		$this->assertSame('2010-10-13', $actualResult);
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertFromAllowsToOverrideTheTime() {
 		$source = array(
 			'date' => '2011-06-16',
