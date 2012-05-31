@@ -21,6 +21,7 @@ use TYPO3\FLOW3\Validation\Validator\ConjunctionValidator;
  * Validator resolver to automatically find a appropriate validator for a given subject
  *
  * @FLOW3\Scope("singleton")
+ * @api
  */
 class ValidatorResolver {
 
@@ -82,6 +83,7 @@ class ValidatorResolver {
 	 * @param array $validatorOptions Options to be passed to the validator
 	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorInterface
 	 * @throws \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException
+	 * @api
 	 */
 	public function createValidator($validatorType, array $validatorOptions = array()) {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
@@ -115,6 +117,7 @@ class ValidatorResolver {
 	 * @param string $targetClassName Fully qualified class name of the target class, ie. the class which should be validated
 	 * @param array $validationGroups The validation groups to build the validator for
 	 * @return \TYPO3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction
+	 * @api
 	 */
 	public function getBaseValidatorConjunction($targetClassName, array $validationGroups = array('Default')) {
 		$targetClassName = trim($targetClassName, ' \\');
