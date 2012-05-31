@@ -335,7 +335,7 @@ one).
 * Commit: `96b49cb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=96b49cb6219d7cccd2bce479cec2f0bcc8c418bb>`_
 
 [!!!][BUGFIX] Float and Integer converters do not correctly handle errors and empty values
------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 
 When an argument of a controller action is annotated with
 @param integer $var, the validation never fails if a string
@@ -529,10 +529,11 @@ supported:
 * application/x-www-form-urlencoded
 * application/json
 * xml
+
+
 * Resolves: `#36913 <http://forge.typo3.org/issues/36913>`_
 * Related: `#37402 <http://forge.typo3.org/issues/37402>`_
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-
 * Commit: `8ce2f8d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8ce2f8da04576f850dc1bb02c22fdd582f02df86>`_
 
 [TASK] Common base class Message for Request / Response
