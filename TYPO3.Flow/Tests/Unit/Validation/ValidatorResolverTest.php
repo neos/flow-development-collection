@@ -96,6 +96,18 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function resolveValidatorObjectNameCanResolveShorthandValidatornamesForHierarchicalPackages() {
+		$this->mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Mypkg.Foo:My')->will($this->returnValue(FALSE));
+		$this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('Mypkg\Foo\Validation\Validator\\MyValidator')->will($this->returnValue(TRUE));
+
+		$this->mockReflectionService->expects($this->atLeastOnce())->method('isClassImplementationOf')->with('Mypkg\Foo\Validation\Validator\\MyValidator', 'TYPO3\FLOW3\Validation\Validator\ValidatorInterface')->will($this->returnValue(TRUE));
+
+		$this->assertSame('Mypkg\Foo\Validation\Validator\\MyValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Mypkg.Foo:My'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function resolveValidatorObjectNameCanResolveShortNamesOfBuiltInValidators() {
 		$this->mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Foo')->will($this->returnValue(FALSE));
 		$this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('TYPO3\FLOW3\Validation\Validator\FooValidator')->will($this->returnValue(TRUE));
