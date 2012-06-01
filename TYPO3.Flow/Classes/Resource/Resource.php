@@ -24,7 +24,7 @@ class Resource {
 
 	/**
 	 * @var \TYPO3\FLOW3\Resource\ResourcePointer
-	 * @ORM\ManyToOne
+	 * @ORM\ManyToOne(cascade={"persist", "merge"})
 	 */
 	protected $resourcePointer;
 
