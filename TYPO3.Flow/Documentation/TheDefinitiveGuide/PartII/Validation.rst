@@ -68,7 +68,7 @@ annotations.
 .. tip::
 	FLOW3 provides a range of built-in validators which can be found in the
 	*FLOW3\Validation\Validator* sub package. The names used in the
-	``type`` dattributes are just the unqualified class names of these validators.
+	``type`` attributes are just the unqualified class names of these validators.
 
 	It is possible and very simple to program custom validators by implementing
 	the ``TYPO3\FLOW3\Validation\Validator\ValidatorInterface``.
