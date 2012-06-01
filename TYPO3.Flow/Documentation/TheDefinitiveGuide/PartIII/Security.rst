@@ -47,7 +47,7 @@ Authentication
 One of the main things people associate with security is authentication. That means to
 identify your communication partner - the one sending a request to FLOW3. Therefore the
 framework provides an infrastructure to easily use different mechanisms for such a
-plausibility proof. The most important achievment of the provided infrastructure is its
+plausibility proof. The most important achievement of the provided infrastructure is its
 flexible extensibility. You can easily write your own authentication mechanisms and
 configure the framework to use them without touching the framework code itself. The
 details are explained in the section  :ref:`Implementing your own authentication mechanism`.
@@ -77,7 +77,7 @@ configuration looks like this:
 	    authentication:
 	      providers:
 	        DefaultProvider:
-	          providerClass: PersistedUsernamePasswordProvider
+	          provider: PersistedUsernamePasswordProvider
 
 This registers the ``PersistedUsernamePasswordProvider`` authentication provider under
 the name "``DefaultProvider``" as the only, global authentication mechanism. To
@@ -106,7 +106,7 @@ you provided valid credentials an account will be authenticated afterwards. [#]_
 .. note::
 
 	After authentication the ``authenticate()`` action will automatically redirect to the
-	original request, if the authentication process has been triggerd due missing privileges
+	original request, if the authentication process has been triggered due missing privileges
 	while handling this original request.
 
 The internal authentication process
@@ -178,7 +178,7 @@ provider is able to authenticate the ``UsernamePassword`` token.
 
 After checking the credentials, it is the responsibility of an authentication provider to
 set the correct authentication status (see above) and ``Roles`` in its corresponding token.
-The role implementation resides in the ``TYPO3\FLOW3\Security\Poilcy`` namespace. (see the
+The role implementation resides in the ``TYPO3\FLOW3\Security\Policy`` namespace. (see the
 Policy section for details).
 
 .. _Account management:
@@ -219,6 +219,11 @@ the authentication status of this account.
 	In case of a directory service, the real authentication will probably not take place
 	in the provider itself, but the provider will pass the result of the directory service
 	on to the authentication token.
+
+.. note::
+
+	The ``DefaultProvider`` authentication provider used in the examples is not shipped
+	with FLOW3, you have to configure all available authentication providers in your application.
 
 Creating accounts
 ~~~~~~~~~~~~~~~~~
@@ -272,7 +277,7 @@ again the configuration of the default authentication provider:
 	  authentication:
 	    providers:
 	      DefaultProvider:
-	        providerClass: PersistedUsernamePasswordProvider
+	        provider: PersistedUsernamePasswordProvider
 
 If you have a closer look at this configuration, you can see, that the word providers is
 plural. That means, you have the possibility to configure more than one provider and use
@@ -291,10 +296,10 @@ them in "parallel".
 	  authentication:
 	    providers:
 	      MyLDAPProvider:
-	        providerClass: TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider
-	        options: 'Some LDAP configuration options'
+	        provider: TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider
+	        providerOptions: 'Some LDAP configuration options'
 	      DefaultProvider:
-	        providerClass: PersistedUsernamePasswordProvider
+	        provider: PersistedUsernamePasswordProvider
 
 This will advice the authentication manager to first authenticate over the LDAP provider
 and if that fails it will try to authenticate the default provider. So this configuration
@@ -345,7 +350,7 @@ in a POST request or set in an HTTP Basic authentication header.
 	  authentication:
 	    providers:
 	      DefaultProvider:
-	        providerClass: PersistedUsernamePasswordProvider
+	        provider: PersistedUsernamePasswordProvider
 	        tokenClass: UsernamePasswordHttpBasic
 
 .. _Request Patterns:
@@ -368,12 +373,12 @@ configuration:
 	  authentication:
 	    providers:
 	      MyLDAPProvider:
-	        providerClass: TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider
-	        options: 'Some LDAP configuration options'
+	        provider: TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider
+	        providerOptions: 'Some LDAP configuration options'
 	        requestPatterns:
 	         controllerObjectName: TYPO3\MyApplication\AdministrationArea\.*
 	      DefaultProvider:
-	        providerClass: PersistedUsernamePasswordProvider
+	        provider: PersistedUsernamePasswordProvider
 	        requestPatterns:
 	         controllerObjectName: TYPO3\MyApplication\UserArea\.*
 
@@ -439,10 +444,10 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 	  authentication:
 	    providers:
 	      DefaultProvider:
-	        providerClass: PersistedUsernamePasswordProvider
-	        entryPoint:
-	          WebRedirect:
-	            uri: login/
+	        provider: PersistedUsernamePasswordProvider
+	        entryPoint: 'WebRedirect'
+	        entryPointOptions:
+	            uri: 'login/'
 
 .. note::
 
@@ -812,7 +817,7 @@ The role ``PrivilegedCustomer`` is configured as a sub role of ``Customer``, for
 example it will inherit the privileges from the ``Customer`` role.
 
 FLOW3 will always add the magic ``Everybody`` role, which you don't have to
-configure youreself. This role will also be present, if no account is authenticated.
+configure yourself. This role will also be present, if no account is authenticated.
 
 Likewise, the magic role ``Anonymous`` is added to the security context if a user
 is not authenticated.
@@ -863,11 +868,12 @@ have a look at an example for such ACL entries:
 	  Administrator:
 	    methods:
 	      listMethods:         GRANT
-	      modifyMethods:       GRANT
+	      updateMethods:       GRANT
+	      deleteMethods:       GRANT
 	  Customer:
 	    methods:
 	      listMethods:         GRANT
-	  PriviledgedCustomer:
+	  PrivilegedCustomer:
 	    methods:
 	      updateMethods:       GRANT
 	      deleteMethods:       DENY
@@ -891,7 +897,7 @@ when writing your policies:
 
 *Runtime constraints*
 
-Runtime constraints are a very poweful feature of FLOW3's AOP framework. A full reference
+Runtime constraints are a very powerful feature of FLOW3's AOP framework. A full reference
 of the possibilities can be found in the AOP chapter of this documentation. However, this
 features was mainly implemented to support sophisticated policy definitions and therefore
 here is a short introduction by two simple examples on how to use it:
@@ -907,7 +913,7 @@ here is a short introduction by two simple examples on how to use it:
 	      TYPO3_FooPackage_secondResource: TYPO3_FooPackage_firstResource &amp;&amp; evaluate(current.securityContext.party.name == "Andi")
 
 The above configuration defines a resource that matches on the ``updateProject`` method
-only if it is not called with the ``title`` arugment equal to "FLOW3". The second resource
+only if it is not called with the ``title`` argument equal to "FLOW3". The second resource
 matches if the first one matches and the ``name`` property of the currently authenticated
 ``party`` is equal to "Andi".
 
@@ -928,7 +934,7 @@ Security for persisted objects
 	    Acme_MyPackage_Domain_Model_Customer:
 	      Acme_MyPackage_Customers_All: 'ANY'
 	      Acme_MyPackage_Customers_Vip: 'this.vip == TRUE'
-	      Acme_MyPackage_Customers_Me: 'current.securityContext.account != this.account && this.account != NULL'
+	      Acme_MyPackage_Customers_Me: 'current.securityContext.account == this.account && this.account != NULL'
 
 The ``Acme_MyPacakge_Customer_All`` resource will match any customer object.
 The ``Acme_MyPacakge_Customer_Vip`` resource matches all customer's which have their
@@ -937,7 +943,7 @@ The ``Acme_MyPackage_Customer_Me`` resource matches any customer object whose ac
 property matches the currently logged in account.
 
 * if an entity resource is defined, access is denied automatically to all who don't
-  have access granted to that new resource explictly defined in the ACLs.
+  have access granted to that new resource explicitly defined in the ACLs.
 * if there is no ``ANY`` resource defined, only objects explicitly matched by one of
   the other resources are denied by default.
 * if there is a ``ANY`` resource define, all objects of this type will be denied for
@@ -1039,14 +1045,14 @@ Hash service
 ------------
 
 * hashing/verifying hashes
-* special hasing strategies/algorithms
+* special hashing strategies/algorithms
 * random number generation
 
 RSA wallet service
 ------------------
 
 * cli commands to safe keys
-* crypting/decrypting/verifying signatures
+* encrypting/decrypting/verifying signatures
 
 .. _http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq:  http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq
 
