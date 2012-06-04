@@ -206,12 +206,13 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	public function getFrozenPackages() {
 		$frozenPackages = array();
-		foreach ($this->packages as $packageKey => $package) {
-			if (isset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']) &&
-					$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] === TRUE) {
-				$frozenPackages[$packageKey] = $package;
+		if ($this->bootstrap->getContext()->isDevelopment()) {
+			foreach ($this->packages as $packageKey => $package) {
+				if (isset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']) &&
+						$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] === TRUE) {
+					$frozenPackages[$packageKey] = $package;
+				}
 			}
-
 		}
 		return $frozenPackages;
 	}
@@ -391,6 +392,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 */
 	public function freezePackage($packageKey) {
+		if (!$this->bootstrap->getContext()->isDevelopment()) {
+			throw new \LogicException('Package freezing is only supported in Development context.', 1338810870);
+		}
+
 		if (!$this->isPackageActive($packageKey)) {
 			throw new \TYPO3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available or active.', 1331715956);
 		}
@@ -412,8 +417,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	public function isPackageFrozen($packageKey) {
 		return (
-			isset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']) &&
-			$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] === TRUE
+			$this->bootstrap->getContext()->isDevelopment()
+			&& isset($this->packageStatesConfiguration['packages'][$packageKey]['frozen'])
+			&& $this->packageStatesConfiguration['packages'][$packageKey]['frozen'] === TRUE
 		);
 	}
 

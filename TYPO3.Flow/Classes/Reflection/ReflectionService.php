@@ -1553,7 +1553,7 @@ class ReflectionService {
 
 	/**
 	 * Stores the current reflection data related to classes of the specified package
-	 * in the Configuration directory of that package.
+	 * in the PrecompiledReflectionData directory for the current context.
 	 *
 	 * This method is used by the package manager.
 	 *
