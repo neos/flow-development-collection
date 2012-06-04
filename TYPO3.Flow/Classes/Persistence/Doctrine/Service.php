@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * Service class for tasks related to Doctrine
@@ -43,15 +44,10 @@ class Service {
 	protected $packageManager;
 
 	/**
-	 * Injects the FLOW3 settings, the persistence part is kept
-	 * for further use.
-	 *
-	 * @param array $settings
-	 * @return void
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings['persistence'];
-	}
+	protected $environment;
 
 	/**
 	 * Validates the metadata mapping for Doctrine, using the SchemaValidator
@@ -107,6 +103,7 @@ class Service {
 	 * @return void
 	 */
 	public function compileProxies() {
+		Files::emptyDirectoryRecursively(Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies')));
 		$proxyFactory = $this->entityManager->getProxyFactory();
 		$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 	}
