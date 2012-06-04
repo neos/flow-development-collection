@@ -408,23 +408,23 @@ class ObjectManager implements ObjectManagerInterface {
 
 		try {
 			switch (count($arguments)) {
-				case 0: return new $className();
-				case 1: return new $className($arguments[0]);
-				case 2: return new $className($arguments[0], $arguments[1]);
-				case 3: return new $className($arguments[0], $arguments[1], $arguments[2]);
-				case 4: return new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
-				case 5: return new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
-				case 6: return new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
+				case 0: $object = new $className(); break;
+				case 1: $object = new $className($arguments[0]); break;
+				case 2: $object = new $className($arguments[0], $arguments[1]); break;
+				case 3: $object = new $className($arguments[0], $arguments[1], $arguments[2]); break;
+				case 4: $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]); break;
+				case 5: $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]); break;
+				case 6: $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]); break;
+				default:
+					$class = new \ReflectionClass($className);
+					$object =  $class->newInstanceArgs($arguments);
 			}
-			$class = new \ReflectionClass($className);
-			$object =  $class->newInstanceArgs($arguments);
+			unset ($this->classesBeingInstantiated[$className]);
+			return $object;
 		} catch (\Exception $exception) {
 			unset ($this->classesBeingInstantiated[$className]);
 			throw $exception;
 		}
-
-		unset ($this->classesBeingInstantiated[$className]);
-		return $object;
 	}
 
 }
