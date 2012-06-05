@@ -114,7 +114,7 @@ class Request extends Message {
 
 		$defaultServerEnvironment = array(
 			'HTTP_USER_AGENT' => 'FLOW3/' . FLOW3_VERSION_BRANCH . '.x',
-			'HTTP_HOST' => $uri->getHost(),
+			'HTTP_HOST' => $uri->getHost() . ($uri->getPort() !== 80 ? ':' . $uri->getPort() : ''),
 			'SERVER_NAME' => $uri->getHost(),
 			'SERVER_ADDR' => '127.0.0.1',
 			'SERVER_PORT' => $uri->getPort() ?: 80,
@@ -127,7 +127,7 @@ class Request extends Message {
 
 		if ($uri->getScheme() === 'https') {
 			$defaultServerEnvironment['HTTPS'] = 'on';
-			$defaultServerEnvironment['SERVER_PORT'] = 443;
+			$defaultServerEnvironment['SERVER_PORT'] = $uri->getPort() ?: 443;
 		}
 
 		if (in_array($method, array('POST', 'PUT', 'DELETE'))) {

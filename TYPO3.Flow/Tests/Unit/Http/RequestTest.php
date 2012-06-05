@@ -493,6 +493,48 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
+	public function nonStandardPortIsAddedToHttpHost() {
+		$request = Request::create(new Uri('http://dev.blog.rob:8080/foo/bar?baz=quux&coffee=due'));
+		$this->assertSame(8080, $request->getUri()->getPort());
+	}
+
+	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
+	public function nonStandardPortIsAddedToServerPort() {
+		$request = Request::create(new Uri('http://dev.blog.rob:8080/foo/bar?baz=quux&coffee=due'));
+		$reflectedServerProperty = new \ReflectionProperty(get_class($request), 'server');
+		$reflectedServerProperty->setAccessible(TRUE);
+		$serverValue = $reflectedServerProperty->getValue($request);
+		$this->assertSame(8080, $serverValue['SERVER_PORT']);
+	}
+
+	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
+	public function nonStandardHttpsPortIsAddedToHttpHost() {
+		$request = Request::create(new Uri('https://dev.blog.rob:44343/foo/bar?baz=quux&coffee=due'));
+		$this->assertSame(44343, $request->getUri()->getPort());
+	}
+
+	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
+	public function nonStandardHttpsPortIsAddedToServerPort() {
+		$request = Request::create(new Uri('https://dev.blog.rob:44343/foo/bar?baz=quux&coffee=due'));
+		$reflectedServerProperty = new \ReflectionProperty(get_class($request), 'server');
+		$reflectedServerProperty->setAccessible(TRUE);
+		$serverValue = $reflectedServerProperty->getValue($request);
+		$this->assertSame(44343, $serverValue['SERVER_PORT']);
+	}
+
+	/**
 	 * @test
 	 */
 	public function setContentRebuildsUnifiedArgumentsToIntegratePutArguments() {
