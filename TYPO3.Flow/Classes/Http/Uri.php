@@ -96,7 +96,7 @@ class Uri {
 			$this->username = isset($uriParts['user']) ? $uriParts['user'] : NULL;
 			$this->password = isset($uriParts['pass']) ? $uriParts['pass'] : NULL;
 			$this->host = isset($uriParts['host']) ? $uriParts['host'] : NULL;
-			$this->port = isset($uriParts['port']) ? $uriParts['port'] : NULL;
+			$this->port = isset($uriParts['port']) ? $uriParts['port'] : (isset($uriParts['scheme']) && $uriParts['scheme'] === 'https' ? 443 : NULL);
 			$this->path = isset($uriParts['path']) ? $uriParts['path'] : NULL;
 			if (isset($uriParts['query'])) {
 				$this->setQuery ($uriParts['query']);
