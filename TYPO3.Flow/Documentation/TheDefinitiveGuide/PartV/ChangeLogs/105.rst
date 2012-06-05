@@ -1,0 +1,271 @@
+====================
+1.0.5
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Change comment on RewriteBase directive
+-----------------------------------------------------------------------------------------
+
+* Commit: `ba9d4e9 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=ba9d4e94e8facafdf9078a89d0e0f96b417ef71f>`_
+
+[BUGFIX] Make Settings.yaml.example a working example
+-----------------------------------------------------------------------------------------
+
+With this change the Settings.yaml.example can be used as is,
+because the key "doctrine" is commented out now.
+
+* Fixes: `#33410 <http://forge.typo3.org/issues/33410>`_
+* Commit: `5fbea99 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=5fbea995fa0d15310aff0c259d332c0cd1749dd4>`_
+
+[TASK] Update Upgrading.txt with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `c59c471 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=c59c471781d198b3746cdf5deee1e47a75e9489e>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Common
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Doctrine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Symfony.Component.Yaml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.FLOW3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Action arguments of type DateTime throw Exception
+-----------------------------------------------------------------------------------------
+
+If an action argument is an object, the ValidatorResolver tries to
+instantiate that object to use it as Validator without checks.
+
+This change solves this by checking if the specified object implements
+the ValidatorInterface.
+
+* Fixes: `#35338 <http://forge.typo3.org/issues/35338>`_
+* Commit: `64a8f49 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=64a8f49896332e8f69c9d01ba2f6e68f0640e213>`_
+
+[BUGFIX] Nested arrays in Annotation options are no longer dropped
+-----------------------------------------------------------------------------------------
+
+When giving a nested array of options to an annotation the rendered
+form in proxy classes was cut off.
+
+* Fixes: `#37193 <http://forge.typo3.org/issues/37193>`_
+* Commit: `04c3486 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=04c348617735fe345087c19a5dac55192240206d>`_
+
+[BUGFIX] HTML should be escaped in Debug Exception
+-----------------------------------------------------------------------------------------
+
+HTML in the code that is output as part of the stack trace is
+escaped now.
+
+* Fixes: `#25961 <http://forge.typo3.org/issues/25961>`_
+* Commit: `1c33165 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1c3316531f1311937377d9c8a676018baaafab49>`_
+
+[BUGFIX] Fix error message about command controller classes
+-----------------------------------------------------------------------------------------
+
+If you create a CommandController which is not in the "Controller" directory
+of a package or where the name does not end in "CommandController" you will
+get an error saying "Invalid controller class name [...] 1305100019".
+
+This change makes the error message a little more helpful.
+
+* Fixes: `#33139 <http://forge.typo3.org/issues/33139>`_
+* Commit: `cc72a1c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cc72a1c6dd12855c7d9dd43aed48db8aca0f7a03>`_
+
+[BUGFIX] PersistenceManager->add() now requires objects being new
+-----------------------------------------------------------------------------------------
+
+The add method in repositories did also update existing entities,
+this can be dangerous, as it allows an attacker to misuse creation
+forms (i.e. a register form) and change existing entities.
+
+* Fixes: `#34527 <http://forge.typo3.org/issues/34527>`_
+* Commit: `df6b6f4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=df6b6f457cbe2d282a7b3d857acac7987635a54d>`_
+
+[BUGFIX] Fix Wrong exception message in Repository->remove()
+-----------------------------------------------------------------------------------------
+
+The message would say add() was involved, which is wrong.
+
+* Fixes: `#37448 <http://forge.typo3.org/issues/37448>`_
+* Commit: `c13969e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c13969e78cdac842040e465871e77070a5946a18>`_
+
+[BUGFIX] Skip functional test if Doctrine is not enabled
+-----------------------------------------------------------------------------------------
+
+The Flow3AnnotationDriverTest should be skipped if Doctrine is not
+enabled to prevent problems if no actual driver or connection
+can be created.
+
+* Commit: `3044312 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=304431233d823af73f894f120094b2590e645869>`_
+
+[FEATURE] Add __toString() and make Resource use more convenient
+-----------------------------------------------------------------------------------------
+
+To use a Resource with file operations, one can use the
+resource:// scheme and the __toString() method of any
+ResourcePointer.
+
+To make this a little easier, this change adds two new
+methods to the Resource class:
+
+__toString() returns the SHA1 of the ResourcePointer the
+Resource is holding (as is documented for ages).
+
+getUri() returns a ready-to-use resource://<sha1> URI of
+the ResourcePointer the Resource is holding.
+
+* Fixes: `#29694 <http://forge.typo3.org/issues/29694>`_
+* Resolves: `#34177 <http://forge.typo3.org/issues/34177>`_
+
+* Commit: `8c7ec51 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8c7ec51b5a0e90a859c102fde6f5f0859babed1a>`_
+
+[BUGFIX] flow3.php now uses return code from setfilepermissions.sh
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#36279 <http://forge.typo3.org/issues/36279>`_
+* Commit: `a0de72a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a0de72aa66bbed2b44c88221ab8ffbdfb810a6b2>`_
+
+[BUGFIX] Proxy methods with referenced arguments should work
+-----------------------------------------------------------------------------------------
+
+Arguments given by reference would result in an exception if
+the method was proxied due to AOP.
+
+* Fixes: `#30914 <http://forge.typo3.org/issues/30914>`_
+* Fixes: `#13333 <http://forge.typo3.org/issues/13333>`_
+
+* Commit: `fed005b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fed005bf03d37e0ae48db565d28ca87653e9341b>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `29961d6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=29961d6d31b442d0b44375161105ad7c03e0b807>`_
+
+[BUGFIX] Fixes handling of numeric annotation parameters
+-----------------------------------------------------------------------------------------
+
+Annotations like @FooBar(amount=2) lost their parameter value
+in renderAnnotation(). This change fixes that.
+
+* Fixes: `#33932 <http://forge.typo3.org/issues/33932>`_
+* Commit: `1fb98a9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1fb98a958e7a28698997724385d78e094c8ad3a9>`_
+
+[BUGFIX] Make flow3.bat output usage texts matching Windows
+-----------------------------------------------------------------------------------------
+
+When using flow3.bat on Windows the usage information would tell the
+user to call "./flow3", which doesn't fit the Windows world.
+
+* Fixes: `#33048 <http://forge.typo3.org/issues/33048>`_
+* Commit: `b33afd7 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b33afd7b7190150e521f19e22c2de5b957f313c4>`_
+
+[TASK] Add early returns to Security\\Context::hasRole
+-----------------------------------------------------------------------------------------
+
+Change the behavior of hasRole so it has an early return
+when the authenticationManager is not yet authenticated
+(and thus no role can be assigned to the authenticated user).
+
+Also an earlier return on the Everyone role.
+
+* Fixes: `#32841 <http://forge.typo3.org/issues/32841>`_
+* Commit: `024f8fc <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=024f8fc597af78b351991780486f44f742c9ecfe>`_
+
+[BUGFIX] Keep class doc comments when building proxies
+-----------------------------------------------------------------------------------------
+
+Currently the doc comment of a class is replaced with
+"Autogenerated Proxy Class" when the proxy class is generated.
+This change fixes this and keeps the original doc comment.
+
+That is particulary useful if you rely on the original comment
+when creating automatic class documentations.
+
+* Fixes: `#34110 <http://forge.typo3.org/issues/34110>`_
+* Commit: `465c4cb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=465c4cbe06fa750999907d351595778f3adde96c>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fixes doc comment of Form.ValidationResultsViewHelper
+-----------------------------------------------------------------------------------------
+
+The example in the class doc comment was outdated and is fixed with
+this change.
+
+* Fixes: `#31380 <http://forge.typo3.org/issues/31380>`_
+* Commit: `a481d4a <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=a481d4ad57a2141c4ccd6d6c1385cd2bff4b51ec>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `5e72fd9 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=5e72fd95cf1f8d088553bc573b242fb9fb59e4ea>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Kickstart kickstart:model should give correct example
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#36155 <http://forge.typo3.org/issues/36155>`_
+* Commit: `4bd6bc2 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=4bd6bc27673eb05522f4316236f249bdc92060ca>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `d6d142f <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=d6d142f23ce7bd03dddde2566dd21ff6afcca496>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] PrimaryElectronicAddress should check before adding
+-----------------------------------------------------------------------------------------
+
+With setPrimaryElectronicAddress the electronic address is also
+added to the electronicAddress collection but it should check
+first if it is already in to avoid creating duplicate entries.
+
+* Fixes: `#29484 <http://forge.typo3.org/issues/29484>`_
+* Commit: `736f2ec <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=736f2ecbe68d7d85832ff21ddc84e8cb8663b4b6>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `f21f580 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=f21f580691325786ff27db6f71ce48d9ad6ee087>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix links and update "About" content
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#36580 <http://forge.typo3.org/issues/36580>`_
+* Commit: `d37f215 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=d37f215bb03158617c45497532477008a7a9cf34>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `2116b95 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=2116b955f9ecce7741df954d07af55c0177865e6>`_
+
