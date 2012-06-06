@@ -1,0 +1,4 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'compileConfigurationFiles': { type: boolean, required: TRUE }

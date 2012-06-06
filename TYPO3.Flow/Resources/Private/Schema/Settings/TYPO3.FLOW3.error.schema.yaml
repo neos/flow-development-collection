@@ -1,0 +1,18 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'exceptionHandler':
+    type: dictionary
+    additionalProperties: FALSE
+    required: TRUE
+    properties:
+      'className': { type: string, required: TRUE, format: class-name }
+  'errorHandler':
+    type: dictionary
+    additionalProperties: FALSE
+    required: TRUE
+    properties:
+      'exceptionalErrors':
+        type: array
+        required: TRUE
+        items: { type: [string, integer] }

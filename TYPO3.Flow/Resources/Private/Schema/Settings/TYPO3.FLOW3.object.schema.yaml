@@ -1,0 +1,4 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'registerFunctionalTestClasses': { type: boolean, required: TRUE }
