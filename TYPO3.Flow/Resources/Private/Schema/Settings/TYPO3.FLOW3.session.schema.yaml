@@ -1,0 +1,21 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'inactivityTimeout': { type: integer, required: TRUE }
+  'PhpSession':
+    type: dictionary
+    required: TRUE
+    additionalProperties: FALSE
+    properties:
+      'name': { type: [string, 'null'], required: TRUE }
+      'savePath': { type: [ string, 'null'], required: TRUE }
+      'cookie':
+        type: dictionary
+        required: TRUE
+        additionalProperties: FALSE
+        properties:
+          'lifetime': { type: integer }
+          'path': { type: string }
+          'secure': { type: boolean }
+          'httponly': { type: boolean }
+          'domain': { type: [ string, 'null' ] }

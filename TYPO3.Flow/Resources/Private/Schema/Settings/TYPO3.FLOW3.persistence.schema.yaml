@@ -1,0 +1,31 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'backendOptions':
+    type: dictionary
+    required: TRUE
+    properties:
+      'driver':
+        type: string
+        enum: [ 'pdo_mysql', 'pdo_sqlite', 'pdo_pgsql', 'pdo_oci', 'oci8', 'ibm_db2', 'pdo_ibm', 'pdo_sqlsrv', 'mysqli' ]
+      'host':
+        -
+          type: string
+          format: host-name
+        -
+          type: string
+          format: ip-address
+      'charset': { type: string }
+      'dbname': { type: string }
+      'user': { type: string }
+      'password':  { type: string }
+      'path': { type: string }
+
+  'doctrine':
+    type: dictionary
+    required: TRUE
+    additionalProperties: FALSE
+    properties:
+      'enable': { type: boolean, required: TRUE }
+      'cacheImplementation': { type: string, format: class-name, required: TRUE }
+      'sqlLogger': { type: [string, 'null'], required: TRUE }

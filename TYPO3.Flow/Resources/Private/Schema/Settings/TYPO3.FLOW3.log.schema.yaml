@@ -1,0 +1,16 @@
+type: dictionary
+additionalProperties:
+  type: dictionary
+  additionalProperties: FALSE
+  properties:
+    'backend': { type: string, format: class-name }
+    'backendOptions':
+      type: dictionary
+      properties:
+        'logFileURL':  { type: string }
+        'createParentDirectories':  { type: boolean }
+        'severityThreshold': { type: [string, integer] }
+        'maximumLogFileSize': { type: integer }
+        'logFilesToKeep': { type: integer }
+        'logMessageOrigin': { type: boolean }
+        'logIpAddress': { type: boolean }
