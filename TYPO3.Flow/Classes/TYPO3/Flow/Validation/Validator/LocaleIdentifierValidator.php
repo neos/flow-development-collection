@@ -24,10 +24,8 @@ use TYPO3\Flow\Annotations as Flow;
 class LocaleIdentifierValidator extends AbstractValidator {
 
 	/**
-	 * Is valid if the given property ($propertyValue) is empty or a valid "locale identifier".
-	 * Set error if pattern does not match
-	 *
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * Is valid if the given value is a valid "locale identifier"
+	 * based on the expressions of the FLOW3 I18n implementation.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

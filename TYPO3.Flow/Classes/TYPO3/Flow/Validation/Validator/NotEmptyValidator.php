@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for not empty values
+ * Validator for not empty values.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -30,9 +30,7 @@ class NotEmptyValidator extends AbstractValidator {
 	protected $acceptsEmptyValues = FALSE;
 
 	/**
-	 * Checks if the given property ($propertyValue) is not empty (NULL or empty string).
-	 *
-	 * If at least one error occurred, the $this->result->hasErrors() is TRUE.
+	 * Checks if the given value is not empty (NULL or empty string).
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for integers
+ * Validator for integers.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -23,7 +23,6 @@ class IntegerValidator extends AbstractValidator {
 
 	/**
 	 * Checks if the given value is a valid integer.
-	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

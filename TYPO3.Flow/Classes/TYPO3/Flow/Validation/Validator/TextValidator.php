@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for text
+ * Validator for "plain" text.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -22,11 +22,13 @@ use TYPO3\Flow\Annotations as Flow;
 class TextValidator extends AbstractValidator {
 
 	/**
-	 * Checks if the given $value is a valid text (contains no XML tags). @see filter_var()
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * Checks if the given value is a valid text (contains no XML tags).
+	 *
 	 * Be aware that the value of this check entirely depends on the output context.
-	 * The validated text is not expected to be secure in every circumstance, if you want to be sure of that, use
-	 * a customized regular expression or filter on output.
+	 * The validated text is not expected to be secure in every circumstance, if you
+	 * want to be sure of that, use a customized regular expression or filter on output.
+	 *
+	 * See http://php.net/filter_var for details.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

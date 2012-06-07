@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for Universally Unique Identifiers
+ * Validator for Universally Unique Identifiers.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -29,7 +29,6 @@ class UuidValidator extends AbstractValidator {
 
 	/**
 	 * Checks if the given value is a syntactically valid UUID.
-	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

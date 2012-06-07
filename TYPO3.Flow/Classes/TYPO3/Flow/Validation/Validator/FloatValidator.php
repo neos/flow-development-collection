@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for floats
+ * Validator for floats.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -22,8 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class FloatValidator extends AbstractValidator {
 
 	/**
-	 * The given $value is valid if it is of type float or a string matching the regular expression [0-9.e+-]
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * The given value is valid if it is of type float or a string matching the regular expression [0-9.e+-]
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
