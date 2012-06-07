@@ -184,8 +184,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param integer $depth How many levels deep the result should be dumped
 	 * @param string $hydrationMode One of: object, array, scalar, single-scalar, simpleobject
-	 * @param integer $offset
-	 * @param integer $limit
+	 * @param integer $offset Offset the result by this number
+	 * @param integer $limit Limit the result to this number
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
@@ -334,7 +334,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * Otherwise an empty migration skeleton is generated.
 	 *
-	 * @param boolean $diffAgainstCurrent
+	 * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
 	 * @return void
 	 * @see typo3.flow3:doctrine:migrate
 	 * @see typo3.flow3:doctrine:migrationstatus
