@@ -42,7 +42,7 @@ For a quick start follow the these simple steps:
 	Of course you can also use the package TYPO3.FLOW3 from any FLOW3 distribution you installed
 	already.
 
-#. Read the documentation and adjust it as needed.
+#. Read the documentation and adjust it as needed - it is in the *Documentation* directory.
 
 #. Push it to gerrit, or alternatively upload a patch with the changes to the
    `Forge Issue Tracker <http://forge.typo3.org/projects/flow3-documentation/issues>`_.

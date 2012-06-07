@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-02-04
+This reference was automatically generated from code on 2012-06-07
 
 
 f:alias
@@ -12,7 +12,6 @@ Takes a "map"-Parameter which is an associative array which defines the shorthan
 
 The variables are only declared inside the <f:alias>...</f:alias>-tag. After the
 closing tag, all declared variables are removed again.
-
 
 
 
@@ -32,7 +31,7 @@ Examples
 	<f:alias map="{x: 'foo'}">{x}</f:alias>
 
 
-Expected result:::
+Expected result::
 
 	foo
 
@@ -44,7 +43,7 @@ Expected result:::
 	</f:alias>
 
 
-Expected result:::
+Expected result::
 
 	[name] or [name]
 	depending on {foo.bar.baz}
@@ -62,8 +61,6 @@ In FLOW3, you should always include this ViewHelper to make the links work.
 
 
 
-
-
 Examples
 ********
 
@@ -72,7 +69,7 @@ Examples
 	<f:base />
 
 
-Expected result:::
+Expected result::
 
 	<base href="http://yourdomain.tld/" />
 	(depending on your domain)
@@ -91,8 +88,6 @@ CDATA tags to avoid this.
 
 
 
-
-
 Examples
 ********
 
@@ -106,7 +101,7 @@ Examples
 	After
 
 
-Expected result:::
+Expected result::
 
 	Before
 	After
@@ -121,12 +116,10 @@ Expected result:::
 
 
 
-
 f:count
 -------
 
 This ViewHelper counts elements of the specified array or countable object.
-
 
 
 
@@ -146,7 +139,7 @@ Examples
 	<f:count subject="{0:1, 1:2, 2:3, 3:4}" />
 
 
-Expected result:::
+Expected result::
 
 	4
 
@@ -156,7 +149,7 @@ Expected result:::
 	{objects -> f:count()}
 
 
-Expected result:::
+Expected result::
 
 	10 (depending on the number of items in {objects})
 
@@ -169,7 +162,6 @@ f:cycle
 This ViewHelper cycles through the specified values.
 This can be often used to specify CSS classes for example.
 **Note:** To achieve the "zebra class" effect in a loop you can also use the "iteration" argument of the **for** ViewHelper.
-
 
 
 
@@ -191,7 +183,7 @@ Examples
 	<f:for each="{0:1, 1:2, 2:3, 3:4}" as="foo"><f:cycle values="{0: 'foo', 1: 'bar', 2: 'baz'}" as="cycle">{cycle}</f:cycle></f:for>
 
 
-Expected result:::
+Expected result::
 
 	foobarbazfoo
 
@@ -207,7 +199,7 @@ Expected result:::
 	</ul>
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li class="odd">1</li>
@@ -226,11 +218,12 @@ Viewhelper that outputs its childnodes with \TYPO3\var_dump()
 
 
 
-
 Arguments
 *********
 
 * ``title`` (string, *optional*): 
+
+* ``typeOnly`` (boolean, *optional*): Whether only the type should be returned instead of the whole chain.
 
 
 
@@ -243,9 +236,19 @@ Examples
 	{object -> f:debug(title: 'Custom title')}
 
 
-Expected result:::
+Expected result::
 
 	all properties of {object} nicely highlighted (with custom title)
+
+
+**only output the type**::
+
+	{object -> f:debug(typeOnly: 1)}
+
+
+Expected result::
+
+	the type or class name of {object}
 
 
 
@@ -254,8 +257,6 @@ f:else
 ------
 
 Else-Branch of a condition. Only has an effect inside of "If". See the If-ViewHelper for documentation.
-
-
 
 
 
@@ -272,87 +273,10 @@ Examples
 	</f:if>
 
 
-Expected result:::
+Expected result::
 
 	Everything inside the "else" tag is displayed if the condition evaluates to FALSE.
 	Otherwise nothing is outputted in this example.
-
-
-
-
-f:escape (deprecated)
----------------------
-
-The EscapeViewHelper is used to escape variable content in various ways.
-
-
-**DEPRECATED** since 1.0.0 alpha 7; use corresponding f:format.* ViewHelpers instead
-
-
-
-Arguments
-*********
-
-* ``value`` (string, *optional*): The value to be escaped
-
-* ``type`` (string, *optional*): The type, one of 'html', 'entities', 'url'
-
-* ``encoding`` (string, *optional*): 
-
-
-
-
-Examples
-********
-
-**HTML**::
-
-	<f:escape>{text}</f:escape>
-
-
-Expected result:::
-
-	Text with & " ' < > * replaced by HTML entities (htmlspecialchars applied).
-
-
-**Entities**::
-
-	<f:escape type="entities">{text}</f:escape>
-
-
-Expected result:::
-
-	Text with all possible chars replaced by HTML entities (htmlentities applied).
-
-
-**XML**::
-
-	<f:escape type="xml">{text}</f:escape>
-
-
-Expected result:::
-
-	Replaces only "<", ">" and "&" by entities as required for valid XML.
-
-
-**URL**::
-
-	<f:escape type="url">{text}</f:escape>
-
-
-Expected result:::
-
-	Text encoded for URL use (rawurlencode applied).
-
-
-**Text**::
-
-	<f:escape type="text">{someHtml}</f:escape>
-
-
-Expected result:::
-
-	Strips all tags from the HTML or XML input and returns plain text.
 
 
 
@@ -361,7 +285,6 @@ f:flashMessages
 ---------------
 
 View helper which renders the flash messages (if there are any) as an unsorted list.
-
 
 
 
@@ -403,7 +326,7 @@ Examples
 	<f:flashMessages />
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li class="flashmessages-ok">Some Default Message</li>
@@ -416,7 +339,7 @@ Expected result:::
 	<f:flashMessages class="specialClass" />
 
 
-Expected result:::
+Expected result::
 
 	<ul class="specialClass">
 	  <li class="specialClass-ok">Default Message</li>
@@ -436,7 +359,7 @@ Expected result:::
 	</f:flashMessages>
 
 
-Expected result:::
+Expected result::
 
 	<dl class="messages">
 		<dt>1013</dt>
@@ -451,7 +374,6 @@ f:for
 
 Loop view helper which can be used to interate over array.
 Implements what a basic foreach()-PHP-method does.
-
 
 
 
@@ -479,7 +401,7 @@ Examples
 	<f:for each="{0:1, 1:2, 2:3, 3:4}" as="foo">{foo}</f:for>
 
 
-Expected result:::
+Expected result::
 
 	1234
 
@@ -493,7 +415,7 @@ Expected result:::
 	</ul>
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li>fruit1: apple</li>
@@ -512,7 +434,7 @@ Expected result:::
 	</ul>
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li>Index: 0 Cycle: 1 Total: 4 Odd First</li>
@@ -526,7 +448,6 @@ Expected result:::
 
 f:form
 ------
-
 
 
 
@@ -598,12 +519,10 @@ Arguments
 
 
 
-
 f:form.button
 -------------
 
 Creates a button.
-
 
 
 
@@ -665,7 +584,7 @@ Examples
 	<f:form.button>Send Mail</f:form.button>
 
 
-Expected result:::
+Expected result::
 
 	<button type="submit" name="" value="">Send Mail</button>
 
@@ -675,7 +594,7 @@ Expected result:::
 	<f:form.button type="reset" name="buttonName" value="buttonValue" disabled="disabled" formmethod="post" formnovalidate="formnovalidate">Cancel</f:form.button>
 
 
-Expected result:::
+Expected result::
 
 	<button disabled="disabled" formmethod="post" formnovalidate="formnovalidate" type="reset" name="myForm[buttonName]" value="buttonValue">Cancel</button>
 
@@ -686,7 +605,6 @@ f:form.checkbox
 ---------------
 
 View Helper which creates a simple checkbox (<input type="checkbox">).
-
 
 
 
@@ -738,7 +656,7 @@ Examples
 	<f:form.checkbox name="myCheckBox" value="someValue" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="checkbox" name="myCheckBox" value="someValue" />
 
@@ -748,7 +666,7 @@ Expected result:::
 	<f:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="checkbox" name="myCheckBox" value="someValue" checked="checked" />
 	(depending on $object)
@@ -759,7 +677,7 @@ Expected result:::
 	<f:form.checkbox property="interests" value="TYPO3" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
 	(depending on property "interests")
@@ -771,7 +689,6 @@ f:form.hidden
 -------------
 
 Renders an <input type="hidden" ...> tag.
-
 
 
 
@@ -815,7 +732,7 @@ Examples
 	<f:form.hidden name="myHiddenValue" value="42" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="hidden" name="myHiddenValue" value="42" />
 
@@ -826,7 +743,6 @@ f:form.password
 ---------------
 
 View Helper which creates a simple Password Text Box (<input type="password">).
-
 
 
 
@@ -880,7 +796,7 @@ Examples
 	<f:form.password name="myPassword" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="password" name="myPassword" value="default value" />
 
@@ -891,7 +807,6 @@ f:form.radio
 ------------
 
 View Helper which creates a simple radio button (<input type="radio">).
-
 
 
 
@@ -941,7 +856,7 @@ Examples
 	<f:form.radio name="myRadioButton" value="someValue" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="radio" name="myRadioButton" value="someValue" />
 
@@ -951,7 +866,7 @@ Expected result:::
 	<f:form.radio name="myRadioButton" value="someValue" checked="{object.value} == 5" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="radio" name="myRadioButton" value="someValue" checked="checked" />
 	(depending on $object)
@@ -963,7 +878,7 @@ Expected result:::
 	<f:form.radio property="newsletter" value="0" /> no
 
 
-Expected result:::
+Expected result::
 
 	<input type="radio" name="user[newsletter]" value="1" checked="checked" /> yes
 	<input type="radio" name="user[newsletter]" value="0" /> no
@@ -974,7 +889,6 @@ Expected result:::
 
 f:form.select
 -------------
-
 
 
 
@@ -1027,6 +941,7 @@ Arguments
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
+* ``translate`` (array, *optional*): Configures translation of view helper output.
 
 
 
@@ -1035,7 +950,6 @@ f:form.submit
 -------------
 
 Creates a submit button.
-
 
 
 
@@ -1081,7 +995,7 @@ Examples
 	<f:form.submit value="Send Mail" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="submit" />
 
@@ -1091,7 +1005,7 @@ Expected result:::
 	<f:submit name="mySubmit" value="Send Mail"><button>dummy button</button></f:submit>
 
 
-Expected result:::
+Expected result::
 
 	<input type="submit" name="mySubmit" value="Send Mail" />
 
@@ -1103,7 +1017,6 @@ f:form.textarea
 
 Textarea view helper.
 The value of the text area needs to be set via the "value" attribute, as with all other form ViewHelpers.
-
 
 
 
@@ -1155,7 +1068,7 @@ Examples
 	<f:form.textarea name="myTextArea" value="This is shown inside the textarea" />
 
 
-Expected result:::
+Expected result::
 
 	<textarea name="myTextArea">This is shown inside the textarea</textarea>
 
@@ -1166,7 +1079,6 @@ f:form.textfield
 ----------------
 
 View Helper which creates a text field (<input type="text">).
-
 
 
 
@@ -1226,82 +1138,7 @@ Examples
 	<f:form.textfield name="myTextBox" value="default value" />
 
 
-Expected result:::
-
-	<input type="text" name="myTextBox" value="default value" />
-
-
-
-
-f:form.textbox (deprecated)
----------------------------
-
-DEPRECATED: Use <f:form.textfield> instead!
-
-View Helper which creates a simple Text Box (<input type="text">).
-
-
-**DEPRECATED** since 1.0.0 alpha 7
-
-
-
-Arguments
-*********
-
-* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
-
-* ``required`` (boolean, *optional*): If the field is required or not
-
-* ``type`` (string, *optional*): The field type, e.g. "text", "email", "url" etc.
-
-* ``placeholder`` (string, *optional*): A string used as a placeholder for the value to enter
-
-* ``name`` (string, *optional*): Name of input tag
-
-* ``value`` (mixed, *optional*): Value of input tag
-
-* ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
-
-* ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
-
-* ``maxlength`` (int, *optional*): The maxlength attribute of the input field (will not be validated)
-
-* ``readonly`` (string, *optional*): The readonly attribute of the input field
-
-* ``size`` (int, *optional*): The size of the input field
-
-* ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
-
-* ``class`` (string, *optional*): CSS class(es) for this element
-
-* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
-
-* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
-
-* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
-
-* ``style`` (string, *optional*): Individual CSS styles for this element
-
-* ``title`` (string, *optional*): Tooltip text of element
-
-* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
-
-* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
-
-* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
-
-
-
-
-Examples
-********
-
-**Example**::
-
-	<f:form.textbox name="myTextBox" value="default value" />
-
-
-Expected result:::
+Expected result::
 
 	<input type="text" name="myTextBox" value="default value" />
 
@@ -1313,7 +1150,6 @@ f:form.upload
 
 A view helper which generates an <input type="file"> HTML element.
 Make sure to set enctype="multipart/form-data" on the form!
-
 
 
 
@@ -1361,7 +1197,7 @@ Examples
 	<f:form.upload name="file" />
 
 
-Expected result:::
+Expected result::
 
 	<input type="file" name="file" />
 
@@ -1372,7 +1208,6 @@ f:form.validationResults
 ------------------------
 
 Validation results view helper
-
 
 
 
@@ -1394,15 +1229,21 @@ Examples
 	<f:form.validationResults>
 	  <f:if condition="{validationResults.flattenedErrors}">
 	    <ul class="errors">
-	      <f:for each="{validationResults.errors}" as="error">
-	        <li>{error.code}: {error}</li>
+	      <f:for each="{validationResults.flattenedErrors}" as="errors" key="propertyPath">
+	        <li>{propertyPath}
+	          <ul>
+	          <f:for each="{errors}" as="error">
+	            <li>{error.code}: {error}</li>
+	          </f:for>
+	          </ul>
+	        </li>
 	      </f:for>
 	    </ul>
 	  </f:if>
 	</f:form.validationResults>
 
 
-Expected result:::
+Expected result::
 
 	<ul class="errors">
 	  <li>1234567890: Validation errors for argument "newBlog"</li>
@@ -1422,7 +1263,7 @@ Expected result:::
 	</f:form.validationResults>
 
 
-Expected result:::
+Expected result::
 
 	<ul class="errors">
 	  <li>1234567890: Some error message</li>
@@ -1435,7 +1276,6 @@ f:format.crop
 -------------
 
 Use this view helper to crop the text between its opening and closing tags.
-
 
 
 
@@ -1457,7 +1297,7 @@ Examples
 	<f:format.crop maxCharacters="10">This is some very long text</f:format.crop>
 
 
-Expected result:::
+Expected result::
 
 	This is so...
 
@@ -1467,7 +1307,7 @@ Expected result:::
 	<f:format.crop maxCharacters="17" append=" [more]">This is some very long text</f:format.crop>
 
 
-Expected result:::
+Expected result::
 
 	This is some very [more]
 
@@ -1478,7 +1318,6 @@ f:format.currency
 -----------------
 
 Formats a given float to a currency representation.
-
 
 
 
@@ -1502,7 +1341,7 @@ Examples
 	<f:format.currency>123.456</f:format.currency>
 
 
-Expected result:::
+Expected result::
 
 	123,46
 
@@ -1512,7 +1351,7 @@ Expected result:::
 	<f:format.currency currencySign="$" decimalSeparator="." thousandsSeparator=",">54321</f:format.currency>
 
 
-Expected result:::
+Expected result::
 
 	54,321.00 $
 
@@ -1522,7 +1361,7 @@ Expected result:::
 	{someNumber -> f:format.currency(thousandsSeparator: ',', currencySign: '€')}
 
 
-Expected result:::
+Expected result::
 
 	54,321,00 €
 	(depending on the value of {someNumber})
@@ -1534,7 +1373,6 @@ f:format.date
 -------------
 
 Formats a \DateTime object.
-
 
 
 
@@ -1556,7 +1394,7 @@ Examples
 	<f:format.date>{dateObject}</f:format.date>
 
 
-Expected result:::
+Expected result::
 
 	1980-12-13
 	(depending on the current date)
@@ -1567,7 +1405,7 @@ Expected result:::
 	<f:format.date format="H:i">{dateObject}</f:format.date>
 
 
-Expected result:::
+Expected result::
 
 	01:23
 	(depending on the current time)
@@ -1578,7 +1416,7 @@ Expected result:::
 	<f:format.date format="d.m.Y - H:i:s">+1 week 2 days 4 hours 2 seconds</f:format.date>
 
 
-Expected result:::
+Expected result::
 
 	13.12.1980 - 21:03:42
 	(depending on the current time, see http://www.php.net/manual/en/function.strtotime.php)
@@ -1589,7 +1427,7 @@ Expected result:::
 	<f:format.date format="d.m.Y - H:i:s">@{someTimestamp}</f:format.date>
 
 
-Expected result:::
+Expected result::
 
 	13.12.1980 - 21:03:42
 	(depending on the current time. Don't forget the "@" in front of the timestamp see http://www.php.net/manual/en/function.strtotime.php)
@@ -1600,7 +1438,7 @@ Expected result:::
 	{f:format.date(date: dateObject)}
 
 
-Expected result:::
+Expected result::
 
 	1980-12-13
 	(depending on the value of {dateObject})
@@ -1611,7 +1449,7 @@ Expected result:::
 	{dateObject -> f:format.date()}
 
 
-Expected result:::
+Expected result::
 
 	1980-12-13
 	(depending on the value of {dateObject})
@@ -1626,7 +1464,6 @@ f:format.htmlentitiesDecode
 
 
 
-
 Arguments
 *********
 
@@ -1635,7 +1472,6 @@ Arguments
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
 * ``encoding`` (string, *optional*): 
-
 
 
 
@@ -1647,7 +1483,6 @@ f:format.htmlentities
 
 
 
-
 Arguments
 *********
 
@@ -1658,7 +1493,6 @@ Arguments
 * ``encoding`` (string, *optional*): 
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
-
 
 
 
@@ -1670,7 +1504,6 @@ f:format.htmlspecialchars
 
 
 
-
 Arguments
 *********
 
@@ -1682,6 +1515,58 @@ Arguments
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
+
+
+
+f:format.json
+-------------
+
+Wrapper for PHPs json_encode function.
+
+
+
+Arguments
+*********
+
+* ``value`` (mixed, *optional*): The incoming data to convert, or NULL if VH children should be used
+
+* ``forceObject`` (bool, *optional*): Outputs an JSON object rather than an array
+
+
+
+
+Examples
+********
+
+**encoding a view variable**::
+
+	{someArray -> f:format.json()}
+
+
+Expected result::
+
+	["array","values"]
+	// depending on the value of {someArray}
+
+
+**associative array**::
+
+	{f:format.json(value: {foo: 'bar', bar: 'baz'})}
+
+
+Expected result::
+
+	{"foo":"bar","bar":"baz"}
+
+
+**non-associative array with forced object**::
+
+	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: 1)}
+
+
+Expected result::
+
+	{"0":"bar","1":"baz"}
 
 
 
@@ -1694,12 +1579,8 @@ f:format.nl2br
 
 
 
-
-
-
 f:format.number
 ---------------
-
 
 
 
@@ -1717,10 +1598,8 @@ Arguments
 
 
 
-
 f:format.padding
 ----------------
-
 
 
 
@@ -1738,14 +1617,12 @@ Arguments
 
 
 
-
 f:format.printf
 ---------------
 
 A view helper for formatting values with printf. Either supply an array for
 the arguments or a single value.
 See http://www.php.net/manual/en/function.sprintf.php
-
 
 
 
@@ -1765,7 +1642,7 @@ Examples
 	<f:format.printf arguments="{number: 362525200}">%.3e</f:format.printf>
 
 
-Expected result:::
+Expected result::
 
 	3.625e+8
 
@@ -1775,7 +1652,7 @@ Expected result:::
 	<f:format.printf arguments="{0: 3, 1: 'Kasper'}">%2$s is great, TYPO%1$d too. Yes, TYPO%1$d is great and so is %2$s!</f:format.printf>
 
 
-Expected result:::
+Expected result::
 
 	Kasper is great, TYPO3 too. Yes, TYPO3 is great and so is Kasper!
 
@@ -1785,7 +1662,7 @@ Expected result:::
 	<f:format.printf arguments="{1: 'TYPO3'}">We love %s</f:format.printf>
 
 
-Expected result:::
+Expected result::
 
 	We love TYPO3
 
@@ -1795,7 +1672,7 @@ Expected result:::
 	{someText -> f:format.printf(arguments: {1: 'TYPO3'})}
 
 
-Expected result:::
+Expected result::
 
 	We love TYPO3
 
@@ -1810,7 +1687,6 @@ an ObjectAccessor which should not be escaped, but output as-is.
 
 PAY SPECIAL ATTENTION TO SECURITY HERE (especially Cross Site Scripting),
 as the output is NOT SANITIZED!
-
 
 
 
@@ -1830,7 +1706,7 @@ Examples
 	<f:format.raw>{string}</f:format.raw>
 
 
-Expected result:::
+Expected result::
 
 	(Content of {string} without any conversion/escaping)
 
@@ -1840,7 +1716,7 @@ Expected result:::
 	<f:format.raw value="{string}" />
 
 
-Expected result:::
+Expected result::
 
 	(Content of {string} without any conversion/escaping)
 
@@ -1850,7 +1726,7 @@ Expected result:::
 	{string -> f:format.raw()}
 
 
-Expected result:::
+Expected result::
 
 	(Content of {string} without any conversion/escaping)
 
@@ -1864,12 +1740,10 @@ f:format.stripTags
 
 
 
-
 Arguments
 *********
 
 * ``value`` (string, *optional*): string to format
-
 
 
 
@@ -1881,12 +1755,10 @@ f:format.urlencode
 
 
 
-
 Arguments
 *********
 
 * ``value`` (string, *optional*): string to format
-
 
 
 
@@ -1898,7 +1770,6 @@ Grouped loop view helper.
 Loops through the specified values.
 
 The groupBy argument also supports property paths.
-
 
 
 
@@ -1928,7 +1799,7 @@ Examples
 	</f:groupedFor>
 
 
-Expected result:::
+Expected result::
 
 	apple cherry strawberry banana
 
@@ -1949,7 +1820,7 @@ Expected result:::
 	</ul>
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li>green fruits
@@ -1984,7 +1855,6 @@ Useful for using the identity outside of the form view helpers
 
 
 
-
 Arguments
 *********
 
@@ -2001,7 +1871,7 @@ Examples
 	<f:persistence.identity object="{post.blog}" />
 
 
-Expected result:::
+Expected result::
 
 	97e7e90a-413c-44ef-b2d0-ddfa4387b5ca
 
@@ -2012,7 +1882,7 @@ f:if
 ----
 
 This view helper implements an if/else condition.
-Check TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to find see how boolean arguments are evaluated
+Check TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to see how boolean arguments are evaluated
 
 **Conditions:**
 
@@ -2028,7 +1898,9 @@ XX and YY can be one of:
 - Object Accessor
 - Array
 - a ViewHelper
-Note: Strings at XX/YY are NOT allowed.
+Note: Strings at XX/YY are NOT allowed, however, for the time being,
+a string comparison can be achieved with comparing arrays (see example
+below).
 ::
 
   <f:if condition="{rank} > 100">
@@ -2040,7 +1912,9 @@ Note: Strings at XX/YY are NOT allowed.
   <f:if condition="{rank} == {k:bar()}">
     Checks if rank is equal to the result of the ViewHelper "k:bar"
   </f:if>
-
+  <f:if condition="{0: foo.bar} == {0: 'stringToCompare'}">
+    Will result true if {foo.bar}'s represented value equals 'stringToCompare'.
+  </f:if>
 
 
 
@@ -2066,7 +1940,7 @@ Examples
 	</f:if>
 
 
-Expected result:::
+Expected result::
 
 	Everything inside the <f:if> tag is being displayed if the condition evaluates to TRUE.
 
@@ -2083,7 +1957,7 @@ Expected result:::
 	</f:if>
 
 
-Expected result:::
+Expected result::
 
 	Everything inside the "then" tag is displayed if the condition evaluates to TRUE.
 	Otherwise, everything inside the "else"-tag is displayed.
@@ -2094,7 +1968,7 @@ Expected result:::
 	{f:if(condition: someCondition, then: 'condition is met', else: 'condition is not met')}
 
 
-Expected result:::
+Expected result::
 
 	The value of the "then" attribute is displayed if the condition evaluates to TRUE.
 	Otherwise, everything the value of the "else"-attribute is displayed.
@@ -2109,7 +1983,6 @@ With this tag, you can select a layout to be used for the current template.
 
 
 
-
 Arguments
 *********
 
@@ -2118,12 +1991,10 @@ Arguments
 
 
 
-
 f:link.action
 -------------
 
 A view helper for creating links to actions.
-
 
 
 
@@ -2189,7 +2060,7 @@ Examples
 	<f:link.action>some link</f:link.action>
 
 
-Expected result:::
+Expected result::
 
 	<a href="currentpackage/currentcontroller">some link</a>
 	(depending on routing setup and current package/controller/action)
@@ -2200,7 +2071,7 @@ Expected result:::
 	<f:link.action action="myAction" controller="MyController" package="YourCompanyName.MyPackage" subpackage="YourCompanyName.MySubpackage" arguments="{key1: 'value1', key2: 'value2'}">some link</f:link.action>
 
 
-Expected result:::
+Expected result::
 
 	<a href="mypackage/mycontroller/mysubpackage/myaction?key1=value1&amp;key2=value2">some link</a>
 	(depending on routing setup)
@@ -2213,7 +2084,6 @@ f:link.email
 
 Email link view helper.
 Generates an email link.
-
 
 
 
@@ -2261,7 +2131,7 @@ Examples
 	<f:link.email email="foo@bar.tld" />
 
 
-Expected result:::
+Expected result::
 
 	<a href="mailto:foo@bar.tld">foo@bar.tld</a>
 
@@ -2271,7 +2141,7 @@ Expected result:::
 	<f:link.email email="foo@bar.tld">some custom content</f:emaillink>
 
 
-Expected result:::
+Expected result::
 
 	<a href="mailto:foo@bar.tld">some custom content</a>
 
@@ -2282,7 +2152,6 @@ f:link.external
 ---------------
 
 A view helper for creating links to external targets.
-
 
 
 
@@ -2332,16 +2201,69 @@ Examples
 	<f:link.external uri="typo3.org" defaultScheme="ftp">external ftp link</f:link.external>
 
 
-Expected result:::
+Expected result::
 
 	<a href="ftp://typo3.org">external ftp link</a>
 
 
 
 
-f:link.widget
+f:widget.link
 -------------
 
+widget.link ViewHelper
+This ViewHelper can be used inside widget templates in order to render links pointing to widget actions
+
+
+
+Arguments
+*********
+
+* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
+
+* ``action`` (string, *optional*): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html
+
+* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+
+* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+
+* ``class`` (string, *optional*): CSS class(es) for this element
+
+* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
+
+* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
+
+* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
+
+* ``style`` (string, *optional*): Individual CSS styles for this element
+
+* ``title`` (string, *optional*): Tooltip text of element
+
+* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
+
+* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
+
+* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``name`` (string, *optional*): Specifies the name of an anchor
+
+* ``rel`` (string, *optional*): Specifies the relationship between the current document and the linked document
+
+* ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
+
+* ``target`` (string, *optional*): Specifies where to open the linked document
+
+
+
+
+f:link.widget
+-------------
 
 
 
@@ -2393,10 +2315,8 @@ Arguments
 
 
 
-
 f:renderChildren
 ----------------
-
 
 
 
@@ -2410,10 +2330,8 @@ Arguments
 
 
 
-
 f:render
 --------
-
 
 
 
@@ -2441,7 +2359,7 @@ Examples
 	<f:render partial="SomePartial" arguments="{foo: someVariable}" />
 
 
-Expected result:::
+Expected result::
 
 	the content of the partial "SomePartial". The content of the variable {someVariable} will be available in the partial as {foo}
 
@@ -2452,7 +2370,7 @@ Expected result:::
 	<f:render section="someSection" arguments="{foo: someVariable}" />
 
 
-Expected result:::
+Expected result::
 
 	the content of the section "someSection". The content of the variable {someVariable} will be available in the partial as {foo}
 
@@ -2474,7 +2392,7 @@ Expected result:::
 	<f:render section="mySection" arguments="{myMenu: menu}" />
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li>menu1
@@ -2492,7 +2410,7 @@ Expected result:::
 	<f:render partial="somePartial" arguments="{_all}" />
 
 
-Expected result:::
+Expected result::
 
 	the content of the partial "somePartial".
 	Using the reserved keyword "_all", all available variables will be passed along to the partial
@@ -2502,7 +2420,6 @@ Expected result:::
 
 f:section
 ---------
-
 
 
 
@@ -2525,7 +2442,7 @@ Examples
 	<f:render section="someSection" arguments="{foo: someVariable}" />
 
 
-Expected result:::
+Expected result::
 
 	the content of the section "someSection". The content of the variable {someVariable} will be available in the partial as {foo}
 
@@ -2547,7 +2464,7 @@ Expected result:::
 	<f:render section="mySection" arguments="{myMenu: menu}" />
 
 
-Expected result:::
+Expected result::
 
 	<ul>
 	  <li>menu1
@@ -2569,7 +2486,6 @@ This view helper implements an ifAccess/else condition.
 
 
 
-
 Arguments
 *********
 
@@ -2582,12 +2498,10 @@ Arguments
 
 
 
-
 f:security.ifAuthenticated
 --------------------------
 
 This view helper implements an ifAuthenticated/else condition.
-
 
 
 
@@ -2601,12 +2515,10 @@ Arguments
 
 
 
-
 f:security.ifHasRole
 --------------------
 
 This view helper implements an ifHasRole/else condition.
-
 
 
 
@@ -2622,12 +2534,8 @@ Arguments
 
 
 
-
 f:then
 ------
-
-
-
 
 
 
@@ -2643,13 +2551,12 @@ Also replaces all placeholders with formatted versions of provided values.
 
 
 
-
 Arguments
 *********
 
-* ``key`` (string, *optional*): Id to use for finding translation
+* ``id`` (string, *optional*): Id to use for finding translation (trans-unit id in XLIFF)
 
-* ``value`` (string, *optional*): if $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
+* ``value`` (string, *optional*): If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default
 
 * ``arguments`` (array, *optional*): Numerically indexed array of values to be inserted into placeholders
 
@@ -2667,34 +2574,44 @@ Arguments
 Examples
 ********
 
-**Default parameters**::
+**Translation by id**::
 
-	<f:translate>Untranslated label</f:translate>
+	<f:translate id="user.unregistered">Unregistered User</f:translate>
 
 
-Expected result:::
+Expected result::
 
-	translation of the label "Untranslated label"
+	translation of label with the id "user.unregistered" and a fallback to "Unregistered User"
+
+
+**Inline notation**::
+
+	{f:translate(id: 'some.label.id', default: 'fallback result')}
+
+
+Expected result::
+
+	translation of label with the id "some.label.id" and a fallback to "fallback result"
 
 
 **Custom source and locale**::
 
-	<f:translate source="SomeLabelsCatalog" locale="de_DE">Untranslated label</f:translate>
+	<f:translate id="some.label.id" somesource="SomeLabelsCatalog" locale="de_DE"/>
 
 
-Expected result:::
+Expected result::
 
-	translation of the label "Untranslated label" from custom source "SomeLabelsCatalog" and locale "de_DE"
+	translation from custom source "SomeLabelsCatalog" for locale "de_DE"
 
 
 **Custom source from other package**::
 
-	<f:translate source="LabelsCatalog" package="OtherPackage">Untranslated label</f:translate>
+	<f:translate id="some.label.id" source="LabelsCatalog" package="OtherPackage"/>
 
 
-Expected result:::
+Expected result::
 
-	translation of the label "Untranslated label" from custom source "LabelsCatalog" in "OtherPackage"
+	translation from custom source "LabelsCatalog" in "OtherPackage"
 
 
 **Arguments**::
@@ -2702,29 +2619,19 @@ Expected result:::
 	<f:translate arguments="{0: 'foo', 1: '99.9'}">Untranslated {0} and {1,number}</f:translate>
 
 
-Expected result:::
+Expected result::
 
 	translation of the label "Untranslated foo and 99.9"
 
 
-**Translation by id**::
+**Translation by label**::
 
-	<f:translate key="user.unregistered">Unregistered User</f:translate>
-
-
-Expected result:::
-
-	translation of label with the id "user.unregistered" and the default translation "Unregistered User"
+	<f:translate>Untranslated label</f:translate>
 
 
-**Inline notation**::
+Expected result::
 
-	{f:translate(key: 'someLabelId', default: 'default translation')}
-
-
-Expected result:::
-
-	translation of label with the id "someLabelId" and the default translation "default translation"
+	translation of the label "Untranslated label"
 
 
 
@@ -2733,7 +2640,6 @@ f:uri.action
 ------------
 
 A view helper for creating URIs to actions.
-
 
 
 
@@ -2773,7 +2679,7 @@ Examples
 	<f:uri.action>some link</f:uri.action>
 
 
-Expected result:::
+Expected result::
 
 	currentpackage/currentcontroller
 	(depending on routing setup and current package/controller/action)
@@ -2784,7 +2690,7 @@ Expected result:::
 	<f:uri.action action="myAction" controller="MyController" package="YourCompanyName.MyPackage" subpackage="YourCompanyName.MySubpackage" arguments="{key1: 'value1', key2: 'value2'}">some link</f:uri.action>
 
 
-Expected result:::
+Expected result::
 
 	mypackage/mycontroller/mysubpackage/myaction?key1=value1&amp;key2=value2
 	(depending on routing setup)
@@ -2797,7 +2703,6 @@ f:uri.email
 
 Email uri view helper.
 Currently the specified email is simply prepended by "mailto:" but we might add spam protection.
-
 
 
 
@@ -2817,7 +2722,7 @@ Examples
 	<f:uri.email email="foo@bar.tld" />
 
 
-Expected result:::
+Expected result::
 
 	mailto:foo@bar.tld
 
@@ -2829,7 +2734,6 @@ f:uri.external
 
 A view helper for creating URIs to external targets.
 Currently the specified URI is simply passed through.
-
 
 
 
@@ -2851,7 +2755,7 @@ Examples
 	<f:uri.external uri="typo3.org" defaultScheme="ftp" />
 
 
-Expected result:::
+Expected result::
 
 	ftp://typo3.org
 
@@ -2862,7 +2766,6 @@ f:uri.resource
 --------------
 
 A view helper for creating URIs to resources.
-
 
 
 
@@ -2888,7 +2791,7 @@ Examples
 	<link href="{f:uri.resource(path: 'CSS/Stylesheet.css')}" rel="stylesheet" />
 
 
-Expected result:::
+Expected result::
 
 	<link href="http://yourdomain.tld/_Resources/Static/YourPackage/CSS/Stylesheet.css" rel="stylesheet" />
 	(depending on current package)
@@ -2899,7 +2802,7 @@ Expected result:::
 	{f:uri.resource(path: 'gfx/SomeImage.png', package: 'DifferentPackage')}
 
 
-Expected result:::
+Expected result::
 
 	http://yourdomain.tld/_Resources/Static/DifferentPackage/gfx/SomeImage.png
 	(depending on domain)
@@ -2910,7 +2813,7 @@ Expected result:::
 	<img src="{f:uri.resource(resource: myImage.resource)}" />
 
 
-Expected result:::
+Expected result::
 
 	<img src="http://yourdomain.tld/_Resources/Persistent/69e73da3ce0ad08c717b7b9f1c759182d6650944.jpg" />
 	(depending on your resource object)
@@ -2918,9 +2821,34 @@ Expected result:::
 
 
 
-f:uri.widget
+f:widget.uri
 ------------
 
+widget.uri ViewHelper
+This ViewHelper can be used inside widget templates in order to render URIs pointing to widget actions
+
+
+
+Arguments
+*********
+
+* ``action`` (string, *optional*): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html
+
+* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+
+* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+
+
+
+
+f:uri.widget
+------------
 
 
 
@@ -2944,10 +2872,8 @@ Arguments
 
 
 
-
 f:widget.autocomplete
 ---------------------
-
 
 
 
@@ -2964,6 +2890,7 @@ Arguments
 
 * ``configuration`` (array, *optional*): 
 
+* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
 
 
@@ -2972,7 +2899,6 @@ f:widget.paginate
 -----------------
 
 This ViewHelper renders a Pagination of objects.
-
 
 
 
@@ -2985,6 +2911,7 @@ Arguments
 
 * ``configuration`` (array, *optional*): 
 
+* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
 
 
