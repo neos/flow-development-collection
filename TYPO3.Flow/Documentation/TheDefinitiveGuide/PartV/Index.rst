@@ -7,7 +7,6 @@ Part V: Appendixes
 	ValidatorReference
 	FluidViewHelperReference
 	CommandReference
-	Doctrine
 	ContributingToFLOW3
 	CodingGuideLines/Index
 	ChangeLogs/Index
