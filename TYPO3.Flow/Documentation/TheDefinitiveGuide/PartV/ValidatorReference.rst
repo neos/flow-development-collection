@@ -1,7 +1,7 @@
 FLOW3 Validator Reference
 =========================
 
-This reference was automatically generated from code on 2012-06-07
+This reference was automatically generated from code on 2012-06-08
 
 
 AlphanumericValidator
@@ -47,11 +47,11 @@ will be skipped.
 Arguments
 *********
 
-* ``elementValidator`` (NULL, *optional*): The validator type to use for the collection elements
+* ``elementValidator`` (string, *optional*): The validator type to use for the collection elements
 
-* ``elementType`` (NULL, *optional*): The type of the elements in the collection
+* ``elementType`` (string, *optional*): The type of the elements in the collection
 
-* ``validationGroups`` (NULL, *optional*): The validation groups to link to
+* ``validationGroups`` (string, *optional*): The validation groups to link to
 
 
 
@@ -125,9 +125,9 @@ http://en.wikipedia.org/wiki/ISO_8601#Time_intervals (3)
 Arguments
 *********
 
-* ``latestDate`` (NULL, *optional*): The latest date to accept
+* ``latestDate`` (string, *optional*): The latest date to accept
 
-* ``earliestDate`` (NULL, *optional*): The earliest date to accept
+* ``earliestDate`` (string, *optional*): The earliest date to accept
 
 
 
@@ -146,7 +146,7 @@ Checks if the given value is a valid DateTime object.
 Arguments
 *********
 
-* ``locale`` (NULL, *optional*): The locale to use for date parsing
+* ``locale`` (string|Locale, *optional*): The locale to use for date parsing
 
 * ``strictMode`` (boolean, *optional*): Use strict mode for date parsing
 
@@ -273,7 +273,7 @@ Checks if the given value is a valid number.
 Arguments
 *********
 
-* ``locale`` (NULL, *optional*): The locale to use for number parsing
+* ``locale`` (string|Locale, *optional*): The locale to use for number parsing
 
 * ``strictMode`` (boolean, *optional*): Use strict mode for number parsing
 
@@ -310,7 +310,7 @@ Checks if the given value matches the specified regular expression.
 Arguments
 *********
 
-* ``regularExpression`` (NULL): The regular expression to use for validation, used as given
+* ``regularExpression`` (string): The regular expression to use for validation, used as given
 
 
 
