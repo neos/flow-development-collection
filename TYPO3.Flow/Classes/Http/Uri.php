@@ -338,11 +338,9 @@ class Uri {
 		}
 		$uriString .= $this->host;
 		$uriString .= isset($this->port) ? ':' . $this->port : '';
-		if (isset($this->path)) {
-			$uriString .= $this->path;
-			$uriString .= isset($this->query) ? '?' . $this->query : '';
-			$uriString .= isset($this->fragment) ? '#' . $this->fragment : '';
-		}
+		$uriString .= isset($this->path) ? $this->path : '';
+		$uriString .= isset($this->query) ? '?' . $this->query : '';
+		$uriString .= isset($this->fragment) ? '#' . $this->fragment : '';
 		return $uriString;
 	}
 }

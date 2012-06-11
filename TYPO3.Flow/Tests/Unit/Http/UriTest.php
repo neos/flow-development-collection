@@ -51,6 +51,8 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('http://flow3.typo3.org/foo/bar?baz=1&quux=true'),
 			array('https://robert@localhost/arabica/coffee.html'),
 			array('http://127.0.0.1/bar.baz.com/foo.js'),
+			array('http://localhost:8080?foo=bar'),
+			array('http://localhost:443#hashme!x'),
 		);
 	}
 
