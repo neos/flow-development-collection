@@ -200,7 +200,7 @@ it is also possible to specify configuration options for lower levels, using
 ``forProperty($propertyPath)``. This is best shown with the example from the previous section.
 
 The following configuration sets a mapping on the top level, and furthermore
-configures the ``DateTime`` converter for the birthDate property::
+configures the ``DateTime`` converter for the ``birthDate`` property::
 
 	$propertyMappingConfiguration->setMapping('fullName', 'name');
 	$propertyMappingConfiguration
@@ -213,6 +213,37 @@ configures the ``DateTime`` converter for the birthDate property::
 
 ``forProperty()`` also supports more than one nesting level using the dot notation,
 so writing something like ``forProperty('mother.birthDate')`` is possible.
+
+.. admonition:: Property Mapping Configuration in MVC stack
+
+	The most common use-case where you will want to adjust the Property Mapping Configuration
+	is inside the MVC stack, where incoming arguments are converted to objects.
+
+	If you use Fluid forms, normally no adjustments are needed. However, when programming
+	a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
+	manually. You can access them using the ``TYPO3\FLOW3\Mvc\Controller\Argument``
+	object -- and this configuration takes place inside the corresponding ``initialize*Action``
+	of the controller, as in the following example:
+
+	.. code-block:: php
+
+		public function initializeUpdateAction() {
+			$commentConfiguration = $this->arguments['comment']->getPropertyMappingConfiguration();
+			$commentConfiguration->allowAllProperties();
+			$commentConfiguration
+				->setTypeConverterOption(
+				'TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
+				\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+				TRUE
+			);
+		}
+
+		/**
+		 * @param \My\Package\Domain\Model\Comment $comment
+		 */
+		public function updateAction(\My\Package\Domain\Model\Comment $comment) {
+			// use $comment object here
+		}
 
 
 Security Considerations
@@ -263,6 +294,9 @@ If the Property Mapper is called without any ``PropertyMappingConfiguration``, t
 It allows *all changes* for the *top-level object*, but does not allow anything
 for nested objects.
 
+.. note:: In the MVC stack, the default ``PropertyMappingConfiguration`` is much more restrictive,
+	not allowing any changes to any objects. See the next section for an in-depth
+	explanation.
 
 The Common Case: Fluid Forms
 ----------------------------
@@ -284,7 +318,6 @@ up the correct ``PropertyMappingConfiguration``.
 
 As a result, it is not possible to manipulate the request on the client side,
 but as long as Fluid forms are used, no extra work has to be done by the developer.
-
 
 Reference of TypeConverters
 ===========================
