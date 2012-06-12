@@ -94,6 +94,12 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 		$actionRequest = new ActionRequest($httpRequest);
 
+		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
+		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
+
 		$this->assertFalse($actionRequest->isDispatched());
 		$actionRequest->setDispatched(TRUE);
 		$this->assertTrue($actionRequest->isDispatched());
@@ -486,6 +492,23 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$request->setArgument('__referrer', $referrer);
 		$this->inject($request, 'hashService', new \TYPO3\FLOW3\Security\Cryptography\HashService());
 		$request->getReferringRequest();
+	}
+
+	/**
+	 * @test
+	 */
+	public function setDispatchedEmitsSignalIfDispatched() {
+		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
+		$actionRequest = new ActionRequest($httpRequest);
+
+		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
+		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\FLOW3\Mvc\ActionRequest', 'requestDispatched', array($actionRequest));
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
+		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
+
+		$actionRequest->setDispatched(TRUE);
 	}
 
 }

@@ -222,6 +222,10 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function setDispatched($flag) {
 		$this->dispatched = $flag ? TRUE : FALSE;
+
+		if ($flag) {
+			$this->emitRequestDispatched($this);
+		}
 	}
 
 	/**
@@ -594,6 +598,25 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function getFormat() {
 		return $this->format;
+	}
+
+	/**
+	 * Emits a signal when a Request has been dispatched
+	 *
+	 * The action request is not proxyable, so the signal is dispatched manually here.
+	 * The safeguard allows unit tests without the dispatcher dependency.
+	 *
+	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @return void
+	 * @FLOW3\Signal
+	 */
+	protected function emitRequestDispatched($request) {
+		if ($this->objectManager !== NULL) {
+			$dispatcher = $this->objectManager->get('TYPO3\FLOW3\SignalSlot\Dispatcher');
+			if ($dispatcher !== NULL) {
+				$dispatcher->dispatch('TYPO3\FLOW3\Mvc\ActionRequest', 'requestDispatched', array($request));
+			}
+		}
 	}
 
 	/**

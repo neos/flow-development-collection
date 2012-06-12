@@ -29,7 +29,11 @@ class AbstractAdviceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
 
+		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
+
 		$advice = new \TYPO3\FLOW3\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return TRUE; });
+		$this->inject($advice, 'dispatcher', $mockDispatcher);
+
 		$advice->invoke($mockJoinPoint);
 	}
 
@@ -45,8 +49,35 @@ class AbstractAdviceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
 
+		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
+
 		$advice = new \TYPO3\FLOW3\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return FALSE; });
+		$this->inject($advice, 'dispatcher', $mockDispatcher);
+
 		$advice->invoke($mockJoinPoint);
 	}
+
+	/**
+	 * @test
+	 */
+	public function invokeEmitsSignalWithAdviceAndJoinPoint() {
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPointInterface', array(), array(), '', FALSE);
+
+		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
+		$mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint);
+
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
+
+
+		$advice = new \TYPO3\FLOW3\Aop\Advice\AbstractAdvice('aspectObjectName', 'someMethod', $mockObjectManager);
+
+		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
+		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\FLOW3\Aop\Advice\AbstractAdvice', 'adviceInvoked', array($mockAspect, 'someMethod', $mockJoinPoint));
+		$this->inject($advice, 'dispatcher', $mockDispatcher);
+
+		$advice->invoke($mockJoinPoint);
+	}
+
 }
 ?>
