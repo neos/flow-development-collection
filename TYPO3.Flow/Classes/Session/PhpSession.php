@@ -88,26 +88,26 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @return void
 	 */
 	public function initializeObject() {
-		if (!empty($this->settings['session']['PHPSession']['name'])) {
-			session_name($this->settings['session']['PHPSession']['name']);
+		if (!empty($this->settings['session']['PhpSession']['name'])) {
+			session_name($this->settings['session']['PhpSession']['name']);
 		}
 
 		$cookieParameters = session_get_cookie_params();
 
-		if (!empty($this->settings['session']['PHPSession']['cookie']['domain'])) {
-			$cookieParameters['domain'] = $this->settings['session']['PHPSession']['cookie']['domain'];
+		if (!empty($this->settings['session']['PhpSession']['cookie']['domain'])) {
+			$cookieParameters['domain'] = $this->settings['session']['PhpSession']['cookie']['domain'];
 		}
-		if (!empty($this->settings['session']['PHPSession']['cookie']['lifetime'])) {
-			$cookieParameters['lifetime'] = $this->settings['session']['PHPSession']['cookie']['lifetime'];
+		if (!empty($this->settings['session']['PhpSession']['cookie']['lifetime'])) {
+			$cookieParameters['lifetime'] = $this->settings['session']['PhpSession']['cookie']['lifetime'];
 		}
-		if (!empty($this->settings['session']['PHPSession']['cookie']['path'])) {
-			$cookieParameters['path'] = $this->settings['session']['PHPSession']['cookie']['path'];
+		if (!empty($this->settings['session']['PhpSession']['cookie']['path'])) {
+			$cookieParameters['path'] = $this->settings['session']['PhpSession']['cookie']['path'];
 		}
-		if (!empty($this->settings['session']['PHPSession']['cookie']['secure'])) {
-			$cookieParameters['secure'] = $this->settings['session']['PHPSession']['cookie']['secure'];
+		if (!empty($this->settings['session']['PhpSession']['cookie']['secure'])) {
+			$cookieParameters['secure'] = $this->settings['session']['PhpSession']['cookie']['secure'];
 		}
-		if (!empty($this->settings['session']['PHPSession']['cookie']['httponly'])) {
-			$cookieParameters['httponly'] = $this->settings['session']['PHPSession']['cookie']['httponly'];
+		if (!empty($this->settings['session']['PhpSession']['cookie']['httponly'])) {
+			$cookieParameters['httponly'] = $this->settings['session']['PhpSession']['cookie']['httponly'];
 		}
 
 		session_set_cookie_params(
@@ -118,10 +118,10 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 			$cookieParameters['httponly']
 		);
 
-		if (empty($this->settings['session']['PHPSession']['savePath'])) {
+		if (empty($this->settings['session']['PhpSession']['savePath'])) {
 			$sessionsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
 		} else {
-			$sessionsPath = $this->settings['session']['PHPSession']['savePath'];
+			$sessionsPath = $this->settings['session']['PhpSession']['savePath'];
 		}
 
 		if (!file_exists($sessionsPath)) {
@@ -293,10 +293,10 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 */
 	static public function destroyAll(Bootstrap $bootstrap) {
 		$settings = $bootstrap->getObjectManager()->get('TYPO3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
-		if (empty($settings['session']['PHPSession']['savePath'])) {
+		if (empty($settings['session']['PhpSession']['savePath'])) {
 			$sessionsPath = Files::concatenatePaths(array($bootstrap->getObjectManager()->get('TYPO3\FLOW3\Utility\Environment')->getPathToTemporaryDirectory(), 'Sessions'));
 		} else {
-			$sessionsPath = $settings['session']['PHPSession']['savePath'];
+			$sessionsPath = $settings['session']['PhpSession']['savePath'];
 		}
 		if (is_dir($sessionsPath)) {
 			$filenames = Files::readDirectoryRecursively($sessionsPath);

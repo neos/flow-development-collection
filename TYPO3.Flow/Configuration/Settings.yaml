@@ -292,7 +292,7 @@ TYPO3:
       # automatically.
       inactivityTimeout: 3600
 
-      PHPSession:
+      PhpSession:
 
         # A specific name for the session, used in the session cookie.
         # The session name must be alphanumerical and must contain at least one
