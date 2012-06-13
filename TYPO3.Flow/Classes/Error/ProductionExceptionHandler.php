@@ -21,14 +21,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ProductionExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler {
 
 	/**
-	 * Constructs this exception handler - registers itself as the default exception handler.
-	 *
-	 */
-	public function __construct() {
-		set_exception_handler(array($this, 'handleException'));
-	}
-
-	/**
 	 * Echoes an exception for the web.
 	 *
 	 * @param \Exception $exception The exception

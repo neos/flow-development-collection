@@ -23,14 +23,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler {
 
 	/**
-	 * Constructs this exception handler - registers itself as the default exception handler.
-	 *
-	 */
-	public function __construct() {
-		set_exception_handler(array($this, 'handleException'));
-	}
-
-	/**
 	 * Formats and echoes the exception as XHTML.
 	 *
 	 * @param \Exception $exception The exception object
