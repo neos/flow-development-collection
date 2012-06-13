@@ -86,8 +86,6 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 		if (!is_writable($this->resourcesPublishingPath . 'Persistent')) {
 			throw new \TYPO3\FLOW3\Resource\Exception('The directory "' . $this->resourcesPublishingPath . 'Persistent" is not writable.', 1260527881);
 		}
-
-		$this->detectResourcesBaseUri();
 	}
 
 	/**
@@ -165,10 +163,14 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	}
 
 	/**
-	 * Returns the base URI where persistent resources are published an accessbile from the outside
+	 * Returns the base URI where persistent resources are published an accessible from the outside.
+	 *
 	 * @return \TYPO3\FLOW3\Http\Uri The base URI
 	 */
 	public function getResourcesBaseUri() {
+		if ($this->resourcesBaseUri === NULL) {
+			$this->detectResourcesBaseUri();
+		}
 		return $this->resourcesBaseUri;
 	}
 
@@ -186,7 +188,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * @return string The base URI pointing to web accessible static resources
 	 */
 	public function getStaticResourcesWebBaseUri() {
-		return $this->resourcesBaseUri . 'Static/';
+		return $this->getResourcesBaseUri() . 'Static/';
 	}
 
 	/**
@@ -265,7 +267,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	protected function buildPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$filename = $resource->getFilename();
 		$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . $this->rewriteFilenameForUri($filename);
-		return $this->resourcesBaseUri . 'Persistent/' . $resource->getResourcePointer()->getHash() . $rewrittenFilename;
+		return $this->getResourcesBaseUri() . 'Persistent/' . $resource->getResourcePointer()->getHash() . $rewrittenFilename;
 	}
 
 	/**
