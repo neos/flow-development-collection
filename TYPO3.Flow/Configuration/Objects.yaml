@@ -7,8 +7,6 @@
 # figuration files.                                                        #
 #                                                                          #
 
-# @package FLOW3
-
 DateTime:
   scope: prototype
   autowiring: off

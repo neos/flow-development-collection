@@ -15,6 +15,7 @@ TYPO3:
 
       # Registers global objects to be evaluated for dynamic pointcut expressions
       globalObjects:
+
         securityContext: TYPO3\FLOW3\Security\Context
 
     configuration:
@@ -126,13 +127,12 @@ TYPO3:
         password: NULL
         charset: 'utf8'
       doctrine:
-        cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
-        sqlLogger: NULL
         # By default Doctrine proxy compilation is done in the FLOW3 bootstrap
         enable: TRUE
+        cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
+        sqlLogger: NULL
 
     reflection:
-
 
       # A list of tags to be ignored during reflection
       ignoredTags: ['api', 'package', 'subpackage', 'license', 'copyright', 'author', 'const', 'see', 'todo', 'scope', 'fixme', 'test', 'expectedException', 'depends', 'dataProvider', 'group', 'codeCoverageIgnore']
@@ -142,6 +142,7 @@ TYPO3:
       logIncorrectDocCommentHints: FALSE
 
     resource:
+
       publishing:
 
         # If enabled, the publisher will check if the static resources of active packages

@@ -58,12 +58,12 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 	public function getPattern() {}
 
 	/**
-	 * Does nothing, as this pattern holds not configure pattern value
+	 * Does nothing, as this pattern holds no configured pattern value
 	 *
-	 * @param string $uriPattern Not used
+	 * @param string $pattern Not used
 	 * @return void
 	 */
-	public function setPattern($uriPattern) {}
+	public function setPattern($pattern) {}
 
 	/**
 	 * Matches a \TYPO3\FLOW3\Mvc\RequestInterface against the configured CSRF pattern rules and searches for invalid

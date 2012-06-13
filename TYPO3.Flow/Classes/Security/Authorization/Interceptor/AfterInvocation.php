@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 /**
  * This is the second main security interceptor, which enforces the current security policy for return values and is usually applied over AOP:
  *
- * 1. We call the AfterInvocationManager with the method's return value as paramter
+ * 1. We call the AfterInvocationManager with the method's return value as parameter
  * 2. If we had a "run as" support, we would have to reset the security context
  * 3. If a PermissionDeniedException was thrown we look for any an authentication entry point in the active tokens to redirect to authentication
  * 4. Then the value is returned to the caller
@@ -40,12 +40,7 @@ class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\Interceptor
 	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
 	 * @param \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 */
-	public function __construct(
-		\TYPO3\FLOW3\Security\Context $securityContext,
-		\TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager
-		) {
-
-	}
+	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager) {}
 
 	/**
 	 * Sets the current joinpoint for this interception
