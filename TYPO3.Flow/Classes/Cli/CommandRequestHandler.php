@@ -77,7 +77,11 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 	}
 
 	/**
-	 * Handles a command line request
+	 * Handles a command line request.
+	 *
+	 * While booting, the Object Manager is not yet available for retrieving the CommandExceptionHandler.
+	 * For this purpose, possible occurring exceptions at this stage are caught manually and treated the
+	 * same way the CommandExceptionHandler treats exceptions on itself anyways.
 	 *
 	 * @return void
 	 */
@@ -85,44 +89,21 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 		try {
 			$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? 'Compiletime' : 'Runtime';
 			$this->boot($runLevel);
-
-			$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
-			$this->request = $this->objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
-			$this->response = new Response();
-
-			$this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
-
-			$this->dispatcher->dispatch($this->request, $this->response);
-			$this->response->send();
-
-			$this->shutdown($runLevel);
+			$this->objectManager->get('TYPO3\FLOW3\Cli\CommandExceptionHandler');
 		} catch (\Exception $exception) {
-			$this->handleException($exception);
-		}
-	}
-
-	/**
-	 * Displays a human readable, partly beautified version of the given exception
-	 * and stops the application, return a non-zero exit code.
-	 *
-	 * @param \Exception $exception
-	 * @return void
-	 */
-	protected function handleException(\Exception $exception) {
-		$response = new Response();
-
-		$exceptionMessage = '';
-		$exceptionReference = "\n<b>More Information</b>\n";
-		$exceptionReference .= "  Exception code      #" . $exception->getCode() . "\n";
-		$exceptionReference .= "  File                " . $exception->getFile() . ($exception->getLine() ? ' line ' . $exception->getLine() : '') . "\n";
-		$exceptionReference .= ($exception instanceof \TYPO3\FLOW3\Exception ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
-		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
-			 $exceptionMessage .= "  $messageLine\n";
+			\TYPO3\FLOW3\Cli\CommandExceptionHandler::writeResponseAndExit($exception);
 		}
 
-		$response->setContent(sprintf("<b>Uncaught Exception</b>\n%s%s\n", $exceptionMessage, $exceptionReference));
-		$response->send();
-		exit(1);
+		$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
+		$this->request = $this->objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
+		$this->response = new Response();
+
+		$this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
+
+		$this->dispatcher->dispatch($this->request, $this->response);
+		$this->response->send();
+
+		$this->shutdown($runLevel);
 	}
 
 	/**
