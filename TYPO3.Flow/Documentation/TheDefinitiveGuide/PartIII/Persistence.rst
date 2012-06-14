@@ -6,8 +6,8 @@ Persistence
 
 This chapter explains how to use object persistence in FLOW3. To do this, it focuses on
 the persistence based on the *Doctrine* 2 ORM first. There is another mechanism available,
-called *Generic* persistence, which also can be used to add your own persistence backends
-to FLOW3. It is explained seperately later in the chapter.
+called *Generic* persistence, which can be used to add your own persistence backends to
+FLOW3. It is explained seperately later in the chapter.
 
 .. tip::
 
@@ -212,7 +212,8 @@ from objects managed in a repository (aggregate roots) for all persistence opera
 unless the referenced object itself is an aggregate root.
 
 When using the Doctrine 2 persistence, this is done by virtually creating cascade attributes
-on the mapped associations.
+on the mapped associations. That means if you changed an object attached to some aggregate
+root, you need to hand that aggregate root to ``update`` for the change to be persisted.
 
 Conventions for File and Class Names
 ====================================
@@ -226,7 +227,8 @@ conventions need to be followed:
 * Aside from ``Model`` versus ``Repository`` the qualified class class names should be the
   same for corresponding classes
 * Repositories must implement ``\TYPO3\FLOW3\Persistence\RepositoryInterface`` (which is
-  the case when extending ``\TYPO3\FLOW3\Persistence\Repository``)
+  already the case when extending ``\TYPO3\FLOW3\Persistence\Repository`` or
+  ``\TYPO3\FLOW3\Persistence\Doctrine\Repository``)
 
 *Example: Conventions for model and repository naming*
 
@@ -260,7 +262,7 @@ The drawback of this: If you access associated objects, each access will fire a 
 the persistent storage now. So there might be situations when eager loading comes in
 handy to avoid excessive database roundtrips. Eager loading is the default when using the
 *Generic* persistence mechanism and can be achieved for the Doctrine 2 ORM by using join
-operations  in DQL or specifying the fetch mode in the mapping configuration.
+operations in DQL or specifying the fetch mode in the mapping configuration.
 
 Doctrine Persistence
 ======================
@@ -322,9 +324,7 @@ with their name, scope and meaning:
 +------------------+----------+----------------------------------------------------------+
 + ``ValueObject``  + Class    + Declares a class as a Value Object, allowing the         +
 +                  +          + persistence framework to reuse an existing object if one +
-+                  +          + exists. *Doctrine 2 does not (yet) support value         +
-+                  +          + objects, thus we handle this like an entity for the time +
-+                  +          + being.*                                                  +
++                  +          + exists.                                                  +
 +------------------+----------+----------------------------------------------------------+
 + ``Column``       + Variable + Allows to take influence on the column actually          +
 +                  +          + generated for this property in the database.             +
@@ -350,11 +350,25 @@ with their name, scope and meaning:
 +                  +          + touched during reconstitution.                           +
 +------------------+----------+----------------------------------------------------------+
 + ``Identity``     + Variable + Marks the variable as being relevant for determining     +
-+                  +          + the identity of an object in the domain.                 +
++                  +          + the identity of an object in the domain. For all class   +
++                  +          + properties marked with this, a (compound) unique index   +
++                  +          + will be created in the database.                         +
 +------------------+----------+----------------------------------------------------------+
 
 Doctrine supports many more annotations, for a full reference please consult the Doctrine
 2 ORM documentation.
+
+On Value Object handling with Doctrine
+--------------------------------------
+
+Doctrine 2 does not (yet[#]_) support value objects, thus we treat them as 
+entities for the time being, with some differences:
+
+* Value Objects are marked immutable as with the ``ReadOnly`` annotation of Doctrine.
+* Unless you override the type using ``Column`` Value Objects will be stored as
+  serialized object in the database.
+* Upon persisting Value Objects already present in the underlying database will be
+  deduplicated.
 
 Differences between FLOW3 and plain Doctrine
 --------------------------------------------
@@ -362,63 +376,52 @@ Differences between FLOW3 and plain Doctrine
 The custom annotation driver used by FLOW3 to collect mapping information from the code
 makes a number of things easier, compared to plain Doctrine 2.
 
-* ``Entity``
+``Entity``
+  ``repositoryClass`` can be left out, if you follow the naming rules for your
+  repository classes explained above.
 
-  * ``repositoryClass`` can be left out, if you follow the naming rules for your
-    repository classes explained above.
+``Table``
+  ``name`` does not default to the unqualified entity classname, but a name is generated
+  from classname, package key and more elements to make it unique.
 
-* ``Table``
+``Id``
+  Can be left out, as it is automatically generated, this means you also do not need
+  ``@GeneratedValue``. Every entity will get a property injected that is filled with
+  an UUID upon instantiation and used as technical identifier.
+  
+  If an ``@Id`` annotation is found, it is of course used as is and no magic will happen.
 
-  * ``name`` does not default to the unqualified entity classname, but a name is generated
-    from classname, package key and more elements to make it unique.
+``Column``
+  Can usually be left out altogether, as the vital *type* information can be read from
+  the ``@var`` annotation on a class member.
 
-* ``Id``
+  .. important::
+    Since PHP does not differentiate between short and long strings, but databases do,
+    you must use ``@Column(type="text")`` if you intend to store more than 255
+    characters in a string property.
 
-  * Can be left out, as it is automatically generated, this means you also do not need
-    ``@GeneratedValue``. Every entity will get a property injected that is filled with
-    an UUID upon instantiation and used as technical identifier.
-  * If an ``@Id`` annotation is found, it is of course used as is and no magic will happen.
+``OneToOne``, ``OneToMany``, ``ManyToOne``, ``ManyToMany``
+  ``targetEntity`` can be omitted, it is read from the ``@var`` annotation on the property
 
-* ``Column``
+``JoinTable``, ``JoinColumn``
+  Can usually be left out completely, the needed information is gathered automatically
+  But *when using a self-referencing association*, you will need to help FLOW3 a
+  little, so it doesn't generate a join table with only one column.
 
-  * Can usually be left out altogether, as the vital *type* information can be read from
-    the ``@var`` annotation on a class member.
+  *Example: JoinTable annotation for a self-referencing annotation* ::
 
-    .. important::
-      Since PHP does not differentiate between short and long strings, but databases do,
-      you must use ``@Column(type="text")`` if you intend to store more than 255
-      characters in a string property.
+	/**
+	 * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Blog\Domain\Model\Post>
+	 * @ORM\ManyToMany
+	 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(name="related_id")})
+	 */
+	 protected $relatedPosts;
 
-* ``OneToOne``
-* ``OneToMany``
-* ``ManyToOne``
-* ``ManyToMany``
+  Without this, the created table would not  contain two columns but only one, named
+  after the identifiers of the associated entities - which is the same in this case.
 
-  * ``targetEntity`` can be omitted, it is read from the ``@var`` annotation on the property
-
-* ``JoinTable``
-* ``JoinColumn``
-
-  * Can usually be left out completely, the needed information is gathered automatically
-  * But *when using a self-referencing association*, you will need to help FLOW3 a
-    little, so it doesn't generate a join table with only one column.
-
-    *Example: JoinTable annotation for a self-referencing annotation*::
-
-		/**
-		 * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Blog\Domain\Model\Post>
-		 * @ORM\ManyToMany
-		 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(name="related_id")})
-		 */
-		 protected $relatedPosts;
-
-	Without this, the created table would not  contain two columns but only one, named
-	after the identifiers of the associated entities - which is the same in this case.
-
-* ``DiscriminatorColumn``
-* ``DiscriminatorMap``
-
-  * Can be left out, as they are automatically generated.
+``DiscriminatorColumn``, ``DiscriminatorMap``
+  Can be left out, as they are automatically generated.
 
 The generation of this metadata is slightly more expensive compared to the plain Doctrine
 ``AnnotationDriver``, but since this information can be cached after being generated once,
@@ -641,13 +644,13 @@ you can write to a file:
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrate --path <write/here/the.sql>
+	$ ./flow3 flow3:doctrine:migrate --path <where/to/write/the.sql>
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Writing migration file to "<write/here/the.sql>"
+	Writing migration file to "<where/to/write/the.sql>"
 
 .. important::
 
@@ -735,7 +738,7 @@ This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Generated new migration class to "/path/to/Data/DoctrineMigrationsVersion20110624143847.php".
+	Generated new migration class to "/…/Data/DoctrineMigrationsVersion20110624143847.php".
 
 Looking into that file reveals a basic migration class already filled with the differences
 detected between the current schema and the current models in the system:
@@ -814,10 +817,14 @@ Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 	Be careful, the update command might destroy data, as it could drop tables and fields
 	irreversibly.
 
-.. tip::
-
 	Both commands also support ``--output <write/here/the.sql>`` to write the SQL
 	statements to the given file instead of executing it.
+
+.. tip::
+
+	If you created or updated the schema this way, you should afterwards execute
+	``flow3:doctrine:migrationversion --version all --add`` to avoid migration
+	errors later.
 
 Generic Persistence
 ===================
@@ -835,8 +842,7 @@ target a RDBMS is still possible, but probably only useful for rare edge cases.
 Switching to Generic Persistence
 --------------------------------
 
-To switch back to Generic persistence on SQLite using PDO you need to configure FLOW3 like
-this.
+To switch to Generic persistence you need to configure FLOW3 like this.
 
 *Objects.yaml*:
 
@@ -857,20 +863,8 @@ this.
 	  persistence:
 	    doctrine:
 	      enable: FALSE
-	    backendOptions:
-	      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
-	      username: ''
-	      password: ''
-	      # set the following to null to have them ignored
-	      driver: ''
-	      path: ''
-	      dbname: ''
 
-Using different database systems is possible, as long as there is a PDO driver available
-in PHP. The syntax to use for ``dataSourceName`` depends on the PDO driver used, consult the
-PHP documentation for that.
-
-When installing other backend packages, like CouchDB, the needed object configuration
+When installing generic backend packages, like CouchDB, the needed object configuration
 should be contained in them, for the connection settings, consult the package's
 documentation.
 
@@ -954,11 +948,6 @@ for that object and the object properties will be thawed when the object is actu
 Schema management
 -----------------
 
-For the PDO backend that comes with FLOW3, the needed tables are set up automatically.
-When models are changed, no adjustments to the schema are needed. Effectively the schema
-is maintenance-free. If you ever need to create or fix the schema manually, have a look at
-*Resources/Private/Persistence/SQL/DDL.sql* in the FLOW3 package.
-
 Whether other backends implement automatic schema management is up to the developers,
 consult the documentation of the relevant backend for details.
 
@@ -984,7 +973,7 @@ FLOW3 defines interfaces for persistence backends and queries, the details of ho
 are persisted and queried are up to the persistence backend implementation. Have a look at
 the documentation of the respective package for more information. The following diagram
 shows (most of) the way an object takes from creation until it is persisted when using the
-FLOW3 default backend:
+suggested process:
 
 .. figure:: /Images/TheDefinitiveGuide/PartIII/Persistence_PersistenceProcess.png
 	:align: center
@@ -1002,7 +991,7 @@ Querying the Storage Backend
 As we saw in the introductory example there is a query mechanism available that provides
 easy fetching of objects through the persistence framework. You ask for instances of a
 specific class that match certain filters and get back an array of those reconstituted
-objects. Here is a diagram of the internal process when using the FLOW3 default backend:
+objects. Here is a diagram of the internal process when using the suggested process:
 
 .. figure:: /Images/TheDefinitiveGuide/PartIII/Persistence_QueryProcess.png
 	:align: center
@@ -1019,3 +1008,4 @@ the array of objects being returned.
 
 .. [#] An alternative would have been to do an implicit persist call before a query, but
 	that seemed to be confusing.
+.. [#] See https://github.com/doctrine/doctrine2/pull/265 for one approach in the making.
