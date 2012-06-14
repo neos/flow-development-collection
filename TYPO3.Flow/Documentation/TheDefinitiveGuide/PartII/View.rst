@@ -83,7 +83,7 @@ the following code:
 
 *Resources/Private/Layouts/Default.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<!DOCTYPE html
 		 PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -199,7 +199,7 @@ meaningful HTML:
 
 *Resources/Private/Templates/Post/Index.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:layout name="Default" />
 
@@ -281,7 +281,7 @@ After creating the folder ``Resources/Private/Partials/`` add the following to a
 
 *Resources/Private/Partials/PostMetaData.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<p class="metadata">
 		Published on <f:format.date format='d.m.Y'>{post.date}</f:format.date> by {post.author}
@@ -347,7 +347,7 @@ the ``Resources/Public/Templates/Post/`` folder:
 
 *Resources/Public/Templates/Post/New.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:layout name="Default" />
 
@@ -433,7 +433,7 @@ First you need to add the "edit" link to the post index template:
 
 *Resources/Public/Templates/Post/Index.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	...
 			<h2>

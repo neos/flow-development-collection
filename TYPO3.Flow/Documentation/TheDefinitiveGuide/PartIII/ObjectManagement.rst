@@ -43,7 +43,7 @@ only through the object framework.
 	As a general rule of thumb for those not developing the FLOW3 core itself but your very
 	own packages:
 
-		**Use Dependency Injection whenever possible for retrieving singletons.**
+	**Use Dependency Injection whenever possible for retrieving singletons.**
 
 Object Scopes
 -------------
@@ -312,8 +312,10 @@ Thus, you can also ask for interface implementations::
 
 	$objectTypeInstance = $objectManager->get('MyCompany\MyPackage\MyInterface');
 
-.. note:: If zero or more than one class implements the interface, the Object Manager will
-   throw an exception.
+.. note::
+
+  If zero or more than one class implements the interface, the Object Manager will
+  throw an exception.
 
 The advantage of programming against interfaces is the increased
 flexibility: By referring to interfaces rather than classes it is possible to write code
@@ -418,8 +420,7 @@ specify a configuration which differs from would be done automatically.
 	MyCompany\MyPackage\Foo:
 	  arguments:
 	    1:
-	      object:
-	        MyCompany\MyPackage\Bar
+	      object: 'MyCompany\MyPackage\Bar'
 
 The three lines above define that an object instance of ``\MyCompany\MyPackage\Bar`` must
 be passed to the first argument of the constructor when an instance of the object
@@ -461,8 +462,7 @@ called. The necessary configuration for the above example looks like this:
 	MyCompany\MyPackage\Foo:
 	  properties:
 	    bar:
-	      object:
-	        MyCompany\MyPackage\BarInterface
+	      object: 'MyCompany\MyPackage\BarInterface'
 
 Unlike constructor injection, setter injection like in the above example does not offer
 the autowiring feature. All dependencies have to be declared explicitly in the object
@@ -496,7 +496,7 @@ injection in FLOW3.
 
 .. note::
 
-	If both, a ``set*`` and a ``inject*`` method exist for the same property, the
+	If both, a ``set*`` and an ``inject*`` method exist for the same property, the
 	``inject*`` method has precedence.
 
 Constructor- or Setter Injection?
@@ -672,14 +672,14 @@ stick to FLOW3's general rules for YAML-based configuration.
 	MyCompany\MyPackage\Foo:
 	  arguments:
 	    1:
-	      object: MyCompany\MyPackage\Baz
+	      object: 'MyCompany\MyPackage\Baz'
 	    2:
 	      value: "some string"
 	    3:
 	      value: false
 	  properties:
 	    bar:
-	      object: MyCompany\MyPackage\BarInterface
+	      object: 'MyCompany\MyPackage\BarInterface'
 	    enableCache:
 	      setting: MyPackage.Cache.enable
 
@@ -891,7 +891,7 @@ argument is identified by its position, counting starts with 1.
 	MyCompany\MyPackage\Foo:
 	  arguments:
 	    1:
-	      object: MyCompany\MyPackage\Bar
+	      object: 'MyCompany\MyPackage\Bar'
 	    2:
 	      value: "some string"
 	    3:
@@ -944,11 +944,11 @@ definition of setter injection:
 	MyCompany\MyPackage\Foo:
 	  properties:
 	    bar:
-	      object: MyCompany\MyPackage\Bar
+	      object: 'MyCompany\MyPackage\Bar'
 	    identifier:
-	      value: "some string"
+	      value: 'some string'
 	    enableCache:
-	      setting: "MyPackage.Cache.enable"
+	      setting: 'MyPackage.Cache.enable'
 
 As you can see, it is important that a setter method with the same name as the property,
 preceded by ``inject`` or ``set`` exists. It doesn't matter though, if you choose ``inject`` or
@@ -972,7 +972,7 @@ specifying the settings path instead of the object name:
 	MyCompany\MyPackage\Foo:
 	  properties:
 	    bar:
-	      object: MyCompany.MyPackage.fooStuff.barImplementation
+	      object: 'MyCompany.MyPackage.fooStuff.barImplementation'
 
 *Example: Settings.yaml of MyPackage*:
 
@@ -981,7 +981,7 @@ specifying the settings path instead of the object name:
 	MyCompany:
 	  MyPackage:
 	    fooStuff:
-	      barImplementation: MyCompany\MyPackage\Bars\ASpecialBar
+	      barImplementation: 'MyCompany\MyPackage\Bars\ASpecialBar'
 
 Nested Object Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1004,13 +1004,13 @@ structure:
 	  properties:
 	    cache:
 	      object:
-	        name: TYPO3\FLOW3\Cache\VariableCache
+	        name: 'TYPO3\FLOW3\Cache\VariableCache'
 	        arguments:
 	          1:
 	            value: MyCache
 	          2:
 	            object:
-	              name: TYPO3\FLOW3\Cache\Backend\File
+	              name: 'TYPO3\FLOW3\Cache\Backend\File'
 	              properties:
 	                cacheDirectory:
 	                  value: /tmp/

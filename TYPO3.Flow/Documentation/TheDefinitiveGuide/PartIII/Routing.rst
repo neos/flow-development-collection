@@ -89,7 +89,7 @@ without transformation.
 Let's create a route that calls the ``listAction`` of the ``ProductController`` when browsing to
 ``http://localhost/my/demo``:
 
-* Example: Simple route with static route parts Configuration/Routes.yaml*
+*Example: Simple route with static route parts Configuration/Routes.yaml*
 
 .. code-block:: yaml
 
@@ -130,7 +130,7 @@ With ``http://localhost/my/demo/new`` you'd invoke the ``newAction`` and so on.
 	It's not allowed to have successive dynamic route parts in the URI pattern because it
 	wouldn't be possible to determine the end of the first dynamic route part then.
 
-The ``@``-prefix should reveal that *action* has a special meaning here. Other predefined keys
+The ``@`` prefix should reveal that *action* has a special meaning here. Other predefined keys
 are ``@package``, ``@subpackage``, ``@controller`` and ``@format``. But you can use dynamic route parts to
 set any kind of arguments:
 

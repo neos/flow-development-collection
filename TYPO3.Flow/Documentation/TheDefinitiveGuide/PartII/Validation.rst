@@ -96,7 +96,7 @@ validation errors. Just add the ``<f:form.errors>`` view helper to your
 
 *Resources/Private/Templates/Post/New.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:layout name="Default" />
 
@@ -135,7 +135,7 @@ Now that you know how validation errors can be displayed, you should add a
 
 *Resources/Private/Templates/Post/Edit.html*:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:layout name="Default" />
 

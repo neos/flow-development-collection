@@ -29,26 +29,18 @@ packages are kept in a directory called *Framework* while the application specif
 packages reside in the *Application* directory. This leads to the following
 folder structure:
 
-* *Configuration/*
-	The global configuration folder
-* *Data/*
-	The various data folders, temporary as well as persistent
-* *Packages/*
-	* *Framework/*
-		The Framework directory contains packages of the FLOW3 distribution (just examples):
+Configuration/
+  The global configuration folder
 
-		* *TYPO3.FLOW3/*
-			The FLOW3 package
-		* *TYPO3.Fluid/*
-			The Fluid package (Template Engine)
+Data/
+  The various data folders, temporary as well as persistent
 
-	* *Application/*
-		The Application directory contains your own / application specific packages:
+Packages/
+  Framework/
+    The Framework directory contains packages of the FLOW3 distribution.
 
-		* *TYPO3.TYPO3/*
-			For example the TYPO3 package…
-		* *Acme.Demo/*
-			…or the demo package
+  Application/
+    The Application directory contains your own / application specific packages.
 
 The reason for separating packages into separate directories is that the core packages
 in *Framework/* can reside in a different, shared location and be symlinked
@@ -82,76 +74,76 @@ The FLOW3 package directory structure follows a certain convention which has the
 that you don't need to care about any package-related configuration. If you put your files
 into the right directories, everything will just work.
 
-The suggested directory layout of a FLOW3 package is as follows:
+The suggested directory layout inside a FLOW3 package is as follows:
 
-* *<[PackageName]>*
+Classes
+  This directory contains the actual source code for the package. Package authors
+  are free to add (only!) class or interface files directly to this directory or add
+  subdirectories to organize the content as necessary. All classes or interfaces
+  below this directory are handled by the autoloading mechanism and will be
+  registered at the object manager automatically (and will thus be considered
+  "registered objects").
 
-	* *Classes*
-		This directory contains the actual source code for the package. Package authors
-		are free to add (only!) class or interface files directly to this directory or add
-		subdirectories to organize the content as necessary. All classes or interfaces
-		below this directory are handled by the autoloading mechanism and will be
-		registered at the object manager automatically (and will thus be considered
-		"registered objects").
+  One special file in here is the *Package.php* which contains the class with the
+  package's bootstrap code.
 
-		One special file in here is the *Package.php* which contains the class with the
-		package's bootstrap code.
-	* *Configuration*
-		All kinds of configuration which are delivered with the package reside in this
-		directory. The configuration files are immutable and must not be changed by the
-		user or administrator. The most prominent configuration files are the
-		*Objects.yaml* file which may be used to configure the package's objects and
-		the *Settings.yaml* file which contains general user-level settings.
-	* *Documentation*
-		Holds the package documentation. Please refer to the Documentor's Guide for
-		more details about the directories and files within this directory.
-	* *Meta*
-		A folder which provides some meta information about the package.
+Configuration
+  All kinds of configuration which are delivered with the package reside in this
+  directory. The configuration files are immutable and must not be changed by the
+  user or administrator. The most prominent configuration files are the
+  *Objects.yaml* file which may be used to configure the package's objects and
+  the *Settings.yaml* file which contains general user-level settings.
 
-		* *Package.xml*
-			This mandatory file contains some basic information about the package, such as
-			title, description, author, constraints, version number and more. You should take
-			great care to keep this information updated.
+Documentation
+  Holds the package documentation. Please refer to the Documentor's Guide for
+  more details about the directories and files within this directory.
 
-	* *Resources*
-		Contains static resources the package needs, such as library code, template files,
-		graphics, ... In general, there is a distinction between public and private
-		resources.
+Meta
+  A folder which provides some meta information about the package. It must contain
+  *Package.xml*.
+  This mandatory file contains some basic information about the package, such as
+  title, description, author, constraints, version number and more. You should take
+  great care to keep this information updated.
 
-		* *Private*
-			Contains private resources for the package. All files inside this directory
-			will never be directly available from the web.
-		* *Public*
-			Contains public resources for the package. All files in this directory
-			will be mirrored into FLOW3's *Web* directory by the Resource Manager
-			(and therefore become accessible from the web).
+Resources
+  Contains static resources the package needs, such as library code, template files,
+  graphics, ... In general, there is a distinction between public and private
+  resources.
 
-		Although it is up to the package author to name the directories, we suggest the
-		following conventions for directories below ``Private`` and ``Public``:
+  Private
+    Contains private resources for the package. All files inside this directory
+    will never be directly available from the web.
+  Public
+    Contains public resources for the package. All files in this directory
+    will be mirrored into FLOW3's *Web* directory by the Resource Manager
+    (and therefore become accessible from the web).
 
-		* *Media*
-			This directory holds images, PDF, Flash, CSS and other files that will be
-			delivered to the client directly without further processing.
-		* *Templates*
-			Template files used by the package should go here. If a user wants to modify
-			the template it will end up elsewhere and should be pointed to by some
-			configuration setting.
-		* *PHP*
-			Should hold any PHP code that is an external library which should not be
-			handled by the object manager (at least not by default), is of procedural
-			nature or doesn't belong into the classes directory for any other reason.
-		* *Java*
-			Should hold any Java code needed by the package. Repeat and rinse for
-			Smalltalk, Modula, Pascal, ;)
+  Although it is up to the package author to name the directories, we suggest the
+  following conventions for directories below ``Private`` and ``Public``:
 
-		More directories can be added as needed.
+  Media
+    This directory holds images, PDF, Flash, CSS and other files that will be
+    delivered to the client directly without further processing.
+  Templates
+    Template files used by the package should go here. If a user wants to modify
+    the template it will end up elsewhere and should be pointed to by some
+    configuration setting.
+  PHP
+    Should hold any PHP code that is an external library which should not be
+    handled by the object manager (at least not by default), is of procedural
+    nature or doesn't belong into the classes directory for any other reason.
+  Java
+    Should hold any Java code needed by the package. Repeat and rinse for
+    Smalltalk, Modula, Pascal, ;)
 
-	* *Tests*
+  More directories can be added as needed.
 
-		* *Unit*
-			Holds the unit tests for the package.
-		* *Functional*
-			Holds the functional tests for the package.
+Tests
+  Unit
+    Holds the unit tests for the package.
+
+  Functional
+    Holds the functional tests for the package.
 
 As already mentioned, all classes which are found in the *Classes* directory will be
 detected and registered. However, this only works if you follow the naming rules equally

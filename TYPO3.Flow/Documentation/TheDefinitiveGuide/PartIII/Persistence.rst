@@ -361,7 +361,7 @@ Doctrine supports many more annotations, for a full reference please consult the
 On Value Object handling with Doctrine
 --------------------------------------
 
-Doctrine 2 does not (yet[#]_) support value objects, thus we treat them as 
+Doctrine 2 does not (yet [#]_) support value objects, thus we treat them as 
 entities for the time being, with some differences:
 
 * Value Objects are marked immutable as with the ``ReadOnly`` annotation of Doctrine.
@@ -388,7 +388,7 @@ makes a number of things easier, compared to plain Doctrine 2.
   Can be left out, as it is automatically generated, this means you also do not need
   ``@GeneratedValue``. Every entity will get a property injected that is filled with
   an UUID upon instantiation and used as technical identifier.
-  
+
   If an ``@Id`` annotation is found, it is of course used as is and no magic will happen.
 
 ``Column``

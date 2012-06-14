@@ -137,7 +137,7 @@ you could repeat the above steps, but that would be quite inconvenient and hard 
 	The semantics between the controller and the view should be the following:
 	The controller instructs the view to "render the blog object given to it",
 	and not to "render the Blog title, and the blog posting 1, ...".
-	
+
 	Passing objects to the view instead of simple values is highly encouraged!
 
 That is why the template language has a special syntax for object access. A nicer
@@ -267,11 +267,11 @@ All boolean expressions have the form ``X <omparator> Y``, where:
 * *<comparator>* is one of the following: ``==, >, >=, <, <=, % (modulo)``
 * *X* and *Y* are one of the following:
 
-	* a number (integer or float)
-	* a JSON array
-	* a ViewHelper
-	* an Object Accessor (this is probably the most used example)
-	* inline notation for ViewHelpers
+  * a number (integer or float)
+  * a JSON array
+  * a ViewHelper
+  * an Object Accessor (this is probably the most used example)
+  * inline notation for ViewHelpers
 
 Inline Notation for ViewHelpers
 -------------------------------

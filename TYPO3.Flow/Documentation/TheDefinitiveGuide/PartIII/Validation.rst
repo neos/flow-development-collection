@@ -166,23 +166,23 @@ The returned validator checks the following things:
 
 * All *property validation rules* configured through ``@FLOW3\Validate`` annotations on properties of the model:
 
-	.. code-block:: php
+  .. code-block:: php
 
-		namespace YourPackage\Domain\Model;
-		use TYPO3\FLOW3\Annotations as FLOW3;
+  	namespace YourPackage\Domain\Model;
+  	use TYPO3\FLOW3\Annotations as FLOW3;
 
-		class Comment {
+  	class Comment {
 
-			/**
-			 * @FLOW3\Validate(type="NotEmpty")
-			 */
-			protected $text;
+  		/**
+  		 * @FLOW3\Validate(type="NotEmpty")
+  		 */
+  		protected $text;
 
-			// Add getters and setters here
-		}
+  		// Add getters and setters here
+  	}
 
-	It also correctly builds up validators for ``Collections`` or ``arrays``, if they are properly
-	typed (``Doctrine\Common\Collection<YourPackage\Domain\Model\Author>``).
+  It also correctly builds up validators for ``Collections`` or ``arrays``, if they are properly
+  typed (``Doctrine\Common\Collection<YourPackage\Domain\Model\Author>``).
 
 * In addition to validating the individual properties on the model, it checks whether a designated *Domain Model
   Validator* exists; i.e. for the Domain Model ``YourPackage\Domain\Model\Comment`` it is checked
