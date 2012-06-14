@@ -343,10 +343,10 @@ object. Some of the steps will be described in detail afterwards.
 
 #. For each child propery, do the following:
 
-  #. Ask the type converter about the data type of the child property, by calling
-     ``getTypeOfChildProperty()`` on the type converter.
+   #. Ask the type converter about the data type of the child property, by calling
+      ``getTypeOfChildProperty()`` on the type converter.
 
-  #. Recursively invoke the ``PropertyMapper`` to build the child object from the input data.
+   #. Recursively invoke the ``PropertyMapper`` to build the child object from the input data.
 
 #. Now, call the type converter again (method ``convertFrom()``), passing all (already
    built) child objects along. The result of this call is returned as the final result of the
@@ -377,8 +377,8 @@ each ``TypeConverter`` which influence the resolving process:
   have a priority lower than 100.
 
 ``canConvertFrom($source, $targetType)``
-  Is called as last check, when source and target types fit together. Here, the 
-  TypeConverter can implement runtime constraints to decide whether it can do 
+  Is called as last check, when source and target types fit together. Here, the
+  TypeConverter can implement runtime constraints to decide whether it can do
   the conversion.
 
 When a type converter has to be found, the following algorithm is applied:
