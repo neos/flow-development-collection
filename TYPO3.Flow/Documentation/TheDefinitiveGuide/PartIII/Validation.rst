@@ -17,6 +17,57 @@ This chapter will explain:
 * ... how to use validation in your own code
 * ... how validation is embedded in the model, the persistence and the MVC layer
 
+Automatic Validation Throughout The Framework
+=============================================
+
+Inside FLOW3, validation is triggered automatically at two places: When an object is *persisted*, its
+*base validators* are checked as explained in the last section. Furthermore, validation happens in
+the MVC layer when a Domain Model is used as a controller argument, directly after Property Mapping.
+
+.. warning::
+
+	If a validation error occurs during persistence, there is no way to catch this error
+	and handle it -- as persistence is executed at the end of every request *after the response
+	has been sent to the client*.
+
+	Thus, validation on persistence is merely a safeguard for preventing invalid data to be stored
+	in the database.
+
+When validation in the MVC layer happens, it is possible to handle errors correctly. In a nutshell,
+the process is as follows:
+
+* an array of data is received from the client
+* it is transformed to an object using Property Mapping
+* this object is validated using the base validators
+* if there is a property mapping or validation error, the last page (which usually contains an
+  edit-form) is re-displayed, an error message is shown and the erroreous field is highlighted.
+
+.. tip::
+
+	If you want to suppress the re-display of the last page (which is handled through
+	``errorAction()``, you can add a ``@FLOW3\IgnoreValidation("$comment")`` annotation
+	to the docblock of the corresponding controller action.
+
+Furthermore, it is also possible to execute *additional validators* only for specific action
+arguments using ``@FLOW3\Validate`` inside a controller action::
+
+	class CommentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+
+		/**
+		 * @param \YourPackage\Domain\Model\Comment $comment
+		 * @FLOW3\Validate(argumentName="comment", type="YourPackage:SomeSpecialValidator")
+		 */
+		public function updateAction(\YourPackage\Domain\Model\Comment $comment) {
+			// here, $comment is a valid object
+		}
+	}
+
+.. tip::
+
+	It is also possible to add an additional validator for a sub object of the argument, using
+	the "dot-notation": ``@FLOW3\Validate(argumentName="comment.text", type="....")``.
+
+However, it is a rather rare use-case that a validation rule needs to be defined only in the controller.
 
 Using Validators & The ValidatorResolver
 ========================================
@@ -24,17 +75,17 @@ Using Validators & The ValidatorResolver
 A validator is a PHP class being responsible for checking validity of a certain object or
 simple type.
 
-All validators implement ``TYPO3\FLOW3\Validation\Validator\ValidatorInterface``, and
+All validators implement ``\TYPO3\FLOW3\Validation\Validator\ValidatorInterface``, and
 the API of every validator is demonstrated in the following code example::
 
-	// NOTE: you should always use the ValidatorResolver to create new
-	// validators, as it is demonstrated in the next section.
+		// NOTE: you should always use the ValidatorResolver to create new
+		// validators, as it is demonstrated in the next section.
 	$validator = new \TYPO3\FLOW3\Validation\Validator\StringLengthValidator(array(
 		'minimum' => 10,
 		'maximum' => 20
 	));
 
-	// $result is of type TYPO3\FLOW3\Error\Result
+		// $result is of type TYPO3\FLOW3\Error\Result
 	$result = $validator->validate('myExampleString');
 	$result->hasErrors(); // is FALSE, as the string is longer than 10 characters.
 
@@ -47,7 +98,9 @@ Furthermore, a validator does not only just return TRUE or FALSE, but instead re
 a ``Result`` object which you can ask whether any errors happened. Please see the API
 for a detailed description.
 
-.. note:: The ``TYPO3\FLOW3\Error\Result`` object has been introduced in order to
+.. note::
+
+	The ``TYPO3\FLOW3\Error\Result`` object has been introduced in order to
 	make more structured error output possible -- which is especially needed when
 	objects with sub-properties should be validated recursively.
 
@@ -56,7 +109,7 @@ Creating Validator Instances: The ValidatorResolver
 
 As validators can be both singleton or prototype objects (depending if they have internal state),
 you should not instanciate them directly as it has been done in the above example. Instead,
-you should use the ``TYPO3\FLOW3\Validation\ValidatorResolver`` singleton to get a new instance
+you should use the ``\TYPO3\FLOW3\Validation\ValidatorResolver`` singleton to get a new instance
 of a certain validator::
 
 	$validatorResolver->createValidator($validatorType, array $validatorOptions);
@@ -84,57 +137,20 @@ list. Here, we just want to highlight some more special validators.
 Additional to the simple validators for strings, numbers and other basic types, FLOW3 has a few powerful
 validators shipped:
 
-* ``GenericObjectValidator``: Validates an object by validating all of its properties. This validator
-  is often used internally, but often you will not use it directly.
-* ``CollectionValidator``: validate a collection of objects. This validator is often used internally,
-  but often you will not use it directly.
-* ``ConjunctionValidator`` and ``DisjunctionValidator``: Implement logical AND / OR conditions.
+* ``GenericObjectValidator`` validates an object by validating all of its properties. This validator
+  is often used internally, but will rarely be used directly.
+* ``CollectionValidator`` validates a collection of objects. This validator is often used internally,
+  but will rarely be used directly.
+* ``ConjunctionValidator`` and ``DisjunctionValidator`` implement logical AND / OR conditions.
 
-Furthermore, almost all validators of simple types regard ``NULL`` and the empty string (``""``) as **valid**.
+Furthermore, almost all validators of simple types regard ``NULL`` and the empty string (``''``) as **valid**.
 The only exception is the ``NotEmpty`` validator, which disallows both ``NULL`` and empty string. This means
-if you want to validate that a property is e.g. an E-Mail and does exist, you need to combine the two validators
-using a ``ConjunctionValidator``::
+if you want to validate that a property is e.g. an email address *and* does exist, you need to combine the two
+validators using a ``ConjunctionValidator``::
 
 	$conjunctionValidator = $validatorResolver->createValidator('Conjunction');
 	$conjunctionValidator->addValidator($validatorResolver->createValidator('NotEmpty'));
 	$conjunctionValidator->addValidator($validatorResolver->createValidator('EmailAddress'));
-
-Writing Own Validators
-======================
-
-Usually, when you write an own validator, you will not directly implement ``ValidatorInterface``, but
-rather subclass ``AbstractValidator``. You only need to implement the ``isValid()`` method then::
-
-	class MySpecialValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
-		protected function isValid($value) {
-			if (!isset($this->options['foo'])) {
-				throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException(
-					'The option "foo" for this validator needs to be specified', 12346788
-				);
-			}
-
-			if ($value !== $this->options['foo']) {
-				$this->addError('The value must be equal to "%s"', 435346321, array($this->options['foo']));
-			}
-		}
-	}
-
-In the above example, the ``isValid()`` method has been implemented, and the parameter ``$value`` is the
-data we want to check for validity. In case the data is valid, nothing needs to be done.
-
-In case the data is invalid, ``$this->addError()`` should be used to add an error message, an error code
-(which should be the unix timestamp of the current time) and optional arguments which are inserted into
-the error message.
-
-The options of the validator can be accessed in the associative array ``$this->options``. In case any
-of the options is invalid, an ``InvalidValidationOptionsException`` should be thrown.
-
-.. tip:: Because you extended AbstractValidator in the above example, ``NULL`` and empty string
-	are automatically regarded as valid values; as it is the case for all other validators.
-
-
-* TODO Karsten: write something about custom Object Validator
-
 
 Validating Domain Models
 ========================
@@ -175,53 +191,6 @@ The returned validator checks the following things:
 
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
-
-
-Automatic Validation Throughout The Framework
-=============================================
-
-Inside FLOW3, validation is triggered automatically at two places: When an object is *persisted*, its
-*base validators* are checked as explained in the last section. Furthermore, validation happens in
-the MVC layer when a Domain Model is used as a controller argument, directly after Property Mapping.
-
-.. warning:: If a validation error occurs during persistence, there is no way to catch this error
-	and handle it -- as persistence is executed at the end of every request *after the response
-	has been sent to the client*.
-
-	Thus, validation on persistence is merely a safeguard for preventing invalid data to be stored
-	in the database.
-
-When validation in the MVC layer happens, it is possible to handle errors correctly. In a nutshell,
-the process is as follows:
-
-* an array of data is received from the client
-* it is transformed to an object using Property Mapping
-* this object is validated using the base validators
-* if there is a property mapping or validation error, the last page (which usually contains an
-  edit-form) is re-displayed, an error message is shown and the erroreous field is highlighted.
-
-.. tip:: If you want to suppress the re-displaying of the last page (which is handled through
-	``errorAction()``, you can add a ``@FLOW3\IgnoreValidation("comment")`` annotation
-	to the docblock of the corresponding controller action.
-
-Furthermore, it is also possible to execute *additional validators* only for specific action
-arguments using ``@FLOW3\Validate`` inside a controller action::
-
-	class CommentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
-
-		/**
-		 * @param \YourPackage\Domain\Model\Comment $comment
-		 * @FLOW3\Validate(argumentName="comment", type="YourPackage:SomeSpecialValidator")
-		 */
-		public function updateAction(\YourPackage\Domain\Model\Comment $comment) {
-			// here, $comment is a valid object
-		}
-	}
-
-.. tip:: It is also possible to add an additional validator for a sub object of the argument, using
-	the "dot-notation": ``@FLOW3\Validate(argumentName="comment.text", type="....")``.
-
-However, it is a rather rare use-case that a validation rule needs to be defined only in the controller.
 
 Advanced Feature: Partial Validation
 ====================================
@@ -272,11 +241,63 @@ The following example should demonstrate this::
 If interacting with the ``ValidatorResolver`` directly, the to-be-used validation groups
 can be specified as the last argument of ``getBaseValidatorConjunction()``.
 
-Summary
-=======
+Avoiding Duplicate Validation and Recursion
+===========================================
 
-In this chapter, validation of simple types and objects was discussed. After demonstrating
-how to use validators, it was shown how to write custom ones.
+Unlike simple types, objects (or collections) may reference other objects, potientally leading
+to recursion during the validation and multiple validation of the same instance.
 
-In the second part, validation in the context of Domain Models and the MVC framework was
-introduced, giving an overview where and how validation is triggered inside the framework.
+To avoid this the ``GenericObjectValidator`` as well as anything extending ``AbstractCompositeValidator``
+keep track of instances that have already been validated. The container to keep track of these instances
+can be (re-)set using ``setValidatedInstancesContainer`` defined in the ``ObjectValidatorInterface``.
+
+FLOW3 resets this container before doing validation automatically. If you use validation directly in
+your controller, you should reset the container directly before validation, after any changes have been
+done.
+
+When implementing your own validators (see below), you need to pass the container around and check instances
+against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the ``GenericObjectValidator``
+for examples of how to do this.
+
+Writing Own Validators
+======================
+
+Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
+rather subclass ``AbstractValidator``. You only need to implement the ``isValid()`` method then::
+
+	class MySpecialValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+
+		/**
+		* Check if $value is valid.
+		*
+		* @param mixed $value
+		* @return void
+		*/
+		protected function isValid($value) {
+			if (!isset($this->options['foo'])) {
+				throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException(
+					'The option "foo" for this validator needs to be specified', 12346788
+				);
+			}
+
+			if ($value !== $this->options['foo']) {
+				$this->addError('The value must be equal to "%s"', 435346321, array($this->options['foo']));
+			}
+		}
+
+	}
+
+In the above example, the ``isValid()`` method has been implemented, and the parameter ``$value`` is the
+data we want to check for validity. In case the data is valid, nothing needs to be done.
+
+In case the data is invalid, ``$this->addError()`` should be used to add an error message, an error code
+(which should be the unix timestamp of the current time) and optional arguments which are inserted into
+the error message.
+
+The options of the validator can be accessed in the associative array ``$this->options``. In case any
+of the options is invalid, an ``InvalidValidationOptionsException`` should be thrown.
+
+.. tip::
+
+	Because you extended AbstractValidator in the above example, ``NULL`` and empty string
+	are automatically regarded as valid values; as it is the case for all other validators.
