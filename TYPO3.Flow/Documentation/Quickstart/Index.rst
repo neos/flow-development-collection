@@ -40,7 +40,7 @@ Setting up FLOW3 is pretty straight-forward. As a minimum requirement you will n
 
 * A web server (we recommend Apache with the *mod_rewrite* module enabled)
 * PHP 5.3.2 or later
-* A PDO-compatible database such as MySQL
+* A database supported by Doctrine DBAL, such as MySQL
 * Command line access
 
 Download the `FLOW3 Base Distribution`_ and unpack it in a directory which will be
@@ -58,7 +58,7 @@ accessible by your web server. You will end up with a directory structure like t
 	      Framework/
 	        TYPO3.FLOW3/
 	        ...
-	    Web/              <-- your virtual host root will later point to this
+	    Web/              <-- your virtual host root will point to this
 	      .htaccess
 	      index.php
 	    flow3
@@ -103,6 +103,21 @@ new group membership to take effect.
 	For Apache to be able to create symlinks, it needs to be started with Administrator
 	privileges, though.
 
+Setting up a virtual host
+-------------------------
+
+It is very much recommended to create a virtual host configuration for Apache
+that uses the *Web* folder as the document root. This has a number of reasons:
+
+* it makes for nicer URLs
+* it is **more secure** because that way access to anything else through the
+  web is not possible
+
+The latter point is really important!
+
+For the rest of this tutorial we assume you have created a virtual host
+that can be reached through ``http://quickstart/``.
+
 Testing the Installation
 ------------------------
 
@@ -114,8 +129,14 @@ Testing the Installation
 	The FLOW3 Welcome Screen
 
 If your system is configured correctly you should now be able to access the Welcome
-screen. Just point your browser to the ``Web`` directory of your FLOW3 installation,
-for example:
+screen:
+
+.. code-block:: text
+
+	http://quickstart/
+
+If you did not follow our advice to create a virtual host, point your browser to the
+``Web`` directory of your FLOW3 installation throughout this tutorial, for example:
 
 .. code-block:: text
 
@@ -128,11 +149,7 @@ permissions.
 .. note::
 
 	If all you get is a 404, you might need to edit the ``.htaccess`` file in the
-	``Web`` folder to adjust the ``RewriteBase`` directive to point to the right
-	folder.
-
-	Or you can configure your webserver to use the ``Web`` folder as the document
-	root. That is the recommended setup.
+	``Web`` folder to adjust the ``RewriteBase`` directive as needed.
 
 .. tip::
 
@@ -184,7 +201,7 @@ some content. You should be able to access it through the following URL:
 
 .. code-block:: text
 
-	http://localhost/Quickstart/Web/Acme.Demo
+	http://quickstart/Acme.Demo
 
 .. tip::
 
@@ -193,7 +210,7 @@ some content. You should be able to access it through the following URL:
 
 	.. code-block:: text
 
-		http://localhost/Quickstart/Web/index.php/Acme.Demo
+		http://quickstart/index.php/Acme.Demo
 
 	If this the case, keep in mind to add ``index.php`` to the following URLs in this
 	Quickstart tutorial.
@@ -243,7 +260,7 @@ Now test the new action by passing it a name like in the following URL:
 
 .. code-block:: text
 
-	http://localhost/Quickstart/Web/Acme.Demo/Standard/hello?name=Robert
+	http://quickstart/Acme.Demo/Standard/hello?name=Robert
 
 The path segments of this URL tell FLOW3 to which controller and action the web request
 should be dispatched to. In our example the parts are:
@@ -347,7 +364,7 @@ creating, editing and deleting coffee beans. Try it out by accessing this URL:
 
 .. code-block:: text
 
-	http://localhost/Quickstart/Web/Acme.Demo/CoffeeBean
+	http://quickstart/Acme.Demo/CoffeeBean
 
 Create a few coffee beans, edit and delete them and take a look at the database tables
 if you can't resist ...
@@ -574,7 +591,7 @@ the view helper will render an address like the following:
 
 .. code-block:: text
 
-	http://localhost/Quickstart/Web/acme.demo/coffeebean/show?
+	http://quickstart/acme.demo/coffeebean/show?
 		coffeeBean%5B__identity%5D=910c2440-ea61-49a2-a68c-ee108a6ee429
 
 Instead of the real PHP object, its *Universally Unique Identifier* (UUID) was included as
