@@ -772,7 +772,7 @@ for specific Route Parts:
       '@action':     'index'
       '@format':     'html'
     toLowerCase: false
-  
+
   -
     name: 'Case sensitive Route Part'
     uriPattern:    'posts/{post}/{category}'
@@ -784,7 +784,7 @@ for specific Route Parts:
     routeParts:
       post:
         toLowerCase: false
-  
+
 Note: This is a breaking change in the sense that dynamic route
 parts are now resolved to a lower cased string by default.
 

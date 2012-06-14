@@ -123,9 +123,9 @@ Placeholders
 Translated messages (labels) can contain placeholders - special markers denoting he place
 where to insert a particular value and optional configuration on how to format it.
 
-The syntax of placeholders is very simple:
+The syntax of placeholders is very simple::
 
- ``{id[,formatter[,attribute1[,attribute2...]]]}``
+	{id[,formatter[,attribute1[,attribute2...]]]}
 
 where:
 
@@ -232,7 +232,7 @@ The ``TranslateViewHelper`` also accepts all optional parameters the ``Translato
 
 .. code-block:: xml
 
-  <f:translate id="label.id" source="someLabelsCatalog" arguments="{0: 'foo', 1: '99.9'}/>
+  <f:translate id="label.id" source="someLabelsCatalog" arguments="{0: 'foo', 1: '99.9'}"/>
 
 It will translate the label using *someLabelsCatalog*. Then it will insert string casted
 value "*foo*" in place of *{0}* and localized formatted *99.9* in place of *{1,number}*.

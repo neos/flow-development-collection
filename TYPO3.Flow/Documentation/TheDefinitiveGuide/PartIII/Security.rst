@@ -593,24 +593,24 @@ to the current security context. However, here is the recommended way of what sh
 be done in this method and if you don't have really good reasons, you shouldn't
 deviate from this procedure.
 
-	#. Get the credentials provided by the client from the authentication token
-	   (``getCredentials()``)
+  #. Get the credentials provided by the client from the authentication token
+     (``getCredentials()``)
 
-	#. Retrieve the corresponding account object from the account repository, which
-	   you should inject into your provider by dependency injection. The repository
-	   provides a convenient find method for this task:
-	   ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
+  #. Retrieve the corresponding account object from the account repository, which
+     you should inject into your provider by dependency injection. The repository
+     provides a convenient find method for this task:
+     ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
 
-	#. The ``credentialsSource`` property of the account will hold the credentials
-	   you'll need to compare or at least the information, where these credentials lie.
+  #. The ``credentialsSource`` property of the account will hold the credentials
+     you'll need to compare or at least the information, where these credentials lie.
 
-	#. Start the authentication process (e.g. compare credentials/call directory service/...).
+  #. Start the authentication process (e.g. compare credentials/call directory service/...).
 
-	#. Depending on the authentication result, set the correct status in the
-	   authentication token, by ``calling setAuthenticationStatus()``.
+  #. Depending on the authentication result, set the correct status in the
+     authentication token, by ``calling setAuthenticationStatus()``.
 
-	#. Set the account in the authentication token, if authentication succeeded. This
-	   will add the roles of this token to the security context.
+  #. Set the account in the authentication token, if authentication succeeded. This
+     will add the roles of this token to the security context.
 
 Authorization
 =============
@@ -931,7 +931,7 @@ Security for persisted objects
 .. warning::
 
 	**This section is not complete yet!**
-	
+
 	* TODO: Explain query rewriting via aspect to the persistence layer
 	* NOTE: Content security not working for DQL queries currently (only QOM!)
 

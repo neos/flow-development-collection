@@ -146,7 +146,7 @@ a bit shorter now:
 
 However, the edit link still looks it bit ugly:
 
-..code-block:: none
+.. code-block:: none
 
 	http://dev.tutorial.local/post/edit?post%5B__identity%5D=229e2b23-b6f3-4422-8b7a-efb196dbc88b
 
@@ -158,7 +158,7 @@ Object Route Parts
 
 Our goal is to produce an URI like:
 
-..code-block:: none
+.. code-block:: none
 
 	http://dev.tutorial.local/post/2010/01/18/post-title/edit
 
