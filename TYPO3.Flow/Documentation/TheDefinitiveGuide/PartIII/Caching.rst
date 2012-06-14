@@ -22,17 +22,17 @@ The caching framework can handle multiple caches with different configurations. 
 cache consists of any number of cache entries. A single cache entry is defined by these
 parts:
 
-* **identifier**
+identifier
 	A string as unique identifier within this cache. Used to store and retrieve entries.
 
-* **data**
+data
 	The data to be cached.
 
-* **lifetime**
+lifetime
 	A lifetime in seconds of this cache entry. The entry can not be retrieved from cache
 	if lifetime expired.
 
-* **tags**
+tags
 	Additional tags (an array of strings) assigned to the entry. Used to remove specific
 	cache entries.
 
@@ -97,18 +97,18 @@ System Architecture
 
 The caching framework architecture is based on these classes:
 
-* ``TYPO3\FLOW3\Cache\CacheFactory``
+``TYPO3\FLOW3\Cache\CacheFactory``
 	Factory class to instantiate caches.
 
-* ``TYPO3\FLOW3\Cache\CacheManager``
+``TYPO3\FLOW3\Cache\CacheManager``
 	Returns the cache frontend of a specific cache. Implements methods to handle cache
 	instances.
 
-* ``TYPO3\FLOW3\Cache\Frontend\FrontendInterface``
+``TYPO3\FLOW3\Cache\Frontend\FrontendInterface``
 	Interface to handle cache entries of a specific cache. Different frontends exist to
 	handle different data types.
 
-* ``TYPO3\FLOW3\Cache\Backend\BackendInterface``
+``TYPO3\FLOW3\Cache\Backend\BackendInterface``
 	Interface for different storage strategies. A set of implementations exist with
 	different characteristics.
 
@@ -123,19 +123,19 @@ important is *Caches.yaml*, although you may of course use *Objects.yaml* to fur
 configre the way your caches are used. Caches are given a (unique) name and have three
 keys in their configuration:
 
-* **frontend**
+frontend
 	The frontend to use for the cache.
 
-* **backend**
+backend
 	The backend to use for the cache.
 
-* **backendOptions**
+backendOptions
 	The backend options to use.
 
 As an example for such a configuration take a look at the default that is inherited for
 any cache unless overridden:
 
-*Example: Default cache settings*::
+*Example: Default cache settings* ::
 
 	##
 	# Default cache configuration
@@ -153,7 +153,7 @@ If not all mandatory options are defined, the backend will throw an exception on
 access. To override options for a cache, simply set them in *Caches.yaml* in your global
 or package *Configuration* directory.
 
-*Example: Configuration to use RedisBackend for FooCache*::
+*Example: Configuration to use RedisBackend for FooCache* ::
 
 	FooCache:
 	  backend: TYPO3\FLOW3\Cache\Backend\RedisBackend
@@ -166,43 +166,43 @@ Cache Frontends
 Frontend API
 ------------
 
-* All frontends must implement the API defined in the interface
-	``TYPO3\FLOW3\Cache\Frontend\FrontendInterface``. All cache operations must be done
-	with these methods.
+All frontends must implement the API defined in the interface
+``TYPO3\FLOW3\Cache\Frontend\FrontendInterface``. All cache operations must be done
+with these methods.
 
-	* **getIdentifier()**
-		Returns the cache identifier.
+``getIdentifier()``
+	Returns the cache identifier.
 
-	* **getBackend()**
-		Returns the backend instance of this cache. It is seldom needed in usual code.
+``getBackend()``
+	Returns the backend instance of this cache. It is seldom needed in usual code.
 
-	* **set()**
-		Sets/overwrites an entry in the cache.
+``set()``
+	Sets/overwrites an entry in the cache.
 
-	* **get()**
-		Return the cache entry for the given identifier.</para>
+``get()``
+	Return the cache entry for the given identifier.</para>
 
-	* **has()**
-		Check for existance of a cache entry.</para>
+``has()``
+	Check for existance of a cache entry.</para>
 
-	* **remove()**
-		Remove the entry for the given identifier from the cache.
+``remove()``
+	Remove the entry for the given identifier from the cache.
 
-	* **flushByTag()**
-		Flush all cache entries which are tagged with the given tag.
+``flushByTag()``
+	Flush all cache entries which are tagged with the given tag.
 
-	* **flushByTags()**
-		Remove all cache entries which are tagged with one of the given tags.
+``flushByTags()``
+	Remove all cache entries which are tagged with one of the given tags.
 
-	* **collectGarbage()**
-		Call the garbage collection method of the backend. This is important for backends
-		which are unable to do this internally.
+``collectGarbage()``
+	Call the garbage collection method of the backend. This is important for backends
+	which are unable to do this internally.
 
-	* **isValidIdentifier()**
-		Checks if a given identifier is valid.
+``isValidIdentifier()``
+	Checks if a given identifier is valid.
 
-	* **isValidTag()**
-		Checks if a given tag is valid.
+``isValidTag()``
+	Checks if a given tag is valid.
 
 Check the API documentation for details on these methods.
 
@@ -212,10 +212,10 @@ Available Frontends
 Currenly three different frontends are implemented, the main difference is the data types
 which can be stored using a specific frontend.
 
-* ``TYPO3\FLOW3\Cache\Frontend\StringFrontend``
+``TYPO3\FLOW3\Cache\Frontend\StringFrontend``
 	The string frontend accepts strings as data to be cached.
 
-* ``TYPO3\FLOW3\Cache\Frontend\VariableFrontend``
+``TYPO3\FLOW3\Cache\Frontend\VariableFrontend``
 	Strings, arrays and objects are accepted by this frontend. Data is serialized before
 	it is given to the backend. The igbinary serializer is used transparently (if
 	available in the system) which speeds up the serialization and unserialization and
@@ -224,15 +224,16 @@ which can be stored using a specific frontend.
 	string frontend should be used in this case to avoid the additional serialization done
 	by the variable frontend.
 
-* ``TYPO3\FLOW3\Cache\Frontend\PhpFrontend``
+``TYPO3\FLOW3\Cache\Frontend\PhpFrontend``
 	This is a special frontend to cache PHP files. It extends the string frontend with the
 	method ``requireOnce()`` and allows PHP files to be ``require()``'d if a cache entry
 	exists.
+
 	This can be used to cache and speed up loading of calculated PHP code and becomes handy
 	if a lot of reflection and dynamic PHP class construction is done. A backend to be used
 	with the PHP frontend must implement the
 
-* ``TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface``
+``TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface``
 	Currently the file backend is the only backend which fulfills this requirement.
 
 .. note::
@@ -616,7 +617,7 @@ Using the CacheFactory
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Of course you can also manually ask the CacheManager (have it injected for your
-convenience) for a cache:::
+convenience) for a cache::
 
 	$this->fooCache = $this->cacheManager->getCache('MyPackage_FooCache');
 

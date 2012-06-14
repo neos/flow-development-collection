@@ -18,17 +18,18 @@ scanned by the configuration manager during initialization and cascaded into a s
 configuration tree. The following locations exist (listed in the order they are loaded,
 i.e. later values override prior ones):
 
-* */Packages/<PackageDirectoryAndName>/Configuration/*
+/Packages/<PackageDirectoryAndName>/Configuration/
 	The *Configuration* directory of each package is scanned first. Only at this stage new
-	configuration options should be introduced (by just defining a default value).
-* */Configuration/*
-	Configuration in the global *Configuration* directory override the default settings
-	which were defined in the package's configuration directories.
-* */Packages/<PackageDirectoryAndName>/Configuration/<ApplicationContext>/*
-* */Configuration/<ApplicationContext>/*
+	configuration options must be introduced (by defining a default value).
+/Configuration/
+	Configuration in the global *Configuration* directory overrides the default settings
+	defined in the package's configuration directories.
+/Packages/<PackageDirectoryAndName>/Configuration/<ApplicationContext>/
 	There may exist a subdirectory for each application context (see FLOW3 Bootstrap
 	section). This configuration is only loaded if FLOW3 runs in the respective
 	application context.
+/Configuration/<ApplicationContext>/
+	The context specific configuration again overrides the generic settings.
 
 The configuration manager also considers custom contexts, such as ``Production/Live``.
 First, the base configuration is loaded, folled by the context specific configuration
@@ -44,24 +45,24 @@ purposes.
 The configuration format is YAML and the configuration options of each type are
 defined in their own dedicated file:
 
-* *Settings.yaml*
+Settings.yaml
 	Contains user-level settings, i.e. configuration options the users or administrators
 	are meant to change. Settings are the highest level of system configuration.
-* *Routes.yaml*
+Routes.yaml
 	Contains routes configuration. This routing information is parsed and used by the MVC
 	Web Routing mechanism. Refer to the :ref:`ch-routing` chapter for more information.
-* *Objects.yaml*
+Objects.yaml
 	Contains object configuration, i.e. options which configure objects and the
 	combination of those on a lower level. See the :ref:`ch-object-management` chapter for more
 	information.
-* *Policy.yaml*
+Policy.yaml
 	Contains the configuration of the security policies of the system. See the :ref:`ch-security`
 	chapter for details.
-* *PackageStates.php*
+PackageStates.php
 	Contains a list of packages and their current state, for  example if they are active
 	or not. Don't edit this file directly, rather use the *flow3* command line tool do
 	activate and deactivate packages.
-* *Caches.yaml*
+Caches.yaml
 	Contains a list of caches which are registered automatically. Caches defined in this
 	configuration file are registered in an early stage of the boot process and profit
 	from mechanisms such as automatic flushing by the File Monitor. See the chapter about
@@ -113,11 +114,11 @@ uppercase.
 
 Some examples:
 
-* ``%FLOW3_PATH_WEB%``
+``%FLOW3_PATH_WEB%``
 	Will be replaced by the path to the public web directory.
-* ``%FLOW3_PATH_DATA%``
+``%FLOW3_PATH_DATA%``
 	Will be replaced by the path to the */Data/* directory.
-* ``%PHP_VERSION%``
+``%PHP_VERSION%``
 	Will be replaced by the current PHP version.
 
 Accessing Settings
@@ -212,7 +213,6 @@ file which will be loaded in subsequent calls instead of parsing the YAML files 
 	feature in the YAML file *and* flush all caches afterwards manually.
 
 In order to flush caches, use the following command:
-
 
 .. code-block:: bash
 

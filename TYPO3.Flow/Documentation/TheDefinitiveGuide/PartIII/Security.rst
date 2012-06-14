@@ -24,7 +24,10 @@ following value in *Settings.yaml* configuration file:
 
 .. code-block:: yaml
 
-	FLOW3: security: enable: TRUE
+	FLOW3:
+	  security:
+	    enable:
+		  TRUE
 
 If set to "yes", which is the default, the security framework engages with FLOW3
 by vowing in two AOP advices into the MVC dispatcher and another two into the
@@ -144,14 +147,14 @@ from the ``getAuthenticationStatus()`` method of any token.
 	If you only want to know, if authentication was successful, you can call the
 	convenient method ``isAuthenticated()``.
 
-* *NO_CREDENTIALS_GIVEN*
+``NO_CREDENTIALS_GIVEN``
 	This is the default state. The token is not authenticated and holds no credentials,
-		that could be used for authentication.
-* *WRONG_CREDENTIALS*
+	that could be used for authentication.
+``WRONG_CREDENTIALS``
 	It was tried to authenticate the token, but the credentials were wrong.
-* *AUTHENTICATION_SUCCESSFUL*
+``AUTHENTICATION_SUCCESSFUL``
 	The token has been successfully authenticated.
-* *AUTHENTICATION_NEEDED*
+``AUTHENTICATION_NEEDED``
 	This indicates, that the token received credentials, but has not been authenticated yet.
 
 Now you might ask yourself, how a token receives its credentials. The simple answer
@@ -412,16 +415,16 @@ controllers will be authenticated by the default username/password provider.
 
 :title:`Available request patterns`
 
-+----------------------+------------------------+----------------------------------------+
-+ Request Pattern      + Match criteria         + Configuration options                  +
-+======================+========================+========================================+
-+ controllerObjectName + Matches on the object  + Expects one regular expression, to     +
-+                      + name of the controller + match on the object name.              +
-+                      + that has been resolved +                                        +
-+                      + by the MVC dispatcher  + For example.:                          +
-+                      + for the current .      +                                        +
-+                      + request                + F3\MyApplication\AdministrationArea\.* +
-+----------------------+------------------------+----------------------------------------+
++----------------------+------------------------+------------------------------------------+
++ Request Pattern      + Match criteria         + Configuration options                    +
++======================+========================+==========================================+
++ controllerObjectName + Matches on the object  + Expects one regular expression, to       +
++                      + name of the controller + match on the object name.                +
++                      + that has been resolved +                                          +
++                      + by the MVC dispatcher  + For example.:                            +
++                      + for the current .      +                                          +
++                      + request                + ``My\Application\AdministrationArea\.*`` +
++----------------------+------------------------+------------------------------------------+
 
 Authentication entry points
 ---------------------------
@@ -555,11 +558,11 @@ here find the steps needed to implement your own authentication mechanism:
 You'll have to provide an authentication token, that implements the interface
 ``TYPO3\FLOW3\Security\Authentication\TokenInterface``:
 
-1. The most interesting method is ``updateCredentials()``. There you'll get the current
+#. The most interesting method is ``updateCredentials()``. There you'll get the current
 request and you'll have to make sure that credentials sent from the client will be
 fetched and stored in the token.
 
-2. Implement the remaining methods of the interface. These are  mostly getters and setters,
+#. Implement the remaining methods of the interface. These are  mostly getters and setters,
 have a look in one of the existing  tokens (for example
 ``TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword``), if you need more
 information.
@@ -570,18 +573,18 @@ After that you'll have to implement your own authentication strategy by providin
 that implements the interface
 ``TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface``:
 
-1. In the constructor you will get the name, that has been configured for the provider and
+#. In the constructor you will get the name, that has been configured for the provider and
 an optional options array. Basically you can decide on your own which options you need
 and how the corresponding yaml configuration will look like.
 
-2. Then there has to be a ``canAuthenticate()`` method, which gets an authentication token
+#. Then there has to be a ``canAuthenticate()`` method, which gets an authentication token
 and returns a boolean value whether your provider can authenticate that token or not.
 Most likely you will call ``getAuthenticationProviderName()`` on the token and check,
 if it matches the provider name given to you in your provider's constructor. In
 addition to this, the method ``getTokenClassNames()`` has to return an array with all
 authentication token classes, your provider is able to authenticate.
 
-3. All the magic will happen in the ``authenticate()`` method, which will get an appropriate
+#. All the magic will happen in the ``authenticate()`` method, which will get an appropriate
 authentication token. Basically you could do whatever you want in this method, the
 only thing you'll have to make sure is to set the correct status (possible values are
 defined as constants in the token interface and explained above). If authentication
@@ -590,23 +593,23 @@ to the current security context. However, here is the recommended way of what sh
 be done in this method and if you don't have really good reasons, you shouldn't
 deviate from this procedure.
 
-	1. Get the credentials provided by the client from the authentication token
+	#. Get the credentials provided by the client from the authentication token
 	   (``getCredentials()``)
 
-	2. Retrieve the corresponding account object from the account repository, which
+	#. Retrieve the corresponding account object from the account repository, which
 	   you should inject into your provider by dependency injection. The repository
 	   provides a convenient find method for this task:
 	   ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
 
-	3. The ``credentialsSource`` property of the account will hold the credentials
+	#. The ``credentialsSource`` property of the account will hold the credentials
 	   you'll need to compare or at least the information, where these credentials lie.
 
-	4. Start the authentication process (e.g. compare credentials/call directory service/...).
+	#. Start the authentication process (e.g. compare credentials/call directory service/...).
 
-	5. Depending on the authentication result, set the correct status in the
+	#. Depending on the authentication result, set the correct status in the
 	   authentication token, by ``calling setAuthenticationStatus()``.
 
-	6. Set the account in the authentication token, if authentication succeeded. This
+	#. Set the account in the authentication token, if authentication succeeded. This
 	   will add the roles of this token to the security context.
 
 Authorization
@@ -657,11 +660,11 @@ However, there is a very flexible one shipped with FLOW3
 (``TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager``), which uses the
 following voting process to meet its decision:
 
-1. Check for registered access decision voters.
+#. Check for registered access decision voters.
 
-2. Ask every voter, to vote for the given method call (or join point in AOP nomenclature).
+#. Ask every voter, to vote for the given method call (or join point in AOP nomenclature).
 
-3. Count the votes and grant access, if there is at least one ``VOTE_GRANT`` vote and no
+#. Count the votes and grant access, if there is at least one ``VOTE_GRANT`` vote and no
    ``VOTE_DENY`` vote. In all other cases an access denied exception will be thrown.
 
 *On access decision voters*
@@ -749,7 +752,7 @@ Of course you are able to configure as many request filters as
 you like. Have a look at the following example to get an idea how a
 firewall configuration will look like:
 
-*Example: Firewall configuration in the *Settings.yaml* file*
+*Example: Firewall configuration in the Settings.yaml file*
 
 .. code-block:: yaml
 
@@ -804,7 +807,7 @@ which must be unique in the whole FLOW3 instance. Following there is an example
 configuration, that will proclaim the roles ``Administrator``, ``Customer``, and
 ``PrivilegedCustomer`` to the system.
 
-*Example: roles definition in the *Policy.yaml* file*
+*Example: roles definition in the Policy.yaml file*
 
 .. code-block:: yaml
 
@@ -832,7 +835,7 @@ Entity resources are related to content security, which are explained in the
 :ref:`Content security` section below. In this section we will deal with method
 resources only.
 
-*Example: resources definition in the *Policy.yaml* file*
+*Example: resources definition in the Policy.yaml file*
 
 .. code-block:: yaml
 
@@ -860,7 +863,7 @@ specific resource, the whole syntax is described in detail in the chapter about 
 The last step is to connect resources with roles by assigning access privileges. Let's
 have a look at an example for such ACL entries:
 
-*Example: ACL entry definitions in the *Policy.yaml* file*
+*Example: ACL entry definitions in the Policy.yaml file*
 
 .. code-block:: yaml
 
@@ -910,7 +913,7 @@ here is a short introduction by two simple examples on how to use it:
 	  resources:
 	    methods:
 	      TYPO3_FooPackage_firstResource: 'method(TYPO3\FooPackage\SomeClass->updateProject(title != "FLOW3"))'
-	      TYPO3_FooPackage_secondResource: TYPO3_FooPackage_firstResource &amp;&amp; evaluate(current.securityContext.party.name == "Andi")
+	      TYPO3_FooPackage_secondResource: TYPO3_FooPackage_firstResource && evaluate(current.securityContext.party.name == "Andi")
 
 The above configuration defines a resource that matches on the ``updateProject`` method
 only if it is not called with the ``title`` argument equal to "FLOW3". The second resource
@@ -925,7 +928,12 @@ Content security
 Security for persisted objects
 ------------------------------
 
-*FIXME: This section is not complete yet*
+.. warning::
+
+	**This section is not complete yet!**
+	
+	* TODO: Explain query rewriting via aspect to the persistence layer
+	* NOTE: Content security not working for DQL queries currently (only QOM!)
 
 .. code-block:: yaml
 
@@ -955,9 +963,6 @@ property matches the currently logged in account.
   resources you will never see entities matched by this resource, no matter how many
   ``GRANT`` privileges there might be set for other roles you also have.
 
-* TODO: Explain query rewriting via aspect to the persistence layer
-* NOTE: not working for DQL queries currently (only QOM!)
-
 
 Security for files aka secure downloads
 ---------------------------------------
@@ -985,9 +990,9 @@ view helpers.
 This view helper implements an ifAccess/else condition, have a look at the following
 example, which should be more or less self-explanatory:
 
-*Example: the ``ifAccess`` view helper*
+*Example: the ifAccess view helper*
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:security.ifAccess resource="someResource">
 		This is being shown in case you have access to the given resource
@@ -1012,9 +1017,9 @@ This view helper is pretty similar to the ``ifAccess`` view helper, however it d
 check the access privilege for a given resource, but the availability of a certain role.
 For example you could check, if the current user has the ``Administrator`` role assigned:
 
-*Example: the ``ifHasRole`` view helper*
+*Example: the ifHasRole view helper*
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:security.ifHasRole role="Administrator">
 		This is being shown in case you have the Administrator role (aka role).
@@ -1051,7 +1056,7 @@ Hash service
 RSA wallet service
 ------------------
 
-* cli commands to safe keys
+* CLI commands to save keys
 * encrypting/decrypting/verifying signatures
 
 .. _http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq:  http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq

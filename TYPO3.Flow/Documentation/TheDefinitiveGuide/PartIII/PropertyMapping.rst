@@ -76,7 +76,7 @@ We'll first use a simple input array::
 	  'birthDate' => '1990-11-14T15:32:12+00:00'
 	);
 
-After calling ``$propertyMapper->convert($input, 'TYPO3\MyPackage\Domain\Model\Person'),
+After calling ``$propertyMapper->convert($input, 'TYPO3\MyPackage\Domain\Model\Person')``,
 we receive an ew object of type ``Person`` which has ``$name`` set to ``John Fisher``,
 and ``$birthDate`` set to a ``DateTime`` object of the specified date. You might
 now wonder how the PropertyMapper knows how to convert ``DateTime`` objects and
@@ -128,11 +128,11 @@ So, let's walk through a more complete input example::
 
 In this case, the following steps happen:
 
-* The ``Person``object with identity ``14d20100-9d70-11e0-aa82-0800200c9a66`` is
+* The ``Person`` object with identity ``14d20100-9d70-11e0-aa82-0800200c9a66`` is
   fetched from persistence.
 * The ``$name`` of the fetched ``$person`` object is updated to ``John Doe``
 * As the ``$mother`` property is also of type ``Person``, the ``PersistentObjectConverter``
-  is invoked recursively. It fetches the ``Person`` object with UUID
+  is invoked recursively. It fetches the ``Person`` object with identifier
   ``efd3b461-6f24-499d-97bc-309dfbe01f05``, which is then set as the ``$mother``
   property of the original person.
 
@@ -140,7 +140,6 @@ Here, you see that we can also set associations using the Property Mapper.
 
 Configuring the Conversion Process
 ==================================
-
 
 It is possible to configure the conversion process by specifying a
 ``PropertyMappingConfiguration`` as third parameter to ``PropertyMapper::convert()``.
@@ -150,10 +149,13 @@ automatically creates a default ``PropertyMappingConfiguration``.
 In most cases, you should use the ``PropertyMappingConfigurationBuilder`` to create a new
 PropertyMappingConfiguration, so that you get a convenient default configuration::
 
-	// $propertyMappingConfigurationBuilder instanceof TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
+		// Here $propertyMappingConfigurationBuilder is an instance of
+		// \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
 	$propertyMappingConfiguration = $propertyMappingConfigurationBuilder->build();
-	// modify $propertyMappingConfiguration
 
+		// modify $propertyMappingConfiguration here
+
+		// pass the configuration to convert()
 	$propertyMapper->convert($source, $targetType, $propertyMappingConfiguration);
 
 The following configuration options exist:
@@ -214,14 +216,14 @@ configures the ``DateTime`` converter for the ``birthDate`` property::
 ``forProperty()`` also supports more than one nesting level using the dot notation,
 so writing something like ``forProperty('mother.birthDate')`` is possible.
 
-.. admonition:: Property Mapping Configuration in MVC stack
+.. admonition:: Property Mapping Configuration in the MVC stack
 
 	The most common use-case where you will want to adjust the Property Mapping Configuration
 	is inside the MVC stack, where incoming arguments are converted to objects.
 
 	If you use Fluid forms, normally no adjustments are needed. However, when programming
 	a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
-	manually. You can access them using the ``TYPO3\FLOW3\Mvc\Controller\Argument``
+	manually. You can access them using the ``\TYPO3\FLOW3\Mvc\Controller\Argument``
 	object -- and this configuration takes place inside the corresponding ``initialize*Action``
 	of the controller, as in the following example:
 
@@ -322,7 +324,10 @@ but as long as Fluid forms are used, no extra work has to be done by the develop
 Reference of TypeConverters
 ===========================
 
-.. note:: TODO: should be automatically generated from the source
+.. note::
+
+	This should be automatically generated from the source and will be
+	added to the appendix if available.
 
 The Inner Workings of the Property Mapper
 =========================================
@@ -330,20 +335,20 @@ The Inner Workings of the Property Mapper
 The Property Mapper applies the following steps to convert a simple type to an
 object. Some of the steps will be described in detail afterwards.
 
-1. Figure out which type converter to use for the given source - target pair.
+#. Figure out which type converter to use for the given source - target pair.
 
-2. Ask this type converter to return the child properties of the source data
+#. Ask this type converter to return the child properties of the source data
    (if it has any), by calling ``getSourceChildPropertiesToBeConverted()`` on
    the type converter.
 
-3. For each child propery, do the following:
+#. For each child propery, do the following:
 
-	1. Ask the type converter about the data type of the child property, by calling
+	#. Ask the type converter about the data type of the child property, by calling
 	   ``getTypeOfChildProperty()`` on the type converter.
 
-	2. Recursively invoke the ``PropertyMapper`` to build the child object from the input data.
+	#. Recursively invoke the ``PropertyMapper`` to build the child object from the input data.
 
-4. Now, call the type converter again (method ``convertFrom()``), passing all (already
+#. Now, call the type converter again (method ``convertFrom()``), passing all (already
    built) child objects along. The result of this call is returned as the final result of the
    property mapping process.
 
@@ -358,19 +363,23 @@ All type converters which implement ``TYPO3\FLOW3\Property\TypeConverterInterfac
 are automatically found in the resolving process. There are four API methods in
 each ``TypeConverter`` which influence the resolving process:
 
-* ``getSupportedSourceTypes()``: returns an array of simple types which are
-  understood as source type by this type converter
+``getSupportedSourceTypes()``
+  Returns an array of simple types which are understood as source type by this type
+  converter.
 
-* ``getSupportedTargetType()``: The target type this type converter can convert
-  into. Can be either a simple type, or a class name.
+``getSupportedTargetType()``
+  The target type this type converter can convert into. Can be either a simple type,
+  or a class name.
 
-* ``getPriority()``: If two type converters have the same source and target type,
-  precedence is given to the one with higher priority. All standard TypeConverters
+``getPriority()``
+  If two type converters have the same source and target type, precedence
+  is given to the one with higher priority. All standard TypeConverters
   have a priority lower than 100.
 
-* ``canConvertFrom($source, $targetType)`` is called as last check, when source
-  and target types fit together. Here, the TypeConverter can implement runtime
-  constraints to decide whether it can do the conversion.
+``canConvertFrom($source, $targetType)``
+  Is called as last check, when source and target types fit together. Here, the 
+  TypeConverter can implement runtime constraints to decide whether it can do 
+  the conversion.
 
 When a type converter has to be found, the following algorithm is applied:
 
@@ -395,8 +404,8 @@ where it left off in the above algorithm.
 
 For simple target types, the steps 2 and 3 are omitted.
 
-Writing Own TypeConverters
---------------------------
+Writing Your Own TypeConverters
+-------------------------------
 
 Often, it is enough to subclass
 ``TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter``
@@ -435,6 +444,7 @@ possibilities what can be returned in ``convertFrom()``:
   because of wrong checksums, or because the disk on the server is full.
 
 .. warning::
-	Inside a type converter it is not allowed to use an (injected)
-	instance of ``TYPO3\FLOW3\Property\PropertyMapper`` because it can lead to
-	an infinite, recursive invocation.
+
+	Inside a type converter it is not allowed to use an (injected) instance
+	of ``TYPO3\FLOW3\Property\PropertyMapper`` because it can lead to an
+	infinite recursive invocation.
