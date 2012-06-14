@@ -15,7 +15,6 @@ interchanging FLOW3 based packages with other community members.
 .. note::
 
 	At the time of writing the package repository for FLOW3 is still in the planning phase.
-	In order to publish packages, use `TYPO3 Forge <http://forge.typo3.org>`_ for now.
 
 Package Locations
 =================
@@ -47,9 +46,9 @@ folder structure:
 		The Application directory contains your own / application specific packages:
 
 		* *TYPO3.TYPO3/*
-			For example the TYPO3 package
+			For example the TYPO3 package…
 		* *Acme.Demo/*
-			Or the demo package
+			…or the demo package
 
 The reason for separating packages into separate directories is that the core packages
 in *Framework/* can reside in a different, shared location and be symlinked
@@ -72,7 +71,7 @@ expects packages with website resources in a folder named *Sites*.
 Loading Order
 -------------
 
-The loading order of packages locations is undefined, except that FLOW3 itself will of
+The loading order of additional package locations is undefined, except that FLOW3 itself will of
 course always be loaded first.
 
 
@@ -129,10 +128,6 @@ The suggested directory layout of a FLOW3 package is as follows:
 
 		Although it is up to the package author to name the directories, we suggest the
 		following conventions for directories below ``Private`` and ``Public``:
-
-		.. warning:: The following folder structure is not yet finalized, it is more a rough draft.
-
-		.. TODO: fix the above warning and then remove it.
 
 		* *Media*
 			This directory holds images, PDF, Flash, CSS and other files that will be

@@ -9,6 +9,4 @@ FLOW3 – The Definitive Guide
 	PartIII/Index
 	PartIV/Index
 	PartV/Index
-	Glossary
 	Contributors
-	Colophon

@@ -454,7 +454,9 @@ in the following routing configuration:
 You can even reference multiple SubRoutes from one route - that will create one route for
 all possible combinations.
 
-.. tip:: You can use the following command-line command to list all routes which are currently active:
+.. tip::
+
+	You can use the ``flow3:routing:list`` command to list all routes which are currently active:
 
 	.. code-block:: bash
 
@@ -475,5 +477,5 @@ all possible combinations.
 Route Loading Order and the FLOW3 Application Context
 =====================================================
 
-- routes inside more specific contexts are loaded *first*, and after that, global ones
-- so you can specify context-specific routes
+- routes inside more specific contexts are loaded *first*
+- and *after* that, global ones, so you can specify context-specific routes

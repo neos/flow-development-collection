@@ -403,7 +403,7 @@ output. Earlier we saw an example use of the TranslateViewHelper:
 
 .. code-block:: xml
 
-  <f:translate id="label.id" arguments="{0: 'foo', 1: '99.9'}/>
+	<f:translate id="label.id" arguments="{0: 'foo', 1: '99.9'}"/>
 
 The corresponding XLIFF files will contain placeholders in the source and target strings:
 

@@ -98,15 +98,15 @@ provide a "thumbnail resource" for a smaller version of the original.
 
 This is what happens in detail while executing the ``importImageAction`` method:
 
-1. The URI (in our case an absolute path and filename) is passed to the ``importResource()``
+#. The URI (in our case an absolute path and filename) is passed to the ``importResource()``
    method which analyzes the file found at that location.
-2. The file is imported into FLOW3's persistent resources storage  using the sha1 hash over
+#. The file is imported into FLOW3's persistent resources storage  using the sha1 hash over
    the file content as its filename. If a file with exactly the same content is imported
    it will reuse the already stored resource.
-3. The Resource Manager returns a new ``Resource`` object which refers to the newly
+#. The Resource Manager returns a new ``Resource`` object which refers to the newly
    imported file.
-4. A new ``Image`` object is created and the resource is attached to it.
-5. The image is added to the ``ImageRepository``. Only from now on the new image and the
+#. A new ``Image`` object is created and the resource is attached to it.
+#. The image is added to the ``ImageRepository``. Only from now on the new image and the
    related resource will be persisted. If we omitted that step, the image, the resource
    and in the end the imported file would be discarded at the end of the script run.
 
@@ -123,7 +123,7 @@ object.
 
 Consider the following Fluid template:
 
-.. code-block:: html
+.. code-block:: xml
 
 	<f:form method="post" action="create" object="{newImage}" name="newImage"
 		enctype="multipart/form-data">
@@ -189,7 +189,7 @@ package containing the currently active controller.
 
 .. warning::
 
-	Although it might be tempting shortcut, never refer to the resource files directly
+	Although it might be a tempting shortcut, never refer to the resource files directly
 	through a URL like ``_Resources/Static/Packages/Acme.Demo/Images/Icons/FooIcon.png``
 	because you can't really rely on this path. Always use the resource view helper
 	instead.
@@ -228,7 +228,7 @@ A URI produced by the above template would look like this:
 You can define as many titles for each resource as you want – the resulting file is always
 the same, identified by the sha1 hash.
 
-.. note:: Internally, FLOW3 uses a rewrite rule to map the speaking titles to the hash files.
+.. note:: FLOW3 ships a *mod_rewrite* rule to map the speaking titles to the hash files.
 
 Mirror Mode
 -----------

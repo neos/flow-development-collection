@@ -24,7 +24,7 @@ contexts:
 
 The context FLOW3 runs in is specified through the environment variable
 ``FLOW3_CONTEXT``. It can be set per command at the command line or be part of the
-webserver configuration:
+webserver configuration::
 
 	# run the FLOW3 CLI commands in production context
 	FLOW3_CONTEXT=Production ./flow3 help
@@ -64,12 +64,12 @@ Boot Sequence
 =============
 
 There are basically two types of requests which are handled by a FLOW3
-application: command line and HTTP requests:
+application:
 
 * *command line* requests are passed to the ``flow3.php`` script which
   resides in the ``Scripts`` folder of the FLOW3 package
 * *HTTP requests* are first taken care of by the ``index.php`` script
-  residing in the public ``Web`` directory.
+  in the public ``Web`` directory.
 
 Both scripts set certain environment variables and then instantiate and run the
 ``TYPO3\FLOW3\Core\Bootstrap`` class.
@@ -77,7 +77,9 @@ Both scripts set certain environment variables and then instantiate and run the
 The bootstrap's ``run()`` method initializes the bare minimum needed for any
 kind of operation. When it did that, it determines the actual request
 handler which takes over the control of the further boot sequence and
-handling the request. ::
+handling the request.
+
+::
 
 	public function run() {
 		Scripts::initializeClassLoader($this);
@@ -125,7 +127,7 @@ Request Handlers
 A request handler is in charge of executing the boot sequence and ultimately
 answering the request it was designed for. It must implement the
 ``\TYPO3\FLOW3\Core\RequestHandlerInterface`` interface which,
-among others, contains the following methods: ::
+among others, contains the following methods::
 
 	public function handleRequest();
 
@@ -135,14 +137,14 @@ among others, contains the following methods: ::
 
 On trying to find a suitable request handler, the bootstrap asks each
 registered request handler if it can handle the current request
-– ``canHandleRequest()`` – and if it can,
-how eager it is to do so – ``getPriority()``. It then passes control to the
-request handler which is most capable of responding to the request
-– ``handleRequest()``.
+using ``canHandleRequest()`` – and if it can,
+how eager it is to do so through ``getPriority()``. It then passes control to the
+request handler which is most capable of responding to the request by
+calling ``handleRequest()``.
 
 Request handlers must first be registered in order to be considered during the
 resolving phase. Registration is done in the ``Package`` class of the package
-containing the request handler: ::
+containing the request handler::
 
 	class Package extends BasePackage {
 

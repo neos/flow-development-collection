@@ -219,10 +219,7 @@ lifecycle step:
    dependencies are passed to the constructor arguments
 #. After all dependencies have been injected (through constructor- or setter injection)
    the object's ``initializeObject()`` method is called. The name of this method is configurable
-   inside *Objects.yaml*.
-
-   .. tip:: ``initializeObject()`` is also called if no dependencies were injected.
-
+   inside *Objects.yaml*. ``initializeObject()`` is also called if no dependencies were injected.
 #. During the life of an object no special lifecycle methods are called
 #. Before destruction of the object, the function ``shutdownObject()`` is called. The name of
    this method is also configurable.
@@ -1015,7 +1012,8 @@ structure:
 	            object:
 	              name: TYPO3\FLOW3\Cache\Backend\File
 	              properties:
-	                cacheDirectory: value: /tmp/
+	                cacheDirectory:
+	                  value: /tmp/
 
 Disabling Autowiring
 ~~~~~~~~~~~~~~~~~~~~
@@ -1107,17 +1105,17 @@ recreating/reconstituting an object, there are cases where different code should
 executed. That is why the initialization method gets a parameter, which is one of the
 ``\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_*`` constants:
 
-* ``\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED``
-  if the object is newly created (i.e. the constructor has been called)
-* ``\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED``
-  if the object has been recreated/reconstituted (i.e. the constructor has not been
+``\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED``
+  If the object is newly created (i.e. the constructor has been called)
+``\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED``
+  If the object has been recreated/reconstituted (i.e. the constructor has not been
   called)
 
 The name of both methods is configurable per object for situations you don't have control
 over the name of your initialization method (maybe, because you are integrating legacy
 code):
 
-*Example: Objects.yaml configuration of the initialization and shutdown method*:
+*Example: Objects.yaml configuration of the initialization and shutdown method*
 
 .. code-block:: yaml
 
