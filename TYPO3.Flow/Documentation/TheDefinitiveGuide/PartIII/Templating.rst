@@ -33,8 +33,7 @@ is controlled by a special TemplateView which instanciates the Template Parser,
 resolves the template HTML file, and renders the template afterwards.
 
 Below, you'll find a snippet of a real-world template displaying a list of blog
-postings. Use it to check whether you find the template language intuitive (we
-hope you will ;-) )::
+postings. Use it to check whether you find the template language intuitive::
 
 	{namespace f=TYPO3\Fluid\ViewHelpers}
 	<html>
@@ -53,10 +52,10 @@ hope you will ;-) )::
 	</body>
 	</html>
 
-* The *Namespace Import* makes the ``TYPO3\Fluid\ViewHelper`` namespace available
-  under the shorthand f. This is important for View Helpers, like the ``<f:link.action />`` tag.
-* The ``<f:for>`` essentially corresponds to ``foreach($postings as $posting)`` in PHP.
-* With the dot-notation (``{posting.title}``, or ``{posting.author.name}``), you
+* The *Namespace Import* makes the ``\TYPO3\Fluid\ViewHelper`` namespace available
+  under the shorthand f.
+* The ``<f:for>`` essentially corresponds to ``foreach ($postings as $posting)`` in PHP.
+* With the dot-notation (``{posting.title}`` or ``{posting.author.name}``), you
   can traverse objects. In the latter example, the system calls ``$posting->getAuthor()->getName()``.
 * The ``<f:link.action />`` tag is a so-called ViewHelper. It calls arbitary PHP
   code, and in this case renders a link to the "details"-Action.
@@ -74,15 +73,50 @@ Basic Concepts
 
 This section describes all basic concepts available. This includes:
 
+* Namespaces
 * Variables / Object Accessors
 * View Helpers
 * Arrays
+
+Namespaces
+----------
+
+Fluid can be extended easily, thus it needs a way to tell where a certain tag
+is defined. This is done using namespaces, closely following the well-known
+XML behavior.
+
+Namespaces can be defined in a template in two ways:
+
+{namespace f=TYPO3\Fluid\ViewHelpers}
+  This is a non-standard way only understood by Fluid. It links the ``f``
+  prefix to the PHP namespace ``\TYPO3\Fluid\ViewHelpers``.
+<html xmlns:foo=”http://some/unique/namespace”>
+  The standard for declaring a namespace in XML. This will link the ``foo``
+  prefix to the URI ``http://some/unique/namespace`` and Fluid can look up
+  the corresponding PHP namespace in your settings (so this is a two-piece
+  configuration). This makes it possible for your XML editor to validate the
+  template files and even use an XSD schema for autocompletion.
+
+A namespace linking ``f`` to ``\TYPO3\Fluid\ViewHelpers`` is imported by
+default. All other namespaces need to be imported explicitely.	
+
+If using the XML namespace syntax the default pattern
+``http://typo3.org/ns/<php namespace>`` is resolved automatically by the
+Fluid parser. If you use a custom XML namespace URI you need to configure the
+URI to PHP namespace mapping. The YAML syntax for that is:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Fluid:
+	    namespaces:
+	      'http://some/unique/namespace': 'My\Php\Namespace'
 
 Variables and Object Accessors
 ------------------------------
 
 A templating system would be quite pointless if it was not possible to display some
-external data in the templates. That's what variables are for:
+external data in the templates. That's what variables are for.
 
 Suppose you want to output the title of your blog, you could write the following
 snippet into your controller:
@@ -100,14 +134,14 @@ you could repeat the above steps, but that would be quite inconvenient and hard 
 
 .. Note::
 
-	Remember: The semantics between the controller and the view should be the
-	following: The controller says to the view "Please render the blog object
-	I give to you", and not "Please render the Blog title, and the blog posting
-	1, ...". That's why passing objects to the view instead of simple values is
-	highly encouraged.
+	The semantics between the controller and the view should be the following:
+	The controller instructs the view to "render the blog object given to it",
+	and not to "render the Blog title, and the blog posting 1, ...".
+	
+	Passing objects to the view instead of simple values is highly encouraged!
 
-That's why the template language has a special syntax for object access, demonstrated
-below. A nicer way of expressing the above is the following:
+That is why the template language has a special syntax for object access. A nicer
+way of expressing the above is the following:
 
 .. code-block:: php
 
@@ -147,37 +181,37 @@ This concept is best understood with an example::
 
 The example consists of two parts:
 
-* *Namespace Declaration*: You import the PHP Namespace ``TYPO3\Fluid\ViewHelpers``
-  under the prefix ``f``. The above namespace import ``{namespace f=TYPO3\Fluid\ViewHelpers}``
-  is imported by default. All other namespaces need to be imported explicitely.
-  This is like an XML namespace import, just with a different syntax.
-* *Calling the View Helper*: The ``<f:link.action...> ... </f:link.action>`` tag
-  renders a link.
+* *Namespace Declaration* as explained earlier.
+* *Calling the View Helper* with the ``<f:link.action...> ... </f:link.action>``
+  tag renders a link.
 
 Now, the main difference between Fluid and other templating engines is how the
 view helpers are implemented: For each view helper, there exists a corresponding
 PHP class. Let's see how this works for the example above:
 
-The ``<f:link.action />`` tag is implemented in the class ``TYPO3\Fluid\ViewHelpers\Link\ActionViewHelper``.
+The ``<f:link.action />`` tag is implemented in the class ``\TYPO3\Fluid\ViewHelpers\Link\ActionViewHelper``.
 
-.. Note:: The class name of such a view helper is constructed for a given tag as follows:
+.. note::
 
-	* The first part of the class name is the namespace which was imported (the namespace
-	  prefix ``f`` was expanded to its full namespace ``TYPO3\Fluid\ViewHelpers``)
-	* The unqualified name of the tag, without the prefix, is capitalized (``Link``),
-	  and the postfix ViewHelper is appended.
+	The class name of such a view helper is constructed for a given tag as follows:
+
+	#. The first part of the class name is the namespace which was imported (the namespace
+	   prefix ``f`` was expanded to its full namespace ``TYPO3\Fluid\ViewHelpers``)
+	#. The unqualified name of the tag, without the prefix, is capitalized (``Link``),
+	   and the postfix ViewHelper is appended.
 
 The tag and view helper concept is the core concept of Fluid. All output logic is
-implemented through such ViewHelpers / Tags! Things like ``if/else, for, ...`` are
+implemented through such ViewHelpers / tags! Things like ``if/else``, ``for``, … are
 all implemented using custom tags - a main difference to other templating languages.
 
-.. Note:: Some benefits of the class-based approach approach are:
+.. note::
+
+	Some benefits of the class-based approach approach are:
 
 	* You cannot override already existing view helpers by accident.
 	* It is very easy to write custom view helpers, which live next to the standard view helpers
 	* All user documentation for a view helper can be automatically generated from the
 	  annotations and code documentation.
-
 
 Most view helpers have some parameters. These can be plain strings, just like in
 ``<f:link.action controller="Administration">...</f:link.action>``, but as well
@@ -192,7 +226,9 @@ This is often used when adding arguments to links::
 
 Here, the view helper will get a parameter called ``arguments`` which is of type ``array``.
 
-.. Warning:: Make sure you do not put a space before or after the opening or closing
+.. warning::
+
+	Make sure you do not put a space before or after the opening or closing
 	brackets of an array. If you type ``arguments=" {singleBlog : blogObject}"``
 	(notice the space before the opening curly bracket), the array is automatically
 	casted to a string (as a string concatenation takes place).
@@ -226,16 +262,16 @@ Why can we use this boolean expression syntax? Well, because the ``IfViewHelper`
 has registered the argument condition as ``boolean``. Thus, the boolean expression
 syntax is available in all arguments of ViewHelpers which are of type ``boolean``.
 
-All boolean expressions have the form ``XX Comparator YY``, where:
+All boolean expressions have the form ``X <omparator> Y``, where:
 
-* Comparator is one of the following: ``==, >, >=, <, <=, % (modulo)``
-* XX / YY is one of the following:
+* *<comparator>* is one of the following: ``==, >, >=, <, <=, % (modulo)``
+* *X* and *Y* are one of the following:
 
-	* A number (integer or float
-	* A JSON Array
-	* A ViewHelper
-	* An Object Accessor (this is probably the most used example)
-	* Inline Notation for ViewHelpers
+	* a number (integer or float)
+	* a JSON array
+	* a ViewHelper
+	* an Object Accessor (this is probably the most used example)
+	* inline notation for ViewHelpers
 
 Inline Notation for ViewHelpers
 -------------------------------
@@ -259,7 +295,7 @@ be written like the following::
 This is readable much better, and explains the intent of the ViewHelper in a much
 better way: It is used like a helper function.
 
-The syntax is still more flexible: In Real-World templates, you will often find
+The syntax is still more flexible: In real-world templates, you will often find
 code like the following, formatting a ``DateTime`` object (stored in ``{post.date}``
 in the example below)::
 
@@ -270,7 +306,7 @@ This can also be re-written using the inline notation:
 {post.date -> f:format.date(format:'d-m-Y')}
 This is also a lot better readable than the above syntax.
 
-.. Tip::
+.. tip::
 
 	This can also be nested indefinitely often, so one can write::
 
@@ -286,7 +322,7 @@ Arrays
 
 Some view helpers, like the ``SelectViewHelper`` (which renders an HTML select
 dropdown box), need to get associative arrays as arguments (mapping from internal
-to displayed name). See the following example how this works::
+to displayed name). See the following example for how this works::
 
 	<f:form.select options="{edit: 'Edit item', delete: 'Delete item'}" />
 
@@ -579,7 +615,7 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
 
 Additionally, we now already have support for all universal HTML attributes.
 
-.. Tip::
+.. tip::
 
 	The ``TagBuilder`` also makes sure that all attributes are escaped properly,
 	so to decrease the risk of Cross-Site Scripting attacks, make sure to use it
@@ -719,11 +755,14 @@ Fluid Template
 --------------
 
 The Fluid templates of a widget are normal Fluid templates as you know them, but
-have a few ViewHelpers available additionally, which are described now:
+have a few ViewHelpers available additionally:
 
-* <f:uri.widget>: Generates an URI to another action of the widget.
-* <f:link.widget>: Generates a link to another action of the widget.
-* <f:renderChildren>: Can be used to render the child nodes of the Widget ViewHelper,
+<f:uri.widget>
+  Generates an URI to another action of the widget.
+<f:link.widget>
+  Generates a link to another action of the widget.
+<f:renderChildren>
+  Can be used to render the child nodes of the Widget ViewHelper,
   possibly with some more variables declared.
 
 .. _ajax-widgets:
@@ -736,7 +775,7 @@ to be done to create an AJAX compatible widget, and then explain it with an exam
 
 To make a widget AJAX-aware, you need to do the following:
 
-* set ``$ajaxWidget`` to TRUE inside the ViewHelper. This will generate an unique
+* Set ``$ajaxWidget`` to TRUE inside the ViewHelper. This will generate an unique
   AJAX Identifier for the Widget, and store the WidgetConfiguration in the user's
   session on the server.
 * Inside the index-action of the Widget Controller, generate the JavaScript which
@@ -747,3 +786,37 @@ To make a widget AJAX-aware, you need to do the following:
 
 * Inside the template of the AJAX request, ``<f:renderChildren>`` is not available,
   because the child nodes of the Widget ViewHelper are not accessible there.
+
+XSD schema generation
+=====================
+
+A XSD schema file for your ViewHelpers can be created by executing
+
+.. code-block:: text
+
+	./flow3 documenation:generatexsd <Your>\\<Package>\\ViewHelpers
+		--target-file /some/directory/your.package.xsd
+
+Then import the XSD file in your favorite IDE and map it to the namespace 
+``http://typo3.org/ns/<Your/Package>/ViewHelpers``. Add the namespace to your 
+Fluid template by adding the ``xmlns`` attribute to the root tag (usually 
+``<xml …>`` or ``<html …>``).
+
+.. note::
+
+	You are able to use a different XML namespace pattern by specifying the 
+	``-–xsd-namespace argument`` in the generatexsd command.
+
+If you want to use this inside partials, you can use the “section” argument of 
+the render ViewHelper in order to only render the content of the partial.
+
+Partial::
+
+	<html xmlns:x=”http://typo3.org/ns/Your/Package/ViewHelpers”>
+	<f:section name=”content”>
+		<x:yourViewHelper />
+	</f:section>
+
+Template::
+
+	<f:render partial=”PartialName” section=”content” />
