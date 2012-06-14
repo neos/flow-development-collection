@@ -1042,55 +1042,56 @@ whose name starts with ``inject``.
 Custom Factories
 ----------------
 
-.. warning:: |documentationNotReady|
-
 Complex objects might require a custom factory which takes care of all important settings
-and dependencies. As we have seen previously, a cache consists of a frontend, a backend
+and dependencies. As we have seen previously, a logger consists of a frontend, a backend
 and configuration options for that backend. Instead of creating and configuring these
-objects on your own, you can use the ``TYPO3\FLOW3\Cache\CacheFactory`` which provides a
+objects on your own, you can use the ``TYPO3\FLOW3\Log\LoggerFactory`` which provides a
 convenient ``create`` method taking care of all the rest::
 
-	$myCache = $cacheFactory->create('MyCache', 'TYPO3\FLOW3\Cache\VariableCache',
-	    'TYPO3\FLOW3\Cache\Backend\File', array('cacheDirectory' => '/tmp'));
+	$myCache = $loggerFactory->create('FLOW3_System', 'TYPO3\FLOW3\Log\Logger',
+	    'TYPO3\FLOW3\Log\Backend\FileBackend', array( … ));
 
 It is possible to specify for each object if it should be created by a custom factory
 rather than the Object Builder. Consider the following configuration:
 
-*Example: Sample configuration for a Custom Factory*:
+*Example: Sample configuration for a Custom Factory*
 
 .. code-block:: yaml
 
-	TYPO3\FLOW3\Cache\CacheInterface:
-	  factoryObjectName: TYPO3\FLOW3\Cache\CacheFactory
+	TYPO3\FLOW3\Log\SystemLoggerInterface:
+	  scope: singleton
+	  factoryObjectName: TYPO3\FLOW3\Log\LoggerFactory
 	  factoryMethodName: create
 
-From now on the Cache Factory's ``create`` method will be called each time an object of
-type ``CacheInterface`` needs to be instantiated. If arguments were passed to the
+From now on the LoggerFactory's ``create`` method will be called each time an object of
+type ``SystemLoggerInterface`` needs to be instantiated. If arguments were passed to the
 ``ObjectManagerInterface::get()`` method or defined in the configuration, they will be
 passed through to the custom factory method:
 
-*Example: YAML configuration for a Custom Factory with default arguments*:
+*Example: YAML configuration for a Custom Factory with default arguments*
 
 .. code-block:: yaml
 
-	TYPO3\FLOW3\Cache\CacheInterface:
-	  factoryObjectName: TYPO3\FLOW3\Cache\CacheFactory
+	TYPO3\FLOW3\Log\SystemLoggerInterface:
+	  scope: singleton
+	  factoryObjectName: TYPO3\FLOW3\Log\LoggerFactory
 	  arguments:
+	    1:
+	      value: 'FLOW3_System'
 	    2:
-	      value: TYPO3\FLOW3\Cache\VariableCache
+	      value: 'TYPO3\FLOW3\Log\Logger'
 	    3:
-	      value: TYPO3\FLOW3\Cache\Backend\File
+	      value: 'TYPO3\FLOW3\Log\Backend\FileBackend'
 	    4:
-	      value: { cacheDirectory: /tmp }
+	      setting: TYPO3.FLOW3.log.systemLogger.backendOptions
 
-*Example: PHP code using the custom factory*::
+*Example: PHP code using the custom factory* ::
 
-	$myCache = $objectManager->create('MyCache');
+	$myCache = $objectManager->get('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
-``$objectManager`` is a reference to the ``TYPO3\FLOW3\Object\ObjectManager``. The
-argument with the value ``MyCache`` is passed to the Cache Factory as the first parameter.
-The required second and third argument and the optional fourth parameter are automatically
-built from the values defined in the object configuration.
+``$objectManager`` is a reference to the ``TYPO3\FLOW3\Object\ObjectManager``.
+The required arguments are automatically built from the values defined in the
+object configuration.
 
 Name of Lifecycle Methods
 -------------------------
