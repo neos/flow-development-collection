@@ -36,6 +36,8 @@ class Version201201261636 extends AbstractMigration {
 
 		$this->searchAndReplace('->getRootRequest()', '->getMainRequest()');
 		$this->searchAndReplace('$this->controllerContext->getRequest()->getBaseUri()', '$this->controllerContext->getRequest()->getHttpRequest()->getBaseUri()');
+		$this->searchAndReplace('->getOriginalRequestMappingResults()', '->getInternalArgument(\'__submittedArgumentValidationResults\')');
+		$this->searchAndReplace('->getOriginalRequest()->getArguments()', '->getInternalArgument(\'__submittedArguments\')');
 
 		$this->showNote('\TYPO3\FLOW3\MVC\Web\RequestBuilder does not exist anymore. If you need to create requests, do "new ActionRequest($parentRequest)".');
 		$this->showNote('\TYPO3\FLOW3\MVC\Web\SubRequestBuilder does not exist anymore. If you need to create sub requests, do "new ActionRequest($parentRequest)".');
