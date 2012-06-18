@@ -121,7 +121,7 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * (RFC 2616 3.3.1)
 	 *
-	 * This checks if set() and get() convert DateTime to an RFC 822 compliant date /
+	 * This checks if set() and get() convert DateTime to an RFC 2822 compliant date /
 	 * time string and vice versa. Note that the date / time passed to set() is
 	 * normalized to GMT internally, so that get() will return the same point in time,
 	 * but not in the same timezone, if it was not GMT previously.
