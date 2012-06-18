@@ -1,0 +1,14 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'defaultLocale': { type: string, required: TRUE }
+  'fallbackRule':
+     type: dictionary
+     additionalProperties: FALSE
+     properties:
+       'strict': { type: boolean, required: TRUE }
+       'order':
+         type: array
+         required: TRUE
+         items:
+           type: string

@@ -1,0 +1,8 @@
+type: dictionary
+additionalProperties: FALSE
+properties:
+  'git':
+    type: dictionary
+    additionalProperties: FALSE
+    properties:
+      'gitBinary': { type: string }
