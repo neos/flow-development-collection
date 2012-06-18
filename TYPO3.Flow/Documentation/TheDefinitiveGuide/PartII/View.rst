@@ -384,6 +384,15 @@ post object. The form's elements are named after the class properties of the
 ``Post`` domain model: ``blog``, ``author``, ``title``, ``content`` and
 ``relatedPosts``. Let's look at the ``createAction`` again:
 
+.. note::
+
+	Mind that ``newPost`` is not assigned to the view in this example. Assigning
+	this object is only needed if you have set default values to your model
+	properties. So if you for example have a ``protected $foo = TRUE``
+	definition in your model, a ``<f:form.checkbox property="foo" />`` will not
+	be checked by default, unless you instantiate ``$newPost`` in your index
+	action and assign it to the view.
+
 *Classes/Controller/PostController.php*:
 
 .. code-block:: php
