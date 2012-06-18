@@ -132,7 +132,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 */
 	public function makeDirectory($path, $mode, $options) {
 		$path = $this->evaluateResourcePath($path, FALSE);
-     	mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
+		mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
 	}
 
 	/**

@@ -104,6 +104,7 @@ class EmptyQueryResult implements  QueryResultInterface {
 	public function rewind() {}
 
 	/**
+	 * @param mixed $offset
 	 * @return boolean Returns FALSE in this case
 	 */
 	public function offsetExists($offset) {
@@ -111,6 +112,7 @@ class EmptyQueryResult implements  QueryResultInterface {
 	}
 
 	/**
+	 * @param mixed $offset
 	 * @return mixed Returns NULL in this case
 	 */
 	public function offsetGet($offset) {

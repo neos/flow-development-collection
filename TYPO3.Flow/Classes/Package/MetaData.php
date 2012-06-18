@@ -29,7 +29,7 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 
 	/**
 	 * The version number
-	 * @var \TYPO3\FLOW3\Package\Version
+	 * @var string
 	 */
 	protected $version;
 

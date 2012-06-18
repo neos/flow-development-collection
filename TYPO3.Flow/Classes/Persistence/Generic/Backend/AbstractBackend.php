@@ -105,7 +105,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Session $persistenceSession
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession
 	 * @return void
 	 */
 	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {

@@ -70,6 +70,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 	 *
 	 * @param \TYPO3\FLOW3\Http\Request $request
 	 * @return \TYPO3\FLOW3\Http\Response
+	 * @throws \TYPO3\FLOW3\Http\Exception
 	 * @api
 	 */
 	public function sendRequest(Request $request) {

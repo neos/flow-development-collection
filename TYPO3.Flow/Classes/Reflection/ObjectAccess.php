@@ -81,7 +81,7 @@ class ObjectAccess {
 	 */
 	static public function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
 		if ($subject === NULL) {
-			return;
+			return NULL;
 		}
 		$propertyExists = TRUE;
 		if (is_array($subject)) {
@@ -89,7 +89,7 @@ class ObjectAccess {
 				return $subject[$propertyName];
 			}
 			$propertyExists = FALSE;
-			return;
+			return NULL;
 		}
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
@@ -116,6 +116,7 @@ class ObjectAccess {
 			return $subject->$propertyName;
 		}
 		$propertyExists = FALSE;
+		return NULL;
 	}
 
 	/**

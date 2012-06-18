@@ -35,9 +35,10 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Setting cache expectations is partially same for many tests, so it's been
 	 * extracted to this method.
 	 *
+	 * @param \PHPUnit_Framework_MockObject_MockObject $mockCache
 	 * @return array
 	 */
-	public function createCacheExpectations($mockCache) {
+	public function createCacheExpectations(\PHPUnit_Framework_MockObject_MockObject $mockCache) {
 		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(2))->method('has')->with('localizedLiterals')->will($this->returnValue(TRUE));

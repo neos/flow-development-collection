@@ -250,11 +250,16 @@ class ProxyClassBuilder {
 	 *
 	 * @param string $targetClassName Name of the target class
 	 * @return mixed An array of method names and their advices as array of \TYPO3\FLOW3\Aop\Advice\AdviceInterface
+	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
 		throw new \TYPO3\FLOW3\Aop\Exception('This method is currently not supported.');
-		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) return array();
-		return $this->advicedMethodsInformationByTargetClass[$targetClassName];
+
+		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) {
+			return array();
+		} else {
+			return $this->advicedMethodsInformationByTargetClass[$targetClassName];
+		}
 	}
 
 	/**

@@ -87,8 +87,6 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod() {
-		$arguments = array();
-
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('TYPO3\FLOW3\Tests\Unit\SignalSlot\DispatcherTest')->will($this->returnValue('TYPO3\FLOW3\Tests\Unit\SignalSlot\DispatcherTest'));
 

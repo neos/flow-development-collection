@@ -125,7 +125,7 @@ class TextIterator implements \Iterator {
 	 * Returns the key of the current element. That means the number of the
 	 * current element starting with 0.
 	 *
-	 * @return Key (number) of the current element
+	 * @return mixed Key (number) of the current element
 	 */
 	public function key() {
 		return $this->iteratorCacheIterator->key();
@@ -212,7 +212,9 @@ class TextIterator implements \Iterator {
 			$previousElement = $this->getCurrentElement();
 			$this->next();
 			$currentElement = $this->getCurrentElement();
-			if (($currentElement->getOffset() + $currentElement->getLength()) >= $offset) return $previousElement->getOffset() + $previousElement->getLength();
+			if (($currentElement->getOffset() + $currentElement->getLength()) >= $offset) {
+				return $previousElement->getOffset() + $previousElement->getLength();
+			}
 		}
 		return $currentElement->getOffset() + $currentElement->getLength();
 	}

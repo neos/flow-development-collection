@@ -117,7 +117,7 @@ class TypeHandling {
 	 * Converts a hex encoded string into binary data
 	 *
 	 * @param string $hexadecimalData A hex encoded string of data
-	 * @return binary
+	 * @return string A binary string decoded from the input
 	 */
 	static public function hex2bin($hexadecimalData) {
 		$binaryData = '';

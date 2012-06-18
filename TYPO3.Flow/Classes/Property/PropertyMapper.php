@@ -152,6 +152,7 @@ class PropertyMapper {
 	 * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
 	 * @return mixed an instance of $targetType
 	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	protected function doMapping($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
 		if ($source === NULL) {
@@ -161,14 +162,14 @@ class PropertyMapper {
 		$typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
 
 		if (!is_object($typeConverter) || !($typeConverter instanceof \TYPO3\FLOW3\Property\TypeConverterInterface)) {
-			throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
+			throw new Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
 		}
 
 		$convertedChildProperties = array();
 		foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
 			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
 			if (!$configuration->shouldMap($targetPropertyName)) {
-				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1335969887);
+				throw new Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1335969887);
 			}
 
 			$targetPropertyType = $typeConverter->getTypeOfChildProperty($targetType, $targetPropertyName, $configuration);

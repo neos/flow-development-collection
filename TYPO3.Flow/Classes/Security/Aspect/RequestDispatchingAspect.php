@@ -61,6 +61,7 @@ class RequestDispatchingAspect {
 	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Dispatcher->dispatch())")
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {

@@ -23,7 +23,7 @@ class AbstractFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function theConstructorAcceptsValidIdentifiers() {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		foreach (array('x', 'someValue', '123fivesixseveneight', 'some&', 'ab_cd%', rawurlencode('resource://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
-			$abstractCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
+			$this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 		}
 	}
 
@@ -34,7 +34,7 @@ class AbstractFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockBackend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $identifier) {
 			try {
-				$abstractCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
+				$this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 				$this->fail('Identifier "' . $identifier . '" was not rejected.');
 			} catch (\InvalidArgumentException $exception) {
 			}
@@ -99,7 +99,7 @@ class AbstractFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
-		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$this->assertEquals('%CLASS%TYPO3_Foo_Bar_Baz', \TYPO3\FLOW3\Cache\CacheManager::getClassTag('TYPO3\Foo\Bar\Baz'));
 	}
 

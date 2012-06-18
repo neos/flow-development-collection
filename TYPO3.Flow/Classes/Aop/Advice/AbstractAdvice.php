@@ -67,7 +67,7 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 	 * Invokes the advice method
 	 *
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
-	 * @return Result of the advice method
+	 * @return mixed Result of the advice method
 	 */
 	public function invoke(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) {

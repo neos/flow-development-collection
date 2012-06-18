@@ -25,8 +25,7 @@ class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory {
 	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata
 	 */
 	protected function newClassMetadataInstance($className) {
-		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata($className);
-		return $classMetadata;
+		return new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata($className);
 	}
 
 }

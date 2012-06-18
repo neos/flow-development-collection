@@ -422,8 +422,6 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getRolesReturnsTheAnonymousRoleIfNoTokenIsAuthenticated() {
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
 

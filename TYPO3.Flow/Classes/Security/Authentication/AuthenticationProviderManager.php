@@ -86,8 +86,9 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
-		if (!isset($settings['security']['authentication']['providers'])) return;
-		if (!is_array($settings['security']['authentication']['providers'])) return;
+		if (!isset($settings['security']['authentication']['providers']) || !is_array($settings['security']['authentication']['providers'])) {
+			return;
+		}
 
 		$this->buildProvidersAndTokensFromConfiguration($settings['security']['authentication']['providers']);
 	}
@@ -248,7 +249,9 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
 			}
 			$providerOptions = array();
-			if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) $providerOptions = $providerConfiguration['providerOptions'];
+			if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) {
+				$providerOptions = $providerConfiguration['providerOptions'];
+			}
 
 			$providerInstance = new $providerObjectName($providerName, $providerOptions);
 			$this->providers[] = $providerInstance;

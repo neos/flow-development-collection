@@ -39,7 +39,7 @@ class MethodReflection extends \ReflectionMethod {
 	 * that \TYPO3\FLOW3\Reflection\ParameterReflection objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
-	 * @return array of \TYPO3\FLOW3\Reflection\ParameterReflection Parameter reflection objects of the parameters of this method
+	 * @return array of \TYPO3\FLOW3\Reflection\ParameterReflection objects of the parameters of this method
 	 */
 	public function getParameters() {
 		$extendedParameters = array();

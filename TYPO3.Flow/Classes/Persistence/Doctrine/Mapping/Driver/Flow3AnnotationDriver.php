@@ -272,7 +272,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		$metadata->setPrimaryTable($primaryTable);
 
 			// Evaluate @HasLifecycleCallbacks annotation
-		$this->evaluateLifeCycleAnnotations($classAnnotations, $class, $metadata);
+		$this->evaluateLifeCycleAnnotations($class, $metadata);
 	}
 
 	/**
@@ -692,12 +692,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	/**
 	 * Evaluate the lifecycle annotations and amend the metadata accordingly.
 	 *
-	 * @param array $classAnnotations
 	 * @param \ReflectionClass $class
 	 * @param \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata
 	 * @return void
 	 */
-	protected function evaluateLifeCycleAnnotations(array $classAnnotations, \ReflectionClass $class, \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
+	protected function evaluateLifeCycleAnnotations(\ReflectionClass $class, \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
 		foreach ($class->getMethods() as $method) {
 			if ($method->isPublic()) {
 				$annotations = $this->reader->getMethodAnnotations($method);

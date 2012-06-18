@@ -183,7 +183,8 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @param integer $numberOfResults
-	 * @param Matcher $howOftenIsGetFirstCalled
+	 * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $howOftenIsGetFirstCalled
+	 * @return \stdClass
 	 */
 	public function setupMockQuery($numberOfResults, $howOftenIsGetFirstCalled) {
 		$mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));

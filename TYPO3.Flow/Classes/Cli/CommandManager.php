@@ -89,7 +89,7 @@ class CommandManager {
 	 * @param string $commandIdentifier command identifier in the format foo:bar:baz
 	 * @return \TYPO3\FLOW3\Mvc\Cli\Command
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException if no matching command is available
-	 * @throws \TYPO3\FLOW3\Mvc\ExceptionAmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
 	 * @api
 	 */
 	public function getCommandByIdentifier($commandIdentifier) {

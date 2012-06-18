@@ -286,7 +286,7 @@ class ConfigurationBuilder {
 	 *
 	 * @param string $argumentName Name of the argument
 	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the argument configuration - either a string or an array
-	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
+	 * @param string $configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
 	 * @return \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument A configuration argument of type object
 	 */
 	protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, $configurationSourceHint) {

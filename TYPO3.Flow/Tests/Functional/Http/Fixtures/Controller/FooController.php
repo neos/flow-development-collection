@@ -17,7 +17,7 @@ class FooController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController {
 	 * Process Request
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
-	 * @param \TYPO3\FLOW3\Http\Reponse $response
+	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response
 	 * @return void
 	 */
 	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {

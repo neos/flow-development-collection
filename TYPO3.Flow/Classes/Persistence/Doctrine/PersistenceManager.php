@@ -120,6 +120,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Validates the given object and throws an exception if validation fails.
 	 *
 	 * @param object $object
+	 * @param \SplObjectStorage $validatedInstancesContainer
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
 	 */

@@ -237,6 +237,7 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * Connect to the database
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception if the connection cannot be established
 	 */
 	protected function connect() {
 		try {

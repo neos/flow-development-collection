@@ -30,7 +30,7 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 	/**
 	 * Initializes $this->reflClass and a number of related variables.
 	 *
-	 * @param ReflectionService $reflService
+	 * @param \Doctrine\Common\Persistence\Mapping\ReflectionService $reflService
 	 * @return void
 	 */
 	public function initializeReflection($reflService) {

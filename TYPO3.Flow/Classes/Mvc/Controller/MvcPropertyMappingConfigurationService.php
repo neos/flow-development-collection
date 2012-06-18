@@ -45,6 +45,7 @@ class MvcPropertyMappingConfigurationService {
 	 * @param array $formFieldNames Array of form fields
 	 * @param string $fieldNamePrefix
 	 * @return string trusted properties token
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function generateTrustedPropertiesToken($formFieldNames, $fieldNamePrefix = '') {
 		$formFieldArray = array();

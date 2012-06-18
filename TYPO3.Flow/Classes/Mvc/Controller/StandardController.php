@@ -39,7 +39,6 @@ class StandardController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @return string
 	 */
 	public function indexAction() {
-
 		if (!$this->request instanceof \TYPO3\FLOW3\Mvc\ActionRequest) {
 			return
 				"\nWelcome to FLOW3!\n\n" .

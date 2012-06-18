@@ -210,7 +210,7 @@ class Session {
 	 * @param string $type
 	 * @param mixed $previousValue
 	 * @param mixed &$currentValue
-	 * @return boolan
+	 * @return boolean
 	 */
 	protected function isSingleValuedPropertyDirty($type, $previousValue, $currentValue) {
 		switch ($type) {

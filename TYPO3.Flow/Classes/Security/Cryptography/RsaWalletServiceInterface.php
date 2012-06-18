@@ -48,7 +48,7 @@ interface RsaWalletServiceInterface {
 	 * Returns the public key for the given UUID
 	 *
 	 * @param string $uuid The UUID
-	 * @return \TYPO3\FLOW3\Security\Cryptography\RSAKey The public key
+	 * @return \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey The public key
 	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function getPublicKey($uuid);

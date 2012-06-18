@@ -232,7 +232,7 @@ class Service {
 			$output .= "\n == Migration Versions\n";
 			foreach ($migrations as $version) {
 				$status = $version->isMigrated() ? 'migrated' : 'not migrated';
-				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . str_repeat(' ', 30 - strlen($name)) . $status . PHP_EOL;
+				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . str_repeat(' ', 16) . $status . PHP_EOL;
 			}
 		}
 

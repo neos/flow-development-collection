@@ -43,14 +43,15 @@ class TextValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 		$this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
 	}
 
+	/**
+	 * @return array
+	 */
 	public function validInput() {
 		return array(
 			array('this is a very simple string'),
 			array('Ierd Frot uechter mä get, Kirmesdag Milliounen all en, sinn main Stréi mä och. ' . chr(10) . 'Vu dan durch jéngt gréng, ze rou Monn voll stolz. \nKe kille Minutt d\'Kirmes net. Hir Wand Lann Gaas da, wär hu Heck Gart zënter, Welt Ronn grousse der ke. Wou fond eraus Wisen am. Hu dénen d\'Gaassen eng, eng am virun geplot d\'Lëtzebuerger, get botze rëscht Blieder si. Dat Dauschen schéinste Milliounen fu. Ze riede méngem Keppchen déi, si gét fergiess erwaacht, räich jéngt duerch en nun. Gëtt Gaas d\'Vullen hie hu, laacht Grénge der dé. Gemaacht gehéiert da aus, gutt gudden d\'wäiss mat wa.'),
 			array('3% of most people tend to use semikolae; we need to check & allow that. And hashes (#) are not evil either, nor is the sign called \'quote\'.'),
 		);
-		$textValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($textValidator->isValid($input));
 	}
 
 	/**

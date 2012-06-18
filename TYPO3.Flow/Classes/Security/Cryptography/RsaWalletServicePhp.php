@@ -76,7 +76,6 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @throws \TYPO3\FLOW3\Security\Exception
 	 */
 	public function generateNewKeypair($usedForPasswords = FALSE) {
-
 		$keyResource = openssl_pkey_new($this->openSSLConfiguration);
 
 		if ($keyResource === FALSE) {
@@ -137,7 +136,9 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function getPublicKey($uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438860);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) {
+			throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438860);
+		}
 
 		return $this->keys[$uuid]['publicKey'];
 	}

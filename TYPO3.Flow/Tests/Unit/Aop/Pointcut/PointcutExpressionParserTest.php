@@ -192,7 +192,7 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$parser->_call('parseDesignatorMethod', '&&', 'protected Foo->bar()', $composite);
 		$filters = $composite->_get('filters');
 		foreach ($filters as $operatorAndFilter) {
-			list($operator, $filter) = $operatorAndFilter;
+			list(, $filter) = $operatorAndFilter;
 			if ($filter instanceof \TYPO3\FLOW3\Aop\Pointcut\PointcutMethodNameFilter) {
 				$this->assertEquals('protected', $filter->getMethodVisibility());
 				return;

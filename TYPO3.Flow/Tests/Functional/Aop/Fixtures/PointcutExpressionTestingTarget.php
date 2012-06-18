@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Aop\Fixtures;
 class PointcutExpressionTestingTarget {
 
 	/**
-	 * @return void
+	 * @return boolean
 	 */
 	public function testSettingFilter() {
 		return FALSE;

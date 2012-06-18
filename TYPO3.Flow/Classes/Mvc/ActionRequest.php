@@ -122,6 +122,7 @@ class ActionRequest implements RequestInterface {
 	 * Constructs this action request
 	 *
 	 * @param object $parentRequest Either an HTTP request or another ActionRequest
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function __construct($parentRequest) {

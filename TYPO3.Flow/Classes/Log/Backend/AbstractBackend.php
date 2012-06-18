@@ -37,7 +37,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Log\Backend\BackendInterf
 	 * @api
 	 */
 	public function __construct($options = array()) {
-		if (is_array($options) || $options instanceof ArrayAccess) {
+		if (is_array($options) || $options instanceof \ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {
 				$methodName = 'set' . ucfirst($optionKey);
 				if (method_exists($this, $methodName)) {
