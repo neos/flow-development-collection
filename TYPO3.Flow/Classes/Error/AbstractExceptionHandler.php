@@ -33,6 +33,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	}
 
 	/**
+	 * Constructs this exception handler - registers itself as the default exception handler.
+	 *
+	 */
+	public function __construct() {
+		set_exception_handler(array($this, 'handleException'));
+	}
+
+	/**
 	 * Handles the given exception
 	 *
 	 * @param \Exception $exception The exception object
