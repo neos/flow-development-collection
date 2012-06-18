@@ -101,6 +101,24 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame($expectedHost, $uri->getHost());
 	}
 
+	/**
+	 * @dataProvider hostTestUris
+	 * @test
+	 */
+	public function settingValidHostPassesRegexCheck($uriString, $plainHost) {
+		$uri = new Uri('');
+		$uri->setHost($plainHost);
+		$this->assertEquals($plainHost, $uri->getHost());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function settingInvalidHostThrowsException() {
+		$uri = new Uri('');
+		$uri->setHost('an#invalid.host');
+	}
 
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
