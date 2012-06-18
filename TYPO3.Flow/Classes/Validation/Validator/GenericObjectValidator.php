@@ -40,6 +40,27 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 	}
 
 	/**
+	 * Checks if the given value is valid according to the validator, and returns
+	 * the Error Messages object which occurred.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @return \TYPO3\FLOW3\Error\Result
+	 * @api
+	 */
+	public function validate($value) {
+		$this->result = new \TYPO3\FLOW3\Error\Result();
+
+		if ($this->acceptsEmptyValues === FALSE || $this->isEmpty($value) === FALSE) {
+			if (!is_object($value)) {
+				$this->addError('Object expected, %1$s given.', 1241099149, array(gettype($value)));
+			} elseif ($this->isValidatedAlready($value) === FALSE) {
+				$this->isValid($value);
+			}
+		}
+		return $this->result;
+	}
+
+	/**
 	 * Checks if the given value is valid according to the property validators
 	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
@@ -48,15 +69,6 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 	 * @api
 	 */
 	protected function isValid($object) {
-		if (!is_object($object)) {
-			$this->addError('Object expected, %1$s given.', 1241099149, array(gettype($object)));
-			return;
-		}
-
-		if ($this->isValidatedAlready($object)) {
-			return;
-		}
-
 		$messages = new \TYPO3\FLOW3\Error\Result();
 		foreach ($this->propertyValidators as $propertyName => $validators) {
 			$propertyValue = $this->getPropertyValue($object, $propertyName);

@@ -27,6 +27,32 @@ class CollectionValidator extends GenericObjectValidator {
 	protected $validatorResolver;
 
 	/**
+	 * Checks if the given value is valid according to the validator, and returns
+	 * the Error Messages object which occurred.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @return \TYPO3\FLOW3\Error\Result
+	 * @api
+	 */
+	public function validate($value) {
+		$this->result = new \TYPO3\FLOW3\Error\Result();
+
+		if ($this->acceptsEmptyValues === FALSE || $this->isEmpty($value) === FALSE) {
+			if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
+				return $this->result;
+			} elseif ((is_object($value) && !\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
+				$this->addError('The given subject was not a collection.', 1317204797);
+				return $this->result;
+			} elseif (is_object($value) && $this->isValidatedAlready($value)) {
+				return $this->result;
+			} else {
+				$this->isValid($value);
+			}
+		}
+		return $this->result;
+	}
+
+	/**
 	 * Check if $value is valid. If it is not valid, needs to add an error
 	 * to Result.
 	 *
@@ -34,19 +60,6 @@ class CollectionValidator extends GenericObjectValidator {
 	 * @return void
 	 */
 	protected function isValid($value) {
-		if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
-			return;
-		}
-
-		if (is_object($value) && $this->isValidatedAlready($value)) {
-			return;
-		}
-
-		if ((is_object($value) && !\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
-			$this->addError('The given subject was not a collection.', 1317204797);
-			return;
-		}
-
 		foreach ($value as $index => $collectionElement) {
 			if (isset($this->options['elementValidator'])) {
 				$collectionElementValidator = $this->validatorResolver->createValidator($this->options['elementValidator']);

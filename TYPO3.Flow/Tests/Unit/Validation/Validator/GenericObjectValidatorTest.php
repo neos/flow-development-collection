@@ -42,6 +42,9 @@ class GenericObjectValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Vali
 		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
 	}
 
+	/**
+	 * @return array
+	 */
 	public function dataProviderForValidator() {
 		$error1 = new \TYPO3\FLOW3\Error\Error('error1', 1);
 		$error2 = new \TYPO3\FLOW3\Error\Error('error2', 2);
