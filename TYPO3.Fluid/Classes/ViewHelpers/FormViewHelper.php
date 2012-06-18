@@ -147,6 +147,7 @@ class FormViewHelper extends \TYPO3\Fluid\ViewHelpers\Form\AbstractFormViewHelpe
 	/**
 	 * Sets the "action" attribute of the form tag
 	 *
+	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
 	 * @return void
 	 */
 	protected function setFormActionUri() {
