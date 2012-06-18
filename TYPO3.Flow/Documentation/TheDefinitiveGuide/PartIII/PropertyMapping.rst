@@ -214,7 +214,18 @@ configures the ``DateTime`` converter for the ``birthDate`` property::
 		);
 
 ``forProperty()`` also supports more than one nesting level using the dot notation,
-so writing something like ``forProperty('mother.birthDate')`` is possible.
+so writing something like ``forProperty('mother.birthDate')`` is possible. For multi-valued
+property types (``Doctrine\Common\Collections\Collection`` or ``array``) the property mapper
+will use indexes as property names. To match the property mapping configuration for any index,
+the path syntax supports an asterisk as a placeholder::
+
+	$propertyMappingConfiguration
+		->forProperty('items.*')
+		->setTypeConverterOption(
+			'TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
+			\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+			TRUE
+		);
 
 .. admonition:: Property Mapping Configuration in the MVC stack
 
