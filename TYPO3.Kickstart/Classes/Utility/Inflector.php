@@ -32,7 +32,7 @@ class Inflector {
 	 *
 	 * @param string $camelCased The camel cased value
 	 * @param boolean $lowercase Return lowercase value
-	 * @return The humanized value
+	 * @return string The humanized value
 	 */
 	public function humanizeCamelCase($camelCased, $lowercase = FALSE) {
 		$spacified = $this->spacify($camelCased);

@@ -393,6 +393,7 @@ class GeneratorService {
 	 * @param string $templatePathAndFilename
 	 * @param array $contextVariables
 	 * @return string
+	 * @throws \TYPO3\Fluid\Core\Exception
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
 		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
@@ -410,6 +411,7 @@ class GeneratorService {
 	 * Build the rendering context
 	 *
 	 * @param array $contextVariables
+	 * @return \TYPO3\Fluid\Core\Rendering\RenderingContext
 	 */
 	protected function buildRenderingContext(array $contextVariables) {
 		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
