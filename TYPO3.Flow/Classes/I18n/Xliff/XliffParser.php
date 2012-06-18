@@ -34,6 +34,7 @@ class XliffParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
 	 *
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed XLIFF
+	 * @throws Exception\InvalidXliffDataException
 	 * @todo Support "approved" attribute
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {

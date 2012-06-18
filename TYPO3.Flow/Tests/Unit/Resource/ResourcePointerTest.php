@@ -22,7 +22,7 @@ class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructThrowsExceptionOnFormallyInvalidHash() {
-		$resourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer('69e73da3ce0ad08c717b7b9f1c759182d64');
+		new \TYPO3\FLOW3\Resource\ResourcePointer('69e73da3ce0ad08c717b7b9f1c759182d64');
 	}
 
 	/**

@@ -45,6 +45,8 @@ class SchemaValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Handle the assertation that the given result object has no errors
 	 *
 	 * @param \TYPO3\FLOW3\Error\Result $result
+	 * @param boolean $expectSuccess
+	 * @return void
 	 */
 	protected function assertSuccess(\TYPO3\FLOW3\Error\Result $result, $expectSuccess = TRUE) {
 		if ($expectSuccess === TRUE) {

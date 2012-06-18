@@ -363,7 +363,7 @@ class Headers {
 	 * Internally sets the cache directives correctly by parsing the given
 	 * Cache-Control field value.
 	 *
-	 * @param $rawFieldValue The value of a specification compliant Cache-Control header
+	 * @param string $rawFieldValue The value of a specification compliant Cache-Control header
 	 * @return void
 	 * @see set()
 	 */

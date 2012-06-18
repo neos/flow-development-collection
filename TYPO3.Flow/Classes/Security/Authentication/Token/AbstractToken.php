@@ -114,6 +114,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	 *
 	 * @param array $requestPatterns Array of RequestPatternInterface to be set
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setRequestPatterns(array $requestPatterns) {
 		foreach ($requestPatterns as $requestPattern) {

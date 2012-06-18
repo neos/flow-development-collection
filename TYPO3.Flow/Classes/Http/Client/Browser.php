@@ -55,6 +55,7 @@ class Browser {
 	 * @param array $server
 	 * @param string $content
 	 * @return \TYPO3\FLOW3\Http\Response The HTTP response
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function request($uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array(), $content = NULL) {

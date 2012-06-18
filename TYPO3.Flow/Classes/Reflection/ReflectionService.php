@@ -1253,6 +1253,7 @@ class ReflectionService {
 	 * assigned yet, that will be done.
 	 *
 	 * @return void
+	 * @throws Exception\ClassSchemaConstraintViolationException
 	 */
 	protected function completeRepositoryAssignments() {
 		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassName) {

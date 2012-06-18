@@ -118,7 +118,6 @@ class Manager {
 	 *
 	 * @param string $packageKey
 	 * @param array $packageData
-	 * @param string $migrationIdentifier
 	 * @param AbstractMigration $migration
 	 * @return void
 	 * @throws \RuntimeException

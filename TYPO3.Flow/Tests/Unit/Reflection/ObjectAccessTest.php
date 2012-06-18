@@ -69,7 +69,7 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
 	 */
 	public function getPropertyReturnsPropertyNotAccessibleExceptionForNotExistingPropertyIfForceDirectAccessIsTrue() {
-		$property = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty', TRUE);
+		\TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty', TRUE);
 	}
 
 	/**

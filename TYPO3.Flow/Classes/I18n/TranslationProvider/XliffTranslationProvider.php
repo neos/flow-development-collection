@@ -137,6 +137,7 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * @param string $sourceName Relative path to existing CLDR file
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale object
 	 * @return \TYPO3\FLOW3\I18n\Xliff\XliffModel New or existing instance
+	 * @throws \TYPO3\FLOW3\I18n\Exception
 	 */
 	protected function getModel($packageKey, $sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
 		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath));

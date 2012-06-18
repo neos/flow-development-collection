@@ -79,6 +79,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setCache(FrontendInterface $cache) {
 		parent::setCache($cache);
@@ -122,16 +123,26 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 * @param integer $lifetime Ignored in this type of cache backend
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!is_string($data)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
-		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
-		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756736);
+		if (!is_string($data)) {
+			throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1334756734);
+		}
+		if ($entryIdentifier !== basename($entryIdentifier)) {
+			throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
+		}
+		if ($entryIdentifier === '') {
+			throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756736);
+		}
 
 		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . uniqid() . '.temp';
 		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data);
-		if ($result === FALSE) throw new \TYPO3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1334756737);
+		if ($result === FALSE) {
+			throw new \TYPO3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1334756737);
+		}
 
 		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		rename($temporaryCacheEntryPathAndFilename, $cacheEntryPathAndFilename);
@@ -142,10 +153,13 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756877);
+		if ($entryIdentifier !== basename($entryIdentifier)) {
+			throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756877);
+		}
 
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		if (!file_exists($pathAndFilename)) {
@@ -159,10 +173,13 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 *
 	 * @param string $entryIdentifier
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function has($entryIdentifier) {
-		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756878);
+		if ($entryIdentifier !== basename($entryIdentifier)) {
+			throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756878);
+		}
 		return file_exists($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
 	}
 
@@ -172,11 +189,16 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756960);
-		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756961);
+		if ($entryIdentifier !== basename($entryIdentifier)) {
+			throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756960);
+		}
+		if ($entryIdentifier === '') {
+			throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756961);
+		}
 
 		try {
 			unlink($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
@@ -234,6 +256,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed Potential return value from the include operation
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function requireOnce($entryIdentifier) {

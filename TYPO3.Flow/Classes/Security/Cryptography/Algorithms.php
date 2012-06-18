@@ -25,6 +25,9 @@ class Algorithms {
 	 * See PKCS #5 v2.0 http://tools.ietf.org/html/rfc2898 for implementation details.
 	 * The implementation is tested with test vectors from http://tools.ietf.org/html/rfc6070 .
 	 *
+	 * If https://wiki.php.net/rfc/hash_pbkdf2 is ever part of PHP we should check for the
+	 * existence of hash_pbkdf2() and use it if available.
+	 *
 	 * @param string $password Input string / password
 	 * @param string $salt The salt
 	 * @param integer $iterationCount Hash iteration count

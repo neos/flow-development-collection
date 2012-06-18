@@ -304,6 +304,8 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 				Files::emptyDirectoryRecursively($sessionsPath);
 			}
 			return count($filenames);
+		} else {
+			return 0;
 		}
 	}
 

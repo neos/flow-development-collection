@@ -89,6 +89,7 @@ abstract class AbstractMigration {
 	abstract public function up();
 
 	/**
+	 * @param array $packageData
 	 * @return void
 	 */
 	public function execute(array $packageData) {
@@ -191,6 +192,7 @@ abstract class AbstractMigration {
 	 * @param string $oldName
 	 * @param string $newName
 	 * @return void
+	 * @throws \LogicException
 	 */
 	protected function renameClass($oldName, $newName) {
 		throw new \LogicException('renameClass is not yet implemented, sorry!', 1335525001);
@@ -202,11 +204,12 @@ abstract class AbstractMigration {
 	 * This expects a fully qualified class name, so proper refactoring
 	 * can be done.
 	 *
-	 * @param string $class the class that contains the method to be renamed
-	 * @param string $oldMethod the method to be renamed
-	 * @param string $newMethod the new method name
+	 * @param string $className the class that contains the method to be renamed
+	 * @param string $oldMethodName the method to be renamed
+	 * @param string $newMethodName the new method name
 	 * @param boolean $withInheritance if true, also rename method on child classes
 	 * @return void
+	 * @throws \LogicException
 	 */
 	protected function renameMethod($className, $oldMethodName, $newMethodName, $withInheritance = TRUE) {
 		throw new \LogicException('renameClass is not yet implemented, sorry!', 1335525001);

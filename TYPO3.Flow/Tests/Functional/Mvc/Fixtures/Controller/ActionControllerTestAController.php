@@ -77,6 +77,7 @@ class ActionControllerTestAController extends ActionController {
 	 * @FLOW3\IgnoreValidation("$brokenArgument2")
 	 * @param string $brokenArgument1
 	 * @param string $brokenArgument2
+	 * @return string
 	 */
 	public function ignoreValidationAction($brokenArgument1, $brokenArgument2) {
 		return 'action was called';

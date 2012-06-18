@@ -389,6 +389,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package to freeze
 	 * @return void
+	 * @throws \LogicException
 	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 */
 	public function freezePackage($packageKey) {
@@ -666,8 +667,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * in the result.
 	 *
 	 * @param string $packageKey The package key to fetch the dependencies for
+	 * @param array $dependentPackageKeys
 	 * @param array $trace An array of already visited package keys, to detect circular dependencies
 	 * @return array An array of direct or indirect dependant packages
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidPackageKeyException
 	 */
 	protected function getDependencyArrayForPackage($packageKey, array &$dependentPackageKeys = array(), array $trace = array()) {
 		if (!isset($this->packages[$packageKey])) {

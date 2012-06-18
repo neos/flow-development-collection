@@ -22,7 +22,7 @@ interface SourceInterface {
 	 * configuration container
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
-	 * @return \TYPO3\FLOW3\Configuration\Container
+	 * @return array
 	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchFileException if the specified file does not exist
 	 */
 	public function load($pathAndFilename);

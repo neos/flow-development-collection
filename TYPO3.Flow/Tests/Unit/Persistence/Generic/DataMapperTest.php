@@ -379,7 +379,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function mapArrayCreatesExpectedArray() {
-		$array = array('foo' => 'bar');
 		$dateTime = new \DateTime();
 		$object = new \stdClass();
 		$splObjectStorage = new \SplObjectStorage();

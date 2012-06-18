@@ -102,6 +102,7 @@ class Request extends Message {
 	 * @param array $files
 	 * @param array $server
 	 * @return \TYPO3\FLOW3\Http\Request
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	static public function create(Uri $uri, $method = 'GET', array $arguments = array(), array $cookies = array(), array $files = array(), array $server = array()) {
@@ -304,6 +305,7 @@ class Request extends Message {
 	 * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
 	 * @return string|resource
 	 * @api
+	 * @throws Exception
 	 */
 	public function getContent($asResource = FALSE) {
 		if ($asResource === TRUE) {

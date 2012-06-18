@@ -429,7 +429,6 @@ class DatetimeParser {
 										// Try to match month's name by cases below
 								}
 							case 3:
-								$month = 0;
 								foreach ($localizedLiterals['months'][$typeOfLiteral]['abbreviated'] as $monthId => $monthName) {
 									$positionOfMonthName = strpos($datetimeToParse, $monthName);
 									if ($positionOfMonthName !== FALSE) {
@@ -443,7 +442,6 @@ class DatetimeParser {
 									break;
 								}
 							case 4:
-								$month = 0;
 								foreach ($localizedLiterals['months'][$typeOfLiteral]['wide'] as $monthId => $monthName) {
 									$positionOfMonthName = strpos($datetimeToParse, $monthName);
 									if ($positionOfMonthName !== FALSE) {

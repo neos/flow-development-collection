@@ -137,7 +137,7 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function throwsExceptionWhenUnsupportedFormatsEncountered($format) {
 		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
 
-		$result = $reader->_call('parseFormat', $format);
+		$reader->_call('parseFormat', $format);
 	}
 }
 

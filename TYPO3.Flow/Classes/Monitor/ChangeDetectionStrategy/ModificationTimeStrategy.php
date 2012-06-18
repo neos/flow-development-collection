@@ -58,6 +58,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	/**
 	 * Initializes this strategy
 	 *
+	 * @param FileMonitor $fileMonitor
 	 * @return void
 	 */
 	public function setFileMonitor(FileMonitor $fileMonitor) {

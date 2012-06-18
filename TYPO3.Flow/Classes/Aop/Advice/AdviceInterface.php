@@ -23,7 +23,7 @@ interface AdviceInterface {
 	 * Invokes the advice method
 	 *
 	 * @param  \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
-	 * @return Optionally the result of the advice method
+	 * @return mixed Optionally the result of the advice method
 	 */
 	public function invoke(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint);
 

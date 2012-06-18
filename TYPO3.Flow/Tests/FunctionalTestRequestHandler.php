@@ -52,7 +52,6 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	 * Constructor
 	 *
 	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
-	 * @return void
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;

@@ -110,6 +110,8 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 		} elseif (class_exists($this->interfaceOrClassName)) {
 			$classNames = $this->reflectionService->getAllSubClassNamesForClass($this->interfaceOrClassName);
 			$classNames[] = $this->interfaceOrClassName;
+		} else {
+			$classNames = array();
 		}
 		$filteredIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
 		$filteredIndex->setClassNames($classNames);

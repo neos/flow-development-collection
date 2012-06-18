@@ -226,7 +226,6 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$conjunction2->expects($this->at(0))->method('addValidator')->with($mockArrayValidator);
 		$conjunction2->expects($this->at(1))->method('addValidator')->with($mockQuuxValidator);
 
-		$validatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver = $this->getAccessibleMock('TYPO3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction1));
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with('string')->will($this->returnValue($mockStringValidator));

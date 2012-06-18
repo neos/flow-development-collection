@@ -166,6 +166,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->settings['security']['enable'] === FALSE) {
@@ -539,6 +540,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * Parses the policy and stores the configured entity acls in the internal acls array
 	 *
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException
 	 */
 	protected function parseEntityAcls() {
 		foreach ($this->policy['acls'] as $role => $aclEntries) {

@@ -78,7 +78,7 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 * - else, return FALSE.
 	 *
 	 * @param string $propertyName
-	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
+	 * @return boolean TRUE if the given propertyName should be mapped, FALSE otherwise.
 	 */
 	public function shouldMap($propertyName) {
 		if (isset($this->propertiesNotToBeMapped[$propertyName])) {
@@ -109,9 +109,6 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * Example: allowProperties('title', 'content', 'author')
 	 *
-	 * @param string $propertyName1
-	 * @param string $propertyName2
-	 * @param string $propertyName3 ...
 	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration this
 	 * @api
 	 */

@@ -25,7 +25,7 @@ class XmlReader {
 	 * Package.xml file contained in the package
 	 *
 	 * @param \TYPO3\FLOW3\Package\PackageInterface $package The package to read metadata for
-	 * @return MetaData A package meta data instance with the data from the package's Package.xml file.
+	 * @return \TYPO3\FLOW3\Package\MetaData A package meta data instance with the data from the package's Package.xml file.
 	 */
 	static public function readPackageMetaData(\TYPO3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getMetaPath();

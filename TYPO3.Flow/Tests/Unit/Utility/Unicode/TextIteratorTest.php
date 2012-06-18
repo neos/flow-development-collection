@@ -76,7 +76,7 @@ class TextIteratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function instantiatingIteratorWithInvalidTypeThrowsError() {
 		try {
-			$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator('Some string', 948);
+			new \TYPO3\FLOW3\Utility\Unicode\TextIterator('Some string', 948);
 			$this->fail('Constructor did not reject invalid TextIterator type.');
 		} catch (\TYPO3\FLOW3\Error\Exception $exception) {
 			$this->assertContains('Invalid iterator type in TextIterator constructor', $exception->getMessage(), 'Wrong error message.');

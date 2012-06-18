@@ -546,8 +546,7 @@ class SchemaValidator {
 	 * @return \TYPO3\FLOW3\Error\Result
 	 */
 	protected function validateAnyType($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
-		return $result;
+		return new \TYPO3\FLOW3\Error\Result();
 	}
 
 	/**
@@ -555,25 +554,13 @@ class SchemaValidator {
 	 *
 	 * @param string $expectation
 	 * @param string $value
+	 * @return \TYPO3\FLOW3\Error\Error
 	 */
 	protected function createError($expectation, $value = NULL) {
-		if ($value !== NULL){
-			$error = new \TYPO3\FLOW3\Error\Error(
-				'expected: %s found: %s',
-				1328557141,
-				array(
-					$expectation,
-					$value
-				),
-				'Validation Error'
-			);
+		if ($value !== NULL) {
+			$error = new \TYPO3\FLOW3\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $value), 'Validation Error');
 		} else {
-			$error = new \TYPO3\FLOW3\Error\Error(
-				$expectation,
-				1328557141,
-				array(),
-				'Validation Error'
-			);
+			$error = new \TYPO3\FLOW3\Error\Error($expectation, 1328557141, array(), 'Validation Error');
 		}
 		return $error;
 	}

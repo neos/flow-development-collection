@@ -465,13 +465,14 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @return string The last part of the property name prefixed by the used join alias, if joins have been added
 	 */
 	protected function getPropertyNameWithAlias($propertyPath) {
+		$aliases = $this->queryBuilder->getRootAliases();
+		$previousJoinAlias = $aliases[0];
 		if (strpos($propertyPath, '.') === FALSE) {
-			return $this->queryBuilder->getRootAlias() . '.' . $propertyPath;
+			return $previousJoinAlias . '.' . $propertyPath;
 		}
 
 		$propertyPathParts = explode('.', $propertyPath);
 		$conditionPartsCount = count($propertyPathParts);
-		$previousJoinAlias = $this->queryBuilder->getRootAlias();
 		for ($i = 0; $i < $conditionPartsCount - 1; $i++) {
 			$joinAlias = uniqid($propertyPathParts[$i]);
 			$this->queryBuilder->leftJoin($previousJoinAlias . '.' . $propertyPathParts[$i], $joinAlias);
@@ -503,8 +504,9 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		}
 
 		if (is_array($this->orderings)) {
+			$aliases = $this->queryBuilder->getRootAliases();
 			foreach ($this->orderings AS $propertyName => $order) {
-				$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
+				$this->queryBuilder->addOrderBy($aliases[0] . '.' . $propertyName, $order);
 			}
 		}
 		if (is_array($this->joins)) {

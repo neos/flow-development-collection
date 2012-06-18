@@ -24,7 +24,7 @@ class TestingFileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing
 	/**
 	 * Always returns a fixed base URI of http://baseuri/_Resources/
 	 *
-	 * @return string the base URI
+	 * @return void
 	 */
 	protected function detectResourcesBaseUri() {
 		$this->resourcesBaseUri = 'http://baseuri/_Resources/';

@@ -67,6 +67,7 @@ class AbstractControllerTestAController extends ActionController {
 	 *
 	 * @param string $nonObject1
 	 * @param integer $nonObject2
+	 * @return string
 	 */
 	public function fourthAction($nonObject1 = NULL, $nonObject2 = NULL) {
 		$internalArguments = $this->request->getInternalArguments();

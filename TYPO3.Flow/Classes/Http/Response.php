@@ -192,7 +192,7 @@ class Response extends Message implements ResponseInterface{
 	 * of the Response methods are used and it must not be called a second time.
 	 *
 	 * @param \DateTime $now The current point in time
-	 * @return
+	 * @return void
 	 * @api
 	 */
 	public function setNow(\DateTime $now) {

@@ -29,8 +29,8 @@ class TargetClass02 {
 	}
 
 	/**
-	 * @param $foo
-	 * @return void
+	 * @param mixed $foo
+	 * @return mixed
 	 */
 	protected function protectedTargetMethod($foo) {
 		return $foo;

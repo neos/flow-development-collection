@@ -46,8 +46,11 @@ abstract class AbstractProvider implements \TYPO3\FLOW3\Security\Authentication\
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 */
 	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
-		return FALSE;
+		if ($authenticationToken->getAuthenticationProviderName() === $this->name) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
 	}
 
 }

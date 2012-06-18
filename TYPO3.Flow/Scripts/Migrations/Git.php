@@ -31,6 +31,7 @@ class Git {
 	/**
 	 * Check whether the working copy is clean.
 	 *
+	 * @param string $path
 	 * @return boolean
 	 */
 	static public function isWorkingCopyClean($path) {
@@ -68,7 +69,6 @@ class Git {
 	/**
 	 * Get the result of git show for the current directory.
 	 *
-	 * @param string $message
 	 * @return string
 	 */
 	static public function show() {
@@ -80,6 +80,7 @@ class Git {
 	/**
 	 * @param string $path
 	 * @param string $message
+	 * @return array
 	 */
 	static public function commitAll($path, $message) {
 		chdir($path);
@@ -87,7 +88,7 @@ class Git {
 		$output = array();
 		$returnCode = NULL;
 		exec('git commit -m ' . escapeshellarg($message), $output, $returnCode);
-		return array ($returnCode, $output);
+		return array($returnCode, $output);
 	}
 
 	/**

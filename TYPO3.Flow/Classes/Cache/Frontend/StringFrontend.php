@@ -50,7 +50,9 @@ class StringFrontend extends \TYPO3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
+		}
 
 		return $this->backend->get($entryIdentifier);
 	}
