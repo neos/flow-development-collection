@@ -324,7 +324,7 @@ class Request extends Message {
 	 * Returns the best guess of the client's IP address.
 	 *
 	 * Note that, depending on the actual source used, IP addresses can be spoofed
-	 * and may not reliable. Although several kinds of proxy headers are taken into
+	 * and may not be reliable. Although several kinds of proxy headers are taken into
 	 * account, certain combinations of ISPs and proxies might still produce wrong
 	 * results.
 	 *
