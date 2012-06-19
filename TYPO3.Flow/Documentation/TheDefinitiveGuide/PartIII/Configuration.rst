@@ -35,7 +35,7 @@ i.e. later values override prior ones):
   The context specific configuration again overrides the generic settings.
 
 The configuration manager also considers custom contexts, such as ``Production/Live``.
-First, the base configuration is loaded, folled by the context specific configuration
+First, the base configuration is loaded, followed by the context specific configuration
 for ``Production`` and ``Production/Live``.
 
 Configuration Files
@@ -138,7 +138,7 @@ Accessing Settings
 
 In almost all cases, FLOW3 will automatically provide you with the right configuration.
 
-What you usually want to work with are ``settings``, wich are application-specific to
+What you usually want to work with are ``settings``, which are application-specific to
 your package. The following example demonstrates how to let FLOW3 inject the settings
 of a classes' package and output some option value:
 

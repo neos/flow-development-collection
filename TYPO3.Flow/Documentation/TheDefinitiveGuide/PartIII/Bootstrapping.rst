@@ -24,7 +24,7 @@ contexts:
 
 The context FLOW3 runs in is specified through the environment variable
 ``FLOW3_CONTEXT``. It can be set per command at the command line or be part of the
-webserver configuration::
+web server configuration::
 
 	# run the FLOW3 CLI commands in production context
 	FLOW3_CONTEXT=Production ./flow3 help

@@ -29,7 +29,7 @@ standard view usually provides a ``render`` method, and nothing more. That makes
 cumbersome to write powerful views, as most designers will not write PHP code.
 
 That is where the Template Engine comes into play: It "lives" inside the View, and
-is controlled by a special TemplateView which instanciates the Template Parser,
+is controlled by a special TemplateView which instantiates the Template Parser,
 resolves the template HTML file, and renders the template afterwards.
 
 Below, you'll find a snippet of a real-world template displaying a list of blog
@@ -98,7 +98,7 @@ Namespaces can be defined in a template in two ways:
   template files and even use an XSD schema for autocompletion.
 
 A namespace linking ``f`` to ``\TYPO3\Fluid\ViewHelpers`` is imported by
-default. All other namespaces need to be imported explicitely.	
+default. All other namespaces need to be imported explicitly.
 
 If using the XML namespace syntax the default pattern
 ``http://typo3.org/ns/<php namespace>`` is resolved automatically by the
@@ -215,7 +215,7 @@ all implemented using custom tags - a main difference to other templating langua
 
 Most view helpers have some parameters. These can be plain strings, just like in
 ``<f:link.action controller="Administration">...</f:link.action>``, but as well
-arbitary objects. Parameters of view helpers will just be parsed with the same rules
+arbitrary objects. Parameters of view helpers will just be parsed with the same rules
 as the rest of the template, thus you can pass arrays or objects as parameters.
 
 This is often used when adding arguments to links::
@@ -262,7 +262,7 @@ Why can we use this boolean expression syntax? Well, because the ``IfViewHelper`
 has registered the argument condition as ``boolean``. Thus, the boolean expression
 syntax is available in all arguments of ViewHelpers which are of type ``boolean``.
 
-All boolean expressions have the form ``X <omparator> Y``, where:
+All boolean expressions have the form ``X <comparator> Y``, where:
 
 * *<comparator>* is one of the following: ``==, >, >=, <, <=, % (modulo)``
 * *X* and *Y* are one of the following:
@@ -438,7 +438,7 @@ Rendering the View Helper
 
 We refresh what we have learned so far: When a user writes something like
 ``<blog:displayNews />`` inside a template (and has imported the ``blog`` namespace
-to ``TYPO3\Blog\ViewHelpers``), Fluid will automatically instanciate the class
+to ``TYPO3\Blog\ViewHelpers``), Fluid will automatically instantiate the class
 ``TYPO3\Blog\ViewHelpers\DisplayNewsViewHelper``, and invoke the render() method on it.
 
 This ``render()`` method should return the rendered content as string.
@@ -481,7 +481,7 @@ It needs two arguments:
 * ``each``: Will be set to some object or array which can be iterated over.
 * ``as``: The name of a variable which will contain the current element being iterated over
 
-It then should do the following (in pseudocode):
+It then should do the following (in pseudo code):
 
 .. code-block:: php
 
@@ -513,7 +513,7 @@ Implementing this is fairly straightforward, as you will see right now:
 
 	}
 
-* The PHPDoc is part of the code! Fluid extracts the argument datatypes from the PHPDoc.
+* The PHPDoc is part of the code! Fluid extracts the argument data types from the PHPDoc.
 * You can simply register arguments to the view helper by adding them as method
   arguments of the ``render()`` method.
 * Using ``$this->renderChildren()``, everything between the opening and closing
@@ -797,17 +797,17 @@ A XSD schema file for your ViewHelpers can be created by executing
 	./flow3 documenation:generatexsd <Your>\\<Package>\\ViewHelpers
 		--target-file /some/directory/your.package.xsd
 
-Then import the XSD file in your favorite IDE and map it to the namespace 
-``http://typo3.org/ns/<Your/Package>/ViewHelpers``. Add the namespace to your 
-Fluid template by adding the ``xmlns`` attribute to the root tag (usually 
+Then import the XSD file in your favorite IDE and map it to the namespace
+``http://typo3.org/ns/<Your/Package>/ViewHelpers``. Add the namespace to your
+Fluid template by adding the ``xmlns`` attribute to the root tag (usually
 ``<xml …>`` or ``<html …>``).
 
 .. note::
 
-	You are able to use a different XML namespace pattern by specifying the 
+	You are able to use a different XML namespace pattern by specifying the
 	``-–xsd-namespace argument`` in the generatexsd command.
 
-If you want to use this inside partials, you can use the “section” argument of 
+If you want to use this inside partials, you can use the “section” argument of
 the render ViewHelper in order to only render the content of the partial.
 
 Partial::

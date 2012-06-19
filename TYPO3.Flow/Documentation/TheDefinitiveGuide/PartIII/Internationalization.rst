@@ -214,7 +214,7 @@ like *PO*, *YAML* or even *PHP* arrays. Just implement the interface mentioned e
 use the *Objects.yaml* configuration file to set your translation provider to be injected
 into the ``Translator``.
 
-Fluid Viewhelper
+Fluid ViewHelper
 ----------------
 
 There is a ``TranslateViewHelper`` for Fluid. It covers all ``Translator``
@@ -260,7 +260,7 @@ Just use the ``getLocalizedFilename()`` of the i18n ``Service`` singleton to obt
 localized resource path by providing a path to the non-localized file and a ``Locale``
 object. The method will return a path to the best matching localized version of the file.
 
-Fluid Viewhelper
+Fluid ViewHelper
 ----------------
 
 The ``ResourceViewHelper`` will by default use locale-specific versions of any resources
@@ -367,7 +367,7 @@ as a directory hierarchy in between. The minimum needed to provide message catal
 XLIFF file creation
 -------------------
 
-For now there are no FLWO3 tools to aid in creation of the initial XLIFF files. So you
+For now there are no FLOW3 tools to aid in creation of the initial XLIFF files. So you
 need to write them yourself. A minimal XLIFF file looks like this:
 
 .. code-block:: xml
@@ -394,7 +394,7 @@ the files you are working on.
   element is found. This eliminates the need to duplicate messages in catalogs where
   source and target language are the same.
 
-  But you may stil ask yourself *do I really need to duplicate all the strings
+  But you may still ask yourself *do I really need to duplicate all the strings
   in XLIFF files?* The answer is *you should*. Using target allows to fix typos
   or change wording without breaking translation by label for all other languages.
 

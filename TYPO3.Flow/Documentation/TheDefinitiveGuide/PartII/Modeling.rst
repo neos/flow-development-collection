@@ -123,7 +123,7 @@ finding blogs. In our example application only one blog at a time is supported
 so all we need is a function to find the **active** blog – even though the
 repository can contain more than one blog.
 
-Now, what if you want to display a list of the 5 latests posts, no matter what
+Now, what if you want to display a list of the 5 latest posts, no matter what
 blog they belong to? One option would be to find all blogs, iterate over their
 posts and inspect each ``date`` property to create a list of the 5 most recent
 posts. Sounds slow? It is.

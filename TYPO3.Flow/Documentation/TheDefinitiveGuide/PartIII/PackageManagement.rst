@@ -95,7 +95,7 @@ Configuration
   the *Settings.yaml* file which contains general user-level settings.
 
 Documentation
-  Holds the package documentation. Please refer to the Documentor's Guide for
+  Holds the package documentation. Please refer to the Documenter's Guide for
   more details about the directories and files within this directory.
 
 Meta
