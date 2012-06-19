@@ -33,11 +33,6 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
 	 * Array containing the configuration for all routes.
 	 * @var array
 	 */
@@ -62,6 +57,16 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	protected $actionRequest;
 
 	/**
+	 * @var \TYPO3\FLOW3\Mvc\Routing\Route
+	 */
+	protected $lastMatchedRoute;
+
+	/**
+	 * @var \TYPO3\FLOW3\Mvc\Routing\Route
+	 */
+	protected $lastResolvedRoute;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -69,16 +74,6 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 */
 	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -111,6 +106,16 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 		}
 		$this->setDefaultControllerAndActionNameIfNoneSpecified();
 		return $this->actionRequest;
+	}
+
+	/**
+	 * Returns the route that has been matched with the last route() call.
+	 * Returns NULL if no route matched or route() has not been called yet
+	 *
+	 * @return Route
+	 */
+	public function getLastMatchedRoute() {
+		return $this->lastMatchedRoute;
 	}
 
 	/**
@@ -159,16 +164,15 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 * @see route()
 	 */
 	protected function findMatchResults($routePath) {
+		$this->lastMatchedRoute = NULL;
 		$this->createRoutesFromConfiguration();
 
 		foreach ($this->routes as $route) {
 			if ($route->matches($routePath) === TRUE) {
-				$matchResults = $route->getMatchResults();
-				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the path "' . $routePath . '".', LOG_DEBUG);
-				return $matchResults;
+				$this->lastMatchedRoute = $route;
+				return $route->getMatchResults();
 			}
 		}
-		$this->systemLogger->log('Router route(): No route matched the route path "' . $routePath . '".', LOG_NOTICE);
 		return NULL;
 	}
 
@@ -183,15 +187,26 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException
 	 */
 	public function resolve(array $routeValues) {
+		$this->lastResolvedRoute = NULL;
 		$this->createRoutesFromConfiguration();
 
 		foreach ($this->routes as $route) {
 			if ($route->resolves($routeValues)) {
+				$this->lastResolvedRoute = $route;
 				return $route->getMatchingUri();
 			}
 		}
-		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
 		throw new \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
+	}
+
+	/**
+	 * Returns the route that has been resolved with the last resolve() call.
+	 * Returns NULL if no route was found or resolve() has not been called yet
+	 *
+	 * @return Route
+	 */
+	public function getLastResolvedRoute() {
+		return $this->lastResolvedRoute;
 	}
 
 	/**

@@ -224,11 +224,22 @@ class CacheManager {
 				}
 			break;
 			case 'FLOW3_ConfigurationFiles' :
+				$policyChangeDetected = FALSE;
+				$routesChangeDetected = FALSE;
 				foreach (array_keys($changedFiles) as $pathAndFilename) {
-					if (basename($pathAndFilename) === 'Policy.yaml') {
+					$filename = basename($pathAndFilename);
+					if (!in_array($filename, array('Policy.yaml', 'Routes.yaml'))) {
+						continue;
+					}
+					if ($policyChangeDetected === FALSE && basename($pathAndFilename) === 'Policy.yaml') {
 						$this->systemLogger->log('The security policies have changed, flushing the policy cache.', LOG_INFO);
 						$this->getCache('FLOW3_Security_Policy')->flush();
-						break;
+						$policyChangeDetected = TRUE;
+					} elseif ($routesChangeDetected === FALSE && basename($pathAndFilename) === 'Routes.yaml') {
+						$this->systemLogger->log('A Routes.yaml file has been changed, flushing the routing cache.', LOG_INFO);
+						$this->getCache('FLOW3_Mvc_Routing_FindMatchResults')->flush();
+						$this->getCache('FLOW3_Mvc_Routing_Resolve')->flush();
+						$routesChangeDetected = TRUE;
 					}
 				}
 

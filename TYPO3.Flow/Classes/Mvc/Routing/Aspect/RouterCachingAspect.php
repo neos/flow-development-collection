@@ -23,33 +23,27 @@ class RouterCachingAspect {
 
 	/**
 	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @FLOW3\Inject
 	 */
 	protected $findMatchResultsCache;
 
 	/**
 	 * @var \TYPO3\FLOW3\Cache\Frontend\StringFrontend
+	 * @FLOW3\Inject
 	 */
 	protected $resolveCache;
 
 	/**
-	 * Injects the $findMatchResultsCache frontend
-	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
-	 * @return void
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @FLOW3\Inject
 	 */
-	public function injectFindMatchResultsCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->findMatchResultsCache = $cache;
-	}
+	protected $persistenceManager;
 
 	/**
-	 * Injects the $resolveCache drontend
-	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache
-	 * @return void
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @FLOW3\Inject
 	 */
-	public function injectResolveCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
-		$this->resolveCache = $cache;
-	}
+	protected $systemLogger;
 
 	/**
 	 * Around advice
@@ -63,10 +57,17 @@ class RouterCachingAspect {
 
 		$cacheIdentifier = md5($routePath);
 		if ($this->findMatchResultsCache->has($cacheIdentifier)) {
+			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $cacheIdentifier, $routePath), LOG_DEBUG);
 			return $this->findMatchResultsCache->get($cacheIdentifier);
 		}
 
 		$matchResults = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		$matchedRoute = $joinPoint->getProxy()->getLastMatchedRoute();
+		if ($matchedRoute !== NULL) {
+			$this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $matchedRoute->getName(), $routePath), LOG_DEBUG);
+		} else {
+			$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $routePath), LOG_NOTICE);
+		}
 		if ($matchResults !== NULL && $this->containsObject($matchResults) === FALSE) {
 			$this->findMatchResultsCache->set($cacheIdentifier, $matchResults);
 		}
@@ -81,20 +82,33 @@ class RouterCachingAspect {
 	 * @return string Result of the target method
 	 */
 	public function cacheResolveCall(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+		$cacheIdentifier = NULL;
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
-		$routeValues = $this->convertObjectsToHashes($routeValues);
-		\TYPO3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
-
-		$cacheIdentifier = md5(http_build_query($routeValues));
-		if ($this->resolveCache->has($cacheIdentifier)) {
-			return $this->resolveCache->get($cacheIdentifier);
+		try {
+			$routeValues = $this->convertObjectsToHashes($routeValues);
+			\TYPO3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
+			$cacheIdentifier = md5(http_build_query($routeValues));
+			if ($this->resolveCache->has($cacheIdentifier)) {
+				return $this->resolveCache->get($cacheIdentifier);
+			}
+		} catch (\InvalidArgumentException $exception) {
 		}
 
 		$matchingUri = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($matchingUri !== NULL) {
+		if ($matchingUri !== NULL && $cacheIdentifier !== NULL) {
 			$this->resolveCache->set($cacheIdentifier, $matchingUri);
 		}
 		return $matchingUri;
+	}
+
+	/**
+	 * Flushes 'findMatchResults' and 'resolve' caches.
+	 *
+	 * @return void
+	 */
+	public function flushCaches() {
+		$this->findMatchResultsCache->flush();
+		$this->resolveCache->flush();
 	}
 
 	/**
@@ -119,15 +133,20 @@ class RouterCachingAspect {
 	}
 
 	/**
-	 * Recursively converts objects in an array to their spl object hashes
+	 * Recursively converts objects in an array to their identifiers
 	 *
 	 * @param array $routeValues the array to be processed
 	 * @return array the modified array
+	 * @throws \InvalidArgumentException if $routeValues contain an object and its identifier could not be determined
 	 */
 	protected function convertObjectsToHashes(array $routeValues) {
 		foreach ($routeValues as &$value) {
 			if (is_object($value)) {
-				$value = spl_object_hash($value);
+				$identifier = $this->persistenceManager->getIdentifierByObject($value);
+				if ($identifier === NULL) {
+					throw new \InvalidArgumentException(sprintf('The identifier of an object of type "%s" could not be determined', get_class($value)), 1340102526);
+				}
+				$value = $identifier;
 			} elseif (is_array($value)) {
 				$value = $this->convertObjectsToHashes($value);
 			}
