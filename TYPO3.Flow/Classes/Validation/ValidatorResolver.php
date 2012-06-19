@@ -298,7 +298,7 @@ class ValidatorResolver {
 		} else {
 			if (strpos($validatorType, ':') !== FALSE) {
 				list($packageName, $packageValidatorType) = explode(':', $validatorType);
-				$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', $packageName, $this->getValidatorType($packageValidatorType));
+				$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', str_replace('.', '\\', $packageName), $this->getValidatorType($packageValidatorType));
 			} else {
 				$possibleClassName = sprintf('TYPO3\FLOW3\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
 			}
