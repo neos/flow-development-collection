@@ -40,7 +40,7 @@ the process is as follows:
 * it is transformed to an object using Property Mapping
 * this object is validated using the base validators
 * if there is a property mapping or validation error, the last page (which usually contains an
-  edit-form) is re-displayed, an error message is shown and the erroreous field is highlighted.
+  edit-form) is re-displayed, an error message is shown and the erroneous field is highlighted.
 
 .. tip::
 
@@ -108,7 +108,7 @@ Creating Validator Instances: The ValidatorResolver
 ---------------------------------------------------
 
 As validators can be both singleton or prototype objects (depending if they have internal state),
-you should not instanciate them directly as it has been done in the above example. Instead,
+you should not instantiate them directly as it has been done in the above example. Instead,
 you should use the ``\TYPO3\FLOW3\Validation\ValidatorResolver`` singleton to get a new instance
 of a certain validator::
 
@@ -244,7 +244,7 @@ can be specified as the last argument of ``getBaseValidatorConjunction()``.
 Avoiding Duplicate Validation and Recursion
 ===========================================
 
-Unlike simple types, objects (or collections) may reference other objects, potientally leading
+Unlike simple types, objects (or collections) may reference other objects, potentially leading
 to recursion during the validation and multiple validation of the same instance.
 
 To avoid this the ``GenericObjectValidator`` as well as anything extending ``AbstractCompositeValidator``

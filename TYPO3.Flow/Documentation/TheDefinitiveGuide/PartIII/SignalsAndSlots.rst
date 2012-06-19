@@ -78,7 +78,7 @@ non-slot method.
 	} 
 
 Depending on the wiring there might be an extra parameter being given to the slot that
-contains the classname and method name of the signal emitter, seperated by ``::``.
+contains the class name and method name of the signal emitter, separated by ``::``.
 
 Wiring Signals and Slots Together
 =================================
@@ -118,11 +118,11 @@ The signal is identified by the class name and the signal name, which is the met
 The slot is identified by the class name and method name which should be called. If the
 method name starts with ``::`` the slot will be called statically.
 
-An alternative way of specifying the slot is to give an object instead of a classname to
+An alternative way of specifying the slot is to give an object instead of a class name to
 the ``connect`` method. This can also be used to pass a ``Closure`` instance to react to
 signals, in this case the slot method name can be omitted.
 
 There is one more parameter available: ``$passSignalInformation``. It controls
-whether or not the signal information (classname and methodname of the signal
-emitter, seperated by ``::``) should be passed to the slot as last parameter.
+whether or not the signal information (class name and method name of the signal
+emitter, separated by ``::``) should be passed to the slot as last parameter.
 ``$passSignalInformation`` is ``TRUE`` by default.

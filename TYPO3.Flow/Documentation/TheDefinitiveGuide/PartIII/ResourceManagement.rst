@@ -54,7 +54,7 @@ resource exists as long as the ``Resource`` object is connected to another entit
 object which is persisted. If a resource is not attached to any other persisted object,
 its data will be permanently removed by a cleanup task.
 
-.. note:: Garbage collecton of unused files is not yet implemented.
+.. note:: Garbage collection of unused files is not yet implemented.
 
 Importing Resources
 -------------------
@@ -215,7 +215,7 @@ A published persistent resource is accessible through a web URI like
 One advantage of using the sha1 hash of the resource content as a filename is that once the
 resource changes it gets a new filename and is displayed correctly regardless of the cache
 settings in the user's web browser. Search engines on the other hand prefer more meaningful
-filenames. For these cases the resource view helper allows for defining a speaking title
+file names. For these cases the resource view helper allows for defining a speaking title
 for a resource URI:
 
 .. code-block :: html

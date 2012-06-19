@@ -97,7 +97,7 @@ just concentrate on the business logic.
 
 The	logging is now done from an AOP *aspect*. It's just a class tagged with
 ``@aspect`` and a method that implements the specific action, an
-*before advice*. The expression after the ``@before`` tag tells the AOP framwork
+*before advice*. The expression after the ``@before`` tag tells the AOP framework
 to which method calls this action should be applied. It's called *pointcut expression*
 and has many possibilities, even for complex scenarios.
 
@@ -168,7 +168,7 @@ Pointcut
 	methods in an aspect class as anchors for pointcut declarations.
 
 Pointcut expression
-	A poincut expression is the condition under which a join point should match.
+	A pointcut expression is the condition under which a join point should match.
 	It may, for example, define that join points only match on the execution of a
 	(target-) method with a certain name. Pointcut expressions are used in
 	pointcut- and advice declarations.
@@ -313,8 +313,8 @@ You can either define the pointcut in the advice declaration or set up named
 pointcuts to help clarify their use.
 
 A named pointcut is represented by a method of an aspect class. It contains
-two pieces of information: The pointcut name, defined by the methodname,
-and the poincut expression, declared by an annotation. The following pointcut
+two pieces of information: The pointcut name, defined by the method name,
+and the pointcut expression, declared by an annotation. The following pointcut
 will match the execution of methods whose name starts with “delete”, no matter
 in which class they are defined:
 
@@ -334,7 +334,7 @@ As already mentioned, the pointcut expression configures the filters which are
 used to match against join points. It is comparable to an if condition in PHP:
 Only if the whole condition evaluates to TRUE, the statement is executed -
 otherwise it will be just ignored. If a pointcut expression evaluates to TRUE,
-the pointcut matches and advices which refer to this poincut become active.
+the pointcut matches and advices which refer to this pointcut become active.
 
 .. Note::
 	The AOP framework AspectJ provides a complete pointcut language with dozens
@@ -392,7 +392,7 @@ Matches all methods except injectors in class ``Example\MyPackage\MyObject``:
 
 The ``method()`` designator also supports so called runtime evaluations,
 meaning you can specify values for the method's arguments. If those argument
-values do not match the adivce won't be executed. The following example should
+values do not match the advice won't be executed. The following example should
 give you an idea how this works:
 
 *Example: Runtime evaluations for the method() pointcut designator*
@@ -621,7 +621,7 @@ conveniently in advice declarations:
 	namespace Example\TestPackage;
 
 	/**
-	 * Fixture class for testing poincut definitions
+	 * Fixture class for testing pointcut definitions
 	 *
 	 * @FLOW3\Aspect
 	 */
@@ -894,7 +894,7 @@ place but refer to a named pointcut.
 		public function guestbookSubmissionPointcut() {}
 
 		/**
-		 * Around advice, rejects the lastname "Sarkosh"
+		 * Around advice, rejects the last name "Sarkosh"
 		 *
 		 * @param  \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 		 * @return mixed Result of the target method
@@ -902,7 +902,7 @@ place but refer to a named pointcut.
 		 */
 		public function rejectLastName(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 			if ($joinPoint->getMethodArgument('lastName') === 'Sarkosh') {
-				throw new \Exception('Sarkosh is not a valid lastname - should be Skårhøj!');
+				throw new \Exception('Sarkosh is not a valid last name - should be Skårhøj!');
 			}
 			$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 			return $result;
@@ -934,7 +934,7 @@ the aspect class. The annotation tag follows this syntax:
 
 ``@FLOW3\Introduce("PointcutExpression", interfaceName="NewInterfaceName")``
 
-Although the PoincutExpression is just a normal pointcut expression, which may
+Although the PointcutExpression is just a normal pointcut expression, which may
 also refer to named pointcuts, be aware that only expressions filtering for
 classes make sense. You cannot use the method() pointcut designator in this
 context and will typically take the class() designator instead.

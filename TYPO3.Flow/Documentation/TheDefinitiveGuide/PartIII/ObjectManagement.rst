@@ -195,7 +195,7 @@ To explicitly retrieve an object instance use the ``get()`` method::
 	$myObjectInstance = $objectManager->get('MyCompany\MyPackage\MyClassName');
 
 It is *not* possible to pass arguments to the constructor of the object, as the object might
-be already instanciated when you call ``get()``. If the object needs constructor arguments,
+be already instantiated when you call ``get()``. If the object needs constructor arguments,
 these must be :ref:`configured in Objects.yaml <sect-objects-yaml>`.
 
 Lifecycle methods
@@ -1121,8 +1121,8 @@ code):
 .. code-block:: yaml
 
 	MyCompany\MyPackage\MyObject:
-	  lifecycleInitializationMethod: myInitializeMethodname
-	  lifecycleShutdownMethod: myShutdownMethodname
+	  lifecycleInitializationMethod: myInitializeMethodName
+	  lifecycleShutdownMethod: myShutdownMethodName
 
 .. _Martin Fowler's article: http://martinfowler.com/articles/injection.html
 .. _his blog:                http://tapestryjava.blogspot.com/2004/08/dependency-injection-mirror-of-garbage.html

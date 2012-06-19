@@ -7,7 +7,7 @@ Persistence
 This chapter explains how to use object persistence in FLOW3. To do this, it focuses on
 the persistence based on the *Doctrine* 2 ORM first. There is another mechanism available,
 called *Generic* persistence, which can be used to add your own persistence backends to
-FLOW3. It is explained seperately later in the chapter.
+FLOW3. It is explained separately later in the chapter.
 
 .. tip::
 
@@ -207,7 +207,7 @@ changes to already persisted objects? As we have seen, those changes are only pe
 the changed object is given to ``update`` on the corresponding repository.
 
 Now, for objects that have no corresponding repository, how are changes persisted? In the
-same way you fetch those objets from their parent - by traversal. FLOW3 follows references
+same way you fetch those objects from their parent - by traversal. FLOW3 follows references
 from objects managed in a repository (aggregate roots) for all persistence operations,
 unless the referenced object itself is an aggregate root.
 
@@ -361,7 +361,7 @@ Doctrine supports many more annotations, for a full reference please consult the
 On Value Object handling with Doctrine
 --------------------------------------
 
-Doctrine 2 does not (yet [#]_) support value objects, thus we treat them as 
+Doctrine 2 does not (yet [#]_) support value objects, thus we treat them as
 entities for the time being, with some differences:
 
 * Value Objects are marked immutable as with the ``ReadOnly`` annotation of Doctrine.
@@ -382,7 +382,7 @@ makes a number of things easier, compared to plain Doctrine 2.
 
 ``Table``
   ``name`` does not default to the unqualified entity classname, but a name is generated
-  from classname, package key and more elements to make it unique.
+  from class name, package key and more elements to make it unique.
 
 ``Id``
   Can be left out, as it is automatically generated, this means you also do not need

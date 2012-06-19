@@ -470,7 +470,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 +--------------+---------------------------+---------------------------------------------+
 + Entry Point  + Description               + Configuration options                       +
 +==============+===========================+=============================================+
-+ WebRedirect  + Triggers an HTTP redirect + Expects an associtative array with          +
++ WebRedirect  + Triggers an HTTP redirect + Expects an associative array with           +
 +              + to a given uri.           + one entry.                                  +
 +              + that has been resolved    +                                             +
 +              + by the MVC dispatcher     + For example.:                               +
@@ -480,7 +480,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 + HttpBasic    + Adds a WWW-Authenticate   + Optionally takes an option realm, which     +
 +              + header to the response,   + will be displayed in the authentication     +
 +              + which will trigger the    + prompt.                                     +
-+              + browsers authenticaiton   +                                             +
++              + browsers authentication   +                                             +
 +              + form.                     +                                             +
 +--------------+---------------------------+---------------------------------------------+
 
@@ -520,7 +520,7 @@ in the following format: ``HashOfThePassword,Salt``
 	that you really have secure hashes.
 
 The provider will explode the credentials source by the "," and try to authenticate the
-token by asking the FLOW3 hash service to verfiy the hashed password against the given
+token by asking the FLOW3 hash service to verify the hashed password against the given
 plaintext password in from the token.
 If you want to know more about accounts and how you can create them, look in the
 corresponding section above.
@@ -743,7 +743,7 @@ available interceptors, shipped with FLOW3:
 + PolicyEnforcement     + Triggers the authorization process as +
 +                       + described one section above.          +
 +-----------------------+---------------------------------------+
-+ RequireAuthenticaiton + Calls the authentication manager to   +
++ RequireAuthentication + Calls the authentication manager to   +
 +                       + authenticate all active tokens for    +
 +                       + the current request.                  +
 +-----------------------+---------------------------------------+
@@ -944,8 +944,8 @@ Security for persisted objects
 	      Acme_MyPackage_Customers_Vip: 'this.vip == TRUE'
 	      Acme_MyPackage_Customers_Me: 'current.securityContext.account == this.account && this.account != NULL'
 
-The ``Acme_MyPacakge_Customer_All`` resource will match any customer object.
-The ``Acme_MyPacakge_Customer_Vip`` resource matches all customer's which have their
+The ``Acme_MyPackage_Customer_All`` resource will match any customer object.
+The ``Acme_MyPackage_Customer_Vip`` resource matches all customer's which have their
 ``vip`` attribute set.
 The ``Acme_MyPackage_Customer_Me`` resource matches any customer object whose account
 property matches the currently logged in account.

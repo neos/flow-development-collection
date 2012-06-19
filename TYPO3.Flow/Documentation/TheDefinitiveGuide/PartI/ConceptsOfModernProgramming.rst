@@ -39,7 +39,7 @@ very early on (instead of extensive requirements specifications); and
 real-world problems thus occur very early in the development process,
 where they can be easily corrected. Normally, it takes some iterations
 of model refinement until a domain model adequately reflects the problem
-domain, focussing on the important properties, and leaving out
+domain, focusing on the important properties, and leaving out
 unimportant ones.
 
 In the following sections, some core components of Domain-Driven
@@ -125,7 +125,7 @@ Entities
 
 Entities have a unique identity, which stays the same despite
 of changes in the properties of the object. For example, a user can
-have a user name as identity, a student an immatriculation ID.
+have a user name as identity, a student a matriculation ID.
 Although properties of the objects can change over time (for example
 the student changes his courses), it is still the same object. Thus,
 the above examples are *entities*.
@@ -239,7 +239,7 @@ Associations
 ~~~~~~~~~~~~
 
 Now, after explaining the two types of domain objects, we will
-look at a particularily important implementation area: Associations
+look at a particularly important implementation area: Associations
 between objects.
 
 Domain objects have relationships between them. In the domain
@@ -482,5 +482,5 @@ needed in the controller or the model.
 There are a lot more features to show, like rapid prototyping
 support, dependency injection, a signal-slots system and a
 custom-built template engine, but all these should only aid the
-developer in focussing on the problem domain and writing decoupled and
+developer in focusing on the problem domain and writing decoupled and
 extensible code.

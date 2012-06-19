@@ -120,7 +120,7 @@ Configuration
 
 The cache framework is configured in the usual FLOW3 way through YAML files. The most
 important is *Caches.yaml*, although you may of course use *Objects.yaml* to further
-configre the way your caches are used. Caches are given a (unique) name and have three
+configure the way your caches are used. Caches are given a (unique) name and have three
 keys in their configuration:
 
 frontend
@@ -209,7 +209,7 @@ Check the API documentation for details on these methods.
 Available Frontends
 -------------------
 
-Currenly three different frontends are implemented, the main difference is the data types
+Currently three different frontends are implemented, the main difference is the data types
 which can be stored using a specific frontend.
 
 ``TYPO3\FLOW3\Cache\Frontend\StringFrontend``
@@ -269,7 +269,7 @@ The file backend stores every cache entry as a single file to the file system. T
 lifetime and tags are added after the data part in the same file.
 
 As main advantage the file backend is the only backend which implements the
-``PhpCapableInterfac`` and can be used in combination with the ``PhpFrontend``. The
+``PhpCapableInterface`` and can be used in combination with the ``PhpFrontend``. The
 backend was specifically adapted to these needs and has low overhead for get and set
 operations, it scales very well with the number of entries for those operations. This
 mostly depends on the file lookup performance of the underlying file system in large
@@ -504,7 +504,7 @@ from the same problems if APC runs out of memory.
 
 The garbage collection is currently not implemented. In its latest version, APC will fail
 to store data with a `PHP warning`_ if it runs out of memory. This may change in the
-future. Even without using the cache backend, it is adviseable to increase the memory
+future. Even without using the cache backend, it is advisable to increase the memory
 cache size of APC to at least 64MB when working with FLOW3, simply due to the large number
 of PHP files to be cached. A minimum of 128MB is recommended when using the additional
 content cache. Cache TTL for file and user data should be set to zero (disabled) to avoid
@@ -578,7 +578,7 @@ meaningful schema.
 Retrieve and Use a Cache
 ------------------------
 
-Using depdendency injection
+Using dependency injection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A cache is usually retrieved through dependency injection, either constructor or setter

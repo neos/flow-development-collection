@@ -32,7 +32,7 @@ converting a numeric ``string`` to a ``float`` number::
 	$result = $propertyMapper->convert('12.5', 'float');
 	// $result == (float)12.5
 
-This is of course a really conceived example, as the same result could be archieved
+This is of course a really conceived example, as the same result could be achieved
 by just casting the numeric string to a floating point number.
 
 Our next example goes a bit further and shows how we can use the Property Mapper
@@ -197,7 +197,7 @@ The following configuration options exist:
   specified as arguments to this method.
 
 All the configuration options work only for the current level, i.e. all of the
-above converter options would only work for the toplevel type converter. However,
+above converter options would only work for the top level type converter. However,
 it is also possible to specify configuration options for lower levels, using
 ``forProperty($propertyPath)``. This is best shown with the example from the previous section.
 
@@ -282,7 +282,7 @@ or ``allowAllPropertiesExcept()`` methods.
 
 Second, you need to configure the the PersistentObjectConverter using the two options
 ``CONFIGURATION_MODIFICATION_ALLOWED`` and ``CONFIGURATION_CREATION_ALLOWED``. They
-must be used to explicitely activate the modification or creation of objects. By
+must be used to explicitly activate the modification or creation of objects. By
 default, the ``PersistentObjectConverter`` does only fetch objects from the persistence,
 but does not create new ones or modifies existing ones.
 
@@ -341,7 +341,7 @@ object. Some of the steps will be described in detail afterwards.
    (if it has any), by calling ``getSourceChildPropertiesToBeConverted()`` on
    the type converter.
 
-#. For each child propery, do the following:
+#. For each child property, do the following:
 
    #. Ask the type converter about the data type of the child property, by calling
       ``getTypeOfChildProperty()`` on the type converter.
@@ -392,7 +392,7 @@ When a type converter has to be found, the following algorithm is applied:
 3. If no type converter could be found for the direct inheritance hierarchy, it is
    checked if there is a TypeConverter for one of the interfaces the target class
    implements. As it is not possible in PHP to order interfaces in any meaningful
-   way, the TypeConverter with the highest priority is used (througout all interfaces).
+   way, the TypeConverter with the highest priority is used (throughout all interfaces).
 
 4. If no type converter is found in the interfaces, it is checked if there is an
    applicable type converter for the target type ``object``.

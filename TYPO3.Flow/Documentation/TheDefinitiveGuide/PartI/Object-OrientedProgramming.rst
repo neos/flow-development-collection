@@ -4,9 +4,9 @@ Object-Oriented Programming
 
 .. sectionauthor:: Patrick Lobacher
 
-Object-oriented programming is a Programming Paradigm, versatilely applied in
-FLOW3 and the Packages built on it. In this section we will give an overview
-of the basic concepts of Object Orientation.
+Object-oriented programming is a Programming Paradigm, applied in FLOW3 and
+the Packages built on it. In this section we will give an overview of the
+basic concepts of Object Orientation.
 
 Programs have a certain purpose, which is - generally speaking - to solve a
 problem. "Problem" does not necessarily mean error or defect but rather an
@@ -232,7 +232,7 @@ PHP Code::
 
 	}
 
-With ``$this->speed`` you can acces the property *speed* in the actual object,
+With ``$this->speed`` you can access the property *speed* in the actual object,
 independently of it's name.
 
 Constructor
