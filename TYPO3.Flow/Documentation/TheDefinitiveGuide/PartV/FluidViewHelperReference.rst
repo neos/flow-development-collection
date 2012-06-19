@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-06-07
+This reference was automatically generated from code on 2012-06-19
 
 
 f:alias
@@ -1518,6 +1518,21 @@ Arguments
 
 
 
+f:format.identifier
+-------------------
+
+
+
+
+
+Arguments
+*********
+
+* ``value`` (object, *optional*): the object to render the identifier for, or NULL if VH children should be used
+
+
+
+
 f:format.json
 -------------
 
@@ -1852,6 +1867,9 @@ f:identity.json
 Renders the identity of a persisted object (if it has an identity).
 Useful for using the identity outside of the form view helpers
 (e.g. JavaScript and AJAX).
+
+Deprecated since 1.1.0. Use f:format.identifier and f:format.json
+ViewHelpers instead.
 
 
 
