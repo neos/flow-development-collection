@@ -125,10 +125,10 @@ Consider the following Fluid template:
 
 .. code-block:: xml
 
-	<f:form method="post" action="create" object="{newImage}" name="newImage"
+	<f:form method="post" action="create" object="{newImage}" objectName="newImage"
 		enctype="multipart/form-data">
-		<f:form.textbox property="image.title" value="My image title" />
-		<f:form.upload property="image.originalResource" />
+		<f:form.textfield property="title" value="My image title" />
+		<f:form.upload property="originalResource" />
 		<f:form.submit value="Submit new image"/>
 	</f:form>
 
@@ -153,7 +153,50 @@ form::
 
 Provided that the ``Image`` class has a ``$title`` and a ``$originalResource`` property and
 that they are accessible through ``setTitle()`` and ``setOriginalResource()`` respectively the
-above code will work just as expected.
+above code will work just as expected::
+
+	class Image {
+
+	   /**
+	    * @var string
+	    */
+	   protected $title;
+
+	   /**
+	    * @var \TYPO3\FLOW3\Resource\Resource
+	    */
+	   protected $originalResource;
+
+	   /**
+	    * @param string $title
+	    * @return void
+	    */
+	   public function setTitle($title) {
+	      $this->title = $title;
+	   }
+
+	   /**
+	    * @return string
+	    */
+	   public function getTitle() {
+	      return $this->title;
+	   }
+
+	   /**
+	    * @param \TYPO3\FLOW3\Resource\Resource $originalResource
+	    * @return void
+	    */
+	   public function setOriginalResource(\TYPO3\FLOW3\Resource\Resource $originalResource) {
+	      $this->originalResource = $originalResource;
+	   }
+
+	   /**
+	    * @return \TYPO3\FLOW3\Resource\Resource
+	    */
+	   public function getOriginalResource() {
+	      return $this->originalResource;
+	   }
+	}
 
 .. tip::
 
