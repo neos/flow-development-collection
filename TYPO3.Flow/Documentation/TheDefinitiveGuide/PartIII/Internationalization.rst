@@ -398,6 +398,18 @@ the files you are working on.
   in XLIFF files?* The answer is *you should*. Using target allows to fix typos
   or change wording without breaking translation by label for all other languages.
 
+.. admonition:: How to create meaningful XLIFF ids
+
+  When using the recommended way of translating by id, it is even more important to use
+  meaningful identifiers. Our suggestion is to group identifiers and use dot notation
+  to build a hierarchy that is meaningful and intuitive::
+
+    settings.account.keepLoggedIn
+    settings.display.compactControls
+    book.title
+    book.author
+    …
+
 Labels may contain placeholders to be replaced with given arguments during
 output. Earlier we saw an example use of the TranslateViewHelper:
 
