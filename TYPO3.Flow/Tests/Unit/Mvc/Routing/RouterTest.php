@@ -23,9 +23,7 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function resolveCallsCreateRoutesFromConfiguration() {
-		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
-		$router->injectSystemLogger($mockLogger);
 
 			// not saying anything, but seems better than to expect the exception we'd get otherwise
 		$mockRoute = $this->getMock('TYPO3\FLOW3\Mvc\Routing\Route');
@@ -42,8 +40,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createRoutesFromConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
-		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
-
 		$routesConfiguration = array();
 		$routesConfiguration['route1']['uriPattern'] = 'number1';
 		$routesConfiguration['route2']['uriPattern'] = 'number2';
@@ -57,7 +53,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('dummy'));
-		$router->injectSystemLogger($mockLogger);
 		$router->setRoutesConfiguration($routesConfiguration);
 		$router->_call('createRoutesFromConfiguration');
 		$createdRoutes = $router->_get('routes');
@@ -90,12 +85,10 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$route3 = $this->getMock('TYPO3\FLOW3\Mvc\Routing\Route', array('resolves'), array(), '', FALSE);
 
 		$mockRoutes = array($route1, $route2, $route3);
-		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('createRoutesFromConfiguration'), array(), '', FALSE);
 		$router->expects($this->once())->method('createRoutesFromConfiguration');
 		$router->_set('routes', $mockRoutes);
-		$router->injectSystemLogger($mockLogger);
 
 		$matchingUri = $router->resolve($routeValues);
 		$this->assertSame('route2', $matchingUri);
@@ -113,13 +106,37 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$route2->expects($this->once())->method('resolves')->will($this->returnValue(FALSE));
 
 		$mockRoutes = array($route1, $route2);
-		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
 		$router->_set('routes', $mockRoutes);
-		$router->injectSystemLogger($mockLogger);
 
 		$router->resolve(array());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getLastResolvedRouteReturnsNullByDefault() {
+		$router = new \TYPO3\FLOW3\Mvc\Routing\Router();
+		$this->assertNull($router->getLastResolvedRoute());
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveSetsLastResolvedRoute() {
+		$routeValues = array('some' => 'route values');
+		$mockRoute1 = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Route')->getMock();
+		$mockRoute1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
+		$mockRoute2 = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Route')->getMock();
+		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
+
+		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router->_set('routes', array($mockRoute1, $mockRoute2));
+
+		$router->resolve($routeValues);
+
+		$this->assertSame($mockRoute2, $router->getLastResolvedRoute());
 	}
 
 	/**
@@ -149,21 +166,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$router->injectObjectManager($mockObjectManager);
 
 		$this->assertEquals('TestPackage\Bar\Baz\Controller\FooController', $router->getControllerObjectName('testpackage', 'bar\baz', 'foo'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function getControllerObjectNameReturnsNullIfTheResolvedControllerDoesNotExist() {
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('testpackage\Controller\fooController'))
-			->will($this->returnValue(FALSE));
-
-		$router = new \TYPO3\FLOW3\Mvc\Routing\Router();
-		$router->injectObjectManager($mockObjectManager);
-
-		$this->assertEquals('', $router->getControllerObjectName('testpackage', '', 'foo'));
 	}
 
 	/**
@@ -236,11 +238,52 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function getLastMatchedRouteReturnsNullByDefault() {
+		$router = new \TYPO3\FLOW3\Mvc\Routing\Router();
+		$this->assertNull($router->getLastMatchedRoute());
+	}
+
+	/**
+	 * @test
+	 */
+	public function findMatchResultsSetsLastMatchedRoute() {
+		$routePath = 'some/request/path';
+		$mockRoute1 = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Route')->getMock();
+		$mockRoute1->expects($this->once())->method('matches')->with($routePath)->will($this->returnValue(FALSE));
+		$mockRoute2 = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Route')->getMock();
+		$mockRoute2->expects($this->once())->method('matches')->with($routePath)->will($this->returnValue(TRUE));
+
+		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+		$router->_set('routes', array($mockRoute1, $mockRoute2));
+
+		$router->_call('findMatchResults', $routePath);
+
+		$this->assertSame($mockRoute2, $router->getLastMatchedRoute());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getControllerObjectNameReturnsNullIfTheResolvedControllerDoesNotExist() {
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
+			->with($this->equalTo('testpackage\Controller\fooController'))
+			->will($this->returnValue(FALSE));
+
+		$router = new \TYPO3\FLOW3\Mvc\Routing\Router();
+		$router->injectObjectManager($mockObjectManager);
+
+		$this->assertEquals('', $router->getControllerObjectName('testpackage', '', 'foo'));
+	}
+
+	/**
 	 * Data Provider
 	 *
 	 * @return array
 	 */
-	public function getControllerObjectNameArguments() {
+	public function getControllerObjectNameDataProvider() {
 		return array(
 			array('MyPackage', NULL, 'MyController', 'MyPackage\Controller\MyControllerController'),
 			array('MyCompany.MyPackage', NULL, 'MyController', 'MyCompany\MyPackage\Controller\MyControllerController'),
@@ -250,7 +293,7 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider getControllerObjectNameArguments
+	 * @dataProvider getControllerObjectNameDataProvider
 	 */
 	public function getControllerObjectNameReturnsCorrectObjectNamesBasedOnTheGivenArguments($packageKey, $subpackageKey, $controllerName, $expectedObjectName) {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
@@ -260,10 +303,6 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$router->injectObjectManager($mockObjectManager);
 
 		$this->assertEquals($expectedObjectName, $router->getControllerObjectName($packageKey, $subpackageKey, $controllerName));
-	}
-
-	protected function getRouter() {
-		return $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
 	}
 
 }

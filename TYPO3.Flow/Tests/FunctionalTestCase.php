@@ -22,6 +22,7 @@ namespace TYPO3\FLOW3\Tests;
  *                                                                        */
 
 use TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A base test case for functional tests
@@ -227,6 +228,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
 		}
+		$this->emitFunctionalTestTearDown();
 	}
 
 	/**
@@ -374,5 +376,14 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$requestHandler->setHttpRequest(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost')));
 	}
 
+	/**
+	 * Signals that the functional test case has been executed
+	 *
+	 * @return void
+	 * @FLOW3\Signal
+	 */
+	protected function emitFunctionalTestTearDown() {
+		self::$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'functionalTestTearDown');
+	}
 }
 ?>
