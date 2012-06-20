@@ -86,16 +86,34 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 *
 	 * @param string $className
 	 * @return \TYPO3\FLOW3\Reflection\ClassSchema
-	 * @throws \RuntimeException
+	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException
 	 */
 	protected function getClassSchema($className) {
 		$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
 
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
-			throw new \RuntimeException('No class schema found for "' . $className . '". The class should probably marked as entity or value object!', 1295973082);
+			throw new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException('No class schema found for "' . $className . '".', 1295973082);
 		}
 		return $classSchema;
+	}
+
+	/**
+	 * Check for $className being an aggregate root.
+	 *
+	 * @param string $className
+	 * @param string $propertySourceHint
+	 * @return boolean
+	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException
+	 */
+	protected function isAggregateRoot($className, $propertySourceHint) {
+		$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+		try {
+			$classSchema = $this->getClassSchema($className);
+			return $classSchema->isAggregateRoot();
+		} catch (\TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException $exception) {
+			throw new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException('No class schema found for "' . $className . '". The class should probably marked as entity or value object! This happened while examining "' . $propertySourceHint . '"', 1340185197);
+		}
 	}
 
 	/**
@@ -401,12 +419,12 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
 				if ($oneToOneAnnotation->cascade) {
 					$mapping['cascade'] = $oneToOneAnnotation->cascade;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
 				if ($oneToOneAnnotation->orphanRemoval) {
 					$mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
 				$mapping['fetch'] = $this->getFetchMode($className, $oneToOneAnnotation->fetch);
@@ -420,12 +438,12 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				}
 				if ($oneToManyAnnotation->cascade) {
 					$mapping['cascade'] = $oneToManyAnnotation->cascade;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
 				if ($oneToManyAnnotation->orphanRemoval) {
 					$mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
 				$mapping['fetch'] = $this->getFetchMode($className, $oneToManyAnnotation->fetch);
@@ -442,7 +460,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
 				if ($manyToOneAnnotation->cascade) {
 					$mapping['cascade'] = $manyToOneAnnotation->cascade;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
 				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
@@ -476,12 +494,12 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
 				if ($manyToManyAnnotation->cascade) {
 					$mapping['cascade'] = $manyToManyAnnotation->cascade;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
 				if ($manyToManyAnnotation->orphanRemoval) {
 					$mapping['orphanRemoval'] = $manyToManyAnnotation->orphanRemoval;
-				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
 				$mapping['fetch'] = $this->getFetchMode($className, $manyToManyAnnotation->fetch);
