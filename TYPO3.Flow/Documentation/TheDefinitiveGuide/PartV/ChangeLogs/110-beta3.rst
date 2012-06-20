@@ -40,6 +40,10 @@ getOriginalRequest()->getArguments() to the upgrading instructions.
 * Related: `#37762 <http://forge.typo3.org/issues/37762>`_
 * Commit: `8cad35a <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=8cad35ab295fe0a75f32cbdca3465a01c5769f41>`_
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.FLOW3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
