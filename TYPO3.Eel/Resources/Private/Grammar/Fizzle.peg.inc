@@ -36,10 +36,13 @@ Filter: ( :PropertyNameFilter ) ?  ( AttributeFilters:AttributeFilter )*
 		}
 		$result['AttributeFilters'][] = $sub;
 	}
+	function PropertyNameFilter(&$result, $sub) {
+		$result['PropertyNameFilter'] = $sub['Identifier'];
+	}
 
 PropertyNameFilter: Identifier
-	function __finalise(&$self) {
-		$self = $self['text'];
+	function Identifier(&$result, $sub) {
+		$result['Identifier'] = $sub['text'];
 	}
 
 AttributeFilter:

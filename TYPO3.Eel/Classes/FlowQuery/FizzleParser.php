@@ -144,6 +144,10 @@ function Filter_AttributeFilters (&$result, $sub) {
 		$result['AttributeFilters'][] = $sub;
 	}
 
+function Filter_PropertyNameFilter (&$result, $sub) {
+		$result['PropertyNameFilter'] = $sub['Identifier'];
+	}
+
 /* PropertyNameFilter: Identifier */
 protected $match_PropertyNameFilter_typestack = array('PropertyNameFilter');
 function match_PropertyNameFilter ($stack = array()) {
@@ -157,8 +161,8 @@ function match_PropertyNameFilter ($stack = array()) {
 	else { return FALSE; }
 }
 
-function PropertyNameFilter__finalise (&$self) {
-		$self = $self['text'];
+function PropertyNameFilter_Identifier (&$result, $sub) {
+		$result['Identifier'] = $sub['text'];
 	}
 
 /* AttributeFilter:
