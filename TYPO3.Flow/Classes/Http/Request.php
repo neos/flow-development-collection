@@ -546,7 +546,9 @@ class Request extends Message {
 					$fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
 				}
 			}
-			$untangledFiles = Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
+			if (isset($fileInformation['error']) && $fileInformation['error'] !== \UPLOAD_ERR_NO_FILE) {
+				$untangledFiles = Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
+			}
 		}
 		return $untangledFiles;
 	}

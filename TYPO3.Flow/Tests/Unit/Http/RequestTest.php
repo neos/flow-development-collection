@@ -821,6 +821,65 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function untangleFilesArrayDoesNotChangeArgumentsIfNoFileWasUploaded() {
+		$convolutedFiles = array (
+			'a0' => array (
+				'name' => array (
+					'a1' => '',
+				),
+				'type' => array (
+					'a1' => '',
+				),
+				'tmp_name' => array (
+					'a1' => '',
+				),
+				'error' => array (
+					'a1' => \UPLOAD_ERR_NO_FILE,
+				),
+				'size' => array (
+					'a1' => 0,
+				),
+			),
+			'b0' => array (
+				'name' => array (
+					'b1' => 'b.txt',
+				),
+				'type' => array (
+					'b1' => 'text/plain',
+				),
+				'tmp_name' => array (
+					'b1' => '/private/var/tmp/phpvZ6oUD',
+				),
+				'error' => array (
+					'b1' => 0,
+				),
+				'size' => array (
+					'b1' => 200,
+				),
+			),
+		);
+
+		$untangledFiles = array (
+			'b0' => array (
+				'b1' => array(
+					'name' => 'b.txt',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/phpvZ6oUD',
+					'error' => 0,
+					'size' => 200,
+				)
+			),
+		);
+
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$result = $request->_call('untangleFilesArray', $convolutedFiles);
+
+		$this->assertSame($untangledFiles, $result);
+	}
+
+	/**
 	 * Data provider with valid quality value strings and the expected parse output
 	 *
 	 * @return array

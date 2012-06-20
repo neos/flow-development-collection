@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Resource;
+namespace TYPO3\FLOW3\Tests\Unit\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * Testcase for the File class
+ * Testcase for the Resource class
  *
  */
 class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
