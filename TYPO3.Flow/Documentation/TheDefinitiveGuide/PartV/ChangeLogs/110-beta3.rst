@@ -1,0 +1,607 @@
+====================
+1.1.0-beta3
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Adjust release deployment descriptor
+-----------------------------------------------------------------------------------------
+
+This adds the configuration needed to push tags based on
+the PUSH_TAGS environment variable and tweaks some tiny
+(style) issues.
+
+* Commit: `138dfc3 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=138dfc36418977b4c019db2fb38c1323a569a64a>`_
+
+[TASK] Mention PhpSession configuration change in Upgrading.txt
+-----------------------------------------------------------------------------------------
+
+This informs about the PhpSession settings key change.
+
+* Related: `#37993 <http://forge.typo3.org/issues/37993>`_
+* Commit: `052524c <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=052524c7bd296814da0af023ba77fafd35c11a89>`_
+
+[TASK] Correct information about frozen packages
+-----------------------------------------------------------------------------------------
+
+The upgrading instructions explained that packages were frozen by
+default, which is no longer true.
+
+* Commit: `c5b25bf <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=c5b25bfe8c62cf0e935c9531b2ec4f8faebdec41>`_
+
+[TASK] Update Upgrading.txt with two more adjustments
+-----------------------------------------------------------------------------------------
+
+Add the needed changes for getOriginalRequestMappingResults() and
+getOriginalRequest()->getArguments() to the upgrading instructions.
+
+* Related: `#37762 <http://forge.typo3.org/issues/37762>`_
+* Commit: `8cad35a <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=8cad35ab295fe0a75f32cbdca3465a01c5769f41>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `e7812ee <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=e7812eef060c19dcc85d66caea43aed8d56022c6>`_
+
+[TASK] Fix section about Resources in FLOW3 manual
+-----------------------------------------------------------------------------------------
+
+This fixes the Fluid code snippet of the resource upload example
+in the Resource Management section.
+Besides this adds a sample domain model to make this easier to
+understand.
+
+* Related: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `27951cf <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=27951cf889df5b82e87ba01c05083c3c688ae1a3>`_
+
+[TASK] Documentation corrections, each minor
+-----------------------------------------------------------------------------------------
+
+Some additional corrections, basically typo corrections,
+for the manual.
+
+* Related: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `53227d0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=53227d03a0aaeb15820640a58f14dae2a7b39729>`_
+
+[TASK] Update Fluid ViewHelper reference
+-----------------------------------------------------------------------------------------
+
+This adds format.identifier documentation and a depreciation
+notice for identity.json to the Fluid VH reference.
+
+* Related: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `ff2fc38 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ff2fc38d01fd04d1610d506eb96fd09032db447a>`_
+
+[BUGFIX] Non-standard ports are now considered by HttpRequest
+-----------------------------------------------------------------------------------------
+
+Ports that are not 80 for HTTP or 443 for HTTPS were simply not
+passed through to the Request when being created by the create()
+method.
+
+Also Uri will now set the port to 443 for HTTPS if no port is
+given in the string handed to the constructor.
+
+* Fixes: `#37770 <http://forge.typo3.org/issues/37770>`_
+* Commit: `091a37f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=091a37f7ab8332fe69b79df5659bf1559235099a>`_
+
+[BUGFIX] Uri respects query and fragment even without path
+-----------------------------------------------------------------------------------------
+
+Corresponding to the appropriate RFC 3986, section 3.3
+the query and fragment indeed may be present also if no
+path is given.
+
+* Fixes: `#37903 <http://forge.typo3.org/issues/37903>`_
+* Commit: `c0a7fc5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c0a7fc5ce2048cc44ca0915dafaf473c479a9ede>`_
+
+[BUGFIX] Fix recursion detection in instantiateClass
+-----------------------------------------------------------------------------------------
+
+When in ObjectManager->instantiateClass() the speedup case was
+used, recursion detection would potentially fail, as it returns
+early without removing the class name from the list of classes
+currently being instantiated.
+
+* Fixes: `#37997 <http://forge.typo3.org/issues/37997>`_
+* Commit: `b898eb9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b898eb9b2f91d8e7bf3572093ac761c6741c24ba>`_
+
+[BUGFIX] Corrected "Uri host" regular expression
+-----------------------------------------------------------------------------------------
+
+The regular expression verifying the validity of
+a host name in Uri's setHost method was of an incorrect
+syntax leading to a PHP error message.
+Besides correcting that, this patch adds a Test to
+proof the intended functionality.
+
+* Fixes: `#37554 <http://forge.typo3.org/issues/37554>`_
+* Commit: `4257fae <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4257faebb635394c9b0bff1d6139be147be5975f>`_
+
+[BUGFIX] Property Mapper chokes on already-converted objects
+-----------------------------------------------------------------------------------------
+
+This happens for example when using the TYPO3.Form Project with a DatePicker,
+which already transforms the value to the correct data type.
+
+* Fixes: `#36988 <http://forge.typo3.org/issues/36988>`_
+* Commit: `c2caff2 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c2caff2490ee39b6b5c032fe713c315f72e00e7a>`_
+
+[FEATURE] Configuration validation through (adapted) JSON Schema
+-----------------------------------------------------------------------------------------
+
+Implementation of a PHP array schema validator modeled using the
+JSON Schema specification as guideline.
+
+The following CLI commands which utilize the validator are provided:
+
+- configuration:validate validates the configuration of a certain type
+  with respect to the provided schemata. The schema files are searched
+  for in Resources/Private/Schema of all active packages.
+
+- configuration:generateschema is a kickstarter which generates a basic
+  schema to be used as a starting point for further adjustments
+
+Furthermore, this change includes schemata for all FLOW3 settings and the other
+configuration types (Caches, Objects, Policy and Routes).
+
+* Resolves: `#31277 <http://forge.typo3.org/issues/31277>`_
+* Commit: `37145b1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=37145b1f83e3828095f2b584ecc02a0eed3cb551>`_
+
+[BUGFIX] Correctly implement validator resolver short notation
+-----------------------------------------------------------------------------------------
+
+Currently, the short notation for validators which has been introduced
+with Id807dbfa78ae1388aa8cd53bfc578893eade427c does only support syntax
+like TYPO3\\FLOW3:EmailAddress; but we should rather support TYPO3.FLOW3:EmailAddress
+as this is how we use package keys at all other places which are not PHP code.
+
+* Fixes: `#38154 <http://forge.typo3.org/issues/38154>`_
+* Related: `#33862 <http://forge.typo3.org/issues/33862>`_
+
+* Commit: `ead2734 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ead273410f52ae50390c20116e0826e9186b60a4>`_
+
+[TASK] Add note to View chapter about default model properties
+-----------------------------------------------------------------------------------------
+
+This note should be made seen the confusion around fixing #35894
+
+* Related: `#35894 <http://forge.typo3.org/issues/35894>`_
+* Commit: `70b26b8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=70b26b8f633114611a93158ae81da13e09887c51>`_
+
+[BUGFIX] Make baseUri setting work for resource publishing
+-----------------------------------------------------------------------------------------
+
+The baseUri setting was not observed in the filesystem resource
+publisher.
+
+* Fixes: `#37550 <http://forge.typo3.org/issues/37550>`_
+* Commit: `f75c243 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f75c243edf5e1a0de222e8dc6f930bfc5d020b62>`_
+
+[BUGFIX] Use exception handling framework for CommandController
+-----------------------------------------------------------------------------------------
+
+The CommandRequestHandler brought its own tiny exception handling
+with the main drawback exceptions not being logged anymore, unlike
+the Error\\AbstractExceptionHandler features.
+
+When handling a CommandRequest, a dedicated CommandExceptionHandler
+is involved, taking care of occuring exceptions.
+
+* Fixes: `#37995 <http://forge.typo3.org/issues/37995>`_
+* Commit: `a54ebdb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a54ebdb9b8f70986aacb96248601596b41e1f152>`_
+
+[BUGFIX] Internal Request Engine needs to clear security context
+-----------------------------------------------------------------------------------------
+
+In order to get the security tokens matching the new request created
+in the internal request engine, the security context should be cleared
+using the "clearContext" method. This means that the tokens will be
+matched with the configuration from the routing based on the new request
+and not the parent request.
+
+This patch also contains a small enhancement which adds two additional
+headers to the virtual browser's response containing the code and message
+of a possible exception.
+
+* Fixes: `#37377 <http://forge.typo3.org/issues/37377>`_
+* Commit: `ec51212 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ec5121249cf900fac1675014b3c5eaf445db5e39>`_
+
+[TASK] Update code migration to do two more fixes
+-----------------------------------------------------------------------------------------
+
+This adds adjustments for getOriginalRequestMappingResults() and
+getOriginalRequest()->getArguments().
+
+* Resolves: `#37762 <http://forge.typo3.org/issues/37762>`_
+* Commit: `8ee6404 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8ee6404b73c77b8f25ab651d5617205fd7b559ad>`_
+
+[TASK] Refactor constructor argument of ExceptionHandler implementors
+-----------------------------------------------------------------------------------------
+
+Moves the redundant constructor method of each AbstractExceptionHandler
+implementor to the AbstractExceptionHandler itself.
+
+* Resolves: `#38002 <http://forge.typo3.org/issues/38002>`_
+* Commit: `1f3cdea <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1f3cdea0960f6abd0f4fb6b1bee0e63b65e2c8b7>`_
+
+[TASK] Fix markup errors in FLOW3 manual
+-----------------------------------------------------------------------------------------
+
+This change fixes another markup issue resulting in rendering
+glitches.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `e3039f6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=e3039f6849ef2e681582bb7c0d6987c2a1d08933>`_
+
+[TASK] Fix markup errors in FLOW3 manual
+-----------------------------------------------------------------------------------------
+
+This change fixes a number of markup issues resulting in rendering
+glitches.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `174cf9c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=174cf9c0228ee01f7d0f90b23af4b2961e4ef48a>`_
+
+[BUGFIX] Remove unused configuration option from settings
+-----------------------------------------------------------------------------------------
+
+This change removes a no longer used/supported option from the
+shipped Development configuration.
+
+* Fixes: `#37966 <http://forge.typo3.org/issues/37966>`_
+* Commit: `cb2e18d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cb2e18d1859b26aa06e360e994b7124ae23df1cd>`_
+
+[BUGFIX] Discourage people to expose anything but the Web folder
+-----------------------------------------------------------------------------------------
+
+This updates the Quickstart to explicitly push people into using Web
+as the document root for their web server.
+
+* Fixes: `#38016 <http://forge.typo3.org/issues/38016>`_
+* Commit: `b62de73 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b62de73c2eb7b1231a94ebd28e8e89892494877c>`_
+
+[TASK] Update templating chapter
+-----------------------------------------------------------------------------------------
+
+Along with some style and markup tweaks this adds details
+on XML namespace declaration and XSD generation.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `9300c10 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9300c1013f23100969bf45023d9e1bdff4f2f4c8>`_
+
+[TASK] Update validation chapter
+-----------------------------------------------------------------------------------------
+
+Along with some style and markup tweaks this moves some sections
+around and adds details on avoiding recursive/duplicate validation.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `4e9ebe2 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4e9ebe29f3df59dc9e3a5c6f1c2fda3a256065d4>`_
+
+[TASK] Update object management chapter
+-----------------------------------------------------------------------------------------
+
+This updates the section on custom factories.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `57a5d13 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=57a5d13c61f4a4ca1849e2692de64d8a314db76d>`_
+
+[TASK] Update persistence chapter
+-----------------------------------------------------------------------------------------
+
+Some layout/markup tweaks and removed some outdated parts about
+the generic PDO persistence we had earlier. Also explain identity
+and value object handling in more detail.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `f1bda0b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f1bda0b8e6bf1bfade6a47ac52ec29366f88b1a4>`_
+
+[TASK] Update FLOW3 manual
+-----------------------------------------------------------------------------------------
+
+This change removes the glossary and colophon from the guide
+and applies mostly markup changes to various parts.
+
+* Resolves: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `f661930 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f66193005cb83dcc90151a4b806afba4ca893b14>`_
+
+[TASK] Session handling documentation
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#37668 <http://forge.typo3.org/issues/37668>`_
+* Commit: `63b7c09 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=63b7c09ce4964e7d09013a7ee4d3b95dba6693c2>`_
+
+[TASK] Update Security Framework chapter
+-----------------------------------------------------------------------------------------
+
+Quick update of the Security Framework chapter to reflect recent
+changes in FLOW3. Also some minor spelling error fixes.
+
+* Resolves: `#37672 <http://forge.typo3.org/issues/37672>`_
+* Commit: `3e918ee <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3e918ee71059ea3b36885d599fe38d1fa6e2fde6>`_
+
+[BUGFIX] Make PhpSession read settings from "PhpSession"
+-----------------------------------------------------------------------------------------
+
+The settings for the PhpSession are read from the key "PhpSession" now,
+to ensure consistency. Before that they were read from "PHPSession".
+
+You should adjust your settings, but for backwards compatibility
+settings from "PHPSession" will still be used if present.
+
+* Fixes: `#37993 <http://forge.typo3.org/issues/37993>`_
+* Commit: `8a9619a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8a9619abb8404ce98a86d8d267043530d349c1ee>`_
+
+[TASK] Make validator resolver public API
+-----------------------------------------------------------------------------------------
+
+People should use it when validation is used in custom code instead of
+creating validators using new; thus the ValidatorResolver must be marked
+as public API.
+
+* Resolves: `#37665 <http://forge.typo3.org/issues/37665>`_
+* Commit: `b00d9cc <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b00d9cc046c2e5ea8f859e191a4dcc99ac4f59fc>`_
+
+[TASK] Documentation of Validation
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#37666 <http://forge.typo3.org/issues/37666>`_
+* Commit: `394f188 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=394f1884d2c496eee6d94a7736205daf3d197b66>`_
+
+[TASK] document utility functions
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#37669 <http://forge.typo3.org/issues/37669>`_
+* Commit: `ac4d62a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ac4d62af08724fe21871676f83d06586cb0c4e9d>`_
+
+[TASK] improve Property Mapping Documentation
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#37664 <http://forge.typo3.org/issues/37664>`_
+* Commit: `95a686c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=95a686c03dd57ca3f98a501ceca4fd310f71f241>`_
+
+[TASK] Tiny docblock fix in DoctrineCommandController
+-----------------------------------------------------------------------------------------
+
+* Commit: `f6e8532 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f6e85325ca88c65e5b20d52c0b34fdb6271f9a53>`_
+
+[BUGFIX] Purge Doctrine proxies that are no longer needed
+-----------------------------------------------------------------------------------------
+
+With this change the proxy target directory is emptied before
+Doctrine proxies are (re)built, removing outdated proxy classes.
+
+This solves fatal errors when (proxied) classes are removed, and
+thus can no longer be found when referenced from their heirs.
+
+* Fixes: `#26903 <http://forge.typo3.org/issues/26903>`_
+* Commit: `13220e0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=13220e0e23602d7a70e2ffdf1ebd1928a300d040>`_
+
+[BUGFIX] Packages can be frozen in Development only
+-----------------------------------------------------------------------------------------
+
+Freezing packages was not possible in other contexts than Development
+with the related commands. But if a package was frozen according to
+PackageStates.php, it would advertise itself as frozen in all contexts.
+
+While this did not seem to have any real effects, it caused confusing
+output with the cache:flush command in Production context.
+
+This change makes the Package class ignore the frozen state in any
+context except Development and adds a check in the freezePackage()
+method of the PackageManager.
+
+* Fixes: `#37223 <http://forge.typo3.org/issues/37223>`_
+* Commit: `3bfddf0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3bfddf0331b9a7df4272d367f104975ea5a118e4>`_
+
+[TASK] No longer freeze packages by default
+-----------------------------------------------------------------------------------------
+
+Due to the possible pitfalls with frozen packages, no packages will be frozen
+by default. This way a developer has to learn about frozen packages before he
+can be confronted with them (and their pitfalls).
+
+* Resolves: `#37726 <http://forge.typo3.org/issues/37726>`_
+* Commit: `977ba8e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=977ba8e14cf080be32f5d51527f7f1dcec1917da>`_
+
+[TASK] Add validator reference to the FLOW3 guide
+-----------------------------------------------------------------------------------------
+
+* Commit: `bc34734 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=bc3473461a6fc062962b00310368e90f66fb119b>`_
+
+[TASK] Add CLI command reference to guide
+-----------------------------------------------------------------------------------------
+
+Adds a reference for the CLI commands in the FLOW3
+base distribution.
+
+* Commit: `932d713 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=932d7135b2da8a4c1d2bcf5a5362ac46236d48ce>`_
+
+[TASK] Add contributors list
+-----------------------------------------------------------------------------------------
+
+* Commit: `74671a3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=74671a3c2d2ba512e8c10f73783dbb65a0423d19>`_
+
+[TASK] Update Fluid ViewHelper reference
+-----------------------------------------------------------------------------------------
+
+This change updates the Fluid VH reference and does some tiny
+tweaks along the way.
+
+* Commit: `42e16cf <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=42e16cff73fc5918fab2d9b1f195199154e19239>`_
+
+[TASK] Add changelog for FLOW3 1.0.5
+-----------------------------------------------------------------------------------------
+
+* Commit: `d88b1df <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d88b1df97d61ea21e9f58accf58c504d62ee3783>`_
+
+[BUGFIX] Integrity constraint violation deleting resources
+-----------------------------------------------------------------------------------------
+
+If you have two resources using the same resource pointer,
+deleting a Resource will trigger deletion of the
+connected ResourcePointer which then leads to an integrity
+constraint violation.
+
+This patch tells doctrine NOT to cascade delete operations.
+This will lead to orphan resource-pointers which have to
+be deleted manually or on a regular base.
+
+* Fixes: `#34448 <http://forge.typo3.org/issues/34448>`_
+* Commit: `8b383f6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8b383f621e0c3a91a39d13b5b677476d71c24d2d>`_
+
+[BUGFIX] Nested arrays in Annotation options are no longer dropped
+-----------------------------------------------------------------------------------------
+
+When giving a nested array of options to an annotation the rendered
+form in proxy classes was cut off.
+
+* Fixes: `#37193 <http://forge.typo3.org/issues/37193>`_
+* Commit: `62053eb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=62053eb7fce82f961bbdbbb2752e58c37223e71d>`_
+
+[TASK] Some tiny tweaks to the 1.1.0b2 changelog
+-----------------------------------------------------------------------------------------
+
+* Commit: `98b914a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=98b914afee089823869802669fb8c41f5c250299>`_
+
+[TASK] Add changelog for FLOW3 1.1.0-beta2
+-----------------------------------------------------------------------------------------
+
+* Commit: `fa870e2 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fa870e26b7263e3b12f102ec18d826aa57178dad>`_
+
+[TASK] Make extending GenericObjectValidator easier
+-----------------------------------------------------------------------------------------
+
+This change moves the check for already validated objects out
+of the isValid() method and into validate() instead. Since in
+custom validators isValid() is the method to implement, this
+makes correct implementation less error-prone.
+
+* Related: `#37363 <http://forge.typo3.org/issues/37363>`_
+* Commit: `fdc462b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fdc462b04fe21bb35e08191d659f0ccf004849e7>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `a8b5832 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=a8b58323292ee09529a5cb2cd6fc55b7d7c91f21>`_
+
+[BUGFIX] Fix unusable checkbox/radio if formObject is NULL
+-----------------------------------------------------------------------------------------
+
+When using a form object inside of a form view helper inside an index
+action template and a checkbox is referring to a property $sth of
+$someFormObject, the form object can be NULL with code like:
+
+ indexAction(\\Some\\Type $someFormObject = NULL){ ... }
+
+ <f:form ... object="{someFormObject}">
+  <f:form.checkbox property="{sth}" value="yes" checked="{sth.value} == yes"/>
+ </f:form>
+
+Initially calling the index action makes someFormObject NULL. If the submitted
+form had validation errors someFormObject is NULL, too. This possibility
+was ignored in a call for the formObject from within the CheckboxViewHelper as
+well as from the RadioViewHelper.
+
+So you would get an exception telling you
+ No value found for key "TYPO3\\Fluid\\ViewHelpers\\FormViewHelper->formObject"
+
+This change fixes that bug and thus also sets the checkbox and radio
+"checked" attribute properly when a validation error occurred.
+
+* Fixes: `#35894 <http://forge.typo3.org/issues/35894>`_
+* Commit: `dec3b18 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=dec3b187b6db773a5a84dec70918c22f428cb994>`_
+
+[BUGFIX] hidden fields should be rendered in extra section
+-----------------------------------------------------------------------------------------
+
+Currently form.select and form.checkbox ViewHelpers render
+hidden fields before the actual input field in order to
+force submission of a value.
+This leads to the situation that labels wrapped around the
+field do not correspond to the actual form field, but to
+the hidden field.
+This is fixed by letting the form ViewHelper taking care of
+rendering the requried hidden fields in the already existing
+section on top of the form.
+
+* Fixes: `#26481 <http://forge.typo3.org/issues/26481>`_
+* Fixes: `#13342 <http://forge.typo3.org/issues/13342>`_
+
+* Commit: `9f01a42 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=9f01a42dc97a85f22a08c4d7ca75405fe1e75557>`_
+
+[FEATURE] Add a ViewHelper for entity identifier retrieval
+-----------------------------------------------------------------------------------------
+
+This adds a ViewHelper "format.identifier" that returns
+the plain identifier for a given entity.
+
+* Resolves: `#33494 <http://forge.typo3.org/issues/33494>`_
+* Commit: `85bca32 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=85bca3221ba3150baf59f8fd9ccd1f9e7732f02f>`_
+
+[BUGFIX] ViewHelper exceptions should not be caught in testing context
+-----------------------------------------------------------------------------------------
+
+While it is correct that ViewHelper exceptions are silently logged in
+production context, they should be displayed in development and testing
+context; and not only in development context.
+
+* Fixes: `#37671 <http://forge.typo3.org/issues/37671>`_
+* Commit: `5a75ed8 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=5a75ed885661b11d73715acc82922936b438f0b1>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `6efcb5a <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=6efcb5a4ee49d26c4691f4e44be9b2e3bd91bde3>`_
+
+[TASK] Code cleanup
+-----------------------------------------------------------------------------------------
+
+Does cleanup to code documentation.
+
+* Related: `#34875 <http://forge.typo3.org/issues/34875>`_
+* Commit: `57f4099 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=57f4099b65a8e269748cf44b1b4b0c45b3ba71e9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `feb68d1 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=feb68d11bcf380d33bcbf59bcb7b367609304d14>`_
+
+[TASK] Code cleanup
+-----------------------------------------------------------------------------------------
+
+Tweaks a single constructor docblock.
+
+* Related: `#34875 <http://forge.typo3.org/issues/34875>`_
+* Commit: `8d04ec5 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=8d04ec579623233576ad77c2b8316cfd106ee0cb>`_
+
+[TASK] Adjust validators to avoid validating more than needed
+-----------------------------------------------------------------------------------------
+
+* Related: `#34154 <http://forge.typo3.org/issues/34154>`_
+* Commit: `8646019 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=864601991b49bed50303601b1859345dee86227e>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `09229df <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=09229df2adb1897c248c50593d82b0abb5bfd7fe>`_
+
