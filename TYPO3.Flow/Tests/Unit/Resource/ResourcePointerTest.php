@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Resource;
  *                                                                        */
 
 /**
- * Testcase for the Resource class
+ * Testcase for the Resource Pointer class
  *
  */
 class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
