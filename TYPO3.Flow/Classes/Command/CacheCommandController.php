@@ -125,7 +125,7 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		}
 
 		$this->cacheManager->flushCaches();
-		$this->outputLine('Flushed all caches' . $sessionDestroyMessage);
+		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context' . $sessionDestroyMessage);
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();
 		}
