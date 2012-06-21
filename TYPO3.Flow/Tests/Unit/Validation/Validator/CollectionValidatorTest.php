@@ -39,7 +39,7 @@ class CollectionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validat
 	/**
 	 * @test
 	 */
-	public function collectionValidatorFailsForAValueNotBeeingACollection() {
+	public function collectionValidatorFailsForAValueNotBeingACollection() {
 		$this->assertTrue($this->validator->validate(new \StdClass())->hasErrors());
 	}
 
