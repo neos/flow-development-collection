@@ -65,7 +65,7 @@ class Scripts {
 		$environment = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Utility\Environment');
 		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());
 
-		echo "Force-flushed caches." . PHP_EOL;
+		echo 'Force-flushed caches for "' . $bootstrap->getContext() . '" context.' . PHP_EOL;
 		exit(0);
 	}
 
