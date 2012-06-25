@@ -56,7 +56,7 @@ class DatetimeParser {
 	 *
 	 * Format is remembered in cache and won't be parsed again for some time.
 	 *
-	 * @param \DateTime $datetimeToParse PHP object representing particular point in time
+	 * @param string $datetimeToParse Date/time to be parsed
 	 * @param string $format Format string
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale used for finding literals array
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
@@ -72,7 +72,7 @@ class DatetimeParser {
 	 * Parses date with format string for date defined in CLDR for particular
 	 * locale.
 	 *
-	 * @param \DateTime $dateToParse PHP object representing particular point in time
+	 * @param string $dateToParse date to be parsed
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
@@ -88,7 +88,7 @@ class DatetimeParser {
 	 * Parses time with format string for time defined in CLDR for particular
 	 * locale.
 	 *
-	 * @param \DateTime $timeToParse PHP object representing particular point in time
+	 * @param string $timeToParse Time to be parsed
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
@@ -104,7 +104,7 @@ class DatetimeParser {
 	 * Parses dateTime with format string for date and time defined in CLDR for
 	 * particular locale.
 	 *
-	 * @param \DateTime $dateAndTimeToParse PHP object representing particular point in time
+	 * @param string $dateAndTimeToParse Date and time to be parsed
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
@@ -118,9 +118,9 @@ class DatetimeParser {
 	/**
 	 * Parses date and / or time using parsed format, in strict or lenient mode.
 	 *
-	 * @param string $datetimeToParse Number to be parsed
-	 * @param array $parsedFormat Parsed format (from NumbersReader)
-	 * @param array $localizedLiterals An array with symbols to use
+	 * @param string $datetimeToParse Date/time to be parsed
+	 * @param array $parsedFormat Parsed format (from DatesReader)
+	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date and / or time elements, FALSE on failure
 	 */
@@ -134,7 +134,7 @@ class DatetimeParser {
 	 * @param string $datetimeToParse Date/time to be parsed
 	 * @param array $parsedFormat Format parsed by DatesReader
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
-	 * @return mixed Array of parsed date and / or time elements, FALSE on failure
+	 * @return array Array of parsed date and / or time elements, FALSE on failure
 	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
 	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
