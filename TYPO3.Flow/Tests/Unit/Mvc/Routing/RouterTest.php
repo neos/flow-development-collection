@@ -109,6 +109,8 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
 		$router->_set('routes', $mockRoutes);
+		$mockSystemLogger  = $this->getMockBuilder('TYPO3\FLOW3\Log\SystemLoggerInterface')->getMock();
+		$router->_set('systemLogger', $mockSystemLogger);
 
 		$router->resolve(array());
 	}
