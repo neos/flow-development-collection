@@ -23,6 +23,12 @@ use TYPO3\FLOW3\Utility\Arrays;
 class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 
 	/**
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @FLOW3\Inject
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var string
 	 */
 	protected $controllerObjectNamePattern = '@package\@subpackage\Controller\@controllerController';
@@ -196,6 +202,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 				return $route->getMatchingUri();
 			}
 		}
+		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
 		throw new \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
 	}
 
