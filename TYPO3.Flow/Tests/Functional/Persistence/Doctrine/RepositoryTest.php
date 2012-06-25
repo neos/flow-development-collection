@@ -269,6 +269,17 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals('this is the sub sub entity - touched by SubSubEntityRepository', $subSubEntity->getContent());
 	}
 
+	/**
+	 * @test
+	 */
+	public function findAllReturnsQueryResult() {
+		$this->postRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository');
+		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\Doctrine\Repository', $this->postRepository, 'Repository under test should be a Doctrine Repository');
+
+		$result = $this->postRepository->findAll();
+		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\QueryResultInterface', $result, 'findAll should return a QueryResult object');
+	}
+
 }
 
 ?>
