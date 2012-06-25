@@ -29,7 +29,8 @@ class Resource {
 	protected $resourcePointer;
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface
+	 * @var \TYPO3\FLOW3\Resource\Publishing\AbstractPublishingConfiguration
+	 * @ORM\ManyToOne
 	 */
 	protected $publishingConfiguration;
 
