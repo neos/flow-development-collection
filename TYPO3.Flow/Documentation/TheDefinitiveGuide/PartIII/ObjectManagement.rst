@@ -734,60 +734,21 @@ case, as the scope usually is a design decision which is very unlikely to be cha
 Overriding Object Implementations
 ---------------------------------
 
-One advantage of componentry is the ability to replace objects by others without any bad
-impact on those parts depending on them. A prerequisite for replaceable objects is that
-their classes implement a common `interface`_ which defines the public API of the original
-object. Other objects which implement the same interface can then act as a true
-replacement for the original object without the need to change code anywhere in the
-system. If this requirement is met, the only necessary step to replace the original
-implementation with a substitute is to alter the object configuration and set the class
-name to the new implementation.
+One advantage of componentry is the ability to replace objects by others 
+without any bad impact on those parts depending on them.
 
-To illustrate this circumstance, consider the following classes:
 
-*Example: A simple Greeter class*::
+A prerequisite for replaceable objects is that their classes implement a common 
+`interface`_ which defines the public API of the original object. Other objects 
+which implement the same interface can then act as a true replacement for the 
+original object without the need to change code anywhere in the system. If this 
+requirement is met, the only necessary step to replace the original 
+implementation with a substitute is to alter the object configuration and set 
+the class name to the new implementation.
 
-	namespace MyCompany\MyPackage;
+To illustrate this circumstance, consider the following classes.
 
-	class Greeter {
-		public function sayHelloTo($name) {
-			echo('Hello ' . $name);
-		}
-	}
-
-During initialization the above class will automatically be registered as the object
-``MyCompany\MyPackage\Greeter`` and is available to other objects. In the class code of
-another object you might find these lines:
-
-*Example: Code using the object MyCompany\\MyPackage\\Greeter*::
-
-	  // Use setter injection for fetching an instance
-	  // of the \MyCompany\MyPackage\Greeter object:
-	public function injectGreeter(\MyCompany\MyPackage\Greeter $greeter) {
-		$this->greeter = $greeter;
-	}
-
-	public function someAction() {
-		$this->greeter->sayHelloTo('Heike');
-	}
-
-Great, that looks all fine and dandy but what if we want to use the much better object
-``\TYPO3\OtherPackage\GreeterWithCompliments``? Well, you just configure the object
-``\MyCompany\MyPackage\Greeter`` to use a different class:
-
-*Example: Objects.yaml file for object replacement*::
-
-	  // Change the name of the class which
-	  // represents the object MyCompany\MyPackage\Greeter
-	MyCompany\MyPackage\Greeter:
-	  className: TYPO3\OtherPackage\GreeterWithCompliments
-
-Now all objects who ask for a traditional greeter will get the more polite version.
-However, there comes a sour note with the above example: We can't be sure that the
-``GreeterWithCompliments`` class really provides the necessary ``sayHello()`` method.
-The solution is to let both implementations implement the same interface:
-
-*Example: The Greeter object type*::
+*Example: The Greeter object type* ::
 
 	namespace MyCompany\MyPackage;
 
@@ -795,42 +756,56 @@ The solution is to let both implementations implement the same interface:
 		public function sayHelloTo($name);
 	}
 
-	class Greeter implements \MyCompany\MyPackage\GreeterInterface {
+	class Greeter implements GreeterInterface {
 		public function sayHelloTo($name) {
-			echo('Hello ' . $name);
+			echo 'Hello ' . $name;
 		}
 	}
 
-	namespace TYPO3\OtherPackage;
+During initialization the above ``Greeter`` class will automatically be 
+registered as the default implementation of 
+``MyCompany\MyPackage\GreeterInterface`` and is available to other objects. In 
+the class code of another object you might find the following lines.
 
-	class GreeterWithCompliments implements \MyCompany\MyPackage\GreeterInterface{
-		public function sayHelloTo($name) {
-			echo('Hello ' . $name . '! You look so great!');
-		}
-	}
+*Example: Using the Greeter object type* ::
 
-Instead of referring to the original implementation directly we can now refer to the
-interface.
-
-*Example: Code using the interface MyCompany\MyPackage\GreeterInterface*::
-
+	   // Use setter injection for fetching an instance
+	   // of \MyCompany\MyPackage\GreeterInterface:
 	public function injectGreeter(\MyCompany\MyPackage\GreeterInterface $greeter) {
 		$this->greeter = $greeter;
 	}
 
 	public function someAction() {
-		$greeter->sayHelloTo('Heike');
+		$this->greeter->sayHelloTo('Heike');
 	}
 
-Finally we have to set which implementation of the ``MyCompany\MyPackage\GreeterInterface``
-should be active:
+If we want to use the much better object 
+``\TYPO3\OtherPackage\GreeterWithCompliments``, the solution is to let the new 
+implementation implement the same interface.
 
-*Example: Objects.yaml file for object type definition*:
+*Example: The improved Greeter object type* ::
+
+	namespace TYPO3\OtherPackage;
+
+	class GreeterWithCompliments implements \MyCompany\MyPackage\GreeterInterface {
+		public function sayHelloTo($name) {
+			echo('Hello ' . $name . '! You look so great!');
+		}
+	}
+
+Then we have to set which implementation of the ``MyCompany\MyPackage\GreeterInterface``
+should be active and are done:
+
+*Example: Objects.yaml file for object type definition*
 
 .. code-block:: yaml
 
 	MyCompany\MyPackage\GreeterInterface:
 	  className: 'TYPO3\OtherPackage\GreeterWithCompliments'
+
+The the same code as above will get the improved ``GreeterWithCompliments`` 
+instead of the simple ``Greeter`` now.
+
 
 Configuring Injection
 ---------------------
