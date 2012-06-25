@@ -253,7 +253,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * Testcase for issue #32830
+	 * Testcase for issue #32830 - Validation on persist breaks with Doctrine Lazy Loading Proxies
 	 *
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException

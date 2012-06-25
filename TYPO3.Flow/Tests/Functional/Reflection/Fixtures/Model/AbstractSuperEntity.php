@@ -14,19 +14,14 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Model;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A model fixture which is used for testing the class schema building
+ * A model fixture
+ *
+ * It is not used directly in any test but makes sure that #31522 is fixed.
+ * Without the fix (I51d33c69be577ce0d1c0f663042c0de5ec6109e7) the compile step
+ * of the functional tests fails because of this class.
  *
  * @FLOW3\Entity
  */
-class SuperEntity extends AbstractSuperEntity {
-
-	/**
-	 * Just a normal string
-	 *
-	 * @var string
-	 */
-	protected $someString;
-
-}
+abstract class AbstractSuperEntity {}
 
 ?>

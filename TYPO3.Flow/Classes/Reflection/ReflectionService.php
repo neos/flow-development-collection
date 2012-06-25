@@ -1309,7 +1309,7 @@ class ReflectionService {
 			}
 
 			foreach (class_parents($className) as $parentClassName) {
-				if ($this->classSchemata[$parentClassName]->isAggregateRoot() === FALSE) {
+				if ($this->isClassAbstract($parentClassName) === FALSE && $this->classSchemata[$parentClassName]->isAggregateRoot() === FALSE) {
 					throw new \TYPO3\FLOW3\Reflection\Exception('In a class hierarchy either all or no classes must be an aggregate root, "' . $className . '" is one but the parent class "' . $parentClassName . '" is not. You probably want to add a repository for "' . $parentClassName . '"', 1316009511);
 				}
 			}
