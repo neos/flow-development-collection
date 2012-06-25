@@ -57,7 +57,7 @@ postings. Use it to check whether you find the template language intuitive::
 * The ``<f:for>`` essentially corresponds to ``foreach ($postings as $posting)`` in PHP.
 * With the dot-notation (``{posting.title}`` or ``{posting.author.name}``), you
   can traverse objects. In the latter example, the system calls ``$posting->getAuthor()->getName()``.
-* The ``<f:link.action />`` tag is a so-called ViewHelper. It calls arbitary PHP
+* The ``<f:link.action />`` tag is a so-called ViewHelper. It calls arbitrary PHP
   code, and in this case renders a link to the "details"-Action.
 
 There is a lot more to show, including:
@@ -95,7 +95,7 @@ Namespaces can be defined in a template in two ways:
   prefix to the URI ``http://some/unique/namespace`` and Fluid can look up
   the corresponding PHP namespace in your settings (so this is a two-piece
   configuration). This makes it possible for your XML editor to validate the
-  template files and even use an XSD schema for autocompletion.
+  template files and even use an XSD schema for auto completion.
 
 A namespace linking ``f`` to ``\TYPO3\Fluid\ViewHelpers`` is imported by
 default. All other namespaces need to be imported explicitly.
@@ -301,16 +301,25 @@ in the example below)::
 
 	<f:format.date format="d-m-Y">{post.date}</f:format.date>
 
-This can also be re-written using the inline notation:
+This can also be re-written using the inline notation::
 
-{post.date -> f:format.date(format:'d-m-Y')}
+	{post.date -> f:format.date(format:'d-m-Y')}
+
 This is also a lot better readable than the above syntax.
 
 .. tip::
 
-	This can also be nested indefinitely often, so one can write::
+	This can also be chained indefinitely often, so one can write::
 
 		{post.date -> foo:myHelper() -> bar:bla()}
+
+	Sometimes you'll still need to further nest ViewHelpers, that is when the design
+	of the ViewHelper does not allow that chaining or provides further arguments. Have
+	in mind that each argument itself is evaluated as Fluid code, so the following
+	constructs are also possible::
+
+		{foo: bar, baz: '{planet.manufacturer -> f:someother.helper(test: \'stuff\')}'}
+		{some: '{f:format.stuff(arg: \'foo'\)}'}
 
 To wrap it up: Internally, both syntax variants are handled equally, and every
 ViewHelper can be called in both ways. However, if the ViewHelper "feels" like a
@@ -343,7 +352,14 @@ right side can be either:
 
 	{a : 'Hallo',
 	 b : "Second string with escaped \" (double quotes) but not escaped ' (single quotes)"
-	 c : "{firstname} {lastname}"
+	 c : "{firstName} {lastName}"
+	}
+
+* a boolean, best represented with their integer equivalents::
+
+	{a : 'foo',
+	 notifySomebody: 1
+	 useLogging: 0
 	}
 
 * a nested array::
@@ -361,10 +377,16 @@ right side can be either:
 	 blogObject: blog
 	}
 
+.. Note::
+
+	All these array examples will result into an associative array. If you have to supply
+	a non-associative, i.e. numerically-indexed array, you'll write ``{0: 'foo', 1: 'bar', 2: 'baz'}``.
+
+
 Passing Data to the View
 ========================
 
-You can pass arbitary objects to the view, using ``$this->view->assign($identifier, $object)``
+You can pass arbitrary objects to the view, using ``$this->view->assign($identifier, $object)``
 from within the controller. See the above paragraphs about Object Accessors for details
 how to use the passed data.
 
