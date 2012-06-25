@@ -100,10 +100,11 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	/**
 	 * Finds all entities in the repository.
 	 *
-	 * @return array The entities.
+	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
+	 * @api
 	 */
 	public function findAll() {
-		return parent::findAll();
+		return $this->createQuery()->execute();
 	}
 
 	/**
