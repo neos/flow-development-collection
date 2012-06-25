@@ -17,6 +17,19 @@ therefore, whenever we mention FLOW3 in the following sections, we equally refer
 We hope that you feel encouraged to follow these guidelines as well when creating your own
 packages and FLOW3 based applications.
 
+CGL on One Page
+===============
+
+.. figure:: /Images/TheDefinitiveGuide/PartV/FLOW3_Coding_Guidelines_on_one_page.png
+	:align: right
+	:class: intext right
+	:alt: CGL on one page
+
+The most important parts of our `Coding Guidelines in a one page document
+<http://flow3.typo3.org/_Resources/Static/Packages/TYPO3.Flow3Org/Assets/Content/FLOW3-CGL-on-one-page.pdf>`_
+you can print out and hang on your wall for easy reference.
+Does it get any easier than that?
+
 Code Formatting and Layout aka "beautiful code"
 ===============================================
 
