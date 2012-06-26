@@ -100,7 +100,8 @@ class LockManager {
 				header('HTTP/1.1 503 Service Temporarily Unavailable');
 				readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');
 			} else {
-				echo "Site is currently locked, exiting.\n";
+				$expiresIn = abs((time() - self::LOCKFILE_MAXIMUM_AGE - filemtime($this->lockPathAndFilename)));
+				echo 'Site is currently locked, exiting.' . PHP_EOL . 'The current lock will expire after ' . $expiresIn . ' seconds.' . PHP_EOL;
 			}
 			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
 			exit(1);
