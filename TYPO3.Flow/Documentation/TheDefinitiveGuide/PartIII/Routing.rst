@@ -383,6 +383,37 @@ Matching of incoming URIs to static route parts is always done case sensitive. S
 For dynamic route parts the case is usually not defined. If you want to handle data coming in through dynamic
 route parts case-sensitive, you need to handle that in your own code.
 
+Exceeding Arguments
+===================
+
+By default arguments that are not part of the configured route values are *not
+appended* to the resulting URI as *query string*.
+
+If you need this behavior, you have to explicitly enable this by setting
+``appendExceedingArguments``::
+
+.. code-block:: yaml
+
+  -
+    uriPattern: 'foo/{dynamic}'
+    defaults:
+      '@package':    'Acme.Demo'
+      '@controller': 'Standard'
+      '@action':     'index'
+    appendExceedingArguments: true
+
+Now route values that are neither defined in the ``uriPattern`` nor specified in the ``defaults`` will be
+appended to the resulting URI: ``http://localhost/foo/dynamicValue?someOtherArgument=argumentValue``
+
+This setting is mostly useful for *fallback routes* and it is enabled for the default action route provided
+with FLOW3, so that most links will work out of the box.
+
+.. note::
+
+	The setting ``appendExceedingArguments`` is only relevant for *creating* URIs (resolve).
+	While matching an incoming request to a route, this has no effect. Nevertheless, all query parameters
+	will be available in the resulting action request via ``$actionRequest::getArguments()``.
+
 Subroutes
 =========
 
