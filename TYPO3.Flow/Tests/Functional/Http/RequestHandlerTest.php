@@ -34,7 +34,7 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController() {
 		$foundRoute = FALSE;
 		foreach ($this->router->getRoutes() as $route) {
-			if ($route->getName() === 'FLOW3 :: FLOW3 :: Functional Test: HTTP - FooController') {
+			if ($route->getName() === 'FLOW3 :: Functional Test: HTTP - FooController') {
 				$foundRoute = TRUE;
 			}
 		}
