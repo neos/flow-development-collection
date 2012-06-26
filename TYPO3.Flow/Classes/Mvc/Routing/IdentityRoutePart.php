@@ -162,10 +162,14 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\InfiniteLoopException if no unique path segment could be found after 100 iterations
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof $this->objectType) {
+		if (is_array($value) && isset($value['__identity'])) {
+			$identifier = $value['__identity'];
+		} elseif ($value instanceof $this->objectType) {
+			$identifier = $this->persistenceManager->getIdentifierByObject($value);
+		} else {
 			return FALSE;
 		}
-		$identifier = $this->persistenceManager->getIdentifierByObject($value);
+
 		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndIdentifier($this->objectType, $this->getUriPattern(), $identifier);
 		if ($objectPathMapping !== NULL) {
 			$this->value = $objectPathMapping->getPathSegment();

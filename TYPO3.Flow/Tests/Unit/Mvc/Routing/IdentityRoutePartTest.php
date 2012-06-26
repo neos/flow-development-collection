@@ -74,7 +74,6 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getUriPatternReturnsAnEmptyStringIfObjectTypeHasNotIdentityPropertiesAndNoPatternWasSpecified() {
 		$this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array()));
 
-		//$this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('SomeObjectType')->will($this->returnValue($mockClassSchema));
 		$this->identityRoutePart->setObjectType('SomeObjectType');
 		$this->assertSame('', $this->identityRoutePart->getUriPattern());
 	}
@@ -181,6 +180,22 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->identityRoutePart->setUriPattern($uriPattern);
 		$this->identityRoutePart->setSplitString($splitString);
 		$this->assertSame($expectedResult, $this->identityRoutePart->_call('findValueToMatch', $routePath));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueAcceptsIdentityArrays() {
+		$value = array('__identity' => 'SomeIdentifier');
+		$mockObjectPathMapping = $this->getMock('TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping');
+		$mockObjectPathMapping->expects($this->once())->method('getPathSegment')->will($this->returnValue('ThePathSegment'));
+		$this->mockPersistenceManager->expects($this->never())->method('getIdentifierByObject');
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'SomeIdentifier')->will($this->returnValue($mockObjectPathMapping));
+
+		$this->identityRoutePart->setObjectType('stdClass');
+		$this->identityRoutePart->setUriPattern('SomeUriPattern');
+		$this->assertTrue($this->identityRoutePart->_call('resolveValue', $value));
+		$this->assertSame('ThePathSegment', $this->identityRoutePart->getValue());
 	}
 
 	/**
