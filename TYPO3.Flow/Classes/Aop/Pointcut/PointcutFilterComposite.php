@@ -60,7 +60,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 			list($operator, $filter) = $operatorAndFilter;
 
 			$currentFilterMatches = $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
-			$currentRuntimeEvaluationsDefintion = $filter->getRuntimeEvaluationsDefinition();
+			$currentRuntimeEvaluationsDefinition = $filter->getRuntimeEvaluationsDefinition();
 
 			switch ($operator) {
 				case '&&' :
@@ -68,7 +68,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
 							$this->runtimeEvaluationsDefinition[$operator] = array();
 						}
-						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
 					}
 					if ($this->earlyReturn && !$currentFilterMatches) {
 						return FALSE;
@@ -80,7 +80,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
 							$this->runtimeEvaluationsDefinition[$operator] = array();
 						}
-						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
 						$currentFilterMatches = FALSE;
 					}
 					if ($this->earlyReturn && $currentFilterMatches) {
@@ -93,7 +93,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
 							$this->runtimeEvaluationsDefinition[$operator] = array();
 						}
-						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
 					}
 					$matches = $matches || $currentFilterMatches;
 				break;
@@ -102,7 +102,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 						if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
 							$this->runtimeEvaluationsDefinition[$operator] = array();
 						}
-						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
 						$currentFilterMatches = FALSE;
 					}
 					$matches = $matches || (!$currentFilterMatches);
@@ -147,7 +147,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 
 	/**
 	 * Sets static runtime evaluations for to pointcut, that will be used for every
-	 * method this compsite matches
+	 * method this composite matches
 	 *
 	 * @param array $runtimeEvaluations Runtime evaluations to be added
 	 * @return void

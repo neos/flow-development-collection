@@ -349,7 +349,7 @@ class Debugger {
 	/**
 	 * Returns a code snippet from the specified file.
 	 *
-	 * @param string $filePathAndName Absolute path and file name of the PHP file
+	 * @param string $filePathAndName Absolute path and filename of the PHP file
 	 * @param integer $lineNumber Line number defining the center of the code snippet
 	 * @param boolean $plaintext
 	 * @return string The code snippet

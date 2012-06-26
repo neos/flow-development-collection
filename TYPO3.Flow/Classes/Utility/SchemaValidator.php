@@ -416,7 +416,7 @@ class SchemaValidator {
 	 *
 	 * - pattern : Regular expression that matches the $value
 	 * - minLength : minimal allowed string length
-	 * - maxLength : maximal sllowed string length
+	 * - maxLength : maximal allowed string length
 	 * - format : some predefined formats
 	 *   [date-time|date|time|uri|email|ipv4|ipv6|ip-address|host-name|class-name|interface-name]
 	 *

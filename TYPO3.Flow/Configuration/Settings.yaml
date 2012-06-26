@@ -113,7 +113,7 @@ TYPO3:
 
       git:
 
-        # The full path and file name of the git binary.
+        # The full path and filename of the git binary.
         gitBinary: '/usr/bin/env git'
 
     persistence:
@@ -179,7 +179,7 @@ TYPO3:
         #     interceptor:  AccessDeny
         #
         # If the objects are in the namespace "\TYPO3\FLOW3\Security" it is enough to specify
-        # the last name of the classname, e.g. AccessGrant
+        # the last name of the class name, e.g. AccessGrant
         filters:
           -
             patternType: CsrfProtection
@@ -191,7 +191,7 @@ TYPO3:
         # Array of authentication providers that should be used for authentication.
         # If you define a request pattern, the provider will only be called if the pattern
         # matches the current request. If the objects are in the namespace
-        # "\TYPO3\FLOW3\Security" it is sufficient to specify the last name of the classname,
+        # "\TYPO3\FLOW3\Security" it is sufficient to specify the last part of the class name,
         # e.g. PersistedUsernamePasswordProvider
         # Note: Authentication will be performed in the given order of the providers.
         # So make sure, that the primary authentication method is the first array entry.
@@ -292,7 +292,7 @@ TYPO3:
 
     session:
 
-      # Specifies the number of seconds a user must be idle before the sesssion
+      # Specifies the number of seconds a user must be idle before the session
       # automatically expires. If set to "0", a session will never expire
       # automatically.
       inactivityTimeout: 3600

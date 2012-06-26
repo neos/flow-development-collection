@@ -175,7 +175,7 @@ class FileMonitor {
 	/**
 	 * Returns a list of all monitored files
 	 *
-	 * @return array A list of paths and file names of monitored files
+	 * @return array A list of paths and filenames of monitored files
 	 * @api
 	 */
 	public function getMonitoredFiles() {
@@ -255,7 +255,7 @@ class FileMonitor {
 	 * Signalizes that the specified file has changed
 	 *
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
-	 * @param array $changedFiles An array of changed files (key = path and filenmae) and their status (value)
+	 * @param array $changedFiles An array of changed files (key = path and filename) and their status (value)
 	 * @return void
 	 * @FLOW3\Signal
 	 * @api

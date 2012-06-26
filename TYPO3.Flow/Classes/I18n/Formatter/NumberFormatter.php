@@ -139,10 +139,10 @@ class NumberFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterface 
 	 * Formats provided float or integer.
 	 *
 	 * Format rules defined in $parsedFormat array are used. Localizable symbols
-	 * are replaced with elelements from $symbols array, and currency
+	 * are replaced with elements from $symbols array, and currency
 	 * placeholder is replaced with the value of $currency, if not NULL.
 	 *
-	 * If $number is NaN or infite, proper localized symbol will be returned,
+	 * If $number is NaN or infinite, proper localized symbol will be returned,
 	 * as defined in CLDR specification.
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
@@ -220,7 +220,7 @@ class NumberFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterface 
 
 		$number = str_replace(array('%', '‰', '-'), array($symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']), $number);
 		if ($currency !== NULL) {
-				// @todo When currency is set, min / max DecimalDigits and rounding is overrided with CLDR data
+				// @todo When currency is set, min / max DecimalDigits and rounding is overridden with CLDR data
 			$number = str_replace('¤', $currency, $number);
 		}
 

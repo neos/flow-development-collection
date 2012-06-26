@@ -53,7 +53,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'])) {
 			$this->keystorePathAndFilename = $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'];
 		} else {
-			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration setting TYPO3.FLOW3.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specifiy it in your Settings.yaml file. Beware: This file must not be accessbile by the public!', 1305711354);
+			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration setting TYPO3.FLOW3.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specify it in your Settings.yaml file. Beware: This file must not be accessible by the public!', 1305711354);
 		}
 	}
 
@@ -223,7 +223,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 
 	/**
 	 * Checks if the given encrypted password is correct by
-	 * comparing it's md5 hash. The salt is appendend to the decrypted password string before hashing.
+	 * comparing it's md5 hash. The salt is appended to the decrypted password string before hashing.
 	 *
 	 * @param string $encryptedPassword The received, RSA encrypted password to check
 	 * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))

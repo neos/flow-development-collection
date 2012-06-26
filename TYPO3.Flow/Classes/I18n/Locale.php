@@ -35,7 +35,7 @@ namespace TYPO3\FLOW3\I18n;
 class Locale {
 
 	/**
-	 * Simplified pattern which maches (most) locale identifiers
+	 * Simplified pattern which matches (most) locale identifiers
 	 *
 	 * @see http://rfc.net/rfc4646.html
 	 */

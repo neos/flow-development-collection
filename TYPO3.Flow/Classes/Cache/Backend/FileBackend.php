@@ -53,7 +53,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * individual cache entries are ignored.
 	 *
 	 * On the positive side, a frozen cache backend is much faster on read access.
-	 * A frozen backend can only be thawn by calling the flush() method.
+	 * A frozen backend can only be thawed by calling the flush() method.
 	 *
 	 * @return void
 	 * @throws \RuntimeException
@@ -355,7 +355,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * is due to some error or crash.
 	 *
 	 * @param string $entryIdentifier The cache entry identifier
-	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
+	 * @return mixed The filenames (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @throws \TYPO3\FLOW3\Cache\Exception if no frontend has been set
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {

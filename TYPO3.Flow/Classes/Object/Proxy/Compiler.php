@@ -185,7 +185,7 @@ class Compiler {
 	 * class name and stores the result in the proxy classes cache.
 	 *
 	 * @param string $className Short class name of the class to copy
-	 * @param string $pathAndFilename Full path and file name of the original class file
+	 * @param string $pathAndFilename Full path and filename of the original class file
 	 * @return void
 	 */
 	protected function cacheOriginalClassFile($className, $pathAndFilename) {

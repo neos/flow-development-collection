@@ -98,7 +98,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	protected $redis;
 
 	/**
-	 * Indicates wether the server is connected
+	 * Indicates whether the server is connected
 	 * @var boolean
 	 */
 	protected $connected = FALSE;
@@ -128,7 +128,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	protected $password = '';
 
 	/**
-	 * Indicates wether data is compressed or not (requires php zlib)
+	 * Indicates whether data is compressed or not (requires php zlib)
 	 * @var boolean
 	 */
 	protected $compression = FALSE;

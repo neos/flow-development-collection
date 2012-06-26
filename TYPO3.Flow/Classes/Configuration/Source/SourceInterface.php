@@ -21,7 +21,7 @@ interface SourceInterface {
 	 * Loads the specified configuration file and returns its content in a
 	 * configuration container
 	 *
-	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
+	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the dot and file extension
 	 * @return array
 	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchFileException if the specified file does not exist
 	 */
@@ -30,7 +30,7 @@ interface SourceInterface {
 	/**
 	 * Save the specified configuration container to the given file
 	 *
-	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension
+	 * @param string $pathAndFilename Full path and filename of the file to write to, excluding the dot and file extension
 	 * @param array $configuration The configuration array to save
 	 * @return void
 	 */

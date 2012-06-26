@@ -28,7 +28,7 @@ class ClassReflection extends \ReflectionClass {
 	/**
 	 * Replacement for the original getConstructor() method which makes sure
 	 * that \TYPO3\FLOW3\Reflection\MethodReflection objects are returned instead of the
-	 * orginal ReflectionMethod instances.
+	 * original ReflectionMethod instances.
 	 *
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
 	 */
@@ -40,7 +40,7 @@ class ClassReflection extends \ReflectionClass {
 	/**
 	 * Replacement for the original getInterfaces() method which makes sure
 	 * that \TYPO3\FLOW3\Reflection\ClassReflection objects are returned instead of the
-	 * orginal ReflectionClass instances.
+	 * original ReflectionClass instances.
 	 *
 	 * @return array of \TYPO3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
 	 */
@@ -68,7 +68,7 @@ class ClassReflection extends \ReflectionClass {
 	/**
 	 * Replacement for the original getMethods() method which makes sure
 	 * that \TYPO3\FLOW3\Reflection\MethodReflection objects are returned instead of the
-	 * orginal ReflectionMethod instances.
+	 * original ReflectionMethod instances.
 	 *
 	 * @param integer $filter A filter mask
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection objects of the methods in this class

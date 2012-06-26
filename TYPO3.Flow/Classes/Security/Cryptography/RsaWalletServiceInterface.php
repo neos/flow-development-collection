@@ -98,7 +98,7 @@ interface RsaWalletServiceInterface {
 
 	/**
 	 * Checks if the given encrypted password is correct by
-	 * comparing it's md5 hash. The salt is appendend to the decrypted password string before hashing.
+	 * comparing it's md5 hash. The salt is appended to the decrypted password string before hashing.
 	 *
 	 * @param string $encryptedPassword The received, RSA encrypted password to check
 	 * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))

@@ -58,7 +58,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	/**
 	 * Set the target type for a certain property. Especially useful
 	 * if there is an object which has a nested object which is abstract,
-	 * and you want to instanciate a concrete object instead.
+	 * and you want to instantiate a concrete object instead.
 	 *
 	 * @param string $propertyPath
 	 * @param string $targetType

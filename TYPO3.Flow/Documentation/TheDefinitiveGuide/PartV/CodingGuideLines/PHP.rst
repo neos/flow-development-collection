@@ -302,12 +302,12 @@ constants thematically:
 It is, by the way, a good idea to use constants for defining regular expression patterns
 (as seen above) instead of defining them somewhere in your code.
 
-File names
+Filenames
 ----------
 
 These are the rules for naming files:
 
-* All file names are ``UpperCamelCase``.
+* All filenames are ``UpperCamelCase``.
 * Class and interface files are named according to the class or interface they represent
 * Each file must contain only one class or interface
 * Names of files containing code for unit tests must be the same as the class which is

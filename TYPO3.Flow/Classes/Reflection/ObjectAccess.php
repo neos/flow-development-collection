@@ -259,7 +259,7 @@ class ObjectAccess {
 	/**
 	 * Tells if the value of the specified property can be set by this Object Accessor.
 	 *
-	 * @param object $object Object containting the property
+	 * @param object $object Object containing the property
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean
 	 * @throws \InvalidArgumentException
@@ -277,7 +277,7 @@ class ObjectAccess {
 	/**
 	 * Tells if the value of the specified property can be retrieved by this Object Accessor.
 	 *
-	 * @param object $object Object containting the property
+	 * @param object $object Object containing the property
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean
 	 * @throws \InvalidArgumentException

@@ -19,9 +19,9 @@ namespace TYPO3\FLOW3\Resource\Publishing;
 abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
 
 	/**
-	 * Rewrites the given resource file name to a human readable but still URI compatible string.
+	 * Rewrites the given resource filename to a human readable but still URI compatible string.
 	 *
-	 * @param string $filename The raw resource file name
+	 * @param string $filename The raw resource filename
 	 * @return string The rewritten title
 	 */
 	protected function rewriteFilenameForUri($filename) {

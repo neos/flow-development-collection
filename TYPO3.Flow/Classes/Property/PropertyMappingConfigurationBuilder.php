@@ -23,7 +23,7 @@ class PropertyMappingConfigurationBuilder {
 	/**
 	 * Builds the default property mapping configuration.
 	 *
-	 * @param string $type the implementation class name of the PropertyMappingConfiguration to instanciate; must be a subclass of TYPO3\FLOW3\Property\PropertyMappingConfiguration
+	 * @param string $type the implementation class name of the PropertyMappingConfiguration to instantiate; must be a subclass of TYPO3\FLOW3\Property\PropertyMappingConfiguration
 	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration
 	 */
 	public function build($type = 'TYPO3\FLOW3\Property\PropertyMappingConfiguration') {

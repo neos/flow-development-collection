@@ -193,13 +193,13 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$dqlSatetements = $this->request->getExceedingArguments();
+			$dqlStatements = $this->request->getExceedingArguments();
 			$hydrationModeConstant = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationMode));
 			if (!defined($hydrationModeConstant)) {
 				throw new \InvalidArgumentException('Hydration mode "' . $hydrationMode . '" does not exist. It should be either: object, array, scalar or single-scalar.');
 			}
 
-			foreach ($dqlSatetements as $dql) {
+			foreach ($dqlStatements as $dql) {
 				$resultSet = $this->doctrineService->runDql($dql, $hydrationModeConstant, $offset, $limit);
 				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
 			}
@@ -255,7 +255,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
 			if ($result == '') {
 				if (!$quiet) {
-					$this->outputLine('No migration was neccessary.');
+					$this->outputLine('No migration was necessary.');
 				}
 			} elseif ($output === NULL) {
 				$this->outputLine($result);

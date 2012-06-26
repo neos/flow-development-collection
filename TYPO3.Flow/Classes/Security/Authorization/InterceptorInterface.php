@@ -18,7 +18,7 @@ namespace TYPO3\FLOW3\Security\Authorization;
 interface InterceptorInterface {
 
 	/**
-	 * Invokes the security interception (e.g. calls a \TYPO3\FLOW3\Security\Ahtorization\AccessDecisionManagerInterface)
+	 * Invokes the security interception (e.g. calls a \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 */

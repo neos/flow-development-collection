@@ -228,12 +228,12 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param mixed $data The data to be stored
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception\DataNotSerializeableException
+	 * @throws \TYPO3\FLOW3\Session\Exception\DataNotSerializableException
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data) {
 		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043309);
-		if (is_resource($data)) throw new \TYPO3\FLOW3\Session\Exception\DataNotSerializeableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
+		if (is_resource($data)) throw new \TYPO3\FLOW3\Session\Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
 		$_SESSION[$key] = $data;
 	}
 

@@ -86,7 +86,7 @@ class PluralsReader {
 	protected $rulesets;
 
 	/**
-	 * An assocciative array holding information which ruleset is used by given
+	 * An associative array holding information which ruleset is used by given
 	 * locale. One or more locales can use the same ruleset.
 	 *
 	 * @var array

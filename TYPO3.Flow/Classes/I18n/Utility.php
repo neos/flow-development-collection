@@ -87,7 +87,7 @@ class Utility {
 	 *
 	 * Note: this ignores matches on rss, xml and php and validates the identifier.
 	 *
-	 * @param string $filename File name to extract locale identifier from
+	 * @param string $filename Filename to extract locale identifier from
 	 * @return mixed The string with extracted locale identifier of FALSE on failure
 	 */
 	static public function extractLocaleTagFromFilename($filename) {

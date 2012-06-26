@@ -45,7 +45,7 @@ class PointcutFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterfac
 	protected $proxyClassBuilder;
 
 	/**
-	 * The constructor - initializes the pointcut filter with the name of the pointcut we're refering to
+	 * The constructor - initializes the pointcut filter with the name of the pointcut we're referring to
 	 *
 	 * @param string $aspectClassName Name of the aspect class containing the pointcut
 	 * @param string $pointcutMethodName Name of the method which acts as an anchor for the pointcut name and expression

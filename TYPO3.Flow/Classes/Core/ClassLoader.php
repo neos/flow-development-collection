@@ -122,7 +122,7 @@ class ClassLoader {
 
 						// The only reason using file_exists here is that Doctrine tries
 						// out several combinations of annotation namespaces and thus also triggers
-						// autoloading for non-existant classes in a valid package namespace
+						// autoloading for non-existent classes in a valid package namespace
 					$classPathAndFilename = $packageData['classesPath'] . str_replace('\\', '/', substr($className, $packageData['namespaceLength'])) . '.php';
 					if (file_exists($classPathAndFilename)) {
 						require ($classPathAndFilename);

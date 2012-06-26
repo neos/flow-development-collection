@@ -298,7 +298,7 @@ class DatetimeParser {
 				}
 			}
 		} catch (\TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException $exception) {
-				// Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fullfiled
+				// Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
 			return FALSE;
 		}
 
