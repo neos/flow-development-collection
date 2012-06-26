@@ -26,7 +26,7 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 * array. If the file does not exist or could not be loaded, an empty
 	 * array is returned
 	 *
-	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the file extension (ie. ".yaml")
+	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
 	 * @return array
 	 * @throws \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
 	 */
@@ -49,7 +49,7 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	/**
 	 * Save the specified configuration array to the given file in YAML format.
 	 *
-	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension (i.e. ".yaml")
+	 * @param string $pathAndFilename Full path and filename of the file to write to, excluding the dot and file extension (i.e. ".yaml")
 	 * @param array $configuration The configuration to save
 	 * @return void
 	 */

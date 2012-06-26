@@ -302,7 +302,7 @@ class ProxyClassBuilder {
 	/**
 	 * Creates and returns an aspect from the annotations found in a class which
 	 * is tagged as an aspect. The object acting as an advice will already be
-	 * fetched (and therefore instantiated if neccessary).
+	 * fetched (and therefore instantiated if necessary).
 	 *
 	 * @param  string $aspectClassName Name of the class which forms the aspect, contains advices etc.
 	 * @return mixed The aspect container containing one or more advisors or FALSE if no container could be built
@@ -548,7 +548,7 @@ EOT;
 
 	/**
 	 * Traverses all intercepted methods and their advices and builds PHP code to intercept
-	 * methods if neccessary.
+	 * methods if necessary.
 	 *
 	 * The generated code is added directly to the proxy class by calling the respective
 	 * methods of the Compiler API.

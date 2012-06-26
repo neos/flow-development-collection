@@ -258,7 +258,7 @@ A published persistent resource is accessible through a web URI like
 One advantage of using the sha1 hash of the resource content as a filename is that once the
 resource changes it gets a new filename and is displayed correctly regardless of the cache
 settings in the user's web browser. Search engines on the other hand prefer more meaningful
-file names. For these cases the resource view helper allows for defining a speaking title
+filenames. For these cases the resource view helper allows for defining a speaking title
 for a resource URI:
 
 .. code-block :: html

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Security\Exception;
+namespace TYPO3\FLOW3\Session\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,11 +12,11 @@ namespace TYPO3\FLOW3\Security\Exception;
  *                                                                        */
 
 /**
- * A "MissingConfiguration" Exception
+ * A "Data not serializable" Exception
  *
  * @api
  */
-class MissingConfigurationException extends \TYPO3\FLOW3\Security\Exception {
+class DataNotSerializableException extends \TYPO3\FLOW3\Session\Exception {
 }
 
 ?>

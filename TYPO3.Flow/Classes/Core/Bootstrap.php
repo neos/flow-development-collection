@@ -321,7 +321,7 @@ class Bootstrap {
 	/**
 	 * Registers the instance of the specified object for an early boot stage.
 	 * On finalizing the Object Manager initialization, all those instances will
-	 * be transfered to the Object Manager's registry.
+	 * be transferred to the Object Manager's registry.
 	 *
 	 * @param string $objectName Object name, as later used by the Object Manager
 	 * @param object $instance The instance to register

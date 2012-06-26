@@ -386,7 +386,7 @@ class TextIterator implements \Iterator {
 
 	/**
 	 * Helper function to do the splitting by sentence. Note: one punctuations
-	 * mark belongs to the preceeding sentence. Whitespace between sentences is
+	 * mark belongs to the preceding sentence. Whitespace between sentences is
 	 * marked as boundary.
 	 *
 	 */

@@ -22,7 +22,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class Arrays {
 
 	/**
-	 * Explodes a $string delimited by $delimeter and passes each item in the array through intval().
+	 * Explodes a $string delimited by $delimiter and passes each item in the array through intval().
 	 * Corresponds to explode(), but with conversion to integers for all values.
 	 *
 	 * @param string $delimiter Delimiter string to explode with
@@ -126,11 +126,11 @@ class Arrays {
 	 * @return mixed
 	 */
 	static public function array_reduce(array $array, $function, $initial = NULL) {
-		$accumlator = $initial;
+		$accumulator = $initial;
 		foreach ($array as $value) {
-			$accumlator = $function($accumlator, $value);
+			$accumulator = $function($accumulator, $value);
 		}
-		return $accumlator;
+		return $accumulator;
 	}
 
 	/**

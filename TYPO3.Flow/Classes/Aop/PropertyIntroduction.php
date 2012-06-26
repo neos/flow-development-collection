@@ -43,7 +43,7 @@ class PropertyIntroduction {
 	protected $propertyDocComment;
 
 	/**
-	 * The poincut this introduction applies to
+	 * The pointcut this introduction applies to
 	 * @var \TYPO3\FLOW3\Aop\Pointcut\Pointcut
 	 */
 	protected $pointcut;

@@ -28,7 +28,7 @@ interface PackageManagerInterface {
 
 	/**
 	 * Returns TRUE if a package is available (the package's files exist in the packages directory)
-	 * or FALSE if it's not. If a package is available it doesn't mean neccessarily that it's active!
+	 * or FALSE if it's not. If a package is available it doesn't mean necessarily that it's active!
 	 *
 	 * @param string $packageKey The key of the package to check
 	 * @return boolean TRUE if the package is available, otherwise FALSE

@@ -202,7 +202,7 @@ class ResourceManager {
 	 *
 	 * @param mixed $content The binary content of the file
 	 * @param string $filename
-	 * @return \TYPO3\FLOW3\Resource\Resource A resource object representing the created resource or FALSE if an error occured.
+	 * @return \TYPO3\FLOW3\Resource\Resource A resource object representing the created resource or FALSE if an error occurred.
 	 * @api
 	 */
 	public function createResourceFromContent($content, $filename) {

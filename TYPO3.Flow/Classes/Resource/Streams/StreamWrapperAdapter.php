@@ -270,7 +270,7 @@ class StreamWrapperAdapter {
 	 * This method is called immediately after the wrapper is initialized (f.e.
 	 * by fopen() and file_get_contents()).
 	 *
-	 * $optiosn can hold one of the following values OR'd together:
+	 * $options can hold one of the following values OR'd together:
 	 *  STREAM_USE_PATH
 	 *    If path is relative, search for the resource using the include_path.
 	 *  STREAM_REPORT_ERRORS

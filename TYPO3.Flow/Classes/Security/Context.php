@@ -284,7 +284,7 @@ class Context {
 
 	/**
 	 * Returns the roles of all active and authenticated tokens.
-	 * If no authenticated roles could be found the "Everbody" role is returned
+	 * If no authenticated roles could be found the "Everybody" role is returned
 	 *
 	 * @return array Array of TYPO3\FLOW3\Security\Policy\Role objects
 	 */

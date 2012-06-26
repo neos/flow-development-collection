@@ -127,7 +127,7 @@ class Result {
 	}
 
 	/**
-	 * Get the first notice object of the curren Result object (non-recursive)
+	 * Get the first notice object of the current Result object (non-recursive)
 	 *
 	 * @return \TYPO3\FLOW3\Error\Notice
 	 * @api
@@ -139,7 +139,7 @@ class Result {
 
 	/**
 	 * Return a Result object for the given property path. This is
-	 * a fluent interface, so you will proboably use it like:
+	 * a fluent interface, so you will probably use it like:
 	 * $result->forProperty('foo.bar')->getErrors() -- to get all errors
 	 * for property "foo.bar"
 	 *
@@ -229,7 +229,7 @@ class Result {
 
 	/**
 	 * Get a list of all Error objects recursively. The result is an array,
-	 * where the key is the property path where the error occured, and the
+	 * where the key is the property path where the error occurred, and the
 	 * value is a list of all errors (stored as array)
 	 *
 	 * @return array<\TYPO3\FLOW3\Error\Error>
@@ -257,7 +257,7 @@ class Result {
 
 	/**
 	 * Get a list of all Notice objects recursively. The result is an array,
-	 * where the key is the property path where the notice occured, and the
+	 * where the key is the property path where the notice occurred, and the
 	 * value is a list of all notices (stored as array)
 	 *
 	 * @return array<\TYPO3\FLOW3\Error\Notice>

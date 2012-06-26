@@ -263,7 +263,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 
 	/**
 	 * Performs a logical conjunction of the two given constraints. The method
-	 * takes one or more contraints and concatenates them with a boolean AND.
+	 * takes one or more constraints and concatenates them with a boolean AND.
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
@@ -281,7 +281,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 
 	/**
 	 * Performs a logical disjunction of the two given constraints. The method
-	 * takes one or more contraints and concatenates them with a boolean OR.
+	 * takes one or more constraints and concatenates them with a boolean OR.
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.

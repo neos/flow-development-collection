@@ -90,7 +90,7 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	 * method is not final.
 	 *
 	 * @param string $className Ignored in this pointcut filter
-	 * @param string $methodName Name of the method to match agains
+	 * @param string $methodName Name of the method to match against
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE

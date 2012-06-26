@@ -93,7 +93,7 @@ class Account {
 	}
 
 	/**
-	 * Returns the authenitcation provider name this account corresponds to
+	 * Returns the authentication provider name this account corresponds to
 	 *
 	 * @return string The authentication provider name
 	 */

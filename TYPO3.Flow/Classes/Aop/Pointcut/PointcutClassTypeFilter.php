@@ -40,7 +40,7 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	/**
 	 * The constructor - initializes the class type filter with the class or interface name
 	 *
-	 * @param string $interfaceOrClassName Interface or a class name to match agagins
+	 * @param string $interfaceOrClassName Interface or a class name to match against
 	 * @throws \TYPO3\FLOW3\Aop\Exception
 	 */
 	public function __construct($interfaceOrClassName) {

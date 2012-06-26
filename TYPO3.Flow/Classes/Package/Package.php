@@ -274,7 +274,7 @@ class Package implements PackageInterface {
 	}
 
 	/**
-	 * Builds and returns an array of class names => file names of all
+	 * Builds and returns an array of class names => filenames of all
 	 * *.php files in the package's Classes directory and its sub-
 	 * directories.
 	 *
