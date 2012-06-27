@@ -135,7 +135,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	}
 
 	/**
-	 * Manually adds a route
+	 * Manually adds a route to the beginning of the configured routes
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\Routing\Route $route
 	 * @return void
