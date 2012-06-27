@@ -91,7 +91,7 @@ in the `Reference Manual <http://flow3.typo3.org/documentation/>`_.
 .. note::
 	If you're running FLOW3 on a Windows machine, you do have to make some
 	adjustments to the standard configuration because it will cause problems
-	with long paths and file names. By default FLOW3 caches files within the
+	with long paths and filenames. By default FLOW3 caches files within the
 	``Data/Temporary/<Context>/Caches/`` directory
 	whose absolute path can eventually become too long for Windows.
 

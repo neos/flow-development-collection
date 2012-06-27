@@ -121,7 +121,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * Generates the parameters code needed to call the constructor with the saved parameters.
 	 *
 	 * @param string $className Name of the class the method is declared in
-	 * @return string The generated paramters code
+	 * @return string The generated parameters code
 	 */
 	protected function buildSavedConstructorParametersCode($className) {
 		if ($className === NULL) {

@@ -17,7 +17,7 @@ TYPO3\FLOW3\Http\Client\Browser:
       object: TYPO3\FLOW3\Http\Client\InternalRequestEngine
 
 #
-# Sesions should be transient in a test context:
+# Sessions should be transient in a test context:
 #
 TYPO3\FLOW3\Session\SessionInterface:
   className: TYPO3\FLOW3\Session\TransientSession

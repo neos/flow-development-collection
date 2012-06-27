@@ -145,7 +145,7 @@ class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterfac
 	 * Formats provided dateTime object.
 	 *
 	 * Format rules defined in $parsedFormat array are used. Localizable literals
-	 * are replaced with elelements from $localizedLiterals array.
+	 * are replaced with elements from $localizedLiterals array.
 	 *
 	 * @param \DateTime $dateTime PHP object representing particular point in time
 	 * @param array $parsedFormat An array describing format (as in $parsedFormats property)

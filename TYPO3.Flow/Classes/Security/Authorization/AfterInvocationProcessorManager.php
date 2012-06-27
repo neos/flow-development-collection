@@ -27,7 +27,7 @@ class AfterInvocationProcessorManager implements \TYPO3\FLOW3\Security\Authoriza
 	 * The naming convention is: [InterceptedClassName]_[InterceptedMethodName]_AfterInvocationProcessor
 	 *
 	 *
-	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
 	 * @param object $object The return object to be processed
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision

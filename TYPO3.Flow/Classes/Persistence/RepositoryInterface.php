@@ -20,7 +20,7 @@ interface RepositoryInterface {
 
 	/**
 	 * If set in an implementation overrides automatic detection of the
-	 * entity classname being managed by the repository.
+	 * entity class name being managed by the repository.
 	 *
 	 * @var string
 	 * @api

@@ -147,7 +147,7 @@ Tests
 
 As already mentioned, all classes which are found in the *Classes* directory will be
 detected and registered. However, this only works if you follow the naming rules equally
-for the class name as well as the file name. An example for a valid class name is
+for the class name as well as the filename. An example for a valid class name is
 ``\MyCompany\MyPackage\Controller\StandardController`` while the file containing this
 class would be named *StandardController.php* and is expected to be in a directory
 *MyPackage/Classes/Controller*.

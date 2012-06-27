@@ -314,13 +314,13 @@ class PointcutExpressionParser {
 	protected function parseDesignatorFilter($operator, $filterObjectName, PointcutFilterComposite $pointcutFilterComposite) {
 		$customFilter = $this->objectManager->get($filterObjectName);
 		if (!$customFilter instanceof PointcutFilterInterface) {
-			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Invalid custom filter: "' . $filterObjectName . '" does not implement the required PoincutFilterInterface, defined in ' . $this->sourceHint, 1231871755);
+			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Invalid custom filter: "' . $filterObjectName . '" does not implement the required PointcutFilterInterface, defined in ' . $this->sourceHint, 1231871755);
 		}
 		$pointcutFilterComposite->addFilter($operator, $customFilter);
 	}
 
 	/**
-	 * Adds a setting filter to the poincut filter composite
+	 * Adds a setting filter to the pointcut filter composite
 	 *
 	 * @param string $operator The operator
 	 * @param string $configurationPath The path to the settings option, that should be used
@@ -335,7 +335,7 @@ class PointcutExpressionParser {
 	}
 
 	/**
-	 * Adds runtime evaluations to the poincut filter composite
+	 * Adds runtime evaluations to the pointcut filter composite
 	 *
 	 * @param string $operator The operator
 	 * @param string $runtimeEvaluations The runtime evaluations string
@@ -343,13 +343,13 @@ class PointcutExpressionParser {
 	 * @return void
 	 */
 	protected function parseRuntimeEvaluations($operator, $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite) {
-		$runtimeEvaluationsDefintion = array(
+		$runtimeEvaluationsDefinition = array(
 			$operator => array(
 				'evaluateConditions' => $this->getRuntimeEvaluationConditionsFromEvaluateString($runtimeEvaluations)
 			)
 		);
 
-		$pointcutFilterComposite->setGlobalRuntimeEvaluationsDefinition($runtimeEvaluationsDefintion);
+		$pointcutFilterComposite->setGlobalRuntimeEvaluationsDefinition($runtimeEvaluationsDefinition);
 	}
 
 	/**
@@ -377,10 +377,10 @@ class PointcutExpressionParser {
 			}
 		}
 		if ($openParentheses < 0) {
-			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression is in excess of ' . abs($openParentheses) . ' closing parenthese(s), defined in ' . $this->sourceHint, 1168966689);
+			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression is in excess of ' . abs($openParentheses) . ' closing parenthesis/es, defined in ' . $this->sourceHint, 1168966689);
 		}
 		if ($openParentheses > 0) {
-			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression lacks of ' . $openParentheses . ' closing parenthese(s), defined in ' . $this->sourceHint, 1168966690);
+			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression lacks of ' . $openParentheses . ' closing parenthesis/es, defined in ' . $this->sourceHint, 1168966690);
 		}
 		return $substring;
 	}

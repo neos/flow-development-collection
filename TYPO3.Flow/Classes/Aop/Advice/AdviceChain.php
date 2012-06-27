@@ -41,7 +41,7 @@ class AdviceChain {
 	}
 
 	/**
-	 * An advice usually calls (but doesn't have to neccessarily) this method
+	 * An advice usually calls (but doesn't have to necessarily) this method
 	 * in order to proceed with the next advice in the chain. If no advice is
 	 * left in the chain, the proxy classes' method invokeJoinpoint() will finally
 	 * be called.

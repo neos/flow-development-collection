@@ -127,7 +127,7 @@ class FormatResolver {
 	 * Returns instance of concrete formatter.
 	 *
 	 * The name provided has to be a name of existing class placed in
-	 * \TYPO3\FLOW3\I18n\Formatter package and implementing FormatterIntefrace
+	 * \TYPO3\FLOW3\I18n\Formatter package and implementing FormatterInterface
 	 * (also in this package). For example,  when $formatterName is 'number',
 	 * the \TYPO3\FLOW3\I18n\Formatter\NumberFormatter class has to exist.
 	 *

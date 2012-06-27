@@ -219,7 +219,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	}
 
 	/**
-	 * First persist new objects, then check reconstituted entites.
+	 * First persist new objects, then check reconstituted entities.
 	 *
 	 * @return void
 	 */

@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Persistence\Generic;
 
 
 /**
- * The Query classs used to run queries like
+ * The Query class used to run queries like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
  * @api
@@ -268,7 +268,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 
 	/**
 	 * Performs a logical disjunction of the two given constraints. The method
-	 * takes one or more contraints and concatenates them with a boolean OR.
+	 * takes one or more constraints and concatenates them with a boolean OR.
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param object $constraint1 The first of multiple constraints or an array of constraints.

@@ -261,7 +261,7 @@ class Configuration {
 	/**
 	 * Returns the name of the lifecycle initialization method for this object
 	 *
-	 * @return string The name of the intialization method
+	 * @return string The name of the initialization method
 	 */
 	public function getLifecycleInitializationMethodName() {
 		return $this->lifecycleInitializationMethodName;
@@ -374,7 +374,7 @@ class Configuration {
 	/**
 	 * Sets some information (hint) about where this configuration has been created.
 	 *
-	 * @param string $hint The hint - e.g. the file name of the configuration file
+	 * @param string $hint The hint - e.g. the filename of the configuration file
 	 * @return void
 	 */
 	public function setConfigurationSourceHint($hint) {
@@ -384,7 +384,7 @@ class Configuration {
 	/**
 	 * Returns some information (if any) about where this configuration has been created.
 	 *
-	 * @return string The hint - e.g. the file name of the configuration file
+	 * @return string The hint - e.g. the filename of the configuration file
 	 */
 	public function getConfigurationSourceHint() {
 		return $this->configurationSourceHint;
