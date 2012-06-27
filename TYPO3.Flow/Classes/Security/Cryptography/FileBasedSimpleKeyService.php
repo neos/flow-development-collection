@@ -117,16 +117,16 @@ class FileBasedSimpleKeyService {
 		if (strlen($name) === 0) {
 			throw new \TYPO3\FLOW3\Security\Exception('Required name argument was empty', 1334215378);
 		}
-		$keyPathAndFileName = $this->getKeyPathAndFilename($name);
-		if (!file_exists($keyPathAndFileName)) {
-			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key "%s" does not exist.', $keyPathAndFileName), 1305812921);
+		$keyPathAndFilename = $this->getKeyPathAndFilename($name);
+		if (!file_exists($keyPathAndFilename)) {
+			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key "%s" does not exist.', $keyPathAndFilename), 1305812921);
 		}
-		$key = Files::getFileContents($keyPathAndFileName);
+		$key = Files::getFileContents($keyPathAndFilename);
 		if ($key === FALSE) {
-			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key "%s" could not be read.', $keyPathAndFileName), 1334483163);
+			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key "%s" could not be read.', $keyPathAndFilename), 1334483163);
 		}
 		if (strlen($key) === 0) {
-			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key "%s" is empty.', $keyPathAndFileName), 1334483165);
+			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key "%s" is empty.', $keyPathAndFilename), 1334483165);
 		}
 		return $key;
 	}
@@ -141,13 +141,13 @@ class FileBasedSimpleKeyService {
 	 */
 	protected function persistKey($name, $password) {
 		$hashedPassword = $this->hashService->hashPassword($password, $this->passwordHashingStrategy);
-		$keyPathAndFileName = $this->getKeyPathAndFilename($name);
+		$keyPathAndFilename = $this->getKeyPathAndFilename($name);
 		if (!is_dir($this->getPath())) {
 			Files::createDirectoryRecursively($this->getPath());
 		}
-		$result = file_put_contents($keyPathAndFileName, $hashedPassword);
+		$result = file_put_contents($keyPathAndFilename, $hashedPassword);
 		if ($result === FALSE) {
-			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key could not be stored ("%s").', $keyPathAndFileName), 1305812921);
+			throw new \TYPO3\FLOW3\Security\Exception(sprintf('The key could not be stored ("%s").', $keyPathAndFilename), 1305812921);
 		}
 	}
 
