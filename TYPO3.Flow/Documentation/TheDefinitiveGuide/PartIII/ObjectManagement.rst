@@ -379,7 +379,7 @@ With constructor injection, the dependencies are passed as constructor arguments
 depending object while it is instantiated. Here is an example of an object ``Foo`` which
 depends on an object ``Bar``:
 
-*Example: A simple example for Constructor Injection*::
+*Example: A simple example for Constructor Injection* ::
 
 	namespace MyCompany\MyPackage;
 
@@ -413,7 +413,7 @@ The object framework can also be configured manually to inject a certain object 
 type. You'll have to do that either if you want to switch off autowiring or want to
 specify a configuration which differs from would be done automatically.
 
-*Example: Objects.yaml file for Constructor Injection*:
+*Example: Objects.yaml file for Constructor Injection*
 
 .. code-block:: yaml
 
@@ -433,7 +433,7 @@ With setter injection, the dependencies are passed by calling *setter methods* o
 depending object right after it has been instantiated. Here is an example of the ``Foo``
 class which depends on a ``Bar`` object - this time with setter injection:
 
-*Example: A simple example for Setter Injection*::
+*Example: A simple example for Setter Injection* ::
 
 	namespace MyCompany\MyPackage;
 
@@ -455,7 +455,7 @@ injected into the ``Foo`` object. In this case, however, the injection only take
 place after the class has been instantiated and a possible constructor method has been
 called. The necessary configuration for the above example looks like this:
 
-*Example: Objects.yaml file for Setter Injection*:
+*Example: Objects.yaml file for Setter Injection*
 
 .. code-block:: yaml
 
@@ -533,7 +533,7 @@ Setter injection is the academic, clean way to set dependencies from outside. Ho
 writing these setters can become quite tiresome if all they do is setting the property.
 For these cases FLOW3 provides support for *Property Injection*:
 
-*Example: Example for Property Injection*::
+*Example: Example for Property Injection* ::
 
 	namespace MyCompany\MyPackage;
 
@@ -659,7 +659,7 @@ If a file named *Objects.yaml* exists in the *Configuration* directory
 of a package, it will be included during the configuration process. The YAML file should
 stick to FLOW3's general rules for YAML-based configuration.
 
-*Example: Sample Objects.yaml file*:
+*Example: Sample Objects.yaml file*
 
 .. code-block:: yaml
 
@@ -697,7 +697,7 @@ It's up to you defining the scope in the class directly or doing it in a *Object
 configuration file – both have the same effect. We recommend using annotations in this
 case, as the scope usually is a design decision which is very unlikely to be changed.
 
-*Example: Sample scope annotation*::
+*Example: Sample scope annotation* ::
 
 	/**
 	 * This is my great class.
@@ -708,7 +708,7 @@ case, as the scope usually is a design decision which is very unlikely to be cha
 
 	}
 
-*Example: Sample autowiring annotation for a class*::
+*Example: Sample autowiring annotation for a class* ::
 
 	/**
 	 * This turns off autowiring for the whole class:
@@ -719,7 +719,7 @@ case, as the scope usually is a design decision which is very unlikely to be cha
 
 	}
 
-*Example: Sample autowiring annotation for a method*::
+*Example: Sample autowiring annotation for a method* ::
 
 	/**
 	 * This turns off autowiring for a single method:
@@ -837,7 +837,7 @@ Constructor Injection
 Arguments for constructor injection are defined through the *arguments* option. Each
 argument is identified by its position, counting starts with 1.
 
-*Example: Sample class for Constructor Injection*::
+*Example: Sample class for Constructor Injection* ::
 
 	namespace MyCompany\MyPackage;
 
@@ -859,7 +859,7 @@ argument is identified by its position, counting starts with 1.
 		}
 	}
 
-*Example: Sample configuration for Constructor Injection*:
+*Example: Sample configuration for Constructor Injection*
 
 .. code-block:: yaml
 
@@ -885,7 +885,7 @@ Setter Injection
 The following class and the related *Objects.yaml* file demonstrate the syntax for the
 definition of setter injection:
 
-*Example: Sample class for Setter Injection*::
+*Example: Sample class for Setter Injection* ::
 
 	namespace MyCompany\MyPackage;
 
@@ -912,7 +912,7 @@ definition of setter injection:
 		}
 	}
 
-*Example: Sample configuration for Setter Injection*:
+*Example: Sample configuration for Setter Injection*
 
 .. code-block:: yaml
 
@@ -940,7 +940,7 @@ In some cases it might be convenient to specify the name of the object to be inj
 the *settings* rather than in the objects configuration. This can be achieved by
 specifying the settings path instead of the object name:
 
-*Example: Injecting an object specified in the settings*:
+*Example: Injecting an object specified in the settings*
 
 .. code-block:: yaml
 
@@ -949,7 +949,7 @@ specifying the settings path instead of the object name:
 	    bar:
 	      object: 'MyCompany.MyPackage.fooStuff.barImplementation'
 
-*Example: Settings.yaml of MyPackage*:
+*Example: Settings.yaml of MyPackage*
 
 .. code-block:: yaml
 
@@ -971,7 +971,7 @@ this readily prepared cache should now be injected into another object. Sounds c
 With the objects configuration it is however possible to configure even that nested object
 structure:
 
-*Example: Nesting object configuration*:
+*Example: Nesting object configuration*
 
 .. code-block:: yaml
 
@@ -1002,7 +1002,7 @@ all constructor arguments and all methods named after the pattern ``inject*``.
 If, for some reason, autowiring is not wanted, it can be disabled by setting an option in
 the object configuration:
 
-*Example: Turning off autowiring support in Objects.yaml*:
+*Example: Turning off autowiring support in Objects.yaml*
 
 .. code-block:: yaml
 
