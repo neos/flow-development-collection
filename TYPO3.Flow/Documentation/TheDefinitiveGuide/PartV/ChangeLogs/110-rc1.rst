@@ -1,0 +1,388 @@
+====================
+1.1.0-rc1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update upgrading instructions
+-----------------------------------------------------------------------------------------
+
+Adds instructions to replace DataNotSerializeableException with
+DataNotSerializableException.
+
+* Commit: `0bfbf2e <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=0bfbf2e6f74133225ea530fec477dc336760d4bb>`_
+
+[TASK] Disable test timeout when using PHP_Invoker
+-----------------------------------------------------------------------------------------
+
+when PHP_Invoker is installed, PHPUnit will by default only let a test
+run for one second. This kills most of our functional tests when being
+run in this setup.
+
+Setting this default value to 0 (undefined) fixes the problem.
+
+* Commit: `ce42ca6 <http://git.typo3.org/FLOW3/Packages/Common.git?a=commit;h=ce42ca6fd9b372f4009c8778edd49ae5ce72efbb>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Doctrine.Common
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Doctrine.DBAL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Doctrine.ORM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Symfony.Component.DomCrawler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Symfony.Component.Yaml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.FLOW3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `2e7f224 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2e7f224c3fb4c838b8b505ed8d0383c83061edc1>`_
+
+[BUGFIX] Fix wrong check in atomic writes code
+-----------------------------------------------------------------------------------------
+
+Fixes a wrong check in Cache\\FileBackend and RsaWalletServicePhp
+as well as a bunch of one-line if blocks.
+
+* Fixes: `#27989 <http://forge.typo3.org/issues/27989>`_
+* Related: `#34875 <http://forge.typo3.org/issues/34875>`_
+
+* Commit: `3664972 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3664972e8be221277fd3443efb7c41cb4d9ed6dc>`_
+
+[!!!][TASK] Minor typo corrections in code
+-----------------------------------------------------------------------------------------
+
+This trivially corrects some typos in code.
+
+As a consequence, the DataNotSerializeableException was renamed
+to DataNotSerializableException.
+
+* Commit: `fec3f04 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fec3f046d336725bcbdbe39212ef313ec90d4552>`_
+
+[TASK] Remove trailing colon from example headlines
+-----------------------------------------------------------------------------------------
+
+It just looked weird this way…
+
+* Related: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Commit: `bfeeb2a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=bfeeb2ad9584902081c8b1aa5d587001d6ca4c52>`_
+
+[TASK] Add "Essential Design Patterns" to the guide
+-----------------------------------------------------------------------------------------
+
+Re-uses some AOP verbage from part III of the guide.
+
+* Related: `#38037 <http://forge.typo3.org/issues/38037>`_
+* Related: `#27561 <http://forge.typo3.org/issues/27561>`_
+
+* Commit: `94d73f3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=94d73f3a914df16882f2a6e84917178a768cc8f1>`_
+
+[TASK] Document Routing feature "appendExceedingArguments"
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#35394 <http://forge.typo3.org/issues/35394>`_
+* Commit: `833f676 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=833f676ee146ce5a7b1626c83440cca47d06b058>`_
+
+[BUGFIX] IdentityRoutePart should accept identity array
+-----------------------------------------------------------------------------------------
+
+IdentityRoutePart::matchValue() returns an identity array in
+the format array('__identity' => '<Identifier>') (see #37403).
+
+This change ajusts resolveValue() to accept arrays in that
+format, too.
+This is required for widgets that fetch arguments from the
+current request and pass them to the UriBuilder.
+
+* Resolves: `#38404 <http://forge.typo3.org/issues/38404>`_
+* Commit: `bd08fb9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=bd08fb9999a31a8f76173f7b31d6660ce14e4905>`_
+
+[TASK] Adjust filename spelling to match rest of package
+-----------------------------------------------------------------------------------------
+
+* Related: `#35298 <http://forge.typo3.org/issues/35298>`_
+* Commit: `f310050 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f310050e8b51bb977413762cb7593256f38ba6b0>`_
+
+[BUGFIX] Fix code documentation of DatetimeParser
+-----------------------------------------------------------------------------------------
+
+The parser code documentation would state the parse methods
+expect \\DateTime instances, but in fact strings are expected.
+
+* Fixes: `#34050 <http://forge.typo3.org/issues/34050>`_
+* Commit: `b51a56b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=b51a56b7e3be08d2667eb1db399f6fd91a28f73f>`_
+
+[BUGFIX] Fix Objects.yaml className example in guide
+-----------------------------------------------------------------------------------------
+
+The guide still stated that setting className in Objects.yaml
+was possible for classes, but it works only for interfaces.
+
+* Fixes: `#37648 <http://forge.typo3.org/issues/37648>`_
+* Commit: `3de0e72 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3de0e728f9d91bc83ce03ff9051fd0f370cad27e>`_
+
+[TASK] Add "Architectural Overview" to the guide
+-----------------------------------------------------------------------------------------
+
+Based on the introduction from the old DocBook manual,
+tweaked and amended.
+
+* Resolves: `#29266 <http://forge.typo3.org/issues/29266>`_
+* Commit: `a56ac99 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=a56ac99b15a86aa1c9aedb57f78c32780368539a>`_
+
+[TASK] Provide conventions for ids in XLIFF files
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#32606 <http://forge.typo3.org/issues/32606>`_
+* Commit: `70f5662 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=70f56623582d1a203a358c2785b0eaee04570058>`_
+
+[TASK] Update and link CGL on one page
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#36651 <http://forge.typo3.org/issues/36651>`_
+* Commit: `fc2d196 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fc2d196907bc4d68221cc4b6d92d09480b68cacb>`_
+
+[TASK] Show up hints for nesting inline ViewHelpers
+-----------------------------------------------------------------------------------------
+
+This adds a section with some examples about how to nest
+and use inline ViewHelpers.
+Besides, it does some minor typo and formatting corrections.
+
+* Resolves: `#34749 <http://forge.typo3.org/issues/34749>`_
+* Commit: `70457ec <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=70457ec8d7d9aae57221d4c7dccbcddb2c3d156d>`_
+
+[BUGFIX] Log route values if a route can't be resolved
+-----------------------------------------------------------------------------------------
+
+This re-introduces logging if a route could not be resolved.
+This behaviour was lost with I9605731f78cb1be9b0fb5c439d7149a676b6ccb7
+
+* Related: `#38172 <http://forge.typo3.org/issues/38172>`_
+* Commit: `0d3440f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0d3440fc74be4f49628dd0c71aa8ba121e1083a1>`_
+
+[TASK] Update "CGL on one page"
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#36651 <http://forge.typo3.org/issues/36651>`_
+* Commit: `2e85be9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2e85be9b40c89c5393f2ea77784fc2759c802bc9>`_
+
+[TASK] Add context information to cache clearing commands
+-----------------------------------------------------------------------------------------
+
+When using the flow3:cache:flush commands only the current
+cli context is cleared. This is not clear when using the
+commands and this change add the context information
+to the command output.
+
+* Resolves: `#38221 <http://forge.typo3.org/issues/38221>`_
+* Commit: `1ba1631 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1ba1631bd5b21ac3fa62341bc90d8f6f9bd281c2>`_
+
+[TASK] Code cleanup
+-----------------------------------------------------------------------------------------
+
+Does code cleanup, mostly to documentation, but also tweaks
+unused variables, missing return statements and similar things.
+
+* Related: `#34875 <http://forge.typo3.org/issues/34875>`_
+* Commit: `02647e4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=02647e4dc260e2c993eab3d88d34f3b364042c8d>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `838fe96 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=838fe96829086a485b243badf059dcbbf9327883>`_
+
+[TASK] Some tiny tweaks to the 1.1.0b3 changelog
+-----------------------------------------------------------------------------------------
+
+* Commit: `fd417d6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fd417d6e91d92741db5c3fbfdc7a55a448b0e4a4>`_
+
+[TASK] Add changelog for FLOW3 1.1.0-beta3
+-----------------------------------------------------------------------------------------
+
+* Commit: `8da82b2 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8da82b23127b0e99907374fbcdb96ca904d0386f>`_
+
+[BUGFIX] Only map file uploads to arguments if not empty
+-----------------------------------------------------------------------------------------
+
+Currently the HTTP request converts the FILES superglobal
+to request arguments even if no file has been uploaded.
+This leads to an exception when submitting a form without
+uploading a file because the property mapper receives a
+corrupt source array in that case.
+
+This adjust the HTTP request to only map values from the
+FILES superglobal to arguments if a file has been uploaded.
+
+This also tweaks the ResourceTypeConverter to accept
+an empty source. Besides the converter now only outputs
+filer errors (for too large or corrupt files) to the user.
+Server errors (e.g. non-existing/read-only tmp directory)
+are logged to the systemLogger.
+
+* Fixes: `#38184 <http://forge.typo3.org/issues/38184>`_
+* Commit: `4441c3c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4441c3cb94079e602bcfbebc3c7e10cb95d32b53>`_
+
+[BUGFIX] Inform about possible cause for "No class schema found"
+-----------------------------------------------------------------------------------------
+
+When mapping meta data for Doctrine an error about "No class schema
+found for …" could occur. It would not tell in what model the mapping
+was taking place, leaving the user to guesswork. This adds output
+of the currently examined class to the exception.
+
+* Fixes: `#37547 <http://forge.typo3.org/issues/37547>`_
+* Commit: `82e8f43 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=82e8f439859418654723011431c4a3ed8f2a5a6c>`_
+
+[BUGFIX] Routing cache only works for one request
+-----------------------------------------------------------------------------------------
+
+Currently the routing uses a TransientMemory cache backend by
+default. Besides, objects in the routing values are converted
+to hashes using spl_object_hash() - which generates a new hash
+for every request.
+
+This change configures the RouterCachingAspect to use a
+SimpleFile cache backend and adjusts the aspect to use the
+persistence manager in order to convert objects to their
+identifiers before creating cache entries.
+
+This also adds a signal to the FunctionalTestCase base
+class that flushes the routing caches on teardown.
+
+Furthermore this adds two convenience methods
+getLastMatchedRoute() and getLastResolvedRoute() to the router
+which should make debugging and testing easier.
+
+* Fixes: `#38172 <http://forge.typo3.org/issues/38172>`_
+* Commit: `de4ea73 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=de4ea73dc015b18d7e2ed887e66d3d49a3ccc8bd>`_
+
+[BUGFIX] Property mapper should distinguish between error and NULL
+-----------------------------------------------------------------------------------------
+
+Currently, when a nested type converter returns NULL, this is silently
+caught by the property mapper. Thus, it is not possible to reset e.g.
+an integer value to NULL again.
+
+This change fixes that behavior, and adds a functional test for it.
+
+* Related: `#35136 <http://forge.typo3.org/issues/35136>`_
+* Commit: `ca4ef91 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ca4ef91cee2ecb84fa8d8abcd24418a1e83d3c16>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `2a9e2f2 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=2a9e2f2fe2fe71b52860a33a6fa009fbe8cab0b7>`_
+
+[TASK] Add query parameters for form action as hidden fields
+-----------------------------------------------------------------------------------------
+
+This change makes the form viewhelper usable with method GET by adding
+query parameters of the action as hidden fields to the form. Otherwise
+the browser would replace them by the form values
+(http://www.w3.org/TR/html401/interact/forms.html#h-17.13.3.4).
+
+* Resolves: `#11636 <http://forge.typo3.org/issues/11636>`_
+* Commit: `0c8ef04 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=0c8ef04ce86582e4eea8a702b3f4a90c9d639227>`_
+
+[BUGFIX] Only render hidden upload fields if a resource is available
+-----------------------------------------------------------------------------------------
+
+The UploadViewHelper always creates hidden fields for filename and
+resource pointer so that previously uploaded files are not lost
+if validation errors occur.
+
+This change makes sure that those hidden fields are only rendered
+if a file has been uploaded before because otherwise the property
+mapper tries to create a Resource object and fails with an
+exception (see #38184).
+
+* Related: `#38184 <http://forge.typo3.org/issues/38184>`_
+* Commit: `ecc4f01 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=ecc4f01ead99f3993bd3908d974485e2c65dd080>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `40a283f <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=40a283fb44865efde9d36645130eae7c15b85f72>`_
+
+[TASK] Code cleanup
+-----------------------------------------------------------------------------------------
+
+Does code cleanup, mostly to documentation, but also tweaks
+unused variables, missing return statements and similar things.
+
+* Related: `#34875 <http://forge.typo3.org/issues/34875>`_
+* Commit: `ad4ed84 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=ad4ed8417fd8e3897c417e168898557e7989f6e6>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `7c65b11 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=7c65b111bf6b2d0b1501e26b9124cf3c4f832de3>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `c96108a <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=c96108a799dbac24d228a21a6e370d421d655ce7>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `45afa0b <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=45afa0ba497770ed12fcfbc4c2c8477c34fb7b7d>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `80b82d4 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=80b82d4e979cd7e787339572abb080260d7726d8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `4c4f158 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=4c4f158101c4d572344f4f1335bbd65e956e393d>`_
+
+[TASK] Update Package.xml with new version number
+-----------------------------------------------------------------------------------------
+
+* Commit: `d3a82c0 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=d3a82c0edc1f34e65b54b3edfbc08fc0dbc35a45>`_
+
