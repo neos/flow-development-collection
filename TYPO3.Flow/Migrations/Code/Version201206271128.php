@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Core\Migrations;
 /**
  * Replace DataNotSerializeableException with DataNotSerializableException.
  */
-class Version201205292145 extends AbstractMigration {
+class Version201206271128 extends AbstractMigration {
 
 	/**
 	 * @return void
