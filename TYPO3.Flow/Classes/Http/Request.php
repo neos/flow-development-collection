@@ -113,9 +113,11 @@ class Request extends Message {
 		$get = $uri->getArguments();
 		$post = $arguments;
 
+		$isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
+
 		$defaultServerEnvironment = array(
 			'HTTP_USER_AGENT' => 'FLOW3/' . FLOW3_VERSION_BRANCH . '.x',
-			'HTTP_HOST' => $uri->getHost() . ($uri->getPort() !== 80 ? ':' . $uri->getPort() : ''),
+			'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== TRUE ? ':' . $uri->getPort() : ''),
 			'SERVER_NAME' => $uri->getHost(),
 			'SERVER_ADDR' => '127.0.0.1',
 			'SERVER_PORT' => $uri->getPort() ?: 80,
