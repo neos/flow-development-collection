@@ -496,6 +496,15 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * RFC 2616 / 14.23 (Host)
 	 * @test
 	 */
+	public function standardPortIsNotAddedToHttpHost() {
+		$request = Request::create(new Uri('http://dev.blog.rob:80/foo/bar?baz=quux&coffee=due'));
+		$this->assertNull($request->getUri()->getPort());
+	}
+
+	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
 	public function nonStandardPortIsAddedToHttpHost() {
 		$request = Request::create(new Uri('http://dev.blog.rob:8080/foo/bar?baz=quux&coffee=due'));
 		$this->assertSame(8080, $request->getUri()->getPort());
@@ -520,6 +529,15 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function nonStandardHttpsPortIsAddedToHttpHost() {
 		$request = Request::create(new Uri('https://dev.blog.rob:44343/foo/bar?baz=quux&coffee=due'));
 		$this->assertSame(44343, $request->getUri()->getPort());
+	}
+
+	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
+	public function standardHttpsPortIsNotAddedToHttpHost() {
+		$request = Request::create(new Uri('https://dev.blog.rob:443/foo/bar?baz=quux&coffee=due'));
+		$this->assertNull($request->getUri()->getPort());
 	}
 
 	/**
