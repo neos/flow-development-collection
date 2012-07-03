@@ -32,7 +32,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			// It all starts with zero
 			array('0', $c, 0),
 			// Very large number!
-			array('237498237473284', $c, 237498237473284),
+			array('2147483600', $c, 2147483600),
 			// Don't be so negative
 			array('-100', $c, -100),
 		);
