@@ -117,6 +117,7 @@ class ProxyClassBuilder {
 			if ($proxyClass === FALSE) {
 				continue;
 			}
+			$this->systemLogger->log('Building DI proxy for "' . $className . '".', LOG_DEBUG);
 
 			$constructorPreCode = '';
 			$constructorPostCode = '';

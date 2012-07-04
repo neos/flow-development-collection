@@ -287,9 +287,9 @@ class Bootstrap {
 
 		$sequence->addStep(new Step('typo3.flow3:cachemanagement:forceflush', array('TYPO3\FLOW3\Core\Booting\Scripts', 'forceFlushCachesIfNeccessary')), 'typo3.flow3:systemlogger');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:compiletime:create', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeCreate')), 'typo3.flow3:systemlogger');
-		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:objectmanagement:compiletime:create');
+		$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:compiletime:create');
+		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:systemfilemonitor');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:compiletime:finalize', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManagerCompileTimeFinalize')), 'typo3.flow3:reflectionservice');
-		$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:compiletime:finalize');
 		return $sequence;
 	}
 
@@ -304,14 +304,14 @@ class Bootstrap {
 		$sequence = $this->buildEssentialsSequence();
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:proxyclasses', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeProxyClasses')), 'typo3.flow3:systemlogger');
 		$sequence->addStep(new Step('typo3.flow3:classloader:cache', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow3:objectmanagement:proxyclasses');
-		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:classloader:cache');
-		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:reflectionservice');
+		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:classloader:cache');
 
 		if (!$this->context->isProduction()) {
 			$sequence->addStep(new Step('typo3.flow3:systemfilemonitor', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow3:objectmanagement:runtime');
 		}
 
-		$sequence->addStep(new Step('typo3.flow3:persistence', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow3:objectmanagement:runtime');
+		$sequence->addStep(new Step('typo3.flow3:reflectionservice', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow3:objectmanagement:runtime');
+		$sequence->addStep(new Step('typo3.flow3:persistence', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow3:reflectionservice');
 		$sequence->addStep(new Step('typo3.flow3:session', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSession')), 'typo3.flow3:persistence');
 		$sequence->addStep(new Step('typo3.flow3:resources', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeResources')), 'typo3.flow3:session');
 		$sequence->addStep(new Step('typo3.flow3:i18n', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeI18n')), 'typo3.flow3:resources');
