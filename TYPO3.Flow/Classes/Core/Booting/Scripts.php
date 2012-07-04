@@ -243,7 +243,7 @@ class Scripts {
 	 * @return void
 	 */
 	static public function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap) {
-		$objectManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager = $bootstrap->getObjectManager();
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
 		$reflectionService = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Reflection\ReflectionService');
 		$cacheManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager');
