@@ -20,7 +20,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @FLOW3\Scope("singleton")
  * @todo Implement functionality for converting collection properties.
  */
-class CollectionConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class CollectionConverter extends AbstractTypeConverter {
 
 	/**
 	 * @var array<string>

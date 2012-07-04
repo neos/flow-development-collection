@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class ArrayConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ArrayConverter extends AbstractTypeConverter {
 
 	/**
 	 * @var array<string>

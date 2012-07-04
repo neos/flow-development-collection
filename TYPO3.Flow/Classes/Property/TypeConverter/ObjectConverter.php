@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ObjectConverter extends AbstractTypeConverter {
 
 	/**
 	 * @var integer

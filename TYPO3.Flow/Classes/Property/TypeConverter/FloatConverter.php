@@ -20,7 +20,7 @@ use TYPO3\FLOW3\Error\Error;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class FloatConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class FloatConverter extends AbstractTypeConverter {
 
 	/**
 	 * @var array<string>

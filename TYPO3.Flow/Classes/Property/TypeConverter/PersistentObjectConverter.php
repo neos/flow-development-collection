@@ -28,7 +28,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * @api
  * @FLOW3\Scope("singleton")
  */
-class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\ObjectConverter {
+class PersistentObjectConverter extends ObjectConverter {
 
 	/**
 	 * @var string
