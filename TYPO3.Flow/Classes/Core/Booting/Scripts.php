@@ -234,6 +234,13 @@ class Scripts {
 		$objectManager = new \TYPO3\FLOW3\Object\CompileTimeObjectManager($bootstrap->getContext());
 		$bootstrap->setEarlyInstance('TYPO3\FLOW3\Object\ObjectManagerInterface', $objectManager);
 		Bootstrap::$staticObjectManager = $objectManager;
+
+		$signalSlotDispatcher = $bootstrap->getEarlyInstance('TYPO3\FLOW3\SignalSlot\Dispatcher');
+		$signalSlotDispatcher->injectObjectManager($objectManager);
+
+		foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
+			$objectManager->setInstance($objectName, $instance);
+		}
 	}
 
 	/**
@@ -245,11 +252,10 @@ class Scripts {
 	static public function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap) {
 		$objectManager = $bootstrap->getObjectManager();
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Configuration\ConfigurationManager');
-		$reflectionService = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Reflection\ReflectionService');
+		$reflectionService = $objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
 		$cacheManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Cache\CacheManager');
 		$systemLogger = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface');
 		$packageManager = $bootstrap->getEarlyInstance('TYPO3\FLOW3\Package\PackageManagerInterface');
-		$signalSlotDispatcher = $bootstrap->getEarlyInstance('TYPO3\FLOW3\SignalSlot\Dispatcher');
 
 		$objectManager->injectAllSettings($configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 		$objectManager->injectReflectionService($reflectionService);
@@ -262,7 +268,6 @@ class Scripts {
 			$objectManager->setInstance($objectName, $instance);
 		}
 
-		$signalSlotDispatcher->injectObjectManager($objectManager);
 		\TYPO3\FLOW3\Error\Debugger::injectObjectManager($objectManager);
 	}
 
@@ -318,6 +323,7 @@ class Scripts {
 		$reflectionService->initialize($bootstrap);
 
 		$bootstrap->setEarlyInstance('TYPO3\FLOW3\Reflection\ReflectionService', $reflectionService);
+		$bootstrap->getObjectManager()->setInstance('TYPO3\FLOW3\Reflection\ReflectionService', $reflectionService);
 	}
 
 	/**
