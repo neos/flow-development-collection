@@ -20,7 +20,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
- * singleton scoped objets. This Object Manager is used during compile time when the proxy
+ * singleton scoped objects. This Object Manager is used during compile time when the proxy
  * class based DI mechanism is not yet available.
  *
  * @FLOW3\Scope("singleton")
