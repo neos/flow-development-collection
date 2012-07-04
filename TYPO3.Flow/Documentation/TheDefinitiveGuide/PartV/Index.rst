@@ -6,6 +6,7 @@ Part V: Appendixes
 
 	ValidatorReference
 	AnnotationReference
+	TypeConverterReference
 	FluidViewHelperReference
 	CommandReference
 	ContributingToFLOW3

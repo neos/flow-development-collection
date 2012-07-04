@@ -16,35 +16,40 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Converter which transforms from different input formats into DateTime objects.
  *
- * Source can be either a string or an array.
- * The date string is expected to be formatted according to DEFAULT_DATE_FORMAT
- * But the default date format can be overridden in the initialize*Action() method like this:
- * $this->arguments['<argumentName>']
- *   ->getPropertyMappingConfiguration()
- *   ->forProperty('<propertyName>') // this line can be skipped in order to specify the format for all properties
- *   ->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
+ * Source can be either a string or an array. The date string is expected to be formatted
+ * according to DEFAULT_DATE_FORMAT.
  *
- * If the source is of type array, it is possible to override the format in the source:
- * array(
- *  'date' => '<dateString>',
- *  'dateFormat' => '<dateFormat>'
- * );
+ * But the default date format can be overridden in the initialize*Action() method like this::
  *
- * By using an array as source you can also override time and timezone of the created DateTime object:
- * array(
- *  'date' => '<dateString>',
- *  'hour' => '<hour>', // integer
- *  'minute' => '<minute>', // integer
- *  'seconds' => '<seconds>', // integer
- *  'timezone' => '<timezone>', // string, see http://www.php.net/manual/timezones.php
- * );
+ *  $this->arguments['<argumentName>']
+ *    ->getPropertyMappingConfiguration()
+ *    ->forProperty('<propertyName>') // this line can be skipped in order to specify the format for all properties
+ *    ->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
  *
- * As an alternative to providing the date as string, you might supply day, month and year as array items each:
- * array(
- *  'day' => '<day>', // integer
- *  'month' => '<month>', // integer
- *  'year' => '<year>', // integer
- * );
+ * If the source is of type array, it is possible to override the format in the source::
+ *
+ *  array(
+ *   'date' => '<dateString>',
+ *   'dateFormat' => '<dateFormat>'
+ *  );
+ *
+ * By using an array as source you can also override time and timezone of the created DateTime object::
+ *
+ *  array(
+ *   'date' => '<dateString>',
+ *   'hour' => '<hour>', // integer
+ *   'minute' => '<minute>', // integer
+ *   'seconds' => '<seconds>', // integer
+ *   'timezone' => '<timezone>', // string, see http://www.php.net/manual/timezones.php
+ *  );
+ *
+ * As an alternative to providing the date as string, you might supply day, month and year as array items each::
+ *
+ *  array(
+ *   'day' => '<day>', // integer
+ *   'month' => '<month>', // integer
+ *   'year' => '<year>', // integer
+ *  );
  *
  * @api
  * @FLOW3\Scope("singleton")
