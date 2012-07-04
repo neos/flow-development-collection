@@ -297,8 +297,7 @@ class Debugger {
 							$preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
 							$preparedArgument = htmlspecialchars($preparedArgument);
 							if ($plaintext) {
-								$preparedArgument = str_replace("\n", '⏎', $preparedArgument);
-								$arguments .= '(' . $argument . ')' . $preparedArgument;
+								$arguments .= '"' . $argument . '"';
 							} else {
 								$preparedArgument = str_replace("…", '<span style="color:white;">…</span>', $preparedArgument);
 								$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
