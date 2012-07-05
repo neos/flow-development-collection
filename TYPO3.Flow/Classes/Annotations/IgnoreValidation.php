@@ -12,12 +12,15 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to ignore validation on a specific method argument.
+ *
  * @Annotation
  * @Target("METHOD")
  */
 final class IgnoreValidation {
 
 	/**
+	 * Name of the argument to skip validation for. (Can be given as anonymous argument.)
 	 * @var string
 	 */
 	public $argumentName;

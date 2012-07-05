@@ -12,6 +12,12 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks the annotate class as a value object.
+ *
+ * Regarding Doctrine the object is treated like an entity, but FLOW3
+ * applies some optimizations internally, e.g. to store only one instance
+ * of a value object.
+ *
  * @Annotation
  * @Target("CLASS")
  */

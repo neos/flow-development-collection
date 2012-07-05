@@ -12,6 +12,8 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks an object as an entity.
+ *
  * Behaves like \Doctrine\ORM\Mapping\Entity so it is interchangeable
  * with that.
  *
@@ -21,11 +23,13 @@ namespace TYPO3\FLOW3\Annotations;
 final class Entity {
 
 	/**
+	 * Name of the repository class to use for managing the entity.
 	 * @var string
 	 */
 	public $repositoryClass;
 
 	/**
+	 * Whether the entity should be read-only.
 	 * @var boolean
 	 */
 	public $readOnly = FALSE;
