@@ -11,11 +11,9 @@ namespace TYPO3\FLOW3\Annotations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
-
 /**
  * @Annotation
- * @DoctrineAnnotation\Target("METHOD")
+ * @Target("METHOD")
  */
 final class IgnoreValidation {
 
