@@ -229,3 +229,93 @@ In order to flush caches, use the following command:
 .. code-block:: bash
 
 	$ ./flow3 flow3:cache:flush
+
+Configuration Validation
+========================
+
+Errors in configuration can lead to hard to spot errors and seemingly random
+weird behavior. FLOW3 therefore comes with a general purpose array validator
+which can check PHP arrays for validity according to some schema.
+
+This validator is used in the ``configuration:validate`` command::
+
+  $ ./flow3 configuration:validate --type Settings
+  Validating configuration for type: "Settings"
+
+  16 schema files were found:
+   - package:"TYPO3.FLOW3" schema:"Settings/TYPO3.FLOW3.aop" -> is valid
+  …
+   - package:"TYPO3.FLOW3" schema:"Settings/TYPO3.FLOW3.utility" -> is valid
+
+  The configuration is valid!
+
+See the command help for details on how to use the validation.
+
+Writing Schemata
+----------------
+
+.. warning::
+
+ While the `configuration:validate` command will stay like it is, the inner workings
+ of the schema validation are still subject to change. The location of schema files
+ and the syntax might be adjusted in the future, as we (and you) gather real-world
+ experience with this.
+
+ With that out of the way: feel free to create custom schemata and let us know
+ of any issues you find or suggestion you have!
+
+The schema format is adapted from the `JSON Schema standard <http://json-schema.org>`_;
+currently the Parts 5.1 to 5.25 of the json-schema specification are implemented,
+with the following deviations from the specification:
+
+* The "type" constraint is required for all properties.
+* The validator only executes the checks that make sense for a specific type,
+  see list of possible contstraints below.
+* The "format" constraint for string type has additional class-name and
+  instance-name options.
+* The "dependencies" constraint of the spec is not implemented.
+* Similar to "patternProperties" "formatProperties" can be specified specified
+  for dictionaries
+
+The schemas are searched in the path *Resources/Private/Schema* of all active
+Packages. The schema-filenames must match the pattern
+``<type>.<path>.schema.yaml``. The type and/or the path can also be expressed
+as subdirectories of *Resources/Private/Schema*. So
+*Settings/TYPO3/FLOW3.persistence.schema.yaml* will match the same paths as
+*Settings.TYPO3.FLOW3.persistence.schema.yaml* or
+*Settings/TYPO3.FLOW3/persistence.schema.yaml*.
+
+Here is an example of a schema, from *TYPO3.FLOW3.core.schema.yaml*:
+
+.. code-block:: yaml
+
+ type: dictionary
+ additionalProperties: FALSE
+ properties:
+   'context': { type: string, required: TRUE }
+   'phpBinaryPathAndFilename': { type: string, required: TRUE }
+
+It declares the constraints for the *TYPO3.FLOW3.core* setting:
+
+* the setting is a dictionary (an associative array in PHP nomenclature)
+* properties not defined in the schema are not not allowed
+* the properties ``context`` and ``phpBinaryPathAndFilename`` are both required
+  and of type string
+
+General constraints for all types (for implementation see ``validate`` method in
+``SchemaValidator``):
+
+* type
+* disallow
+* enum
+
+Additional constraints allowed per type:
+
+:string: pattern, minLength, maxLength, format(date-time|date|time|uri|email|ipv4|ipv6|ip-address|host-name|class-name|interface-name)
+:number: maximum, minimum, exclusiveMinimum, exclusiveMaximum, divisibleBy
+:integer: maximum, minimum, exclusiveMinimum, exclusiveMaximum, divisibleBy
+:boolean: --
+:array: minItems, maxItems, items
+:dictionary: properties, patternProperties, formatProperties, additionalProperties
+:null: --
+:any: --
