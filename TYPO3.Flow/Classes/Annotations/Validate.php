@@ -12,6 +12,8 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Controls how a property or method argument will be validated by FLOW3.
+ *
  * @Annotation
  * @Target({"METHOD", "PROPERTY"})
  */
@@ -30,13 +32,13 @@ final class Validate {
 	public $options = array();
 
 	/**
-	 * The name of the argument this annotation is attached to
+	 * The name of the argument this annotation is attached to, if used on a method. (Can be given as anonymous argument.)
 	 * @var string
 	 */
 	public $argumentName;
 
 	/**
-	 * The validation groups for which this validator should be executed
+	 * The validation groups for which this validator should be executed.
 	 * @var array
 	 */
 	public $validationGroups = array('Default');

@@ -12,12 +12,16 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Declares a named pointcut. The annotated method does not become an advice
+ * but can be used as a named pointcut instead of the given expression.
+ *
  * @Annotation
  * @Target("METHOD")
  */
 final class Pointcut {
 
 	/**
+	 * The pointcut expression. (Can be given as anonymous argument.)
 	 * @var string
 	 */
 	public $expression;
