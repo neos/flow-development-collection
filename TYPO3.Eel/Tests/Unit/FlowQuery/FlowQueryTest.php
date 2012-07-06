@@ -149,7 +149,7 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function dataProviderForChildrenAndFilter() {
+	public function dataProviderForChildrenAndFilterAndProperty() {
 		$person1 = new \stdClass();
 		$person1->name = 'Kasper Skaarhoj';
 		$address1_1 = new \stdClass();
@@ -203,6 +203,22 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 					'$query->children()->filter("address[country=Germany]")',
 				),
 				'expectedResult' => array($address2_1, $address3_1)
+			),
+			'property() with property name returns object accessor on first object' => array(
+				'sourceObjects' => array($person1, $person2, $person3, $person4),
+				'expressions' => array(
+					'$query->property("address")'
+				),
+				'expectedResult' => $address1_1,
+				'isFinal' => TRUE
+			),
+			'property() with property name works with property paths' => array(
+				'sourceObjects' => array($person1, $person2, $person3, $person4),
+				'expressions' => array(
+					'$query->property("address.street")'
+				),
+				'expectedResult' => 'SomeCopenhagenStreet',
+				'isFinal' => TRUE
 			)
 			// TODO: children without filter removes elements which do not have target property set
 			// TODO: duplicate objects are removed
@@ -210,15 +226,18 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @dataProvider dataProviderForChildrenAndFilter
+	 * @dataProvider dataProviderForChildrenAndFilterAndProperty
 	 * @test
 	 */
-	public function childrenAndFilterWorks($sourceObjects, array $expressions, $expectedResult) {
+	public function childrenAndFilterAndPropertyWorks($sourceObjects, array $expressions, $expectedResult, $isFinal = FALSE) {
 		$query = $this->createFlowQuery($sourceObjects);
 		foreach ($expressions as $expression) {
 			eval('$result = ' . $expression . ';');
-			$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $result);
-			$this->assertSame($expectedResult, iterator_to_array($result), 'Expression "' . $expression . '" did not match expected result');
+			if (!$isFinal) {
+				$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $result);
+				$result = iterator_to_array($result);
+			}
+			$this->assertSame($expectedResult, $result, 'Expression "' . $expression . '" did not match expected result');
 		}
 	}
 
@@ -244,7 +263,6 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('$query->children("foo[foo]")->filter("foo[foo]")'),
 		);
 	}
-
 
 	/**
 	 * @dataProvider dataProviderForErrorQueries
@@ -279,7 +297,8 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$operationResolver->_set('finalOperationNames', array(
 			'count' => 'count',
 			'get' => 'get',
-			'is' => 'is'
+			'is' => 'is',
+			'property' => 'property'
 		));
 
 		$operationResolver->_set('operations', array(
@@ -289,7 +308,8 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'get' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\GetOperation'),
 			'is' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\IsOperation'),
 			'filter' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation'),
-			'children' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\ChildrenOperation')
+			'children' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\ChildrenOperation'),
+			'property' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\PropertyOperation')
 		));
 
 		$flowQuery->_set('operationResolver', $operationResolver);
