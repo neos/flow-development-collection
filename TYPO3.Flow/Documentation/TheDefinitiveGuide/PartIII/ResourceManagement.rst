@@ -210,6 +210,12 @@ Resource Publishing
 The process of *resource publishing* makes the resources in the system available,
 and to provide an URL by which the given resource can be retrieved by the client.
 
+.. admonition:: Why FLOW3 requires your OS to support symbolic links
+
+  Publishing resources basically means copying files from a private location to the public
+  web directory. FLOW3 instead creates symbolic links, making the resource publishing
+  process consume less disk space and work faster.
+
 Static Resources
 ----------------
 
@@ -258,29 +264,9 @@ A published persistent resource is accessible through a web URI like
 One advantage of using the sha1 hash of the resource content as a filename is that once the
 resource changes it gets a new filename and is displayed correctly regardless of the cache
 settings in the user's web browser. Search engines on the other hand prefer more meaningful
-file names. For these cases the resource view helper allows for defining a speaking title
-for a resource URI:
-
-.. code-block :: html
-
-	<img src="{f:uri.resource(resource: image.originalResource, title: image.title)}" />
-
-A URI produced by the above template would look like this:
-``http://example.local/_Resources/Persistent/107bed85ba5e9bae0edbae879bbc2c26d72033ab/my-speaking-title.jpg``
-
-You can define as many titles for each resource as you want – the resulting file is always
-the same, identified by the sha1 hash.
-
-.. note:: FLOW3 ships a *mod_rewrite* rule to map the speaking titles to the hash files.
-
-Mirror Mode
------------
-
-Publishing resources basically means copying files from a private location to the public
-web directory. FLOW3 instead creates symbolic links, making the resource publishing
-process fast.
-
-If your operating system does not support symbolic links, you will not be able to use FLOW3.
+file names. That is why FLOW3 adds a "virtual" file name to the resource, like this:
+``http://example.local/_Resources/Persistent/107bed85ba5e9bae0edbae879bbc2c26d72033ab/my-speaking-title.jpg``.
+FLOW3 ships with a *mod_rewrite* rule to map the speaking titles to the hash files.
 
 Resource Stream Wrapper
 =======================
@@ -300,9 +286,7 @@ The following example reads the content of the file
 		'resource://Acme.Demo/Private/Templates/SomeTemplate.html
 	');
 
-Likewise you might get into a situation where you need to programmatically access
-persistent resources. The resource stream wrapper also supports these, all you need to do
-is passing the resource hash:
+Some situations might require access to persistent resources. The resource stream wrapper also supports this. To use this feature, just pass the resource hash:
 
 *Example: Accessing persisted resources* ::
 
@@ -313,4 +297,4 @@ above example only works because ``Resource`` provides a ``__toString()`` method
 returns the resource's hash.
 
 You are encouraged to use this stream wrapper wherever you need to access a static or
-persisted resource in your PHP code.
+persistent resource in your PHP code.
