@@ -228,6 +228,8 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
 		}
+
+		self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\FLOW3\Http\Client\InternalRequestEngine');
 		$this->emitFunctionalTestTearDown();
 	}
 
@@ -381,7 +383,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		$this->browser = new \TYPO3\FLOW3\Http\Client\Browser();
 		$this->router = $this->browser->getRequestEngine()->getRouter();
-		$this->browser->getRequestEngine()->initializeObject();
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$requestHandler->setHttpRequest(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost')));
