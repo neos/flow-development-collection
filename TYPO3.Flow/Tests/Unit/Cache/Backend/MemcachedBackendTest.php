@@ -226,14 +226,14 @@ class MemcachedBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$thisCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-		$thisBackend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
+		$thisBackend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
 		$thisBackend->injectEnvironment($this->mockEnvironment);
 		$thisBackend->setCache($thisCache);
 		$thisBackend->initializeObject();
 
 		$thatCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-		$thatBackend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
+		$thatBackend = new \TYPO3\FLOW3\Cache\Backend\MemcachedBackend(new ApplicationContext('Testing'), $backendOptions);
 		$thatBackend->injectEnvironment($this->mockEnvironment);
 		$thatBackend->setCache($thatCache);
 		$thatBackend->initializeObject();
