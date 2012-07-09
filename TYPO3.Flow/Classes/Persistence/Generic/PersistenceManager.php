@@ -308,5 +308,19 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	protected function emitAllObjectsPersisted() {
 	}
 
+	/**
+	 * Tear down the persistence
+	 *
+	 * This method is called in functional tests to reset the storage between tests.
+	 * The implementation is optional and depends on the underlying persistence backend.
+	 *
+	 * @return void
+	 */
+	public function tearDown() {
+		if (method_exists($this->backend, 'tearDown')) {
+			$this->backend->tearDown();
+		}
+	}
+
 }
 ?>
