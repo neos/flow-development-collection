@@ -56,7 +56,7 @@ interface RepositoryInterface {
 	/**
 	 * Returns all objects of this repository.
 	 *
-	 * @return array An array of objects, empty if no objects found
+	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
 	public function findAll();
@@ -116,6 +116,21 @@ interface RepositoryInterface {
 	 * @api
 	 */
 	public function update($object);
+
+	/**
+	 * Magic call method for repository methods.
+	 *
+	 * Provides three methods
+	 *  - findBy<PropertyName>($value, $caseSensitive = TRUE)
+	 *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE)
+	 *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
+	 *
+	 * @param string $method Name of the method
+	 * @param array $arguments The arguments
+	 * @return mixed The result of the repository method
+	 * @api
+	 */
+	public function __call($method, $arguments);
 
 }
 ?>
