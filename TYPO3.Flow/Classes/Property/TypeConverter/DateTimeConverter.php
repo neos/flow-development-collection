@@ -128,13 +128,21 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 		if ($dateAsString === '') {
 			return NULL;
 		}
-		$date = $targetType::createFromFormat($dateFormat, $dateAsString);
+		if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
+			try {
+				$timezone = new \DateTimeZone($source['timezone']);
+			} catch (\Exception $e) {
+				throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
+			}
+			$date = $targetType::createFromFormat($dateFormat, $dateAsString, $timezone);
+		} else {
+			$date = $targetType::createFromFormat($dateFormat, $dateAsString);
+		}
 		if ($date === FALSE) {
 			return new \TYPO3\FLOW3\Validation\Error('The date "%s" was not recognized (for format "%s").', 1307719788, array($dateAsString, $dateFormat));
 		}
 		if (is_array($source)) {
 			$this->overrideTimeIfSpecified($date, $source);
-			$this->overrideTimezoneIfSpecified($date, $source);
 		}
 		return $date;
 	}
@@ -188,24 +196,5 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 		$date->setTime($hour, $minute, $second);
 	}
 
-	/**
-	 * Overrides timezone of the given date with $source['timezone']
-	 *
-	 * @param \DateTime $date
-	 * @param array $source
-	 * @return void
-	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException
-	 */
-	protected function overrideTimezoneIfSpecified(\DateTime $date, array $source) {
-		if (!isset($source['timezone']) || strlen($source['timezone']) === 0) {
-			return;
-		}
-		try {
-			$timezone = new \DateTimeZone($source['timezone']);
-		} catch (\Exception $e) {
-			throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid', 1308240974);
-		}
-		$date->setTimezone($timezone);
-	}
 }
 ?>
