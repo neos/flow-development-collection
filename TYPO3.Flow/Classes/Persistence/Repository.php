@@ -201,27 +201,27 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	 *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE)
 	 *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
 	 *
-	 * @param string $methodName Name of the method
+	 * @param string $method Name of the method
 	 * @param array $arguments The arguments
 	 * @return mixed The result of the repository method
 	 * @api
 	 */
-	public function __call($methodName, array $arguments) {
+	public function __call($method, $arguments) {
 		$query = $this->createQuery();
 		$caseSensitive = isset($arguments[1]) ? (boolean)$arguments[1] : TRUE;
 
-		if (substr($methodName, 0, 6) === 'findBy' && strlen($methodName) > 7) {
-			$propertyName = lcfirst(substr($methodName, 6));
+		if (substr($method, 0, 6) === 'findBy' && strlen($method) > 7) {
+			$propertyName = lcfirst(substr($method, 6));
 			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute();
-		} elseif (substr($methodName, 0, 7) === 'countBy' && strlen($methodName) > 8) {
-			$propertyName = lcfirst(substr($methodName, 7));
+		} elseif (substr($method, 0, 7) === 'countBy' && strlen($method) > 8) {
+			$propertyName = lcfirst(substr($method, 7));
 			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
-		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
-			$propertyName = lcfirst(substr($methodName, 9));
+		} elseif (substr($method, 0, 9) === 'findOneBy' && strlen($method) > 10) {
+			$propertyName = lcfirst(substr($method, 9));
 			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute()->getFirst();
 		}
 
-		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
+		trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
 	}
 
 }
