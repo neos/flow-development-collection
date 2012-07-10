@@ -223,7 +223,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled() {
-		$repository = $this->getMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
+		$repository = $this->getMock('TYPO3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->__call('foo', array());
 	}
 
