@@ -306,7 +306,7 @@ class Package extends \TYPO3\FLOW3\Package\Package {}
 	public function createPackageThrowsExceptionOnInvalidPackageKey() {
 		try {
 			$this->packageManager->createPackage('Invalid_PackageKey');
-		} catch(\TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException $exception) {
+		} catch (\TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException $exception) {
 		}
 		$this->assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
 	}

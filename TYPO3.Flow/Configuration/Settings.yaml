@@ -239,7 +239,12 @@ TYPO3:
         # If this is set to TRUE access will be granted even if all voters abstain
         allowAccessIfAllVotersAbstain: FALSE
 
+      # "Cross-site request forgery" is an attack method to have authorized users trigger
+      # actions without them knowing it. This section is configuring the built-in CSRF
+      # protection in FLOW3.
       csrf:
+        # The strategy to use for generating and using the CSRF protection token. Available are
+        # onePerSession, onePerUri and onePerRequest.
         csrfStrategy: onePerSession
 
       cryptography:
