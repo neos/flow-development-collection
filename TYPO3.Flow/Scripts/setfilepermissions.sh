@@ -70,7 +70,7 @@ echo "Setting file permissions per file, this might take a while ..."
 
 sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
 find . -type d -exec sudo chmod 2770 {} \;
-find . -type f \! -name commit-msg -exec sudo chmod 660 {} \;
+find . -type f \! \( -name commit-msg -or -name '*.sh' \) -exec sudo chmod 660 {} \;
 
 sudo chmod 770 flow3
 sudo chmod 700 $0
