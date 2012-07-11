@@ -32,15 +32,15 @@ For a quick start follow the these simple steps:
 
 #. Checkout the Package TYPO3.FLOW3 with Git, and set up the git repository so you can contribute:
 
-	.. code-block:: bash
+   .. code-block:: bash
 
-		$ git clone git://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git
-		$ # set up git so you can push to Gerrit
+   	$ git clone git://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git
+   	$ # set up git so you can push to Gerrit
 
-	If you do not know how to set up Git correctly, follow the easy steps of
-	`our git wizard <http://www.wwwision.de/githelper/#FLOW3/Packages/TYPO3.FLOW3.git>`_.
-	Of course you can also use the package TYPO3.FLOW3 from any FLOW3 distribution you installed
-	already.
+   If you do not know how to set up Git correctly, follow the easy steps of
+   `our git wizard <http://www.wwwision.de/githelper/#FLOW3/Packages/TYPO3.FLOW3.git>`_.
+   Of course you can also use the package TYPO3.FLOW3 from any FLOW3 distribution you installed
+   already.
 
 #. Read the documentation and adjust it as needed - it is in the *Documentation* directory.
 
@@ -60,9 +60,9 @@ If you like to see a rendered HTML result of the documentation a few more steps 
 #. Import and activate the package TYPO3.DocTools. It provides you with a command to render
    standalone documentation.
 
-	.. code-block:: bash
+   .. code-block:: bash
 
-		$ ./flow3 documentation:render --format html
+   	$ ./flow3 documentation:render --format html
 
 #. Read the documentation and adjust it as needed.
 
