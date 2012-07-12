@@ -372,7 +372,10 @@ class ReflectionService {
 		}
 		$this->loadOrReflectClassIfNecessary($interfaceName);
 
-		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
+		if (interface_exists($interfaceName) === FALSE) {
+			throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
+		}
+
 		return (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS])) ? array_keys($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]) : array();
 	}
 
@@ -389,7 +392,9 @@ class ReflectionService {
 		if ($className[0] === '\\') {
 			$className = substr($className, 1);
 		}
-		if (class_exists($className) === FALSE) throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
+		if (class_exists($className) === FALSE) {
+			throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
+		}
 		$this->loadOrReflectClassIfNecessary($className);
 		return (isset($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES])) ? array_keys($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES]) : array();
 	}
@@ -1378,7 +1383,9 @@ class ReflectionService {
 
 
 		$parameterClass = $parameter->getClass();
-		if ($parameterClass !== NULL) $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterClass->getName();
+		if ($parameterClass !== NULL) {
+			$parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterClass->getName();
+		}
 		if ($parameter->isDefaultValueAvailable()) {
 			$parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
 		}
@@ -1632,7 +1639,7 @@ class ReflectionService {
 	 * shutdown sequence.
 	 *
 	 * If the reflection data has previously been loaded from the runtime cache,
-	 * saving it is ommitted as changes are not expected.
+	 * saving it is omitted as changes are not expected.
 	 *
 	 * In Production context the whole cache is written at once and then frozen in
 	 * order to be consistent. Frozen cache data in Development is only produced for
@@ -1646,7 +1653,7 @@ class ReflectionService {
 			return;
 		}
 
-		if (!is_object($this->reflectionDataCompiletimeCache)) {
+		if (!($this->reflectionDataCompiletimeCache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface)) {
 			throw new \TYPO3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 		}
 
