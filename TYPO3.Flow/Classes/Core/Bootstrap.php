@@ -544,10 +544,12 @@ class Bootstrap {
 		ini_set('unicode.output_encoding', 'utf-8');
 		ini_set('unicode.stream_encoding', 'utf-8');
 		ini_set('unicode.runtime_encoding', 'utf-8');
-		#locale_set_default('en_UK');
+
 		if (ini_get('date.timezone') === '') {
-			date_default_timezone_set('Europe/Copenhagen');
+			echo('FLOW3 requires the PHP setting "date.timezone" to be set. (Error #1342087777)');
+			exit(1);
 		}
+
 		if (version_compare(PHP_VERSION, '5.4', '<') && get_magic_quotes_gpc() === 1) {
 			echo('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 			exit(1);
