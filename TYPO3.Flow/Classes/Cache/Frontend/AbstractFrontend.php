@@ -40,7 +40,7 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
 	 */
 	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend) {
-		if (!preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier)) {
+		if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
 			throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		}
 		$this->identifier = $identifier;
