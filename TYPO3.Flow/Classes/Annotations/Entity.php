@@ -11,14 +11,12 @@ namespace TYPO3\FLOW3\Annotations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
-
 /**
  * Behaves like \Doctrine\ORM\Mapping\Entity so it is interchangeable
  * with that.
  *
  * @Annotation
- * @DoctrineAnnotation\Target("CLASS")
+ * @Target("CLASS")
  */
 final class Entity {
 
