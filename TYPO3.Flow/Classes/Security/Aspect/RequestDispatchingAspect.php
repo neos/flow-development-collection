@@ -98,31 +98,8 @@ class RequestDispatchingAspect {
 			}
 		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
 			$this->securityLogger->log('Access denied', LOG_WARNING);
-			$response = $joinPoint->getMethodArgument('response');
-			$response->setStatus(403);
-			$response->setContent('<h1>403 Forbidden</h1><p>' . $exception->getMessage());
+			throw $exception;
 		}
 	}
-
-	/**
-	 * Advices the dispatch method so that access denied exceptions are transformed into the correct
-	 * response status.
-	 *
-	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Dispatcher->dispatch())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
-	 * @return mixed Result of the advice chain
-	 */
-	public function setAccessDeniedResponseHeader(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
-		$response = $joinPoint->getMethodArgument('response');
-
-		try {
-			return $joinPoint->getAdviceChain()->proceed($joinPoint);
-		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
-			if ($response instanceof \TYPO3\FLOW3\Http\Response) {
-				$response->setStatus(403);
-			}
-			$response->setContent('Access denied!');
-		}
-	}
- }
+}
 ?>
