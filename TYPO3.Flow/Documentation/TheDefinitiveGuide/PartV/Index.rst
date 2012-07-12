@@ -5,6 +5,7 @@ Part V: Appendixes
 	:maxdepth: 2
 
 	ValidatorReference
+	AnnotationReference
 	FluidViewHelperReference
 	CommandReference
 	ContributingToFLOW3
