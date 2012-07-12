@@ -12,6 +12,12 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks a property as transient - it will never be considered by the
+ * persistence layer for storage and retrieval.
+ *
+ * Useful for calculated values and any other properties only needed
+ * during runtime.
+ *
  * @Annotation
  * @Target("PROPERTY")
  */

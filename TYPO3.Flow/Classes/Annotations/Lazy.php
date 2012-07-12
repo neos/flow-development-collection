@@ -12,6 +12,11 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks a property or class as lazy-loaded.
+ *
+ * This is only relevant for anything based on the generic persistence
+ * layer of FLOW3. For Doctrine based persistence this is ignored.
+ *
  * @Annotation
  * @Target({"CLASS", "PROPERTY"})
  */

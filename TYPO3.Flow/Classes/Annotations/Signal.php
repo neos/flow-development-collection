@@ -12,6 +12,10 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks a method as a signal for the signal/slot implementation
+ * of FLOW3. The method will be augmented as needed (using AOP)
+ * to be a usable signal.
+ *
  * @Annotation
  * @Target("METHOD")
  */

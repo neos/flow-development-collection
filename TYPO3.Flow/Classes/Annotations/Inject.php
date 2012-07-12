@@ -12,6 +12,11 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to enable property injection.
+ *
+ * FLOW3 will build Dependency Injection code for the property and try
+ * to inject a value as specified by the var annotation.
+ *
  * @Annotation
  * @Target("PROPERTY")
  */

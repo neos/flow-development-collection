@@ -12,6 +12,10 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks a CLI command as a cache-flushing command.
+ *
+ * Usually used for framework purposes only.
+ *
  * @Annotation
  * @Target("METHOD")
  */

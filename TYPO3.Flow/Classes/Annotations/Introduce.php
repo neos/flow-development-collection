@@ -12,17 +12,22 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Introduces the given interface or property into any target class matching
+ * the given pointcut expression.
+ *
  * @Annotation
  * @Target({"CLASS", "PROPERTY"})
  */
 final class Introduce {
 
 	/**
+	 * The pointcut expression. (Can be given as anonymous argument.)
 	 * @var string
 	 */
 	public $pointcutExpression;
 
 	/**
+	 * The interface name to introduce.
 	 * @var string
 	 */
 	public $interfaceName;

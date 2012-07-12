@@ -12,13 +12,15 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to set the scope of an object.
+ *
  * @Annotation
  * @Target("CLASS")
  */
 final class Scope {
 
 	/**
-	 * The scope of an object: prototype, singleton, session
+	 * The scope of an object: prototype, singleton, session. (Usually given as anonymous argument.)
 	 * @var string
 	 */
 	public $value = 'prototype';
