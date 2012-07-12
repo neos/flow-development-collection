@@ -244,5 +244,32 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertNull($object);
 	}
 
+	/**
+	 * @test
+	 */
+	public function tearDownWithBackendNotSupportingTearDownDoesNothing() {
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend->expects($this->never())->method('tearDown');
+
+		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager->injectBackend($mockBackend);
+
+		$persistenceManager->tearDown();
+	}
+
+	/**
+	 * @test
+	 */
+	public function tearDownWithBackendSupportingTearDownDelegatesCallToBackend() {
+		$methods = array_merge(get_class_methods('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface'), array('tearDown'));
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface', $methods);
+		$mockBackend->expects($this->once())->method('tearDown');
+
+		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager->injectBackend($mockBackend);
+
+		$persistenceManager->tearDown();
+	}
+
 }
 ?>
