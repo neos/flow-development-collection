@@ -24,6 +24,11 @@ class Exception extends \Exception {
 	protected $referenceCode;
 
 	/**
+	 * @var integer
+	 */
+	protected $statusCode = 500;
+
+	/**
 	 * Returns a code which can be communicated publicly so that whoever experiences the exception can refer
 	 * to it and a developer can find more information about it in the system log.
 	 *
@@ -37,6 +42,15 @@ class Exception extends \Exception {
 		return $this->referenceCode;
 	}
 
+	/**
+	 * Returns the HTTP status code this exception corresponds to (defaults to 500).
+	 *
+	 * @return integer
+	 * @api
+	 */
+	public function getStatusCode() {
+		return $this->statusCode;
+	}
 }
 
 ?>

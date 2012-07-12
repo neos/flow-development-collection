@@ -18,6 +18,11 @@ namespace TYPO3\FLOW3\Security\Exception;
  */
 class AccessDeniedException extends \TYPO3\FLOW3\Security\Exception {
 
+	/**
+	 * @var integer
+	 */
+	protected $statusCode = 403;
+
 }
 
 ?>

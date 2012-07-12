@@ -11,7 +11,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException;
 use TYPO3\FLOW3\Mvc\Routing\Route;
 
 /**
@@ -30,7 +29,7 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $testableHttpEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController
+	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController
 	 */
 	protected $restrictedController;
 

@@ -19,6 +19,11 @@ namespace TYPO3\FLOW3\Mvc\Exception;
  */
 class NoMatchingRouteException extends \TYPO3\FLOW3\Mvc\Exception {
 
+	/**
+	 * @var integer
+	 */
+	protected $statusCode = 404;
+
 }
 
 ?>
