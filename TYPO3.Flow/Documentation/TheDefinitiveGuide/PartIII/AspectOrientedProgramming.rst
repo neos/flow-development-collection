@@ -4,9 +4,6 @@ Aspect-Oriented Programming
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-Introduction
-============
-
 Aspect-Oriented Programming (AOP) is a programming paradigm which complements
 Object-Oriented Programming (OOP) by separating *concerns* of a software
 application to improve modularization. The separation of concerns (SoC) aims for
