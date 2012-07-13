@@ -1,9 +1,11 @@
 Eel - Evaluated Expression Language
 ===================================
+
 created by Christopher Hlubek
 
 FlowQuery - is jQuery for PHP
 =============================
+
 created by Sebastian Kurfürst
 
 ... a selector and traversal engine for object sets.
@@ -15,7 +17,7 @@ Syntax Examples
 ---------------
 
 * `children('foo')`: Selects the sub object with name "foo"
-* `filter('[attribute="value"]')`: Selects an object if it has an attribute àttribute` with value `value`
+* `filter('[attribute="value"]')`: Selects an object if it has an attribute `attribute` with value `value`
 * `filter("[  attribute      =   'value'  ]")`: See above
 * `filter('[attribute=  Foo.Bar  ]'`: See above; you can leave out the quotes if your value does not contain whitespace, or any of `"'[]`.
 * `filter('[attribute1=value1][attribute2=value2]')`: Selects an object only if BOTH conditions match
