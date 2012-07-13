@@ -26,7 +26,7 @@ If you can't wait to see the finished blog all you need to do is:
 Feedback
 ========
 
-Me and the FLOW3 core team are curious about getting your feedback! If you have any
+The FLOW3 core team and I are curious about getting your feedback! If you have any
 questions, are stuck at some point or just want to let me know how you liked the tutorial
 please write to the
 `FLOW3 mailing list <http://flow3.typo3.org/support>`_ or drop me a line via robert@typo3.org.

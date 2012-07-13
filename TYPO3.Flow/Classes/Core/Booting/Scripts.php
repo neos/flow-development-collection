@@ -490,6 +490,7 @@ class Scripts {
 	 * @param array $settings The FLOW3 settings
 	 * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
+	 * @api
 	 */
 	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE) {
 		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
