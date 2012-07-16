@@ -45,7 +45,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function packageCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
 			$this->quit(1);
 		}
 
@@ -95,7 +95,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
 		}
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
 			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -177,7 +177,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function commandControllerCommand($packageKey, $controllerName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
 			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -246,7 +246,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function repositoryCommand($packageKey, $modelName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
 			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
