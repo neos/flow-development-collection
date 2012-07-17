@@ -276,7 +276,7 @@ class Service {
 
 	/**
 	 * Execute a single migration in up or down direction. If $path is given, the
-	 * SQL statements will be writte to the file in $path instead of executed.
+	 * SQL statements will be written to the file in $path instead of executed.
 	 *
 	 * @param string $version The version to migrate to
 	 * @param string $direction

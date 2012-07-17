@@ -326,6 +326,22 @@ class ConfigurationManager {
 	}
 
 	/**
+	 * If a cache file with previously saved configuration exists, it is removed.
+	 *
+	 * @return void
+	 */
+	public function flushConfigurationCache() {
+		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
+		$cachePathAndFilename = $configurationCachePath  . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
+		if (file_exists($cachePathAndFilename)) {
+			if (unlink($cachePathAndFilename) === FALSE) {
+				throw new \TYPO3\FLOW3\Configuration\Exception(sprintf('Could not delete configuration cache file "%s". Check file permissions for the parent directory.', $cachePathAndFilename), 1341999203);
+			}
+		}
+		$this->configurations = array(self::CONFIGURATION_TYPE_SETTINGS => array());
+	}
+
+	/**
 	 * Saves the current configuration into a cache file and creates a cache inclusion script
 	 * in the context's Configuration directory.
 	 *
