@@ -125,6 +125,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * This should only ever be executed from the QueryResult class.
 	 *
 	 * @return array result set
+	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException
 	 */
 	public function getResult() {
 		try {
@@ -132,6 +133,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		} catch (\Doctrine\ORM\ORMException $ormException) {
 			$this->systemLogger->logException($ormException);
 			return array();
+		} catch (\PDOException $pdoException) {
+			throw new DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
 		}
 	}
 
@@ -139,8 +142,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the query result count
 	 *
 	 * @return integer The query result count
+	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException
 	 * @api
-	 * @todo improve try/catch block
 	 */
 	public function count() {
 		try {
@@ -152,6 +155,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		} catch (\Doctrine\ORM\ORMException $ormException) {
 			$this->systemLogger->logException($ormException);
 			return 0;
+		} catch (\PDOException $pdoException) {
+			throw new DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
 		}
 	}
 
