@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-06-19
+This reference was automatically generated from code on 2012-07-18
 
 
 f:alias
@@ -1151,6 +1151,12 @@ f:form.upload
 A view helper which generates an <input type="file"> HTML element.
 Make sure to set enctype="multipart/form-data" on the form!
 
+If a file has been uploaded successfully and the form is re-displayed due to validation errors,
+this ViewHelper will render hidden fields that contain the previously generated resource so you
+won't have to upload the file again.
+
+You can use a separate ViewHelper to display previously uploaded resources in order to remove/replace them.
+
 
 
 Arguments
@@ -1200,6 +1206,18 @@ Examples
 Expected result::
 
 	<input type="file" name="file" />
+
+
+**Multiple Uploads**::
+
+	<f:form.upload property="attachments.0.originalResource" />
+	<f:form.upload property="attachments.1.originalResource" />
+
+
+Expected result::
+
+	<input type="file" name="formObject[attachments][0][originalResource]">
+	<input type="file" name="formObject[attachments][0][originalResource]">
 
 
 
@@ -1529,59 +1547,6 @@ Arguments
 *********
 
 * ``value`` (object, *optional*): the object to render the identifier for, or NULL if VH children should be used
-
-
-
-
-f:format.json
--------------
-
-Wrapper for PHPs json_encode function.
-
-
-
-Arguments
-*********
-
-* ``value`` (mixed, *optional*): The incoming data to convert, or NULL if VH children should be used
-
-* ``forceObject`` (bool, *optional*): Outputs an JSON object rather than an array
-
-
-
-
-Examples
-********
-
-**encoding a view variable**::
-
-	{someArray -> f:format.json()}
-
-
-Expected result::
-
-	["array","values"]
-	// depending on the value of {someArray}
-
-
-**associative array**::
-
-	{f:format.json(value: {foo: 'bar', bar: 'baz'})}
-
-
-Expected result::
-
-	{"foo":"bar","bar":"baz"}
-
-
-**non-associative array with forced object**::
-
-	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: 1)}
-
-
-Expected result::
-
-	{"0":"bar","1":"baz"}
 
 
 
@@ -2930,6 +2895,59 @@ Arguments
 * ``configuration`` (array, *optional*): 
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+
+
+
+f:format.json
+-------------
+
+Wrapper for PHPs json_encode function.
+
+
+
+Arguments
+*********
+
+* ``value`` (mixed, *optional*): The incoming data to convert, or NULL if VH children should be used
+
+* ``forceObject`` (boolean, *optional*): Outputs an JSON object rather than an array
+
+
+
+
+Examples
+********
+
+**encoding a view variable**::
+
+	{someArray -> f:format.json()}
+
+
+Expected result::
+
+	["array","values"]
+	// depending on the value of {someArray}
+
+
+**associative array**::
+
+	{f:format.json(value: {foo: 'bar', bar: 'baz'})}
+
+
+Expected result::
+
+	{"foo":"bar","bar":"baz"}
+
+
+**non-associative array with forced object**::
+
+	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: 1)}
+
+
+Expected result::
+
+	{"0":"bar","1":"baz"}
 
 
 

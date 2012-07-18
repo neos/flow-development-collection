@@ -17,7 +17,7 @@ commands that may be available, use::
 
   ./flow3 help
 
-The following reference was automatically generated from code on 2012-06-07
+The following reference was automatically generated from code on 2012-07-18
 
 
 Package *TYPO3.FLOW3*
@@ -123,6 +123,60 @@ Options
   Configuration type to show
 ``--path``
   path to subconfiguration separated by "." like "TYPO3.FLOW3
+
+
+
+
+
+``typo3.flow3:configuration:validate``
+**************************************
+
+**Validate the given configuration**
+
+./flow3 configuration:validate --type Settings --path TYPO3.FLOW3.persistence
+
+The schemas are searched in the path "Resources/Private/Schema" of all
+active Packages. The schema-filenames must match the pattern
+__type__.__path__.schema.yaml. The type and/or the path can also be
+expressed as subdirectories of Resources/Private/Schema. So
+Settings/TYPO3/FLOW3.persistence.schema.yaml will match the same pathes
+like Settings.TYPO3.FLOW3.persistence.schema.yaml or
+Settings/TYPO3.FLOW3/persistence.schema.yaml
+
+
+
+Options
+^^^^^^^
+
+``--type``
+  Configuration type to validate
+``--path``
+  path to the subconfiguration separated by "." like "TYPO3.FLOW3
+
+
+
+
+
+``typo3.flow3:configuration:generateschema``
+********************************************
+
+**Generate a schema for the given configuration or YAML file.**
+
+./flow3 configuration:generateschema --type Settings --path TYPO3.FLOW3.persistence
+
+The schema will be output to standard output.
+
+
+
+Options
+^^^^^^^
+
+``--type``
+  Configuration type to create a schema for
+``--path``
+  path to the subconfiguration separated by "." like "TYPO3.FLOW3
+``--yaml``
+  YAML file to create a schema for
 
 
 

@@ -1,7 +1,7 @@
 FLOW3 TypeConverter Reference
 =============================
 
-This reference was automatically generated from code on 2012-07-04
+This reference was automatically generated from code on 2012-07-18
 
 
 ArrayConverter
@@ -97,7 +97,71 @@ As an alternative to providing the date as string, you might supply day, month a
 FloatConverter
 --------------
 
-Converter which transforms a simple type to a float, by simply casting it.
+Converter which transforms a simple type to a float.
+
+This is basically done by simply casting it, except you provide some configuration options
+which will make this converter use FLOW3's locale parsing capabilities in order to respect
+deviating decimal separators.
+
+**Advanced usage in action controller context**
+
+*Using default locale*::
+
+ public function initializeCreateAction() {
+ 	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
+ 		'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', TRUE
+ 	);
+ }
+
+Just providing TRUE as option value will use the current default locale. In case that default locale is "DE"
+for Germany for example, where a comma is used as decimal separator, the mentioned code will return
+(float)15.5 when the input was (string)"15,50".
+
+*Using arbitrary locale*::
+
+ public function initializeCreateAction() {
+ 	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
+ 		'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', 'fr'
+ 	);
+ }
+
+**Parsing mode**
+
+There are two parsing modes available, strict and lenient mode. Strict mode will check all constraints of the provided
+format, and if any of them are not fulfilled, the conversion will not take place.
+In Lenient mode the parser will try to extract the intended number from the string, even if it's not well formed.
+Default for strict mode is TRUE.
+
+*Example setting lenient mode (abridged)*::
+
+ ->setTypeConverterOption(
+ 	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'strictMode', FALSE
+ );
+
+**Format type**
+
+Format type can be decimal, percent or currency; represented as class constant FORMAT_TYPE_DECIMAL,
+FORMAT_TYPE_PERCENT or FORMAT_TYPE_CURRENCY of class TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader.
+Default, if none given, is FORMAT_TYPE_DECIMAL.
+
+*Example setting format type `currency` (abridged)*::
+
+ ->setTypeConverterOption(
+ 	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'formatType', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+ );
+
+**Format length**
+
+Format type can be default, full, long, medium or short; represented as class constant FORMAT_LENGTH_DEFAULT,
+FORMAT_LENGTH_FULL, FORMAT_LENGTH_LONG etc., of class  TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader.
+The format length has a technical background in the CLDR repository, and specifies whether a different number
+pattern should be used. In most cases leaving this DEFAULT would be the correct choice.
+
+*Example setting format length (abridged)*::
+
+ ->setTypeConverterOption(
+ 	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'formatLength', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
+ );
 
 :Priority: 1
 :Target type: float
