@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-06-19
+This reference was automatically generated from code on 2012-07-18
 
 
 f:alias
@@ -1151,6 +1151,12 @@ f:form.upload
 A view helper which generates an <input type="file"> HTML element.
 Make sure to set enctype="multipart/form-data" on the form!
 
+If a file has been uploaded successfully and the form is re-displayed due to validation errors,
+this ViewHelper will render hidden fields that contain the previously generated resource so you
+won't have to upload the file again.
+
+You can use a separate ViewHelper to display previously uploaded resources in order to remove/replace them.
+
 
 
 Arguments
@@ -1200,6 +1206,18 @@ Examples
 Expected result::
 
 	<input type="file" name="file" />
+
+
+**Multiple Uploads**::
+
+	<f:form.upload property="attachments.0.originalResource" />
+	<f:form.upload property="attachments.1.originalResource" />
+
+
+Expected result::
+
+	<input type="file" name="formObject[attachments][0][originalResource]">
+	<input type="file" name="formObject[attachments][0][originalResource]">
 
 
 
@@ -1815,7 +1833,8 @@ Renders the identity of a persisted object (if it has an identity).
 Useful for using the identity outside of the form view helpers
 (e.g. JavaScript and AJAX).
 
-Deprecated since 1.1.0. Use the f:format.identifier ViewHelper instead.
+Deprecated since 1.1.0. Use f:format.identifier and f:format.json
+ViewHelpers instead.
 
 
 

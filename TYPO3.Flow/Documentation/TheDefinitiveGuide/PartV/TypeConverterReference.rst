@@ -1,7 +1,7 @@
 FLOW3 TypeConverter Reference
 =============================
 
-This reference was automatically generated from code on 2012-07-04
+This reference was automatically generated from code on 2012-07-18
 
 
 ArrayConverter
@@ -75,14 +75,6 @@ By using an array as source you can also override time and timezone of the creat
   'minute' => '<minute>', // integer
   'seconds' => '<seconds>', // integer
   'timezone' => '<timezone>', // string, see http://www.php.net/manual/timezones.php
- );
-
-As an alternative to providing the date as string, you might supply day, month and year as array items each::
-
- array(
-  'day' => '<day>', // integer
-  'month' => '<month>', // integer
-  'year' => '<year>', // integer
  );
 
 :Priority: 1
