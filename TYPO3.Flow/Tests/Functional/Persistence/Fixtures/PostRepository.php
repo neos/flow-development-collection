@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  * A repository for posts
  * @TYPO3\FLOW3\Annotations\Scope("singleton")
  */
-class PostRepository extends \TYPO3\FLOW3\Persistence\Repository {
+class PostRepository extends \TYPO3\FLOW3\Persistence\Doctrine\Repository {
 
 	/**
 	 * @var string
