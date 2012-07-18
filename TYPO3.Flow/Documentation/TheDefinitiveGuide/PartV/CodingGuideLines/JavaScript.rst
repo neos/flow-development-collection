@@ -28,7 +28,7 @@ Naming Conventions
 - Classes and namespaces are written in ``UpperCamelCase``, while properties and methods
   are written in ``lowerCamelCase``.
 - The xtype of a class is always the fully qualified class name. Every class which can be
-  instanciated needs to have an xtype declaration.
+  instantiated needs to have an xtype declaration.
 - Never create a class which has classes inside itself. Example: if the class
   ``TYPO3.Foo`` exists, it is prohibited to create a class ``TYPO3.Foo.Bar``.You can
   easily check this: If a directory with the same name as the JavaScript file exists, this
@@ -75,9 +75,9 @@ which is not marked as private belongs to the public API!**
 We are not sure yet if we should use ``@author`` annotations at all. (TODO Decide!)
 
 To make a reference to another method of a class, use the
-``{@link #methodOne This is a example link to method one}`` syntax.
+``{@link #methodOne This is an example link to method one}`` syntax.
 
-If you want to do multiline doc comments, you need to format them with ``<br>``,
+If you want to do multi-line doc comments, you need to format them with ``<br>``,
 ``<pre>`` and other HTML tags::
 
 	/**
@@ -86,7 +86,7 @@ If you want to do multiline doc comments, you need to format them with ``<br>``,
 	 * This is a sample class <br/>
 	 * The file encoding should be utf-8 <br/>
 	 * UTF-8 Check: öäüß <br/>
-	 * {@link #methodOne This is a example link to method one}
+	 * {@link #methodOne This is an example link to method one}
 	 */
 
 Class Definitions
@@ -212,7 +212,7 @@ prototype class definition, we will only highlight the differences.
 - You should add a ``@singleton`` annotation to the class doc comment after the
   ``@namespace`` and ``@extends`` annotation
 - In singleton classes, you use ``Ext.apply``. Note that you need to use ``new`` to
-  instanciate the base class.
+  instantiate the base class.
 - There is **no xType** registration in singletons, as they are available globally anyhow.
 
 Class Doc Comments
@@ -222,7 +222,7 @@ Class Doc Comments should always be in the following order:
 
 - ``@class <Name.Of.Class>`` (required)
 - Then follows a description of the class, which can span multiple lines. Before and after
-  this description should be a a blank line.
+  this description should be a blank line.
 - ``@namespace <Name.Of.Namespace>`` (required)
 - ``@extends <Name.Of.BaseClass>`` (required)
 - ``@singleton`` (required if the class is a singleton)
@@ -269,7 +269,7 @@ Methods should be documented the following way, with a blank line between method
 
 	...
 	TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
-		... propery definitions ...
+		... property definitions ...
 		/**
 		 * This is a method declaration; and the
 		 * explanatory text is followed by a newline.
@@ -284,7 +284,7 @@ Methods should be documented the following way, with a blank line between method
 
 		/**
 		 * this is a private method of this class,
-		 * the private anotation marks them an prevent that they
+		 * the private annotation marks them an prevent that they
 		 * are listed in the api doc. As they are private, they
 		 * have to start with an underscore as well.
 		 *
@@ -338,7 +338,7 @@ Code Style
 ----------
 
 - use single quotes(') instead of double quotes(") for string quoting
-- Multiline strings (using ``\``) are forbidden. Instead, multiline strings should be
+- Multi-line strings (using ``\``) are forbidden. Instead, multi-line strings should be
   written like this::
 
 	'Some String' +
@@ -346,8 +346,8 @@ Code Style
 	' multiple lines'
 
 - There is no limitation on line length.
-- JavaScript Constants (true, false, null) should be written lowercase, and not uppercase.
-- Custom JavaScript Constants should be avoided.
+- JavaScript constants (true, false, null) must be written in lowercase, and not uppercase.
+- Custom JavaScript constants should be avoided.
 - Use a single ``var`` statement at the top of a method to declare all variables::
 
 	function() {
@@ -551,7 +551,7 @@ TODO
 
 - explain initializeObject
 - how to extend Ext components
-- can be extended by using constructer() not initComponets() like it is for panels and so
+- can be extended by using constructor() not initComponents() like it is for panels and so
   on
 
 How to extend data stores

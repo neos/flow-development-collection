@@ -235,7 +235,7 @@ Exception names
 
 Exception naming basically follows the rules for naming classes. There are two possible
 types of exceptions: generic exceptions and specific exceptions. Generic exceptions should
-be named "Exception" preceeded by their namespace. Specific exceptions should reside in
+be named "Exception" preceded by their namespace. Specific exceptions should reside in
 their own sub-namespace end with the word ``Exception``.
 
 * ``\TYPO3\FLOW3\Object\Exception``
@@ -516,7 +516,7 @@ The syntax is as follows:
  Further paragraphs come after blank lines.
 
  * Bullet points are okay, too
- * An asterisk is used for the bullet, it can bepreceded by a single
+ * An asterisk is used for the bullet, it can be preceded by a single
    space. This format is rendered correctly by Forge (redmine)
  * Use a hanging indent
 
@@ -552,7 +552,7 @@ Classes have their own documentation block describing the classes purpose.
   *
   * Here may follow some detailed description about what the class is for.
   *
-  * Paragraphs are seperated by a empty line.
+  * Paragraphs are separated by an empty line.
   */
  class SomeClass {
   ...
@@ -586,7 +586,7 @@ don't we?)
  /**
   * A description for this method
   *
-  * Paragraphs are seperated by a empty line.
+  * Paragraphs are separated by an empty line.
   *
   * @param \TYPO3\Blog\Domain\Model\Post $post A post
   * @param string $someString This parameter should contain some string
@@ -618,7 +618,7 @@ Testcases need to be marked as being a test and can have some more annotations.
 Defining the Public API
 -----------------------
 
-Not all methods with a public visibility are neccessarily part of the intended public API
+Not all methods with a public visibility are necessarily part of the intended public API
 of a project. For FLOW3, only the methods explicitly defined as part of the public API
 will be kept stable and are intended for use by developers using FLOW3. Also the API
 documentation we produce will only cover the public API.
