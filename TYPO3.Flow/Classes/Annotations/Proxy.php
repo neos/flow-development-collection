@@ -12,13 +12,18 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to disable proxy building for an object.
+ *
+ * If disabled, neither Dependency Injection nor AOP can be used
+ * on the object.
+ *
  * @Annotation
  * @Target("CLASS")
  */
 final class Proxy {
 
 	/**
-	 * Whether proxy building for the target is disabled.
+	 * Whether proxy building for the target is disabled. (Can be given as anonymous argument.)
 	 * @var boolean
 	 */
 	public $enabled = TRUE;

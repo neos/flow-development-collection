@@ -12,6 +12,11 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to mark a command as internal - it will not be shown in
+ * CLI help output.
+ *
+ * Usually used for framework purposes only.
+ *
  * @Annotation
  * @Target("METHOD")
  */

@@ -12,13 +12,16 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to disable autowiring for Dependency Injection on the
+ * whole class or on the annotated property only.
+ *
  * @Annotation
  * @Target({"METHOD", "CLASS"})
  */
 final class Autowiring {
 
 	/**
-	 * Whether autowiring is enabled.
+	 * Whether autowiring is enabled. (Can be given as anonymous argument.)
 	 * @var boolean
 	 */
 	public $enabled = TRUE;

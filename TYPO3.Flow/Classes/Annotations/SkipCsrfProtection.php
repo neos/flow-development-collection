@@ -12,6 +12,13 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Action methods marked with this annotation will not be secured
+ * against CSRF.
+ *
+ * Since CSRF is a risk for write operations, this is useful for read-only
+ * actions. The overhead for CRSF token generation and validation can be
+ * skipped in those cases.
+ *
  * @Annotation
  * @Target("METHOD")
  */

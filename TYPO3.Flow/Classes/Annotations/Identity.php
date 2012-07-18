@@ -12,6 +12,14 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Marks a property as being (part of) the identity of an object.
+ *
+ * If multiple properties are annotated as Identity, a compound
+ * identity is created.
+ *
+ * For Doctrine a unique key over all involved properties will be
+ * created - thus the limitations of that need to be observed.
+ *
  * @Annotation
  * @Target("PROPERTY")
  */

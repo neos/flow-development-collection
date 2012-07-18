@@ -12,12 +12,16 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Declares a method as an after advice to be triggered after any
+ * pointcut matching the given expression.
+ *
  * @Annotation
  * @Target("METHOD")
  */
 final class After {
 
 	/**
+	 * The pointcut expression. (Can be given as anonymous argument.)
 	 * @var string
 	 */
 	public $pointcutExpression;

@@ -12,6 +12,9 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
+ * Used to control the behavior of session handling when the annotated
+ * method is called.
+ *
  * @Annotation
  * @Target("METHOD")
  */
