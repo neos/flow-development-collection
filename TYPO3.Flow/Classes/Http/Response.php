@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Mvc\ResponseInterface;
  *
  * @api
  */
-class Response extends Message implements ResponseInterface{
+class Response extends Message implements ResponseInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Http\Response
@@ -48,7 +48,7 @@ class Response extends Message implements ResponseInterface{
 	 *
 	 * @var array
 	 */
-	protected $statusMessages = array(
+	static protected $statusMessages = array(
 		100 => 'Continue',
 		101 => 'Switching Protocols',
 		102 => 'Processing', # RFC 2518
@@ -95,6 +95,16 @@ class Response extends Message implements ResponseInterface{
 		507 => 'Insufficient Storage',
 		509 => 'Bandwidth Limit Exceeded',
 	);
+
+	/**
+	 * Returns the human-readable message for the given status code.
+	 *
+	 * @param integer $statusCode
+	 * @return string
+	 */
+	static public function getStatusMessageByCode($statusCode) {
+		return isset(self::$statusMessages[$statusCode]) ? self::$statusMessages[$statusCode] : 'Unknown Status';
+	}
 
 	/**
 	 * Construct this Response
@@ -152,11 +162,11 @@ class Response extends Message implements ResponseInterface{
 		if (!is_int($code)) {
 			throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
 		}
-		if ($message === NULL && !isset($this->statusMessages[$code])) {
+		if ($message === NULL && !isset(self::$statusMessages[$code])) {
 			throw new \InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
 		}
 		$this->statusCode = $code;
-		$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
+		$this->statusMessage = ($message === NULL) ? self::$statusMessages[$code] : $message;
 		return $this;
 	}
 

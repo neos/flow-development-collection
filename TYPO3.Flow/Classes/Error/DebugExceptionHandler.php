@@ -29,8 +29,13 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 * @return void
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
+		$statusCode = 500;
+		if ($exception instanceof \TYPO3\FLOW3\Exception) {
+			$statusCode = $exception->getStatusCode();
+		}
+		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
 		if (!headers_sent()) {
-			header("HTTP/1.1 500 Internal Server Error");
+			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
 
 		$exceptionHeader = '';
@@ -65,21 +70,21 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 			<head>
-				<title>FLOW3 Exception</title>
+				<title>FLOW3 - ' . $statusCode . ' ' . $statusMessage . '</title>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				<style>
+					.ExceptionProperty {
+						color: #101010;
+					}
+					pre {
+						margin: 0;
+						font-size: 11px;
+						color: #515151;
+						background-color: #D0D0D0;
+						padding-left: 30px;
+					}
+				</style>
 			</head>
-			<style>
-				.ExceptionProperty {
-					color: #101010;
-				}
-				pre {
-					margin: 0;
-					font-size: 11px;
-					color: #515151;
-					background-color: #D0D0D0;
-					padding-left: 30px;
-				}
-			</style>
 			<div style="
 					position: absolute;
 					left: 10px;
