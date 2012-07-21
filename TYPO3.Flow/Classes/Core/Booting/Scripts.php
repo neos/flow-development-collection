@@ -217,7 +217,7 @@ class Scripts {
 			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
 			exec($command, $output, $result);
 			if ($result !== 0) {
-				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
+				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
 			}
 			echo PHP_EOL . 'FLOW3: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
 			exit(1);
