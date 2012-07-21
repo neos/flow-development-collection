@@ -417,7 +417,7 @@ class Bootstrap {
 			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
 			system($command, $result);
 			if ($result !== 0) {
-				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $this->settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
+				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $this->settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
 			}
 			throw new \TYPO3\FLOW3\Exception('The compile run failed. Please check the error output or system log for more information.', 1297263663);
 		}
