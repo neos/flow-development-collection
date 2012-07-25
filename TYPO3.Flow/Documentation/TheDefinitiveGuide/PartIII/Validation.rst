@@ -209,26 +209,26 @@ certain validation groups are executed:
 
 A validator is only executed if at least one validation group overlap.
 
-The following example should demonstrate this::
+The following example demonstrates this::
 
 	class Comment {
 		/**
-		 * @FLOW3\Validate(name='Required')
+		 * @FLOW3\Validate(type="NotEmpty")
 		 */
 		protected $prop1;
 
 		/**
-		 * @FLOW3\Validate(name='Required', validationGroups={'Default')})
+		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"Default"})
 		 */
 		protected $prop2;
 
 		/**
-		 * @FLOW3\Validate(name='Required', validationGroups={'Persistence')})
+		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"Persistence"})
 		 */
 		protected $prop3;
 
 		/**
-		 * @FLOW3\Validate(name='Required', validationGroups={'Controller')})
+		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"Controller"})
 		 */
 		protected $prop3;
 	}
