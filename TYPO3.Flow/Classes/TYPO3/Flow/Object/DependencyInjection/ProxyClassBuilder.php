@@ -325,8 +325,10 @@ class ProxyClassBuilder {
 				continue;
 			}
 			$argumentValue = $argumentConfiguration->getValue();
-			$assignmentPrologue = 'if (!isset($arguments[' . ($argumentNumber - 1) . '])) $arguments[' . ($argumentNumber - 1) . '] = ';
-			if ($argumentValue !== NULL) {
+			$assignmentPrologue = 'if (!array_key_exists(' . ($argumentNumber - 1) . ', $arguments)) $arguments[' . ($argumentNumber - 1) . '] = ';
+			if ($argumentValue === NULL && isset($argumentNumberToOptionalInfo[$argumentNumber]) && $argumentNumberToOptionalInfo[$argumentNumber] === TRUE) {
+				$assignments[] = $assignmentPrologue . 'NULL';
+			} else {
 				switch ($argumentConfiguration->getType()) {
 					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
 						if ($argumentValue instanceof \TYPO3\Flow\Object\Configuration\Configuration) {
@@ -357,10 +359,6 @@ class ProxyClassBuilder {
 						$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
 					break;
 				}
-			} else {
-				if (isset($argumentNumberToOptionalInfo[$argumentNumber]) && $argumentNumberToOptionalInfo[$argumentNumber] === TRUE) {
-					$assignments[] = $assignmentPrologue . 'NULL';
-				}
 			}
 		}
 		$code = count($assignments) > 0 ? "\n\t\t" . implode(";\n\t\t", $assignments) . ";\n" : '';
@@ -371,9 +369,9 @@ class ProxyClassBuilder {
 				break;
 			}
 			if ($objectConfiguration->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON) {
-				$code .= '		if (!isset($arguments[' . $index . '])) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
+				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
 			} else {
-				$code .= '		if (!isset($arguments[' . $index . '])) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
+				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
 			}
 			$index ++;
 		}

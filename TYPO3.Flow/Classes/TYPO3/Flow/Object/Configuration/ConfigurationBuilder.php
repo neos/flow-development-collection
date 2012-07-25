@@ -165,11 +165,11 @@ class ConfigurationBuilder {
 				case 'properties':
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $propertyName => $propertyValue) {
-							if (isset($propertyValue['value'])) {
+							if (array_key_exists('value', $propertyValue)) {
 								$property = new ConfigurationProperty($propertyName, $propertyValue['value'], ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
-							} elseif (isset($propertyValue['object'])) {
+							} elseif (array_key_exists('object', $propertyValue)) {
 								$property = $this->parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $configurationSourceHint);
-							} elseif (isset($propertyValue['setting'])) {
+							} elseif (array_key_exists('setting', $propertyValue)) {
 								$property = new ConfigurationProperty($propertyName, $propertyValue['setting'], ConfigurationProperty::PROPERTY_TYPES_SETTING);
 							} else {
 								throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
@@ -181,11 +181,11 @@ class ConfigurationBuilder {
 				case 'arguments':
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $argumentName => $argumentValue) {
-							if (isset($argumentValue['value'])) {
+							if (array_key_exists('value', $argumentValue)) {
 								$argument = new ConfigurationArgument($argumentName, $argumentValue['value'], ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-							} elseif (isset($argumentValue['object'])) {
+							} elseif (array_key_exists('object', $argumentValue)) {
 								$argument = $this->parseArgumentOfTypeObject($argumentName, $argumentValue['object'], $configurationSourceHint);
-							} elseif (isset($argumentValue['setting'])) {
+							} elseif (array_key_exists('setting', $argumentValue)) {
 								$argument = new ConfigurationArgument($argumentName, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
 							} else {
 								throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);

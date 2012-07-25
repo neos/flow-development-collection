@@ -56,3 +56,8 @@ TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC:
   arguments:
     1:
       setting: TYPO3.Flow.tests.functional.dependencyInjection.prototypeConstructorArgument
+
+TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassF:
+  arguments:
+    1:
+      value: ~
