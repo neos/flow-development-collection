@@ -11,9 +11,13 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Reflection\ObjectAccess;
+
 /**
  * A debugging utility class
  *
+ * @FLOW3\Proxy(false)
  */
 class Debugger {
 
@@ -24,9 +28,9 @@ class Debugger {
 
 	/**
 	 *
-	 * @var \SplObjectStorage
+	 * @var array
 	 */
-	static protected $renderedObjects;
+	static protected $renderedObjects = array();
 
 	/**
 	 * Hardcoded list of FLOW3 class names (regex) which should not be displayed during debugging
@@ -75,7 +79,7 @@ class Debugger {
 	 * @return void
 	 */
 	static public function clearState() {
-		self::$renderedObjects = new \SplObjectStorage;
+		self::$renderedObjects = array();
 	}
 
 	/**
@@ -148,13 +152,22 @@ class Debugger {
 		$scope = '';
 		$additionalAttributes = '';
 
-		if (preg_match(self::$blacklistedClassNames, get_class($object)) !== 0) {
-			$renderProperties = FALSE;
+		if ($object instanceof \Doctrine\Common\Collections\Collection) {
+			return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 12), $level, $plaintext, $ansiColors);
 		}
 
-		if ($object instanceof \Doctrine\Common\Collections\Collection) {
-			return \Doctrine\Common\Util\Debug::export($object, 12);
+			// Objects returned from Doctrine's Debug::export function are stdClass with special properties:
+		try {
+			$objectIdentifier = ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+		} catch (\TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException $exception) {
+			$objectIdentifier = spl_object_hash($object);
 		}
+		$className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);
+
+		if (preg_match(self::$blacklistedClassNames, $className) !== 0 || isset(self::$renderedObjects[$objectIdentifier])) {
+			$renderProperties = FALSE;
+		}
+		self::$renderedObjects[$objectIdentifier] = TRUE;
 
 		if (self::$objectManager !== NULL) {
 			$objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
@@ -170,51 +183,45 @@ class Debugger {
 						$scope = 'session';
 						break;
 				}
-				if (self::$renderedObjects->contains($object)) {
-					$renderProperties = FALSE;
-				} elseif ($renderProperties === TRUE) {
-					if (!$plaintext) {
-						$scope .= '<a id="' . spl_object_hash($object) . '"></a>';
-					}
-					self::$renderedObjects->attach($object);
-				}
 			} else {
 				$additionalAttributes .= ' debug-unregistered';
 			}
 		}
 
-		$className = get_class($object);
-
-		if ($plaintext) {
-			$dump .= $className;
-		} else {
-			$dump .= '<span class="debug-object' . $additionalAttributes . '" title="' . spl_object_hash($object) . '">' . $className . '</span>';
+		if ($renderProperties === TRUE && !$plaintext) {
+			if ($scope === '') {
+				$scope = 'prototype';
+			}
+			$scope .= '<a id="o' . $objectIdentifier . '"></a>';
 		}
 
 		if ($plaintext) {
+			$dump .= $className;
 			$dump .= ($scope !== '') ? ' ' . self::ansiEscapeWrap($scope, '44;37', $ansiColors) : '';
 		} else {
+			$dump .= '<span class="debug-object' . $additionalAttributes . '" title="' . $objectIdentifier . '">' . $className . '</span>';
 			$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope .'</span>' : '';
 		}
 
 		if (property_exists($object, 'FLOW3_Persistence_Identifier')) {
-			$identifier = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+			$persistenceIdentifier = $objectIdentifier;
 			$persistenceType = 'persistable';
 		} else {
-			$identifier = 'unknown';
+			$persistenceIdentifier = 'unknown';
 			$persistenceType = 'object';
 		}
+
 		if ($plaintext) {
 			$dump .= ' ' . self::ansiEscapeWrap($persistenceType, '42;37', $ansiColors);
 		} else {
-			$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
+			$dump .= '<span class="debug-ptype" title="' . $persistenceIdentifier . '">' . $persistenceType . '</span>';
 		}
 
-		if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface) {
+		if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface || (isset($object->__IS_PROXY__) && $object->__IS_PROXY__ === TRUE)) {
 			if ($plaintext) {
 				$dump .= ' ' . self::ansiEscapeWrap('proxy', '41;37', $ansiColors);
 			} else {
-				$dump .= '<span class="debug-proxy" title="' . get_class($object) . '">proxy</span>';
+				$dump .= '<span class="debug-proxy" title="' . $className . '">proxy</span>';
 			}
 		}
 
@@ -224,22 +231,15 @@ class Debugger {
 				foreach ($object as $value) {
 					$dump .= chr(10);
 					$dump .= str_repeat(' ', $level);
-					if (preg_match(self::$blacklistedClassNames, get_class($value)) !== 0) {
-						$dump .= self::renderObjectDump($value, 0, FALSE, $plaintext, $ansiColors);
-						if ($plaintext) {
-							$dump .= ' ' . self::ansiEscapeWrap('filtered', '47;30', $ansiColors);
-						} else {
-							$dump .= '<span class="debug-filtered">filtered</span>';
-						}
-					} else {
-						$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
-					}
+					$dump .= self::renderObjectDump($value, 0, FALSE, $plaintext, $ansiColors);
 				}
 			} else {
 				$classReflection = new \ReflectionClass($className);
 				$properties = $classReflection->getProperties();
 				foreach ($properties as $property) {
-					if (preg_match(self::$blacklistedPropertyNames, $property->getName())) continue;
+					if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
+						continue;
+					}
 					$dump .= chr(10);
 					$dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
 					$property->setAccessible(TRUE);
@@ -247,19 +247,15 @@ class Debugger {
 					if (is_array($value)) {
 						$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
 					} elseif (is_object($value)) {
-						if (preg_match(self::$blacklistedClassNames, get_class($value)) !== 0) {
-							$dump .= self::renderObjectDump($value, 0, FALSE, $plaintext, $ansiColors) . ($plaintext ? ' ' . self::ansiEscapeWrap('filtered', '47;30', $ansiColors) : '<span class="debug-filtered">filtered</span>');
-						} else {
-							$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
-						}
+						$dump .= self::renderObjectDump($value, $level + 1, TRUE, $plaintext, $ansiColors);
 					} else {
 						$dump .= self::renderDump($value, $level, $plaintext, $ansiColors);
 					}
 				}
 			}
-		} elseif (self::$renderedObjects->contains($object)) {
+		} elseif (isset(self::$renderedObjects[$objectIdentifier])) {
 			if (!$plaintext) {
-				$dump = '<a href="#' . spl_object_hash($object) . '" class="debug-seeabove" title="see above">' . $dump . '</a>';
+				$dump = '<a href="#o' . $objectIdentifier . '" onclick="document.location.hash=\'#o' . $objectIdentifier . '\'; return false;" class="debug-seeabove" title="see above">' . $dump . '</a>';
 			}
 		}
 		return $dump;
