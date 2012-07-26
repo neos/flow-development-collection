@@ -32,7 +32,7 @@ interface ViewInterface {
 	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible
 	 *
 	 * @param string $key Key of variable
-	 * @param object $value Value of object
+	 * @param mixed $value Value of object
 	 * @return \TYPO3\FLOW3\Mvc\View\ViewInterface an instance of $this, to enable chaining
 	 * @api
 	 */
