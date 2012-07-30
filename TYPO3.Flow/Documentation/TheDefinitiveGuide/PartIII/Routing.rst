@@ -242,8 +242,8 @@ Route Part Handlers
 ===================
 
 Route part handlers are classes that implement
-``TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface``. But for most cases it will be
-sufficient to extend ``TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart`` and overwrite the
+``TYPO3\FLOW3\Mvc\Routing\DynamicRoutePartInterface``. But for most cases it will be
+sufficient to extend ``TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart`` and overwrite the
 methods ``matchValue`` and ``resolveValue``.
 
 Let's have a look at a (very simple) route part handler that allows you to match values against
@@ -251,7 +251,7 @@ configurable regular expressions:
 
 *Example: RegexRoutePartHandler.php* ::
 
-	class RegexRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+	class RegexRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 
 		/**
 		 * Checks whether the current URI section matches the configured RegEx pattern.
