@@ -13,9 +13,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
 
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
- *
  */
 class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+
+	/**
+	 * @var \TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp
+	 */
+	protected $rsaWalletService;
 
 	/**
 	 * Set up this testcase.
@@ -27,26 +31,12 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		if (!function_exists('openssl_pkey_new')) {
 			$this->markTestSkipped('openssl_pkey_new() not available');
 		} else {
-			$currentKeys = array();
-			$setCallBack = function() use (&$currentKeys) {
-				$args = func_get_args();
-				$currentKeys[$args[0]] = $args[1];
-			};
-			$getCallBack = function() use (&$currentKeys) {
-				$args = func_get_args();
-				return $currentKeys[$args[0]];
-			};
-			$hasCallBack = function() use (&$currentKeys) {
-				$args = func_get_args();
-				return isset($currentKeys[$args[0]]);
-			};
-			$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-			$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack));
-			$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack));
-			$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack));
+			\vfsStreamWrapper::register();
+			\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+			$settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
 
 			$this->rsaWalletService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
-			$this->rsaWalletService->_set('keystoreCache', $mockCache);
+			$this->rsaWalletService->injectSettings($settings);
 
 			$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();
 		}
@@ -95,5 +85,41 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair(TRUE);
 		$this->rsaWalletService->decrypt('some cipher', $this->keyPairUuid);
 	}
+
+	/**
+	 * @test
+	 */
+	public function shutdownSavesKeysToKeystoreFileIfKeysWereModified() {
+		$this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
+		$keyPairUuid = $this->rsaWalletService->generateNewKeypair(TRUE);
+		$this->rsaWalletService->shutdownObject();
+
+		$this->assertTrue(file_exists('vfs://Foo/EncryptionKey'));
+
+		$this->rsaWalletService->destroyKeypair($keyPairUuid);
+		$this->rsaWalletService->initializeObject();
+
+		$this->rsaWalletService->getPublicKey($keyPairUuid);
+	}
+
+	/**
+	 * @test
+	 */
+	public function shutdownDoesNotSavesKeysToKeystoreFileIfKeysWereNotModified() {
+		$this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
+		$keyPairUuid = $this->rsaWalletService->generateNewKeypair(TRUE);
+		$this->rsaWalletService->shutdownObject();
+		$this->assertTrue(file_exists('vfs://Foo/EncryptionKey'));
+
+		$this->rsaWalletService->initializeObject();
+		$this->rsaWalletService->getPublicKey($keyPairUuid);
+
+			// Hack: remove the file so we can actually detect if shutdown() would write it:
+		unlink('vfs://Foo/EncryptionKey');
+
+		$this->rsaWalletService->shutdownObject();
+		$this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
+	}
+
 }
 ?>

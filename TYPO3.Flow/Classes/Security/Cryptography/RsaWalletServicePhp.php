@@ -37,6 +37,11 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	protected $openSSLConfiguration = array();
 
 	/**
+	 * @var boolean
+	 */
+	protected $saveKeysOnShutdown = TRUE;
+
+	/**
 	 * Injects the OpenSSL configuration to be used
 	 *
 	 * @param array $settings
@@ -66,6 +71,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 		if (file_exists($this->keystorePathAndFilename)) {
 			$this->keys = unserialize(file_get_contents($this->keystorePathAndFilename));
 		}
+		$this->saveKeysOnShutdown = FALSE;
 	}
 
 	/**
@@ -255,6 +261,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 		}
 
 		unset($this->keys[$uuid]);
+		$this->saveKeysOnShutdown = TRUE;
 	}
 
 	/**
@@ -323,6 +330,7 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 		$keyPair['usedForPasswords'] = $usedForPasswords;
 
 		$this->keys[$keyPairUUID] = $keyPair;
+		$this->saveKeysOnShutdown = TRUE;
 
 		return $keyPairUUID;
 	}
@@ -334,6 +342,10 @@ class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalle
 	 * @throws \TYPO3\FLOW3\Security\Exception
 	 */
 	public function shutdownObject() {
+		if ($this->saveKeysOnShutdown === FALSE) {
+			return;
+		}
+
 		$temporaryKeystorePathAndFilename = $this->keystorePathAndFilename . uniqid() . '.temp';
 		$result = file_put_contents($temporaryKeystorePathAndFilename, serialize($this->keys));
 
