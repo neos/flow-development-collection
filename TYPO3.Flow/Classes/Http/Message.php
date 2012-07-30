@@ -19,6 +19,7 @@ use TYPO3\FLOW3\Utility\Arrays;
  * Represents a HTTP message
  *
  * @api
+ * @FLOW3\Proxy(false)
  */
 class Message {
 
