@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Security\Exception\AccessDeniedException;
  * A request handler which can handle HTTP requests.
  *
  * @FLOW3\Scope("singleton")
- * @FLOW3\Proxy("disable")
+ * @FLOW3\Proxy(false)
  */
 class RequestHandler implements HttpRequestHandlerInterface {
 

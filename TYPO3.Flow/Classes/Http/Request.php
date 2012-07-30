@@ -19,6 +19,7 @@ use TYPO3\FLOW3\Utility\Arrays;
  * Represents a HTTP request
  *
  * @api
+ * @FLOW3\Proxy(false)
  */
 class Request extends Message {
 
@@ -166,7 +167,6 @@ class Request extends Message {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @FLOW3\Autowiring(FALSE)
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;

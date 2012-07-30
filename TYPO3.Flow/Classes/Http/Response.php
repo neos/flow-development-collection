@@ -13,10 +13,13 @@ namespace TYPO3\FLOW3\Http;
 
 use TYPO3\FLOW3\Mvc\ResponseInterface;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Represents a HTTP Response
  *
  * @api
+ * @FLOW3\Proxy(false)
  */
 class Response extends Message implements ResponseInterface {
 

@@ -11,10 +11,13 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Container for HTTP header fields
  *
  * @api
+ * @FLOW3\Proxy(false)
  */
 class Headers {
 
