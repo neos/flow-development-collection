@@ -202,8 +202,8 @@ Fully qualified class name                   Unqualified name   Remarks
 ===================================================== =================== ==========================
 Fully qualified class name                            Unqualified name    Remarks
 ===================================================== =================== ==========================
-\\TYPO3\\FLOW3\\MVC\\ControllerInterface              ControllerInterface Consequently the interface belongs to all the controllers in the Controller sub namespace
-\\TYPO3\\FLOW3\\MVC\\Controller\\ControllerInterface                      Better
+\\TYPO3\\FLOW3\\Mvc\\ControllerInterface              ControllerInterface Consequently the interface belongs to all the controllers in the Controller sub namespace
+\\TYPO3\\FLOW3\\Mvc\\Controller\\ControllerInterface                      Better
 \\TYPO3\\FLOW3\\Cache\\AbstractBackend                AbstractBackend     Same here: In reality this class belongs to the backends
 \\TYPO3\\FLOW3\\Cache\\Backend\\AbstractBackend                           Better
 ===================================================== =================== ==========================
