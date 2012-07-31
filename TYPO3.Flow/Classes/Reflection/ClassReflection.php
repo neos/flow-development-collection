@@ -21,6 +21,21 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ClassReflection extends \ReflectionClass {
 
 	/**
+	 * Constructor
+	 *
+	 * @param mixed $classNameOrObject the name of the class or the object to be reflected.
+	 */
+	public function __construct($classNameOrObject) {
+		$throwExceptionOnUnloadedClasses =
+			function($className) {
+				throw new Exception\ClassLoadingForReflectionFailedException('Required class "' . $className . '" could not be loaded properly for reflection, possibly requiring non-existent classes or using non-supported annotations.');
+			};
+		spl_autoload_register($throwExceptionOnUnloadedClasses);
+		parent::__construct($classNameOrObject);
+		spl_autoload_unregister($throwExceptionOnUnloadedClasses);
+	}
+
+	/**
 	 * @var \TYPO3\FLOW3\Reflection\DocCommentParser Holds an instance of the doc comment parser for this class
 	 */
 	protected $docCommentParser;
