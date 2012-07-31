@@ -10,6 +10,7 @@ Part III: Manual
 	Configuration
 	ObjectManagement
 	Persistence
+	Http
 	ModelViewController
 	Templating
 	Validation
