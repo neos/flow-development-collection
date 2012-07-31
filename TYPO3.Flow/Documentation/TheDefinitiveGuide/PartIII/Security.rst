@@ -704,6 +704,19 @@ following option:
 	  authorization:
 	    allowAccessIfAllVotersAbstain: FALSE
 
+Request Integrity (HMAC)
+------------------------
+
+(FIXME)
+
+* selection of form fields and the objects / properties which should be allowed or
+  not be allowed to being modified must manipulable
+* HMAC is a hash which can assure that only those form fields were submitted which
+  were intended - additional fields would be detected
+* HMAC is generated automatically and added as a query parameter to the form action
+  URI
+* Link to Property Mapping: "The Common Case: Fluid Forms"
+
 Application firewall
 --------------------
 

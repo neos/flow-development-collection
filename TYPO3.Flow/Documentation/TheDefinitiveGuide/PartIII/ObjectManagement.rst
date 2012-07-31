@@ -734,16 +734,16 @@ case, as the scope usually is a design decision which is very unlikely to be cha
 Overriding Object Implementations
 ---------------------------------
 
-One advantage of componentry is the ability to replace objects by others 
+One advantage of componentry is the ability to replace objects by others
 without any bad impact on those parts depending on them.
 
 
-A prerequisite for replaceable objects is that their classes implement a common 
-`interface`_ which defines the public API of the original object. Other objects 
-which implement the same interface can then act as a true replacement for the 
-original object without the need to change code anywhere in the system. If this 
-requirement is met, the only necessary step to replace the original 
-implementation with a substitute is to alter the object configuration and set 
+A prerequisite for replaceable objects is that their classes implement a common
+`interface`_ which defines the public API of the original object. Other objects
+which implement the same interface can then act as a true replacement for the
+original object without the need to change code anywhere in the system. If this
+requirement is met, the only necessary step to replace the original
+implementation with a substitute is to alter the object configuration and set
 the class name to the new implementation.
 
 To illustrate this circumstance, consider the following classes.
@@ -762,9 +762,9 @@ To illustrate this circumstance, consider the following classes.
 		}
 	}
 
-During initialization the above ``Greeter`` class will automatically be 
-registered as the default implementation of 
-``MyCompany\MyPackage\GreeterInterface`` and is available to other objects. In 
+During initialization the above ``Greeter`` class will automatically be
+registered as the default implementation of
+``MyCompany\MyPackage\GreeterInterface`` and is available to other objects. In
 the class code of another object you might find the following lines.
 
 *Example: Using the Greeter object type* ::
@@ -779,8 +779,8 @@ the class code of another object you might find the following lines.
 		$this->greeter->sayHelloTo('Heike');
 	}
 
-If we want to use the much better object 
-``\TYPO3\OtherPackage\GreeterWithCompliments``, the solution is to let the new 
+If we want to use the much better object
+``\TYPO3\OtherPackage\GreeterWithCompliments``, the solution is to let the new
 implementation implement the same interface.
 
 *Example: The improved Greeter object type* ::
@@ -803,7 +803,7 @@ should be active and are done:
 	MyCompany\MyPackage\GreeterInterface:
 	  className: 'TYPO3\OtherPackage\GreeterWithCompliments'
 
-The the same code as above will get the improved ``GreeterWithCompliments`` 
+The the same code as above will get the improved ``GreeterWithCompliments``
 instead of the simple ``Greeter`` now.
 
 
@@ -1010,7 +1010,7 @@ the object configuration:
 	  autowiring: off
 
 Autowiring can also be switched off through the ``@autowiring off`` annotation - either
-in the DocComment block of a whole class or of a single method. For the latter the
+in the documentation block of a whole class or of a single method. For the latter the
 annotation only has an effect when used in comment blocks of a constructor or of a method
 whose name starts with ``inject``.
 
