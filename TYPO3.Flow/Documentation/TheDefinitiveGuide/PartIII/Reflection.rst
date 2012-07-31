@@ -21,9 +21,9 @@ Reflection in FLOW3
 
 FLOW3 provides a powerful extension to PHP's own basic reflection
 functionality, not only adding more capabilities, but also speeding up
-reflection massively. It makes heavy use of the DocComment annotations, this is
-not least the reason why you should exercise care about a correct formatting
-and respecting some rules when applying these.
+reflection massively. It makes heavy use of the annotations (tags) found in the
+documentation blocks, which is another important reason why you should exercise care
+about a correct formatting and respecting some rules when applying these.
 
 .. note::
 

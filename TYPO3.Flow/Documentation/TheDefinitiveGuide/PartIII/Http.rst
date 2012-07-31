@@ -261,6 +261,7 @@ nice API and validation for free!
 .. _RFC 2616: http://tools.ietf.org/html/rfc2616
 .. _REST: http://en.wikipedia.org/wiki/Representational_state_transfer
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
+.. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 
 .. [#] TYPO3\FLOW3\Core\Bootstrap
 .. [#] TYPO3\FLOW3\Http\RequestHandler

@@ -10,12 +10,12 @@ While validation itself is quite simple, embedding it into the rest of the frame
 If the user has entered a wrong value, the original page has to be re-displayed, and the user
 needs some well-readable information on what data he should enter.
 
-This chapter will explain:
+This chapter explains:
 
-* ... how to use the validators being part of FLOW3
-* ... how to write your own validators
-* ... how to use validation in your own code
-* ... how validation is embedded in the model, the persistence and the MVC layer
+* how to use the validators being part of FLOW3
+* how to write your own validators
+* how to use validation in your own code
+* how validation is embedded in the model, the persistence and the MVC layer
 
 Automatic Validation Throughout The Framework
 =============================================
