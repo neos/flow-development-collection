@@ -208,6 +208,19 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * Testcase for http://forge.typo3.org/issues/39445
+	 *
+	 * @test
+	 */
+	public function ifTargetObjectTypeIsPassedRecursivelyDoNotConvertIt() {
+		$entity = new Fixtures\TestEntity();
+		$entity->setName('Egon Olsen');
+
+		$result = $this->propertyMapper->convert(array($entity), 'array<TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity>');
+		$this->assertSame(array($entity), $result);
+	}
+
+	/**
 	 * Add and persist a test entity, and return the identifier of the newly created
 	 * entity.
 	 *

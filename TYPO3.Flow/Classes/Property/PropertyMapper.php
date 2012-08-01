@@ -111,10 +111,6 @@ class PropertyMapper {
 	 * @api
 	 */
 	public function convert($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		if (is_object($source) && ($source instanceof $targetType)) {
-			return $source;
-		}
-
 		if ($configuration === NULL) {
 			$configuration = $this->configurationBuilder->build();
 		}
@@ -155,6 +151,10 @@ class PropertyMapper {
 	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	protected function doMapping($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
+		if (is_object($source) && ($source instanceof $targetType)) {
+			return $source;
+		}
+
 		if ($source === NULL) {
 			$source = '';
 		}
