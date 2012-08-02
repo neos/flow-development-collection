@@ -213,11 +213,18 @@ class Scripts {
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
-			$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
-			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
+			if (DIRECTORY_SEPARATOR === '/') {
+				$phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+			} else {
+				$phpBinaryPathAndFilename = escapeshellarg(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+			}
+			$command = sprintf('%s -c %s -v', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()));
 			exec($command, $output, $result);
 			if ($result !== 0) {
-				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
+				if (!file_exists($phpBinaryPathAndFilename)) {
+					throw new \TYPO3\FLOW3\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.FLOW3.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
+				}
+				throw new \TYPO3\FLOW3\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by FLOW3. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
 			}
 			echo PHP_EOL . 'FLOW3: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
 			exit(1);
@@ -509,8 +516,12 @@ class Scripts {
 				$command .= sprintf('SET %s=%s&', $argumentKey, escapeshellarg($argumentValue));
 			}
 		}
-		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
-		$command .= sprintf('"%s" -c %s %s %s', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()), escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php'), escapeshellarg($commandIdentifier));
+		if (DIRECTORY_SEPARATOR === '/') {
+			$phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+		} else {
+			$phpBinaryPathAndFilename = escapeshellarg(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+		}
+		$command .= sprintf('%s -c %s %s %s', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()), escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php'), escapeshellarg($commandIdentifier));
 		$output = array();
 		exec($command, $output, $result);
 		if ($outputResults || $result !== 0) {
