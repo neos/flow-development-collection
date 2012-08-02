@@ -214,11 +214,18 @@ class Scripts {
 
 			// Check if code was updated, if not something went wrong
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
-			$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
-			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
+			if (DIRECTORY_SEPARATOR === '/') {
+				$phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+			} else {
+				$phpBinaryPathAndFilename = escapeshellarg(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+			}
+			$command = sprintf('%s -c %s -v', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()));
 			exec($command, $output, $result);
 			if ($result !== 0) {
-				throw new \TYPO3\Flow\Exception('It seems like the PHP binary "' . $settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', 1315561483);
+				if (!file_exists($phpBinaryPathAndFilename)) {
+					throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting TYPO3.Flow.core.phpBinaryPathAndFilename.', $settings['core']['phpBinaryPathAndFilename']), 1315561483);
+				}
+				throw new \TYPO3\Flow\Exception(sprintf('It seems like the PHP binary "%s" cannot be executed by Flow. The command executed was "%s" and returned the following: %s', $settings['core']['phpBinaryPathAndFilename'], $command, PHP_EOL . implode(PHP_EOL, $output)), 1354704332);
 			}
 			echo PHP_EOL . 'Flow: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
 			exit(1);
@@ -503,6 +510,7 @@ class Scripts {
 	 * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 * @api
+	 * @throws \TYPO3\Flow\Core\Booting\Exception\SubProcessException if execution of the sub process failed
 	 */
 	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE) {
 		$subRequestEnvironmentVariables = array(
@@ -521,12 +529,16 @@ class Scripts {
 				$command .= sprintf('SET %s=%s&', $argumentKey, escapeshellarg($argumentValue));
 			}
 		}
-		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
-		$command .= sprintf('"%s" -c %s %s %s', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()), escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier));
+		if (DIRECTORY_SEPARATOR === '/') {
+			$phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
+		} else {
+			$phpBinaryPathAndFilename = escapeshellarg(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+		}
+		$command .= sprintf('%s -c %s %s %s', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()), escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier));
 		$output = array();
 		exec($command, $output, $result);
 		if ($result !== 0) {
-			throw new Exception\SubProcessException('Execution of subprocess failed with exitcode "' . $result .'" and output:' . PHP_EOL . PHP_EOL . implode(PHP_EOL, $output) );
+			throw new Exception\SubProcessException(sprintf('Execution of subprocess failed with exitcode "%s" and output: %s', $result, PHP_EOL . PHP_EOL . implode(PHP_EOL, $output)));
 		}
 		if ($outputResults) {
 			echo implode(PHP_EOL, $output);
