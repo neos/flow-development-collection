@@ -229,6 +229,34 @@ directive one hour::
 	$headers = $this->request->getHttpRequest()->getHeaders();
 	$headers->setCacheControlDirective('max-age', 3600);
 
+Uri
+---
+
+The ``Http`` sub package also provides a class representing a ``Unified Resource
+Identifier``, better known as ``URI``.  The difference between a URI and a URL is
+not as complicated as you might think. "URI" is more generic, so URLs are URIs but
+not the other way around. A URI identifies a resource by its name or location.
+But it does not have to specify the representation of that resource – URLs do that.
+Consider the following examples:
+
+A URI specifying a resource:
+
+	* http://flow3.typo3.org/images/logo
+
+A URL specifying two different representations of that resource:
+
+	* http://flow3.typo3.org/images/logo.png
+	* http://flow3.typo3.org/images/logo.gif
+
+Throughout the framework we use the term ``URI`` instead of ``URL`` because it is
+more generic and more often than not, the correct term to use.
+
+All methods in FLOW3 returning a URI will do so in form of a URI object. Most
+methods requiring a URI will also accept a string representation.
+
+You are encouraged to use the ``Uri`` class for your own purposes – you'll get a
+nice API and validation for free!
+
 
 .. _RFC 2616: http://tools.ietf.org/html/rfc2616
 .. _REST: http://en.wikipedia.org/wiki/Representational_state_transfer
