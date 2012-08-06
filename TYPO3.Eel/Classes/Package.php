@@ -21,11 +21,22 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class Package extends BasePackage {
 
-	// TODO: Improve this eel expression recognizer such that "}" inside quotes
-	// does not abort the eel expression
 	const EelExpressionRecognizer = '/
-		^\${
-		([^}]*)
-		}$/x';
+			^\${(
+				(?:
+					[^}"\']*				# simple eel expression without quoted strings
+					|"[^"\\\\]*				# double quoted strings with possibly escaped double quotes
+						(?:
+							\\\\.			# escaped character (quote)
+							[^"\\\\]*		# unrolled loop following Jeffrey E.F. Friedl
+						)*"
+					|\'[^\'\\\\]*			# single quoted strings with possibly escaped single quotes
+						(?:
+							\\\\.			# escaped character (quote)
+							[^\'\\\\]*		# unrolled loop following Jeffrey E.F. Friedl
+						)*\'
+				)*
+            )}
+			$/x';
 }
 ?>

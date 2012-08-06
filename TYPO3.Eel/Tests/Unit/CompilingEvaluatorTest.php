@@ -30,7 +30,6 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest {
 	 * @test
 	 */
 	public function doubleQuotedStringLiteralVariablesAreEscaped() {
-		$this->markTestIncomplete('TODO fix this test, because the eel RegExp does not yet detect this code as valid Eel expression.');
 		$context = new Context('hidden');
 		$this->assertEvaluated('some {$context->unwrap()} string with \'quoted stuff\'', '"some {$context->unwrap()} string with \'quoted stuff\'"', $context);
 	}
