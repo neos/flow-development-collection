@@ -46,12 +46,16 @@ class Context {
 		}
 		if ($path === NULL) {
 			return NULL;
-		} else {
+		} elseif (is_string($path)) {
 			if (is_array($this->value)) {
 				return array_key_exists($path, $this->value) ? $this->value[$path] : NULL;
 			} elseif (is_object($this->value)) {
-				return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->value, $path);
+				$propertyExists = FALSE;
+				return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyInternal($this->value, $path, FALSE, $propertyExists);
 			}
+		} else {
+				// TODO Better general error handling (return NULL?)
+			throw new \Exception('Path is not of type string ' . gettype($path));
 		}
 	}
 
@@ -125,16 +129,29 @@ class Context {
 	 * @return mixed
 	 */
 	public function unwrap() {
-		if (is_array($this->value)) {
-			return array_map(function($value) {
-				if ($value instanceof Context) {
-					return $value->unwrap();
+		return $this->unwrapValue($this->value);
+	}
+
+	/**
+	 * Unwrap a value by unwrapping nested context objects
+	 *
+	 * This method is public for closure access.
+	 *
+	 * @param $value
+	 * @return mixed
+	 */
+	public function unwrapValue($value) {
+		if (is_array($value)) {
+			$self = $this;
+			return array_map(function($item) use ($self) {
+				if ($item instanceof Context) {
+					return $item->unwrap();
 				} else {
-					return $value;
+					return $self->unwrapValue($item);
 				}
-			}, $this->value);
+			}, $value);
 		} else {
-			return $this->value;
+			return $value;
 		}
 	}
 

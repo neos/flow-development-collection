@@ -25,6 +25,12 @@ class TestObject {
 	protected $property;
 
 	/**
+	 * @var boolean
+	 */
+	protected $booleanProperty;
+
+
+	/**
 	 * @return string
 	 */
 	public function getProperty() {
@@ -36,6 +42,20 @@ class TestObject {
 	 */
 	public function setProperty($property) {
 		$this->property = $property;
+	}
+
+	/**
+	 * @param boolean $booleanProperty
+	 */
+	public function setBooleanProperty($booleanProperty) {
+		$this->booleanProperty = $booleanProperty;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isBooleanProperty() {
+		return $this->booleanProperty;
 	}
 
 	/**
