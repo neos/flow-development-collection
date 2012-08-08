@@ -104,6 +104,33 @@ class InterpretedEelParser extends EelParser {
 		$result['val']->push($sub['val']);
 	}
 
+	public function ArrayLiteral__finalise(&$result) {
+		if (!isset($result['val'])) {
+			$result['val'] = new Context(array());
+		}
+	}
+
+	public function ObjectLiteralProperty_Identifier(&$result, $sub) {
+		$result['val'] = $sub['text'];
+	}
+
+	public function ObjectLiteralProperty_StringLiteral(&$result, $sub) {
+		$result['val'] = $sub['val'];
+	}
+
+	public function ObjectLiteral_ObjectLiteralProperty(&$result, $sub) {
+		if (!isset($result['val'])) {
+			$result['val'] = new Context(array());
+		}
+		$result['val']->push($sub['value']['val'], $sub['key']['val']);
+	}
+
+	public function ObjectLiteral__finalise(&$result) {
+		if (!isset($result['val'])) {
+			$result['val'] = new Context(array());
+		}
+	}
+
 	public function Disjunction_lft(&$result, $sub) {
 		$result['val'] = $sub['val'];
 	}

@@ -30,7 +30,7 @@ Term: term:BooleanLiteral !Identifier | term:NumberLiteral | term:StringLiteral 
 
 /*!* CombinedExpressions
 Expression: exp:ConditionalExpression
-SimpleExpression: term:WrappedExpression | term:NotExpression | term:ArrayLiteral | term:Term
+SimpleExpression: term:WrappedExpression | term:NotExpression | term:ArrayLiteral | term:ObjectLiteral | term:Term
 WrappedExpression: '(' < Expression > ')'
 NotExpression: (/ ! | not\s+ /) > exp:SimpleExpression
 ConditionalExpression: cond:Disjunction (< '?' > then:Expression < ':' > else:Expression)?
@@ -40,6 +40,8 @@ Comparison: lft:SumCalculation (< comp:/ == | <= | >= | < | > / > rgt:SumCalcula
 SumCalculation: lft:ProdCalculation (< op:/ \+ | \- / > rgt:ProdCalculation)*
 ProdCalculation: lft:SimpleExpression (< op:/ \/ | \* | % / > rgt:SimpleExpression)*
 ArrayLiteral: '[' < Expression? (< ',' > Expression)* > ']'
+ObjectLiteralProperty: key:(StringLiteral | Identifier) < ':' > value:Expression
+ObjectLiteral: '{' ObjectLiteralProperty? (< ',' > ObjectLiteralProperty)* > '}'
 */
 
 }

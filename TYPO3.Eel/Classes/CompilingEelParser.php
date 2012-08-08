@@ -102,6 +102,33 @@ class CompilingEelParser extends EelParser {
 		$result['code'] .= '->push(' . $sub['code'] . ')';
 	}
 
+	public function ArrayLiteral__finalise(&$result) {
+		if (!isset($result['code'])) {
+			$result['code'] = '$context->wrap(array())';
+		}
+	}
+
+	public function ObjectLiteralProperty_Identifier(&$result, $sub) {
+		$result['code'] = '\'' . $sub['text'] . '\'';
+	}
+
+	public function ObjectLiteralProperty_StringLiteral(&$result, $sub) {
+		$result['code'] = $sub['code'];
+	}
+
+	public function ObjectLiteral_ObjectLiteralProperty(&$result, $sub) {
+		if (!isset($result['code'])) {
+			$result['code'] = '$context->wrap(array())';
+		}
+		$result['code'] .= '->push(' . $sub['value']['code'] . ',' . $sub['key']['code'] . ')';
+	}
+
+	public function ObjectLiteral__finalise(&$result) {
+		if (!isset($result['code'])) {
+			$result['code'] = '$context->wrap(array())';
+		}
+	}
+
 	public function Disjunction_lft(&$result, $sub) {
 		$result['code'] = $sub['code'];
 	}

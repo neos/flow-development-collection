@@ -22,9 +22,10 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class Package extends BasePackage {
 
 	const EelExpressionRecognizer = '/
-			^\${(
+			^\${(?P<exp>
 				(?:
-					[^}"\']*				# simple eel expression without quoted strings
+					{ (?P>exp) }			# match object literal expression recursively
+					|[^}"\']+				# simple eel expression without quoted strings
 					|"[^"\\\\]*				# double quoted strings with possibly escaped double quotes
 						(?:
 							\\\\.			# escaped character (quote)

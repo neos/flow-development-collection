@@ -297,12 +297,30 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'bar' => 'baz'
 		));
 		return array(
+			// Empty array
+			array('[]', $c, array()),
 			// Simple array with integer literals
 			array('[1, 2, 3]', $c, array(1, 2, 3)),
 			// Nested array literals
 			array('[[1, 2], 3, 4]', $c, array(array(1, 2), 3, 4)),
 			// Nested expressions in array literal
 			array('[[foo[bar], 2], test("a"), 4]', $c, array(array('Hello', 2), 'test|a|', 4)),
+		);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function objectLiteralExpressions() {
+		$c = new Context(array(
+		));
+		return array(
+			// Empty object
+			array('{}', $c, array()),
+			// Simple object literal with unquoted key
+			array('{foo: "bar", bar: "baz"}', $c, array('foo' => 'bar', 'bar' => 'baz')),
+			// Simple object literal with differently quoted keys
+			array('{"foo": "bar", \'bar\': "baz"}', $c, array('foo' => 'bar', 'bar' => 'baz')),
 		);
 	}
 
@@ -515,6 +533,18 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param mixed $result
 	 */
 	public function arrayLiteralsCanBeParsed($expression, $context, $result) {
+		$this->assertEvaluated($result, $expression, $context);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider objectLiteralExpressions
+	 *
+	 * @param string $expression
+	 * @param \TYPO3\Eel\Context $context
+	 * @param mixed $result
+	 */
+	public function objectLiteralsCanBeParsed($expression, $context, $result) {
 		$this->assertEvaluated($result, $expression, $context);
 	}
 

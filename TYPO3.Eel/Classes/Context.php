@@ -159,13 +159,18 @@ class Context {
 	 * Is used to build array instances inside the evaluator.
 	 *
 	 * @param mixed $value
+	 * @param string $key
 	 * @return \TYPO3\Eel\Context
 	 */
-	public function push($value) {
+	public function push($value, $key = NULL) {
 		if (!is_array($this->value)) {
 			throw new EvaluationException('Array operation on non-array context', 1344418485);
 		}
-		$this->value[] = $value;
+		if ($key === NULL) {
+			$this->value[] = $value;
+		} else {
+			$this->value[$key] = $value;
+		}
 		return $this;
 	}
 
