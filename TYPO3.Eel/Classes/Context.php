@@ -54,8 +54,7 @@ class Context {
 				return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyInternal($this->value, $path, FALSE, $propertyExists);
 			}
 		} else {
-				// TODO Better general error handling (return NULL?)
-			throw new \Exception('Path is not of type string ' . gettype($path));
+			throw new EvaluationException('Path is not of type string ' . gettype($path), 1344418464);
 		}
 	}
 
@@ -78,26 +77,25 @@ class Context {
 	 * @throws \Exception
 	 */
 	public function call($method, array $arguments = array()) {
+		if ($this->value === NULL) {
+			return NULL;
+		} elseif (is_object($this->value)) {
+			$callback = array($this->value, $method);
+		} elseif (is_array($this->value)) {
+			if (!array_key_exists($method, $this->value)) {
+				throw new EvaluationException('Array has no function "' . $method . '"', 1344350459);
+			}
+			$callback = $this->value[$method];
+		} else {
+			throw new EvaluationException('Needs object or array to call method "' . $method . '", but has ' . gettype($this->value), 1344350454);
+		}
+		if (!is_callable($callback)) {
+			throw new EvaluationException('Method "' . $method . '" is not callable', 1344350374);
+		}
 		for ($i = 0; $i < count($arguments); $i++) {
 			if ($arguments[$i] instanceof Context) {
 				$arguments[$i] = $arguments[$i]->unwrap();
 			}
-		}
-		if (is_object($this->value)) {
-			$callback = array($this->value, $method);
-		} elseif (is_array($this->value)) {
-			if (!array_key_exists($method, $this->value)) {
-					// TODO Return NULL or throw Exception?
-				return NULL;
-			}
-			$callback = $this->value[$method];
-		} else {
-				// TODO Better general error handling (return NULL?)
-			throw new \Exception('Needs object or array to call method, but has ' . gettype($this->value));
-		}
-		if (!is_callable($callback)) {
-				// TODO Better general error handling (return NULL?)
-			throw new \Exception('Method "' . $method . '" does not exist');
 		}
 		return call_user_func_array($callback, $arguments);
 	}
@@ -165,7 +163,7 @@ class Context {
 	 */
 	public function push($value) {
 		if (!is_array($this->value)) {
-			throw new \Exception('Array operation on non-array context');
+			throw new EvaluationException('Array operation on non-array context', 1344418485);
 		}
 		$this->value[] = $value;
 		return $this;

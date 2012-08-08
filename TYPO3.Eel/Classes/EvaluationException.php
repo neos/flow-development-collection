@@ -11,6 +11,10 @@ namespace TYPO3\Eel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-class Exception extends \TYPO3\FLOW3\Exception {
+/**
+ * Some exception that occurred during evaluation of an expression
+ */
+class EvaluationException extends \TYPO3\FLOW3\Exception {
+
 }
 ?>

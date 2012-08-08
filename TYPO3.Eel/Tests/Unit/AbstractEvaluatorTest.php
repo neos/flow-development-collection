@@ -278,6 +278,8 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('pow(2, count(arr) + 1)', $c, 16),
 			// Nest method calls and object paths
 			array('funcs.dup(arr).b', $c, 4),
+			// Method call on NULL value returns NULL
+			array('unknwn.func()', $c, NULL),
 		);
 	}
 
@@ -454,6 +456,34 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function methodCallExpressionsCanBeParsed($expression, $context, $result) {
 		$this->assertEvaluated($result, $expression, $context);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Eel\EvaluationException
+	 */
+	public function methodCallOfUndefinedFunctionThrowsException() {
+		$c = new Context(array(
+			'arr' => array(
+				'func' => function($arg) {
+					return 42;
+				}
+			)
+		));
+		$this->assertEvaluated(NULL, 'arr.funk("title")', $c);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Eel\EvaluationException
+	 */
+	public function methodCallOfUnknownMethodThrowsException() {
+		$o = new \TYPO3\Eel\Tests\Unit\Fixtures\TestObject();
+
+		$c = new Context(array(
+			'context' => $o
+		));
+		$this->assertEvaluated(NULL, 'context.callYou("title")', $c);
 	}
 
 	/**
