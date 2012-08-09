@@ -15,6 +15,10 @@ TYPO3:
     configuration:
       compileConfigurationFiles: FALSE
 
+    core:
+      subRequestEnvironmentVariables:
+        XDEBUG_CONFIG: 'idekey=FLOW3_SUBREQUEST remote_port=9001'
+
     error:
       exceptionHandler:
         className: 'TYPO3\FLOW3\Error\DebugExceptionHandler'

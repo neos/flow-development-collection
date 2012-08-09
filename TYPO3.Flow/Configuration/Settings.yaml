@@ -36,6 +36,9 @@ TYPO3:
       # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
       phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
 
+      # optional list of variables (key: value) that will be set for all FLOW3 CLI sub requests
+      subRequestEnvironmentVariables: []
+
     error:
 
       exceptionHandler:

@@ -493,12 +493,24 @@ class Scripts {
 	 * @api
 	 */
 	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE) {
-		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
-		if (DIRECTORY_SEPARATOR === '/') {
-			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . escapeshellarg(FLOW3_PATH_ROOT) . ' ' . 'FLOW3_CONTEXT=' . escapeshellarg($settings['core']['context']) . ' "' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
-		} else {
-			$command = 'SET FLOW3_ROOTPATH=' . escapeshellarg(FLOW3_PATH_ROOT) . '&' . 'SET FLOW3_CONTEXT=' . escapeshellarg($settings['core']['context']) . '&"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' ' . escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
+		$subRequestEnvironmentVariables = array(
+			'FLOW3_ROOTPATH' => FLOW3_PATH_ROOT,
+			'FLOW3_CONTEXT' => $settings['core']['context']
+		);
+		if (isset($settings['core']['subRequestEnvironmentVariables'])) {
+			$subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
 		}
+
+		$command = '';
+		foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
+			if (DIRECTORY_SEPARATOR === '/') {
+				$command .= sprintf('%s=%s ', $argumentKey, escapeshellarg($argumentValue));
+			} else {
+				$command .= sprintf('SET %s=%s&', $argumentKey, escapeshellarg($argumentValue));
+			}
+		}
+		$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
+		$command .= sprintf('"%s" -c %s %s %s', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()), escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php'), escapeshellarg($commandIdentifier));
 		$output = array();
 		exec($command, $output, $result);
 		if ($outputResults || $result !== 0) {
@@ -506,7 +518,6 @@ class Scripts {
 		}
 		return $result === 0;
 	}
-
 }
 
 ?>
