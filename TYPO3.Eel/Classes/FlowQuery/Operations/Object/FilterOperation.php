@@ -158,10 +158,46 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 			case '*=':
 				return strpos($value, $operand) !== FALSE;
 			case 'instanceof':
-				return ($value instanceof $operand);
+				if ($this->operandIsSimpleType($operand)) {
+					return $this->handleSimpleTypeOperand($operand, $value);
+				} else {
+					return ($value instanceof $operand);
+				}
 			default:
 				return ($value !== NULL);
 		}
+	}
+
+	/**
+	 * @param string $type
+	 * @return boolean TRUE if operand is a simple type (object, array, string, ...); i.e. everything which is NOT a class name
+	 */
+	protected function operandIsSimpleType($type) {
+		return $type === 'object' || $type === 'array' || \TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type);
+	}
+
+	/**
+	 * @param string $operand
+	 * @param string $value
+	 * @return boolean TRUE if $valus if of type $operand; FALSE otherwise
+	 */
+	protected function handleSimpleTypeOperand($operand, $value) {
+		$operand = \TYPO3\FLOW3\Utility\TypeHandling::normalizeType($operand);
+		if ($operand === 'object') {
+			return is_object($value);
+		} elseif ($operand === 'string') {
+			return is_string($value);
+		} elseif ($operand === 'integer') {
+			return is_integer($value);
+		} elseif ($operand === 'boolean') {
+			return is_bool($value);
+		} elseif ($operand === 'float') {
+			return is_float($value);
+		} elseif ($operand === 'array') {
+			return is_array($value);
+		}
+
+		return FALSE;
 	}
 }
 ?>

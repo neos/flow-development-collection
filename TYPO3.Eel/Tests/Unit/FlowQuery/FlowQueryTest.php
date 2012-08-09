@@ -90,6 +90,46 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'filter' => '[  instanceof \stdClass  ]',
 				'expectedResult' => array($myObject)
 			),
+			'Instanceof test works (with test for object)' => array(
+				'sourceObjects' => array($myObject),
+				'filter' => '[  instanceof object  ]',
+				'expectedResult' => array($myObject)
+			),
+			'Instanceof test works (with test for string)' => array(
+				'sourceObjects' => array('myString'),
+				'filter' => '[  instanceof string  ]',
+				'expectedResult' => array('myString')
+			),
+
+			'Instanceof test works (with test for integer)' => array(
+				'sourceObjects' => array(42, "42", 400, 'foo'),
+				'filter' => '[  instanceof integer  ]',
+				'expectedResult' => array(42, 400)
+			),
+
+			'Instanceof test works (with test for integer 2)' => array(
+				'sourceObjects' => array(42, "42", 400, 'foo'),
+				'filter' => '[  instanceof int  ]',
+				'expectedResult' => array(42, 400)
+			),
+
+			'Instanceof test works (with test for boolean)' => array(
+				'sourceObjects' => array(false, '', true),
+				'filter' => '[  instanceof boolean  ]',
+				'expectedResult' => array(false, true)
+			),
+
+			'Instanceof test works (with test for float)' => array(
+				'sourceObjects' => array(false, 42, 42.5, true),
+				'filter' => '[  instanceof float  ]',
+				'expectedResult' => array(42.5)
+			),
+
+			'Instanceof test works (with test for array)' => array(
+				'sourceObjects' => array(false, 42, 42.5, true, array("foo")),
+				'filter' => '[  instanceof array  ]',
+				'expectedResult' => array(array("foo"))
+			),
 
 			'Begin query match' => array(
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
