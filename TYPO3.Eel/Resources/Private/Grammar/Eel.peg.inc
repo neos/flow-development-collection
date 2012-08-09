@@ -36,7 +36,7 @@ NotExpression: (/ ! | not\s+ /) > exp:SimpleExpression
 ConditionalExpression: cond:Disjunction (< '?' > then:Expression < ':' > else:Expression)?
 Disjunction: lft:Conjunction (< / \|\| | or\s+ / > rgt:Conjunction)*
 Conjunction: lft:Comparison (< / && | and\s+ / > rgt:Comparison)*
-Comparison: lft:SumCalculation (< comp:/ == | <= | >= | < | > / > rgt:SumCalculation)?
+Comparison: lft:SumCalculation (< comp:/ == | != | <= | >= | < | > / > rgt:SumCalculation)?
 SumCalculation: lft:ProdCalculation (< op:/ \+ | \- / > rgt:ProdCalculation)*
 ProdCalculation: lft:SimpleExpression (< op:/ \/ | \* | % / > rgt:SimpleExpression)*
 ArrayLiteral: '[' < Expression? (< ',' > Expression)* > ']'

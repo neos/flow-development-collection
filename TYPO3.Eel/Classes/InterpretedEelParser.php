@@ -163,6 +163,9 @@ class InterpretedEelParser extends EelParser {
 		case '==':
 			$result['val'] = $lval === $rval;
 			break;
+		case '!=':
+			$result['val'] = $lval !== $rval;
+			break;
 		case '<':
 			$result['val'] = $lval < $rval;
 			break;
@@ -175,6 +178,8 @@ class InterpretedEelParser extends EelParser {
 		case '>=':
 			$result['val'] = $lval >= $rval;
 			break;
+		default:
+			throw new ParserException('Unknown comparison operator "' . $result['comp'] . '"', 1344512487);
 		}
 	}
 
@@ -245,7 +250,6 @@ class InterpretedEelParser extends EelParser {
 			$result['val'] = $sub['val'];
 		}
 	}
-
 
 	/**
 	 * If $value is an instance of Context, the result of unwrap()

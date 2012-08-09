@@ -173,6 +173,9 @@ class CompilingEelParser extends EelParser {
 		case '==':
 			$result['code'] = '(' . $lval . ')===(' . $rval . ')';
 			break;
+		case '!=':
+			$result['code'] = '(' . $lval . ')!==(' . $rval . ')';
+			break;
 		case '<':
 			$result['code'] = '(' . $lval . ')<(' . $rval . ')';
 			break;
@@ -185,6 +188,8 @@ class CompilingEelParser extends EelParser {
 		case '>=':
 			$result['code'] = '(' . $lval . ')>=(' . $rval . ')';
 			break;
+		default:
+			throw new ParserException('Unexpected comparison operator "' . $result['comp'] . '"', 1344512571);
 		}
 	}
 
@@ -209,6 +214,8 @@ class CompilingEelParser extends EelParser {
 		case '-':
 			$result['code'] = $result['code'] . '-' .  $rval;
 			break;
+		default:
+			throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512602);
 		}
 	}
 
@@ -234,6 +241,8 @@ class CompilingEelParser extends EelParser {
 		case '%':
 			$result['code'] = $lval . '%' . $rval;
 			break;
+		default:
+			throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512641);
 		}
 	}
 

@@ -128,6 +128,14 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('(0 > 1) < (0 < 1)', $c, TRUE),
 			// Comparisons and variables
 			array('answer > 1', $c, TRUE),
+			array('answer==  42', $c, TRUE),
+			// Less than equal and greater than equal
+			array('1<= 0', $c, FALSE),
+			array('1 >=1', $c, TRUE),
+			// Inequality
+			array('1!=1', $c, FALSE),
+			array('1!=true', $c, TRUE),
+			array('answer != 7', $c, TRUE),
 		);
 	}
 
