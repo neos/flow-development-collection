@@ -26,7 +26,7 @@ class TestObjectArgument {
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="EmailAddress")
+	 * @FLOW3\Validate(type="EmailAddress",validationGroups={"Controller","Default","validatedGroup"})
 	 */
 	protected $emailAddress;
 

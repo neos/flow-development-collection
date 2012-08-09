@@ -223,6 +223,38 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function notValidatedGroupObjectArgumentsAreNotValidated() {
+		$arguments = array(
+			'argument' => array(
+				'name' => 'Foo',
+				'emailAddress' => '-invalid-'
+			)
+		);
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/notvalidatedgroupobject', 'POST', $arguments);
+
+		$expectedResult = '-invalid-';
+		$this->assertEquals($expectedResult, $response->getContent());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validatedGroupObjectArgumentsAreValidated() {
+		$arguments = array(
+			'argument' => array(
+				'name' => 'Foo',
+				'emailAddress' => '-invalid-'
+			)
+		);
+		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
+
+		$expectedResult = 'An error occurred while trying to call TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL . 'Error for argument.emailAddress:  Please specify a valid email address.' . PHP_EOL;
+		$this->assertEquals($expectedResult, $response->getContent());
+	}
+
+	/**
 	 * Data provider for argumentTests()
 	 *
 	 * @return array

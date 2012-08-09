@@ -208,12 +208,19 @@ class ActionController extends AbstractController {
 	 * @return void
 	 */
 	protected function initializeActionMethodValidators() {
+		$validationGroups = array('Default', 'Controller');
+		$validationGroupsAnnotation = $this->reflectionService->getMethodAnnotation(get_class($this), $this->actionMethodName, 'TYPO3\FLOW3\Annotations\ValidationGroups');
+
+		if ($validationGroupsAnnotation !== NULL) {
+			$validationGroups = $validationGroupsAnnotation->validationGroups;
+		}
+
 		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
 
 		foreach ($this->arguments as $argument) {
 			$validator = $parameterValidators[$argument->getName()];
 
-			$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType(), array('Default', 'Controller'));
+			$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType(), $validationGroups);
 			if (count($baseValidatorConjunction) > 0) {
 				$validator->addValidator($baseValidatorConjunction);
 			}

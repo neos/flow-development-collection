@@ -53,6 +53,24 @@ class ActionControllerTestBController extends \TYPO3\FLOW3\Mvc\Controller\Action
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+	 * @FLOW3\ValidationGroups({"notValidatedGroup"})
+	 * @return string
+	 */
+	public function notValidatedGroupObjectAction(TestObjectArgument $argument) {
+		return $argument->getEmailAddress();
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument $argument
+	 * @FLOW3\ValidationGroups({"validatedGroup"})
+	 * @return string
+	 */
+	public function validatedGroupObjectAction(TestObjectArgument $argument) {
+		return $argument->getEmailAddress();
+	}
+
+	/**
 	 * @param string $argument
 	 * @return string
 	 */
