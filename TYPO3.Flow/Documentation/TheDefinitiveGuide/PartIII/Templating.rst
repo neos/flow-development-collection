@@ -268,6 +268,7 @@ All boolean expressions have the form ``X <comparator> Y``, where:
 * *X* and *Y* are one of the following:
 
   * a number (integer or float)
+  * a string (in single or double quotes)
   * a JSON array
   * a ViewHelper
   * an Object Accessor (this is probably the most used example)
