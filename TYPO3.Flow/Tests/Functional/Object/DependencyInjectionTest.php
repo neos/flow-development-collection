@@ -93,7 +93,7 @@ class DependencyInjectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function injectionInParentClassIsDoneOnlyOnceOnCreationOfObject() {
+	public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce() {
 		$prototypeDsub = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassDsub');
 		$this->assertSame(1, $prototypeDsub->injectionRuns);
 	}
