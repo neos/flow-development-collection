@@ -144,8 +144,8 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$reflectionServiceMock = $this->getMock('\TYPO3\FLOW3\Reflection\ReflectionService');
 		$reflectionServiceMock
 				->expects($this->once())
-				->method('getPropertyNamesByTag')
-				->with(__CLASS__, 'inject')
+				->method('getPropertyNamesByAnnotation')
+				->with(__CLASS__, 'TYPO3\FLOW3\Annotations\Inject')
 				->will($this->returnValue(array('dummyProperty')));
 
 		$reflectionServiceMock

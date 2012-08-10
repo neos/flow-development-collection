@@ -392,7 +392,7 @@ class ConfigurationBuilder {
 				}
 			}
 
-			foreach ($this->reflectionService->getPropertyNamesByTag($className, 'inject') as $propertyName) {
+			foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, 'TYPO3\FLOW3\Annotations\Inject') as $propertyName) {
 				if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
 					$exceptionMessage = 'The property "' . $propertyName . '" in class "' . $className . '" must not be private when annotated for injection.';
 					throw new \TYPO3\FLOW3\Object\Exception($exceptionMessage, 1328109641);
