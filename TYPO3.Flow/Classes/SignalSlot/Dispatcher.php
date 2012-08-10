@@ -145,5 +145,15 @@ class Dispatcher {
 		return (isset($this->slots[$signalClassName][$signalName])) ? $this->slots[$signalClassName][$signalName] : array();
 	}
 
+	/**
+	 * Returns all signals with its slots
+	 *
+	 * @return array An array of arrays with slot information
+	 * @api
+	 */
+	public function getSignals() {
+		return $this->slots;
+	}
+
 }
 ?>

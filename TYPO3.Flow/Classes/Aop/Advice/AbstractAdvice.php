@@ -11,6 +11,7 @@ namespace TYPO3\FLOW3\Aop\Advice;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Base class for Advices.
@@ -29,6 +30,12 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 	 * @var string
 	 */
 	protected $adviceMethodName;
+
+	/**
+	 * A reference to the SingalSlot Dispatcher
+	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
+	 */
+	protected $dispatcher;
 
 	/**
 	 * A reference to the Object Manager
@@ -77,6 +84,8 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 		$adviceObject = $this->objectManager->get($this->aspectObjectName);
 		$methodName = $this->adviceMethodName;
 		$adviceObject->$methodName($joinPoint);
+
+		$this->emitAdviceInvoked($adviceObject, $methodName, $joinPoint);
 	}
 
 	/**
@@ -95,6 +104,25 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 	 */
 	public function getAdviceMethodName() {
 		return $this->adviceMethodName;
+	}
+
+	/**
+	 * Emits a signal when an Advice is invoked
+	 *
+	 * The advice is not proxyable, so the signal is dispatched manually here.
+	 *
+	 * @param object $aspectObject
+	 * @param string $methodName
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
+	 * @return void
+	 * @FLOW3\Signal
+	 */
+	protected function emitAdviceInvoked($aspectObject, $methodName, $joinPoint) {
+		if ($this->dispatcher === NULL) {
+			$this->dispatcher = $this->objectManager->get('TYPO3\FLOW3\SignalSlot\Dispatcher');
+		}
+
+		$this->dispatcher->dispatch('TYPO3\FLOW3\Aop\Advice\AbstractAdvice', 'adviceInvoked', array($aspectObject, $methodName, $joinPoint));
 	}
 }
 
