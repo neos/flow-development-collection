@@ -360,8 +360,8 @@ class ConfigurationBuilder {
 			$properties = $objectConfiguration->getProperties();
 
 			foreach (get_class_methods($className) as $methodName) {
-				if (substr($methodName, 0, 6) === 'inject') {
-					$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
+				if (strlen($methodName) > 6 && substr($methodName, 0, 6) === 'inject' && $methodName[6] === strtoupper($methodName[6])) {
+					$propertyName = lcfirst(substr($methodName, 6));
 
 					$autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, 'TYPO3\FLOW3\Annotations\Autowiring');
 					if ($autowiringAnnotation !== NULL && $autowiringAnnotation->enabled === FALSE) {
