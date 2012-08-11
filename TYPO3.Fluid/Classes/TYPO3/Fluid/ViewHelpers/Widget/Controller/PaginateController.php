@@ -63,7 +63,7 @@ class PaginateController extends \TYPO3\Fluid\Core\Widget\AbstractWidgetControll
 	/**
 	 * @return void
 	 */
-	public function initializeAction() {
+	protected function initializeAction() {
 		$this->objects = $this->widgetConfiguration['objects'];
 		$this->configuration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], TRUE);
 		$this->numberOfPages = ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);

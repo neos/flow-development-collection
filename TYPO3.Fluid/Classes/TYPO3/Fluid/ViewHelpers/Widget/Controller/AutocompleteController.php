@@ -23,7 +23,7 @@ class AutocompleteController extends \TYPO3\Fluid\Core\Widget\AbstractWidgetCont
 	/**
 	 * @return void
 	 */
-	public function initializeAction() {
+	protected function initializeAction() {
 		$this->configuration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], TRUE);
 	}
 
