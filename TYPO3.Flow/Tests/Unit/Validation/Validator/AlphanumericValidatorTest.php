@@ -45,6 +45,13 @@ class AlphanumericValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	/**
 	 * @test
 	 */
+	public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericStringWithUmlauts() {
+		$this->assertFalse($this->validator->validate('12ssDF34daweidfäøüößØLīgaestevimīlojuņščļœøÅ')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function alphanumericValidatorReturnsErrorsForAStringWithSpecialCharacters() {
 		$this->assertTrue($this->validator->validate('adsf%&/$jklsfdö')->hasErrors());
 	}

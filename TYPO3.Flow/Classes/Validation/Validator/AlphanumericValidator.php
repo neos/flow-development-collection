@@ -22,7 +22,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class AlphanumericValidator extends AbstractValidator {
 
 	/**
-	 * The given $value is valid if it is an alphanumeric string, which is defined as [a-zA-Z0-9]
+	 * The given $value is valid if it is an alphanumeric string, which is defined as [[:alnum:]]
 	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
@@ -30,8 +30,8 @@ class AlphanumericValidator extends AbstractValidator {
 	 * @api
 	 */
 	protected function isValid($value) {
-		if (!is_string($value) || preg_match('/^[a-z0-9]*$/i', $value) !== 1) {
-			$this->addError('Only the characters a to z and numbers are allowed.', 1221551320);
+		if (!is_string($value) || preg_match('/^[[:alnum:]]*$/u', $value) !== 1) {
+			$this->addError('Only regular characters (a to z, umlauts, ...) and numbers are allowed.', 1221551320);
 		}
 	}
 }
