@@ -89,12 +89,15 @@ abstract class AbstractFormFieldViewHelper extends \TYPO3\Fluid\ViewHelpers\Form
 
 		if ($this->hasArgument('value')) {
 			$value = $this->arguments['value'];
-		} elseif ($this->hasMappingErrorOccured()) {
-			$value = $this->getLastSubmittedFormData();
-		} elseif ($this->isObjectAccessorMode() && $this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObject')) {
+		} elseif ($this->isObjectAccessorMode()) {
+			if ($this->hasMappingErrorOccured()) {
+				$value = $this->getLastSubmittedFormData();
+			} else {
+				$value = $this->getPropertyValue();
+			}
 			$this->addAdditionalIdentityPropertiesIfNeeded();
-			$value = $this->getPropertyValue();
 		}
+
 		if ($convertObjects && is_object($value)) {
 			$identifier = $this->persistenceManager->getIdentifierByObject($value);
 			if ($identifier !== NULL) {
