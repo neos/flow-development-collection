@@ -43,13 +43,10 @@ class EmailAddressValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	public function validAddresses() {
 		return array(
 			array('andreas.foerthner@netlogix.de'),
-			array('user@localhost'),
 			array('user@localhost.localdomain'),
 			array('info@guggenheim.museum'),
 			array('just@test.invalid'),
-			array('just+spam@test.de'),
-			array('just+spam@192.168.249.100'),
-			array('local@192.168.0.2')
+			array('just+spam@test.de')
 		);
 	}
 
