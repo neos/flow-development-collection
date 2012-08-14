@@ -26,7 +26,7 @@ store a new blog once the index action is called:
 
 	// ...
 
-	class SetupController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+	class SetupController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 		/**
 		 * @FLOW3\Inject
@@ -150,7 +150,7 @@ Now let us add some more code to *.../Classes/Controller/PostController.php*:
 
 	...
 
-	class PostController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+	class PostController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 		/**
 		 * @var \TYPO3\Blog\Domain\Repository\BlogRepository

@@ -243,8 +243,8 @@ of our ``PostController``::
 	$this->addFlashMessage('Created a new post.');
 
 Flash messages are a great way to display success or error messages to
-the user. And because they are so useful, the action controller provides the
-``FlashMessageContainer`` and Fluid offers the ``flashMessages`` view helper.
+the user. And because they are so useful, FLOW3 provides a ``FlashMessageContainer``
+with some helper methods and Fluid offers the ``flashMessages`` view helper.
 Therefore, if you create a new post, you'll see the message *Your new post was
 created* at the top of your blog index on the next hit.
 
@@ -407,7 +407,7 @@ post object. The form's elements are named after the class properties of the
 		$blog = $this->blogRepository->findActive();
 		$blog->addPost($newPost);
 		$this->postRepository->add($newPost);
-		$this->flashMessageContainer->add('Created a new post.');
+		$this->addFlashMessage('Created a new post.');
 		$this->redirect('index');
 	}
 
