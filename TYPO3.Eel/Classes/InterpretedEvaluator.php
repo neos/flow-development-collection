@@ -30,13 +30,15 @@ class InterpretedEvaluator implements EelEvaluatorInterface {
 		$parser = new InterpretedEelParser($expression, $context);
 		$res = $parser->match_Expression();
 
-		if ($parser->pos !== strlen($expression)) {
-			throw new Exception(sprintf('The Eel Expression "%s" could not be parsed. Error at character %d.', $expression, $parser->pos+1), 1327682383);
+		if ($res === FALSE) {
+			throw new ParserException(sprintf('Expression "%s" could not be parsed.', $expression), 1344514198);
+		} elseif ($parser->pos !== strlen($expression)) {
+			throw new ParserException(sprintf('Expression "%s" could not be parsed. Error starting at character %d: "%s".', $expression, $parser->pos, substr($expression, $parser->pos)), 1344514188);
+		} elseif (!array_key_exists('val', $res)) {
+			throw new ParserException(sprintf('Parser error, no val in result %s ', json_encode($res)), 1344514204);
 		}
 
-		if (!array_key_exists('val', $res)) {
-			throw new \Exception('No value in result: ' . json_encode($res));
-		} else if ($res['val'] instanceof Context) {
+		if ($res['val'] instanceof Context) {
 			return $res['val']->unwrap();
 		} else {
 			return $res['val'];

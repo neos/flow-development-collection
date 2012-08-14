@@ -57,12 +57,12 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 		$parser = new CompilingEelParser($expression);
 		$res = $parser->match_Expression();
 
-		if ($parser->pos !== strlen($expression)) {
-			throw new Exception(sprintf('Expression "%s" could not be parsed. Error at character %d.', $expression, $parser->pos + 1), 1327682383);
-		}
-
-		if (!array_key_exists('code', $res)) {
-			throw new Exception(sprintf('Parser error, no code in result %s ', json_encode($res)), 1334491498);
+		if ($res === FALSE) {
+			throw new ParserException(sprintf('Expression "%s" could not be parsed.', $expression), 1344513194);
+		} elseif ($parser->pos !== strlen($expression)) {
+			throw new ParserException(sprintf('Expression "%s" could not be parsed. Error starting at character %d: "%s".', $expression, $parser->pos, substr($expression, $parser->pos)), 1327682383);
+		} elseif (!array_key_exists('code', $res)) {
+			throw new ParserException(sprintf('Parser error, no code in result %s ', json_encode($res)), 1334491498);
 		}
 		return $res['code'];
 	}

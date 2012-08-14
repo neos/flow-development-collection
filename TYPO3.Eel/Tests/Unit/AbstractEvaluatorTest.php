@@ -514,14 +514,6 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Eel\Exception
-	 */
-	public function invalidExpressionsThrowExceptions() {
-		$this->assertEvaluated(FALSE, 'NULL ---invalid---', new Context());
-	}
-
-	/**
-	 * @test
 	 * @dataProvider booleanExpressions
 	 *
 	 * @param string $expression
@@ -566,6 +558,33 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function conditionalOperatorsCanBeParsed($expression, $context, $result) {
 		$this->assertEvaluated($result, $expression, $context);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function invalidExpressions() {
+		return array(
+			// Completely insane expression
+			array('NULL ---invalid---'),
+			// Wrong parens
+			array('a * (5 + a))'),
+			array('(a * 5 + b'),
+			// Incomplete object path
+			array('a.b. < 1'),
+			// Invalid quoted strings
+			array('"a "super\" \'thing\'"'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidExpressions
+	 *
+	 * @expectedException TYPO3\Eel\ParserException
+	 */
+	public function invalidExpressionsThrowExceptions($expression) {
+		$this->assertEvaluated(FALSE, $expression, new Context());
 	}
 
 	/**
