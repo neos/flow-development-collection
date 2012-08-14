@@ -11,11 +11,14 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Represents a HTTP Cookie as of RFC 2965
  *
  * @api
  * @see http://tools.ietf.org/html/rfc2965
+ * @FLOW3\Proxy(false)
  */
 class Cookie {
 
