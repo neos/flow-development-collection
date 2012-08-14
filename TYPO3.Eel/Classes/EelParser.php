@@ -641,7 +641,7 @@ function match_Conjunction ($stack = array()) {
 }
 
 
-/* Comparison: lft:SumCalculation (< comp:/ == | <= | >= | < | > / > rgt:SumCalculation)? */
+/* Comparison: lft:SumCalculation (< comp:/ == | != | <= | >= | < | > / > rgt:SumCalculation)? */
 protected $match_Comparison_typestack = array('Comparison');
 function match_Comparison ($stack = array()) {
 	$matchrule = "Comparison"; $result = $this->construct($matchrule, $matchrule, null);
@@ -659,7 +659,7 @@ function match_Comparison ($stack = array()) {
 		do {
 			if (( $subres = $this->whitespace(  ) ) !== FALSE) { $result["text"] .= $subres; }
 			$stack[] = $result; $result = $this->construct( $matchrule, "comp" ); 
-			if (( $subres = $this->rx( '/ == | <= | >= | < | > /' ) ) !== FALSE) {
+			if (( $subres = $this->rx( '/ == | != | <= | >= | < | > /' ) ) !== FALSE) {
 				$result["text"] .= $subres;
 				$subres = $result; $result = array_pop($stack);
 				$this->store( $result, $subres, 'comp' );
