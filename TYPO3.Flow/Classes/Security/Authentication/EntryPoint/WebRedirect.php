@@ -11,6 +11,7 @@ namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Http\Request;
 use TYPO3\FLOW3\Http\Response;
 
@@ -20,26 +21,61 @@ use TYPO3\FLOW3\Http\Response;
 class WebRedirect extends AbstractEntryPoint {
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Mvc\Routing\UriBuilder
+	 */
+	protected $uriBuilder;
+
+	/**
 	 * Starts the authentication: Redirect to login page
 	 *
 	 * @param \TYPO3\FLOW3\Http\Request $request The current request
 	 * @param \TYPO3\FLOW3\Http\Response $response The current response
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthentication(Request $request, Response $response) {
-		if (!isset($this->options['uri'])) {
-			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing.', 1237282583);
+		if (isset($this->options['routeValues'])) {
+			$routeValues = $this->options['routeValues'];
+			if (!is_array($routeValues)) {
+				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException(sprintf('The configuration for the WebRedirect authentication entry point is incorrect. "routeValues" must be an array, got "%s".', gettype($routeValues)), 1345040415);
+			}
+			$actionRequest = $request->createActionRequest();
+			$this->uriBuilder->setRequest($actionRequest);
+
+			$actionName = $this->extractRouteValue($routeValues, '@action');
+			$controllerName = $this->extractRouteValue($routeValues, '@controller');
+			$packageKey = $this->extractRouteValue($routeValues, '@package');
+			$subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
+			$uri = $this->uriBuilder->setCreateAbsoluteUri(TRUE)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
+		} elseif (isset($this->options['uri'])) {
+			$uri = (strpos('://', $this->options['uri'] !== FALSE)) ? $this->options['uri'] : $request->getBaseUri() . $this->options['uri'];
+		} else {
+			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing. You need to specify either the target "uri" or "routeValues".', 1237282583);
 		}
 
-		$plainUri = (strpos('://', $this->options['uri'] !== FALSE)) ? $this->options['uri'] : $request->getBaseUri() . $this->options['uri'];
-		$escapedUri = htmlentities($plainUri, ENT_QUOTES, 'utf-8');
-
-		$response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . $escapedUri . '"/></head></html>');
+		$response->setContent(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8')));
 		$response->setStatus(303);
-		$response->setHeader('Location', $plainUri);
+		$response->setHeader('Location', $uri);
 	}
+
+	/**
+	 * Returns the entry $key from the array $routeValues removing the original array item.
+	 * If $key does not exist, NULL is returned.
+	 *
+	 * @param array $routeValues
+	 * @param string $key
+	 * @return mixed the specified route value or NULL if it is not set
+	 */
+	protected function extractRouteValue(array &$routeValues, $key) {
+		if (!isset($routeValues[$key])) {
+			return NULL;
+		}
+		$routeValue = $routeValues[$key];
+		unset($routeValues[$key]);
+		return $routeValue;
+	}
+
 }
 
 ?>

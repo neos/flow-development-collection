@@ -26,30 +26,71 @@ class WebRedirectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$request = Request::create(new Uri('http://robertlemke.com/admin'));
 		$response = new Response();
 
 		$entryPoint = new WebRedirect();
 		$entryPoint->setOptions(array('something' => 'irrelevant'));
 
-		$entryPoint->startAuthentication($request->getHttpRequest(), $response);
+		$entryPoint->startAuthentication($request, $response);
 	}
 
 	/**
 	 * @test
 	 */
-	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+	public function startAuthenticationSetsTheCorrectValuesInTheResponseObjectIfUriIsSpecified() {
+		$request = Request::create(new Uri('http://robertlemke.com/admin'));
 		$response = new Response();
 
 		$entryPoint = new WebRedirect();
 		$entryPoint->setOptions(array('uri' => 'some/page'));
 
-		$entryPoint->startAuthentication($request->getHttpRequest(), $response);
+		$entryPoint->startAuthentication($request, $response);
 
 		$this->assertEquals('303', substr($response->getStatus(), 0, 3));
 		$this->assertEquals('http://robertlemke.com/some/page', $response->getHeader('Location'));
-		$this->assertEquals(array('uri' => 'some/page'), $entryPoint->getOptions());
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\FLOW3\Security\Exception\MissingConfigurationException
+	 */
+	public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid() {
+		$request = Request::create(new Uri('http://robertlemke.com/admin'));
+		$response = new Response();
+
+		$entryPoint = new WebRedirect();
+		$entryPoint->setOptions(array('routeValues' => 'this/is/invalid'));
+		$entryPoint->startAuthentication($request, $response);
+	}
+
+	/**
+	 * @test
+	 */
+	public function startAuthenticationSetsTheCorrectValuesInTheResponseObjectIfRouteValuesAreSpecified() {
+		$request = Request::create(new Uri('http://robertlemke.com/admin'));
+		$response = new Response();
+
+		$entryPoint = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect', array('dummy'));
+		$routeValues = array(
+			'@package' => 'SomePackage',
+			'@subpackage' => 'SomeSubPackage',
+			'@controller' => 'SomeController',
+			'@action' => 'someAction',
+			'@format' => 'someFormat',
+			'otherArguments' => array('foo' => 'bar')
+		);
+		$entryPoint->setOptions(array('routeValues' => $routeValues));
+
+		$mockUriBuilder = $this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(TRUE)->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', array('otherArguments' => array('foo' => 'bar'), '@format' => 'someFormat'), 'SomeController', 'SomePackage', 'SomeSubPackage')->will($this->returnValue('http://resolved/redirect/uri'));
+		$entryPoint->_set('uriBuilder', $mockUriBuilder);
+
+		$entryPoint->startAuthentication($request, $response);
+
+		$this->assertEquals('303', substr($response->getStatus(), 0, 3));
+		$this->assertEquals('http://resolved/redirect/uri', $response->getHeader('Location'));
 	}
 }
 ?>

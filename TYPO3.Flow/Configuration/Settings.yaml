@@ -202,7 +202,7 @@ TYPO3:
         # You'll need to configure your own authentication provider depending on your use case.
         # Below you find an example which uses simple username/password authentication. In
         # case the user is not logged in, the web redirect entry point, which redirects her
-        # to the URI login/form/action where the login form resides.
+        # to the login action that displays the authentication form.
         #
         #  AdminInterfaceProvider:
         #    provider: 'PersistedUsernamePasswordProvider'
@@ -212,7 +212,11 @@ TYPO3:
         #      controllerObjectName: 'TYPO3\Admin\Controller\.*'
         #    entryPoint: 'WebRedirect'
         #    entryPointOptions:
-        #      uri: 'login/form/action'
+        #      routeValues:
+        #        '@package': 'Your.Package'
+        #        '@controller': 'Authenticate'
+        #        '@action': 'login'
+        #        '@format': 'html'
         providers: []
 
         # One of the available authentication strategies:
