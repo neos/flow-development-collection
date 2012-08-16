@@ -77,14 +77,13 @@ class Request extends Message {
 	 *
 	 * @param array $get Data similar to that which is typically provided by $_GET
 	 * @param array $post Data similar to that which is typically provided by $_POST
-	 * @param array $cookie Data similar to that which is typically provided by $_COOKIE
 	 * @param array $files Data similar to that which is typically provided by $_FILES
 	 * @param array $server Data similar to that which is typically provided by $_SERVER
 	 * @see create()
 	 * @see createFromEnvironment()
 	 * @api
 	 */
-	public function __construct(array $get, array $post, array $cookie, array $files, array $server) {
+	public function __construct(array $get, array $post, array $files, array $server) {
 		$this->headers = Headers::createFromServer($server);
 		$this->setMethod(isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET');
 		$protocol = (isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0))) ? 'https' : 'http';
@@ -99,14 +98,13 @@ class Request extends Message {
 	 * @param \TYPO3\FLOW3\Http\Uri $uri The request URI
 	 * @param string $method Request method, for example "GET"
 	 * @param array $arguments
-	 * @param array $cookies
 	 * @param array $files
 	 * @param array $server
 	 * @return \TYPO3\FLOW3\Http\Request
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
-	static public function create(Uri $uri, $method = 'GET', array $arguments = array(), array $cookies = array(), array $files = array(), array $server = array()) {
+	static public function create(Uri $uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array()) {
 		if (!in_array($method, array('OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'CONNECT'))) {
 			throw new \InvalidArgumentException(sprintf('Invalid method "%s".', $method), 1326706916);
 		}
@@ -147,7 +145,7 @@ class Request extends Message {
 		);
 		$server = array_replace($defaultServerEnvironment, $server, $overrideValues);
 
-		return new static($get, $post, $cookies, $files, $server);
+		return new static($get, $post, $files, $server);
 	}
 
 	/**
@@ -159,7 +157,7 @@ class Request extends Message {
 	 * @api
 	 */
 	static public function createFromEnvironment() {
-		return new static($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
+		return new static($_GET, $_POST, $_FILES, $_SERVER);
 	}
 
 	/**

@@ -102,6 +102,9 @@ class Headers {
 		if (strtoupper(substr($name, 0, 4)) === 'HTTP') {
 			throw new \InvalidArgumentException('The "HTTP" status header must be set via setStatus().', 1220541963);
 		}
+		if (strtoupper(substr($name, 0, 10)) === 'SET-COOKIE') {
+			throw new \InvalidArgumentException('The "Set-Cookie" headers must be set via setCookie().', 1345128153);
+		}
 
 		if ($values instanceof \DateTime) {
 			$date = clone $values;
@@ -117,6 +120,12 @@ class Headers {
 					throw new \InvalidArgumentException('The "Cache-Control" header must be unique and thus only one field value may be specified.', 1337849415);
 				}
 				$this->setCacheControlDirectivesFromRawHeader(array_pop($values));
+			break;
+			case 'Cookie':
+				if (count($values) !== 1) {
+					throw new \InvalidArgumentException('The "Cookie" header must be unique and thus only one field value may be specified.', 1345127727);
+				}
+				$this->setCookiesFromRawHeader(array_pop($values));
 			break;
 			default:
 				if ($replaceExistingHeader === TRUE || !isset($this->fields[$name])) {
@@ -402,6 +411,22 @@ class Headers {
 		$cacheControl = trim($cacheControl, ' ,');
 		return ($cacheControl === '' ? NULL : $cacheControl);
 	}
+
+	/**
+	 * Internally sets cookie objects based on the Cookie header field value.
+	 *
+	 * @param string $rawFieldValue The value of a specification compliant Cookie header
+	 * @return void
+	 * @see set()
+	 */
+	protected function setCookiesFromRawHeader($rawFieldValue) {
+		$cookiePairs = explode(';', $rawFieldValue);
+		foreach($cookiePairs as $cookiePair) {
+			list($name, $value) = explode('=', $cookiePair, 2);
+			$this->setCookie(new Cookie(trim($name), urldecode(trim($value, "\t ;\""))));
+		}
+	}
+
 }
 
 ?>

@@ -14,6 +14,7 @@ namespace TYPO3\FLOW3\Http;
 use TYPO3\FLOW3\Annotations as FLOW3;
 use TYPO3\FLOW3\Mvc\ActionRequest;
 use TYPO3\FLOW3\Utility\Arrays;
+use TYPO3\FLOW3\Http\Cookie;
 
 /**
  * Represents a HTTP message
@@ -176,6 +177,69 @@ class Message {
 		return $this->charset;
 	}
 
+	/**
+	 * Sets the given cookie to in the headers of this message.
+	 *
+	 * This is a shortcut for $message->getHeaders()->setCookie($cookie);
+	 *
+	 * @param TYPO3\FLOW3\Http\Cookie $cookie The cookie to set
+	 * @return void
+	 * @api
+	 */
+	public function setCookie(Cookie $cookie) {
+		$this->headers->setCookie($cookie);
+	}
+
+	/**
+	 * Returns a cookie specified by the given name
+	 *
+	 * This is a shortcut for $message->getHeaders()->getCookie($name);
+	 *
+	 * @param string $name Name of the cookie
+	 * @return \TYPO3\FLOW3\Http\Cookie The cookie or NULL if no such cookie exists
+	 * @api
+	 */
+	public function getCookie($name) {
+		return $this->headers->getCookie($name);
+	}
+
+	/**
+	 * Returns all cookies attached to the headers of this message
+	 *
+	 * This is a shortcut for $message->getHeaders()->getCookies();
+	 *
+	 * @return array An array of Cookie objects
+	 * @api
+	 */
+	public function getCookies() {
+		return $this->headers->getCookies();
+	}
+
+	/**
+	 * Checks if the specified cookie exists
+	 *
+	 * This is a shortcut for $message->getHeaders()->hasCookie($name);
+	 *
+	 * @param string $name Name of the cookie
+	 * @return boolean
+	 * @api
+	 */
+	public function hasCookie($name) {
+		return $this->headers->hasCookie($name);
+	}
+
+	/**
+	 * Removes the specified cookie from the headers of this message, if it exists
+	 *
+	 * This is a shortcut for $message->getHeaders()->removeCookie($name);
+	 *
+	 * @param string $name Name of the cookie to remove
+	 * @return void
+	 * @api
+	 */
+	public function removeCookie($name) {
+		$this->headers->removeCookie($name);
+	}
 }
 
 ?>

@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
 
 use TYPO3\FLOW3\Http\Message;
 use TYPO3\FLOW3\Http\Headers;
+use TYPO3\FLOW3\Http\Cookie;
 
 /**
  * Testcase for the Http Message class
@@ -168,6 +169,22 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame($message,
 			$message->setContent('Foo')->setCharset('UTF-8')->setHeader('X-Foo', 'Bar')
 		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function cookieConvenienceMethodsUseMethodsOfHeadersObject() {
+		$cookie = new Cookie('foo', 'bar');
+		$message = new Message();
+		$message->setCookie($cookie);
+
+		$this->assertSame($cookie, $message->getCookie('foo'));
+		$this->assertSame($cookie, $message->getHeaders()->getCookie('foo'));
+		$this->assertSame(array('foo' => $cookie), $message->getCookies());
+		$this->assertTrue($message->hasCookie('foo'));
+		$message->removeCookie('foo');
+		$this->assertFalse($message->hasCookie('foo'));
 	}
 }
 

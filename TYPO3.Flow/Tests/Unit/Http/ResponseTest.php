@@ -16,7 +16,7 @@ use TYPO3\FLOW3\Http\Response;
 use TYPO3\FLOW3\Http\Uri;
 
 /**
- * Testcase for the Http Response class
+ * Test case for the Http Response class
  */
 class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

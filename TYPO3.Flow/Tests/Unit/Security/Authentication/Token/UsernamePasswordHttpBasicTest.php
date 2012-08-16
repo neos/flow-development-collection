@@ -31,7 +31,7 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PHP_AUTH_PW' => 'mysecretpassword, containing a : colon ;-)'
 		);
 
-		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), array(), $serverEnvironment);
+		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
 		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePasswordHttpBasic();
 		$token->updateCredentials($actionRequest);
@@ -51,7 +51,7 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'REDIRECT_REMOTE_AUTHORIZATION' => 'Basic ' . base64_encode($expectedCredentials['username'] . ':' . $expectedCredentials['password'])
 		);
 
-		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), array(), $serverEnvironment);
+		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
 		$actionRequest = $request->createActionRequest();
 		$token = new UsernamePasswordHttpBasic();
 		$token->updateCredentials($actionRequest);

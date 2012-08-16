@@ -198,6 +198,22 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function cookiesCanBeSetThroughTheCookieHeader() {
+		$headers = new Headers();
+		$headers->set('Cookie', array('cookie1=the+value+number+1; cookie2=the+value+number+2;  Cookie-Thing3="' . urlencode('Fön + x = \'test\'') . '"'));
+
+		$this->assertTrue($headers->hasCookie('cookie1'));
+		$this->assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
+
+		$this->assertTrue($headers->hasCookie('cookie2'));
+		$this->assertEquals('the value number 2', $headers->getCookie('cookie2')->getValue());
+
+		$this->assertEquals('Fön + x = \'test\'', $headers->getCookie('Cookie-Thing3')->getValue());
+	}
+
+	/**
 	 * Data provider with valid cache control headers
 	 */
 	public function cacheControlHeaders() {

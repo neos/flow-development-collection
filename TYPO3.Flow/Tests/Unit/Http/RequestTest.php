@@ -105,7 +105,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'SSL_SESSION_ID' => '12345'
 		);
 
-		$request = new Request($get, $post, $cookie, $files, $server);
+		$request = new Request($get, $post, $files, $server);
 		$this->assertEquals('https', $request->getUri()->getScheme());
 		$this->assertTrue($request->isSecure());
 	}
@@ -239,7 +239,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$uri = new Uri('http://dev.blog.rob/foo/bar');
-		$request = new Request(array(), array(), array(), array(), $server);
+		$request = new Request(array(), array(), array(), $server);
 		$this->assertEquals($uri, $request->getUri());
 	}
 
@@ -335,7 +335,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = Request::create(new Uri('http://flow3.typo3.org'), 'GET', array(), array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
+		$request = Request::create(new Uri('http://flow3.typo3.org'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
 		$this->assertSame($expectedIpAddress, $request->getClientIpAddress());
 	}
 
@@ -413,7 +413,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = new Request(array(), array(), array(), array(), $server);
+		$request = new Request(array(), array(), array(), $server);
 		$this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 
 		$server = array (
@@ -424,7 +424,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = new Request(array(), array(), array(), array(), $server);
+		$request = new Request(array(), array(), array(), $server);
 		$this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 
 		$server = array (
@@ -434,7 +434,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = new Request(array(), array(), array(), array(), $server);
+		$request = new Request(array(), array(), array(), $server);
 		$this->assertEquals('http://dev.blog.rob/', (string)$request->getBaseUri());
 	}
 
@@ -617,7 +617,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), array(), $server);
+		$request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), $server);
 		$this->assertEquals('http', $request->getUri()->getScheme());
 		$this->assertTrue($request->isSecure());
 	}

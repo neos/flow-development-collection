@@ -505,7 +505,7 @@ class Response extends Message implements ResponseInterface {
 			header($header);
 		}
 		foreach ($this->headers->getCookies() as $cookie) {
-			setcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+			header('Set-Cookie: ' . $cookie, FALSE);
 		}
 	}
 
