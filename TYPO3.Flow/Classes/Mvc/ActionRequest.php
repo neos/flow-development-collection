@@ -180,7 +180,7 @@ class ActionRequest implements RequestInterface {
 	 * Returns an ActionRequest which referred to this request, if any.
 	 *
 	 * The referring request is not set or determined automatically but must be
-	 * explictly set through the corresponding internal argument "__referrer".
+	 * explicitly set through the corresponding internal argument "__referrer".
 	 * This mechanism is used by FLOW3's form and validation mechanisms.
 	 *
 	 * @return \TYPO3\FLOW3\Mvc\ActionRequest the referring request, or NULL if no referrer found

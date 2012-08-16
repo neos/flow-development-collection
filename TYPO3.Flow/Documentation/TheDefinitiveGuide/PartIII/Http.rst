@@ -229,6 +229,60 @@ directive one hour::
 	$headers = $this->request->getHttpRequest()->getHeaders();
 	$headers->setCacheControlDirective('max-age', 3600);
 
+Cookies
+-------
+
+The HTTP foundation provides a very convenient way to deal with cookies. Instead of
+calling the PHP cookie functions (like ``setcookie()``), we recommend using the
+respective methods available in the ``Request`` and ``Response`` classes.
+
+Like requests and responses, a cookie also is represented by a PHP class. Instead
+of working on arrays with values, instances of the ``Cookie`` class are used.
+In order to set a cookie, just create a new ``Cookie`` object and add it to the
+HTTP response::
+
+	public function myAction() {
+		$cookie = new Cookie('myCounter', 1);
+		$this->response->setCookie($cookie);
+	}
+
+As soon as the response is sent to the browser, the cookie is sent as part of it.
+With the next request, the user agent will send the cookie through the ``Cookie``
+header. These headers are parsed automatically and can be retrieved from the
+``Request`` object::
+
+	public function myAction() {
+		$httpRequest = $this->request->getHttpRequest();
+		if ($httpRequest->hasCookie('myCounter')) {
+			$cookie = $httpRequest->getCookie('myCounter');
+			$this->view->assign('counter', $cookie->getValue());
+		}
+	}
+
+The cookie value can be updated and re-assigned to the response::
+
+	public function myAction() {
+		$httpRequest = $this->request->getHttpRequest();
+		if ($httpRequest->hasCookie('myCounter')) {
+			$cookie = $httpRequest->getCookie('myCounter');
+		} else {
+			$cookie = new Cookie('myCounter', 1);
+		}
+		$this->view->assign('counter', $cookie->getValue());
+
+		$cookie->setValue((integer)$cookie->getValue() + 1);
+		$this->response->setCookie($cookie);
+	}
+
+Finally, a cookie can be deleted by calling the ``expire()`` method::
+
+	public function myAction() {
+		$httpRequest = $this->request->getHttpRequest();
+		$cookie = $httpRequest->getCookie('myCounter');
+		$cookie->expire();
+		$this->response->setCookie($cookie);
+	}
+
 Uri
 ---
 
