@@ -72,7 +72,7 @@ write access to certain directories for both, you will need to set the file perm
 accordingly. But don't worry, this is simply done by changing to the FLOW3 base directory
 (``Quickstart`` in the above example) and calling the following command:
 
-.. code-block:: bash
+.. code-block:: none
 
 	./flow3 core:setfilepermissions john www-data www-data
 

@@ -728,9 +728,9 @@ Often, controllers need to defer execution to other controllers or actions. For
 that to happen, FLOW3 supports both, internal and external redirects:
 
 * in an internal redirect which is triggered by ``forward()``, the URI does not
-change.
+  change.
 * in an external redirect, the browser receives a HTTP ``Location`` header, redirecting
-him to the new controller. Thus, the URI changes.
+  him to the new controller. Thus, the URI changes.
 
 As a consequence, ``forward()`` can also call controllers or actions which are
 not exposed through the routing mechanism, while ``redirect()`` only works with

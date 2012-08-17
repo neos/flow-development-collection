@@ -661,7 +661,7 @@ ResourcePointer.
 To make this a little easier, this change adds two new
 methods to the Resource class:
 
-__toString() returns the SHA1 of the ResourcePointer the
+``__toString()`` returns the SHA1 of the ResourcePointer the
 Resource is holding (as is documented for ages).
 
 getUri() returns a ready-to-use resource://<sha1> URI of
@@ -710,7 +710,7 @@ This change disables ansiColors on Windows.
 [FEATURE] Makes it possible to wire signals to static slots
 -----------------------------------------------------------------------------------------
 
-To use a static slot simply prefix the slot method name with ::
+To use a static slot simply prefix the slot method name with ``::``
 
 * Resolves: `#34185 <http://forge.typo3.org/issues/34185>`_
 * Commit: `00ea791 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=00ea79198668b30e3fefbd277f8070965ff83c18>`_
@@ -1985,7 +1985,6 @@ as a foundation for further features which are following.
 
 * Resolves: `#35243 <http://forge.typo3.org/issues/35243>`_
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-
 * Commit: `0e05ccc <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0e05ccc570e5d0a46c860e23d38eec3566e6e36e>`_
 
 [!!!][TASK] Sub package name case and location adjustments
@@ -2003,9 +2002,8 @@ and MVC structure.
 \\TYPO3\\FLOW3\\MVC\\Web\\Request -> \\TYPO3\\FLOW3\\Mvc\\ActionRequest
 \\TYPO3\\FLOW3\\MVC\\Web\\Response -> \\TYPO3\\FLOW3\\Http\\Response
 \\TYPO3\\FLOW3\\MVC\\Web\\SubRequest -> \\TYPO3\\FLOW3\\Mvc\\ActionRequest
-TYPO3\\FLOW3\\MVC\\Web\\SubResponse -> TYPO3\\FLOW3\\Http\\Response
-\\TYPO3\\FLOW3\\MVC\\Controller\\CommandController ->
-	\\TYPO3\\FLOW3\\Cli\\CommandController
+\\TYPO3\\FLOW3\\MVC\\Web\\SubResponse -> TYPO3\\FLOW3\\Http\\Response
+\\TYPO3\\FLOW3\\MVC\\Controller\\CommandController -> \\TYPO3\\FLOW3\\Cli\\CommandController
 \\TYPO3\\FLOW3\\Property\\DataType\\Uri -> \\TYPO3\\FLOW3\\Http\\Uri
 
 \\TYPO3\\FLOW3\\MVC\\Web\\RequestBuilder doesn't exist anymore. If
@@ -2019,7 +2017,6 @@ feature.
 
 * Resolves: `#33705 <http://forge.typo3.org/issues/33705>`_
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-
 * Commit: `331a78e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=331a78e8ba19923951a83d50e5f30cc09068db61>`_
 
 [FEATURE] --force option for flow3:cache:flush
@@ -2231,8 +2228,7 @@ package.
 Package freezing is only supported for Development context.
 
 * Resolves: `#34827 <http://forge.typo3.org/issues/34827>`_
-Resolves: PHX-71
-
+* Resolves: PHX-71
 * Commit: `e181054 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=e1810549a590de455a609443a1f35e2e3d9baee3>`_
 
 [FEATURE] Optimize AOP proxy building
@@ -2241,8 +2237,7 @@ Resolves: PHX-71
 This simply makes AOP proxy building a lot faster.
 
 * Resolves: `#9568 <http://forge.typo3.org/issues/9568>`_
-Resolves: PHX-72
-
+* Resolves: PHX-72
 * Commit: `38c3c8e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=38c3c8e7edbb730699dbd993e180e8aee39b3e3d>`_
 
 [FEATURE] Allow setting dataType from outside
@@ -2250,7 +2245,7 @@ Resolves: PHX-72
 
 This change introduces a public setter method for
 the dataType property, making it possible to
-influence the target type for propery mapper.
+influence the target type for property mapper.
 
 * Resolves: `#34867 <http://forge.typo3.org/issues/34867>`_
 * Commit: `6475457 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6475457dadf9f8d00da542e99567395dad796c51>`_
@@ -2423,8 +2418,7 @@ request that triggers the authentication.
 -----------------------------------------------------------------------------------------
 
 * Fixes: `#34399 <http://forge.typo3.org/issues/34399>`_
-Related to: #34398
-
+* Related to: #34398
 * Commit: `3f28855 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3f288553a845c904596dd51454cbc90a3e89e06d>`_
 
 [TASK] Add abstract classes for entrypoint, provider & token in security authentication
@@ -2637,6 +2631,7 @@ Settings.yaml.
 
 Currently most of the provided validators do not accept empty
 values.
+
 This makes it impossible to have an optional email address
 property for example (without using the disjunction validator).
 
@@ -2647,20 +2642,20 @@ This is a breaking change if you expected the previous behavior.
 In order to make a property required you now need to add the
 NotEmptyValidator explicitly!
 
-E.g.:
-previously:
+E.g. previously::
 
-/**
- * @FLOW3\\Validate(type="EmailAddress")
- */
-protected $propertyToValidate;
+	/**
+	 * @FLOW3\\Validate(type="EmailAddress")
+	 */
+	protected $propertyToValidate;
 
-Now:
-/**
- * @FLOW3\\Validate(type="NotEmpty")
- * @FLOW3\\Validate(type="EmailAddress")
- */
-protected $propertyToValidate;
+Now::
+
+	/**
+	 * @FLOW3\\Validate(type="NotEmpty")
+	 * @FLOW3\\Validate(type="EmailAddress")
+	 */
+	protected $propertyToValidate;
 
 * Fixes: `#33300 <http://forge.typo3.org/issues/33300>`_
 * Commit: `9b62795 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9b627954f289d793b808db2ac19edc6a04c25426>`_
@@ -2900,7 +2895,7 @@ implementation to the changes in Doctrine 2.
 * Commit: `e83da5c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=e83da5c28260fc5922f12b10de51d5a1748e007e>`_
 
 [BUGFIX] (Utility): ArrayMergeRecursiveOverrule does not override arrays with simple types
------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 
 If the first element contains an array, and the second element contains a simple
 type at a certain position, the ORIGINAL array is used. That bug prevents to reset
@@ -3091,18 +3086,18 @@ authenticated before trying to fetch the session.
 [BUGFIX] (Command): Improve explanations of doctrine:migrationgenerate
 -----------------------------------------------------------------------------------------
 
-Instead of:
+Instead of::
 
     Generated new migration class to ...
 
-the command output now reads like:
+the command output now reads like::
 
     Generated new migration class!
 
     Next Steps:
     - Move ... to YourPackage/Migrations/Mysql/
     - Review and adjust the generated migration.
-    - (optional) execute the migration using ./flow3 
+    - (optional) execute the migration using ./flow3
       doctrine:migrate
 
 This is much more understandable, and less error-prone, especially to new users.
@@ -3769,7 +3764,7 @@ the behavior in the way, that only removes the last occurrence.
 -----------------------------------------------------------------------------------------
 
 Use annotations for the action method instead of method tags values
-which return wrong results if an explicit argumentName is given 
+which return wrong results if an explicit argumentName is given
 to the annotation. See the functional test that is added.
 
 * Fixes: `#31452 <http://forge.typo3.org/issues/31452>`_
@@ -3934,30 +3929,32 @@ If you want to use this inside partials, you can use the "section"
 argument of the render ViewHelper in order to only render the content
 of the partial:
 
-Partial:
-<html xmlns:x="http://typo3.org/ns/Your/Package/ViewHelpers">
-<f:section name="content">
-	<x:yourViewHelper />
-</f:section>
+Partial::
 
-Template:
-<f:render partial="PartialName" section="content" />
+	<html xmlns:x="http://typo3.org/ns/Your/Package/ViewHelpers">
+	<f:section name="content">
+		<x:yourViewHelper />
+	</f:section>
 
-Note:
+Template::
 
-You are able to use a different XML namespace pattern by specifying
-the --xsd-namespace argument in the generatexsd command.
+	<f:render partial="PartialName" section="content" />
 
-The default pattern "http://typo3.org/ns/<php namespace>" is resolved
-automatically by the Fluid parser. If you use a custom XML namespace,
-you need to configure the namespace mapping.
+.. note:
 
-The (YAML) syntax for that is:
+	You are able to use a different XML namespace pattern by specifying
+	the --xsd-namespace argument in the generatexsd command.
 
-TYPO3:
-  Fluid:
-    namespaces:
-      'http://some/unique/namespace': 'My\\Php\\Namespace'
+	The default pattern "http://typo3.org/ns/<php namespace>" is resolved
+	automatically by the Fluid parser. If you use a custom XML namespace,
+	you need to configure the namespace mapping.
+
+	The (YAML) syntax for that is::
+
+		TYPO3:
+		  Fluid:
+		    namespaces:
+		      'http://some/unique/namespace': 'My\\Php\\Namespace'
 
 * Resolves: `#27119 <http://forge.typo3.org/issues/27119>`_
 * Commit: `432ebf6 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=432ebf65baab808251f8954a12f5678f87b37550>`_
@@ -4081,8 +4078,7 @@ render only only a single section out of a complex template.
 This change is needed for the refactored TypoScript rendering.
 
 * Related: `#31638 <http://forge.typo3.org/issues/31638>`_
-Related: PHX-57
-
+* Related: PHX-57
 * Commit: `a3cb456 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=a3cb456a474f86288c40110f6dc80c81dab5df6e>`_
 
 [TASK] Remove occurences of removed form.textbox ViewHelper
@@ -4367,7 +4363,7 @@ This change adds a property "stateless" to the
 AbstractWidgetViewHelper. If that's TRUE, the widget context
 won't be stored in the session anymore. Instead, the
 WidgetRequestBuilder then expects the "internal argument"
-__widgetContext to be specified (with a valid HMAC appended).
+``__widgetContext`` to be specified (with a valid HMAC appended).
 
 The Widget Link/Uri-Viewhelpers now add the serialized and
 HMAC'ed WidgetContext to the generated URI if the new argument

@@ -37,7 +37,7 @@ special PHP extensions or manual compile steps – and it's a breeze to configur
 .. _Wikipedia: http://en.wikipedia.org/
 
 How AOP can help you
-----------------------------
+====================
 
 Let's imagine you want to log a message inside methods of your domain model:
 
@@ -131,7 +131,7 @@ As you can see the advice has full access to the actual method call, the *join p
 with information about the class, the method and method arguments.
 
 AOP concepts and terminology
-----------------------------
+============================
 
 At the first (and the second, third, ...) glance, the terms used in the AOP
 context are not really intuitive. But, similar to most of the other AOP
@@ -242,13 +242,12 @@ join point types are modularized and can be extended if more advanced
 requirements should arise in the future.
 
 Implementation overview
------------------------
+=======================
 
 FLOW3's AOP framework does not require a pre-processor or an aspect-aware PHP
 interpreter to weave in advices. It is implemented and based on pure PHP and
 doesn't need any specific PHP extension. However, it does require the Object
 Manager to fulfill its task.
-
 
 FLOW3 uses PHP's reflection capabilities to analyze declarations of aspects,
 pointcuts and advices and implements method interceptors as a dynamic proxy. In
@@ -270,9 +269,6 @@ Aspects are abstract containers which accommodate pointcut-, introduction- and
 advice declarations. In most frameworks, including FLOW3, aspects are defined as
 plain classes which are tagged (annotated) as an aspect. The following example
 shows the definition of a hypothetical ``FooSecurity`` aspect:
-
-
-
 
 *Example: Declaration of an aspect*::
 
@@ -348,7 +344,7 @@ A pointcut expression always consists of two parts: The poincut designator and
 its parameter(s). The following designators are supported by FLOW3:
 
 method()
-********
+^^^^^^^^
 
 The ``method()`` designator matches on the execution of methods with a certain
 name. The parameter specifies the class and method name, regular expressions
@@ -406,7 +402,7 @@ A detailed description of the runtime evaluations possibilities is described
 below in the section about the ``evaluate()`` pointcut designator.
 
 class()
-*******
+^^^^^^^
 
 The ``class()`` designator matches on the execution of methods defined in a
 class with a certain name. The parameter specifies the class name, again
@@ -430,7 +426,7 @@ Matches all methods in namespace "Service":
 -----
 
 within()
-********
+^^^^^^^^
 
 The ``within()`` designator matches on the execution of methods defined in a
 class of a certain type. A type matches if the class is a subclass of or
@@ -459,7 +455,7 @@ Matches all methods in classes which are part of the Foo layer:
 	designator matching whole type hierarchies.
 
 classAnnotatedWith()
-********************
+^^^^^^^^^^^^^^^^^^^^
 
 The ``classAnnotatedWith()`` designator matches on classes which are tagged with a
 certain annotation. Currently only the actual annotation class name can be matched,
@@ -482,7 +478,7 @@ Matches all classes which are tagged with a custom annotation:
 -----
 
 methodAnnotatedWith()
-***********************
+^^^^^^^^^^^^^^^^^^^^^
 
 The ``methodAnnotatedWith()`` designator matches on methods which are annotated
 with a certain annotation.  Currently only the actual annotation class name can be
@@ -502,7 +498,7 @@ Matches all method which are annotated with a ``Special`` annotation:
 -----
 
 setting()
-*********
+^^^^^^^^^
 
 The setting() designator matches if the given configuration option is set to
 TRUE, or if an optional given comparison value equals to its configured value.
@@ -527,7 +523,7 @@ execution context: (Note: single and double quotes are allowed)
 -----
 
 evaluate()
-**********
+^^^^^^^^^^
 
 The ``evaluate()`` designator is used to execute advices depending on constraints
 that have to be evaluated during runtime. This could be a specific value for a
@@ -580,7 +576,7 @@ Matches if at least one of the entries in the first array exists in the second o
 	objects with the FLOW3 configuration setting ``TYPO3.FLOW3.aop.globalObjects``.
 
 filter()
-********
+^^^^^^^^
 
 If the built-in filters don't suit your needs you can even define your own
 custom filters. All you need to do is create a class implementing the
