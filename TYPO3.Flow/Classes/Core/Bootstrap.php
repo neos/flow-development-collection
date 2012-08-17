@@ -504,7 +504,7 @@ class Bootstrap {
 		define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
 		define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
 
-		define('FLOW3_VERSION_BRANCH', '1.1');
+		define('FLOW3_VERSION_BRANCH', '1.2');
 	}
 
 	/**
