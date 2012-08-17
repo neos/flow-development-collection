@@ -320,13 +320,13 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function theActionNamesCaseIsFixedIfItIsallLowerCaseAndTheControllerObjectNameIsKnown() {
+	public function theActionNamesCaseIsFixedIfItIsAllLowerCaseAndTheControllerObjectNameIsKnown() {
 		$mockControllerClassName = 'Mock' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $mockControllerClassName . ' extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 				public function someGreatAction() {}
 			}
-     	');
+		');
 
 		$mockController = $this->getMock($mockControllerClassName, array('someGreatAction'), array(), '', FALSE);
 
