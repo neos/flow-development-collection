@@ -390,7 +390,7 @@ By default arguments that are not part of the configured route values are *not
 appended* to the resulting URI as *query string*.
 
 If you need this behavior, you have to explicitly enable this by setting
-``appendExceedingArguments``::
+``appendExceedingArguments``:
 
 .. code-block:: yaml
 

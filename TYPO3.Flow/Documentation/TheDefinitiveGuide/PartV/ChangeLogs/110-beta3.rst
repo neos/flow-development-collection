@@ -501,7 +501,7 @@ TYPO3.Fluid
 
 When using a form object inside of a form view helper inside an index
 action template and a checkbox is referring to a property $sth of
-$someFormObject, the form object can be NULL with code like:
+$someFormObject, the form object can be NULL with code like::
 
  indexAction(\\Some\\Type $someFormObject = NULL){ ... }
 
@@ -514,8 +514,9 @@ form had validation errors someFormObject is NULL, too. This possibility
 was ignored in a call for the formObject from within the CheckboxViewHelper as
 well as from the RadioViewHelper.
 
-So you would get an exception telling you
- No value found for key "TYPO3\\Fluid\\ViewHelpers\\FormViewHelper->formObject"
+So you would get an exception telling you:
+
+	No value found for key "TYPO3\\Fluid\\ViewHelpers\\FormViewHelper->formObject"
 
 This change fixes that bug and thus also sets the checkbox and radio
 "checked" attribute properly when a validation error occurred.
