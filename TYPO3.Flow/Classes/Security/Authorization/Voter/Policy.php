@@ -88,7 +88,9 @@ class Policy implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterI
 				return self::VOTE_ABSTAIN;
 			}
 
-			if ($privilege === NULL) continue;
+			if ($privilege === NULL) {
+				continue;
+			}
 
 			if ($privilege === \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
 				$accessGrants++;

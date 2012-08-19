@@ -274,7 +274,9 @@ class Context {
 
 		$activeTokens = array();
 		foreach ($this->activeTokens as $token) {
-			if (($token instanceof $className) === FALSE) continue;
+			if (($token instanceof $className) === FALSE) {
+				continue;
+			}
 
 			$activeTokens[] = $token;
 		}
@@ -353,7 +355,9 @@ class Context {
 		}
 
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() === TRUE) return $token->getAccount() !== NULL ? $token->getAccount()->getParty() : NULL;
+			if ($token->isAuthenticated() === TRUE) {
+				return $token->getAccount() !== NULL ? $token->getAccount()->getParty() : NULL;
+			}
 		}
 		return NULL;
 	}
@@ -392,7 +396,9 @@ class Context {
 		}
 
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() === TRUE) return $token->getAccount();
+			if ($token->isAuthenticated() === TRUE) {
+				return $token->getAccount();
+			}
 		}
 		return NULL;
 	}
@@ -459,7 +465,9 @@ class Context {
 		}
 
 		if (isset($this->csrfTokens[$csrfToken])) {
-			if ($this->csrfStrategy === self::CSRF_ONE_PER_URI) unset($this->csrfTokens[$csrfToken]);
+			if ($this->csrfStrategy === self::CSRF_ONE_PER_URI) {
+				unset($this->csrfTokens[$csrfToken]);
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -544,12 +552,16 @@ class Context {
 	protected function mergeTokens($managerTokens, $sessionTokens) {
 		$resultTokens = array();
 
-		if (!is_array($managerTokens)) return $resultTokens;
+		if (!is_array($managerTokens)) {
+			return $resultTokens;
+		}
 
 		foreach ($managerTokens as $managerToken) {
 			$noCorrespondingSessionTokenFound = TRUE;
 
-			if (!is_array($sessionTokens)) continue;
+			if (!is_array($sessionTokens)) {
+				continue;
+			}
 
 			foreach ($sessionTokens as $sessionToken) {
 				if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
@@ -558,7 +570,9 @@ class Context {
 				}
 			}
 
-			if ($noCorrespondingSessionTokenFound) $resultTokens[$managerToken->getAuthenticationProviderName()] = $managerToken;
+			if ($noCorrespondingSessionTokenFound) {
+				$resultTokens[$managerToken->getAuthenticationProviderName()] = $managerToken;
+			}
 		}
 
 		return $resultTokens;

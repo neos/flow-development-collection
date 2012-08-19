@@ -303,7 +303,9 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		$roleIdentifier = (string)$role;
 
 		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
-		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) return array();
+		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) {
+			return array();
+		}
 
 		$privileges = array();
 		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
@@ -311,7 +313,9 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 					// Make object manager usable as closure variable
 				$objectManager = $this->objectManager;
 				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode'] . ';');
-				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) continue;
+				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) {
+					continue;
+				}
 			}
 
 			$privileges[$resource] = $privilegeConfiguration['privilege'];
@@ -367,7 +371,9 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		if (isset($this->acls[$methodIdentifier])) {
 			if (count($roles) > 0) {
 				foreach ($roles as $roleIdentifier) {
-					if (isset($this->acls[$methodIdentifier][$roleIdentifier])) return TRUE;
+					if (isset($this->acls[$methodIdentifier][$roleIdentifier])) {
+						return TRUE;
+					}
 				}
 			} else {
 				return TRUE;
@@ -389,8 +395,10 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 
 		if (isset($this->entityResourcesConstraints[$entityType])) {
 			foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
-				foreach ($roles as $roleIdentifier) {
-					if (isset($this->acls[$resource][(string)$roleIdentifier])) return TRUE;
+				foreach ($roles as $role) {
+					if (isset($this->acls[$resource][(string)$role])) {
+						return TRUE;
+					}
 				}
 			}
 		}
@@ -434,7 +442,9 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		}
 
 		foreach ($grantedResources as $grantedResource) {
-			if (isset($abstainedResources[$grantedResource])) unset($abstainedResources[$grantedResource]);
+			if (isset($abstainedResources[$grantedResource])) {
+				unset($abstainedResources[$grantedResource]);
+			}
 		}
 
 		return array_merge($abstainedResources, $deniedResources);
@@ -525,7 +535,9 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 						$foundGrantPrivilege = TRUE;
 					}
 				}
-				if ($foundGrantPrivilege === TRUE) return TRUE;
+				if ($foundGrantPrivilege === TRUE) {
+					return TRUE;
+				}
 			}
 		}
 
@@ -544,10 +556,14 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 */
 	protected function parseEntityAcls() {
 		foreach ($this->policy['acls'] as $role => $aclEntries) {
-			if (!array_key_exists('entities', $aclEntries)) continue;
+			if (!array_key_exists('entities', $aclEntries)) {
+				continue;
+			}
 
 			foreach ($aclEntries['entities'] as $resource => $privilege) {
-				if (!isset($this->acls[$resource])) $this->acls[$resource] = array();
+				if (!isset($this->acls[$resource])) {
+					$this->acls[$resource] = array();
+				}
 				$this->acls[$resource][$role] = array();
 				switch ($privilege) {
 					case 'GRANT':
@@ -574,16 +590,26 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	protected function setAclsForEverybodyRole() {
 		$this->policy['roles']['Everybody'] = array();
 
-		if (!isset($this->policy['acls']['Everybody'])) $this->policy['acls']['Everybody'] = array();
-		if (!isset($this->policy['acls']['Everybody']['methods'])) $this->policy['acls']['Everybody']['methods'] = array();
-		if (!isset($this->policy['acls']['Everybody']['entities'])) $this->policy['acls']['Everybody']['entities'] = array();
+		if (!isset($this->policy['acls']['Everybody'])) {
+			$this->policy['acls']['Everybody'] = array();
+		}
+		if (!isset($this->policy['acls']['Everybody']['methods'])) {
+			$this->policy['acls']['Everybody']['methods'] = array();
+		}
+		if (!isset($this->policy['acls']['Everybody']['entities'])) {
+			$this->policy['acls']['Everybody']['entities'] = array();
+		}
 
 		foreach (array_keys($this->policy['resources']['methods']) as $resource) {
-			if (!isset($this->policy['acls']['Everybody']['methods'][$resource])) $this->policy['acls']['Everybody']['methods'][$resource] = 'ABSTAIN';
+			if (!isset($this->policy['acls']['Everybody']['methods'][$resource])) {
+				$this->policy['acls']['Everybody']['methods'][$resource] = 'ABSTAIN';
+			}
 		}
 		foreach ($this->policy['resources']['entities'] as $resourceDefinition) {
 			foreach (array_keys($resourceDefinition) as $resource) {
-				if (!isset($this->policy['acls']['Everybody']['entities'][$resource])) $this->policy['acls']['Everybody']['entities'][$resource] = 'ABSTAIN';
+				if (!isset($this->policy['acls']['Everybody']['entities'][$resource])) {
+					$this->policy['acls']['Everybody']['entities'][$resource] = 'ABSTAIN';
+				}
 			}
 		}
 	}
