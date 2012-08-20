@@ -412,9 +412,9 @@ class ActionRequest implements RequestInterface {
 		$controllerObjectName = $this->getControllerObjectName();
 		if ($controllerObjectName !== '' && ($this->controllerActionName === strtolower($this->controllerActionName)))  {
 			$controllerClassName = $this->objectManager->getClassNameByObjectName($controllerObjectName);
-			$actionMethodName = $this->controllerActionName . 'Action';
+			$lowercaseActionMethodName = strtolower($this->controllerActionName) . 'action';
 			foreach (get_class_methods($controllerClassName) as $existingMethodName) {
-				if (strtolower($existingMethodName) === strtolower($actionMethodName)) {
+				if (strtolower($existingMethodName) === $lowercaseActionMethodName) {
 					$this->controllerActionName = substr($existingMethodName, 0, -6);
 					break;
 				}
