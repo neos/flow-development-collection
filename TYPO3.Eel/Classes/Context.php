@@ -37,7 +37,7 @@ class Context {
 	 *
 	 * If a property or key did not exist this method will return NULL.
 	 *
-	 * @param string|Context $path The path as string or Context value, will be unwrapped for convenience
+	 * @param string|integer|Context $path The path as string or Context value, will be unwrapped for convenience
 	 * @return mixed The value
 	 */
 	public function get($path) {
@@ -46,7 +46,7 @@ class Context {
 		}
 		if ($path === NULL) {
 			return NULL;
-		} elseif (is_string($path)) {
+		} elseif (is_string($path) || is_integer($path)) {
 			if (is_array($this->value)) {
 				return array_key_exists($path, $this->value) ? $this->value[$path] : NULL;
 			} elseif (is_object($this->value)) {
@@ -54,7 +54,7 @@ class Context {
 				return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyInternal($this->value, $path, FALSE, $propertyExists);
 			}
 		} else {
-			throw new EvaluationException('Path is not of type string ' . gettype($path), 1344418464);
+			throw new EvaluationException('Path is not of type string or integer, got ' . gettype($path), 1344418464);
 		}
 	}
 

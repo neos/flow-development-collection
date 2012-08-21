@@ -217,7 +217,8 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			),
 			'another' => array(
 				'path' => 'b2'
-			)
+			),
+			'numeric' => array('a', 'b', 'c')
 		));
 		return array(
 			// Undefined variables are NULL with the default context
@@ -230,6 +231,9 @@ abstract class AbstractEvaluatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('bar.a1[another.path]', $c, 'Nested'),
 			// Offset access with invalid path is NULL
 			array('bar.a1[unknwn.path]', $c, NULL),
+			// Offset access with integers
+			array('numeric[1]', $c, 'b'),
+			array('numeric[0]', $c, 'a'),
 		);
 	}
 
