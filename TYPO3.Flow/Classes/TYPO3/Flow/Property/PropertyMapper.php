@@ -39,7 +39,9 @@ class PropertyMapper {
 
 	/**
 	 * A multi-dimensional array which stores the Type Converters available in the system.
+	 *
 	 * It has the following structure:
+	 *
 	 * 1. Dimension: Source Type
 	 * 2. Dimension: Target Type
 	 * 3. Dimension: Priority
@@ -353,6 +355,22 @@ class PropertyMapper {
 			$compositeType = substr($compositeType, 0, strpos($compositeType, '<'));
 		}
 		return $compositeType;
+	}
+
+	/**
+	 * Returns a multi-dimensional array with the Type Converters available in the system.
+	 *
+	 * It has the following structure:
+	 *
+	 * 1. Dimension: Source Type
+	 * 2. Dimension: Target Type
+	 * 3. Dimension: Priority
+	 * Value: Type Converter instance
+	 *
+	 * @return array
+	 */
+	public function getTypeConverters() {
+		return $this->typeConverters;
 	}
 }
 ?>
