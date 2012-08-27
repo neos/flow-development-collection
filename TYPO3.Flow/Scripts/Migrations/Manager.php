@@ -101,11 +101,11 @@ class Manager {
 					echo '  Package "' . $packageKey . '" was not found.' . PHP_EOL;
 				}
 			} else {
-				foreach ($this->packagesData as $packageKey => $packageData) {
+				foreach ($this->packagesData as $key => $packageData) {
 					if ($packageData['category'] === 'Framework') {
 						continue;
 					}
-					$this->migratePackage($packageKey, $packageData, $migrationInstance);
+					$this->migratePackage($key, $packageData, $migrationInstance);
 				}
 			}
 			$migrationInstance->outputNotesAndWarnings();
