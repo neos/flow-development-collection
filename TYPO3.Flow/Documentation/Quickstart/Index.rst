@@ -100,8 +100,8 @@ new group membership to take effect.
 .. note::
 
 	Setting file permissions is not necessary and not possible on Windows machines.
-	For Apache to be able to create symlinks, it needs to be started with Administrator
-	privileges, though.
+	For Apache to be able to create symlinks, you need to use Windows Vista (or
+	newer) and Apache needs to be started with Administrator privileges.
 
 Setting up a virtual host
 -------------------------
