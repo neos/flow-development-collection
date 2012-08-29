@@ -450,7 +450,17 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 	        provider: PersistedUsernamePasswordProvider
 	        entryPoint: 'WebRedirect'
 	        entryPointOptions:
-	            uri: 'login/'
+	          routeValues:
+	            '@package': 'Your.Package'
+	            '@controller': 'Authenticate'
+	            '@action': 'login'
+
+.. note::
+
+	Prior to FLOW3 version 1.2 the option ``routeValues`` was not supported by the WebRedirect
+	entry point. Instead you could provide the option ``uri`` containing a relative or absolute
+	URI to redirect to. This is still possible, but we recommend to use ``routeValues`` in
+	order to make your configuration more independent from the routing configuration.
 
 .. note::
 
