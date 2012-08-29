@@ -190,6 +190,9 @@ class Headers {
 	 * @api
 	 */
 	public function has($name) {
+		if ($name === 'Cache-Control') {
+			return ($this->getCacheControlHeader() !== NULL);
+		}
 		return isset($this->fields[$name]);
 	}
 

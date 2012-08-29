@@ -236,7 +236,9 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function cacheControlHeaderPassedToSetIsParsedCorrectly($rawFieldValue, $renderedFieldValue) {
 		$headers = new Headers();
 
+		$this->assertFalse($headers->has('Cache-Control'));
 		$headers->set('Cache-Control', $rawFieldValue);
+		$this->assertTrue($headers->has('Cache-Control'));
 		$this->assertEquals($renderedFieldValue, $headers->get('Cache-Control'));
 	}
 
