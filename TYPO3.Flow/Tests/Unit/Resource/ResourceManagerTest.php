@@ -126,10 +126,13 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
+		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+
 		$resourceManager = $this->getAccessibleMock('\TYPO3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
 		$resourceManager->_set('importedResources', new \SplObjectStorage());
 		$resourceManager->injectEnvironment($mockEnvironment);
+		$resourceManager->injectSystemLogger($mockLogger);
 
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		$resourceManager->injectPersistenceManager($mockPersistenceManager);
