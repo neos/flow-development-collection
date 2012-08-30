@@ -497,11 +497,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
-				if ($manyToManyAnnotation->orphanRemoval) {
-					$mapping['orphanRemoval'] = $manyToManyAnnotation->orphanRemoval;
-				} elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === FALSE) {
-					$mapping['orphanRemoval'] = TRUE;
-				}
+
+				$mapping['orphanRemoval'] = $manyToManyAnnotation->orphanRemoval;
 				$mapping['fetch'] = $this->getFetchMode($className, $manyToManyAnnotation->fetch);
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
