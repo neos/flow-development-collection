@@ -30,7 +30,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
 
 	const MAPPING_REGULAR = 0;
-	const MAPPING_INVERSE = 1;
+	const MAPPING_MM_REGULAR = 1;
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
@@ -484,7 +484,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 
 					$joinTable = array(
 						'name' => $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName()),
-						'joinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_INVERSE),
+						'joinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_MM_REGULAR),
 						'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property)
 					);
 				}
@@ -614,7 +614,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			);
 		}
 		if (array_key_exists('joinColumns', $joinTable)) {
-			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $mapping, $property);
+			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $mapping, $property, self::MAPPING_MM_REGULAR);
 		} else {
 			$joinColumns = array(
 				array(
@@ -622,7 +622,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					'referencedColumnName' => NULL,
 				)
 			);
-			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
+			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_MM_REGULAR);
 		}
 
 		foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
@@ -636,7 +636,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			);
 		}
 		if (array_key_exists('inverseJoinColumns', $joinTable)) {
-			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $mapping, $property, self::MAPPING_INVERSE);
+			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $mapping, $property);
 		} else {
 			$joinColumns = array(
 				array(
@@ -644,7 +644,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					'referencedColumnName' => NULL,
 				)
 			);
-			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_INVERSE);
+			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
 		}
 
 		return $joinTable;
