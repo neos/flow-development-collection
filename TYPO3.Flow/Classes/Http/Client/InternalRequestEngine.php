@@ -84,7 +84,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 		try {
 			$actionRequest = $this->router->route($request);
 			$this->securityContext->clearContext();
-			$this->securityContext->injectRequest($actionRequest);
+			$this->securityContext->setRequest($actionRequest);
 
 			$this->dispatcher->dispatch($actionRequest, $response);
 		} catch (\Exception $exception) {
