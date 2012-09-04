@@ -215,6 +215,26 @@ abstract class AbstractController implements ControllerInterface {
 	}
 
 	/**
+	 * Forwards the request to another action and / or controller.
+	 *
+	 * Request is directly transfered to the other action / controller
+	 *
+	 * @param ActionRequest $request The request to redirect to
+	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\ForwardException
+	 * @see redirectToRequest()
+	 * @api
+	 */
+	protected function forwardToRequest(ActionRequest $request) {
+		$packageKey = $request->getControllerPackageKey();
+		$subpackageKey = $request->getControllerSubpackageKey();
+		if ($subpackageKey !== NULL) {
+			$packageKey .= '\\' . $subpackageKey;
+		}
+		$this->forward($request->getControllerActionName(), $request->getControllerName(), $packageKey, $request->getArguments());
+	}
+
+	/**
 	 * Redirects the request to another action and / or controller.
 	 *
 	 * Redirect will be sent to the client which then performs another request to the new URI.
@@ -249,6 +269,31 @@ abstract class AbstractController implements ControllerInterface {
 
 		$uri = $this->uriBuilder->setCreateAbsoluteUri(TRUE)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
 		$this->redirectToUri($uri, $delay, $statusCode);
+	}
+
+	/**
+	 * Redirects the request to another action and / or controller.
+	 *
+	 * Redirect will be sent to the client which then performs another request to the new URI.
+	 *
+	 * NOTE: This method only supports web requests and will throw an exception
+	 * if used with other request types.
+	 *
+	 * @param ActionRequest $request The request to redirect to
+	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
+	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+	 * @return void
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
+	 * @see forwardToRequest()
+	 * @api
+	 */
+	protected function redirectToRequest(ActionRequest $request, $delay = 0, $statusCode = 303) {
+		$packageKey = $request->getControllerPackageKey();
+		$subpackageKey = $request->getControllerSubpackageKey();
+		if ($subpackageKey !== NULL) {
+			$packageKey .= '\\' . $subpackageKey;
+		}
+		$this->redirect($request->getControllerActionName(), $request->getControllerName(), $packageKey, $request->getArguments(), $delay, $statusCode, $request->getFormat());
 	}
 
 	/**

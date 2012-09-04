@@ -49,7 +49,6 @@ class UsernamePassword extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 		if (!empty($username) && !empty($password)) {
 			$this->credentials['username'] = $username;
 			$this->credentials['password'] = $password;
-
 			$this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
 		}
 	}

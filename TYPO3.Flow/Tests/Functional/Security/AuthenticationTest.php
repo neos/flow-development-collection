@@ -29,9 +29,9 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $testableHttpEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController
+	 * @var boolean
 	 */
-	protected $restrictedController;
+	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
 	 * @return void
@@ -39,8 +39,15 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		$accountRepository = $this->objectManager->get('\TYPO3\FLOW3\Security\AccountRepository');
+		$accountFactory = $this->objectManager->get('\TYPO3\FLOW3\Security\AccountFactory');
+
+		$account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'TestingProvider');
+		$accountRepository->add($account);
+		$this->persistenceManager->persistAll();
+
 		$route = new Route();
-		$route->setName('Functional Test - Security::Authentication');
+		$route->setName('Functional Test - Security::Restricted');
 		$route->setUriPattern('test/security/restricted(/{@action})');
 		$route->setDefaults(array(
 			'@package' => 'TYPO3.FLOW3',
@@ -51,6 +58,19 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		));
 		$route->setAppendExceedingArguments(TRUE);
 		$this->router->addRoute($route);
+
+		$route2 = new Route();
+		$route2->setName('Functional Test - Security::Authentication');
+		$route2->setUriPattern('test/security/authentication(/{@action})');
+		$route2->setDefaults(array(
+			'@package' => 'TYPO3.FLOW3',
+			'@subpackage' => 'Tests\Functional\Security\Fixtures',
+			'@controller' => 'Authentication',
+			'@action' => 'authenticate',
+			'@format' => 'html'
+		));
+		$route2->setAppendExceedingArguments(TRUE);
+		$this->router->addRoute($route2);
 	}
 
 	/**
@@ -69,11 +89,33 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		// point. Also the browser lacks support for cookies which would enable us
 		// to simulate a full round trip.
 
-		$response = $this->browser->request('http://localhost/test/security/restricted/customer');
-
 		// -> should be a redirect to some login page
 		// -> then: send login form
 		// -> then: expect a redirect to the above page and $this->securityContext->getInterceptedRequest() should contain the expected request
+	}
+
+	/**
+	 * @test
+	 */
+	public function successfulAuthenticationCallsOnAuthenticationSuccessMethod() {
+		$providers = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->authenticationManager, 'providers', TRUE);
+		foreach ($providers as $provider) {
+			if ($provider instanceof \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider) {
+				$provider->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+			}
+		}
+
+		$result = $this->browser->request('http://localhost/test/security/authentication');
+		$this->assertSame($result->getContent(), 'Authentication Success returned!');
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function failedAuthenticationCallsOnAuthenticationFailureMethod() {
+		$result = $this->browser->request('http://localhost/test/security/authentication');
+		$this->assertContains('Uncaught Exception in FLOW3 #42: Failure Method Exception', $result->getContent());
 	}
 
 }

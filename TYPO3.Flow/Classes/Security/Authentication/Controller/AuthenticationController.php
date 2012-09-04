@@ -17,8 +17,9 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * An action controller for generic authentication in FLOW3
  *
  * @FLOW3\Scope("singleton")
+ * @deprecated since 1.2 Instead you should inherit from the AbstractAuthenticationController from within your package
  */
-class AuthenticationController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+class AuthenticationController extends AbstractAuthenticationController {
 
 	/**
 	 * The authentication manager
@@ -34,60 +35,19 @@ class AuthenticationController extends \TYPO3\FLOW3\Mvc\Controller\ActionControl
 	protected $securityContext;
 
 	/**
-	 * Calls the authentication manager to authenticate all active tokens
-	 * and redirects to the original intercepted request on success if there
-	 * is one stored in the security context. If no intercepted request is
-	 * found, the function simply returns.
+	 * Redirects to a potentially intercepted request. Returns an error message if there has been none.
 	 *
-	 * If authentication fails, the result of calling the defined
-	 * $errorMethodName is returned.
-	 *
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
 	 * @return string
 	 */
-	public function authenticateAction() {
-		$authenticated = FALSE;
-		try {
-			$this->authenticationManager->authenticate();
-			$authenticated = TRUE;
-		} catch (\TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
+	protected function onAuthenticationSuccess(\TYPO3\FLOW3\Mvc\ActionRequest $originalRequest = NULL) {
+		if ($originalRequest !== NULL) {
+			$this->redirectToRequest($originalRequest);
 		}
-
-		if ($authenticated) {
-			$storedRequest = $this->securityContext->getInterceptedRequest();
-			if ($storedRequest !== NULL) {
-				$mainRequest = $storedRequest->getMainRequest();
-				$packageKey = $mainRequest->getControllerPackageKey();
-				$subpackageKey = $mainRequest->getControllerSubpackageKey();
-				if ($subpackageKey !== NULL) {
-					$packageKey .= '\\' . $subpackageKey;
-				}
-				$this->securityContext->setInterceptedRequest(NULL);
-				$this->redirect($mainRequest->getControllerActionName(), $mainRequest->getControllerName(), $packageKey, $mainRequest->getArguments());
-			}
-		} else {
-			return call_user_func(array($this, $this->errorMethodName));
-		}
-	}
-
-	/**
-	 * Sets the authentication status of all active tokens back to NO_CREDENTIALS_GIVEN
-	 *
-	 * @return void
-	 */
-	public function logoutAction() {
-		$this->authenticationManager->logout();
-	}
-
-	/**
-	 * A template method for displaying custom error flash messages, or to
-	 * display no flash message at all on errors. Override this to customize
-	 * the flash message in your action controller.
-	 *
-	 * @return \TYPO3\FLOW3\Error\Error The flash message
-	 * @api
-	 */
-	protected function getErrorFlashMessage() {
-		return new \TYPO3\FLOW3\Error\Error('Wrong credentials.', NULL, NULL, $this->actionMethodName);
+		return 'There was no redirect implemented and no intercepted request could be found after authentication.
+				Please implement onAuthenticationSuccess() in your login controller to handle this case correctly.
+				If you have a template for the authenticate action, simply make sure that onAuthenticationSuccess()
+				returns NULL in your login controller.';
 	}
 }
 ?>
