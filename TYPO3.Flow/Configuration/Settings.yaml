@@ -86,6 +86,15 @@ TYPO3:
            logFilesToKeep: 1
            logIpAddress: TRUE
 
+      sqlLogger:
+        backend: TYPO3\FLOW3\Log\Backend\FileBackend
+        backendOptions:
+          logFileURL: %FLOW3_PATH_DATA%Logs/Query.log
+          createParentDirectories: TRUE
+          severityThreshold: %LOG_INFO%
+          maximumLogFileSize: 10485760
+          logFilesToKeep: 1
+
     i18n:
 
       # The default locale identifier.
