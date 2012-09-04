@@ -148,7 +148,7 @@ class Context {
 	}
 
 	/**
-	 * Inject the current action request
+	 * Set the current action request
 	 *
 	 * This method is called manually by the request handler which created the HTTP
 	 * request.
@@ -157,7 +157,7 @@ class Context {
 	 * @return void
 	 * @FLOW3\Autowiring(FALSE)
 	 */
-	public function injectRequest(ActionRequest $request) {
+	public function setRequest(ActionRequest $request) {
 		$this->request = $request;
 	}
 

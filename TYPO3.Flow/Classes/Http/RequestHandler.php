@@ -116,8 +116,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 
 		$this->router->setRoutesConfiguration($this->routesConfiguration);
 		$actionRequest = $this->router->route($this->request);
-
-		$this->securityContext->injectRequest($actionRequest);
+		$this->securityContext->setRequest($actionRequest);
 
 		$this->dispatcher->dispatch($actionRequest, $this->response);
 
