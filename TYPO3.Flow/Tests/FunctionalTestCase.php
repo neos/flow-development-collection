@@ -197,7 +197,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$actionRequest = $requestHandler->getHttpRequest()->createActionRequest();
-		$this->securityContext->injectRequest($actionRequest);
+		$this->securityContext->setRequest($actionRequest);
 	}
 
 	/**
@@ -321,7 +321,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$request = $requestHandler->getHttpRequest();
 
 		$actionRequest = $request->createActionRequest();
-		$this->securityContext->injectRequest($actionRequest);
+		$this->securityContext->setRequest($actionRequest);
 		$this->authenticationManager->authenticate();
 	}
 
