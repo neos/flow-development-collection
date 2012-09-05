@@ -301,5 +301,27 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$propertyMapper = $this->getAccessibleMock('TYPO3\FLOW3\Property\PropertyMapper', array('dummy'));
 		$this->assertNull($propertyMapper->_call('findFirstEligibleTypeConverterInObjectHierarchy', 'source', 'unknownSourceType', 'TYPO3\FLOW3\Core\Bootstrap'));
 	}
+
+	/**
+	 * @test
+	 */
+	public function doMappingReturnsSourceUnchangedIfAlreadyConverted() {
+		$source = new \ArrayObject();
+		$targetType = 'ArrayObject';
+		$propertyPath = '';
+		$propertyMapper = $this->getAccessibleMock('TYPO3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$this->assertSame($source, $propertyMapper->_call('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
+	}
+
+	/**
+	 * @test
+	 */
+	public function doMappingReturnsSourceUnchangedIfAlreadyConvertedToCompositeType() {
+		$source = new \ArrayObject();
+		$targetType = 'ArrayObject<SomeEntity>';
+		$propertyPath = '';
+		$propertyMapper = $this->getAccessibleMock('TYPO3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$this->assertSame($source, $propertyMapper->_call('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
+	}
 }
 ?>
