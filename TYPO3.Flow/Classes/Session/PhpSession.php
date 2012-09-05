@@ -269,12 +269,17 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		try {
 			$cookieInfo = session_get_cookie_params();
 			if ((empty($cookieInfo['domain'])) && (empty($cookieInfo['secure']))) {
-				setcookie(session_name(), '', time() - 3600, $cookieInfo['path']);
+				setcookie(session_name(), '', time() - 1, $cookieInfo['path']);
 			} elseif (empty($cookieInfo['secure'])) {
-				setcookie(session_name(), '', time() - 3600, $cookieInfo['path'], $cookieInfo['domain']);
+				setcookie(session_name(), '', time() - 1, $cookieInfo['path'], $cookieInfo['domain']);
 			} else {
-				setcookie(session_name(), '', time() - 3600, $cookieInfo['path'], $cookieInfo['domain'], $cookieInfo['secure']);
+				setcookie(session_name(), '', time() - 1, $cookieInfo['path'], $cookieInfo['domain'], $cookieInfo['secure']);
 			}
+
+			$cookieParameters = $this->settings['session']['PhpSession']['cookie'];
+			setcookie('TYPO3_FLOW3_Session_LastActivity', '', 1, $cookieParameters['path'], $cookieParameters['domain'], $cookieParameters['secure'], $cookieParameters['httponly']);
+			unset($_COOKIE['TYPO3_FLOW3_Session_LastActivity']);
+
 			session_destroy();
 		} catch (\Exception $exception) {
 			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
@@ -327,19 +332,18 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @return boolean TRUE if the session expired, FALSE if not
 	 */
 	protected function autoExpire() {
-		session_start();
 
 			// should never happen, but we handle this case gracefully:
-		if (!isset($_SESSION['TYPO3_FLOW3_Session_LastActivity'])) {
-			session_write_close();
+		if (!isset($_COOKIE['TYPO3_FLOW3_Session_LastActivity'])) {
 			return FALSE;
 		}
 
-		$lastActivitySecondsAgo = time() - $_SESSION['TYPO3_FLOW3_Session_LastActivity'];
+		$lastActivitySecondsAgo = time() - $_COOKIE['TYPO3_FLOW3_Session_LastActivity'];
 		$timeout = $this->settings['session']['inactivityTimeout'];
 
 		$expired = FALSE;
 		if ($timeout !== 0 && $lastActivitySecondsAgo > $timeout) {
+			session_start();
 			$this->started = TRUE;
 			$this->sessionId = session_id();
 			$this->destroy(sprintf('Session was inactive for %s seconds, more than the configured timeout of %s seconds.', $lastActivitySecondsAgo, $timeout));
@@ -361,10 +365,11 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		$this->started = TRUE;
 
 		$previousInactivityInSeconds = TRUE;
-		if ($this->hasKey('TYPO3_FLOW3_Session_LastActivity')) {
-			$previousInactivityInSeconds = time() - $this->getData('TYPO3_FLOW3_Session_LastActivity');
+		if (isset($_COOKIE['TYPO3_FLOW3_Session_LastActivity'])) {
+			$previousInactivityInSeconds = time() - $_COOKIE['TYPO3_FLOW3_Session_LastActivity'];
 		}
-		$this->putData('TYPO3_FLOW3_Session_LastActivity', time());
+		$cookieParameters = $this->settings['session']['PhpSession']['cookie'];
+		setcookie('TYPO3_FLOW3_Session_LastActivity', time(), 0, $cookieParameters['path'], $cookieParameters['domain'], $cookieParameters['secure'], $cookieParameters['httponly']);
 
 		if ($this->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
 			$sessionObjects = $this->getData('TYPO3_FLOW3_Object_ObjectManager');
