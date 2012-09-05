@@ -58,7 +58,10 @@ class AuthenticationController extends \TYPO3\FLOW3\Mvc\Controller\ActionControl
 				$mainRequest = $storedRequest->getMainRequest();
 				$packageKey = $mainRequest->getControllerPackageKey();
 				$subpackageKey = $mainRequest->getControllerSubpackageKey();
-				if ($subpackageKey !== NULL) $packageKey .= '\\' . $subpackageKey;
+				if ($subpackageKey !== NULL) {
+					$packageKey .= '\\' . $subpackageKey;
+				}
+				$this->securityContext->setInterceptedRequest(NULL);
 				$this->redirect($mainRequest->getControllerActionName(), $mainRequest->getControllerName(), $packageKey, $mainRequest->getArguments());
 			}
 		} else {
