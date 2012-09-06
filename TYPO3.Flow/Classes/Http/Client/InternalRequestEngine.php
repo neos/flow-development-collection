@@ -96,7 +96,12 @@ class InternalRequestEngine implements RequestEngineInterface {
 			$content .= 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
 			$content .= \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE, TRUE) . PHP_EOL;
 
-			$response->setStatus(500);
+			if ($exception instanceof \TYPO3\FLOW3\Exception) {
+				$statusCode = $exception->getStatusCode();
+			} else {
+				$statusCode = 500;
+			}
+			$response->setStatus($statusCode);
 			$response->setContent($content);
 			$response->setHeader('X-FLOW3-ExceptionCode', $exceptionCodeNumber);
 			$response->setHeader('X-FLOW3-ExceptionMessage', $exception->getMessage());
