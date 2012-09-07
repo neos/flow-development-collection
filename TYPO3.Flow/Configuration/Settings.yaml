@@ -47,6 +47,24 @@ TYPO3:
         # The specified class must implement \TYPO3\FLOW3\Error\ExceptionHandlerInterface
         className: TYPO3\FLOW3\Error\ProductionExceptionHandler
 
+        # Rendering groups can define special renderings depending on status code or class of the
+        # thrown exception. This is only used by the Production Exception Handler
+        renderingGroups:
+
+          notFoundExceptions:
+            matchingStatusCodes: [404]
+            options:
+              fluidTemplate: 'resource://TYPO3.FLOW3/Private/Templates/Error/Default.html'
+              variables:
+                errorDescription: 'Sorry, the page you requested was not found.'
+
+          databaseConnectionExceptions:
+            matchingExceptionClassNames: ['TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException']
+            options:
+              fluidTemplate: 'resource://TYPO3.FLOW3/Private/Error/Default_Template.html'
+              variables:
+                errorDescription: 'Sorry, the database connection couldn\'t be established.'
+
       errorHandler:
 
         # Defines which errors should result in an exception thrown - all other error
@@ -106,12 +124,6 @@ TYPO3:
         strict: FALSE
         # The locales identifiers to use in their desired order
         order: []
-
-    mvc:
-
-      # Object name of the controller to use if no other controller could be resolved
-      # matching the request.
-      notFoundController: TYPO3\FLOW3\Mvc\Controller\NotFoundController
 
     object:
 

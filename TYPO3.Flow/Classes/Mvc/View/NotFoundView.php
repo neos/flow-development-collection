@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Mvc\View;
 /**
  * The not found view - a special case.
  *
- * @api
+ * @deprecated since FLOW3 1.2. Use the "renderingGroups" options of the exception handler configuration instead
  */
 class NotFoundView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 

@@ -1,4 +1,0 @@
-type: dictionary
-additionalProperties: FALSE
-properties:
-  'notFoundController': { type: string, format: class-name, required: TRUE }

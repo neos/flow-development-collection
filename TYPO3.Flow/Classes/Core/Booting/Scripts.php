@@ -168,6 +168,7 @@ class Scripts {
 		$errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
 		$exceptionHandler = new $settings['error']['exceptionHandler']['className'];
 		$exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\FLOW3\Log\SystemLoggerInterface'));
+		$exceptionHandler->setOptions($settings['error']['exceptionHandler']);
 	}
 
 	/**

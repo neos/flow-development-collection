@@ -119,26 +119,21 @@ class Dispatcher {
 	 *
 	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request to dispatch
 	 * @return \TYPO3\FLOW3\Mvc\Controller\ControllerInterface
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchOptionException
 	 * @throws \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException
 	 */
 	protected function resolveController(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
-		$exception = NULL;
 		$controllerObjectName = $request->getControllerObjectName();
 		if ($controllerObjectName === '') {
-			$exception = new \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException('No controller could be resolved which would match your request', 1303209195, NULL, $request);
+			if (isset($this->settings['mvc']['notFoundController'])) {
+				throw new \TYPO3\FLOW3\Configuration\Exception\NoSuchOptionException('The configuration option TYPO3.FLOW3:mvc:notFoundController is deprecated since FLOW3 1.2. Use the "renderingGroups" option of the production exception handler instead in order to render custom error messages.', 1346949795);
+			}
+			throw new \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException('No controller could be resolved which would match your request', 1303209195, NULL, $request);
 		}
 
-		if ($exception !== NULL) {
-			$controller = $this->objectManager->get($this->settings['mvc']['notFoundController']);
-			if (!$controller instanceof \TYPO3\FLOW3\Mvc\Controller\NotFoundControllerInterface) {
-				throw new \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException('The NotFoundController must implement "\TYPO3\FLOW3\Mvc\Controller\NotFoundControllerInterface", ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1246714416, NULL, $request);
-			}
-			$controller->setException($exception);
-		} else {
-			$controller = $this->objectManager->get($controllerObjectName);
-			if (!$controller instanceof \TYPO3\FLOW3\Mvc\Controller\ControllerInterface) {
-				throw new \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, NULL, $request);
-			}
+		$controller = $this->objectManager->get($controllerObjectName);
+		if (!$controller instanceof \TYPO3\FLOW3\Mvc\Controller\ControllerInterface) {
+			throw new \TYPO3\FLOW3\Mvc\Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, NULL, $request);
 		}
 		return $controller;
 	}

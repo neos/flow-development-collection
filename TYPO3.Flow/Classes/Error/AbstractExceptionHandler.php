@@ -23,6 +23,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	protected $systemLogger;
 
 	/**
+	 * @var array
+	 */
+	protected $options = array();
+
+	/**
 	 * Injects the system logger
 	 *
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
@@ -30,6 +35,17 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
+	}
+
+	/**
+	 * Sets options of this exception handler.
+	 *
+	 * @param array $options Options for the exception handler
+	 * @return void
+	 */
+	public function setOptions(array $options) {
+		$this->options = $options;
+		unset($this->options['className']);
 	}
 
 	/**
@@ -75,5 +91,59 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 * @return void
 	 */
 	abstract protected function echoExceptionWeb(\Exception $exception);
+
+
+	/**
+	 * Prepares a Fluid view for rendering the custom error page.
+	 *
+	 * @param array $renderingOptions Rendering options as defined in the settings
+	 * @param integer $statusCode The HTTP status code
+	 * @param string $referenceCode The generated reference code, if any
+	 * @return \TYPO3\Fluid\View\StandaloneView
+	 */
+	protected function buildCustomFluidView(array $renderingOptions, $statusCode, $referenceCode) {
+		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
+
+		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
+		$fluidView->setTemplatePathAndFilename($renderingOptions['fluidTemplate']);
+		if (isset($renderingOptions['variables'])) {
+			$fluidView->assignMultiple($renderingOptions['variables']);
+		}
+		$fluidView->assignMultiple(array(
+			'statusCode' => $statusCode,
+			'statusMessage' => $statusMessage,
+			'referenceCode' => $referenceCode
+		));
+		return $fluidView;
+	}
+
+	/**
+	 * Checks if custom rendering rules apply to the given $exception and returns those.
+	 *
+	 * @param \Exception $exception
+	 * @return array the custom rendering options, or NULL if no custom rendering is defined for this exception
+	 */
+	protected function resolveCustomRenderingOptions(\Exception $exception) {
+		if (!isset($this->options['renderingGroups'])) {
+			return;
+		}
+		foreach ($this->options['renderingGroups'] as $renderingGroupSettings) {
+			if (isset($renderingGroupSettings['matchingExceptionClassNames'])) {
+				foreach ($renderingGroupSettings['matchingExceptionClassNames'] as $exceptionClassName) {
+					if ($exception instanceof $exceptionClassName) {
+						return $renderingGroupSettings['options'];
+					}
+				}
+			}
+			if ($exception instanceof \TYPO3\FLOW3\Exception && isset($renderingGroupSettings['matchingStatusCodes'])) {
+				foreach ($renderingGroupSettings['matchingStatusCodes'] as $statusCode) {
+					if ($statusCode === $exception->getStatusCode()) {
+						return $renderingGroupSettings['options'];
+					}
+				}
+			}
+		}
+	}
+
 }
 ?>

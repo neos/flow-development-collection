@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * controller is chosen.
  *
  * @FLOW3\Scope("singleton")
- * @api
+ * @deprecated since FLOW3 1.2. Use the "renderingGroups" options of the exception handler configuration instead
  */
 class NotFoundController extends \TYPO3\FLOW3\Mvc\Controller\AbstractController implements \TYPO3\FLOW3\Mvc\Controller\NotFoundControllerInterface {
 

@@ -25,5 +25,13 @@ interface ExceptionHandlerInterface {
 	 */
 	public function handleException(\Exception $exception);
 
+	/**
+	 * Sets options of this exception handler
+	 *
+	 * @param array $options
+	 * @return void
+	 */
+	public function setOptions(array $options);
+
 }
 ?>

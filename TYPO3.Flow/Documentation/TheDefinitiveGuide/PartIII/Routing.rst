@@ -25,10 +25,10 @@ specified arguments.
 
 .. note::
 
-	If no matching route can be found, the ``NotFoundController``
-	of the *FLOW3* package is called which returns a 404 status code
-	and - if in Development Context - some more details about the
-	error that occurred.
+	If no matching route can be found, a ``NotFoundException`` is thrown which
+	results in a 404 status code for the HTTP response and an error page being
+	displayed. In Development context that error page contains some more details
+	about the error that occurred.
 
 Routes
 ======

@@ -7,6 +7,20 @@ properties:
     required: TRUE
     properties:
       'className': { type: string, required: TRUE, format: class-name }
+      'renderingGroups':
+        type: dictionary
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'matchingStatusCodes':
+              type: array
+              items: { type: integer }
+            'options': { type: dictionary }
+            'matchingExceptionClassNames':
+              type: array
+              items: { type: string, required: TRUE, format: class-name }
+
   'errorHandler':
     type: dictionary
     additionalProperties: FALSE

@@ -17,6 +17,11 @@ namespace TYPO3\FLOW3\Mvc\Exception;
  * @api
  */
 class NoSuchControllerException extends \TYPO3\FLOW3\Mvc\Exception {
+	/**
+	 * @var integer
+	 */
+	protected $statusCode = 404;
+
 }
 
 ?>
