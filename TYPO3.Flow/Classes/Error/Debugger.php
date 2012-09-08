@@ -309,6 +309,18 @@ class Debugger {
 							} else {
 								$arguments .= '<span style="color:#FF8700;">' . (string)$argument . '</span>';
 							}
+						} elseif (is_bool($argument)) {
+							if ($plaintext) {
+								$arguments .= ($argument === TRUE ? 'TRUE' : 'FALSE');
+							} else {
+								$arguments .= '<span style="color:#FF8700;">' . ($argument === TRUE ? 'TRUE' : 'FALSE') . '</span>';
+							}
+						} elseif (is_array($argument)) {
+							if ($plaintext) {
+								$arguments .= 'array|' . count($argument) . '|';
+							} else {
+								$arguments .= '<span style="color:#FF8700;" title="%s"><em>array|' . count($argument) . '|</em></span>';
+							}
 						} else {
 							if ($plaintext) {
 								$arguments .= gettype($argument);
