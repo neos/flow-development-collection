@@ -127,7 +127,7 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function createQuery() {
