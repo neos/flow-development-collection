@@ -68,9 +68,14 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$this->mockUriBuilder->expects($this->any())->method('getArguments')->will($this->returnValue($this->internalUriBuilderArguments));
 
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(array()));
+
 		$this->mockJoinPoint = $this->getMock('TYPO3\FLOW3\Aop\JoinPoint', array(), array(), '', FALSE);
-		$this->mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($this->mockUriBuilder));
+		$this->mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($this->mockUriBuilder));
 		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('arguments')->will($this->returnValue($this->arguments));
+		$this->mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+
 
 		$this->mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService');
 
@@ -78,19 +83,21 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager
-			->expects($this->once())
+			->expects($this->any())
 			->method('getCaseSensitiveObjectName')
 			->with($this->controllerObjectName)
 			->will($this->returnValue($this->controllerObjectName));
 
 		$mockObjectManager
-			->expects($this->once())
+			->expects($this->any())
 			->method('getClassNameByObjectName')
 			->with($this->controllerObjectName)
 			->will($this->returnValue($this->controllerObjectName));
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->any())->method('getCsrfProtectionToken')->will($this->returnValue('csrf-token'));
+
+
 
 		$csrfProtectionAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\CsrfProtectionAspect', array('dummy'));
 		$csrfProtectionAspect->_set('objectManager', $mockObjectManager);
@@ -105,36 +112,48 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function addCsrfTokenToUriDoesNothingIfTheTargetControllerActionIsTaggedWithSkipCsrfProtection() {
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$this->csrfProtectionAspect->_set('authenticationManager', $mockAuthenticationManager);
+
 		$this->expectThat_PolicyServiceHasPolicyEntry(TRUE);
 		$this->expectThat_ActionIsTaggedWithSkipCsrfProtection(TRUE);
 
-		$this->assertThat_CsrfTokenIsNotAddedToArguments();
+		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 
-		$this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
+		$this->assertSame($arguments, array());
 	}
 
 
 	/**
 	 * @test
 	 */
-	public function addCsrfTokenToUriDoesNothingIfTheTargetControllerActionIsNotMentionedInThePolicy() {
+	public function addCsrfTokenToUriDoesNothingIfNoOneIsAuthenticated() {
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$this->csrfProtectionAspect->_set('authenticationManager', $mockAuthenticationManager);
+
 		$this->expectThat_PolicyServiceHasPolicyEntry(FALSE);
+		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 
-		$this->assertThat_CsrfTokenIsNotAddedToArguments();
+		$this->assertSame($arguments, array());
 
-		$this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 	}
 
 	/**
 	 * @test
 	 */
 	public function addCsrfTokenToUriAddsAnCsrfTokenToTheUriArguentsIfTheTargetControllerActionIsMentionedInThePolicyAndNotTaggedWithSkipCsrfProtection() {
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$this->csrfProtectionAspect->_set('authenticationManager', $mockAuthenticationManager);
+
 		$this->expectThat_PolicyServiceHasPolicyEntry(TRUE);
 		$this->expectThat_ActionIsTaggedWithSkipCsrfProtection(FALSE);
 
-		$this->assertThat_CsrfTokenIsAddedToArguments();
+		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 
-		$this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
+		$this->assertSame($arguments, array('__csrfToken' => 'csrf-token'));
 	}
 
 	/**
@@ -146,7 +165,7 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected function expectThat_PolicyServiceHasPolicyEntry($expected) {
 		$this->mockPolicyService
-			->expects($this->once())
+			->expects($this->any())
 			->method('hasPolicyEntryForMethod')
 			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action')
 			->will($this->returnValue($expected));
@@ -164,26 +183,6 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			->method('isMethodAnnotatedWith')
 			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action', 'TYPO3\FLOW3\Annotations\SkipCsrfProtection')
 			->will($this->returnValue($expected));
-	}
-
-	/**
-	 * Assert that the CSRF token is not added to the arguments
-	 *
-	 * @return void
-	 */
-	protected function assertThat_CsrfTokenIsNotAddedToArguments() {
-		$this->mockUriBuilder->expects($this->never())->method('setArguments');
-	}
-
-	/**
-	 * Assert that the CSRF token is added to the arguments
-	 *
-	 * @return void
-	 */
-	protected function assertThat_CsrfTokenIsAddedToArguments() {
-		$expected = $this->internalUriBuilderArguments;
-		$expected['__csrfToken'] = 'csrf-token';
-		$this->mockUriBuilder->expects($this->once())->method('setArguments')->with($expected);
 	}
 }
 ?>

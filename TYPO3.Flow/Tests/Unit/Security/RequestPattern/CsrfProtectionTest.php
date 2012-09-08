@@ -91,6 +91,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array()));
+		$mockRequest->expects($this->once())->method('getMainRequest')->will($this->returnValue($mockRequest));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface', array(), array(), '', FALSE);
 		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
@@ -124,6 +125,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'invalidCsrfToken')));
+		$mockRequest->expects($this->once())->method('getMainRequest')->will($this->returnValue($mockRequest));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface', array(), array(), '', FALSE);
 		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
@@ -162,6 +164,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockRequest->expects($this->atLeastOnce())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__csrfToken' => 'validToken')));
+		$mockRequest->expects($this->once())->method('getMainRequest')->will($this->returnValue($mockRequest));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface', array(), array(), '', FALSE);
 		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
