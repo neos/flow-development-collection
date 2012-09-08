@@ -141,7 +141,7 @@ abstract class AbstractAuthenticationController extends \TYPO3\FLOW3\Mvc\Control
 	 * @api
 	 */
 	protected function getErrorFlashMessage() {
-		return new \TYPO3\FLOW3\Error\Error('Wrong credentials.', NULL, NULL, $this->actionMethodName);
+		return new \TYPO3\FLOW3\Error\Error('Wrong credentials.', NULL, array(), $this->actionMethodName);
 	}
 }
 ?>

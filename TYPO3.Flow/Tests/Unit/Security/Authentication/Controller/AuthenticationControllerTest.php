@@ -27,9 +27,11 @@ class AuthenticationControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('authenticate');
 
-		$authenticationController = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer');
+		$authenticationController = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('errorAction'), array(), '', FALSE);
 		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
 		$authenticationController->_set('securityContext', $mockSecurityContext);
+		$authenticationController->_set('flashMessageContainer', $mockFlashMessageContainer);
 
 		$authenticationController->authenticateAction();
 	}
@@ -41,8 +43,10 @@ class AuthenticationControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('logout');
 
-		$authenticationController = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer');
+		$authenticationController = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('errorAction'), array(), '', FALSE);
 		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
+		$authenticationController->_set('flashMessageContainer', $mockFlashMessageContainer);
 
 		$authenticationController->logoutAction();
 	}
