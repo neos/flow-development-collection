@@ -22,9 +22,21 @@ use TYPO3\FLOW3\Core\Bootstrap;
 class Sequence {
 
 	/**
+	 * @var string
+	 */
+	protected $identifier;
+
+	/**
 	 * @var array
 	 */
 	protected $steps = array();
+
+	/**
+	 * @param string $identifier
+	 */
+	public function __construct($identifier) {
+		$this->identifier = $identifier;
+	}
 
 	/**
 	 * Adds the given step to this sequence, to be executed after then step specified
@@ -84,10 +96,10 @@ class Sequence {
 	 * @return void
 	 */
 	protected function invokeStep(Step $step, Bootstrap $bootstrap) {
-		$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', array($step));
+		$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', array($step, $this->identifier));
 		$identifier = $step->getIdentifier();
 		$step($bootstrap);
-		$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', array($step));
+		$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', array($step, $this->identifier));
 		if (isset($this->steps[$identifier])) {
 			foreach ($this->steps[$identifier] as $followingStep) {
 				$this->invokeStep($followingStep, $bootstrap);

@@ -253,11 +253,12 @@ class Bootstrap {
 	 * Builds a boot sequence with the minimum modules necessary for both, compiletime
 	 * and runtime.
 	 *
+	 * @param string $identifier
 	 * @return \TYPO3\FLOW3\Core\Booting\Sequence
 	 * @api
 	 */
-	public function buildEssentialsSequence() {
-		$sequence = new Sequence();
+	public function buildEssentialsSequence($identifier) {
+		$sequence = new Sequence($identifier);
 		$sequence->addStep(new Step('typo3.flow3:configuration', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeConfiguration')));
 		$sequence->addStep(new Step('typo3.flow3:systemlogger', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeSystemLogger')), 'typo3.flow3:configuration');
 
@@ -278,7 +279,7 @@ class Bootstrap {
 	 * @api
 	 */
 	public function buildCompiletimeSequence() {
-		$sequence = $this->buildEssentialsSequence();
+		$sequence = $this->buildEssentialsSequence('compiletime');
 
 		if ($this->context->isProduction()) {
 			$bootstrap = $this;
@@ -301,7 +302,7 @@ class Bootstrap {
 	 * @api
 	 */
 	public function buildRuntimeSequence() {
-		$sequence = $this->buildEssentialsSequence();
+		$sequence = $this->buildEssentialsSequence('runtime');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:proxyclasses', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeProxyClasses')), 'typo3.flow3:systemlogger');
 		$sequence->addStep(new Step('typo3.flow3:classloader:cache', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeClassLoaderClassesCache')), 'typo3.flow3:objectmanagement:proxyclasses');
 		$sequence->addStep(new Step('typo3.flow3:objectmanagement:runtime', array('TYPO3\FLOW3\Core\Booting\Scripts', 'initializeObjectManager')), 'typo3.flow3:classloader:cache');
