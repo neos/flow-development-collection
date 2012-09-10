@@ -33,15 +33,12 @@ TYPO3:
       systemLogger:
         backendOptions:
           logFileURL: %FLOW3_PATH_DATA%Logs/System_Development.log
-          createParentDirectories: TRUE
           severityThreshold: %LOG_DEBUG%
       securityLogger:
         backendOptions:
           logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log
-          createParentDirectories: TRUE
           severityThreshold: %LOG_DEBUG%
       sqlLogger:
         backendOptions:
           logFileURL: %FLOW3_PATH_DATA%Logs/Query_Development.log
-          createParentDirectories: TRUE
           severityThreshold: %LOG_DEBUG%
