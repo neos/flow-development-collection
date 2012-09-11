@@ -135,6 +135,8 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 					}
 				}
 			}
+		}
+		foreach ($this->options['renderingGroups'] as $renderingGroupSettings) {
 			if ($exception instanceof \TYPO3\FLOW3\Exception && isset($renderingGroupSettings['matchingStatusCodes'])) {
 				foreach ($renderingGroupSettings['matchingStatusCodes'] as $statusCode) {
 					if ($statusCode === $exception->getStatusCode()) {
