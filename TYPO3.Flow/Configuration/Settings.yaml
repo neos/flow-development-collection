@@ -63,7 +63,7 @@ TYPO3:
             options:
               fluidTemplate: 'resource://TYPO3.FLOW3/Private/Error/Default_Template.html'
               variables:
-                errorDescription: 'Sorry, the database connection couldn\'t be established.'
+                errorDescription: 'Sorry, the database connection couldn''t be established.'
 
       errorHandler:
 
