@@ -1376,10 +1376,18 @@ class ReflectionService {
 		$parameterInformation = array(
 			self::DATA_PARAMETER_POSITION => $parameter->getPosition()
 		);
-		if ($parameter->isPassedByReference()) $parameterInformation[self::DATA_PARAMETER_BY_REFERENCE] = TRUE;
-		if ($parameter->isArray()) $parameterInformation[self::DATA_PARAMETER_ARRAY] = TRUE;
-		if ($parameter->isOptional()) $parameterInformation[self::DATA_PARAMETER_OPTIONAL] = TRUE;
-		if ($parameter->allowsNull()) $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = TRUE;
+		if ($parameter->isPassedByReference()) {
+			$parameterInformation[self::DATA_PARAMETER_BY_REFERENCE] = TRUE;
+		}
+		if ($parameter->isArray()) {
+			$parameterInformation[self::DATA_PARAMETER_ARRAY] = TRUE;
+		}
+		if ($parameter->isOptional()) {
+			$parameterInformation[self::DATA_PARAMETER_OPTIONAL] = TRUE;
+		}
+		if ($parameter->allowsNull()) {
+			$parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = TRUE;
+		}
 
 
 		$parameterClass = $parameter->getClass();
