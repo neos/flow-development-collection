@@ -27,8 +27,11 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
+class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Driver\MappingDriver, \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
+	/**
+	 * @var integer
+	 */
 	const MAPPING_REGULAR = 0;
 	const MAPPING_MM_REGULAR = 1;
 
@@ -120,13 +123,13 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 	 * Loads the metadata for the specified class into the provided container.
 	 *
 	 * @param string $className
-	 * @param \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata
+	 * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $metadata
 	 * @return void
 	 * @throws \Doctrine\ORM\Mapping\MappingException
 	 * @throws \UnexpectedValueException
 	 * @todo adjust when Doctrine 2 supports value objects, see http://www.doctrine-project.org/jira/browse/DDC-93
 	 */
-	public function loadMetadataForClass($className, \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
+	public function loadMetadataForClass($className, \Doctrine\Common\Persistence\Mapping\ClassMetadata $metadata) {
 		$class = $metadata->getReflectionClass();
 		$classSchema = $this->getClassSchema($class->getName());
 		$classAnnotations = $this->reader->getClassAnnotations($class);
@@ -185,10 +188,66 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 					}
 				}
 			}
+
+			if ($tableAnnotation->options !== NULL) {
+				$primaryTable['options'] = $tableAnnotation->options;
+			}
 		}
 		if (!isset($primaryTable['name'])) {
 			$className = $classSchema->getClassName();
 			$primaryTable['name'] = $this->inferTableNameFromClassName($className);
+		}
+
+			// Evaluate NamedNativeQueries annotation
+		if (isset($classAnnotations['Doctrine\ORM\Mapping\NamedNativeQueries'])) {
+			$namedNativeQueriesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\NamedNativeQueries'];
+
+			foreach ($namedNativeQueriesAnnotation->value as $namedNativeQuery) {
+				$metadata->addNamedNativeQuery(array(
+					'name' => $namedNativeQuery->name,
+					'query' => $namedNativeQuery->query,
+					'resultClass' => $namedNativeQuery->resultClass,
+					'resultSetMapping' => $namedNativeQuery->resultSetMapping,
+				));
+			}
+		}
+
+			// Evaluate SqlResultSetMappings annotation
+		if (isset($classAnnotations['Doctrine\ORM\Mapping\SqlResultSetMappings'])) {
+			$sqlResultSetMappingsAnnotation = $classAnnotations['Doctrine\ORM\Mapping\SqlResultSetMappings'];
+
+			foreach ($sqlResultSetMappingsAnnotation->value as $resultSetMapping) {
+				$entities = array();
+				$columns  = array();
+				foreach ($resultSetMapping->entities as $entityResultAnnotation) {
+					$entityResult = array(
+						'fields' => array(),
+						'entityClass' => $entityResultAnnotation->entityClass,
+						'discriminatorColumn' => $entityResultAnnotation->discriminatorColumn,
+					);
+
+					foreach ($entityResultAnnotation->fields as $fieldResultAnnotation) {
+						$entityResult['fields'][] = array(
+							'name' => $fieldResultAnnotation->name,
+							'column' => $fieldResultAnnotation->column
+						);
+					}
+
+					$entities[] = $entityResult;
+				}
+
+				foreach ($resultSetMapping->columns as $columnResultAnnotation) {
+					$columns[] = array(
+						'name' => $columnResultAnnotation->name,
+					);
+				}
+
+				$metadata->addSqlResultSetMapping(array(
+					'name' => $resultSetMapping->name,
+					'entities' => $entities,
+					'columns' => $columns
+				));
+			}
 		}
 
 			// Evaluate NamedQueries annotation
@@ -222,7 +281,8 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 					$metadata->setDiscriminatorColumn(array(
 						'name' => $discriminatorColumnAnnotation->name,
 						'type' => $discriminatorColumnAnnotation->type,
-						'length' => $discriminatorColumnAnnotation->length
+						'length' => $discriminatorColumnAnnotation->length,
+						'columnDefinition' => $discriminatorColumnAnnotation->columnDefinition
 					));
 				} else {
 					$metadata->setDiscriminatorColumn(array('name' => 'dtype', 'type' => 'string', 'length' => 255));
@@ -269,7 +329,11 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 				}
 			}
 		}
+
 		$metadata->setPrimaryTable($primaryTable);
+
+			// Evaluate AssociationOverrides annotation
+		$this->evaluateOverridesAnnotations($classAnnotations, $metadata);
 
 			// Evaluate @HasLifecycleCallbacks annotation
 		$this->evaluateLifeCycleAnnotations($class, $metadata);
@@ -510,23 +574,7 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 				$mapping['nullable'] = FALSE;
 
 				if ($columnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Column')) {
-					$mapping['type'] = ($columnAnnotation->type === 'string') ? NULL : $columnAnnotation->type;
-					$mapping['length'] = $columnAnnotation->length;
-					$mapping['precision'] = $columnAnnotation->precision;
-					$mapping['scale'] = $columnAnnotation->scale;
-					$mapping['nullable'] = $columnAnnotation->nullable;
-					$mapping['unique'] = $columnAnnotation->unique;
-					if ($columnAnnotation->options) {
-						$mapping['options'] = $columnAnnotation->options;
-					}
-
-					if (isset($columnAnnotation->name)) {
-						$mapping['columnName'] = $columnAnnotation->name;
-					}
-
-					if (isset($columnAnnotation->columnDefinition)) {
-						$mapping['columnDefinition'] = $columnAnnotation->columnDefinition;
-					}
+					$mapping = $this->addColumnToMappingArray($columnAnnotation, $mapping);
 				}
 
 				if (!isset($mapping['type'])) {
@@ -579,6 +627,10 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 					));
 				} elseif ($this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\TableGenerator') !== NULL) {
 					throw \Doctrine\ORM\Mapping\MappingException::tableIdGeneratorNotImplemented($className);
+				} elseif ($customGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\CustomIdGenerator')) {
+					$metadata->setCustomGeneratorDefinition(array(
+						'class' => $customGeneratorAnnotation->class
+					));
 				}
 			}
 
@@ -604,14 +656,7 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 		}
 
 		foreach ($joinTableAnnotation->joinColumns as $joinColumn) {
-			$joinTable['joinColumns'][] = array(
-				'name' => $joinColumn->name,
-				'referencedColumnName' => $joinColumn->referencedColumnName,
-				'unique' => $joinColumn->unique,
-				'nullable' => $joinColumn->nullable,
-				'onDelete' => $joinColumn->onDelete,
-				'columnDefinition' => $joinColumn->columnDefinition,
-			);
+			$joinTable['joinColumns'][] = $this->joinColumnToArray($joinColumn);
 		}
 		if (array_key_exists('joinColumns', $joinTable)) {
 			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $mapping, $property, self::MAPPING_MM_REGULAR);
@@ -626,14 +671,7 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 		}
 
 		foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
-			$joinTable['inverseJoinColumns'][] = array(
-				'name' => $joinColumn->name,
-				'referencedColumnName' => $joinColumn->referencedColumnName,
-				'unique' => $joinColumn->unique,
-				'nullable' => $joinColumn->nullable,
-				'onDelete' => $joinColumn->onDelete,
-				'columnDefinition' => $joinColumn->columnDefinition,
-			);
+			$joinTable['inverseJoinColumns'][] = $this->joinColumnToArray($joinColumn);
 		}
 		if (array_key_exists('inverseJoinColumns', $joinTable)) {
 			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $mapping, $property);
@@ -662,28 +700,72 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 		$joinColumns = array();
 
 		if ($joinColumnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumn')) {
-			$joinColumns[] = array(
-				'name' => $joinColumnAnnotation->name === NULL ? strtolower($property->getName()) : $joinColumnAnnotation->name,
-				'referencedColumnName' => $joinColumnAnnotation->referencedColumnName,
-				'unique' => $joinColumnAnnotation->unique,
-				'nullable' => $joinColumnAnnotation->nullable,
-				'onDelete' => $joinColumnAnnotation->onDelete,
-				'columnDefinition' => $joinColumnAnnotation->columnDefinition,
-			);
+			$joinColumns[] = $this->joinColumnToArray($joinColumnAnnotation, strtolower($property->getName()));
 		} else if ($joinColumnsAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumns')) {
 			foreach ($joinColumnsAnnotation->value as $joinColumnAnnotation) {
-				$joinColumns[] = array(
-					'name' => $joinColumnAnnotation->name === NULL ? strtolower($property->getName()) : $joinColumnAnnotation->name,
-					'referencedColumnName' => $joinColumnAnnotation->referencedColumnName,
-					'unique' => $joinColumnAnnotation->unique,
-					'nullable' => $joinColumnAnnotation->nullable,
-					'onDelete' => $joinColumnAnnotation->onDelete,
-					'columnDefinition' => $joinColumnAnnotation->columnDefinition,
-				);
+				$joinColumns[] = $this->joinColumnToArray($joinColumnAnnotation, strtolower($property->getName()));
 			}
 		}
 
 		return $joinColumns;
+	}
+
+	/**
+	 * Evaluate the association overrides annotations and amend the metadata accordingly.
+	 *
+	 * @param array $classAnnotations
+	 * @param \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata
+	 * @return void
+	 */
+	protected function evaluateOverridesAnnotations(array $classAnnotations, \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
+		if (isset($classAnnotations['Doctrine\ORM\Mapping\AssociationOverrides'])) {
+			$associationOverridesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\AssociationOverrides'];
+
+			foreach ($associationOverridesAnnotation->value as $associationOverride) {
+				$override = array();
+				$fieldName = $associationOverride->name;
+
+					// Check for JoinColummn/JoinColumns annotations
+				if ($associationOverride->joinColumns) {
+					$joinColumns = array();
+					foreach ($associationOverride->joinColumns as $joinColumn) {
+						$joinColumns[] = $this->joinColumnToArray($joinColumn);
+					}
+					$override['joinColumns'] = $joinColumns;
+				}
+
+					// Check for JoinTable annotations
+				if ($associationOverride->joinTable) {
+					$joinTable = NULL;
+					$joinTableAnnotation = $associationOverride->joinTable;
+					$joinTable = array(
+						'name' => $joinTableAnnotation->name,
+						'schema' => $joinTableAnnotation->schema
+					);
+
+					foreach ($joinTableAnnotation->joinColumns as $joinColumn) {
+						$joinTable['joinColumns'][] = $this->joinColumnToArray($joinColumn);
+					}
+
+					foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
+						$joinTable['inverseJoinColumns'][] = $this->joinColumnToArray($joinColumn);
+					}
+
+					$override['joinTable'] = $joinTable;
+				}
+
+				$metadata->setAssociationOverride($fieldName, $override);
+			}
+		}
+
+			// Evaluate AttributeOverrides annotation
+		if (isset($classAnnotations['Doctrine\ORM\Mapping\AttributeOverrides'])) {
+			$attributeOverridesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\AttributeOverrides'];
+			foreach ($attributeOverridesAnnotation->value as $attributeOverrideAnnotation) {
+				$attributeOverride = $this->addColumnToMappingArray($attributeOverrideAnnotation->column, array(), $attributeOverrideAnnotation->name);
+				$metadata->setAttributeOverride($attributeOverrideAnnotation->name, $attributeOverride);
+			}
+		}
 	}
 
 	/**
@@ -792,6 +874,59 @@ class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO
 		);
 
 		return $this->classNames;
+	}
+
+	/**
+	 * Parse the given JoinColumn into an array
+	 *
+	 * @param \Doctrine\ORM\Mapping\JoinColumn $joinColumnAnnotation
+	 * @param string $propertyName
+	 * @return array
+	 */
+	protected function joinColumnToArray(\Doctrine\ORM\Mapping\JoinColumn $joinColumnAnnotation, $propertyName = NULL) {
+		return array(
+			'name' => $joinColumnAnnotation->name === NULL ? $propertyName : $joinColumnAnnotation->name,
+			'unique' => $joinColumnAnnotation->unique,
+			'nullable' => $joinColumnAnnotation->nullable,
+			'onDelete' => $joinColumnAnnotation->onDelete,
+			'columnDefinition' => $joinColumnAnnotation->columnDefinition,
+			'referencedColumnName' => $joinColumnAnnotation->referencedColumnName,
+		);
+	}
+
+	/**
+	 * Parse the given Column into an array
+	 *
+	 * @param \Doctrine\ORM\Mapping\Column $columnAnnotation
+	 * @param array $mapping
+	 * @param string $fieldName
+	 * @return array
+	 */
+	protected function addColumnToMappingArray(\Doctrine\ORM\Mapping\Column $columnAnnotation, $mapping = array(), $fieldName = NULL) {
+		if ($fieldName !== NULL) {
+			$mapping['fieldName'] = $fieldName;
+		}
+
+		$mapping['type'] = ($columnAnnotation->type === 'string') ? NULL : $columnAnnotation->type;
+		$mapping['scale'] = $columnAnnotation->scale;
+		$mapping['length'] = $columnAnnotation->length;
+		$mapping['unique'] = $columnAnnotation->unique;
+		$mapping['nullable'] = $columnAnnotation->nullable;
+		$mapping['precision'] = $columnAnnotation->precision;
+
+		if ($columnAnnotation->options) {
+			$mapping['options'] = $columnAnnotation->options;
+		}
+
+		if (isset($columnAnnotation->name)) {
+			$mapping['columnName'] = $columnAnnotation->name;
+		}
+
+		if (isset($columnAnnotation->columnDefinition)) {
+			$mapping['columnDefinition'] = $columnAnnotation->columnDefinition;
+		}
+
+		return $mapping;
 	}
 
 	/**

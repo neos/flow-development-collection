@@ -23,8 +23,9 @@
         "typo3/fluid": "*",
         "typo3/party": "*",
 
-        "doctrine/orm": "2.2.2",
+        "doctrine/orm": "2.3.*",
         "doctrine/migrations": "*",
+        "doctrine/data-fixtures": "*",
 
         "symfony/yaml": ">2.1.0",
         "symfony/dom-crawler": ">2.0.16",

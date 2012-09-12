@@ -148,6 +148,7 @@ TYPO3:
        'doctrine.migrations' : ['.*']
        'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*', 'Symfony\\Component\\DomCrawler\\Form.*']
        'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
+       'symfony.console' : ['Symfony\\Component\\Console\\Tests\\.*']
        'mikey179.vfsStream' : ['.*']
        # workaround, should rather be deactivated
        'typo3.flowcomposerinstallers': ['.*']
