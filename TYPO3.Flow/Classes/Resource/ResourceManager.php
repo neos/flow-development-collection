@@ -52,6 +52,11 @@ class ResourceManager {
 	protected $persistenceManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;
@@ -127,6 +132,16 @@ class ResourceManager {
 	}
 
 	/**
+	 * Injects the system logger
+	 *
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 */
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
 	 * Injects the settings of this package
 	 *
 	 * @param array $settings
@@ -172,12 +187,14 @@ class ResourceManager {
 	 */
 	public function importResource($uri) {
 		$pathInfo = pathinfo($uri);
-		if (isset($pathInfo['extension']) && substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
+		if (isset($pathInfo['extension']) && substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
+			$this->systemLogger->log('Import of resources with a "php" extension is not allowed.', LOG_WARNING);
 			return FALSE;
 		}
 
 		$temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('FLOW3_ResourceImport_');
 		if (copy($uri, $temporaryTargetPathAndFilename) === FALSE) {
+			$this->systemLogger->log('Could not copy resource from "' . $uri . '" to temporary file "' . $temporaryTargetPathAndFilename . '".', LOG_WARNING);
 			return FALSE;
 		}
 
@@ -185,6 +202,7 @@ class ResourceManager {
 		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
 		if (rename($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
 			unlink($temporaryTargetPathAndFilename);
+			$this->systemLogger->log('Could not copy temporary file from "' . $temporaryTargetPathAndFilename. '" to final destination "' . $finalTargetPathAndFilename . '".', LOG_WARNING);
 			return FALSE;
 		}
 		$this->fixFilePermissions($finalTargetPathAndFilename);
@@ -207,20 +225,24 @@ class ResourceManager {
 	 */
 	public function createResourceFromContent($content, $filename) {
 		$pathInfo = pathinfo($filename);
-		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
+		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
+			$this->systemLogger->log('Creation of resources with a "php" extension is not allowed.', LOG_WARNING);
 			return FALSE;
 		}
 
 		$hash = sha1($content);
 		$finalTargetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->persistentResourcesStorageBaseUri, $hash));
 		if (!file_exists($finalTargetPathAndFilename)) {
-			file_put_contents($finalTargetPathAndFilename, $content);
-			$this->fixFilePermissions($finalTargetPathAndFilename);
+			if (file_put_contents($finalTargetPathAndFilename, $content) === FALSE) {
+				$this->systemLogger->log('Could not create resource at "' . $finalTargetPathAndFilename . '".', LOG_WARNING);
+				return FALSE;
+			} else {
+				$this->fixFilePermissions($finalTargetPathAndFilename);
+			}
 		}
 
 		$resource = $this->createResourceFromHashAndFilename($hash, $pathInfo['basename']);
 		$this->attachImportedResource($resource);
-
 
 		return $resource;
 	}
