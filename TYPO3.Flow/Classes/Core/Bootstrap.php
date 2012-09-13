@@ -557,10 +557,16 @@ class Bootstrap {
 		}
 
 		if (!is_dir(FLOW3_PATH_DATA) && !is_link(FLOW3_PATH_DATA)) {
-			mkdir(FLOW3_PATH_DATA);
+			if (!@mkdir(FLOW3_PATH_DATA)) {
+				echo('FLOW3 could not create the directory "' . FLOW3_PATH_DATA . '". Please check the file permissions manually or run "sudo ./flow3 flow3:core:setfilepermissions" to fix the problem. (Error #1347526552)');
+				exit(1);
+			}
 		}
 		if (!is_dir(FLOW3_PATH_DATA . 'Persistent') && !is_link(FLOW3_PATH_DATA . 'Persistent')) {
-			mkdir(FLOW3_PATH_DATA . 'Persistent');
+			if (!@mkdir(FLOW3_PATH_DATA . 'Persistent')) {
+				echo('FLOW3 could not create the directory "' . FLOW3_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow3 flow3:core:setfilepermissions" to fix the problem. (Error #1347526553)');
+				exit(1);
+			}
 		}
 	}
 }
