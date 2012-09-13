@@ -20,6 +20,11 @@ namespace TYPO3\FLOW3\Property;
 class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface {
 
 	/**
+	 * Placeholder in property paths for multi-valued types
+	 */
+	const PROPERTY_PATH_PLACEHOLDER = '*';
+
+	/**
 	 * multi-dimensional array which stores type-converter specific configuration:
 	 * 1. Dimension: Fully qualified class name of the type converter
 	 * 2. Dimension: Configuration Key
@@ -147,6 +152,8 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 	public function getConfigurationFor($propertyName) {
 		if (isset($this->subConfigurationForProperty[$propertyName])) {
 			return $this->subConfigurationForProperty[$propertyName];
+		} elseif (isset($this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER])) {
+			return $this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER];
 		}
 
 		return new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
@@ -247,7 +254,11 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 		$currentProperty = array_shift($splittedPropertyPath);
 		if (!isset($this->subConfigurationForProperty[$currentProperty])) {
 			$type = get_class($this);
-			$this->subConfigurationForProperty[$currentProperty] = new $type;
+			if (isset($this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER])) {
+				$this->subConfigurationForProperty[$currentProperty] = clone $this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER];
+			} else {
+				$this->subConfigurationForProperty[$currentProperty] = new $type;
+			}
 		}
 		return $this->subConfigurationForProperty[$currentProperty]->traverseProperties($splittedPropertyPath);
 	}

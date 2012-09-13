@@ -178,5 +178,26 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$actualResult = call_user_func_array(array($this->propertyMappingConfiguration, $methodToTestForFluentInterface), $argumentsForMethod);
 		$this->assertSame($this->propertyMappingConfiguration, $actualResult);
 	}
+
+	/**
+	 * @test
+	 */
+	public function forPropertyWithAsteriskAllowsArbitraryPropertyNamesWithGetConfigurationFor() {
+		$this->propertyMappingConfiguration->forProperty('items.*')->setTypeConverterOptions('someConverter', array('k1' => 'v1'));
+
+		$configuration = $this->propertyMappingConfiguration->getConfigurationFor('items')->getConfigurationFor('6');
+		$this->assertSame('v1', $configuration->getConfigurationValue('someConverter', 'k1'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function forPropertyWithAsteriskAllowsArbitraryPropertyNamesWithForProperty() {
+		$this->propertyMappingConfiguration->forProperty('items.*.foo')->setTypeConverterOptions('someConverter', array('k1' => 'v1'));
+
+		$configuration = $this->propertyMappingConfiguration->forProperty('items.6.foo');
+		$this->assertSame('v1', $configuration->getConfigurationValue('someConverter', 'k1'));
+	}
+
 }
 ?>
