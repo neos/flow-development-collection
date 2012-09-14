@@ -151,8 +151,11 @@ class PropertyMapper {
 	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	protected function doMapping($source, $targetType, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
-		if (is_object($source) && ($source instanceof $targetType)) {
-			return $source;
+		if (is_object($source)) {
+			$targetType = $this->parseCompositeType($targetType);
+			if ($source instanceof $targetType) {
+				return $source;
+			}
 		}
 
 		if ($source === NULL) {
@@ -210,9 +213,7 @@ class PropertyMapper {
 		if (!is_string($targetType)) {
 			throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
 		}
-		if (strpos($targetType, '<') !== FALSE) {
-			$targetType = substr($targetType, 0, strpos($targetType, '<'));
-		}
+		$targetType = $this->parseCompositeType($targetType);
 		$converter = NULL;
 
 		if (\TYPO3\FLOW3\Utility\TypeHandling::isSimpleType($targetType)) {
@@ -338,6 +339,20 @@ class PropertyMapper {
 		} else {
 			throw new \TYPO3\FLOW3\Property\Exception\InvalidSourceException('The source is not of type string, array, float, integer or boolean, but of type "' . gettype($source) . '"', 1297773150);
 		}
+	}
+
+	/**
+	 * Parse a composite type like \Foo\Collection<\Bar\Entity> into
+	 * \Foo\Collection
+	 *
+	 * @param string $compositeType
+	 * @return string
+	 */
+	public function parseCompositeType($compositeType) {
+		if (strpos($compositeType, '<') !== FALSE) {
+			$compositeType = substr($compositeType, 0, strpos($compositeType, '<'));
+		}
+		return $compositeType;
 	}
 }
 ?>
