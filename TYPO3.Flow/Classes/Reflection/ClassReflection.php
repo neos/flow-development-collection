@@ -24,6 +24,7 @@ class ClassReflection extends \ReflectionClass {
 	 * Constructor
 	 *
 	 * @param mixed $classNameOrObject the name of the class or the object to be reflected.
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\ClassLoadingForReflectionFailedException
 	 */
 	public function __construct($classNameOrObject) {
 		$throwExceptionOnUnloadedClasses =
@@ -31,7 +32,12 @@ class ClassReflection extends \ReflectionClass {
 				throw new Exception\ClassLoadingForReflectionFailedException('Required class "' . $className . '" could not be loaded properly for reflection, possibly requiring non-existent classes or using non-supported annotations.');
 			};
 		spl_autoload_register($throwExceptionOnUnloadedClasses);
-		parent::__construct($classNameOrObject);
+		try {
+			parent::__construct($classNameOrObject);
+		} catch(\TYPO3\FLOW3\Reflection\Exception\ClassLoadingForReflectionFailedException $exception) {
+			spl_autoload_unregister($throwExceptionOnUnloadedClasses);
+			throw $exception;
+		}
 		spl_autoload_unregister($throwExceptionOnUnloadedClasses);
 	}
 
