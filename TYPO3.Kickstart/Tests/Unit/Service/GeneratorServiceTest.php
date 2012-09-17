@@ -6,7 +6,7 @@ namespace TYPO3\Kickstart\Tests\Unit\Service;
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
- *  of the License, or (at your option) any later version.                *
+ * of the License, or (at your option) any later version.                 *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
@@ -25,7 +25,7 @@ class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'field' => array(
 				'type' => 'bool'
 			)
-		);		
+		);
 		$normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions);
 		$this->assertEquals('boolean', $normalizedFieldDefinitions['field']['type']);
 	}
@@ -39,7 +39,7 @@ class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'field' => array(
 				'type' => 'DateTime'
 			)
-		);		
+		);
 		$normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions);
 		$this->assertEquals('\DateTime', $normalizedFieldDefinitions['field']['type']);
 	}
@@ -53,7 +53,7 @@ class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'field' => array(
 				'type' => 'Foo'
 			)
-		);		
+		);
 		$normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions, 'TYPO3\Testing\Domain\Model');
 		$this->assertEquals('\TYPO3\Testing\Domain\Model\Foo', $normalizedFieldDefinitions['field']['type']);
 	}
