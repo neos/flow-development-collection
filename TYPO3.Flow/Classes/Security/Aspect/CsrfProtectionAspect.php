@@ -21,26 +21,26 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class CsrfProtectionAspect {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Context
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
@@ -51,43 +51,44 @@ class CsrfProtectionAspect {
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Mvc\Routing\RouterInterface
+	 */
+	protected $router;
+
+	/**
 	 * Adds a CSRF token as argument in the URI builder
 	 *
-	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Routing\UriBuilder->addNamespaceToArguments())")
+	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && method(TYPO3\FLOW3\Mvc\Routing\UriBuilder->mergeArgumentsWithRequestArguments())")
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return array
 	 */
 	public function addCsrfTokenToUri(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
-		$arguments = $joinPoint->getMethodArgument('arguments');
-		$namespacedArguments = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		$mergedArguments = $joinPoint->getAdviceChain()->proceed($joinPoint);
 		if ($this->authenticationManager->isAuthenticated() === FALSE) {
-			return $namespacedArguments;
+			return $mergedArguments;
 		}
 
-		$packageKey = (isset($arguments['@package']) ? $arguments['@package'] : '');
-		$subpackageKey = (isset($arguments['@subpackage']) ? $arguments['@subpackage'] : '');
-		$controllerName = (isset($arguments['@controller']) ? $arguments['@controller'] : 'Standard');
-		$actionName = (isset($arguments['@action']) ? $arguments['@action'] : 'index') . 'Action';
+		$packageKey = (isset($mergedArguments['@package']) ? $mergedArguments['@package'] : '');
+		$subpackageKey = (isset($mergedArguments['@subpackage']) ? $mergedArguments['@subpackage'] : '');
+		$controllerName = (isset($mergedArguments['@controller']) ? $mergedArguments['@controller'] : 'Standard');
+		$actionName = ((isset($mergedArguments['@action']) && $mergedArguments['@action'] !== '') ? $mergedArguments['@action'] : 'index') . 'Action';
 
-		$possibleObjectName = '@package\@subpackage\Controller\@controllerController';
-		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
-		$possibleObjectName = str_replace('@subpackage', $subpackageKey, $possibleObjectName);
-		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
-		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
-		$lowercaseObjectName = strtolower($possibleObjectName);
+		$possibleObjectName = $this->router->getControllerObjectName($packageKey, $subpackageKey, $controllerName);
+		$className = $this->objectManager->getClassNameByObjectName($possibleObjectName);
 
-		$className = $this->objectManager->getClassNameByObjectName($this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName));
-		if (!$this->reflectionService->isMethodAnnotatedWith($className, $actionName, 'TYPO3\FLOW3\Annotations\SkipCsrfProtection')) {
-			$namespacedArguments['__csrfToken'] = $this->securityContext->getCsrfProtectionToken();
+		if ($className !== FALSE && $this->reflectionService->hasMethod($className, $actionName)) {
+			if (!$this->reflectionService->isMethodAnnotatedWith($className, $actionName, 'TYPO3\FLOW3\Annotations\SkipCsrfProtection')) {
+				$mergedArguments['__csrfToken'] = $this->securityContext->getCsrfProtectionToken();
+			}
 		}
-
-		return $namespacedArguments;
+		return $mergedArguments;
 	}
 
 	/**
