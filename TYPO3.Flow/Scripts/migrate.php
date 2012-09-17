@@ -10,9 +10,9 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require (__DIR__ . '/../Classes/Exception.php');
-require (__DIR__ . '/../Classes/Utility/Exception.php');
-require (__DIR__ . '/../Classes/Utility/Files.php');
+require (__DIR__ . '/../Classes/TYPO3/FLOW3/Exception.php');
+require (__DIR__ . '/../Classes/TYPO3/FLOW3/Utility/Exception.php');
+require (__DIR__ . '/../Classes/TYPO3/FLOW3/Utility/Files.php');
 
 require(__DIR__ . '/Migrations/AbstractMigration.php');
 require(__DIR__ . '/Migrations/Manager.php');

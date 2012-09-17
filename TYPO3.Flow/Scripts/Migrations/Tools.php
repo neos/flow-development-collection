@@ -44,9 +44,6 @@ class Tools {
 					continue;
 				}
 
-				if (!file_exists(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Classes/Package.php')))) {
-					continue;
-				};
 
 				$packagesData[$packageKey] = array(
 					'packageKey' => $packageKey,

@@ -453,7 +453,7 @@ class Bootstrap {
 		define('FLOW3_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
 
 		if (!defined('FLOW3_PATH_FLOW3')) {
-			define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', __DIR__ . '/../../')));
+			define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', __DIR__ . '/../../../../')));
 		}
 
 		if (!defined('FLOW3_PATH_ROOT')) {

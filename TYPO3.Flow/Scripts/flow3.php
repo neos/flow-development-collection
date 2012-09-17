@@ -33,7 +33,7 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:setfilepermissions' || $a
 	array_shift($argv);
 	require(__DIR__ . '/migrate.php');
 } else {
-	require(__DIR__ . '/../Classes/Core/Bootstrap.php');
+	require(__DIR__ . '/../Classes/TYPO3/FLOW3/Core/Bootstrap.php');
 
 	$context = trim(getenv('FLOW3_CONTEXT'), '"\' ') ?: 'Development';
 	$_SERVER['FLOW3_ROOTPATH'] = trim(getenv('FLOW3_ROOTPATH'), '"\' ') ?: '';

@@ -18,7 +18,7 @@
  * by FLOW3 users.
  */
 
-$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/Utility/MediaTypes.php';
+$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/TYPO3/FLOW3/Utility/MediaTypes.php';
 
 $rawList = file_get_contents('http://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=HEAD&view=co');
 

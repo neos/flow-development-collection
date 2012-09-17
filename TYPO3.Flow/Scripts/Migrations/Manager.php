@@ -102,7 +102,7 @@ class Manager {
 				}
 			} else {
 				foreach ($this->packagesData as $key => $packageData) {
-					if ($packageData['category'] === 'Framework') {
+					if ($packageData['category'] === 'Framework' || $packageData['category'] === 'Vendor') {
 						continue;
 					}
 					$this->migratePackage($key, $packageData, $migrationInstance);

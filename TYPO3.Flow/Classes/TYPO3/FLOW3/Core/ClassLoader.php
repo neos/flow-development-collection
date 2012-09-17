@@ -105,7 +105,7 @@ class ClassLoader {
 			// Load classes from the FLOW3 package at a very early stage where
 			// no packages have been registered yet:
 		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
-			require(FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php');
+			require(FLOW3_PATH_FLOW3 . 'Classes/TYPO3/FLOW3/' . str_replace('\\', '/', substr($className, 12)) . '.php');
 			return TRUE;
 		}
 
@@ -123,7 +123,7 @@ class ClassLoader {
 						// The only reason using file_exists here is that Doctrine tries
 						// out several combinations of annotation namespaces and thus also triggers
 						// autoloading for non-existent classes in a valid package namespace
-					$classPathAndFilename = $packageData['classesPath'] . str_replace('\\', '/', substr($className, $packageData['namespaceLength'])) . '.php';
+					$classPathAndFilename = $packageData['classesPath'] . '/'.  str_replace('\\', '/', $className) . '.php';
 					if (file_exists($classPathAndFilename)) {
 						require ($classPathAndFilename);
 						return TRUE;
