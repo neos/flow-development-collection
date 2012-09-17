@@ -1011,8 +1011,13 @@ class ReflectionService {
 			$classNamesToBuildSchemaFor = array();
 			$count = 0;
 			foreach ($newClassNames as $className) {
-				$count ++;
-				$this->reflectClass($className);
+				$count++;
+				try {
+					$this->reflectClass($className);
+				} catch (Exception\ClassLoadingForReflectionFailedException $exception) {
+					$this->systemLogger->log('Could not reflect "' . $className . '" because the class could not be loaded.', LOG_DEBUG);
+					continue;
+				}
 				if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
 					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\FLOW3\Annotations\Scope');
 					if ($scopeAnnotation !== NULL && $scopeAnnotation->value !== 'prototype') {
