@@ -6,7 +6,7 @@ namespace TYPO3\Eel\FlowQuery;
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
- *  of the License, or (at your option) any later version.                *
+ * of the License, or (at your option) any later version.                 *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
@@ -199,7 +199,7 @@ function match_AttributeFilter ($stack = array()) {
 				$pos_20 = $this->pos;
 				$_31 = NULL;
 				do {
-					$stack[] = $result; $result = $this->construct( $matchrule, "Operator" ); 
+					$stack[] = $result; $result = $this->construct( $matchrule, "Operator" );
 					if (( $subres = $this->literal( 'instanceof' ) ) !== FALSE) {
 						$result["text"] .= $subres;
 						$subres = $result; $result = array_pop($stack);
@@ -269,7 +269,7 @@ function match_AttributeFilter ($stack = array()) {
 					$pos_60 = $this->pos;
 					$_59 = NULL;
 					do {
-						$stack[] = $result; $result = $this->construct( $matchrule, "Operator" ); 
+						$stack[] = $result; $result = $this->construct( $matchrule, "Operator" );
 						$_48 = NULL;
 						do {
 							$_46 = NULL;

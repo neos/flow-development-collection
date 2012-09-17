@@ -6,7 +6,7 @@ namespace TYPO3\Eel;
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
- *  of the License, or (at your option) any later version.                *
+ * of the License, or (at your option) any later version.                 *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
@@ -658,7 +658,7 @@ function match_Comparison ($stack = array()) {
 		$_130 = NULL;
 		do {
 			if (( $subres = $this->whitespace(  ) ) !== FALSE) { $result["text"] .= $subres; }
-			$stack[] = $result; $result = $this->construct( $matchrule, "comp" ); 
+			$stack[] = $result; $result = $this->construct( $matchrule, "comp" );
 			if (( $subres = $this->rx( '/ == | != | <= | >= | < | > /' ) ) !== FALSE) {
 				$result["text"] .= $subres;
 				$subres = $result; $result = array_pop($stack);
@@ -710,7 +710,7 @@ function match_SumCalculation ($stack = array()) {
 			$_139 = NULL;
 			do {
 				if (( $subres = $this->whitespace(  ) ) !== FALSE) { $result["text"] .= $subres; }
-				$stack[] = $result; $result = $this->construct( $matchrule, "op" ); 
+				$stack[] = $result; $result = $this->construct( $matchrule, "op" );
 				if (( $subres = $this->rx( '/ \+ | \- /' ) ) !== FALSE) {
 					$result["text"] .= $subres;
 					$subres = $result; $result = array_pop($stack);
@@ -764,7 +764,7 @@ function match_ProdCalculation ($stack = array()) {
 			$_148 = NULL;
 			do {
 				if (( $subres = $this->whitespace(  ) ) !== FALSE) { $result["text"] .= $subres; }
-				$stack[] = $result; $result = $this->construct( $matchrule, "op" ); 
+				$stack[] = $result; $result = $this->construct( $matchrule, "op" );
 				if (( $subres = $this->rx( '/ \/ | \* | % /' ) ) !== FALSE) {
 					$result["text"] .= $subres;
 					$subres = $result; $result = array_pop($stack);
@@ -870,7 +870,7 @@ function match_ObjectLiteralProperty ($stack = array()) {
 	$matchrule = "ObjectLiteralProperty"; $result = $this->construct($matchrule, $matchrule, null);
 	$_176 = NULL;
 	do {
-		$stack[] = $result; $result = $this->construct( $matchrule, "key" ); 
+		$stack[] = $result; $result = $this->construct( $matchrule, "key" );
 		$_170 = NULL;
 		do {
 			$_168 = NULL;
