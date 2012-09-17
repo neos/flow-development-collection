@@ -102,7 +102,7 @@ class ActionRequest implements RequestInterface {
 
 	/**
 	 * The parent request – either another ActionRequest or Http Request
-	 * @var object
+	 * @var ActionRequest|HttpRequest
 	 */
 	protected $parentRequest;
 
@@ -121,7 +121,7 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Constructs this action request
 	 *
-	 * @param object $parentRequest Either an HTTP request or another ActionRequest
+	 * @param ActionRequest|HttpRequest $parentRequest Either an HTTP request or another ActionRequest
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -135,7 +135,7 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Returns the parent request
 	 *
-	 * @return object
+	 * @return ActionRequest|HttpRequest
 	 * @api
 	 */
 	public function getParentRequest() {
