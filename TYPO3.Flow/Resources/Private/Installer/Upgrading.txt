@@ -1,0 +1,12 @@
+Upgrading instructions
+======================
+
+This file contains instructions for upgrading your FLOW3 1.1 based
+applications to FLOW3 1.2.
+
+Session configuration changes
+-----------------------------
+
+The configuration for the PhpSession is now *only* read from a setting named
+``PhpSession`` instead of the former ``PHPSession``. You must adjust your
+settings accordingly.
