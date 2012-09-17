@@ -1,0 +1,40 @@
+{
+    "name": "typo3/flow3",
+    "type": "flow3-framework",
+    "description": "FLOW3 - TYPO3's Application Framework",
+    "homepage": "http://flow3.typo3.org",
+    "keywords": ["framework"],
+    "license": ["LGPL-3.0+"],
+    "authors": [
+        {
+            "name": "FLOW3 Development Team",
+            "homepage": "http://typo3.org/teams/core-development-team/"
+        }
+    ],
+
+    "version": "dev-master",
+
+    "require": {
+        "php" : ">=5.3.2",
+
+        "ext-zlib": "*",
+        "ext-SPL": "*",
+        "ext-json": ">=1.2.0",
+        "ext-session": "*",
+
+        "christianjul/installers": "*",
+        "typo3/fluid": "*",
+        "typo3/party": "*",
+
+        "doctrine/orm": "2.2.2",
+        "doctrine/migrations": "*",
+
+        "symfony/yaml": ">2.1.0",
+        "symfony/dom-crawler": ">2.0.16"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\FLOW3": "Classes"
+        }
+    }
+}
