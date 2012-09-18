@@ -206,6 +206,9 @@ class Debugger {
 		if (property_exists($object, 'FLOW3_Persistence_Identifier')) {
 			$persistenceIdentifier = $objectIdentifier;
 			$persistenceType = 'persistable';
+		} elseif ($object instanceof \Closure) {
+			$persistenceIdentifier = 'n/a';
+			$persistenceType = 'closure';
 		} else {
 			$persistenceIdentifier = 'unknown';
 			$persistenceType = 'object';
@@ -217,7 +220,7 @@ class Debugger {
 			$dump .= '<span class="debug-ptype" title="' . $persistenceIdentifier . '">' . $persistenceType . '</span>';
 		}
 
-		if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface || (isset($object->__IS_PROXY__) && $object->__IS_PROXY__ === TRUE)) {
+		if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface || (property_exists($object, '__IS_PROXY__') && $object->__IS_PROXY__ === TRUE)) {
 			if ($plaintext) {
 				$dump .= ' ' . self::ansiEscapeWrap('proxy', '41;37', $ansiColors);
 			} else {
