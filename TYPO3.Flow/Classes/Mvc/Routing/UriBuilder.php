@@ -337,7 +337,7 @@ class UriBuilder {
 	 */
 	public function build(array $arguments = array()) {
 		$arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
-		$this->mergeArgumentsWithRequestArguments($arguments);
+		$arguments = $this->mergeArgumentsWithRequestArguments($arguments);
 
 		$uri = $this->router->resolve($arguments);
 		$this->lastArguments = $arguments;
@@ -367,9 +367,9 @@ class UriBuilder {
 	 * root (HTTP) > main (Action) > sub (Action) > sub sub (Action)
 	 *
 	 * @param array $arguments
-	 * @return void
+	 * @return array
 	 */
-	protected function mergeArgumentsWithRequestArguments(array &$arguments) {
+	protected function mergeArgumentsWithRequestArguments(array $arguments) {
 		$requestArguments = array();
 
 		$mainRequest = $this->request->getMainRequest();
@@ -416,10 +416,10 @@ class UriBuilder {
 		}
 
 		if (count($requestArguments) === 0) {
-			return;
+			return $arguments;
 		}
 
-		$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+		return Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 	}
 
 	/**
