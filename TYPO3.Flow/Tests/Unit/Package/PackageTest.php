@@ -62,10 +62,8 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function invalidPackageKeys() {
 		return array(
-			array('3TYPO.FLOW3'),
 			array('TYPO3..FLOW3'),
 			array('RobertLemke.FLOW3. Twitter'),
-			array('sumphonos.stem'),
 			array('Schalke*4')
 		);
 	}
@@ -153,23 +151,23 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getClassFilesReturnsAListOfClassFilesOfThePackage() {
-		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
+		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
 		mkdir ($packagePath, 0777, TRUE);
 
-		mkdir($packagePath . 'Classes/Controller', 0770, TRUE);
-		mkdir($packagePath . 'Classes/Domain/Model', 0770, TRUE);
+		mkdir($packagePath . 'Classes/Acme/MyPackage/Controller', 0770, TRUE);
+		mkdir($packagePath . 'Classes/Acme/MyPackage/Domain/Model', 0770, TRUE);
 
-		file_put_contents($packagePath . 'Classes/Controller/FooController.php', '');
-		file_put_contents($packagePath . 'Classes/Domain/Model/Foo.php', '');
-		file_put_contents($packagePath . 'Classes/Domain/Model/Bar.php', '');
+		file_put_contents($packagePath . 'Classes/Acme/MyPackage/Controller/FooController.php', '');
+		file_put_contents($packagePath . 'Classes/Acme/MyPackage/Domain/Model/Foo.php', '');
+		file_put_contents($packagePath . 'Classes/Acme/MyPackage/Domain/Model/Bar.php', '');
 
 		$expectedClassFilesArray = array(
-			'Acme\MyPackage\Controller\FooController' => 'Classes/Controller/FooController.php',
-			'Acme\MyPackage\Domain\Model\Foo' => 'Classes/Domain/Model/Foo.php',
-			'Acme\MyPackage\Domain\Model\Bar' => 'Classes/Domain/Model/Bar.php',
+			'Acme\MyPackage\Controller\FooController' => 'Classes/Acme/MyPackage/Controller/FooController.php',
+			'Acme\MyPackage\Domain\Model\Foo' => 'Classes/Acme/MyPackage/Domain/Model/Foo.php',
+			'Acme\MyPackage\Domain\Model\Bar' => 'Classes/Acme/MyPackage/Domain/Model/Bar.php',
 		);
 
-		$package = new Package('Acme.MyPackage', $packagePath);
+		$package = new Package('Acme.MyPackage', $packagePath, 'Classes');
 		$actualClassFilesArray = $package->getClassFiles();
 
 		$this->assertEquals($expectedClassFilesArray, $actualClassFilesArray);

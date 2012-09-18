@@ -6,3 +6,6 @@ properties:
     additionalProperties: FALSE
     properties:
       'gitBinary': { type: string }
+  'inactiveByDefault':
+    type: array
+    items: { type: string }

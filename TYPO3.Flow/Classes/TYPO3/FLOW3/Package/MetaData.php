@@ -89,21 +89,6 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	}
 
 	/**
-	 * @return string The package title
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
-	/**
-	 * @param string $title The package title
-	 * @return void
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
 	 * @return string The package version
 	 */
 	public function getVersion() {

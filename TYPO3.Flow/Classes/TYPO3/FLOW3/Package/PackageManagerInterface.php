@@ -103,7 +103,7 @@ interface PackageManagerInterface {
 	public function createPackage($packageKey, \TYPO3\FLOW3\Package\MetaData $packageMetaData = null);
 
 	/**
-	 * Deactivates a packe if it is in the list of active packages
+	 * Deactivates a package if it is in the list of active packages
 	 *
 	 * @param string $packageKey The package to deactivate
 	 * @return void
@@ -143,6 +143,32 @@ interface PackageManagerInterface {
 	 * @return void
 	 */
 	public function unfreezePackage($packageKey);
+
+	/**
+	 * Refreezes a package
+	 *
+	 * @param string $packageKey The package to refreeze
+	 * @return void
+	 */
+	public function refreezePackage($packageKey);
+
+	/**
+	 * Register a native FLOW3 package
+	 *
+	 * @param string $packageKey The Package to be registered
+	 * @param boolean $sortAndSave allows for not saving packagestates when used in loops etc.
+	 * @return PackageInterface
+	 * @throws Exception\CorruptPackageException
+	 */
+	public function registerPackage(PackageInterface $package, $sortAndSave = TRUE);
+
+	/**
+	 * Unregisters a package from the list of available packages
+	 *
+	 * @param PackageInterface $package The package to be unregistered
+	 * @throws Exception\InvalidPackageStateException
+	 */
+	public function unregisterPackage(PackageInterface $package);
 
 	/**
 	 * Removes a package from registry and deletes it from filesystem

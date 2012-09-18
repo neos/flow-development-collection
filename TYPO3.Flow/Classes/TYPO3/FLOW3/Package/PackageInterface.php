@@ -18,7 +18,7 @@ namespace TYPO3\FLOW3\Package;
  */
 interface PackageInterface {
 
-	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Z][A-Za-z0-9]+(?:\.[A-Z][A-Za-z0-9]+)*$/';
+	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*$/';
 
 	const DIRECTORY_CLASSES = 'Classes/';
 	const DIRECTORY_CONFIGURATION = 'Configuration/';

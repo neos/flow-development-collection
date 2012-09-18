@@ -33,11 +33,6 @@ interface MetaDataInterface {
 	public function getPackageKey();
 
 	/**
-	 * @return string The package title
-	 */
-	public function getTitle();
-
-	/**
 	 * @return string The package version
 	 */
 	public function getVersion();

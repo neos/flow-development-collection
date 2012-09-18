@@ -185,7 +185,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		foreach ($activePackages as $package) {
 			$packageMetaData = $package->getPackageMetaData();
 			$frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ' );
-			$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
+			$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15));
 		}
 
 		if (count($inactivePackages) > 0) {
@@ -194,39 +194,13 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			foreach ($inactivePackages as $package) {
 				$frozenState = (isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ' );
 				$packageMetaData = $package->getPackageMetaData();
-				$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
+				$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($packageMetaData->getVersion(), 15));
 			}
 		}
 
 		if (count($frozenPackages) > 0 && $freezeSupported) {
 			$this->outputLine();
 			$this->outputLine(' * frozen package');
-		}
-	}
-
-	/**
-	 * Import a package from a remote location
-	 *
-	 * Imports the specified package from a remote git repository.
-	 * The imported package will not be activated automatically.
-	 *
-	 * Currently only packages located at forge.typo3.org are supported.
-	 * Note that the git binary must be available
-	 *
-	 * @param string $packageKey The package key of the package to import
-	 * @return void
-	 * @see typo3.flow3:package:activate
-	 * @see typo3.flow3:package:create
-	 */
-	public function importCommand($packageKey) {
-		try {
-			$this->packageManager->importPackage($packageKey);
-			$this->outputLine('Imported package %s.', array($packageKey));
-			Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
-			$this->sendAndExit(0);
-		} catch (\TYPO3\FLOW3\Package\Exception $exception) {
-			$this->outputLine($exception->getMessage());
-			$this->quit(1);
 		}
 	}
 

@@ -35,11 +35,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher')));
 		$this->packageManager = new \TYPO3\FLOW3\Package\PackageManager();
 
-		mkdir('vfs://Test/Resources');
-		$packageClassTemplateUri = 'vfs://Test/Resources/Package.php.tmpl';
-		file_put_contents($packageClassTemplateUri, '<?php namespace {packageNamespace}; # The {packageKey} package');
-		$this->packageManager->setPackageClassTemplateUri($packageClassTemplateUri);
-
 		mkdir('vfs://Test/Packages/Application', 0700, TRUE);
 		mkdir('vfs://Test/Configuration');
 
@@ -69,7 +64,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 */
-	public function getPackageThrowsExcpetionOnUnknownPackage() {
+	public function getPackageThrowsExceptionOnUnknownPackage() {
 		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
 	}
 
@@ -94,18 +89,10 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		foreach ($expectedPackageKeys as $packageKey) {
-			$packageNamespace = str_replace('.', '\\', $packageKey);
 			$packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
-			$packageClassCode = '<?php
-					namespace ' . $packageNamespace . ';
-					class Package extends \TYPO3\FLOW3\Package\Package {}
-			?>';
 
 			mkdir($packagePath, 0770, TRUE);
 			mkdir($packagePath . 'Classes');
-			mkdir($packagePath . 'Meta');
-			file_put_contents($packagePath . 'Classes/Package.php', $packageClassCode);
-			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
 		}
 
 		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
@@ -132,18 +119,10 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		foreach ($expectedPackageKeys as $packageKey) {
-			$packageNamespace = str_replace('.', '\\', $packageKey);
 			$packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
-			$packageClassCode = '<?php
-					namespace ' . $packageNamespace . ';
-					class Package extends \TYPO3\FLOW3\Package\Package {}
-			?>';
 
 			mkdir($packagePath, 0770, TRUE);
 			mkdir($packagePath . 'Classes');
-			mkdir($packagePath . 'Meta');
-			file_put_contents($packagePath . 'Classes/Package.php', $packageClassCode);
-			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
 		}
 
 		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
@@ -167,28 +146,6 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals('inactive', $packageStates['packages'][$packageKey]['state']);
 	}
 
-	/**
-	 * @test
-	 * @expectedException TYPO3\FLOW3\Package\Exception\CorruptPackageException
-	 */
-	public function registerPackagesThrowsAnExceptionWhenItFindsACorruptPackage() {
-		mkdir('vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/Meta', 0770, TRUE);
-		file_put_contents('vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/Meta/Package.xml', '<xml>...</xml>');
-
-		$packageStatesConfiguration['packages'] = array(
-			'TYPO3.YetAnotherTestPackage' => array(
-				'packagePath' => 'vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/',
-				'state' => 'active'
-			)
-		);
-
-		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'));
-		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
-		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
-		$packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
-
-		$packageManager->_call('registerPackages');
-	}
 
 	/**
 	 * @test
@@ -201,18 +158,11 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		foreach ($packageKeys as $packageKey) {
-			$packageNamespace = str_replace('.', '\\', $packageKey);
-			$packagePath = 'vfs://Test/Packages/Application/' . str_replace('.', '/', $packageNamespace) . '/';
-			$packageClassCode = '<?php
-namespace ' . $packageNamespace . ';
-class Package extends \TYPO3\FLOW3\Package\Package {}
-?>';
+			$packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
 
 			mkdir($packagePath, 0770, TRUE);
 			mkdir($packagePath . 'Classes');
-			mkdir($packagePath . 'Meta');
-			file_put_contents($packagePath . 'Classes/Package.php', $packageClassCode);
-			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
+			file_put_contents($packagePath . 'composer.json', '{"type": "flow3-test"}');
 		}
 
 		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
@@ -226,7 +176,7 @@ class Package extends \TYPO3\FLOW3\Package\Package {}
 		foreach ($packageKeys as $packageKey) {
 			$expectedPackageStatesConfiguration[$packageKey] = array(
 				'state' => 'active',
-				'packagePath' => 'Application/' . str_replace('.', '/', $packageKey) . '/',
+				'packagePath' => 'Application/' . $packageKey . '/',
 				'classesPath' => 'Classes/'
 			);
 		}
@@ -264,24 +214,25 @@ class Package extends \TYPO3\FLOW3\Package\Package {}
 	/**
 	 * @test
 	 */
-	public function createPackageWritesAPackageMetaFileUsingTheGivenMetaObject() {
+	public function createPackageWritesAComposerManifestUsingTheGivenMetaObject() {
 		$metaData = new \TYPO3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
-		$metaData->setTitle('Yet Another Test Package');
+		$metaData->setDescription('Yet Another Test Package');
 
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', $metaData);
 
-		$actualPackageXml = simplexml_load_file($package->getMetaPath() . 'Package.xml');
-		$this->assertEquals('Acme.YetAnotherTestPackage', (string)$actualPackageXml->key);
-		$this->assertEquals('Yet Another Test Package', (string)$actualPackageXml->title);
+		$json = file_get_contents($package->getPackagePath() . '/composer.json');
+		$composerManifest = json_decode($json);
+
+		$this->assertEquals('acme/yetanothertestpackage', $composerManifest->name);
+		$this->assertEquals('Yet Another Test Package', $composerManifest->description);
 	}
 
 	/**
-	 * Checks if createPackage() creates the folders for classes, configuration, documentation, resources and tests and
-	 * the mandatory Package class.
+	 * Checks if createPackage() creates the folders for classes, configuration, documentation, resources and tests.
 	 *
 	 * @test
 	 */
-	public function createPackageCreatesCommonFoldersAndThePackageClass() {
+	public function createPackageCreatesCommonFolders() {
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
 		$packagePath = $package->getPackagePath();
 
@@ -292,10 +243,6 @@ class Package extends \TYPO3\FLOW3\Package\Package {}
 		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_UNIT), "Tests/Unit directory was not created");
 		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_FUNCTIONAL), "Tests/Functional directory was not created");
 		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_METADATA), "Metadata directory was not created");
-
-		$actualPackageClassCode = file_get_contents($packagePath . PackageInterface::DIRECTORY_CLASSES . 'Package.php');
-		$expectedPackageClassCode = '<?php namespace Acme\YetAnotherTestPackage; # The Acme.YetAnotherTestPackage package';
-		$this->assertEquals($expectedPackageClassCode, $actualPackageClassCode);
 	}
 
 	/**
@@ -315,7 +262,7 @@ class Package extends \TYPO3\FLOW3\Package\Package {}
 	 * Makes sure that duplicate package keys are detected.
 	 *
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
 	 */
 	public function createPackageThrowsExceptionForExistingPackageKey() {
 		$this->packageManager->createPackage('Acme.YetAnotherTestPackage');

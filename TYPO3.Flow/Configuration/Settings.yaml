@@ -149,10 +149,10 @@ TYPO3:
 
     package:
 
-      git:
-
-        # The full path and filename of the git binary.
-        gitBinary: '/usr/bin/env git'
+      # This can be used to make packages inactive, even though they would be
+      # activated automatically otherwise.
+      inactiveByDefault:
+        - 'christianjul.installers'
 
     persistence:
 
