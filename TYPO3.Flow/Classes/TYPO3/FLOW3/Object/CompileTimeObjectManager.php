@@ -202,7 +202,43 @@ class CompileTimeObjectManager extends ObjectManager {
 				$availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
 			}
 		}
-		return $availableClassNames;
+
+		return $this->filterClassNamesFromConfiguration($availableClassNames);
+	}
+
+	/**
+	 * Given an array of class names by package key this filters out all classes that
+	 * have been configured to be excluded from object management.
+	 *
+	 * @param array $classNames 2-level array - key of first level is package key, value of second level is classname (FQN)
+	 * @return array The input array with all configured to be excluded from object management filtered out
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchOptionException
+	 */
+	protected function filterClassNamesFromConfiguration(array $classNames) {
+		if (isset($this->allSettings['TYPO3']['FLOW3']['object']) && isset($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'])) {
+			if (!is_array($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'])) {
+				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('The setting "TYPO3.FLOW3.object.excludeClasses" is invalid (it must be an array).');
+			}
+			foreach ($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
+				if (!array_key_exists($packageKey, $classNames)) {
+					throw new \TYPO3\FLOW3\Configuration\Exception\NoSuchOptionException('The package "' . $packageKey . '" specified in the setting "TYPO3.FLOW3.object.excludeClasses" does not exist or is not active.');
+				}
+				if (!is_array($filterExpressions)) {
+					throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('The value given for setting "TYPO3.FLOW3.object.excludeClasses.\'' . $packageKey . '\'" is  invalid (it must be an array).');
+				}
+				foreach ($filterExpressions as $filterExpression) {
+					$classNames[$packageKey] = array_filter(
+						$classNames[$packageKey],
+						function ($className) use ($filterExpression) {
+							$match = preg_match('/' . $filterExpression . '/', $className);
+							return $match !== 1;
+						}
+					);
+				}
+			}
+		}
+		return $classNames;
 	}
 
 	/**
