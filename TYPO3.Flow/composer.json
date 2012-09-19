@@ -32,6 +32,9 @@
         "symfony/yaml": ">2.1.0",
         "symfony/dom-crawler": ">2.0.16"
     },
+    "require-dev": {
+        "mikey179/vfsStream": "*"
+    },
     "autoload": {
         "psr-0": {
             "TYPO3\\FLOW3": "Classes"

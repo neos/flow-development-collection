@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Package;
  *                                                                        */
 
 use TYPO3\FLOW3\Package\PackageInterface;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the default package manager
@@ -29,8 +30,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	protected function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
+		vfsStream::setup('Test');
 		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
 		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher')));
 		$this->packageManager = new \TYPO3\FLOW3\Package\PackageManager();

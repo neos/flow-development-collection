@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the package documentation class
  *
@@ -22,15 +24,14 @@ class DocumentationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	protected function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+		vfsStream::setup('testDirectory');
 	}
 
 	/**
 	 * @test
 	 */
 	public function constructSetsPackageNameAndPathToDocumentation() {
-		$documentationPath = \vfsStream::url('testDirectory') . '/';
+		$documentationPath = vfsStream::url('testDirectory') . '/';
 
 		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
 
@@ -45,7 +46,7 @@ class DocumentationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getDocumentationFormatsScansDocumentationDirectoryAndReturnsDocumentationFormatObjectsIndexedByFormatName() {
-		$documentationPath = \vfsStream::url('testDirectory') . '/';
+		$documentationPath = vfsStream::url('testDirectory') . '/';
 
 		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
 

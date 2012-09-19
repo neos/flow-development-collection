@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Configuration\Source;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the YAML configuration source
  *
@@ -22,8 +24,7 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	protected function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+		vfsStream::setup('testDirectory');
 	}
 
 	/**
@@ -49,7 +50,7 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function saveWritesArrayToGivenFileAsYAML() {
-		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
+		$pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
 		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
 		$mockConfiguration = array(
 			'configurationFileHasBeenLoaded' => TRUE,
@@ -67,7 +68,7 @@ class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function saveWritesDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
-		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
+		$pathAndFilename = vfsStream::url('testDirectory') . '/YAMLConfiguration';
 		$comment = '# This comment should stay' . chr(10) . 'Test: foo' . chr(10);
 		file_put_contents($pathAndFilename . '.yaml', $comment);
 

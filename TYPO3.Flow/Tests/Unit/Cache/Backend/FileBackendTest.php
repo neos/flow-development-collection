@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the cache to file backend
  */
@@ -19,8 +21,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 	}
 
 	/**

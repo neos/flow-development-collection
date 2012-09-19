@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the resource manager
  *
@@ -20,8 +22,7 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 	}
 
 	/**

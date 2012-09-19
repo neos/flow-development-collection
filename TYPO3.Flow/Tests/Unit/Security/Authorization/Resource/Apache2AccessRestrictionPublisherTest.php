@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Security\Authorization\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the Apache2 access restriction publisher
  *
@@ -20,8 +22,7 @@ class Apache2AccessRestrictionPublisherTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	/**
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 	}
 
 	/**

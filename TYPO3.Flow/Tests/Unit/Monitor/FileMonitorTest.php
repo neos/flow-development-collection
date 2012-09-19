@@ -15,6 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Monitor;
  *                                                                        */
 
 use \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the File Monitor class
@@ -40,8 +41,7 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->unixStylePath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(__DIR__);
 		$this->unixStylePathAndFilename = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(__FILE__);
 
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+		vfsStream::setup('testDirectory');
 	}
 
 	/**
@@ -149,7 +149,7 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function detectChangesDetectsChangesInFilesOfMonitoredDirectories() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
-		$testPath = \vfsStream::url('testDirectory');
+		$testPath = vfsStream::url('testDirectory');
 
 		$knownDirectoriesAndFiles = array(
 			$testPath => array(
@@ -178,7 +178,7 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function detectChangesDetectsNewlyCreatedFilesInMonitoredDirectories() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
-		$testPath = \vfsStream::url('testDirectory');
+		$testPath = vfsStream::url('testDirectory');
 		file_put_contents($testPath . '/oldfile.txt', 'void');
 		file_put_contents($testPath . '/newfile.txt', 'void');
 
@@ -235,14 +235,14 @@ class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function detectChangesEmitsDirectoryChangedSignalIfDirectoryHasBeenRemoved() {
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
-		$expectedChangedDirectories = array(\vfsStream::url('testDirectory') . '/bar' => ChangeDetectionStrategyInterface::STATUS_DELETED);
+		$expectedChangedDirectories = array(vfsStream::url('testDirectory') . '/bar' => ChangeDetectionStrategyInterface::STATUS_DELETED);
 
 		$mockMonitor = $this->getAccessibleMock('TYPO3\FLOW3\Monitor\FileMonitor', array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->expects($this->any())->method('detectChangedFiles')->will($this->returnValue(array()));
 		$mockMonitor->expects($this->once())->method('emitDirectoriesHaveChanged')->with('FLOW3_Test', $expectedChangedDirectories);
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
-		$mockMonitor->_set('directoriesAndFiles', array(\vfsStream::url('testDirectory') . '/bar' => array()));
+		$mockMonitor->_set('directoriesAndFiles', array(vfsStream::url('testDirectory') . '/bar' => array()));
 
 		$mockMonitor->detectChanges();
 	}

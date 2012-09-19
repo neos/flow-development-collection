@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the CldrRepository
  *
@@ -31,8 +33,7 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 
 		$this->repository = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository', array('dummy'));
 		$this->repository->_set('cldrBasePath', 'vfs://Foo/');

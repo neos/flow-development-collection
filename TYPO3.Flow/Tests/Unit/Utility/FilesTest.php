@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the Utility Files class
  *
@@ -23,8 +25,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $temporaryDirectory;
 
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 
 		$intendedTemporaryDirectory = sys_get_temp_dir() . '/' . str_replace('\\', '_', __CLASS__);
 		if (!file_exists($intendedTemporaryDirectory)) {

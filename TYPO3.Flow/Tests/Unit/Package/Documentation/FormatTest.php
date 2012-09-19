@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Package\Documentation;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the documentation format class
  *
@@ -22,15 +24,14 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	protected function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+		vfsStream::setup('testDirectory');
 	}
 
 	/**
 	 * @test
 	 */
 	public function constructSetsNameAndPathToFormat() {
-		$documentationPath = \vfsStream::url('testDirectory') . '/';
+		$documentationPath = vfsStream::url('testDirectory') . '/';
 
 		$format = new \TYPO3\FLOW3\Package\Documentation\Format('DocBook', $documentationPath);
 
@@ -42,7 +43,7 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getLanguagesScansFormatDirectoryAndReturnsLanguagesAsStrings() {
-		$formatPath = \vfsStream::url('testDirectory') . '/';
+		$formatPath = vfsStream::url('testDirectory') . '/';
 
 		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($formatPath . 'en');
 

@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Configuration;
  *                                                                        */
 
 use TYPO3\FLOW3\Core\ApplicationContext;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the configuration manager
@@ -496,8 +497,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('FLOW3'));
+		vfsStream::setup('FLOW3');
 
 		$configurationsCode = <<< "EOD"
 <?php
@@ -505,7 +505,7 @@ return array('bar' => 'touched');
 ?>
 EOD;
 
-		$includeCachedConfigurationsPathAndFilename = \vfsStream::url('FLOW3/IncludeCachedConfigurations.php');
+		$includeCachedConfigurationsPathAndFilename = vfsStream::url('FLOW3/IncludeCachedConfigurations.php');
 		file_put_contents($includeCachedConfigurationsPathAndFilename, $configurationsCode);
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
@@ -537,12 +537,11 @@ EOD;
 	 * @test
 	 */
 	public function saveConfigurationCacheSavesTheCurrentConfigurationAsPhpCode() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('FLOW3'));
-		mkdir(\vfsStream::url('FLOW3/Configuration'));
+		vfsStream::setup('FLOW3');
+		mkdir(vfsStream::url('FLOW3/Configuration'));
 
-		$temporaryDirectoryPath = \vfsStream::url('FLOW3/TemporaryDirectory') . '/';
-		$includeCachedConfigurationsPathAndFilename = \vfsStream::url('FLOW3/Configuration/IncludeCachedConfigurations.php');
+		$temporaryDirectoryPath = vfsStream::url('FLOW3/TemporaryDirectory') . '/';
+		$includeCachedConfigurationsPathAndFilename = vfsStream::url('FLOW3/Configuration/IncludeCachedConfigurations.php');
 
 		$mockConfigurations = array(
 			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('routes'),

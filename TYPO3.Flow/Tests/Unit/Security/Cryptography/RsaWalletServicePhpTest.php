@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
  */
@@ -31,8 +33,7 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		if (!function_exists('openssl_pkey_new')) {
 			$this->markTestSkipped('openssl_pkey_new() not available');
 		} else {
-			\vfsStreamWrapper::register();
-			\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+			vfsStream::setup('Foo');
 			$settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
 
 			$this->rsaWalletService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp', array('dummy'));

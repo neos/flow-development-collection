@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the object class loader
  *
@@ -32,8 +34,7 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
+		vfsStream::setup('Test');
 
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/', 0770, TRUE);
 		$package1 = new \TYPO3\FLOW3\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');

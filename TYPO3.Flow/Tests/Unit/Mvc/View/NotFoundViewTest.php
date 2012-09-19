@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the MVC NotFoundView
  */
@@ -37,8 +39,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $response;
 
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+		vfsStream::setup('testDirectory');
 
 		$this->view = $this->getMock('TYPO3\FLOW3\Mvc\View\NotFoundView', array('getTemplatePathAndFilename'));
 
@@ -57,7 +58,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function renderReturnsContentOfTemplateReturnedByGetTemplatePathAndFilename() {
-		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		$templateUrl = vfsStream::url('testDirectory') . '/template.html';
 		file_put_contents($templateUrl, 'template content');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
@@ -71,7 +72,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\Mvc\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		$templateUrl = vfsStream::url('testDirectory') . '/template.html';
 		file_put_contents($templateUrl, 'error message: {ERROR_MESSAGE}');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
@@ -87,7 +88,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockRequest = $this->getMock('\TYPO3\FLOW3\Mvc\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		$templateUrl = vfsStream::url('testDirectory') . '/template.html';
 		file_put_contents($templateUrl, 'error message: {ERROR_MESSAGE}');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
@@ -112,7 +113,7 @@ class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function renderSets404Status() {
-		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		$templateUrl = vfsStream::url('testDirectory') . '/template.html';
 		file_put_contents($templateUrl, 'template content');
 		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 

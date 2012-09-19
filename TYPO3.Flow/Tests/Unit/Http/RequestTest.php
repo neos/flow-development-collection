@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
 
 use TYPO3\FLOW3\Http\Request;
 use TYPO3\FLOW3\Http\Uri;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the Http Request class
@@ -247,8 +248,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getContentReturnsTheRequestBodyContent() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 
 		$expectedContent = 'userid=joe&password=joh316';
 		file_put_contents('vfs://Foo/content.txt', $expectedContent);
@@ -264,8 +264,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getContentReturnsTheRequestBodyContentAsResourcePointerIfRequested() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 
 		$expectedContent = 'userid=joe&password=joh316';
 		file_put_contents('vfs://Foo/content.txt', $expectedContent);
@@ -284,8 +283,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Http\Exception
 	 */
 	public function getContentThrowsAnExceptionOnTryingToRetrieveContentAsResourceAlthoughItHasBeenRetrievedPreviously() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 
 		file_put_contents('vfs://Foo/content.txt', 'xy');
 

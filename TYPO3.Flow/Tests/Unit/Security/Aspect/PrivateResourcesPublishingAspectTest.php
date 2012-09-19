@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Security\Aspect;
 
 use TYPO3\FLOW3\Utility\Files;
 use TYPO3\FLOW3\Security\Policy\Role;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the private resources publishing aspect
@@ -33,8 +34,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	/**
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 		$temporaryDirectoryBase = realpath(sys_get_temp_dir()) . '/' . str_replace('\\', '_', __CLASS__);
 
 		$this->temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryBase, 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory'));

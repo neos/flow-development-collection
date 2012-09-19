@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Package;
  *                                                                        */
 
 use TYPO3\FLOW3\Package\Package;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the package class
@@ -22,8 +23,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Packages'));
+		vfsStream::setup('Packages');
 	}
 
 	/**
@@ -112,10 +112,9 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPackageDocumentationsReturnsEmptyArrayIfDocumentationDirectoryDoesntExist() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+		vfsStream::setup('testDirectory');
 
-		$packagePath = \vfsStream::url('testDirectory') . '/';
+		$packagePath = vfsStream::url('testDirectory') . '/';
 
 		$package = new Package('TYPO3.FLOW3', $packagePath);
 		$documentations = $package->getPackageDocumentations();

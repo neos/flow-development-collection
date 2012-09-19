@@ -13,6 +13,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache;
 
 require_once ('Backend/MockBackend.php');
 use TYPO3\FLOW3\Core\ApplicationContext;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the Cache Factory
@@ -29,8 +30,7 @@ class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Creates the mocked filesystem used in the tests
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 
 		$this->mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));

@@ -21,6 +21,8 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  */
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Testcase for the Locale Service class.
  *
@@ -31,8 +33,7 @@ class ServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+		vfsStream::setup('Foo');
 	}
 
 	/**
