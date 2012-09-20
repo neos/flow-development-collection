@@ -40,18 +40,6 @@ class CsrfProtectionAspect {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
-	 */
-	protected $policyService;
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
-	 */
-	protected $bootstrap;
-
-	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
@@ -71,7 +59,7 @@ class CsrfProtectionAspect {
 	 */
 	public function addCsrfTokenToUri(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$mergedArguments = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($this->authenticationManager->isAuthenticated() === FALSE) {
+		if ($this->authenticationManager->isAuthenticated() === FALSE || $joinPoint->getProxy()->isLinkProtectionEnabled() === FALSE) {
 			return $mergedArguments;
 		}
 
@@ -89,29 +77,6 @@ class CsrfProtectionAspect {
 			}
 		}
 		return $mergedArguments;
-	}
-
-	/**
-	 * Adds a CSRF token as argument in ExtDirect requests
-	 *
-	 * @FLOW3\Around("method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
-	 */
-	public function transferCsrfTokenToExtDirectRequests(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
-		$extDirectRequest = $joinPoint->getAdviceChain()->proceed($joinPoint);
-
-		$requestHandler = $this->bootstrap->getActiveRequestHandler();
-		if ($requestHandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
-			$arguments = $requestHandler->getHttpRequest()->getArguments();
-			if (isset($arguments['__csrfToken'])) {
-				$requestArguments = $extDirectRequest->getMainRequest()->getArguments();
-				$requestArguments['__csrfToken'] = $arguments['__csrfToken'];
-				$extDirectRequest->getMainRequest()->setArguments($requestArguments);
-			}
-		}
-
-		return $extDirectRequest;
 	}
 }
 
