@@ -32,12 +32,12 @@ abstract class AbstractMigration {
 	/**
 	 * @var string
 	 */
-	protected $packageKey;
+	protected $sourcePackageKey;
 
 	/**
 	 * @var array
 	 */
-	protected $packageData;
+	protected $targetPackageData;
 
 	/**
 	 * @var array
@@ -60,7 +60,18 @@ abstract class AbstractMigration {
 	 */
 	public function __construct(\TYPO3\FLOW3\Core\Migrations\Manager $manager, $packageKey) {
 		$this->migrationsManager = $manager;
-		$this->packageKey = $packageKey;
+		$this->sourcePackageKey = $packageKey;
+	}
+
+	/**
+	 * Resets internal state and sets the target package data.
+	 *
+	 * @param array $targetPackageData
+	 * @return void
+	 */
+	public function prepare(array $targetPackageData) {
+		$this->operations = array('searchAndReplace' => array(), 'searchAndReplaceRegex' => array(), 'moveFile' => array(), 'deleteFile' => array());
+		$this->targetPackageData = $targetPackageData;
 	}
 
 	/**
@@ -68,8 +79,8 @@ abstract class AbstractMigration {
 	 *
 	 * @return string
 	 */
-	public function getPackageKey() {
-		return $this->packageKey;
+	public function getSourcePackageKey() {
+		return $this->sourcePackageKey;
 	}
 
 	/**
@@ -78,7 +89,7 @@ abstract class AbstractMigration {
 	 * @return string
 	 */
 	public function getIdentifier() {
-		return $this->packageKey . '-' . substr(get_class($this), -12);
+		return $this->sourcePackageKey . '-' . substr(get_class($this), -12);
 	}
 
 	/**
@@ -93,11 +104,9 @@ abstract class AbstractMigration {
 	abstract public function up();
 
 	/**
-	 * @param array $packageData
 	 * @return void
 	 */
-	public function execute(array $packageData) {
-		$this->packageData = $packageData;
+	public function execute() {
 		$this->applySearchAndReplaceOperations();
 		$this->applyFileOperations();
 	}
@@ -138,7 +147,7 @@ abstract class AbstractMigration {
 	 * @api
 	 */
 	protected function showNote($note) {
-		$this->notes[] = $note;
+		$this->notes[sha1($note)] = $note;
 	}
 
 	/**
@@ -155,7 +164,7 @@ abstract class AbstractMigration {
 	 * @api
 	 */
 	protected function showWarning($warning) {
-		$this->warnings[] = $warning;
+		$this->warnings[sha1($warning)] = $warning;
 	}
 
 	/**
@@ -251,7 +260,7 @@ abstract class AbstractMigration {
 	 * @return void
 	 */
 	protected function applySearchAndReplaceOperations() {
-		$allPathsAndFilenames = Files::readDirectoryRecursively($this->packageData['path'], NULL, TRUE);
+		$allPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'], NULL, TRUE);
 		foreach ($this->operations['searchAndReplace'] as $operation) {
 			foreach ($allPathsAndFilenames as $pathAndFilename) {
 				$pathInfo = pathinfo($pathAndFilename);
@@ -274,10 +283,10 @@ abstract class AbstractMigration {
 	 * @return void
 	 */
 	protected function applyFileOperations() {
-		$allPathsAndFilenames = Files::readDirectoryRecursively($this->packageData['path'], NULL, TRUE);
+		$allPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'], NULL, TRUE);
 		foreach ($this->operations['moveFile'] as $operation) {
-			$oldPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[0]));
-			$newPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[1]));
+			$oldPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0]));
+			$newPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[1]));
 
 			if (substr($oldPath, -1) === '*') {
 				$oldPath = substr($oldPath, 0, -1);
@@ -297,14 +306,14 @@ abstract class AbstractMigration {
 					}
 				}
 			} else {
-				$oldPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[0]));
-				$newPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[1]));
+				$oldPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0]));
+				$newPath = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[1]));
 				Git::move($oldPath, $newPath);
 			}
 		}
 
 		foreach ($this->operations['deleteFile'] as $operation) {
-			Git::remove(Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[0])));
+			Git::remove(Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0])));
 		}
 	}
 

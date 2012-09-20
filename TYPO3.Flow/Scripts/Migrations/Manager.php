@@ -89,10 +89,6 @@ class Manager {
 		$this->initialize();
 
 		foreach ($this->migrations as $migrationInstance) {
-			$migrationInstance->up();
-		}
-
-		foreach ($this->migrations as $migrationInstance) {
 			echo 'Applying ' . $migrationInstance->getIdentifier() . PHP_EOL;
 			if ($packageKey !== NULL) {
 				if (array_key_exists($packageKey, $this->packagesData)) {
@@ -124,19 +120,21 @@ class Manager {
 	 */
 	protected function migratePackage($packageKey, array $packageData, AbstractMigration $migration) {
 		if (Git::isWorkingCopyClean($packageData['path'])) {
-			echo '  Migrating ' . $packageKey . PHP_EOL;
 			if (Git::hasMigrationApplied($packageData['path'], $migration->getIdentifier())) {
-				echo '    Skipping ' . $packageKey . ', the migration is already applied.' . PHP_EOL;
+				echo '  Skipping ' . $packageKey . ', the migration is already applied.' . PHP_EOL;
 			} else {
+				echo '  Migrating ' . $packageKey . PHP_EOL;
 				try {
-					$migration->execute($packageData);
+					$migration->prepare($this->packagesData[$packageKey]);
+					$migration->up();
+					$migration->execute();
 					echo Git::commitMigration($packageData['path'], $migration->getIdentifier());
-				} catch (\Exeption $exception) {
+				} catch (\Exception $exception) {
 					throw new \RuntimeException('Applying migration "' .$migration->getIdentifier() . '" to "' . $packageKey . '" failed.', 0, $exception);
 				}
 			}
 		} else {
-			echo '    Skipping ' . $packageKey . ', the working copy is dirty.' . PHP_EOL;
+			echo '  Skipping ' . $packageKey . ', the working copy is dirty.' . PHP_EOL;
 		}
 	}
 
