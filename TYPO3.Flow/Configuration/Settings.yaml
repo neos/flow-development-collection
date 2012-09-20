@@ -142,7 +142,7 @@ TYPO3:
        'Doctrine.ORM' : ['.*']
        'Doctrine.DBAL' : ['.*']
        'doctrine.migrations' : ['.*']
-       'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*']
+       'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*', 'Symfony\\Component\\DomCrawler\\Form.*']
        'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
        'mikey179.vfsStream' : ['.*']
        # workaround, should rather be deactivated
