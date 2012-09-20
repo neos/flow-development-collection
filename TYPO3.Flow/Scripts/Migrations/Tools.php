@@ -44,15 +44,49 @@ class Tools {
 					continue;
 				}
 
+				if (file_exists(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Meta/Package.xml')))) {
+					$meta = self::readPackageMetaData(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Meta/Package.xml')));
+				} else {
+					$meta = NULL;
+				}
 
+				if (file_exists(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')))) {
+					$json = file_get_contents(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')));
+					$composerManifest = json_decode($json);
+				} else {
+					$composerManifest = NULL;
+				}
 				$packagesData[$packageKey] = array(
 					'packageKey' => $packageKey,
 					'category' => $category,
 					'path' => $packageFileInfo->getPathname(),
+					'meta' => $meta,
+					'composerManifest' => $composerManifest
 				);
 			}
 		}
 		return $packagesData;
+	}
+
+	/**
+	 * Read the package metadata from the Package.xml file at $pathAndFileName
+	 *
+	 * @param string $pathAndFileName
+	 * @return array
+	 */
+	static protected function readPackageMetaData($pathAndFileName) {
+
+		$xml = simplexml_load_file($pathAndFileName);
+		$meta = array();
+		if ($xml === FALSE) {
+			$meta['description'] = '[Package.xml could not be read.]';
+		} else {
+			$meta['version'] = (string)$xml->version;
+			$meta['title'] = (string)$xml->title;
+			$meta['description'] = (string)$xml->description;
+		}
+
+		return $meta;
 	}
 
 	/**
