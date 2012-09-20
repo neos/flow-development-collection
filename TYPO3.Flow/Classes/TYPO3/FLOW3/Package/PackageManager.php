@@ -248,8 +248,12 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 * @api
 	 */
 	public function createPackage($packageKey, \TYPO3\FLOW3\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
-		if (!$this->isPackageKeyValid($packageKey)) throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
-		if ($this->isPackageAvailable($packageKey)) throw new \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
+		if (!$this->isPackageKeyValid($packageKey)) {
+			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
+		}
+		if ($this->isPackageAvailable($packageKey)) {
+			throw new \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
+		}
 
 		if ($packagesPath === '') {
 			$packagesPath = Files::getUnixStylePath(Files::concatenatePaths(array($this->packagesBasePath, 'Application')));
@@ -273,7 +277,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$this->writeComposerManifest($packagePath, $packageKey, $packageMetaData);
 
-		$package = PackageFactory::create($this->packagesBasePath, $packagePath, $packagePath, $packageKey);
+		$manifestPath = str_replace($this->packagesBasePath, '', $packagePath);
+
+		$package = PackageFactory::create($this->packagesBasePath, $manifestPath, $packageKey, PackageInterface::DIRECTORY_CLASSES);
 
 		$this->packages[$packageKey] = $package;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
@@ -448,7 +454,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$this->packages[$package->getPackageKey()] = $package;
 		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = str_replace($this->packagesBasePath, '', $package->getPackagePath());
-		$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = str_replace($this->packagesBasePath, '', $package->getClassesPath());
+		$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = str_replace($package->getPackagePath(), '', $package->getClassesPath());
 
 		if ($sortAndSave === TRUE) {
 			$this->sortAndSavePackageStates();
@@ -563,7 +569,12 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
  		 * @todo similar functionality in registerPackage - should be refactored
 		 */
 		foreach ($packagePaths as $packagePath) {
-			$packageKey = PackageFactory::getPackageKeyFromManifestPath($packagePath,$this->packagesBasePath);
+			try {
+				$packageKey = PackageFactory::getPackageKeyFromManifestPath($packagePath, $this->packagesBasePath);
+			} catch (\TYPO3\FLOW3\Package\Exception\MissingPackageManifestException $exception) {
+				$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
+				$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
+			}
 			if (!isset($this->packageStatesConfiguration['packages'][$packageKey]['state'])) {
 				/**
  				 * @todo doesn't work, settings not available at this time
@@ -740,13 +751,13 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		};
 
 		uasort($this->packages,
-			function(\TYPO3\FLOW3\Package\PackageInterface $firstPackage, \TYPO3\FLOW3\Package\PackageInterface $secondPackage) use ($comparator) {
+			function (\TYPO3\FLOW3\Package\PackageInterface $firstPackage, \TYPO3\FLOW3\Package\PackageInterface $secondPackage) use ($comparator) {
 				return $comparator($firstPackage->getPackageKey(), $secondPackage->getPackageKey());
 			}
 		);
 
 		uksort($this->packageStatesConfiguration['packages'],
-			function($firstPackageKey, $secondPackageKey) use ($comparator) {
+			function ($firstPackageKey, $secondPackageKey) use ($comparator) {
 				return $comparator($firstPackageKey, $secondPackageKey);
 			}
 		);

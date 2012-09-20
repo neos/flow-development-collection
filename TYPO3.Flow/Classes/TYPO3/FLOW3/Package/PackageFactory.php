@@ -64,8 +64,14 @@ class PackageFactory {
 	 * @return string
 	 */
 	public static function getPackageKeyFromManifestPath($manifestPath, $packagesBasePath) {
+		if (!file_exists($manifestPath . '/composer.json')) {
+			throw new  \TYPO3\FLOW3\Package\Exception\MissingPackageManifestException('No "composer.json" found in ' . $manifestPath, 1348146557);
+		}
 		$composerJson = Files::getFileContents($manifestPath . '/composer.json');
 		$manifest = json_decode($composerJson);
+		if (!is_object($manifest)) {
+			throw new  \TYPO3\FLOW3\Package\Exception\InvalidPackageManifestException('Invalid composer manifest in ' . $manifestPath, 1348146450);
+		}
 		if (substr($manifest->type, 0, 6) === 'flow3-') {
 			$relativePackagePath = substr($manifestPath, strlen($packagesBasePath));
 			$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
