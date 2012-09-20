@@ -23,6 +23,7 @@ namespace TYPO3\FLOW3\Tests;
 
 use TYPO3\FLOW3\Core\Bootstrap;
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\Routing\Route;
 
 /**
  * A base test case for functional tests
@@ -333,6 +334,25 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 */
 	protected function disableAuthorization() {
 		$this->accessDecisionManager->setOverrideDecision(TRUE);
+	}
+
+	/**
+	 * Adds a route that can be used in the functional tests
+	 *
+	 * @param string $name Name of the route
+	 * @param string $uriPattern The uriPattern property of the route
+	 * @param array $defaults An array of defaults declarations
+	 * @param boolean $appendExceedingArguments If exceeding arguments may be appended
+	 * @return void
+	 * @api
+	 */
+	protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = FALSE) {
+		$route = new Route();
+		$route->setName($name);
+		$route->setUriPattern($uriPattern);
+		$route->setDefaults($defaults);
+		$route->setAppendExceedingArguments($appendExceedingArguments);
+		$this->router->addRoute($route);
 	}
 
 	/**

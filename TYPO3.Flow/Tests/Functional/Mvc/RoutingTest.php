@@ -52,24 +52,6 @@ class RoutingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * Adds a route that can be used in the functional tests
-	 *
-	 * @param string $name
-	 * @param string $uriPattern
-	 * @param array $defaults
-	 * @param boolean $appendExceedingArguments
-	 * @return void
-	 */
-	protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = FALSE) {
-		$route = new Route();
-		$route->setName($name);
-		$route->setUriPattern($uriPattern);
-		$route->setDefaults($defaults);
-		$route->setAppendExceedingArguments($appendExceedingArguments);
-		$this->router->addRoute($route);
-	}
-
-	/**
 	 * @test
 	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException
 	 */

@@ -38,7 +38,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->registerRoute('test/mvc/actioncontrollertesta(/{@action})', array(
+		$this->registerRoute('testa', 'test/mvc/actioncontrollertesta(/{@action})', array(
 			'@package' => 'TYPO3.FLOW3',
 			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
 			'@controller' => 'ActionControllerTestA',
@@ -46,26 +46,12 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'@format' =>'html'
 		));
 
-		$this->registerRoute('test/mvc/actioncontrollertestb(/{@action})', array(
+		$this->registerRoute('testb', 'test/mvc/actioncontrollertestb(/{@action})', array(
 			'@package' => 'TYPO3.FLOW3',
 			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
 			'@controller' => 'ActionControllerTestB',
 			'@format' =>'html'
 		));
-	}
-
-	/**
-	 * Adds a route that can be used in the functional tests
-	 *
-	 * @param $uriPattern
-	 * @param array $defaults
-	 */
-	protected function registerRoute($uriPattern, array $defaults) {
-		$route = new Route();
-		$route->setUriPattern($uriPattern);
-		$route->setDefaults($defaults);
-		$route->setAppendExceedingArguments(TRUE);
-		$this->router->addRoute($route);
 	}
 
 	/**
