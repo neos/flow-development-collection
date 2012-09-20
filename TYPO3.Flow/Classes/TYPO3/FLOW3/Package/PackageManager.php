@@ -448,7 +448,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$this->packages[$package->getPackageKey()] = $package;
 		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = str_replace($this->packagesBasePath, '', $package->getPackagePath());
-		$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = $package->getClassesPath();
+		$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = str_replace($this->packagesBasePath, '', $package->getClassesPath());
 
 		if ($sortAndSave === TRUE) {
 			$this->sortAndSavePackageStates();
