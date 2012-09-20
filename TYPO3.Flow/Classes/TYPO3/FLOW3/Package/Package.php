@@ -142,7 +142,7 @@ class Package implements PackageInterface {
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
 	 */
 	public function getFunctionalTestsClassFiles() {
-		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, 'Tests\\Functional\\');
+		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $this->getPackageNamespace() . '\\Tests\\Functional\\');
 	}
 
 	/**
