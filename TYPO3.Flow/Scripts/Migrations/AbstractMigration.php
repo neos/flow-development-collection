@@ -12,12 +12,16 @@ namespace TYPO3\FLOW3\Core\Migrations;
  *                                                                        */
 
 use TYPO3\FLOW3\Core\Migrations\Tools;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * The base class for code migrations.
  */
 abstract class AbstractMigration {
 
+	/**
+	 * @var integer
+	 */
 	const MAXIMUM_LINE_LENGTH = 79;
 
 	/**
@@ -38,7 +42,7 @@ abstract class AbstractMigration {
 	/**
 	 * @var array
 	 */
-	protected $operations = array('searchAndReplace' => array(), 'searchAndReplaceRegex' => array());
+	protected $operations = array('searchAndReplace' => array(), 'searchAndReplaceRegex' => array(), 'moveFile' => array(), 'deleteFile' => array());
 
 	/**
 	 * @var array
@@ -95,6 +99,7 @@ abstract class AbstractMigration {
 	public function execute(array $packageData) {
 		$this->packageData = $packageData;
 		$this->applySearchAndReplaceOperations();
+		$this->applyFileOperations();
 	}
 
 	/**
@@ -216,12 +221,37 @@ abstract class AbstractMigration {
 	}
 
 	/**
+	 * Move a file (or directory) from $oldPath to $newPath.
+	 *
+	 * If $oldPath ends with a * everything starting with $oldPath
+	 * will be moved into $newPath (which then is created as a directory,
+	 * if it does not yet exist).
+	 *
+	 * @param string $oldPath
+	 * @param string $newPath
+	 * @return void
+	 */
+	protected function moveFile($oldPath, $newPath) {
+		$this->operations['moveFile'][] = array($oldPath, $newPath);
+	}
+
+	/**
+	 * Delete a file.
+	 *
+	 * @param string $pathAndFileName
+	 * @return void
+	 */
+	protected function deleteFile($pathAndFileName) {
+		$this->operations['deleteFile'][] = array($pathAndFileName);
+	}
+
+	/**
 	 * Applies all registered searchAndReplace and searchAndReplaceRegex operations.
 	 *
 	 * @return void
 	 */
 	protected function applySearchAndReplaceOperations() {
-		$allPathsAndFilenames = \TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($this->packageData['path'], NULL, TRUE);
+		$allPathsAndFilenames = Files::readDirectoryRecursively($this->packageData['path'], NULL, TRUE);
 		foreach ($this->operations['searchAndReplace'] as $operation) {
 			foreach ($allPathsAndFilenames as $pathAndFilename) {
 				$pathInfo = pathinfo($pathAndFilename);
@@ -235,6 +265,46 @@ abstract class AbstractMigration {
 				}
 				Tools::searchAndReplace($operation[0], $operation[1], $pathAndFilename);
 			}
+		}
+	}
+
+	/**
+	 * Applies all registered moveFile operations.
+	 *
+	 * @return void
+	 */
+	protected function applyFileOperations() {
+		$allPathsAndFilenames = Files::readDirectoryRecursively($this->packageData['path'], NULL, TRUE);
+		foreach ($this->operations['moveFile'] as $operation) {
+			$oldPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[0]));
+			$newPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[1]));
+
+			if (substr($oldPath, -1) === '*') {
+				$oldPath = substr($oldPath, 0, -1);
+				if (!file_exists($newPath)) {
+					Files::createDirectoryRecursively($newPath);
+				}
+				if (!is_dir($newPath) || !file_exists($oldPath)) {
+					continue;
+				}
+				foreach ($allPathsAndFilenames as $pathAndFilename) {
+					if (substr_compare($pathAndFilename, $oldPath, 0, strlen($oldPath)) === 0) {
+						$relativePathAndFilename = substr($pathAndFilename, strlen($oldPath));
+						if (!is_dir(dirname(Files::concatenatePaths(array($newPath, $relativePathAndFilename))))) {
+							Files::createDirectoryRecursively(dirname(Files::concatenatePaths(array($newPath, $relativePathAndFilename))));
+						}
+						Git::move($pathAndFilename, Files::concatenatePaths(array($newPath, $relativePathAndFilename)));
+					}
+				}
+			} else {
+				$oldPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[0]));
+				$newPath = Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[1]));
+				Git::move($oldPath, $newPath);
+			}
+		}
+
+		foreach ($this->operations['deleteFile'] as $operation) {
+			Git::remove(Files::concatenatePaths(array($this->packageData['path'] . '/' . $operation[0])));
 		}
 	}
 
