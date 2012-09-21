@@ -26,7 +26,7 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		require_once(__DIR__ . '/../Resources/Private/PHP/Sho_Inflect.php');
+		require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
 	}
 
 }
