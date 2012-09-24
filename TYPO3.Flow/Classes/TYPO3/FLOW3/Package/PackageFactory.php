@@ -72,7 +72,7 @@ class PackageFactory {
 		if (!is_object($manifest)) {
 			throw new  \TYPO3\FLOW3\Package\Exception\InvalidPackageManifestException('Invalid composer manifest in ' . $manifestPath, 1348146450);
 		}
-		if (substr($manifest->type, 0, 6) === 'flow3-') {
+		if (isset($manifest->type) && substr($manifest->type, 0, 6) === 'flow3-') {
 			$relativePackagePath = substr($manifestPath, strlen($packagesBasePath));
 			$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
 			/**
