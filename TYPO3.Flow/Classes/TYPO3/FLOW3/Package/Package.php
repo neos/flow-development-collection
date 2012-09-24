@@ -63,6 +63,12 @@ class Package implements PackageInterface {
 	protected $classFiles;
 
 	/**
+	 * The namespace of the classes contaoned in this package
+	 * @var string
+	 */
+	protected $namespace;
+
+	/**
 	 * If enabled, the files in the Classes directory are registered and Reflection, Dependency Injection, AOP etc. are supported.
 	 * Disable this flag if you don't need object management for your package and want to save some memory.
 	 * @var boolean
@@ -97,7 +103,7 @@ class Package implements PackageInterface {
 		$this->packageKey = $packageKey;
 		$this->packagePath = $this->resolvePackagePathFromManifest();
 		if (isset($this->getComposerManifest()->autoload->{'psr-0'})) {
-			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getPackageNamespace()});
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getNamespace()});
 		} else {
 			$this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
 		}
@@ -144,7 +150,7 @@ class Package implements PackageInterface {
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
 	 */
 	public function getFunctionalTestsClassFiles() {
-		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $this->getPackageNamespace() . '\\Tests\\Functional\\');
+		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, $this->getNamespace() . '\\Tests\\Functional\\');
 	}
 
 	/**
@@ -163,22 +169,25 @@ class Package implements PackageInterface {
 	 * @return string
 	 * @api
 	 */
-	public function getPackageNamespace() {
-		$manifest = $this->getComposerManifest();
-		if (isset($manifest->autoload->{"psr-0"})) {
-			$namespaces = $manifest->autoload->{"psr-0"};
-			if (count($namespaces) === 1) {
-				$namespace = key($namespaces);
+	public function getNamespace() {
+		if(!$this->namespace) {
+			$manifest = $this->getComposerManifest();
+			if (isset($manifest->autoload->{"psr-0"})) {
+				$namespaces = $manifest->autoload->{"psr-0"};
+				if (count($namespaces) === 1) {
+					$namespace = key($namespaces);
+				} else {
+					/**
+					 * @todo throw meaningful exception with proper description
+					 */
+					throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException('Multiple PHP namespaces in one package are not supported.', 1348053245);
+				}
 			} else {
-				/**
-				 * @todo throw meaningful exception with proper description
-				 */
-				throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException('Multiple PHP namespaces in one package are not supported.', 1348053245);
+				$namespace = str_replace('.', '\\', $this->getPackageKey());
 			}
-		} else {
-			$namespace = str_replace('.', '\\', $this->getPackageKey());
+			$this->namespace = $namespace;
 		}
-		return $namespace;
+		return $this->namespace;
 	}
 
 	/**
@@ -255,6 +264,18 @@ class Package implements PackageInterface {
 	 */
 	public function getClassesPath() {
 		return $this->classesPath;
+	}
+
+	/**
+	 * Returns the full path to the package's classes namespace entry path,
+	 * e.g. "My.Package/ClassesPath/My/Package/"
+	 *
+	 * @return string Path to this package's Classes directory
+	 * @api
+	 */
+	public function getClassesNamespaceEntryPath() {
+		$pathifiedNamespace = str_replace('\\', '/', $this->getNamespace());
+		return Files::getNormalizedPath($this->classesPath . trim($pathifiedNamespace, '/'));
 	}
 
 	/**
