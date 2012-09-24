@@ -80,7 +80,7 @@ class GeneratorService {
 
 		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
 		$controllerFilename = $controllerClassName . '.php';
-		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . $subpackagePath . 'Controller/';
+		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . $subpackagePath . 'Controller/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -118,7 +118,7 @@ class GeneratorService {
 
 		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
 		$controllerFilename = $controllerClassName . '.php';
-		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . $subpackagePath . 'Controller/';
+		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . $subpackagePath . 'Controller/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -148,7 +148,7 @@ class GeneratorService {
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
 		$controllerFilename = $controllerClassName . '.php';
-		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Command/';
+		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . 'Command/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -259,7 +259,7 @@ class GeneratorService {
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
 		$modelFilename = $modelName . '.php';
-		$modelPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Domain/Model/';
+		$modelPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . 'Domain/Model/';
 		$targetPathAndFilename = $modelPath . $modelFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -324,7 +324,7 @@ class GeneratorService {
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
 		$repositoryFilename = $repositoryClassName . '.php';
-		$repositoryPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Domain/Repository/';
+		$repositoryPath = $this->packageManager->getPackage($packageKey)->getClassesNamespaceEntryPath() . 'Domain/Repository/';
 		$targetPathAndFilename = $repositoryPath . $repositoryFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
