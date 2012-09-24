@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Utility\Files;
+
 /**
  * A Package
  *
@@ -95,9 +97,9 @@ class Package implements PackageInterface {
 		$this->packageKey = $packageKey;
 		$this->packagePath = $this->resolvePackagePathFromManifest();
 		if (isset($this->getComposerManifest()->autoload->{'psr-0'})) {
-			$this->classesPath = $this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getPackageNamespace()};
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getPackageNamespace()});
 		} else {
-			$this->classesPath = $this->packagePath . $classesPath;
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
 		}
 	}
 
@@ -131,7 +133,7 @@ class Package implements PackageInterface {
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
-			$this->classFiles = $this->buildArrayOfClassFiles($this->classesPath . '/');
+			$this->classFiles = $this->buildArrayOfClassFiles($this->classesPath);
 		}
 		return $this->classFiles;
 	}
@@ -242,7 +244,7 @@ class Package implements PackageInterface {
 			$packagePath = $this->manifestPath;
 		}
 
-		return $packagePath;
+		return Files::getNormalizedPath($packagePath);
 	}
 
 	/**

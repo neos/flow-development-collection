@@ -111,6 +111,32 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getClassesPathReturnsPathToClasses() {
+		$package = new Package('TYPO3.FLOW3', FLOW3_PATH_FLOW3, Package::DIRECTORY_CLASSES);
+		$packageClassesPath = $package->getClassesPath();
+		$expected = $package->getPackagePath() . Package::DIRECTORY_CLASSES;
+		$this->assertEquals($expected, $packageClassesPath);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getClassesPathReturnsNormalizedPathToClasses() {
+		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
+		mkdir ($packagePath, 0777, TRUE);
+
+		$package = new Package('Acme.MyPackage', $packagePath, 'no/trailing/slash');
+
+		$packageClassesPath = $package->getClassesPath();
+		$expected = $package->getPackagePath() . 'no/trailing/slash/';
+
+		$this->assertEquals($expected, $packageClassesPath);
+	}
+
+
+	/**
+	 * @test
+	 */
 	public function getPackageDocumentationsReturnsEmptyArrayIfDocumentationDirectoryDoesntExist() {
 		vfsStream::setup('testDirectory');
 
