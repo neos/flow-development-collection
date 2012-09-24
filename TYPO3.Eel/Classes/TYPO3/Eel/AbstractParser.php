@@ -11,7 +11,7 @@ namespace TYPO3\Eel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once __DIR__ . '/../Resources/Private/PHP/php-peg/Parser.php';
+require_once __DIR__ . '/../../../Resources/Private/PHP/php-peg/Parser.php';
 
 /*
 WARNING: This file has been machine generated. Do not edit it, or your changes will be overwritten next time it is compiled.

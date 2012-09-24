@@ -1,0 +1,14 @@
+{
+    "name": "typo3/eel",
+    "type": "flow3-package",
+    "description": "",
+    "version": "",
+    "require": {
+        "typo3/flow3": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Eel": "Classes"
+        }
+    }
+}
