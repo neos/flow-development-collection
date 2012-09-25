@@ -20,7 +20,7 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "christianjul/installers": "1.0.0",
+        "composer/installers": "1.0.*",
         "typo3/fluid": "*",
         "typo3/party": "*",
 
