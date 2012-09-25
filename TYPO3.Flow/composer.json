@@ -12,8 +12,6 @@
         }
     ],
 
-    "version": "dev-master",
-
     "require": {
         "php" : ">=5.3.2",
 
@@ -22,7 +20,7 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "christianjul/installers": "*",
+        "composer/installers": ">1.0.0",
         "typo3/fluid": "*",
         "typo3/party": "*",
 
@@ -31,9 +29,6 @@
 
         "symfony/yaml": ">2.1.0",
         "symfony/dom-crawler": ">2.0.16"
-    },
-    "require-dev": {
-        "mikey179/vfsStream": "*"
     },
     "autoload": {
         "psr-0": {
