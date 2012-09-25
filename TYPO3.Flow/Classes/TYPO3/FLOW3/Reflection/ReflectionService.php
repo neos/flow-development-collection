@@ -1429,7 +1429,7 @@ class ReflectionService {
 		$frozenNamespaces = array();
 		foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
 			if ($this->packageManager->isPackageFrozen($packageKey)) {
-				$frozenNamespaces[] = $package->getPackageNamespace();
+				$frozenNamespaces[] = $package->getNamespace();
 			}
 		}
 
@@ -1584,7 +1584,7 @@ class ReflectionService {
 	public function freezePackageReflection($packageKey) {
 		$package = $this->packageManager->getPackage($packageKey);
 
-		$packageNamespace = $package->getPackageNamespace() . '\\';
+		$packageNamespace = $package->getNamespace() . '\\';
 		$packageNamespaceLength = strlen($packageNamespace);
 
 		$reflectionData = array(

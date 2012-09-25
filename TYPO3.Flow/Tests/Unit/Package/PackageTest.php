@@ -82,11 +82,11 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getPackageNamespaceReturnsThePhpNamespaceCorrespondingToThePageKey() {
+	public function getNamespaceReturnsThePhpNamespaceCorrespondingToThePageKey() {
 		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
 		mkdir ($packagePath, 0777, TRUE);
 		$package = new Package('Acme.MyPackage', $packagePath);
-		$this->assertEquals('Acme\\MyPackage', $package->getPackageNamespace());
+		$this->assertEquals('Acme\\MyPackage', $package->getNamespace());
 	}
 
 	/**

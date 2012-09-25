@@ -57,7 +57,7 @@ interface PackageInterface {
 	 * @return string
 	 * @api
 	 */
-	public function getPackageNamespace();
+	public function getNamespace();
 
 	/**
 	 * Tells if this package is protected and therefore cannot be deactivated or deleted
@@ -98,6 +98,15 @@ interface PackageInterface {
 	 * @api
 	 */
 	public function getClassesPath();
+
+	/**
+	 * Returns the full path to the package's classes namespace entry path,
+	 * e.g. "My.Package/ClassesPath/My/Package/"
+	 *
+	 * @return string Path to this package's Classes directory
+	 * @api
+	 */
+	public function getClassesNamespaceEntryPath();
 
 	/**
 	 * Returns the full path to this package's Resources directory

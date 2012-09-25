@@ -144,7 +144,7 @@ class ClassLoader {
 	public function setPackages(array $packages) {
 		$this->packages = $packages;
 		foreach ($packages as $package) {
-			$this->packageNamespaces[$package->getPackageNamespace()] = array('namespaceLength' => strlen($package->getPackageNamespace()), 'classesPath' => $package->getClassesPath());
+			$this->packageNamespaces[$package->getNamespace()] = array('namespaceLength' => strlen($package->getNamespace()), 'classesPath' => $package->getClassesPath());
 		}
 
 			// sort longer package namespaces first, to find specific matches before generic ones
