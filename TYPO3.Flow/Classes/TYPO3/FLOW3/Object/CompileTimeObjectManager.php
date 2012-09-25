@@ -224,7 +224,8 @@ class CompileTimeObjectManager extends ObjectManager {
 			}
 			foreach ($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
 				if (!array_key_exists($packageKey, $classNames)) {
-					throw new \TYPO3\FLOW3\Configuration\Exception\NoSuchOptionException('The package "' . $packageKey . '" specified in the setting "TYPO3.FLOW3.object.excludeClasses" does not exist or is not active.');
+					$this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "TYPO3.FLOW3.object.excludeClasses" does not exist or is not active.', LOG_DEBUG);
+					continue;
 				}
 				if (!is_array($filterExpressions)) {
 					throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('The value given for setting "TYPO3.FLOW3.object.excludeClasses.\'' . $packageKey . '\'" is  invalid. Check the syntax in the YAML file.');
