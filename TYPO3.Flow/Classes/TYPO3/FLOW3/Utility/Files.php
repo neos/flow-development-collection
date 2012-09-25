@@ -33,6 +33,16 @@ class Files {
 	}
 
 	/**
+	 * Makes sure path has a trailing slash
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	static public function getNormalizedPath($path) {
+		return rtrim($path, '/') .'/';
+	}
+
+	/**
 	 * Properly glues together filepaths / filenames by replacing
 	 * backslashes and double slashes of the specified paths.
 	 * Note: trailing slashes will be removed, leading slashes won't.
