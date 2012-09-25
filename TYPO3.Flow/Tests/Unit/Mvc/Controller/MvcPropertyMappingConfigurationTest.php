@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,12 +14,12 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
 /**
  * Testcase for the MVC Controller Argument
  *
- * @covers \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration
+ * @covers \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
  */
-class MvcPropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class MvcPropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration
+	 * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
 	 */
 	protected $mvcPropertyMappingConfiguration;
 
@@ -27,7 +27,7 @@ class MvcPropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCas
 	 *
 	 */
 	public function setUp() {
-		$this->mvcPropertyMappingConfiguration = new \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration();
+		$this->mvcPropertyMappingConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
 	}
 
 	/**

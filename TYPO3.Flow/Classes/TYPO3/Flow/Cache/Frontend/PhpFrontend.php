@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Frontend;
+namespace TYPO3\Flow\Cache\Frontend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,15 +17,15 @@ namespace TYPO3\FLOW3\Cache\Frontend;
  *
  * @api
  */
-class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
+class PhpFrontend extends \TYPO3\Flow\Cache\Frontend\StringFrontend {
 
 	/**
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend Backend to be used for this cache
+	 * @param \TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface $backend Backend to be used for this cache
 	 */
-	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend) {
+	public function __construct($identifier, \TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface $backend) {
 		parent::__construct($identifier, $backend);
 	}
 
@@ -37,13 +37,13 @@ class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException
+	 * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1264023823);
-		if (!is_string($sourceCode)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The given source code is not a valid string.', 1264023824);
+		if (!is_string($sourceCode)) throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The given source code is not a valid string.', 1264023824);
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1264023825);
 		}

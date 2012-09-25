@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security;
+namespace TYPO3\Flow\Tests\Unit\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,19 +15,19 @@ namespace TYPO3\FLOW3\Tests\Unit\Security;
  * Testcase for the account factory
  *
  */
-class AccountFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AccountFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function createAccountWithPasswordCreatesANewAccountWithTheGivenIdentifierPasswordRolesAndProviderName() {
-		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService = $this->getMock('TYPO3\Flow\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('hashPassword')->with('password')->will($this->returnValue('hashed password'));
 
-		$mockRole1 = new \TYPO3\FLOW3\Security\Policy\Role('role1');
-		$mockRole2 = new \TYPO3\FLOW3\Security\Policy\Role('role2');
+		$mockRole1 = new \TYPO3\Flow\Security\Policy\Role('role1');
+		$mockRole2 = new \TYPO3\Flow\Security\Policy\Role('role2');
 
-		$factory = $this->getAccessibleMock('TYPO3\FLOW3\Security\AccountFactory', array('dummy'));
+		$factory = $this->getAccessibleMock('TYPO3\Flow\Security\AccountFactory', array('dummy'));
 		$factory->_set('hashService', $mockHashService);
 
 		$actualAccount = $factory->createAccountWithPassword('username', 'password', array('role1', 'role2'), 'OtherProvider');

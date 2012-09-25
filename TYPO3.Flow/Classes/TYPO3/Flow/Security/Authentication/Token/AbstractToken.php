@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\Token;
+namespace TYPO3\Flow\Security\Authentication\Token;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Security\RequestPatternInterface;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\RequestPatternInterface;
 
 /**
  * An abstract authentication token.
  */
-abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\TokenInterface {
+abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\TokenInterface {
 
 	/**
 	 * @var string
@@ -33,12 +33,12 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	/**
 	 * The credentials submitted by the client
 	 * @var array
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $credentials = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Account
+	 * @var \TYPO3\Flow\Security\Account
 	 */
 	protected $account;
 
@@ -49,7 +49,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 
 	/**
 	 * The authentication entry point
-	 * @var \TYPO3\FLOW3\Security\Authentication\EntryPointInterface
+	 * @var \TYPO3\Flow\Security\Authentication\EntryPointInterface
 	 */
 	protected $entryPoint = NULL;
 
@@ -84,17 +84,17 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	/**
 	 * Sets the authentication entry point
 	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @param \TYPO3\Flow\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
 	 * @return void
 	 */
-	public function setAuthenticationEntryPoint(\TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
+	public function setAuthenticationEntryPoint(\TYPO3\Flow\Security\Authentication\EntryPointInterface $entryPoint) {
 		$this->entryPoint = $entryPoint;
 	}
 
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \TYPO3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
+	 * @return \TYPO3\Flow\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
 	 */
 	public function getAuthenticationEntryPoint() {
 		return $this->entryPoint;
@@ -126,7 +126,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	}
 
 	/**
-	 * Returns an array of set \TYPO3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set \TYPO3\Flow\Security\RequestPatternInterface, NULL if none was set
 	 *
 	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
@@ -147,7 +147,7 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
-	 * @return \TYPO3\FLOW3\Security\Account An account object
+	 * @return \TYPO3\Flow\Security\Account An account object
 	 */
 	public function getAccount() {
 		return $this->isAuthenticated() ? $this->account: NULL;
@@ -156,17 +156,17 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	/**
 	 * Set the (authenticated) account
 	 *
-	 * @param \TYPO3\FLOW3\Security\Account $account An account object
+	 * @param \TYPO3\Flow\Security\Account $account An account object
 	 * @return void
 	 */
-	public function setAccount(\TYPO3\FLOW3\Security\Account $account = NULL) {
+	public function setAccount(\TYPO3\Flow\Security\Account $account = NULL) {
 		$this->account = $account;
 	}
 
 	/**
 	 * Returns the currently valid roles.
 	 *
-	 * @return array Array of TYPO3\FLOW3\Security\Authentication\Role objects
+	 * @return array Array of TYPO3\Flow\Security\Authentication\Role objects
 	 */
 	public function getRoles() {
 		$account = $this->getAccount();
@@ -174,15 +174,15 @@ abstract class AbstractToken implements \TYPO3\FLOW3\Security\Authentication\Tok
 	}
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * Sets the authentication status. Usually called by the responsible \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
 		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) {
-			throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
+			throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
 		}
 		$this->authenticationStatus = $authenticationStatus;
 	}

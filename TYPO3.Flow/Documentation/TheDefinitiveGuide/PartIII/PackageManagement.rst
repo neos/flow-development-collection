@@ -5,16 +5,16 @@ Package Management
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
 
-FLOW3 is a package-based system. In fact, FLOW3 itself is just a package as well - but
+TYPO3 Flow is a package-based system. In fact, TYPO3 Flow itself is just a package as well - but
 obviously an important one. Packages act as a container for different matters: Most of
 them contain PHP code which adds certain functionality, others only contain documentation
 and yet other packages consist of templates, images or other resources. The
 `TYPO3 project`_ will host a package repository which acts as a convenient hub for
-interchanging FLOW3 based packages with other community members.
+interchanging TYPO3 Flow based packages with other community members.
 
 .. note::
 
-	At the time of writing the package repository for FLOW3 is still in the planning phase.
+	At the time of writing the package repository for TYPO3 Flow is still in the planning phase.
 
 Package Locations
 =================
@@ -22,9 +22,9 @@ Package Locations
 Framework and Application Packages
 ----------------------------------
 
-FLOW3 packages are located in a sub folder of the *Packages/* directory. A typical
+TYPO3 Flow packages are located in a sub folder of the *Packages/* directory. A typical
 application (such as TYPO3 for example) will use the core packages which are bundled with
-FLOW3 and use additional packages which are specific to the application. The framework
+TYPO3 Flow and use additional packages which are specific to the application. The framework
 packages are kept in a directory called *Framework* while the application specific
 packages reside in the *Application* directory. This leads to the following
 folder structure:
@@ -37,7 +37,7 @@ Data/
 
 Packages/
   Framework/
-    The Framework directory contains packages of the FLOW3 distribution.
+    The Framework directory contains packages of the TYPO3 Flow distribution.
 
   Application/
     The Application directory contains your own / application specific packages.
@@ -45,12 +45,12 @@ Packages/
 The reason for separating packages into separate directories is that the core packages
 in *Framework/* can reside in a different, shared location and be symlinked
 from the application using it. In this case, just delete the *Framework* directory and replace it with
-a symlink pointing to the *Packages/Framework/* directory of the FLOW3 distribution.
+a symlink pointing to the *Packages/Framework/* directory of the TYPO3 Flow distribution.
 
-We recommend that you keep a version of the FLOW3 distribution in
-*/var/lib/flow3/flow3-x.y.z/* and flag all its content read-only for the web server's
-user. By doing that you can assure that no FLOW3 package (or other PHP script) can tamper
-with the  FLOW3 package and its built-in security framework.
+We recommend that you keep a version of the TYPO3 Flow distribution in
+*/var/lib/flow/flow-x.y.z/* and flag all its content read-only for the web server's
+user. By doing that you can assure that no TYPO3 Flow package (or other PHP script) can tamper
+with the  TYPO3 Flow package and its built-in security framework.
 
 Additional Package Locations
 ----------------------------
@@ -63,18 +63,18 @@ expects packages with website resources in a folder named *Sites*.
 Loading Order
 -------------
 
-The loading order of additional package locations is undefined, except that FLOW3 itself will of
+The loading order of additional package locations is undefined, except that TYPO3 Flow itself will of
 course always be loaded first.
 
 
 Package Directory Layout
 ========================
 
-The FLOW3 package directory structure follows a certain convention which has the advantage
+The TYPO3 Flow package directory structure follows a certain convention which has the advantage
 that you don't need to care about any package-related configuration. If you put your files
 into the right directories, everything will just work.
 
-The suggested directory layout inside a FLOW3 package is as follows:
+The suggested directory layout inside a TYPO3 Flow package is as follows:
 
 Classes
   This directory contains the actual source code for the package. Package authors
@@ -115,7 +115,7 @@ Resources
     will never be directly available from the web.
   Public
     Contains public resources for the package. All files in this directory
-    will be mirrored into FLOW3's *Web* directory by the Resource Manager
+    will be mirrored into TYPO3 Flow's *Web* directory by the Resource Manager
     (and therefore become accessible from the web).
 
   Although it is up to the package author to name the directories, we suggest the
@@ -153,7 +153,7 @@ class would be named *StandardController.php* and is expected to be in a directo
 *MyPackage/Classes/Controller*.
 
 All details about naming files, classes, methods and variables correctly can be found in
-the FLOW3 Coding Guidelines. You're highly encouraged to read (and follow) them.
+the TYPO3 Flow Coding Guidelines. You're highly encouraged to read (and follow) them.
 
 Package Keys
 ============
@@ -163,7 +163,7 @@ different purposes. They save you from conflicts between packages which were pro
 different parties.
 
 We use *vendor namespaces* for package keys, i.e. all packages which are released
-and maintained by the TYPO3 and FLOW3 core teams start with ``TYPO3.*``. In your company
+and maintained by the TYPO3 and TYPO3 Flow core teams start with ``TYPO3.*``. In your company
 we suggest that you use your company name as vendor namespace.
 
 Importing and Installing Packages
@@ -177,21 +177,21 @@ in the *Classes* directory.
 
 If no *PackageStates.php* exists in your *Configuration* folder, it will be created
 and all found packages will be activated. If *PackageStates.php* exists, you can use the
-package manager to activate and deactivate packages through the FLOW3 command line script.
+package manager to activate and deactivate packages through the TYPO3 Flow command line script.
 
 .. tip:: It is very convenient for continuous integration and deployment scenarios that
 	all found packages on the first hit will be automatically registered.
 
-The FLOW3 command line interface is triggered through the *flow3* script
-in the main directory of the FLOW3 distribution. From a Unix
-shell you should be able to run the script by entering ``./flow3`` (on windows,
-use ``flow3.bat``).
+The TYPO3 Flow command line interface is triggered through the *flow* script
+in the main directory of the TYPO3 Flow distribution. From a Unix
+shell you should be able to run the script by entering ``./flow`` (on windows,
+use ``flow.bat``).
 
 To activate a package, use the ``package:activate`` command:
 
 .. code-block:: bash
 
-	$ ./flow3 package:activate <PackageKey>
+	$ ./flow package:activate <PackageKey>
 
 To deactivate a package, use ``package:deactivate``. For a listing of all packages
 (active and inactive) use ``package:list``.
@@ -215,7 +215,7 @@ Use the ``package:create`` command to create a new package:
 
 .. code-block:: bash
 
-	$ ./flow3 package:create Acme.Demo
+	$ ./flow package:create Acme.Demo
 
 This will create the package in *Packages/Application*. After that, adjust *Meta/Package.xml*
 to your needs. Apart from that no further steps are necessary.
@@ -223,7 +223,7 @@ to your needs. Apart from that no further steps are necessary.
 Package Meta Information
 ========================
 
-All packages need to provide some meta information to FLOW3. The data is split in two
+All packages need to provide some meta information to TYPO3 Flow. The data is split in two
 files, depending on primary use.
 
 Classes/Package.php
@@ -236,7 +236,7 @@ empty class, if no bootstrap code is needed.
 
 	namespace Acme\Demo;
 
-	use TYPO3\FLOW3\Package\Package as BasePackage;
+	use TYPO3\Flow\Package\Package as BasePackage;
 
 	/**
 	 * The Acme.Demo Package
@@ -250,7 +250,7 @@ Meta/Package.xml
 
 This file contains some meta information for the package manager. The format of this file
 follows a RelaxNG schema which is available at
-`http://typo3.org/ns/2008/flow3/package/Package.rng`_.
+`http://typo3.org/ns/2008/flow/package/Package.rng`_.
 
 Here is an example of a valid *Package.xml* file:
 
@@ -260,7 +260,7 @@ Here is an example of a valid *Package.xml* file:
 
 	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 	<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	         xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0">
+	         xmlns="http://typo3.org/ns/2008/flow/package" version="1.0">
 	   <key>TestPackage</key>
 	   <title>Test Package</title>
 	   <description>Test to demonstrate the features of Package.xml</description>
@@ -284,7 +284,7 @@ Here is an example of a valid *Package.xml* file:
 	   </parties>
 	   <constraints>
 	      <depends>
-	         <package minVersion="1.0.0" maxVersion="1.9.9">FLOW3</package>
+	         <package minVersion="1.0.0" maxVersion="1.9.9">TYPO3 Flow</package>
 	         <system type="PHP" minVersion="5.1.0" />
 	         <system type="PHPExtension">xml</system>
 	         <system type="PEAR" minVersion="1.5.1">XML_RPC</system>
@@ -319,4 +319,4 @@ Here is an example of a valid *Package.xml* file:
 	</package>
 
 .. _TYPO3 project:         http://typo3.org
-.. _http://typo3.org/ns/2008/flow3/package/Package.rng: http://typo3.org/ns/2008/flow3/package/Package.rng
+.. _http://typo3.org/ns/2008/flow/package/Package.rng: http://typo3.org/ns/2008/flow/package/Package.rng

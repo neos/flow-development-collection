@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Reflection;
+namespace TYPO3\Flow\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A little parser which creates tag objects from doc comments
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class DocCommentParser {
 
@@ -73,10 +73,10 @@ class DocCommentParser {
 	 *
 	 * @param string $tagName The tag name to retrieve the values for
 	 * @return array The tag's values
-	 * @throws \TYPO3\FLOW3\Reflection\Exception
+	 * @throws \TYPO3\Flow\Reflection\Exception
 	 */
 	public function getTagValues($tagName) {
-		if (!$this->isTaggedWith($tagName)) throw new \TYPO3\FLOW3\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
+		if (!$this->isTaggedWith($tagName)) throw new \TYPO3\Flow\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
 		return $this->tags[$tagName];
 	}
 

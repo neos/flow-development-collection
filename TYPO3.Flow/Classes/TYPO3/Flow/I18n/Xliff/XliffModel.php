@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Xliff;
+namespace TYPO3\Flow\I18n\Xliff;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Annotations as FLOW3;
+use \TYPO3\Flow\Annotations as Flow;
 
 /**
  * A model representing data from one XLIFF file.
@@ -32,7 +32,7 @@ use \TYPO3\FLOW3\Annotations as FLOW3;
 class XliffModel {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -40,7 +40,7 @@ class XliffModel {
 	 * Concrete XML parser which is set by more specific model extending this
 	 * class.
 	 *
-	 * @var \TYPO3\FLOW3\I18n\Xliff\XliffParser
+	 * @var \TYPO3\Flow\I18n\Xliff\XliffParser
 	 */
 	protected $xmlParser;
 
@@ -52,13 +52,13 @@ class XliffModel {
 	protected $sourcePath;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
 	protected $locale;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -71,28 +71,28 @@ class XliffModel {
 
 	/**
 	 * @param string $sourcePath
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The locale represented by the file
+	 * @param \TYPO3\Flow\I18n\Locale $locale The locale represented by the file
 	 */
-	public function __construct($sourcePath, \TYPO3\FLOW3\I18n\Locale $locale) {
+	public function __construct($sourcePath, \TYPO3\Flow\I18n\Locale $locale) {
 		$this->sourcePath = $sourcePath;
 		$this->locale = $locale;
 	}
 
 	/**
-	 * Injects the FLOW3_I18n_XmlModelCache cache
+	 * Injects the Flow_I18n_XmlModelCache cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Xliff\XliffParser $parser
+	 * @param \TYPO3\Flow\I18n\Xliff\XliffParser $parser
 	 * @return void
 	 */
-	public function injectParser(\TYPO3\FLOW3\I18n\Xliff\XliffParser $parser) {
+	public function injectParser(\TYPO3\Flow\I18n\Xliff\XliffParser $parser) {
 		$this->xmlParser = $parser;
 	}
 

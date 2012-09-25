@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,13 +12,13 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An ObjectPathMapping model
  * This contains the URI representation of an object (pathSegment)
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class ObjectPathMapping {
 
@@ -27,7 +27,7 @@ class ObjectPathMapping {
 	 *
 	 * @var string
 	 * @ORM\Id
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $objectType;
 
@@ -36,7 +36,7 @@ class ObjectPathMapping {
 	 *
 	 * @var string
 	 * @ORM\Id
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $uriPattern;
 
@@ -45,7 +45,7 @@ class ObjectPathMapping {
 	 *
 	 * @var string
 	 * @ORM\Id
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $pathSegment;
 

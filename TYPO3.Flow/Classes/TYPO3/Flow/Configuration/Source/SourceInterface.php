@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Configuration\Source;
+namespace TYPO3\Flow\Configuration\Source;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -23,7 +23,7 @@ interface SourceInterface {
 	 *
 	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the dot and file extension
 	 * @return array
-	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchFileException if the specified file does not exist
+	 * @throws \TYPO3\Flow\Configuration\Exception\NoSuchFileException if the specified file does not exist
 	 */
 	public function load($pathAndFilename);
 

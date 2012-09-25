@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Policy;
+namespace TYPO3\Flow\Tests\Unit\Security\Policy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,25 +15,25 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Policy;
  * Testcase for the policy expression parser
  *
  */
-class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
+	 * @expectedException \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
 		$resourcesTree = array(
 			'theOneAndOnlyResource' => 'method(TYPO3\Foo\BasicClass->setSomeProperty()) || notExistingResource',
 		);
 
-		$parser =new \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser();
+		$parser =new \TYPO3\Flow\Security\Policy\PolicyExpressionParser();
 
 		$parser->parseMethodResources('theOneAndOnlyResource', $resourcesTree);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\CircularResourceDefinitionDetectedException
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
 		$resourcesTree = array(
@@ -43,7 +43,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		);
 
-		$parser =new \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser();
+		$parser =new \TYPO3\Flow\Security\Policy\PolicyExpressionParser();
 
 		$parser->parseMethodResources('theIntegrativeResource', $resourcesTree);
 	}
@@ -59,15 +59,15 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		);
 
-		$mockPointcutFilterComposite = $this->getMock('TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('create')->will($this->returnValue($mockPointcutFilterComposite));
-		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface')));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($this->getMock('TYPO3\Flow\Log\SystemLoggerInterface')));
 
-		$parser = new \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser();
+		$parser = new \TYPO3\Flow\Security\Policy\PolicyExpressionParser();
 		$parser->injectObjectManager($mockObjectManager);
-		$parser->injectReflectionService(($this->getMock('TYPO3\FLOW3\Reflection\ReflectionService')));
+		$parser->injectReflectionService(($this->getMock('TYPO3\Flow\Reflection\ReflectionService')));
 
 		$trace = array();
 		$parser->parseMethodResources('theIntegrativeResource', $resourcesTree, $trace);
@@ -94,7 +94,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array('parseSingleEntityResource'), array(), '', FALSE);
+		$parser = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyExpressionParser', array('parseSingleEntityResource'), array(), '', FALSE);
 
 		$parser->expects($this->at(0))->method('parseSingleEntityResource')->with('resource1', $resourcesTree['TYPO3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint1'));
 		$parser->expects($this->at(1))->method('parseSingleEntityResource')->with('resource2', $resourcesTree['TYPO3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint2'));
@@ -129,7 +129,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'ownAccount' => 'this.party == current.party && this.credentialsSourec != \'foo\''
 		);
 
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array('getRuntimeEvaluationConditionsFromEvaluateString'), array(), '', FALSE);
+		$parser = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyExpressionParser', array('getRuntimeEvaluationConditionsFromEvaluateString'), array(), '', FALSE);
 		$parser->expects($this->at(0))->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('this.party == current.party')->will($this->returnValue(array('firstConstraint')));
 		$parser->expects($this->at(1))->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('this.credentialsSourec != \'foo\'')->will($this->returnValue(array('secondConstraint')));
 
@@ -151,7 +151,7 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'someOtherResource' => 'this.someProperty != \'bar\''
 		);
 
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array('getRuntimeEvaluationConditionsFromEvaluateString'), array(), '', FALSE);
+		$parser = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyExpressionParser', array('getRuntimeEvaluationConditionsFromEvaluateString'), array(), '', FALSE);
 		$parser->expects($this->at(0))->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('this.party == current.party')->will($this->returnValue(array('firstConstraint')));
 		$parser->expects($this->at(1))->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('this.someProperty != \'bar\'')->will($this->returnValue(array('thirdConstraint')));
 		$parser->expects($this->at(2))->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('this.credentialsSourec != \'foo\'')->will($this->returnValue(array('secondConstraint')));
@@ -175,14 +175,14 @@ class PolicyExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @expectedException \TYPO3\Flow\Security\Exception\NoEntryInPolicyException
 	 */
 	public function parseSingleEntityResourceThrowsAnExceptionIfAnExpressionContainsAReferenceToANotExistingResource() {
 		$resourcesTree = array(
 			'ownAccount' => 'this.party == current.party && someNotExistingResource || this.credentialsSourec != \'foo\'',
 		);
 
-		$parser = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array('getRuntimeEvaluationConditionsFromEvaluateString'), array(), '', FALSE);
+		$parser = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyExpressionParser', array('getRuntimeEvaluationConditionsFromEvaluateString'), array(), '', FALSE);
 		$parser->expects($this->any())->method('getRuntimeEvaluationConditionsFromEvaluateString')->will($this->returnValue(array()));
 
 		$parser->_call('parseSingleEntityResource', 'ownAccount', $resourcesTree);

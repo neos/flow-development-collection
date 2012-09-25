@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -59,11 +59,11 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
 	/**
 	 * Adds a new validator to the conjunction.
 	 *
-	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
+	 * @param \TYPO3\Flow\Validation\Validator\ValidatorInterface $validator The validator that should be added
 	 * @return void
 	 * @api
 	 */
-	public function addValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+	public function addValidator(\TYPO3\Flow\Validation\Validator\ValidatorInterface $validator) {
 		if ($validator instanceof ObjectValidatorInterface) {
 			$validator->setValidatedInstancesContainer = $this->validatedInstancesContainer;
 		}
@@ -73,12 +73,12 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
 	/**
 	 * Removes the specified validator.
 	 *
-	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator to remove
-	 * @throws \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException
+	 * @param \TYPO3\Flow\Validation\Validator\ValidatorInterface $validator The validator to remove
+	 * @throws \TYPO3\Flow\Validation\Exception\NoSuchValidatorException
 	 * @api
 	 */
-	public function removeValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
-		if (!$this->validators->contains($validator)) throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('Cannot remove validator because its not in the conjunction.', 1207020177);
+	public function removeValidator(\TYPO3\Flow\Validation\Validator\ValidatorInterface $validator) {
+		if (!$this->validators->contains($validator)) throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('Cannot remove validator because its not in the conjunction.', 1207020177);
 		$this->validators->detach($validator);
 	}
 

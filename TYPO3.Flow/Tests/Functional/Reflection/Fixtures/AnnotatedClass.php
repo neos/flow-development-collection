@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,25 +12,25 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * @ORM\Entity
- * @FLOW3\Introduce("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface")
+ * @Flow\Introduce("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface")
  */
 class AnnotatedClass {
 
 	/**
 	 * @param string
-	 * @FLOW3\Introduce("within(TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)")
+	 * @Flow\Introduce("within(TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface)")
 	 */
 	protected $introducedProperty;
 
 	/**
 	 * @param string
-	 * @FLOW3\Validate(type="Email")
-	 * @FLOW3\Validate(type="NotEmpty")
-	 * @FLOW3\Identity
+	 * @Flow\Validate(type="Email")
+	 * @Flow\Validate(type="NotEmpty")
+	 * @Flow\Identity
 	 * @ORM\Column(name="baz")
 	 */
 	protected $mail;
@@ -48,9 +48,9 @@ class AnnotatedClass {
 
 	/**
 	 * @param string $foo
-	 * @FLOW3\Validate("foo", type="StringLength", options={ "mininum"=2, "maximum"=5 })
+	 * @Flow\Validate("foo", type="StringLength", options={ "mininum"=2, "maximum"=5 })
 	 */
-	public function someFlow3Annotations($foo) {}
+	public function someFlowAnnotations($foo) {}
 }
 
 ?>

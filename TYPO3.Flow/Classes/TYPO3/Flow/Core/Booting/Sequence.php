@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core\Booting;
+namespace TYPO3\Flow\Core\Booting;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Core\Booting;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * A boot sequence, consisting of individual steps, each of them initializing a
@@ -43,7 +43,7 @@ class Sequence {
 	 * by $previousStepIdentifier. If no previous step is specified, the new step
 	 * is added to the list of steps executed right at the start of the sequence.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Booting\Step $step The new step to add
+	 * @param \TYPO3\Flow\Core\Booting\Step $step The new step to add
 	 * @param string $previousStepIdentifier The preceding step
 	 * @return void
 	 */
@@ -56,7 +56,7 @@ class Sequence {
 	 *
 	 * @param string $stepIdentifier
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Exception
+	 * @throws \TYPO3\Flow\Exception
 	 */
 	public function removeStep($stepIdentifier) {
 		$removedOccurrences = 0;
@@ -69,14 +69,14 @@ class Sequence {
 			}
 		}
 		if ($removedOccurrences === 0) {
-			throw new \TYPO3\FLOW3\Exception(sprintf('Cannot remove sequence step with identifier "%s" because no such step exists in the given sequence.', $stepIdentifier), 1322591669);
+			throw new \TYPO3\Flow\Exception(sprintf('Cannot remove sequence step with identifier "%s" because no such step exists in the given sequence.', $stepIdentifier), 1322591669);
 		}
 	}
 
 	/**
 	 * Executes all steps of this sequence
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
 	public function invoke(Bootstrap $bootstrap) {
@@ -91,8 +91,8 @@ class Sequence {
 	 * Invokes a single step of this sequence and also invokes all steps registered
 	 * to be executed after the given step.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Booting\Step $step The step to invoke
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Booting\Step $step The step to invoke
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
 	protected function invokeStep(Step $step, Bootstrap $bootstrap) {

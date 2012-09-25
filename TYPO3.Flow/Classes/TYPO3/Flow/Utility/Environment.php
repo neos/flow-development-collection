@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Utility;
+namespace TYPO3\Flow\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,24 +11,24 @@ namespace TYPO3\FLOW3\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
 
 /**
  * Abstraction methods which return system environment variables.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class Environment {
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\ApplicationContext
+	 * @var \TYPO3\Flow\Core\ApplicationContext
 	 */
 	protected $context;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @var \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	protected $request;
 
@@ -46,9 +46,9 @@ class Environment {
 	/**
 	 * Initializes the environment instance.
 	 *
-	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context The FLOW3 context
+	 * @param \TYPO3\Flow\Core\ApplicationContext $context The Flow context
 	 */
-	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context) {
+	public function __construct(\TYPO3\Flow\Core\ApplicationContext $context) {
 		$this->context = $context;
 	}
 
@@ -64,7 +64,7 @@ class Environment {
 	}
 
 	/**
-	 * Returns the full path to FLOW3's temporary directory.
+	 * Returns the full path to Flow's temporary directory.
 	 *
 	 * @return string Path to PHP's temporary directory
 	 * @api
@@ -94,26 +94,26 @@ class Environment {
 	 * @return boolean
 	 */
 	public function isRewriteEnabled() {
-		if (getenv('REDIRECT_FLOW3_REWRITEURLS')) {
+		if (getenv('REDIRECT_FLOW_REWRITEURLS')) {
 			return TRUE;
 		}
-		return (boolean)getenv('FLOW3_REWRITEURLS');
+		return (boolean)getenv('FLOW_REWRITEURLS');
 	}
 
 	/**
-	 * Creates FLOW3's temporary directory - or at least asserts that it exists and is
+	 * Creates Flow's temporary directory - or at least asserts that it exists and is
 	 * writable.
 	 *
-	 * For each FLOW3 Application Context, we create an extra temporary folder,
+	 * For each Flow Application Context, we create an extra temporary folder,
 	 * and for nested contexts, the folders are prefixed with "SubContext" to
 	 * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
 	 *
 	 * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
 	 * @return string The full path to the temporary directory
-	 * @throws \TYPO3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
+	 * @throws \TYPO3\Flow\Utility\Exception if the temporary directory could not be created or is not writable
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
-		$temporaryDirectoryBase = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
+		$temporaryDirectoryBase = \TYPO3\Flow\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
 		if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
 			$temporaryDirectoryBase .= '/';
 		}
@@ -121,14 +121,14 @@ class Environment {
 
 		if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
 			try {
-				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
-			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
-				throw new \TYPO3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created. Please make sure permissions are correct for this path or define another temporary directory in your Settings.yaml with the path "TYPO3.FLOW3.utility.environment.temporaryDirectoryBase".', 1335382361);
+				\TYPO3\Flow\Utility\Files::createDirectoryRecursively($temporaryDirectory);
+			} catch (\TYPO3\Flow\Error\Exception $exception) {
+				throw new \TYPO3\Flow\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created. Please make sure permissions are correct for this path or define another temporary directory in your Settings.yaml with the path "TYPO3.Flow.utility.environment.temporaryDirectoryBase".', 1335382361);
 			}
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new \TYPO3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" is not writable. Please make this directory writable or define another temporary directory in your Settings.yaml with the path "TYPO3.FLOW3.utility.environment.temporaryDirectoryBase".', 1216287176);
+			throw new \TYPO3\Flow\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" is not writable. Please make this directory writable or define another temporary directory in your Settings.yaml with the path "TYPO3.Flow.utility.environment.temporaryDirectoryBase".', 1216287176);
 		}
 
 		return $temporaryDirectory;

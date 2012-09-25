@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource;
+namespace TYPO3\Flow\Resource;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An type converter for ResourcePointer objects
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ResourceTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
@@ -28,7 +28,7 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'TYPO3\FLOW3\Resource\Resource';
+	protected $targetType = 'TYPO3\Flow\Resource\Resource';
 
 	/**
 	 * @var integer
@@ -36,20 +36,20 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 	protected $priority = 1;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Resource\ResourceManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
 	protected $resourceManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -68,13 +68,13 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 	 * @param array $source The upload info (expected keys: error, name, tmp_name)
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\FLOW3\Resource\Resource|TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \TYPO3\Flow\Resource\Resource|TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
 			if (isset($source['submittedFile']) && isset($source['submittedFile']['filename']) && isset($source['submittedFile']['resourcePointer'])) {
-				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'TYPO3\FLOW3\Resource\ResourcePointer');
+				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'TYPO3\Flow\Resource\ResourcePointer');
 				if ($resourcePointer) {
 					$resource = new Resource();
 					$resource->setFilename($source['submittedFile']['filename']);
@@ -90,10 +90,10 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 				case \UPLOAD_ERR_INI_SIZE:
 				case \UPLOAD_ERR_FORM_SIZE:
 				case \UPLOAD_ERR_PARTIAL:
-					return new \TYPO3\FLOW3\Error\Error(\TYPO3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+					return new \TYPO3\Flow\Error\Error(\TYPO3\Flow\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 				default:
-					$this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', \TYPO3\FLOW3\Utility\Files::getUploadErrorMessage($source['error'])), LOG_ERR);
-					return new \TYPO3\FLOW3\Error\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains' , 1340193849);
+					$this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', \TYPO3\Flow\Utility\Files::getUploadErrorMessage($source['error'])), LOG_ERR);
+					return new \TYPO3\Flow\Error\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains' , 1340193849);
 			}
 		}
 
@@ -103,7 +103,7 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 
 		$resource = $this->resourceManager->importUploadedResource($source);
 		if ($resource === FALSE) {
-			return new \TYPO3\FLOW3\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
+			return new \TYPO3\Flow\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;

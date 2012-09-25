@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication;
+namespace TYPO3\Flow\Security\Authentication;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,8 +11,8 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Response;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
 
 /**
  * Contract for an authentication entry point
@@ -37,8 +37,8 @@ interface EntryPointInterface {
 	/**
 	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The current request
-	 * @param \TYPO3\FLOW3\Http\Response $response The current response
+	 * @param \TYPO3\Flow\Http\Request $request The current request
+	 * @param \TYPO3\Flow\Http\Response $response The current response
 	 * @return void
 	 */
 	public function startAuthentication(Request $request, Response $response);

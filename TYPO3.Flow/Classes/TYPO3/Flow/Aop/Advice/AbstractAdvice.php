@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Advice;
+namespace TYPO3\Flow\Aop\Advice;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Aop\Advice;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Base class for Advices.
  *
  */
-class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
+class AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface {
 
 	/**
 	 * Holds the name of the aspect object containing the advice
@@ -33,13 +33,13 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 
 	/**
 	 * A reference to the SingalSlot Dispatcher
-	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
+	 * @var \TYPO3\Flow\SignalSlot\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
 	 * A reference to the Object Manager
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -60,10 +60,10 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 	 *
 	 * @param string $aspectObjectName Name of the aspect object containing the advice
 	 * @param string $adviceMethodName Name of the advice method
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
 	 * @param \Closure $runtimeEvaluator Runtime evaluations function
 	 */
-	public function __construct($aspectObjectName, $adviceMethodName, \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager = NULL, \Closure $runtimeEvaluator = NULL) {
+	public function __construct($aspectObjectName, $adviceMethodName, \TYPO3\Flow\Object\ObjectManagerInterface $objectManager = NULL, \Closure $runtimeEvaluator = NULL) {
 		$this->aspectObjectName = $aspectObjectName;
 		$this->adviceMethodName = $adviceMethodName;
 		$this->objectManager = $objectManager;
@@ -73,10 +73,10 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return mixed Result of the advice method
 	 */
-	public function invoke(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) {
 			return;
 		}
@@ -113,16 +113,16 @@ class AbstractAdvice implements \TYPO3\FLOW3\Aop\Advice\AdviceInterface {
 	 *
 	 * @param object $aspectObject
 	 * @param string $methodName
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	protected function emitAdviceInvoked($aspectObject, $methodName, $joinPoint) {
 		if ($this->dispatcher === NULL) {
-			$this->dispatcher = $this->objectManager->get('TYPO3\FLOW3\SignalSlot\Dispatcher');
+			$this->dispatcher = $this->objectManager->get('TYPO3\Flow\SignalSlot\Dispatcher');
 		}
 
-		$this->dispatcher->dispatch('TYPO3\FLOW3\Aop\Advice\AbstractAdvice', 'adviceInvoked', array($aspectObject, $methodName, $joinPoint));
+		$this->dispatcher->dispatch('TYPO3\Flow\Aop\Advice\AbstractAdvice', 'adviceInvoked', array($aspectObject, $methodName, $joinPoint));
 	}
 }
 

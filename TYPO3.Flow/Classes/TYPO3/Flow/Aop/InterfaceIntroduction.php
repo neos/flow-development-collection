@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop;
+namespace TYPO3\Flow\Aop;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -32,7 +32,7 @@ class InterfaceIntroduction {
 
 	/**
 	 * The pointcut this introduction applies to
-	 * @var \TYPO3\FLOW3\Aop\Pointcut\Pointcut
+	 * @var \TYPO3\Flow\Aop\Pointcut\Pointcut
 	 */
 	protected $pointcut;
 
@@ -41,9 +41,9 @@ class InterfaceIntroduction {
 	 *
 	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
 	 * @param string $interfaceName Name of the interface to introduce
-	 * @param \TYPO3\FLOW3\Aop\Pointcut\Pointcut $pointcut The pointcut for this introduction
+	 * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut for this introduction
 	 */
-	public function __construct($declaringAspectClassName, $interfaceName, \TYPO3\FLOW3\Aop\Pointcut\Pointcut $pointcut) {
+	public function __construct($declaringAspectClassName, $interfaceName, \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut) {
 		$this->declaringAspectClassName = $declaringAspectClassName;
 		$this->interfaceName = $interfaceName;
 		$this->pointcut = $pointcut;
@@ -61,7 +61,7 @@ class InterfaceIntroduction {
 	/**
 	 * Returns the poincut this introduction applies to
 	 *
-	 * @return \TYPO3\FLOW3\Aop\Pointcut\Pointcut The pointcut
+	 * @return \TYPO3\Flow\Aop\Pointcut\Pointcut The pointcut
 	 */
 	public function getPointcut() {
 		return $this->pointcut;

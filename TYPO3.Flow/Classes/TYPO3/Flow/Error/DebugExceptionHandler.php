@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Error;
+namespace TYPO3\Flow\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A basic but solid exception handler which catches everything which
  * falls through the other exception handlers and provides useful debugging
  * information.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler {
+class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 
 	/**
 	 * Formats and echoes the exception as XHTML.
@@ -30,17 +30,17 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		$statusCode = 500;
-		if ($exception instanceof \TYPO3\FLOW3\Exception) {
+		if ($exception instanceof \TYPO3\Flow\Exception) {
 			$statusCode = $exception->getStatusCode();
 		}
-		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 		if (!headers_sent()) {
 			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
 
 		$renderingOptions = $this->resolveCustomRenderingOptions($exception);
 		if ($renderingOptions !== NULL && isset($renderingOptions['fluidTemplate'])) {
-			$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? $exception->getReferenceCode() : NULL;
+			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
 			echo $this->buildCustomFluidView($renderingOptions, $statusCode, $referenceCode)->render();
 		} else {
 			echo $this->renderStatically($statusCode, $exception);
@@ -55,7 +55,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 * @return string
 	 */
 	protected function renderStatically($statusCode, $exception) {
-		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 		$exceptionHeader = '';
 		while (true) {
 			$pathPosition = strpos($exception->getFile(), 'Packages/');
@@ -70,7 +70,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
-			if ($exception instanceof \TYPO3\FLOW3\Exception) {
+			if ($exception instanceof \TYPO3\Flow\Exception) {
 				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
 			}
 			if ($exception->getPrevious() === NULL) {
@@ -82,7 +82,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 			}
 		}
 
-		$backtraceCode = \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace());
+		$backtraceCode = \TYPO3\Flow\Error\Debugger::getBacktraceCode($exception->getTrace());
 
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
@@ -114,7 +114,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 					margin: 10px;
 					padding: 0;
 				">
-				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught Exception in FLOW3</div>
+				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught Exception in Flow</div>
 				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
 					' . $exceptionHeader . '
 					<br />
@@ -136,10 +136,10 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
-		echo PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
+		echo PHP_EOL . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
 		echo 'in line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof \TYPO3\FLOW3\Exception) {
+		if ($exception instanceof \TYPO3\Flow\Exception) {
 			echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
 		}
 
@@ -151,10 +151,10 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 
 			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
-			echo PHP_EOL . $indent . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
+			echo PHP_EOL . $indent . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 			echo $indent . 'thrown in file ' . $filePathAndName . PHP_EOL;
 			echo $indent . 'in line ' . $exception->getLine() . PHP_EOL;
-			if ($exception instanceof \TYPO3\FLOW3\Exception) {
+			if ($exception instanceof \TYPO3\Flow\Exception) {
 				echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
 			}
 
@@ -193,13 +193,13 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	 */
 	protected function getCreateIssueLink(\Exception $exception) {
 		$filename = basename($exception->getFile());
-		return 'http://forge.typo3.org/projects/package-typo3-flow3/issues/new?issue[subject]='
+		return 'http://forge.typo3.org/projects/package-typo3-flow/issues/new?issue[subject]='
 			. urlencode(get_class($exception) . ' thrown in file ' . $filename)
 			. '&issue[description]='
 			. urlencode(
 				$exception->getMessage() . chr(10)
 				. strip_tags(
-					str_replace(array('<br />', '</pre>'), chr(10), \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE))
+					str_replace(array('<br />', '</pre>'), chr(10), \TYPO3\Flow\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE))
 				  )
 				. chr(10) . 'Please include more helpful information!'
 			  )

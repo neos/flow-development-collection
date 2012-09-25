@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\Token;
+namespace TYPO3\Flow\Security\Authentication\Token;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,23 +11,23 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An authentication token used for sso credentials coming from typo3.org
  */
-class Typo3OrgSsoToken extends \TYPO3\FLOW3\Security\Authentication\Token\AbstractToken {
+class Typo3OrgSsoToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToken {
 
 	/**
 	 * The username/password credentials
 	 * @var array
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $credentials = array('username' => '', 'signature' => '');
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Utility\Environment
+	 * @Flow\Inject
 	 */
 	protected $environment;
 
@@ -35,10 +35,10 @@ class Typo3OrgSsoToken extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 	 * Updates the username and password credentials from the POST vars, if the POST parameters
 	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $actionRequest The current action request instance
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request instance
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\Mvc\ActionRequest $actionRequest) {
+	public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
 		$getArguments = $actionRequest->getArguments();
 
 		if (!empty($getArguments['user'])
@@ -51,7 +51,7 @@ class Typo3OrgSsoToken extends \TYPO3\FLOW3\Security\Authentication\Token\Abstra
 			&& !empty($getArguments['userdata'])) {
 
 			$this->credentials['username'] = $getArguments['user'];
-			$this->credentials['signature'] = \TYPO3\FLOW3\Utility\TypeHandling::hex2bin($getArguments['signature']);
+			$this->credentials['signature'] = \TYPO3\Flow\Utility\TypeHandling::hex2bin($getArguments['signature']);
 			$this->credentials['expires'] = $getArguments['expires'];
 			$this->credentials['version'] = $getArguments['version'];
 			$this->credentials['tpaId'] = $getArguments['tpa_id'];

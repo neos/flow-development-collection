@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Http;
+namespace TYPO3\Flow\Tests\Unit\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Response;
-use TYPO3\FLOW3\Http\Uri;
-use TYPO3\FLOW3\Http\Headers;
-use TYPO3\FLOW3\Http\Cookie;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http\Headers;
+use TYPO3\Flow\Http\Cookie;
 
 /**
  * Test case for the Http Cookie class
  */
-class CookieTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CookieTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @return array
@@ -180,8 +180,8 @@ class CookieTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getDomainReturnsDomain() {
-		$cookie = new Cookie('foo', 'bar', 0, NULL, 'flow3.typo3.org');
-		$this->assertSame('flow3.typo3.org', $cookie->getDomain());
+		$cookie = new Cookie('foo', 'bar', 0, NULL, 'flow.typo3.org');
+		$this->assertSame('flow.typo3.org', $cookie->getDomain());
 	}
 
 	/**
@@ -213,7 +213,7 @@ class CookieTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$cookie = new Cookie('foo', 'bar');
 		$this->assertSame('/', $cookie->getPath());
 
-		$cookie = new Cookie('foo', 'bar', 0, NULL, 'flow3.typo3.org', '/about/us');
+		$cookie = new Cookie('foo', 'bar', 0, NULL, 'flow.typo3.org', '/about/us');
 		$this->assertSame('/about/us', $cookie->getPath());
 	}
 
@@ -273,8 +273,8 @@ class CookieTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array(new Cookie('foo', 'Some characters, like "double quotes" must be escaped.'), 'foo=Some+characters%2C+like+%22double+quotes%22+must+be+escaped.; Path=/; HttpOnly'),
 			array(new Cookie('foo', 'bar', 1345108546), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly'),
 			array(new Cookie('foo', 'bar', \DateTime::createFromFormat('U', 1345108546)), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly'),
-			array(new Cookie('foo', 'bar', 0, NULL, 'flow3.typo3.org'), 'foo=bar; Domain=flow3.typo3.org; Path=/; HttpOnly'),
-			array(new Cookie('foo', 'bar', 0, NULL, 'flow3.typo3.org', '/about'), 'foo=bar; Domain=flow3.typo3.org; Path=/about; HttpOnly'),
+			array(new Cookie('foo', 'bar', 0, NULL, 'flow.typo3.org'), 'foo=bar; Domain=flow.typo3.org; Path=/; HttpOnly'),
+			array(new Cookie('foo', 'bar', 0, NULL, 'flow.typo3.org', '/about'), 'foo=bar; Domain=flow.typo3.org; Path=/about; HttpOnly'),
 			array(new Cookie('foo', 'bar', 0, NULL, 'typo3.org', '/', TRUE), 'foo=bar; Domain=typo3.org; Path=/; Secure; HttpOnly'),
 			array(new Cookie('foo', 'bar', 0, NULL, 'typo3.org', '/', TRUE, FALSE), 'foo=bar; Domain=typo3.org; Path=/; Secure'),
 			array($expiredCookie, 'foo=bar; Expires=Thu, 27-May-1976 12:00:00 GMT; Path=/; HttpOnly')
@@ -285,7 +285,7 @@ class CookieTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the Cookie cast to a string equals the expected string which can
 	 * be used as a value for the Set-Cookie header.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Cookie $cookie
+	 * @param \TYPO3\Flow\Http\Cookie $cookie
 	 * @param string $expectedString
 	 * @return void
 	 * @test

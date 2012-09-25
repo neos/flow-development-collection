@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,17 +11,17 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A simple class filter which fires on class names defined by a regular expression
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
-class PointcutClassNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PointcutClassNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -49,10 +49,10 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -64,16 +64,16 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @throws \TYPO3\FLOW3\Aop\Exception
+	 * @throws \TYPO3\Flow\Aop\Exception
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		try {
 			$matchResult = preg_match($this->classFilterExpression, $className);
 		} catch (\Exception $exception) {
-			throw new \TYPO3\FLOW3\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
+			throw new \TYPO3\Flow\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
 		}
 		if ($matchResult === FALSE) {
-			throw new \TYPO3\FLOW3\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
+			throw new \TYPO3\Flow\Aop\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
 		}
 		return ($matchResult === 1);
 	}
@@ -99,10 +99,10 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		if (!preg_match('/^([^\.\(\)\{\}\[\]\?\+\$\!\|]+)/', $this->originalExpressionString, $matches)) {
 			return $classNameIndex;
 		}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver;
+namespace TYPO3\Flow\Persistence\Doctrine\Mapping\Driver;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * This driver reads the mapping metadata from docblock annotations.
@@ -25,15 +25,15 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * If a property is not marked as an association the mapping type is set to
  * "object" for objects.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class FlowAnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	const MAPPING_REGULAR = 0;
 	const MAPPING_MM_REGULAR = 1;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -66,10 +66,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -85,15 +85,15 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * Fetch a class schema for the given class, if possible.
 	 *
 	 * @param string $className
-	 * @return \TYPO3\FLOW3\Reflection\ClassSchema
-	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException
+	 * @return \TYPO3\Flow\Reflection\ClassSchema
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException
 	 */
 	protected function getClassSchema($className) {
-		$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+		$className = preg_replace('/' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
 
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
-			throw new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException('No class schema found for "' . $className . '".', 1295973082);
+			throw new \TYPO3\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException('No class schema found for "' . $className . '".', 1295973082);
 		}
 		return $classSchema;
 	}
@@ -104,15 +104,15 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @param string $className
 	 * @param string $propertySourceHint
 	 * @return boolean
-	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException
 	 */
 	protected function isAggregateRoot($className, $propertySourceHint) {
-		$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+		$className = preg_replace('/' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
 		try {
 			$classSchema = $this->getClassSchema($className);
 			return $classSchema->isAggregateRoot();
-		} catch (\TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException $exception) {
-			throw new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException('No class schema found for "' . $className . '". The class should probably marked as entity or value object! This happened while examining "' . $propertySourceHint . '"', 1340185197);
+		} catch (\TYPO3\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException $exception) {
+			throw new \TYPO3\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException('No class schema found for "' . $className . '". The class should probably marked as entity or value object! This happened while examining "' . $propertySourceHint . '"', 1340185197);
 		}
 	}
 
@@ -138,8 +138,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$metadata->setCustomRepositoryClass($mappedSuperclassAnnotation->repositoryClass);
 			}
 			$metadata->isMappedSuperclass = TRUE;
-		} elseif (isset($classAnnotations['TYPO3\FLOW3\Annotations\Entity']) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
-			$entityAnnotation = isset($classAnnotations['TYPO3\FLOW3\Annotations\Entity']) ? $classAnnotations['TYPO3\FLOW3\Annotations\Entity'] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
+		} elseif (isset($classAnnotations['TYPO3\Flow\Annotations\Entity']) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
+			$entityAnnotation = isset($classAnnotations['TYPO3\Flow\Annotations\Entity']) ? $classAnnotations['TYPO3\Flow\Annotations\Entity'] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
 			if ($entityAnnotation->repositoryClass !== NULL) {
 				$metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
 			} elseif ($classSchema->getRepositoryClassName() !== NULL) {
@@ -150,7 +150,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			if ($entityAnnotation->readOnly) {
 				$metadata->markReadOnly();
 			}
-		} elseif ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+		} elseif ($classSchema->getModelType() === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 				// also ok... but we make it read-only
 			$metadata->markReadOnly();
 		} else {
@@ -263,7 +263,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		if (!isset($primaryTable['uniqueConstraints'])) {
 			$idProperties = array_keys($classSchema->getIdentityProperties());
 			if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== array()) {
-				$uniqueIndexName = $this->truncateIdentifier('flow3_identity_' . $primaryTable['name']);
+				$uniqueIndexName = $this->truncateIdentifier('flow_identity_' . $primaryTable['name']);
 				foreach ($idProperties as $idProperty) {
 					$primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = isset($metadata->columnNames[$idProperty]) ? $metadata->columnNames[$idProperty] : strtolower($idProperty);
 				}
@@ -361,13 +361,13 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'id');
 					$joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
 				} else {
-					$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
+					$className = preg_replace('/' . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'id');
 					$joinColumnName = $this->buildJoinTableColumnName($className);
 				}
 				if (count($idProperties) === 0) {
 					$joinColumn['name'] = $joinColumn['name'] === NULL ? $joinColumnName : $joinColumn['name'];
-					$joinColumn['referencedColumnName'] = strtolower('FLOW3_Persistence_Identifier');
+					$joinColumn['referencedColumnName'] = strtolower('Persistence_Object_Identifier');
 				} elseif (count($idProperties) === 1) {
 					$joinColumn['name'] = $joinColumn['name'] === NULL ? $joinColumnName : $joinColumn['name'];
 					$joinColumn['referencedColumnName'] = strtolower(current($idProperties));
@@ -543,7 +543,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 							break;
 						default:
 							if (strpos($propertyMetaData['type'], '\\') !== FALSE) {
-								if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], 'TYPO3\FLOW3\Annotations\ValueObject')) {
+								if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], 'TYPO3\Flow\Annotations\ValueObject')) {
 									$mapping['type'] = 'object';
 								} elseif (class_exists($propertyMetaData['type'])) {
 
@@ -733,9 +733,9 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		}
 
 			// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
-		$metadata->addLifecycleCallback('FLOW3_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
+		$metadata->addLifecycleCallback('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
-		$metadata->addLifecycleCallback('FLOW3_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
+		$metadata->addLifecycleCallback('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 	}
 
 	/**
@@ -759,10 +759,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return boolean
 	 */
 	public function isTransient($className) {
-		return strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
+		return strpos($className, \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
 			(
-				!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') &&
-					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject') &&
+				!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject') &&
 					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
 					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
 			);
@@ -779,15 +779,15 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		}
 
 		$this->classNames = array_merge(
-			$this->reflectionService->getClassNamesByAnnotation('TYPO3\FLOW3\Annotations\ValueObject'),
-			$this->reflectionService->getClassNamesByAnnotation('TYPO3\FLOW3\Annotations\Entity'),
+			$this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\ValueObject'),
+			$this->reflectionService->getClassNamesByAnnotation('TYPO3\Flow\Annotations\Entity'),
 			$this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\Entity'),
 			$this->reflectionService->getClassNamesByAnnotation('Doctrine\ORM\Mapping\MappedSuperclass')
 		);
 		$this->classNames = array_filter($this->classNames,
 			function ($className) {
 				return !interface_exists($className, FALSE)
-						&& strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) === FALSE;
+						&& strpos($className, \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) === FALSE;
 			}
 		);
 
@@ -852,10 +852,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		return $classNameIndex;
 	}
 }

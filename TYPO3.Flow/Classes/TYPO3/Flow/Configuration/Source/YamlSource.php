@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Configuration\Source;
+namespace TYPO3\Flow\Configuration\Source;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Configuration\Source;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Configuration source based on YAML files
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
-class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
+class YamlSource implements \TYPO3\Flow\Configuration\Source\SourceInterface {
 
 	/**
 	 * Loads the specified configuration file and returns its content as an
@@ -28,7 +28,7 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	 *
 	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
 	 * @return array
-	 * @throws \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
+	 * @throws \TYPO3\Flow\Configuration\Exception\ParseErrorException
 	 */
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
@@ -37,8 +37,8 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 				if (!is_array($configuration)) {
 					$configuration = array();
 				}
-			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
-				throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
+			} catch (\TYPO3\Flow\Error\Exception $exception) {
+				throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
 			}
 		} else {
 			$configuration = array();

@@ -6,17 +6,17 @@
 #
 # Make sure to set the webserver group name to the one used by your system.
 
-echo FLOW3 File Permission Script
+echo TYPo3 Flow File Permission Script
 echo
 
 if [ ! -d "Web" -o ! -d "Packages" -o ! -d "Configuration" ]; then
-	echo Make sure you run this from the FLOW3 root directory!
+	echo Make sure you run this from the TYPO3 Flow root directory!
 	echo
 	exit 1
 fi
 
 if [ "$#" != "3" ]; then
-	echo "Usage: ./flow3 core:setfilepermissions <commandlineuser> <webuser> <webgroup>"
+	echo "Usage: ./flow core:setfilepermissions <commandlineuser> <webuser> <webgroup>"
 	echo "Run as super user."
 	echo
 	exit 1
@@ -72,7 +72,7 @@ sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
 find . -type d -exec sudo chmod 2770 {} \;
 find . -type f \! \( -name commit-msg -or -name '*.sh' \) -exec sudo chmod 660 {} \;
 
-sudo chmod 770 flow3
+sudo chmod 770 flow
 sudo chmod 700 $0
 
 sudo chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources

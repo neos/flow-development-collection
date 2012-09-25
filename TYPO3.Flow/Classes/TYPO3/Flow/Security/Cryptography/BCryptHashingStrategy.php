@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Cryptography;
+namespace TYPO3\Flow\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * Hashing passwords using BCrypt
  */
-class BCryptHashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface {
+class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface {
 
 	/**
 	 * Number of rounds to use with BCrypt (04 - 31), must be two digit
@@ -44,7 +44,7 @@ class BCryptHashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 	 * @return string the result of the crypt() call
 	 */
 	public function hashPassword($password, $staticSalt = NULL) {
-		$dynamicSalt = \TYPO3\FLOW3\Utility\Algorithms::generateRandomString(22, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./');
+		$dynamicSalt = \TYPO3\Flow\Utility\Algorithms::generateRandomString(22, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./');
 		return crypt($password, '$2a$' . $this->cost . '$' . $dynamicSalt);
 	}
 

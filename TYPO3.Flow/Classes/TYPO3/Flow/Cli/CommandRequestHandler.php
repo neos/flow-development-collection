@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,47 +11,47 @@ namespace TYPO3\FLOW3\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\Cli\Response;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Cli\Response;
 
 /**
  * A request handler which can handle command line requests.
  *
- * @FLOW3\Proxy(false)
- * @FLOW3\Scope("singleton")
+ * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
  */
-class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
+	 * @var \TYPO3\Flow\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\Request
+	 * @var \TYPO3\Flow\Cli\Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\Response
+	 * @var \TYPO3\Flow\Cli\Response
 	 */
 	protected $response;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -89,13 +89,13 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 		try {
 			$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? 'Compiletime' : 'Runtime';
 			$this->boot($runLevel);
-			$this->objectManager->get('TYPO3\FLOW3\Cli\CommandExceptionHandler');
+			$this->objectManager->get('TYPO3\Flow\Cli\CommandExceptionHandler');
 		} catch (\Exception $exception) {
-			\TYPO3\FLOW3\Cli\CommandExceptionHandler::writeResponseAndExit($exception);
+			\TYPO3\Flow\Cli\CommandExceptionHandler::writeResponseAndExit($exception);
 		}
 
 		$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
-		$this->request = $this->objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
+		$this->request = $this->objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
 		$this->response = new Response();
 
 		$this->exitIfCompiletimeCommandWasNotCalledCorrectly($runLevel);
@@ -114,7 +114,7 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 	 *
 	 * @param string $runlevel
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidCommandIdentifierException
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidCommandIdentifierException
 	 */
 	public function exitIfCompiletimeCommandWasNotCalledCorrectly($runlevel) {
 		if ($runlevel === 'Runtime') {
@@ -147,7 +147,7 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 		$sequence->invoke($this->bootstrap);
 
 		$this->objectManager = $this->bootstrap->getObjectManager();
-		$this->dispatcher = $this->objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher');
+		$this->dispatcher = $this->objectManager->get('TYPO3\Flow\Mvc\Dispatcher');
 	}
 
 	/**
@@ -159,7 +159,7 @@ class CommandRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface
 	protected function shutdown($runlevel) {
 		$this->bootstrap->shutdown($runlevel);
 		if ($runlevel === 'Compiletime') {
-			$this->objectManager->get('TYPO3\FLOW3\Core\LockManager')->unlockSite();
+			$this->objectManager->get('TYPO3\Flow\Core\LockManager')->unlockSite();
 		}
 		exit($this->response->getExitCode());
 	}

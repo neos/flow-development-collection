@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Policy;
+namespace TYPO3\Flow\Security\Policy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The policy service reads the policy configuration. The security adivce asks this service which methods have to be intercepted by a security interceptor.
  * The access decision voters get the roles and privileges configured (in the security policy) for a specific method invocation from this service.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	const
 		PRIVILEGE_ABSTAIN = 0,
@@ -28,13 +28,13 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 		MATCHER_ANY = 'ANY';
 
 	/**
-	 * The FLOW3 settings
+	 * The Flow settings
 	 * @var array
 	 */
 	protected $settings;
 
 	/**
-	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
@@ -44,12 +44,12 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	protected $policy = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser
+	 * @var \TYPO3\Flow\Security\Policy\PolicyExpressionParser
 	 */
 	protected $policyExpressionParser;
 
@@ -78,14 +78,14 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	protected $entityResourcesConstraints = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * Injects the FLOW3 settings
+	 * Injects the Flow settings
 	 *
-	 * @param array $settings Settings of the FLOW3 package
+	 * @param array $settings Settings of the Flow package
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
@@ -95,40 +95,40 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager The configuration manager
+	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager The configuration manager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\Flow\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
 	/**
 	 * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
 	 *
-	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
-		$this->cache = $cacheManager->getCache('FLOW3_Security_Policy');
+	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
+		$this->cache = $cacheManager->getCache('Flow_Security_Policy');
 	}
 
 	/**
 	 * Injects the policy expression parser
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser $parser
+	 * @param \TYPO3\Flow\Security\Policy\PolicyExpressionParser $parser
 	 * @return void
 	 */
-	public function injectPolicyExpressionParser(\TYPO3\FLOW3\Security\Policy\PolicyExpressionParser $parser) {
+	public function injectPolicyExpressionParser(\TYPO3\Flow\Security\Policy\PolicyExpressionParser $parser) {
 		$this->policyExpressionParser = $parser;
 	}
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -138,7 +138,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * @return void
 	 */
 	public function initializeObject() {
-		$this->policy = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
+		$this->policy = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
 
 		$this->setAclsForEverybodyRole();
 
@@ -166,7 +166,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidPrivilegeException
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->settings['security']['enable'] === FALSE) {
@@ -197,7 +197,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 							$policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+							throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
 					}
 
 					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
@@ -239,11 +239,11 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 */
 	public function getRoles() {
 		$roles = array(
-			new \TYPO3\FLOW3\Security\Policy\Role('Everybody'),
-			new \TYPO3\FLOW3\Security\Policy\Role('Anonymous')
+			new \TYPO3\Flow\Security\Policy\Role('Everybody'),
+			new \TYPO3\Flow\Security\Policy\Role('Anonymous')
 		);
 		foreach ($this->policy['roles'] as $roleIdentifier => $parentRoles) {
-			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
+			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleIdentifier);
 		}
 		return $roles;
 	}
@@ -251,16 +251,16 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	/**
 	 * Returns all parent roles for the given role, that are configured in the policy.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role to get the parents for
+	 * @param \TYPO3\Flow\Security\Policy\Role $role The role to get the parents for
 	 * @return array<TYPO3\Security\Policy\Role> Array of parent roles
 	 */
-	public function getAllParentRoles(\TYPO3\FLOW3\Security\Policy\Role $role) {
+	public function getAllParentRoles(\TYPO3\Flow\Security\Policy\Role $role) {
 		$result = array();
 
-		$parentRoles = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->policy, 'roles.' . $role);
+		$parentRoles = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->policy, 'roles.' . $role);
 		if (is_array($parentRoles)) {
 			foreach ($this->policy['roles'][(string)$role] as $currentIdentifier) {
-				$currentParent = new \TYPO3\FLOW3\Security\Policy\Role($currentIdentifier);
+				$currentParent = new \TYPO3\Flow\Security\Policy\Role($currentIdentifier);
 				if (!in_array($currentParent, $result)) $result[] = $currentParent;
 				foreach ($this->getAllParentRoles($currentParent) as $currentGrandParent) {
 					if (!in_array($currentGrandParent, $result)) $result[] = $currentGrandParent;
@@ -273,17 +273,17 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	/**
 	 * Returns the configured roles for the given joinpoint
 	 *
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @return array Array of roles
-	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @throws \TYPO3\Flow\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getRolesForJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function getRolesForJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
-		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
+		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
-			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
+			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleIdentifier);
 		}
 
 		return $roles;
@@ -293,16 +293,16 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * Returns the privileges a specific role has for the given joinpoint. The returned array
 	 * contains the privilege's resource as key of each privilege.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
+	 * @param \TYPO3\Flow\Security\Policy\Role $role The role for which the privileges should be returned
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
 	 * @return array Array of privileges
-	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @throws \TYPO3\Flow\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getPrivilegesForJoinPoint(\TYPO3\FLOW3\Security\Policy\Role $role, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function getPrivilegesForJoinPoint(\TYPO3\Flow\Security\Policy\Role $role, \TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		$roleIdentifier = (string)$role;
 
-		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) {
 			return array();
 		}
@@ -329,17 +329,17 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * Note: Resources with runtime evaluations return always a PRIVILEGE_DENY!
 	 * @see getPrivilegesForJoinPoint() instead, if you need privileges for them.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
+	 * @param \TYPO3\Flow\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param string $resource The resource for which the privileges should be returned
 	 * @return integer One of: PRIVILEGE_GRANT, PRIVILEGE_DENY
-	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @throws \TYPO3\Flow\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getPrivilegeForResource(\TYPO3\FLOW3\Security\Policy\Role $role, $resource) {
+	public function getPrivilegeForResource(\TYPO3\Flow\Security\Policy\Role $role, $resource) {
 		if (!isset($this->acls[$resource])) {
 			if (isset($this->resources[$resource])) {
 				return self::PRIVILEGE_DENY;
 			} else {
-				throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource ("' . $resource . '") was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
+				throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given resource ("' . $resource . '") was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
 			}
 		}
 
@@ -454,8 +454,8 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * Builds the needed pointcut filters for matching the policy resources
 	 *
 	 * @return boolean
-	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException
+	 * @throws \TYPO3\Flow\Security\Exception\MissingConfigurationException
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidPrivilegeException
 	 */
 	protected function buildPointcutFilters() {
 		if (isset($this->policy['resources']['methods']) === FALSE) {
@@ -469,7 +469,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 				continue;
 			}
 			if (!is_array($acl['methods'])) {
-				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The ACL configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+				throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('The ACL configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
 			}
 			foreach ($acl['methods'] as $resource => $privilege) {
 				if (!isset($parsedMethodResources[$resource])) {
@@ -492,7 +492,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 							$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got "' . $privilege . '" for role "' . $role . '" and resource "' . $resource . '"', 1267311437);
+							throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got "' . $privilege . '" for role "' . $role . '" and resource "' . $resource . '"', 1267311437);
 					}
 
 					if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
@@ -552,7 +552,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * Parses the policy and stores the configured entity acls in the internal acls array
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidPrivilegeException
 	 */
 	protected function parseEntityAcls() {
 		foreach ($this->policy['acls'] as $role => $aclEntries) {
@@ -576,7 +576,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_ABSTAIN;
 						break;
 					default:
-						throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+						throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
 				}
 			}
 		}
@@ -620,7 +620,7 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	 * @return void
 	 */
 	public function savePolicyCache() {
-		$tags = array('TYPO3_FLOW3_Aop');
+		$tags = array('TYPO3_Flow_Aop');
 		if (!$this->cache->has('acls')) {
 			$this->cache->set('acls', $this->acls, $tags);
 		}
@@ -632,15 +632,15 @@ class PolicyService implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		if ($this->filters === array()) {
 			$this->buildPointcutFilters();
 		}
 
-		$result = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
+		$result = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		foreach ($this->filters as $resources) {
 			foreach ($resources as $filterForResource) {
 				$result->applyUnion($filterForResource->reduceTargetClassNames($classNameIndex));

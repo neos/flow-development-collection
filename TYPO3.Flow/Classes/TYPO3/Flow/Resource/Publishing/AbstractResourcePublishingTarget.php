@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource\Publishing;
+namespace TYPO3\Flow\Resource\Publishing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Resource\Publishing;
  * channel, such as the local file system or a content delivery network.
  *
  */
-abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
+abstract class AbstractResourcePublishingTarget implements \TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface {
 
 	/**
 	 * Rewrites the given resource filename to a human readable but still URI compatible string.
@@ -31,11 +31,11 @@ abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource
 	/**
 	 * Returns the private path to the source of the given resource.
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource
+	 * @param \TYPO3\Flow\Resource\Resource $resource
 	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\TYPO3\FLOW3\Resource\Resource $resource) {
-		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
+	protected function getPersistentResourceSourcePathAndFilename(\TYPO3\Flow\Resource\Resource $resource) {
+		$pathAndFilename = FLOW_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
 		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
 	}
 }

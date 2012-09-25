@@ -6,7 +6,7 @@ Model and Repository
 
 Usually this would now be the time to write a database schema which contains
 table definitions and lays out relations between the different tables. But
-FLOW3 doesn't deal with tables. You won't even access a database manually nor
+TYPO3 Flow doesn't deal with tables. You won't even access a database manually nor
 will you write SQL. The very best is if you completely forget about tables and
 databases and think only in terms of objects.
 
@@ -23,19 +23,19 @@ databases and think only in terms of objects.
     copy the needed files from there to "your" sandbox project.
 
     To see the full-scale code of the Blog as used by some of us, take a look at
-    the `Blog package <http://git.typo3.org/FLOW3/Packages/TYPO3.Blog.git>`_ in
+    the `Blog package <http://git.typo3.org/Flow/Packages/TYPO3.Blog.git>`_ in
     our Git repository.
 
 Domain models are really the heart of your application and therefore it is
-vital that this layer stays clean and legible. In a FLOW3 application a model
+vital that this layer stays clean and legible. In a TYPO3 Flow application a model
 is just a plain old PHP object [#]_. There's no need to write a schema
 definition, subclass a special base model or implement a required interface.
-All FLOW3 requires from you as a specification for a model is a proper
+All TYPO3 Flow requires from you as a specification for a model is a proper
 documented PHP class containing properties.
 
 All your domain models need a place to live. The directory structure and filenames follow
 the conventions of our `Coding Guidelines
-<http://flow3.typo3.org/documentation/codingguidelines>`_ which basically means that the
+<http://flow.typo3.org/documentation/codingguidelines>`_ which basically means that the
 directories reflect the classes' namespace while the filename is identical to the class
 name. The base directory for the domain models is ``Classes/Domain/Model/``.
 
@@ -46,7 +46,7 @@ The code for your ``Blog`` model can be kickstarted like this:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 kickstart:model TYPO3.Blog Blog title:string \
+	myhost:tutorial johndoe$ ./flow kickstart:model TYPO3.Blog Blog title:string \
 	description:string 'posts:\Doctrine\Common\Collections\Collection'
 
 That command will output the created file and a hint:
@@ -70,8 +70,8 @@ Open the generated file and complete it to look like the following:
 		 * The blog's title.
 		 *
 		 * @var string
-		 * @FLOW3\Validate(type="Text")
-		 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
+		 * @Flow\Validate(type="Text")
+		 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
 		 * @ORM\Column(length=80)
 		 */
 		protected $title = '';
@@ -80,8 +80,8 @@ Open the generated file and complete it to look like the following:
 		 * A short description of the blog
 		 *
 		 * @var string
-		 * @FLOW3\Validate(type="Text")
-		 * @FLOW3\Validate(type="StringLength", options={ "maximum"=150 })
+		 * @Flow\Validate(type="Text")
+		 * @Flow\Validate(type="StringLength", options={ "maximum"=150 })
 		 * @ORM\Column(length=150)
 		 */
 		protected $description = '';
@@ -132,13 +132,13 @@ Open the generated file and complete it to look like the following:
 
 .. tip::
 
-	The `@FLOW3\…` and `@ORM\…` strings in the code are called *Annotations*.
+	The `@Flow\…` and `@ORM\…` strings in the code are called *Annotations*.
 	They are namespaced like PHP classes, so for the above code to work you
 	**must** add a line like::
 
 		use Doctrine\ORM\Mapping as ORM;
 
-	to the files as well. Add it right after the `use` statement for the FLOW3
+	to the files as well. Add it right after the `use` statement for the TYPO3 Flow
 	annotations that is already there.
 
 .. tip:: **Namespaces**
@@ -165,13 +165,13 @@ This namespace declaration must be the very first code in your file.
 	/**
 	 * A blog
 	 *
-	 * @FLOW3\Entity
+	 * @Flow\Entity
 	 */
 	class Blog {
 
 On the first glance this looks like a regular comment block, but it's not. This
 comment contains **annotations** which are an important building block in
-FLOW3's configuration mechanism.
+TYPO3 Flow's configuration mechanism.
 
 The annotation marks this class as an entity. This is an important piece
 of information for the persistence framework because it declares that
@@ -192,8 +192,8 @@ The model's properties are implemented as regular class properties:
 	 * The blog's title.
 	 *
 	 * @var string
-	 * @FLOW3\Validate(type="Text")
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
+	 * @Flow\Validate(type="Text")
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
 	 * @ORM\Column(length=80)
 	 */
 	protected $title = '';
@@ -202,8 +202,8 @@ The model's properties are implemented as regular class properties:
 	 * A short description of the blog
 	 *
 	 * @var string
-	 * @FLOW3\Validate(type="Text")
-	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=150 })
+	 * @Flow\Validate(type="Text")
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=150 })
 	 * @ORM\Column(length=150)
 	 */
 	protected $description = '';
@@ -228,7 +228,7 @@ contained by this blog – in fact this could easily have been an array. However
 does not allow the collection to be persisted by Doctrine 2 properly. We therefore use a
 ``Doctrine\Common\Collections\Collection`` [#]_ instance. The class name bracketed by the
 less-than and greater-than signs gives an important hint on the content of the collection
-(or array). There are a few situations in which FLOW3 relies on this information.
+(or array). There are a few situations in which TYPO3 Flow relies on this information.
 
 The ``OneToMany`` annotation is Doctrine 2 specific and provides more detail on the
 type association a property represents. In this case it tells Doctrine that a ``Blog`` may
@@ -240,7 +240,7 @@ The ``OrderBy`` annotation is regular Doctrine 2 functionality and makes sure th
 posts are always ordered by their date property when the collection is loaded.
 
 The remaining code shouldn't hold any surprises - it only serves for setting and
-retrieving the blog's properties. This again, is no requirement by FLOW3 - if you don't
+retrieving the blog's properties. This again, is no requirement by TYPO3 Flow - if you don't
 want to expose your properties it's fine to not define any setters or getters at all. The
 persistence framework uses other ways to access the properties' values ...
 
@@ -248,7 +248,7 @@ We need a model for the posts as well, so kickstart it like this:
 
 .. code-block:: none
 
-	./flow3 kickstart:model --force TYPO3.Blog Post \
+	./flow kickstart:model --force TYPO3.Blog Post \
 		'blog:\TYPO3\Blog\Domain\Model\Blog' \
 		title:string \
 		linkTitle:string \
@@ -336,7 +336,7 @@ You can kickstart the repository with:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 kickstart:repository TYPO3.Blog Blog
+	myhost:tutorial johndoe$ ./flow kickstart:repository TYPO3.Blog Blog
 
 This will generate a vanilla repository for blogs containing this code:
 
@@ -348,16 +348,16 @@ This will generate a vanilla repository for blogs containing this code:
 	namespace TYPO3\Blog\Domain\Repository;
 
 	/*                                                                        *
-	 * This script belongs to the FLOW3 package "TYPO3.Blog".                 *
+	 * This script belongs to the TYPO3 Flow package "TYPO3.Blog".            *
 	 *                                                                        *
 	 *                                                                        */
 
 	/**
 	 * A repository for Blogs
 	 *
-	 * @FLOW3\Scope("singleton")
+	 * @Flow\Scope("singleton")
 	 */
-	class BlogRepository extends \TYPO3\FLOW3\Persistence\Repository {
+	class BlogRepository extends \TYPO3\Flow\Persistence\Repository {
 
 		// add customized methods here
 
@@ -370,7 +370,7 @@ the base repository already comes with methods like ``add``, ``remove``,
 
 Remember that a repository can only store one kind of an object, in this case
 blogs. The type is derived from the repository name: because you named this
-repository ``BlogRepository`` FLOW3 assumes that it's supposed to store
+repository ``BlogRepository`` TYPO3 Flow assumes that it's supposed to store
 ``Blog`` objects.
 
 To finish up, open the repository for our posts (which was generated along with the Post
@@ -386,7 +386,7 @@ code:
 	 *
 	 * @param \TYPO3\Blog\Domain\Model\Blog $blog The blog the post must refer to
 	 * @param integer $limit The number of posts to return at max
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultProxy The posts
+	 * @return \TYPO3\Flow\Persistence\QueryResultProxy The posts
 	 */
 	public function findByBlog(\TYPO3\Blog\Domain\Model\Blog $blog) {
 		$query = $this->createQuery();
@@ -404,7 +404,7 @@ code:
 	public function findPrevious(\TYPO3\Blog\Domain\Model\Post $post) {
 		$query = $this->createQuery();
 		return $query->matching($query->lessThan('date', $post->getDate()))
-			->setOrderings(array('date' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING))
+			->setOrderings(array('date' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING))
 			->execute()
 			->getFirst();
 	}
@@ -418,7 +418,7 @@ code:
 	public function findNext(\TYPO3\Blog\Domain\Model\Post $post) {
 		$query = $this->createQuery();
 		return $query->matching($query->greaterThan('date', $post->getDate()))
-			->setOrderings(array('date' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING))
+			->setOrderings(array('date' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING))
 			->execute()
 			->getFirst();
 	}

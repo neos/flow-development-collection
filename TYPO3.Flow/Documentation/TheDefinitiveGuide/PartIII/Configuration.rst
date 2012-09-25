@@ -4,7 +4,7 @@ Configuration
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-Configuration is an important aspect of versatile applications. FLOW3 provides you with
+Configuration is an important aspect of versatile applications. TYPO3 Flow provides you with
 configuration mechanisms which have a small footprint and are convenient to use and
 powerful at the same time. Hub for all configuration is the configuration manager which
 handles alls configuration tasks like reading configuration, configuration cascading, and
@@ -27,8 +27,8 @@ i.e. later values override prior ones):
   defined in the package's configuration directories.
 
 ``/Packages/<PackageDirectoryAndName>/Configuration/<ApplicationContext>/``
-  There may exist a subdirectory for each application context (see FLOW3 Bootstrap
-  section). This configuration is only loaded if FLOW3 runs in the respective
+  There may exist a subdirectory for each application context (see TYPO3 Flow Bootstrap
+  section). This configuration is only loaded if TYPO3 Flow runs in the respective
   application context.
 
 ``/Configuration/<ApplicationContext>/``
@@ -41,7 +41,7 @@ for ``Production`` and ``Production/Live``.
 Configuration Files
 ===================
 
-FLOW3 distinguishes between different types of configuration. The most important type of
+TYPO3 Flow distinguishes between different types of configuration. The most important type of
 configuration are the settings, however other configuration types exist for special
 purposes.
 
@@ -67,7 +67,7 @@ defined in their own dedicated file:
 
 ``PackageStates.php``
   Contains a list of packages and their current state, for  example if they are active
-  or not. Don't edit this file directly, rather use the *flow3* command line tool do
+  or not. Don't edit this file directly, rather use the *flow* command line tool do
   activate and deactivate packages.
 
 ``Caches.yaml``
@@ -82,12 +82,12 @@ Defining Configuration
 Configuration Format
 --------------------
 
-The format of FLOW3's configuration files is YAML. YAML is a well-readable format which is
+The format of TYPO3 Flow's configuration files is YAML. YAML is a well-readable format which is
 especially well-suited for defining configuration. The full specification among with many
 examples can be found on the `YAML website <http://www.yaml.org/>`_. All important parts of the YAML
-specification are supported by the parser used by FLOW3, it might happen though that some
+specification are supported by the parser used by TYPO3 Flow, it might happen though that some
 exotic features won't have the desired effect. At best you look at the configuration files
-which come with the FLOW3 distribution for getting more examples.
+which come with the TYPO3 Flow distribution for getting more examples.
 
 **Example: a package-level Settings.yaml**
 
@@ -103,9 +103,9 @@ which come with the FLOW3 distribution for getting more examples.
 
 	    xhprof:
 	      rootDirectory: '' # path to the XHProf library
-	      outputDirectory: %FLOW3_PATH_DATA%Temporary/Viewhelpertest/XHProf/ # output directory
+	      outputDirectory: %FLOW_PATH_DATA%Temporary/Viewhelpertest/XHProf/ # output directory
 
-	    profilingTemplatesDirectory: %FLOW3_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/
+	    profilingTemplatesDirectory: %FLOW_PATH_DATA%Temporary/Viewhelpertest/Fluidtemplates/
 
 
 .. warning::
@@ -124,10 +124,10 @@ uppercase.
 
 Some examples:
 
-``%FLOW3_PATH_WEB%``
+``%FLOW_PATH_WEB%``
   Will be replaced by the path to the public web directory.
 
-``%FLOW3_PATH_DATA%``
+``%FLOW_PATH_DATA%``
   Will be replaced by the path to the */Data/* directory.
 
 ``%PHP_VERSION%``
@@ -136,10 +136,10 @@ Some examples:
 Accessing Settings
 ==================
 
-In almost all cases, FLOW3 will automatically provide you with the right configuration.
+In almost all cases, TYPO3 Flow will automatically provide you with the right configuration.
 
 What you usually want to work with are ``settings``, which are application-specific to
-your package. The following example demonstrates how to let FLOW3 inject the settings
+your package. The following example demonstrates how to let TYPO3 Flow inject the settings
 of a classes' package and output some option value:
 
 **Example: Settings Injection**
@@ -193,7 +193,7 @@ special configuration types. The ``ConfigurationManager`` provides a method call
 actual configuration type you are requesting.
 
 Bottom line is that you should be highly aware of what you're doing when working with
-these special options and that they might change in a later version of FLOW3. Usually
+these special options and that they might change in a later version of TYPO3 Flow. Usually
 there are much better ways to get the desired information (e.g. ask the Object Manager for
 object configuration).
 
@@ -201,7 +201,7 @@ Configuration Cache
 ===================
 
 Parsing the YAML configuration files takes a bit of time which remarkably slows down the
-initialization of FLOW3. That's why all configuration is cached by default when FLOW3 is
+initialization of TYPO3 Flow. That's why all configuration is cached by default when TYPO3 Flow is
 running in Production context. Because this cache cannot be cleared automatically it is
 important to know that changes to any configuration file won't have any effect until you
 manually flush the respective caches.
@@ -211,7 +211,7 @@ This feature can be configured through a switch in the *Settings.yaml* file:
 .. code-block:: yaml
 
 	TYPO3:
-	  FLOW3:
+	  Flow:
 	    configuration:
 	      compileConfigurationFiles: TRUE
 
@@ -228,24 +228,24 @@ In order to flush caches, use the following command:
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:cache:flush
+	$ ./flow flow:cache:flush
 
 Configuration Validation
 ========================
 
 Errors in configuration can lead to hard to spot errors and seemingly random
-weird behavior. FLOW3 therefore comes with a general purpose array validator
+weird behavior. TYPO3 Flow therefore comes with a general purpose array validator
 which can check PHP arrays for validity according to some schema.
 
 This validator is used in the ``configuration:validate`` command::
 
-  $ ./flow3 configuration:validate --type Settings
+  $ ./flow configuration:validate --type Settings
   Validating configuration for type: "Settings"
 
   16 schema files were found:
-   - package:"TYPO3.FLOW3" schema:"Settings/TYPO3.FLOW3.aop" -> is valid
+   - package:"TYPO3.Flow" schema:"Settings/TYPO3.Flow.aop" -> is valid
   …
-   - package:"TYPO3.FLOW3" schema:"Settings/TYPO3.FLOW3.utility" -> is valid
+   - package:"TYPO3.Flow" schema:"Settings/TYPO3.Flow.utility" -> is valid
 
   The configuration is valid!
 
@@ -281,11 +281,11 @@ The schemas are searched in the path *Resources/Private/Schema* of all active
 Packages. The schema-filenames must match the pattern
 ``<type>.<path>.schema.yaml``. The type and/or the path can also be expressed
 as subdirectories of *Resources/Private/Schema*. So
-*Settings/TYPO3/FLOW3.persistence.schema.yaml* will match the same paths as
-*Settings.TYPO3.FLOW3.persistence.schema.yaml* or
-*Settings/TYPO3.FLOW3/persistence.schema.yaml*.
+*Settings/TYPO3/Flow.persistence.schema.yaml* will match the same paths as
+*Settings.TYPO3.Flow.persistence.schema.yaml* or
+*Settings/TYPO3.Flow/persistence.schema.yaml*.
 
-Here is an example of a schema, from *TYPO3.FLOW3.core.schema.yaml*:
+Here is an example of a schema, from *TYPO3.Flow.core.schema.yaml*:
 
 .. code-block:: yaml
 
@@ -295,7 +295,7 @@ Here is an example of a schema, from *TYPO3.FLOW3.core.schema.yaml*:
    'context': { type: string, required: TRUE }
    'phpBinaryPathAndFilename': { type: string, required: TRUE }
 
-It declares the constraints for the *TYPO3.FLOW3.core* setting:
+It declares the constraints for the *TYPO3.Flow.core* setting:
 
 * the setting is a dictionary (an associative array in PHP nomenclature)
 * properties not defined in the schema are not not allowed

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
 /**
  * Testcase for the MVC Property Mapping Configuration Service
  */
-class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Data provider for generating the list of trusted properties
@@ -106,7 +106,7 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 	 * @dataProvider dataProviderForgenerateTrustedPropertiesToken
 	 */
 	public function generateTrustedPropertiesTokenGeneratesTheCorrectHashesInNormalOperation($input, $expected) {
-		$requestHashService = $this->getMock('TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService', array('serializeAndHashFormFieldArray'));
+		$requestHashService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService', array('serializeAndHashFormFieldArray'));
 		$requestHashService->expects($this->once())->method('serializeAndHashFormFieldArray')->with($expected);
 		$requestHashService->generateTrustedPropertiesToken($input);
 	}
@@ -114,10 +114,10 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 	/**
 	 * @test
 	 * @dataProvider dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function generateTrustedPropertiesTokenThrowsExceptionInWrongCases($input) {
-		$requestHashService = $this->getMock('TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService', array('serializeAndHashFormFieldArray'));
+		$requestHashService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService', array('serializeAndHashFormFieldArray'));
 		$requestHashService->generateTrustedPropertiesToken($input);
 	}
 
@@ -133,10 +133,10 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 		);
 		$mockHash = '12345';
 
-		$hashService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService'), array('appendHmac'));
+		$hashService = $this->getMock($this->buildAccessibleProxy('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService'), array('appendHmac'));
 		$hashService->expects($this->once())->method('appendHmac')->with(serialize($formFieldArray))->will($this->returnValue(serialize($formFieldArray) . $mockHash));
 
-		$requestHashService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService'), array('dummy'));
+		$requestHashService = $this->getMock($this->buildAccessibleProxy('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService'), array('dummy'));
 		$requestHashService->_set('hashService', $hashService);
 
 		$expected = serialize($formFieldArray) . $mockHash;
@@ -148,11 +148,11 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 	 * @test
 	 */
 	public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet() {
-		$request = $this->getMockBuilder('TYPO3\FLOW3\Mvc\ActionRequest')->setMethods(array('getInternalArgument'))->disableOriginalConstructor()->getMock();
+		$request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->setMethods(array('getInternalArgument'))->disableOriginalConstructor()->getMock();
 		$request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will($this->returnValue(NULL));
-		$arguments = new \TYPO3\FLOW3\Mvc\Controller\Arguments();
+		$arguments = new \TYPO3\Flow\Mvc\Controller\Arguments();
 
-		$requestHashService = new \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService;
+		$requestHashService = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 		$requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);
 	}
 
@@ -191,12 +191,12 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 		);
 		$arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
 		$propertyMappingConfiguration = $arguments->getArgument('foo')->getPropertyMappingConfiguration();
-		$this->assertTrue($propertyMappingConfiguration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-		$this->assertNull($propertyMappingConfiguration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertTrue($propertyMappingConfiguration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertNull($propertyMappingConfiguration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
 		$this->assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
 
-		$this->assertTrue($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-		$this->assertNull($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertTrue($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertNull($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
 		$this->assertFalse($propertyMappingConfiguration->forProperty('nested')->shouldMap('someProperty'));
 	}
 
@@ -211,12 +211,12 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 		);
 		$arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
 		$propertyMappingConfiguration = $arguments->getArgument('foo')->getPropertyMappingConfiguration();
-		$this->assertNull($propertyMappingConfiguration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-		$this->assertTrue($propertyMappingConfiguration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertNull($propertyMappingConfiguration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertTrue($propertyMappingConfiguration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
 		$this->assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
 
-		$this->assertNull($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-		$this->assertTrue($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertNull($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertTrue($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
 		$this->assertFalse($propertyMappingConfiguration->forProperty('bar')->shouldMap('someProperty'));
 	}
 
@@ -258,19 +258,19 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\FLOW3\Tests\Unit
 	 * Helper which initializes the property mapping configuration and returns arguments
 	 *
 	 * @param array $trustedProperties
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Arguments
+	 * @return \TYPO3\Flow\Mvc\Controller\Arguments
 	 */
 	protected function initializePropertyMappingConfiguration(array $trustedProperties) {
-		$request = $this->getMockBuilder('TYPO3\FLOW3\Mvc\ActionRequest')->setMethods(array('getInternalArgument'))->disableOriginalConstructor()->getMock();
+		$request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->setMethods(array('getInternalArgument'))->disableOriginalConstructor()->getMock();
 		$request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will($this->returnValue('fooTrustedProperties'));
-		$arguments = new \TYPO3\FLOW3\Mvc\Controller\Arguments();
-		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService', array('validateAndStripHmac'));
+		$arguments = new \TYPO3\Flow\Mvc\Controller\Arguments();
+		$mockHashService = $this->getMock('TYPO3\Flow\Security\Cryptography\HashService', array('validateAndStripHmac'));
 		$mockHashService->expects($this->once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will($this->returnValue(serialize($trustedProperties)));
 
 		$arguments->addNewArgument('foo', 'something');
-		$this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new \TYPO3\FLOW3\Property\PropertyMappingConfiguration());
+		$this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new \TYPO3\Flow\Property\PropertyMappingConfiguration());
 
-		$requestHashService = new \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService();
+		$requestHashService = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService();
 		$this->inject($requestHashService, 'hashService', $mockHashService);
 
 		$requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);

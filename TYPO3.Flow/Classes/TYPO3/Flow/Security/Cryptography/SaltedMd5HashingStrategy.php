@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Cryptography;
+namespace TYPO3\Flow\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Security\Cryptography;
  * A salted MD5 based password hashing strategy
  *
  */
-class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface {
+class SaltedMd5HashingStrategy implements \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface {
 
 	/**
 	 * Generates a salted md5 hash over the given string.

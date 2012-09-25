@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3;
+namespace TYPO3\Flow;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3;
  *                                                                        */
 
 /**
- * A generic FLOW3 Exception
+ * A generic Flow Exception
  *
  * @api
  */

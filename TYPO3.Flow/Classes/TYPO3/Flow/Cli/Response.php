@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Cli;
  * A CLI specific response implementation
  *
  */
-class Response extends \TYPO3\FLOW3\Mvc\Response {
+class Response extends \TYPO3\Flow\Mvc\Response {
 
 	/**
 	 * Constants for output styles

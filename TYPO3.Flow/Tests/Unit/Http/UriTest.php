@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Http;
+namespace TYPO3\Flow\Tests\Unit\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Http\Uri;
+use \TYPO3\Flow\Http\Uri;
 
 /**
  * Testcase for the URI class
  *
  */
-class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
@@ -47,8 +47,8 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function uriStrings() {
 		return array(
-			array('http://flow3.typo3.org/x'),
-			array('http://flow3.typo3.org/foo/bar?baz=1&quux=true'),
+			array('http://flow.typo3.org/x'),
+			array('http://flow.typo3.org/foo/bar?baz=1&quux=true'),
 			array('https://robert@localhost:443/arabica/coffee.html'),
 			array('http://127.0.0.1/bar.baz.com/foo.js'),
 			array('http://localhost:8080?foo=bar'),
@@ -90,7 +90,7 @@ class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function hostTestUris() {
 		return array(
 			array('http://www.typo3.org/about/project', 'www.typo3.org'),
-			array('http://flow3.typo3.org/foo', 'flow3.typo3.org')
+			array('http://flow.typo3.org/foo', 'flow.typo3.org')
 		);
 	}
 

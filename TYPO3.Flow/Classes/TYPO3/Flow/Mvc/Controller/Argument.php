@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller;
+namespace TYPO3\Flow\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A controller argument
@@ -64,30 +64,30 @@ class Argument {
 
 	/**
 	 * A custom validator, used supplementary to the base validation
-	 * @var \TYPO3\FLOW3\Validation\Validator\ValidatorInterface
+	 * @var \TYPO3\Flow\Validation\Validator\ValidatorInterface
 	 */
 	protected $validator = NULL;
 
 	/**
 	 * The validation results. This can be asked if the argument has errors.
-	 * @var \TYPO3\FLOW3\Error\Result
+	 * @var \TYPO3\Flow\Error\Result
 	 */
 	protected $validationResults = NULL;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
 
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\PropertyMapper
+	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
+	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
 	 */
 	protected $propertyMappingConfigurationBuilder;
 
@@ -107,10 +107,10 @@ class Argument {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Property\PropertyMapper $propertyMapper The property mapper
+	 * @param \TYPO3\Flow\Property\PropertyMapper $propertyMapper The property mapper
 	 * @return void
 	 */
-	public function injectPropertyMapper(\TYPO3\FLOW3\Property\PropertyMapper $propertyMapper) {
+	public function injectPropertyMapper(\TYPO3\Flow\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
 	}
 
@@ -128,7 +128,7 @@ class Argument {
 	 * Sets the short name of this argument.
 	 *
 	 * @param string $shortName A "short name" - a single character
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument $this
 	 * @throws \InvalidArgumentException if $shortName is not a character
 	 * @api
 	 */
@@ -153,10 +153,10 @@ class Argument {
 	/**
 	 * Sets the data type of this argument that is also used for property mapping.
 	 * @param string $dataType
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument $this
 	 */
 	public function setDataType($dataType) {
-		$this->dataType = \TYPO3\FLOW3\Utility\TypeHandling::normalizeType($dataType);
+		$this->dataType = \TYPO3\Flow\Utility\TypeHandling::normalizeType($dataType);
 		return $this;
 	}
 
@@ -174,7 +174,7 @@ class Argument {
 	 * Marks this argument to be required
 	 *
 	 * @param boolean $required TRUE if this argument should be required
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument $this
 	 * @api
 	 */
 	public function setRequired($required) {
@@ -197,7 +197,7 @@ class Argument {
 	 * used elsewhere, too.
 	 *
 	 * @param string $message A short help message
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument $this
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -223,7 +223,7 @@ class Argument {
 	 * Sets the default value of the argument
 	 *
 	 * @param mixed $defaultValue Default value
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument $this
 	 * @api
 	 */
 	public function setDefaultValue($defaultValue) {
@@ -244,11 +244,11 @@ class Argument {
 	/**
 	 * Sets a custom validator which is used supplementary to the base validation
 	 *
-	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The actual validator object
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument Returns $this (used for fluent interface)
+	 * @param \TYPO3\Flow\Validation\Validator\ValidatorInterface $validator The actual validator object
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument Returns $this (used for fluent interface)
 	 * @api
 	 */
-	public function setValidator(\TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+	public function setValidator(\TYPO3\Flow\Validation\Validator\ValidatorInterface $validator) {
 		$this->validator = $validator;
 		return $this;
 	}
@@ -256,7 +256,7 @@ class Argument {
 	/**
 	 * Returns the set validator
 	 *
-	 * @return \TYPO3\FLOW3\Validation\Validator\ValidatorInterface The set validator, NULL if none was set
+	 * @return \TYPO3\Flow\Validation\Validator\ValidatorInterface The set validator, NULL if none was set
 	 * @api
 	 */
 	public function getValidator() {
@@ -267,7 +267,7 @@ class Argument {
 	 * Sets the value of this argument.
 	 *
 	 * @param mixed $rawValue The value of this argument
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument $this
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument $this
 	 */
 	public function setValue($rawValue) {
 		if ($rawValue === NULL) {
@@ -301,7 +301,7 @@ class Argument {
 	/**
 	 * Return the Property Mapping Configuration used for this argument; can be used by the initialize*action to modify the Property Mapping.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration
+	 * @return \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
 	 * @api
 	 */
 	public function getPropertyMappingConfiguration() {
@@ -317,7 +317,7 @@ class Argument {
 	}
 
 	/**
-	 * @return array<TYPO3\FLOW3\Error\Result> Validation errors which have occured.
+	 * @return array<TYPO3\Flow\Error\Result> Validation errors which have occured.
 	 * @api
 	 */
 	public function getValidationResults() {

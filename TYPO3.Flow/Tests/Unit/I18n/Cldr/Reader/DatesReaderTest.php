@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr\Reader;
+namespace TYPO3\Flow\Tests\Unit\I18n\Cldr\Reader;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,12 +15,12 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr\Reader;
  * Testcase for the DatesReader
  *
  */
-class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DatesReaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Dummy locale used in methods where locale is needed.
 	 *
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
 	protected $sampleLocale;
 
@@ -28,7 +28,7 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
+		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en');
 	}
 
 	/**
@@ -54,23 +54,23 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
-		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray', 'getElement'), array(array()));
+		$mockModel = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\CldrModel', array('getRawArray', 'getElement'), array(array()));
 		$mockModel->expects($this->once())->method('getRawArray')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats')->will($this->returnValue(array('default[@choice="medium"]' => '')));
 		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->will($this->returnValue('mockFormatString'));
 
-		$mockRepository = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
 
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
 
-		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader', array('parseFormat'));
+		$reader = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\Reader\DatesReader', array('parseFormat'));
 		$reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT);
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT);
 		$this->assertEquals('mockParsedFormat', $result);
 
 		$reader->shutdownObject();
@@ -80,23 +80,23 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function dateTimeFormatIsParsedCorrectly() {
-		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('getElement'), array(array()));
+		$mockModel = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\CldrModel', array('getElement'), array(array()));
 		$mockModel->expects($this->at(0))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern')->will($this->returnValue('foo {0} {1} bar'));
 		$mockModel->expects($this->at(1))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern')->will($this->returnValue('dMy'));
 		$mockModel->expects($this->at(2))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern')->will($this->returnValue('hms'));
 
-		$mockRepository = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
 
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
 
-		$reader = new \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader();
+		$reader = new \TYPO3\Flow\I18n\Cldr\Reader\DatesReader();
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL);
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL);
 		$this->assertEquals(array(array('foo '), 'h', 'm', 's', array(' '), 'd', 'M', 'y', array(' bar')), $result);
 		$reader->shutdownObject();
 	}
@@ -118,16 +118,16 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}
 		};
 
-		$mockModel = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray'), array(array()));
+		$mockModel = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\CldrModel', array('getRawArray'), array(array()));
 		$mockModel->expects($this->exactly(5))->method('getRawArray')->will($this->returnCallback($getRawArrayCallback));
 
-		$mockRepository = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
 
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
 
-		$reader = new \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader();
+		$reader = new \TYPO3\Flow\I18n\Cldr\Reader\DatesReader();
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
@@ -164,7 +164,7 @@ class DatesReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider formatStringsAndParsedFormats
 	 */
 	public function formatStringsAreParsedCorrectly($format, $expectedResult) {
-		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
+		$reader = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\Reader\DatesReader', array('dummy'));
 
 		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals($expectedResult, $result);

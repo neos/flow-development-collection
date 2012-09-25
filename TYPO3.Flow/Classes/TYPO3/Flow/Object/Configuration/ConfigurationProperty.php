@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Configuration;
+namespace TYPO3\Flow\Object\Configuration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,12 +12,12 @@ namespace TYPO3\FLOW3\Object\Configuration;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Injection property as used in a Object Configuration
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class ConfigurationProperty {
 
@@ -42,14 +42,14 @@ class ConfigurationProperty {
 
 	/**
 	 * If specified, this configuration is used for instantiating / retrieving an property of type object
-	 * @var \TYPO3\FLOW3\Object\Configuration\Configuration
+	 * @var \TYPO3\Flow\Object\Configuration\Configuration
 	 */
 	protected $objectConfiguration = NULL;
 
 	/**
 	 * @var integer
 	 */
-	protected $autowiring = \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+	protected $autowiring = \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
 
 	/**
 	 * Constructor - sets the name, type and value of the property
@@ -57,7 +57,7 @@ class ConfigurationProperty {
 	 * @param string $name Name of the property
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 */
 	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
 		$this->set($name, $value, $type, $objectConfiguration);
@@ -69,7 +69,7 @@ class ConfigurationProperty {
 	 * @param string $name Name of the property
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @return void
 	 */
 	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
@@ -109,7 +109,7 @@ class ConfigurationProperty {
 	/**
 	 * Returns the (optional) object configuration which may be defined for properties of type OBJECT
 	 *
-	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration or NULL
+	 * @return \TYPO3\Flow\Object\Configuration\Configuration The object configuration or NULL
 	 */
 	public function getObjectConfiguration() {
 		return $this->objectConfiguration;
@@ -118,7 +118,7 @@ class ConfigurationProperty {
 	/**
 	 * Sets autowiring for this property
 	 *
-	 * @param integer $autowiring One of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @param integer $autowiring One of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 * @return void
 	 */
 	public function setAutowiring($autowiring) {
@@ -128,7 +128,7 @@ class ConfigurationProperty {
 	/**
 	 * Returns the autowiring mode for this property
 	 *
-	 * @return integer Value of one of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @return integer Value of one of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;

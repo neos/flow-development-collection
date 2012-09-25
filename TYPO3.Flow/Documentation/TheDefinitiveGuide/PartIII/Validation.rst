@@ -12,7 +12,7 @@ needs some well-readable information on what data he should enter.
 
 This chapter explains:
 
-* how to use the validators being part of FLOW3
+* how to use the validators being part of TYPO3 Flow
 * how to write your own validators
 * how to use validation in your own code
 * how validation is embedded in the model, the persistence and the MVC layer
@@ -20,7 +20,7 @@ This chapter explains:
 Automatic Validation Throughout The Framework
 =============================================
 
-Inside FLOW3, validation is triggered automatically at two places: When an object is *persisted*, its
+Inside TYPO3 Flow, validation is triggered automatically at two places: When an object is *persisted*, its
 *base validators* are checked as explained in the last section. Furthermore, validation happens in
 the MVC layer when a Domain Model is used as a controller argument, directly after Property Mapping.
 
@@ -45,17 +45,17 @@ the process is as follows:
 .. tip::
 
 	If you want to suppress the re-display of the last page (which is handled through
-	``errorAction()``, you can add a ``@FLOW3\IgnoreValidation("$comment")`` annotation
+	``errorAction()``, you can add a ``@Flow\IgnoreValidation("$comment")`` annotation
 	to the docblock of the corresponding controller action.
 
 Furthermore, it is also possible to execute *additional validators* only for specific action
-arguments using ``@FLOW3\Validate`` inside a controller action::
+arguments using ``@Flow\Validate`` inside a controller action::
 
-	class CommentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+	class CommentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		/**
 		 * @param \YourPackage\Domain\Model\Comment $comment
-		 * @FLOW3\Validate(argumentName="comment", type="YourPackage:SomeSpecialValidator")
+		 * @Flow\Validate(argumentName="comment", type="YourPackage:SomeSpecialValidator")
 		 */
 		public function updateAction(\YourPackage\Domain\Model\Comment $comment) {
 			// here, $comment is a valid object
@@ -65,7 +65,7 @@ arguments using ``@FLOW3\Validate`` inside a controller action::
 .. tip::
 
 	It is also possible to add an additional validator for a sub object of the argument, using
-	the "dot-notation": ``@FLOW3\Validate(argumentName="comment.text", type="....")``.
+	the "dot-notation": ``@Flow\Validate(argumentName="comment.text", type="....")``.
 
 However, it is a rather rare use-case that a validation rule needs to be defined only in the controller.
 
@@ -75,17 +75,17 @@ Using Validators & The ValidatorResolver
 A validator is a PHP class being responsible for checking validity of a certain object or
 simple type.
 
-All validators implement ``\TYPO3\FLOW3\Validation\Validator\ValidatorInterface``, and
+All validators implement ``\TYPO3\Flow\Validation\Validator\ValidatorInterface``, and
 the API of every validator is demonstrated in the following code example::
 
 		// NOTE: you should always use the ValidatorResolver to create new
 		// validators, as it is demonstrated in the next section.
-	$validator = new \TYPO3\FLOW3\Validation\Validator\StringLengthValidator(array(
+	$validator = new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array(
 		'minimum' => 10,
 		'maximum' => 20
 	));
 
-		// $result is of type TYPO3\FLOW3\Error\Result
+		// $result is of type TYPO3\Flow\Error\Result
 	$result = $validator->validate('myExampleString');
 	$result->hasErrors(); // is FALSE, as the string is longer than 10 characters.
 
@@ -100,7 +100,7 @@ for a detailed description.
 
 .. note::
 
-	The ``TYPO3\FLOW3\Error\Result`` object has been introduced in order to
+	The ``TYPO3\Flow\Error\Result`` object has been introduced in order to
 	make more structured error output possible -- which is especially needed when
 	objects with sub-properties should be validated recursively.
 
@@ -109,7 +109,7 @@ Creating Validator Instances: The ValidatorResolver
 
 As validators can be both singleton or prototype objects (depending if they have internal state),
 you should not instantiate them directly as it has been done in the above example. Instead,
-you should use the ``\TYPO3\FLOW3\Validation\ValidatorResolver`` singleton to get a new instance
+you should use the ``\TYPO3\Flow\Validation\ValidatorResolver`` singleton to get a new instance
 of a certain validator::
 
 	$validatorResolver->createValidator($validatorType, array $validatorOptions);
@@ -121,8 +121,8 @@ of a certain validator::
   you can also fetch the above validator using ``Your.Package:Foo`` as ``$validatorType``.
 
   **This is the recommended way for custom validators.**
-* For the standard validators inside the ``TYPO3.FLOW3`` package, you can leave out the package key,
-  so you can use ``EmailAddress`` to fetch ``TYPO3\FLOW3\Validation\Validator\EmailAddressValidator``
+* For the standard validators inside the ``TYPO3.Flow`` package, you can leave out the package key,
+  so you can use ``EmailAddress`` to fetch ``TYPO3\Flow\Validation\Validator\EmailAddressValidator``
 
 The ``$validatorOptions`` parameter is an associative array of validator options. See the validator
 reference in the appendix for the configuration options of the built-in validators.
@@ -131,10 +131,10 @@ reference in the appendix for the configuration options of the built-in validato
 Default Validators
 ------------------
 
-FLOW3 is shipped with a big list of validators which are ready to use -- see the appendix for the full
+TYPO3 Flow is shipped with a big list of validators which are ready to use -- see the appendix for the full
 list. Here, we just want to highlight some more special validators.
 
-Additional to the simple validators for strings, numbers and other basic types, FLOW3 has a few powerful
+Additional to the simple validators for strings, numbers and other basic types, TYPO3 Flow has a few powerful
 validators shipped:
 
 * ``GenericObjectValidator`` validates an object by validating all of its properties. This validator
@@ -164,17 +164,17 @@ which returns a fully-configured validator for an arbitrary Domain Object::
 
 The returned validator checks the following things:
 
-* All *property validation rules* configured through ``@FLOW3\Validate`` annotations on properties of the model:
+* All *property validation rules* configured through ``@Flow\Validate`` annotations on properties of the model:
 
   .. code-block:: php
 
   	namespace YourPackage\Domain\Model;
-  	use TYPO3\FLOW3\Annotations as FLOW3;
+  	use TYPO3\Flow\Annotations as Flow;
 
   	class Comment {
 
   		/**
-  		 * @FLOW3\Validate(type="NotEmpty")
+  		 * @Flow\Validate(type="NotEmpty")
   		 */
   		protected $text;
 
@@ -198,7 +198,7 @@ Advanced Feature: Partial Validation
 If you only want to validate parts of your objects, f.e. want to store incomplete objects in
 the database, you can assign special *Validation Groups* to your validators.
 
-It is possible to specify a list of validation groups at each ``@FLOW3\Validate`` annotation,
+It is possible to specify a list of validation groups at each ``@Flow\Validate`` annotation,
 if none is specified the validation group ``Default`` is assigned to the validator.
 
 When *invoking* validation, f.e. in the MVC layer or in persistence, only validators with
@@ -208,7 +208,7 @@ certain validation groups are executed:
 * In persistence, the validation group ``Default`` and ``Persistence`` is used.
 
 Additionally, it is possible to specify a list of validation groups at each controller action
-via the ``@FLOW3\ValidationGroups`` annotation. This way, you can override the default
+via the ``@Flow\ValidationGroups`` annotation. This way, you can override the default
 validation groups that are invoked on this action call, for example when you need to
 validate uniqueness of a property like an e-mail adress only in your createAction.
 
@@ -218,36 +218,36 @@ The following example demonstrates this::
 
 	class Comment {
 		/**
-		 * @FLOW3\Validate(type="NotEmpty")
+		 * @Flow\Validate(type="NotEmpty")
 		 */
 		protected $prop1;
 
 		/**
-		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"Default"})
+		 * @Flow\Validate(type="NotEmpty", validationGroups={"Default"})
 		 */
 		protected $prop2;
 
 		/**
-		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"Persistence"})
+		 * @Flow\Validate(type="NotEmpty", validationGroups={"Persistence"})
 		 */
 		protected $prop3;
 
 		/**
-		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"Controller"})
+		 * @Flow\Validate(type="NotEmpty", validationGroups={"Controller"})
 		 */
 		protected $prop4;
 
 		/**
-		 * @FLOW3\Validate(type="NotEmpty", validationGroups={"createAction"})
+		 * @Flow\Validate(type="NotEmpty", validationGroups={"createAction"})
 		 */
 		protected $prop5;
 	}
 
-	class CommentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+	class CommentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		/**
 		 * @param Comment $comment
-		 * @FLOW3\ValidationGroups({"createAction"})
+		 * @Flow\ValidationGroups({"createAction"})
 		 */
 		public function createAction(Comment $comment) {
 			...
@@ -273,7 +273,7 @@ To avoid this the ``GenericObjectValidator`` as well as anything extending ``Abs
 keep track of instances that have already been validated. The container to keep track of these instances
 can be (re-)set using ``setValidatedInstancesContainer`` defined in the ``ObjectValidatorInterface``.
 
-FLOW3 resets this container before doing validation automatically. If you use validation directly in
+TYPO3 Flow resets this container before doing validation automatically. If you use validation directly in
 your controller, you should reset the container directly before validation, after any changes have been
 done.
 
@@ -287,7 +287,7 @@ Writing Own Validators
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
 rather subclass ``AbstractValidator``. You only need to implement the ``isValid()`` method then::
 
-	class MySpecialValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+	class MySpecialValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
 		/**
 		* Check if $value is valid.
@@ -297,7 +297,7 @@ rather subclass ``AbstractValidator``. You only need to implement the ``isValid(
 		*/
 		protected function isValid($value) {
 			if (!isset($this->options['foo'])) {
-				throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException(
+				throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException(
 					'The option "foo" for this validator needs to be specified', 12346788
 				);
 			}

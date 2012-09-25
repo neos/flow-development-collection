@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Exception;
+namespace TYPO3\Flow\I18n\Exception;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,12 +15,12 @@ namespace TYPO3\FLOW3\I18n\Exception;
  * The "Unknown Formatter" exception
  *
  * Thrown when no suitable class can be found which would implement
- * \TYPO3\FLOW3\Formatter\FormatterInterface and have requested name suffixed with
+ * \TYPO3\Flow\Formatter\FormatterInterface and have requested name suffixed with
  * "Formatter" at the same time.
  *
  * @api
  */
-class UnknownFormatterException extends \TYPO3\FLOW3\I18n\Exception {
+class UnknownFormatterException extends \TYPO3\Flow\I18n\Exception {
 
 }
 

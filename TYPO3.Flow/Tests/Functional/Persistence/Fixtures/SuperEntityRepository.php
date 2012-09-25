@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,14 +13,14 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
 
 /**
  * A repository for SuperEntity and SubEntity
- * @TYPO3\FLOW3\Annotations\Scope("singleton")
+ * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class SuperEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
+class SuperEntityRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\SuperEntity';
+	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntity';
 
 }
 ?>

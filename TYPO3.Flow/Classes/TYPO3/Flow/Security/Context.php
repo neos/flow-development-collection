@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security;
+namespace TYPO3\Flow\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Security\Policy\Role;
-use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Mvc\ActionRequest;
 
 /**
  * This is the default implementation of a security context, which holds current
  * security information like roles oder details of authenticated users.
  *
- * @FLOW3\Scope("session")
+ * @Flow\Scope("session")
  */
 class Context {
 
@@ -67,7 +67,7 @@ class Context {
 	 * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
 	 *
 	 * @var boolean
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $initialized = FALSE;
 
@@ -80,14 +80,14 @@ class Context {
 	/**
 	 * Array of tokens currently active
 	 * @var array
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $activeTokens = array();
 
 	/**
 	 * Array of tokens currently inactive
 	 * @var array
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $inactiveTokens = array();
 
@@ -98,25 +98,25 @@ class Context {
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Request
-	 * @FLOW3\Transient
+	 * @var \TYPO3\Flow\Http\Request
+	 * @Flow\Transient
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 * @Flow\Inject
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Cryptography\HashService
+	 * @Flow\Inject
 	 */
 	protected $hashService;
 
@@ -132,17 +132,17 @@ class Context {
 	protected $csrfTokens = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @var \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	protected $interceptedRequest;
 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
+	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 */
-	public function injectAuthenticationManager(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
+	public function injectAuthenticationManager(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->authenticationManager->setSecurityContext($this);
 	}
@@ -153,9 +153,9 @@ class Context {
 	 * This method is called manually by the request handler which created the HTTP
 	 * request.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request The current ActionRequest
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $request The current ActionRequest
 	 * @return void
-	 * @FLOW3\Autowiring(FALSE)
+	 * @Flow\Autowiring(FALSE)
 	 */
 	public function setRequest(ActionRequest $request) {
 		$this->request = $request;
@@ -166,7 +166,7 @@ class Context {
 	 *
 	 * @param array $settings
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Exception
+	 * @throws \TYPO3\Flow\Exception
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['authentication']['authenticationStrategy'])) {
@@ -185,7 +185,7 @@ class Context {
 					$this->authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 					break;
 				default:
-					throw new \TYPO3\FLOW3\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
+					throw new \TYPO3\Flow\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
 			}
 		}
 
@@ -202,7 +202,7 @@ class Context {
 					$this->csrfStrategy = self::CSRF_ONE_PER_URI;
 					break;
 				default:
-					throw new \TYPO3\FLOW3\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
+					throw new \TYPO3\Flow\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
 			}
 		}
 	}
@@ -245,11 +245,11 @@ class Context {
 	}
 
 	/**
-	 * Returns all \TYPO3\FLOW3\Security\Authentication\Tokens of the security context which are
+	 * Returns all \TYPO3\Flow\Security\Authentication\Tokens of the security context which are
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array Array of set \TYPO3\FLOW3\Authentication\Token objects
+	 * @return array Array of set \TYPO3\Flow\Authentication\Token objects
 	 */
 	public function getAuthenticationTokens() {
 		if ($this->initialized === FALSE) {
@@ -260,12 +260,12 @@ class Context {
 	}
 
 	/**
-	 * Returns all \TYPO3\FLOW3\Security\Authentication\Tokens of the security context which are
+	 * Returns all \TYPO3\Flow\Security\Authentication\Tokens of the security context which are
 	 * active for the current request and of the given type. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
 	 * @param string $className The class name
-	 * @return array Array of set \TYPO3\FLOW3\Authentication\Token objects
+	 * @return array Array of set \TYPO3\Flow\Authentication\Token objects
 	 */
 	public function getAuthenticationTokensOfType($className) {
 		if ($this->initialized === FALSE) {
@@ -288,7 +288,7 @@ class Context {
 	 * Returns the roles of all active and authenticated tokens.
 	 * If no authenticated roles could be found the "Everybody" role is returned
 	 *
-	 * @return array Array of TYPO3\FLOW3\Security\Policy\Role objects
+	 * @return array Array of TYPO3\Flow\Security\Policy\Role objects
 	 */
 	public function getRoles() {
 		if ($this->initialized === FALSE) {
@@ -388,7 +388,7 @@ class Context {
 	 * from the tokens.
 	 * (@see getAuthenticationTokens())
 	 *
-	 * @return \TYPO3\FLOW3\Security\Account The authenticated account
+	 * @return \TYPO3\Flow\Security\Account The authenticated account
 	 */
 	public function getAccount() {
 		if ($this->initialized === FALSE) {
@@ -409,7 +409,7 @@ class Context {
 	 * authentication provider name.
 	 *
 	 * @param string $authenticationProviderName Authentication provider name of the account to find
-	 * @return \TYPO3\FLOW3\Security\Account The authenticated account
+	 * @return \TYPO3\Flow\Security\Account The authenticated account
 	 */
 	public function getAccountByAuthenticationProviderName($authenticationProviderName) {
 		if ($this->initialized === FALSE) {
@@ -437,7 +437,7 @@ class Context {
 			reset($this->csrfTokens);
 			return key($this->csrfTokens);
 		}
-		$newToken = \TYPO3\FLOW3\Utility\Algorithms::generateRandomToken(16);
+		$newToken = \TYPO3\Flow\Utility\Algorithms::generateRandomToken(16);
 		$this->csrfTokens[$newToken] = TRUE;
 
 		return $newToken;
@@ -477,9 +477,9 @@ class Context {
 	 * Sets an action request, to be stored for later resuming after it
 	 * has been intercepted by a security exception.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $interceptedRequest
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $interceptedRequest
 	 * @return void
-	 * @FLOW3\Session(autoStart=true)
+	 * @Flow\Session(autoStart=true)
 	 */
 	public function setInterceptedRequest(ActionRequest $interceptedRequest = NULL) {
 		$this->interceptedRequest = $interceptedRequest;
@@ -489,7 +489,7 @@ class Context {
 	 * Returns the request, that has been stored for later resuming after it
 	 * has been intercepted by a security exception, NULL if there is none.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	public function getInterceptedRequest() {
 		return $this->interceptedRequest;
@@ -547,7 +547,7 @@ class Context {
 	 *
 	 * @param array $managerTokens Array of tokens provided by the authentication manager
 	 * @param array $sessionTokens Array of tokens resotored from the session
-	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface objects
+	 * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface objects
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {
 		$resultTokens = array();

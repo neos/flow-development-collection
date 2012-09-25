@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\I18n\Cldr;
+namespace TYPO3\Flow\Tests\Functional\I18n\Cldr;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,10 +15,10 @@ namespace TYPO3\FLOW3\Tests\Functional\I18n\Cldr;
  * Testcase for the I18N CLDR Repository
  *
  */
-class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class CldrRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Cldr\CldrRepository
+	 * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
 
@@ -32,7 +32,7 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->cldrRepository = $this->objectManager->get('TYPO3\FLOW3\I18n\Cldr\CldrRepository');
+		$this->cldrRepository = $this->objectManager->get('TYPO3\Flow\I18n\Cldr\CldrRepository');
 
 		$this->cldrBasePath = $this->retrieveCldrBasePath();
 	}
@@ -53,13 +53,13 @@ class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function modelIsReturnedCorrectlyForLocaleImplicatingChaining() {
-		$localeImplementingChaining = new \TYPO3\FLOW3\I18n\Locale('de_DE');
+		$localeImplementingChaining = new \TYPO3\Flow\I18n\Locale('de_DE');
 
 		$cldrModel = $this->cldrRepository->getModelForLocale($localeImplementingChaining);
 
-		$this->assertAttributeContains(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/root.xml')), 'sourcePaths', $cldrModel);
-		$this->assertAttributeContains(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de_DE.xml')), 'sourcePaths', $cldrModel);
-		$this->assertAttributeContains(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de.xml')), 'sourcePaths', $cldrModel);
+		$this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/root.xml')), 'sourcePaths', $cldrModel);
+		$this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de_DE.xml')), 'sourcePaths', $cldrModel);
+		$this->assertAttributeContains(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, 'main/de.xml')), 'sourcePaths', $cldrModel);
 	}
 
 }

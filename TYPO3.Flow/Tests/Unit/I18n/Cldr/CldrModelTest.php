@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
+namespace TYPO3\Flow\Tests\Unit\I18n\Cldr;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,10 +15,10 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
  * Testcase for the CldrModel
  *
  */
-class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CldrModelTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Cldr\CldrModel
+	 * @var \TYPO3\Flow\I18n\Cldr\CldrModel
 	 */
 	protected $model;
 
@@ -31,15 +31,15 @@ class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$sampleParsedFile2 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile2.php');
 		$sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->will($this->returnValue(FALSE));
 
-		$mockCldrParser = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrParser');
+		$mockCldrParser = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrParser');
 		$mockCldrParser->expects($this->at(0))->method('getParsedData')->with('foo')->will($this->returnValue($sampleParsedFile1));
 		$mockCldrParser->expects($this->at(1))->method('getParsedData')->with('bar')->will($this->returnValue($sampleParsedFile2));
 		$mockCldrParser->expects($this->at(2))->method('getParsedData')->with('baz')->will($this->returnValue($sampleParsedFile3));
 
-		$this->model = new \TYPO3\FLOW3\I18n\Cldr\CldrModel($samplePaths);
+		$this->model = new \TYPO3\Flow\I18n\Cldr\CldrModel($samplePaths);
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockCldrParser);
 		$this->model->initializeObject();

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
+namespace TYPO3\Flow\Security\Authorization\Interceptor;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -21,10 +21,10 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * 4. Then the value is returned to the caller
  *
  */
-class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
+class AfterInvocation implements \TYPO3\Flow\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface
+	 * @var \TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface
 	 */
 	protected $afterInvocationManager = NULL;
 
@@ -37,18 +37,18 @@ class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\Interceptor
 	/**
 	 * Constructor.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
-	 * @param \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
+	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+	 * @param \TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 */
-	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager) {}
+	public function __construct(\TYPO3\Flow\Security\Context $securityContext, \TYPO3\Flow\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager) {}
 
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 */
-	public function setJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function setJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 
 	}
 

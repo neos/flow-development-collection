@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Http\Client;
+namespace TYPO3\Flow\Tests\Functional\Http\Client;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Http\Client;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\Flow\Mvc\Routing\Route;
 
 /**
  * Functional tests for the HTTP client internal request engine
  */
-class InternalRequestEngineTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class InternalRequestEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -38,7 +38,7 @@ class InternalRequestEngineTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$route->setName('Functional Test - Http::Client::InternalRequestEngine');
 		$route->setUriPattern('test/security/restricted');
 		$route->setDefaults(array(
-			'@package' => 'TYPO3.FLOW3',
+			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Restricted',
 			'@action' => 'admin',
@@ -57,7 +57,7 @@ class InternalRequestEngineTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function securityContextContainsTokens() {
 		$response = $this->browser->request('http://localhost/test/security/restricted');
-		$this->assertEquals('#1222268609: ', $response->getHeader('X-FLOW3-ExceptionCode'));
+		$this->assertEquals('#1222268609: ', $response->getHeader('X-Flow-ExceptionCode'));
 	}
 
 }

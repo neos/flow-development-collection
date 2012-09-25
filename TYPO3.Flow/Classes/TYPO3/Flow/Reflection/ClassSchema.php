@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Reflection;
+namespace TYPO3\Flow\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -111,8 +111,8 @@ class ClassSchema {
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
 		try {
-			$type = \TYPO3\FLOW3\Utility\TypeHandling::parseType($type);
-		} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
+			$type = \TYPO3\Flow\Utility\TypeHandling::parseType($type);
+		} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 			throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $name . '"'), 1315564474);
 		}
 		$this->properties[$name] = array(
@@ -183,10 +183,10 @@ class ClassSchema {
 	 *
 	 * @param string $repositoryClassName
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
+	 * @throws \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException
 	 */
 	public function setRepositoryClassName($repositoryClassName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
 		$this->repositoryClassName = $repositoryClassName;
 	}
 
@@ -224,10 +224,10 @@ class ClassSchema {
 	 * @param string $propertyName
 	 * @return void
 	 * @throws \InvalidArgumentException
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
+	 * @throws \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException
 	 */
 	public function markAsIdentityProperty($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have identity properties', 1264102084);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have identity properties', 1264102084);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}

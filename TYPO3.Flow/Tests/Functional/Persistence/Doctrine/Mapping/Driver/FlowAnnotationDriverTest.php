@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
+namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,14 +14,14 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
 /**
  * Testcase for ORM annotation driver
  */
-class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
 	}
@@ -30,9 +30,9 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lifecycleEventAnnotationsAreDetected() {
-		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
-		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 		$this->assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
 	}
 
@@ -40,9 +40,9 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacks() {
-		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment');
-		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment', $classMetadata);
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment', $classMetadata);
 		$this->assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
 	}
 
@@ -69,7 +69,7 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'joinColumns' => array (
 				0 => array (
 					'name' => 'image',
-					'referencedColumnName' => 'flow3_persistence_identifier',
+					'referencedColumnName' => 'persistence_object_identifier',
 					'unique' => TRUE,
 				),
 			),
@@ -83,28 +83,28 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'columnName' => 'comment',
 			'joinColumns' => array(0 => array (
 					'name' => 'comment',
-					'referencedColumnName' => 'flow3_persistence_identifier',
+					'referencedColumnName' => 'persistence_object_identifier',
 					'unique' => TRUE,
 					'nullable' => TRUE,
 					'onDelete' => 'SET NULL',
 					'columnDefinition' => NULL,
 				),
 			),
-			'sourceEntity' => 'TYPO3\\FLOW3\\Tests\\Functional\\Persistence\\Fixtures\\Post',
+			'sourceEntity' => 'TYPO3\\Flow\\Tests\\Functional\\Persistence\\Fixtures\\Post',
 			'sourceToTargetKeyColumns' => array (
-				'comment' => 'flow3_persistence_identifier',
+				'comment' => 'persistence_object_identifier',
 			),
 			'joinColumnFieldNames' => array (
 				'comment' => 'comment',
 			),
 			'targetToSourceKeyColumns' => array (
-				'flow3_persistence_identifier' => 'comment',
+				'persistence_object_identifier' => 'comment',
 			),
 		);
 
-		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
-		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 
 		$this->assertEquals($expectedTitleMapping, $classMetadata->getFieldMapping('title'), 'mapping for "title" not as expected');
 		$imageAssociationMapping = $classMetadata->getAssociationMapping('image');
@@ -131,18 +131,18 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'fieldName' => 'related',
 			'columnName' => 'related',
 			'joinTable' => array(
-				'name' => 'typo3_flow3_tests_functional_persistence_fix_3ebc7_related_join',
+				'name' => 'typo3_flow_tests_functional_persistence_fix_3ebc7_related_join',
 				'schema' => NULL,
 				'joinColumns' => array(
 					0 => array(
-						'name' => 'flow3_fixtures_post',
-						'referencedColumnName' => 'flow3_persistence_identifier',
+						'name' => 'flow_fixtures_post',
+						'referencedColumnName' => 'persistence_object_identifier',
 					),
 				),
 				'inverseJoinColumns' => array(
 					0 => array(
 						'name' => 'related_post_id',
-						'referencedColumnName' => 'flow3_persistence_identifier',
+						'referencedColumnName' => 'persistence_object_identifier',
 						'unique' => FALSE,
 						'nullable' => TRUE,
 						'onDelete' => NULL,
@@ -151,19 +151,19 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 				),
 			),
 			'relationToSourceKeyColumns' => array(
-				'flow3_fixtures_post' => 'flow3_persistence_identifier',
+				'flow_fixtures_post' => 'persistence_object_identifier',
 			),
 			'joinTableColumns' => array(
-				0 => 'flow3_fixtures_post',
+				0 => 'flow_fixtures_post',
 				1 => 'related_post_id',
 			),
 			'relationToTargetKeyColumns' => array(
-				'related_post_id' => 'flow3_persistence_identifier',
+				'related_post_id' => 'persistence_object_identifier',
 			),
 		);
-		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
-		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 
 		$relatedAssociationMapping = $classMetadata->getAssociationMapping('related');
 		foreach (array_keys($expectedRelatedAssociationMapping) as $key) {

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Reflection;
+namespace TYPO3\Flow\Tests\Unit\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,13 +14,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Reflection;
 /**
  * Testcase for DocCommentParser
  */
-class DocCommentParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DocCommentParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function descriptionWithOneLineIsParsedCorrectly() {
-		$parser = new \TYPO3\FLOW3\Reflection\DocCommentParser();
+		$parser = new \TYPO3\Flow\Reflection\DocCommentParser();
 		$parser->parseDocComment('/**' . chr(10) . ' * Testcase for DocCommentParser' . chr(10) . ' */');
 		$this->assertEquals('Testcase for DocCommentParser', $parser->getDescription());
 	}
@@ -29,7 +29,7 @@ class DocCommentParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function eolCharacterCanBeNewlineOrCarriageReturn() {
-		$parser = new \TYPO3\FLOW3\Reflection\DocCommentParser();
+		$parser = new \TYPO3\Flow\Reflection\DocCommentParser();
 		$parser->parseDocComment('/**' . chr(10) . ' * @var $foo integer' . chr(13) . chr(10) . ' * @var $bar string' . chr(10) . ' */');
 		$this->assertEquals(array('$foo integer', '$bar string'), $parser->getTagValues('var'));
 	}

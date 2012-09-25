@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A generic collection validator
@@ -21,8 +21,8 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class CollectionValidator extends GenericObjectValidator {
 
 	/**
-	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Validation\ValidatorResolver
+	 * @Flow\Inject
 	 */
 	protected $validatorResolver;
 
@@ -31,16 +31,16 @@ class CollectionValidator extends GenericObjectValidator {
 	 * the Error Messages object which occurred.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 * @api
 	 */
 	public function validate($value) {
-		$this->result = new \TYPO3\FLOW3\Error\Result();
+		$this->result = new \TYPO3\Flow\Error\Result();
 
 		if ($this->acceptsEmptyValues === FALSE || $this->isEmpty($value) === FALSE) {
 			if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
 				return $this->result;
-			} elseif ((is_object($value) && !\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
+			} elseif ((is_object($value) && !\TYPO3\Flow\Utility\TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
 				$this->addError('The given subject was not a collection.', 1317204797);
 				return $this->result;
 			} elseif (is_object($value) && $this->isValidatedAlready($value)) {

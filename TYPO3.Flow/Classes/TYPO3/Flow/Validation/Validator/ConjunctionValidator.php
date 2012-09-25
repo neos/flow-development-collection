@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -24,11 +24,11 @@ class ConjunctionValidator extends AbstractCompositeValidator {
 	 * Checks if the given value is valid according to the validators of the conjunction.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 * @api
 	 */
 	public function validate($value) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		foreach ($this->validators as $validator) {
 			$result->merge($validator->validate($value));
 		}

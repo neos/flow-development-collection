@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core;
+namespace TYPO3\Flow\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,24 +11,24 @@ namespace TYPO3\FLOW3\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Class Loader implementation which loads .php files found in the classes
  * directory of an object.
  *
- * @FLOW3\Proxy(false)
- * @FLOW3\Scope("singleton")
+ * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
  */
 class ClassLoader {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\PhpFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
 	 */
 	protected $classesCache;
 
 	/**
-	 * An array of \TYPO3\FLOW3\Package\Package objects
+	 * An array of \TYPO3\Flow\Package\Package objects
 	 * @var array
 	 */
 	protected $packages = array();
@@ -36,14 +36,14 @@ class ClassLoader {
 	/**
 	 * @var string
 	 */
-	protected $packagesPath = FLOW3_PATH_PACKAGES;
+	protected $packagesPath = FLOW_PATH_PACKAGES;
 
 	/**
 	 * A list of namespaces this class loader is definitely responsible for
 	 * @var array
 	 */
 	protected $packageNamespaces = array(
-		'TYPO3\FLOW3' => 11
+		'TYPO3\Flow' => 10
 	);
 
 	/**
@@ -73,10 +73,10 @@ class ClassLoader {
 	/**
 	 * Injects the cache for storing the renamed original classes
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
+	 * @param \TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
 	 */
-	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
+	public function injectClassesCache(\TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;
 	}
 
@@ -102,10 +102,10 @@ class ClassLoader {
 			return FALSE;
 		}
 
-			// Load classes from the FLOW3 package at a very early stage where
+			// Load classes from the Flow package at a very early stage where
 			// no packages have been registered yet:
-		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
-			require(FLOW3_PATH_FLOW3 . 'Classes/TYPO3/FLOW3/' . str_replace('\\', '/', substr($className, 12)) . '.php');
+		if ($this->packages === array() && substr($className, 0, 10) === 'TYPO3\Flow') {
+			require(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/' . str_replace('\\', '/', substr($className, 11)) . '.php');
 			return TRUE;
 		}
 
@@ -138,7 +138,7 @@ class ClassLoader {
 	/**
 	 * Sets the available packages
 	 *
-	 * @param array $packages An array of \TYPO3\FLOW3\Package\Package objects
+	 * @param array $packages An array of \TYPO3\Flow\Package\Package objects
 	 * @return void
 	 */
 	public function setPackages(array $packages) {

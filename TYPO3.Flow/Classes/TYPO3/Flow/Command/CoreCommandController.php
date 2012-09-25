@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,120 +11,120 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Cache\Backend\FreezableBackendInterface;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
 
 /**
  * Command controller for core commands
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Proxy(false)
+ * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  */
-class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\RequestBuilder
+	 * @var \TYPO3\Flow\Cli\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
+	 * @var \TYPO3\Flow\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
+	 * @var \TYPO3\Flow\SignalSlot\Dispatcher
 	 */
 	protected $signalSlotDispatcher;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\CacheManager
+	 * @var \TYPO3\Flow\Cache\CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\Proxy\Compiler
+	 * @var \TYPO3\Flow\Object\Proxy\Compiler
 	 */
 	protected $proxyClassCompiler;
 
 	/**
-	 * @var \TYPO3\FLOW3\Aop\Builder\ProxyClassBuilder
+	 * @var \TYPO3\Flow\Aop\Builder\ProxyClassBuilder
 	 */
 	protected $aopProxyClassBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\DependencyInjection\ProxyClassBuilder
+	 * @var \TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder
 	 */
 	protected $dependencyInjectionProxyClassBuilder;
 
 	/**
-	 * @param \TYPO3\FLOW3\Cli\RequestBuilder $requestBuilder
+	 * @param \TYPO3\Flow\Cli\RequestBuilder $requestBuilder
 	 * @return void
 	 */
-	public function injectRequestBuilder(\TYPO3\FLOW3\Cli\RequestBuilder $requestBuilder) {
+	public function injectRequestBuilder(\TYPO3\Flow\Cli\RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Mvc\Dispatcher $dispatcher
+	 * @param \TYPO3\Flow\Mvc\Dispatcher $dispatcher
 	 * @return void
 	 */
-	public function injectDispatcher(\TYPO3\FLOW3\Mvc\Dispatcher $dispatcher) {
+	public function injectDispatcher(\TYPO3\Flow\Mvc\Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher
+	 * @param \TYPO3\Flow\SignalSlot\Dispatcher $signalSlotDispatcher
 	 * @return void
 	 */
-	public function injectSignalSlotDispatcher(\TYPO3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
+	public function injectSignalSlotDispatcher(\TYPO3\Flow\SignalSlot\Dispatcher $signalSlotDispatcher) {
 		$this->signalSlotDispatcher = $signalSlotDispatcher;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\Proxy\Compiler $proxyClassCompiler
+	 * @param \TYPO3\Flow\Object\Proxy\Compiler $proxyClassCompiler
 	 * @return void
 	 */
-	public function injectProxyClassCompiler(\TYPO3\FLOW3\Object\Proxy\Compiler $proxyClassCompiler) {
+	public function injectProxyClassCompiler(\TYPO3\Flow\Object\Proxy\Compiler $proxyClassCompiler) {
 		$this->proxyClassCompiler = $proxyClassCompiler;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder
+	 * @param \TYPO3\Flow\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder
 	 * @return void
 	 */
-	public function injectAopProxyClassBuilder(\TYPO3\FLOW3\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
+	public function injectAopProxyClassBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
 		$this->aopProxyClassBuilder = $aopProxyClassBuilder;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder
+	 * @param \TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder
 	 * @return void
 	 */
-	public function injectDependencyInjectionProxyClassBuilder(\TYPO3\FLOW3\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder) {
+	public function injectDependencyInjectionProxyClassBuilder(\TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder) {
 		$this->dependencyInjectionProxyClassBuilder = $dependencyInjectionProxyClassBuilder;
 	}
 
@@ -132,22 +132,22 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * Explicitly compile proxy classes
 	 *
 	 * The compile command triggers the proxy class compilation.
-	 * Although a compilation run is triggered automatically by FLOW3, there might
+	 * Although a compilation run is triggered automatically by Flow, there might
 	 * be cases in a production context where a manual compile run is needed.
 	 *
-	 * @FLOW3\Internal
+	 * @Flow\Internal
 	 * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
 	 * @return void
 	 */
 	public function compileCommand($force = FALSE) {
-		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
+		$objectConfigurationCache = $this->cacheManager->getCache('Flow_Object_Configuration');
 		if ($force === FALSE) {
 			if ($objectConfigurationCache->has('allCompiledCodeUpToDate')) {
 				return;
 			}
 		}
 
-		$classesCache = $this->cacheManager->getCache('FLOW3_Object_Classes');
+		$classesCache = $this->cacheManager->getCache('Flow_Object_Classes');
 		$this->proxyClassCompiler->injectClassesCache($classesCache);
 
 		$this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
@@ -169,7 +169,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Adjust file permissions for CLI and web server access
 	 *
-	 * This command adjusts the file permissions of the whole FLOW3 application to
+	 * This command adjusts the file permissions of the whole Flow application to
 	 * the given command line user and webserver user / group.
 	 *
 	 * @param string $commandlineUser User name of the command line user, for example "john"
@@ -179,7 +179,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function setFilePermissionsCommand($commandlineUser, $webserverUser, $webserverGroup) {
 		// This command will never be really called. It rather acts as a stub for rendering the
-		// documentation for this command. In reality, the "flow3" command line script will already
+		// documentation for this command. In reality, the "flow" command line script will already
 		// check if this command is supposed to be called and invoke the setfilepermissions script
 		// directly.
 	}
@@ -198,11 +198,11 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param string $packagesPath If set, use the given path as base when looking for packages
 	 * @param string $packageKey If set, migrate only the given package
 	 * @return void
-	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow:doctrine:migrate
 	 */
 	public function migrateCommand($status = FALSE, $packagesPath = NULL, $packageKey = NULL) {
 		// This command will never be really called. It rather acts as a stub for rendering the
-		// documentation for this command. In reality, the "flow3" command line script will already
+		// documentation for this command. In reality, the "flow" command line script will already
 		// check if this command is supposed to be called and invoke the migrate script
 		// directly.
 	}
@@ -210,7 +210,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Run the interactive Shell
 	 *
-	 * The shell command runs FLOW3's interactive shell. This shell allows for
+	 * The shell command runs Flow's interactive shell. This shell allows for
 	 * entering commands like through the regular command line interface but
 	 * additionally supports autocompletion and a user-based command history.
 	 *
@@ -224,14 +224,14 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$subProcess = FALSE;
 		$pipes = array();
 
-		$historyPathAndFilename = getenv('HOME') . '/.flow3_' . md5(FLOW3_PATH_ROOT);
+		$historyPathAndFilename = getenv('HOME') . '/.flow_' . md5(FLOW_PATH_ROOT);
 		readline_read_history($historyPathAndFilename);
 		readline_completion_function(array($this, 'autocomplete'));
 
-		echo "FLOW3 Interactive Shell\n\n";
+		echo "Flow Interactive Shell\n\n";
 
 		while (true) {
-			$commandLine = readline('FLOW3 > ');
+			$commandLine = readline('Flow > ');
 			if ($commandLine == '') {
 				echo "\n";
 				break;
@@ -241,7 +241,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			readline_write_history($historyPathAndFilename);
 
 			$request = $this->requestBuilder->build($commandLine);
-			$response = new \TYPO3\FLOW3\Cli\Response();
+			$response = new \TYPO3\Flow\Cli\Response();
 			$command = $request->getCommand();
 
 			if ($request === FALSE || $command->getCommandIdentifier() === FALSE) {
@@ -292,7 +292,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param integer $classCount Number of compiled proxy classes
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	protected function emitFinishedCompilationRun($classCount) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', array($classCount));
@@ -305,7 +305,7 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @throws \RuntimeException
 	 */
 	protected function launchSubProcess() {
-		$systemCommand = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3.php' . ' --start-slave';
+		$systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' ' . 'FLOW_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
 		$descriptorSpecification = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'a'));
 		$subProcess = proc_open($systemCommand, $descriptorSpecification, $pipes);
 		if (!is_resource($subProcess)) {
@@ -368,10 +368,10 @@ class CoreCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$suggestions = array();
 
 		$availableCommands = $this->bootstrap->getObjectManager()
-			->get('TYPO3\FLOW3\Cli\CommandManager')
+			->get('TYPO3\Flow\Cli\CommandManager')
 			->getAvailableCommands();
 
-		/** @var $command \TYPO3\FLOW3\Cli\Command */
+		/** @var $command \TYPO3\Flow\Cli\Command */
 		foreach ($availableCommands as $command) {
 			if ($command->isInternal() === FALSE) {
 				$suggestions[] = $command->getCommandIdentifier();

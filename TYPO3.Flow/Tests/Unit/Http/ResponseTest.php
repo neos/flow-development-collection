@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Http;
+namespace TYPO3\Flow\Tests\Unit\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Response;
-use TYPO3\FLOW3\Http\Uri;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Http\Uri;
 
 /**
  * Test case for the Http Response class
  */
-class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -38,7 +38,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				array(
 					'Server' => 'Apache/2.2.17 (Ubuntu)',
 					'X-Powered-By' => 'PHP/5.3.5-1ubuntu7.2',
-					'X-FLOW3-Powered' => 'FLOW3/1.2',
+					'X-Flow-Powered' => 'Flow/1.2',
 					'Cache-Control' => 'public, s-maxage=600',
 					'Vary' => 'Accept-Encoding',
 					'Content-Encoding' => 'gzip',
@@ -53,7 +53,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-2.txt'),
 				array(
 					'Server' => 'Apache/2.2.17 (Ubuntu)',
-					'Location' => 'http://flow3.typo3.org/',
+					'Location' => 'http://flow.typo3.org/',
 					'Vary' => 'Accept-Encoding',
 					'Content-Encoding' => 'gzip',
 					'Content-Type' => 'text/html; charset=iso-8859-1',
@@ -158,7 +158,7 @@ class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$expectedHeaders = array(
 			'HTTP/1.1 123 Custom Status',
-			'X-FLOW3-Powered: FLOW3/' . FLOW3_VERSION_BRANCH,
+			'X-Flow-Powered: Flow/' . FLOW_VERSION_BRANCH,
 			'Content-Type: text/html; charset=UTF-8',
 			'MyHeader: MyValue',
 			'OtherHeader: OtherValue',

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\Flow\Tests\Unit\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,13 +12,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  *                                                                        */
 
 use org\bovigo\vfs\vfsStream;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
  *
  */
-class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var string
@@ -164,7 +164,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
-		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
+		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
 		file_put_contents($targetPathAndFilename, 'some data');
 		$this->assertFalse(Files::is_link($targetPathAndFilename));
 	}
@@ -173,9 +173,9 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsTrueForExistingSymlink() {
-		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
+		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
 		file_put_contents($targetPathAndFilename, 'some data');
-		$linkPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestLink');
+		$linkPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestLink');
 		if (file_exists($linkPathAndFilename)) {
 			@unlink($linkPathAndFilename);
 		}
@@ -187,7 +187,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsFalseForExistingDirectoryThatIsNoSymlink() {
-		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory')) . '/';
+		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectory')) . '/';
 		if (!is_dir($targetPath)) {
 			Files::createDirectoryRecursively($targetPath);
 		}
@@ -198,11 +198,11 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsTrueForExistingSymlinkDirectory() {
-		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
+		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectory'));
 		if (!is_dir($targetPath)) {
 			Files::createDirectoryRecursively($targetPath);
 		}
-		$linkPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
+		$linkPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectoryLink'));
 		if (is_dir($linkPath)) {
 			Files::removeDirectoryRecursively($linkPath);
 		}
@@ -223,7 +223,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Utility\Exception
+	 * @expectedException \TYPO3\Flow\Utility\Exception
 	 */
 	public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
 		Files::emptyDirectoryRecursively('NonExistingPath');
@@ -231,7 +231,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Utility\Exception
+	 * @expectedException \TYPO3\Flow\Utility\Exception
 	 */
 	public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
 		Files::removeDirectoryRecursively('NonExistingPath');
@@ -241,9 +241,9 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function unlinkProperlyRemovesSymlinksPointingToFiles() {
-		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
+		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
 		file_put_contents($targetPathAndFilename, 'some data');
-		$linkPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestLink');
+		$linkPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestLink');
 		if (file_exists($linkPathAndFilename)) {
 			@unlink($linkPathAndFilename);
 		}
@@ -257,11 +257,11 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function unlinkProperlyRemovesSymlinksPointingToDirectories() {
-		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
+		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectory'));
 		if (!is_dir($targetPath)) {
 			Files::createDirectoryRecursively($targetPath);
 		}
-		$linkPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
+		$linkPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectoryLink'));
 		if (is_dir($linkPath)) {
 			Files::removeDirectoryRecursively($linkPath);
 		}

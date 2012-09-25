@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security;
+namespace TYPO3\Flow\Tests\Functional\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Tests\Functional\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Uri;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
 
 /**
  * Functional testcase for certain aspects of CSRF protection.
  *
  * Note that some other parts of this mechanism are tested in a unit testcase.
  */
-class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -33,7 +33,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController
+	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController
 	 */
 	protected $restrictedController;
 
@@ -42,10 +42,10 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->restrictedController = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController');
+		$this->restrictedController = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController');
 
 		$this->registerRoute('test', 'test/security/restricted(/{@action})', array(
-			'@package' => 'TYPO3.FLOW3',
+			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Restricted',
 			'@action' => 'public',
@@ -63,20 +63,20 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$uriBuilder = new UriBuilder();
 		$uriBuilder->setRequest($actionRequest);
 
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.FLOW3', 'Tests\Functional\Security\Fixtures');
+		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
 		$this->assertEquals('index.php/test/security/restricted', (string)$uri);
 
 		$this->authenticateRoles(array('Administrator'));
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.FLOW3', 'Tests\Functional\Security\Fixtures');
+		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
 		$this->assertEquals('index.php/test/security/restricted?__csrfToken', substr($uri, 0, 46));
 
 		$uriBuilder->setLinkProtectionEnabled(FALSE);
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.FLOW3', 'Tests\Functional\Security\Fixtures');
+		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
 		$this->assertEquals('index.php/test/security/restricted', (string)$uri);
 
 		$uriBuilder->reset();
 		$this->assertTrue($uriBuilder->isLinkProtectionEnabled());
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.FLOW3', 'Tests\Functional\Security\Fixtures');
+		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
 		$this->assertEquals('index.php/test/security/restricted?__csrfToken', substr($uri, 0, 46));
 	}
 

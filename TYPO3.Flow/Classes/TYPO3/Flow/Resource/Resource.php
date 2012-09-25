@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource;
+namespace TYPO3\Flow\Resource;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,37 +12,37 @@ namespace TYPO3\FLOW3\Resource;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\MediaTypes;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\MediaTypes;
 
 /**
  * Model describing a resource
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class Resource {
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\ResourcePointer
+	 * @var \TYPO3\Flow\Resource\ResourcePointer
 	 * @ORM\ManyToOne(cascade={"persist", "merge"})
 	 */
 	protected $resourcePointer;
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Publishing\AbstractPublishingConfiguration
+	 * @var \TYPO3\Flow\Resource\Publishing\AbstractPublishingConfiguration
 	 * @ORM\ManyToOne
 	 */
 	protected $publishingConfiguration;
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=100 })
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=100 })
 	 */
 	protected $filename = '';
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=100 })
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=100 })
 	 */
 	protected $fileExtension = '';
 
@@ -124,17 +124,17 @@ class Resource {
 	/**
 	 * Sets the resource pointer
 	 *
-	 * @param \TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer
+	 * @param \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
 	 * @return void
 	 */
-	public function setResourcePointer(\TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer) {
+	public function setResourcePointer(\TYPO3\Flow\Resource\ResourcePointer $resourcePointer) {
 		$this->resourcePointer = $resourcePointer;
 	}
 
 	/**
 	 * Returns the resource pointer
 	 *
-	 * @return \TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer
+	 * @return \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
 	 */
 	public function getResourcePointer() {
 		return $this->resourcePointer;
@@ -143,17 +143,17 @@ class Resource {
 	/**
 	 * Sets the publishing configuration for this resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration The publishing configuration
+	 * @param \TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration The publishing configuration
 	 * @return void
 	 */
-	public function setPublishingConfiguration(\TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration = NULL) {
+	public function setPublishingConfiguration(\TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration = NULL) {
 		$this->publishingConfiguration = $publishingConfiguration;
 	}
 
 	/**
 	 * Returns the publishing configuration for this resource
 	 *
-	 * @return \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface The publishing configuration
+	 * @return \TYPO3\Flow\Resource\Publishing\PublishingConfigurationInterface The publishing configuration
 	 */
 	public function getPublishingConfiguration() {
 		return $this->publishingConfiguration;

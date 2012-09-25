@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A validator for locale identifiers.
  *
  * This validator validates a string based on the expressions of the
- * FLOW3 I18n implementation.
+ * Flow I18n implementation.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class LocaleIdentifierValidator extends AbstractValidator {
 
@@ -33,7 +33,7 @@ class LocaleIdentifierValidator extends AbstractValidator {
 	 * @return void
 	 */
 	protected function isValid($value) {
-		if (!preg_match(\TYPO3\FLOW3\I18n\Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $value)) {
+		if (!preg_match(\TYPO3\Flow\I18n\Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $value)) {
 			$this->addError('Value is no valid I18n locale identifier.', 1327090892);
 		}
 	}

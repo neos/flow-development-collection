@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Http;
+namespace TYPO3\Flow\Tests\Unit\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Message;
-use TYPO3\FLOW3\Http\Headers;
-use TYPO3\FLOW3\Http\Cookie;
+use TYPO3\Flow\Http\Message;
+use TYPO3\Flow\Http\Headers;
+use TYPO3\Flow\Http\Cookie;
 
 /**
  * Testcase for the Http Message class
  */
-class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test

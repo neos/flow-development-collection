@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Aop\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,22 +11,22 @@ namespace TYPO3\FLOW3\Tests\Functional\Aop\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An aspect for testing different kinds of pointcut expressions
  *
- * @FLOW3\Aspect
+ * @Flow\Aspect
  */
 class PointcutExpressionTestingAspect {
 
 	/**
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\Tests\Functional\Aop\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
+	 * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.Flow.tests.functional.aop.pointcutExpressionSettingFilterOptionA)")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @return void
 	 */
-	public function settingFilterAdvice(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function settingFilterAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		return 'pointcutExpressionSettingFilterOptionA on';
 	}
 }

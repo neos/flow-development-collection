@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Advice;
+namespace TYPO3\Flow\Aop\Advice;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,19 +13,19 @@ namespace TYPO3\FLOW3\Aop\Advice;
 
 /**
  * This is the interface for a generic AOP advice. It is never implemented directly.
- * In FLOW3 all advices are implemented as interceptors.
+ * In Flow all advices are implemented as interceptors.
  *
- * @see \TYPO3\FLOW3\Aop\InterceptorInterface
+ * @see \TYPO3\Flow\Aop\InterceptorInterface
  */
 interface AdviceInterface {
 
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param  \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
+	 * @param  \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return mixed Optionally the result of the advice method
 	 */
-	public function invoke(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint);
+	public function invoke(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns the aspect's object name which has been passed to the constructor

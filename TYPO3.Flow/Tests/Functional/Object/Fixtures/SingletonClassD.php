@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,24 +11,24 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class of scope singleton
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class SingletonClassD {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC
 	 */
 	public $prototypeClassC;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
 	 */
 	public $prototypeClassA;
 

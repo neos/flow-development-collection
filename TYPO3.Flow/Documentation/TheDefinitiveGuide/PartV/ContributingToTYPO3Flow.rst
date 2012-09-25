@@ -1,8 +1,8 @@
 .. _ch-contributing:
 
-=====================
-Contributing to FLOW3
-=====================
+==========================
+Contributing to TYPO3 Flow
+==========================
 
 Got time, a computer and a brain? Here is how you can help:
 
@@ -17,7 +17,7 @@ this rocks big time.
 * *Tasks:* Find bugs, describe them, reproduce them in a unit test
 * *Skills needed:* Attention to detail, knowledge about PHP and PHPUnit is a plus
 
-**Report bugs in the** `FLOW3 Base Distribution issue tracker <http://forge.typo3.org/projects/flow3-distribution-base/issues>`_ **!**
+**Report bugs in the** `TYPO3 Flow Base Distribution issue tracker <http://forge.typo3.org/projects/flow-distribution-base/issues>`_ **!**
 
 Improve Documentation
 =====================
@@ -30,26 +30,26 @@ complexity that documentation should be easy and fun to read. Right?
 
 For a quick start follow these simple steps:
 
-#. Checkout the Package TYPO3.FLOW3 with Git, and set up the git repository so you can contribute:
+#. Checkout the Package TYPO3.Flow with Git, and set up the git repository so you can contribute:
 
    .. code-block:: none
 
-     $ git clone git://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git
+     $ git clone git://git.typo3.org/Flow/Packages/TYPO3.Flow.git
      $ # set up git so you can push to Gerrit
 
    If you do not know how to set up Git correctly, follow the easy steps of
-   `our git wizard <http://www.wwwision.de/githelper/#FLOW3/Packages/TYPO3.FLOW3.git>`_.
-   Of course you can also use the package TYPO3.FLOW3 from any FLOW3 distribution you installed
-   already.
+   `our git wizard <http://www.wwwision.de/githelper/#Flow/Packages/TYPO3.Flow.git>`_.
+   Of course you can also use the package TYPO3.Flow from any TYPO3 Flow distribution you
+   installed already.
 
 #. Read the documentation and adjust it as needed - it is in the *Documentation* directory.
 
 #. Push it to gerrit, or alternatively upload a patch with the changes to the
-   `FLOW3 issue tracker <http://forge.typo3.org/projects/package-typo3-flow3/issues>`_.
+   `TYPO3 Flow issue tracker <http://forge.typo3.org/projects/package-typo3-flow/issues>`_.
 
 If you like to see a rendered HTML result of the documentation a few more steps are necessary:
 
-#. Use any installed FLOW3 distribution. If you don't have FLOW3 installed, install the FLOW3
+#. Use any installed TYPO3 Flow distribution. If you don't have TYPO3 Flow installed, install the
    Base distribution as described in the *Installation* section of the *Getting Started* chapter.
 
 #. Set up git for use with gerrit (`our git wizard`_ might help with that).
@@ -61,12 +61,12 @@ If you like to see a rendered HTML result of the documentation a few more steps 
 
    .. code-block:: none
 
-     $ ./flow3 documentation:render --format html
+     $ ./flow documentation:render --format html
 
 #. Read the documentation and adjust it as needed.
 
 #. Push it to gerrit, or alternatively upload a patch with the changes to the
-   `FLOW3 issue tracker`_.
+   `TYPO3 Flow issue tracker`_.
 
 Work on the Code
 ================

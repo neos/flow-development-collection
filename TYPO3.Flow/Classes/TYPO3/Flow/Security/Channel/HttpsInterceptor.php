@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Channel;
+namespace TYPO3\Flow\Security\Channel;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Security\Channel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * This security interceptor switches the current channel between HTTP and HTTPS protocol.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
+class HttpsInterceptor implements \TYPO3\Flow\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * @var boolean
@@ -29,14 +29,14 @@ class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\Intercepto
 	/**
 	 * Constructor.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
-	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $logger A logger to log security relevant actions
+	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $logger A logger to log security relevant actions
 	 */
 	public function __construct(
-		\TYPO3\FLOW3\Security\Context $securityContext,
-		\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
-		\TYPO3\FLOW3\Log\SystemLoggerInterface $logger
+		\TYPO3\Flow\Security\Context $securityContext,
+		\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
+		\TYPO3\Flow\Log\SystemLoggerInterface $logger
 	) {
 
 	}

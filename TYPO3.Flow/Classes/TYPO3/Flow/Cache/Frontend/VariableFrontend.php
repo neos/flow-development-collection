@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Frontend;
+namespace TYPO3\Flow\Cache\Frontend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Cache\Frontend;
  *
  * @api
  */
-class VariableFrontend extends \TYPO3\FLOW3\Cache\Frontend\AbstractFrontend {
+class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 
 	/**
 	 * If the extension "igbinary" is installed, use it for increased performance.

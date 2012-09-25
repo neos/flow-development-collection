@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Configuration;
+namespace TYPO3\Flow\Object\Configuration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,12 +12,12 @@ namespace TYPO3\FLOW3\Object\Configuration;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * FLOW3 Object Configuration
+ * Flow Object Configuration
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class Configuration {
 
@@ -169,11 +169,11 @@ class Configuration {
 	 *
 	 * @param string $className Valid class name of a factory
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidClassException
+	 * @throws \TYPO3\Flow\Object\Exception\InvalidClassException
 	 */
 	public function setFactoryObjectName($className) {
 		if (!class_exists($className, TRUE)) {
-			throw new \TYPO3\FLOW3\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
+			throw new \TYPO3\Flow\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
 		}
 		$this->factoryObjectName= $className;
 	}
@@ -290,7 +290,7 @@ class Configuration {
 	 * Setter function for injection properties. If an empty array is passed to this
 	 * method, all (possibly) defined properties are removed from the configuration.
 	 *
-	 * @param array $properties Array of \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty
+	 * @param array $properties Array of \TYPO3\Flow\Object\Configuration\ConfigurationProperty
 	 * @return void
 	 */
 	public function setProperties(array $properties) {
@@ -306,7 +306,7 @@ class Configuration {
 	/**
 	 * Returns the currently set injection properties of the object
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty
+	 * @return array Array of \TYPO3\Flow\Object\Configuration\ConfigurationProperty
 	 */
 	public function getProperties() {
 		return $this->properties;
@@ -315,10 +315,10 @@ class Configuration {
 	/**
 	 * Setter function for a single injection property
 	 *
-	 * @param \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty $property
+	 * @param \TYPO3\Flow\Object\Configuration\ConfigurationProperty $property
 	 * @return void
 	 */
-	public function setProperty(\TYPO3\FLOW3\Object\Configuration\ConfigurationProperty $property) {
+	public function setProperty(\TYPO3\Flow\Object\Configuration\ConfigurationProperty $property) {
 		$this->properties[$property->getName()] = $property;
 	}
 
@@ -326,7 +326,7 @@ class Configuration {
 	 * Setter function for injection constructor arguments. If an empty array is passed to this
 	 * method, all (possibly) defined constructor arguments are removed from the configuration.
 	 *
-	 * @param array $arguments Array of \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument
+	 * @param array $arguments Array of \TYPO3\Flow\Object\Configuration\ConfigurationArgument
 	 * @return void
 	 */
 	public function setArguments(array $arguments) {
@@ -344,17 +344,17 @@ class Configuration {
 	/**
 	 * Setter function for a single constructor argument
 	 *
-	 * @param \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument $argument The argument
+	 * @param \TYPO3\Flow\Object\Configuration\ConfigurationArgument $argument The argument
 	 * @return void
 	 */
-	public function setArgument(\TYPO3\FLOW3\Object\Configuration\ConfigurationArgument $argument) {
+	public function setArgument(\TYPO3\Flow\Object\Configuration\ConfigurationArgument $argument) {
 		$this->arguments[$argument->getIndex()] = $argument;
 	}
 
 	/**
 	 * Returns a sorted array of constructor arguments indexed by position (starting with "1")
 	 *
-	 * @return array A sorted array of \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument objects with the argument position as index
+	 * @return array A sorted array of \TYPO3\Flow\Object\Configuration\ConfigurationArgument objects with the argument position as index
 	 */
 	public function getArguments() {
 		if (count($this->arguments) < 1 ) {

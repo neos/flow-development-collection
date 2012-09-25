@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic;
+namespace TYPO3\Flow\Tests\Unit\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "FLOW3".                      *
+ * This script belongs to the Flow package "Flow".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,23 +12,23 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic;
  *                                                                        */
 
 /**
- * Testcase for \TYPO3\FLOW3\Persistence\Query
+ * Testcase for \TYPO3\Flow\Persistence\Query
  *
  */
-class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class QueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\Query
+	 * @var \TYPO3\Flow\Persistence\Generic\Query
 	 */
 	protected $query;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -37,9 +37,9 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$this->reflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
-		$this->objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$this->query = new \TYPO3\FLOW3\Persistence\Generic\Query('someType', $this->reflectionService);
+		$this->reflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$this->objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$this->query = new \TYPO3\Flow\Persistence\Generic\Query('someType', $this->reflectionService);
 		$this->query->injectObjectManager($this->objectManager);
 	}
 
@@ -48,7 +48,7 @@ class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function executeReturnsQueryResultInstance() {
 		$result = $this->query->execute();
-		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\Generic\QueryResult', $result);
+		$this->assertInstanceOf('TYPO3\Flow\Persistence\Generic\QueryResult', $result);
 	}
 
 	/**

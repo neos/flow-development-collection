@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,14 +13,14 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
 
 /**
  * A repository for comments
- * @TYPO3\FLOW3\Annotations\Scope("singleton")
+ * @TYPO3\Flow\Annotations\Scope("singleton")
  */
-class RestrictableEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
+class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity';
+	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
 
 }
 ?>

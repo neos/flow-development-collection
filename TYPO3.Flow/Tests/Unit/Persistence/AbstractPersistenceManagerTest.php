@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Persistence;
+namespace TYPO3\Flow\Tests\Unit\Persistence;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,15 +15,15 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence;
  * Testcase for the Abstract Persistence Manager
  *
  */
-class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AbstractPersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Unit\Persistence\AbstractPersistenceManager
+	 * @var \TYPO3\Flow\Tests\Unit\Persistence\AbstractPersistenceManager
 	 */
 	protected $abstractPersistenceManager;
 
 	public function setUp() {
-		$this->abstractPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\AbstractPersistenceManager', array('initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState'));
+		$this->abstractPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\AbstractPersistenceManager', array('initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState'));
 	}
 
 	/**
@@ -40,7 +40,7 @@ class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\UnknownObjectException
 	 */
 	public function convertObjectToIdentityArrayThrowsExceptionIfIdentityForTheGivenObjectCantBeDetermined() {
 		$someObject = new \stdClass();

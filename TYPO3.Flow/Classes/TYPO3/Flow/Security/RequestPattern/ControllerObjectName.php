@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\RequestPattern;
+namespace TYPO3\Flow\Security\RequestPattern;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,10 +13,10 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
 
 
 /**
- * This class holds an controller object name pattern an decides, if a \TYPO3\FLOW3\Mvc\ActionRequest object matches against this pattern
+ * This class holds an controller object name pattern an decides, if a \TYPO3\Flow\Mvc\ActionRequest object matches against this pattern
  *
  */
-class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterface {
+class ControllerObjectName implements \TYPO3\Flow\Security\RequestPatternInterface {
 
 	/**
 	 * The preg_match() styled controller object name pattern
@@ -44,12 +44,12 @@ class ControllerObjectName implements \TYPO3\FLOW3\Security\RequestPatternInterf
 	}
 
 	/**
-	 * Matches a \TYPO3\FLOW3\Mvc\RequestInterface against its set controller object name pattern rules
+	 * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set controller object name pattern rules
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 */
-	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request) {
+	public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request) {
 		return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->controllerObjectNamePattern) . '$/', $request->getControllerObjectName());
 	}
 }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Formatter;
+namespace TYPO3\Flow\I18n\Formatter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -22,12 +22,12 @@ interface FormatterInterface {
 	 * Formats provided value using optional style properties
 	 *
 	 * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param \TYPO3\Flow\I18n\Locale $locale Locale to use
 	 * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
 	 * @api
 	 */
-	public function format($value, \TYPO3\FLOW3\I18n\Locale $locale, array $styleProperties = array());
+	public function format($value, \TYPO3\Flow\I18n\Locale $locale, array $styleProperties = array());
 }
 
 ?>

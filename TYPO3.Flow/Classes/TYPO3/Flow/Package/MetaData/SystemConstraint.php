@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package\MetaData;
+namespace TYPO3\Flow\Package\MetaData;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Package\MetaData;
  * System constraint meta model
  *
  */
-class SystemConstraint extends \TYPO3\FLOW3\Package\MetaData\AbstractConstraint {
+class SystemConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint {
 
 	/**
 	 * The type for a system scope constraint (e.g. "Memory")
@@ -49,10 +49,10 @@ class SystemConstraint extends \TYPO3\FLOW3\Package\MetaData\AbstractConstraint 
 
 	/**
 	 * @return string The constraint scope
-	 * @see \TYPO3\FLOW3\Package\MetaData\Constraint\getConstraintScope()
+	 * @see \TYPO3\Flow\Package\MetaData\Constraint\getConstraintScope()
 	 */
 	public function getConstraintScope() {
-		return \TYPO3\FLOW3\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
+		return \TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
 	}
 }
 ?>

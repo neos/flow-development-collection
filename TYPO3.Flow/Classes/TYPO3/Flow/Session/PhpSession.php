@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session;
+namespace TYPO3\Flow\Session;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,34 +11,34 @@ namespace TYPO3\FLOW3\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
-use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\Configuration\ConfigurationManager;
-use TYPO3\FLOW3\Utility\Files;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A simple session based on PHP session functions.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
+class PhpSession implements \TYPO3\Flow\Session\SessionInterface {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Session\Aspect\LazyLoadingAspect
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Session\Aspect\LazyLoadingAspect
 	 */
 	protected $lazyLoadingAspect;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -64,18 +64,18 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionAutostartIsEnabledException
 	 */
 	public function __construct() {
 		if (ini_get('session.auto_start') != 0) {
-			throw new \TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException('PHP\'s session.auto_start must be disabled.', 1219848292);
+			throw new \TYPO3\Flow\Session\Exception\SessionAutostartIsEnabledException('PHP\'s session.auto_start must be disabled.', 1219848292);
 		}
 	}
 
 	/**
-	 * Injects the FLOW3 settings, only the session settings are kept.
+	 * Injects the Flow settings, only the session settings are kept.
 	 *
-	 * @param array $settings Settings of the FLOW3 package
+	 * @param array $settings Settings of the Flow package
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
@@ -119,13 +119,13 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		);
 
 		if (empty($this->settings['session']['PhpSession']['savePath'])) {
-			$sessionsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
+			$sessionsPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
 		} else {
 			$sessionsPath = $this->settings['session']['PhpSession']['savePath'];
 		}
 
 		if (!file_exists($sessionsPath)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($sessionsPath);
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($sessionsPath);
 		}
 		session_save_path($sessionsPath);
 	}
@@ -181,10 +181,10 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getId() {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043307);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043307);
 		return $this->sessionId;
 	}
 
@@ -205,10 +205,10 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The contents associated with the given key
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getData($key) {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043308);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043308);
 		return (array_key_exists($key, $_SESSION)) ? $_SESSION[$key] : NULL;
 	}
 
@@ -228,12 +228,12 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param mixed $data The data to be stored
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception\DataNotSerializableException
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\DataNotSerializableException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data) {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043309);
-		if (is_resource($data)) throw new \TYPO3\FLOW3\Session\Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043309);
+		if (is_resource($data)) throw new \TYPO3\Flow\Session\Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
 		$_SESSION[$key] = $data;
 	}
 
@@ -241,15 +241,15 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * Explicitly writes and closes the session
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function close() {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043310);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043310);
 		try {
 			session_write_close();
 		} catch (\Exception $exception) {
-			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
+			throw new \TYPO3\Flow\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
 		}
 		unset($_SESSION);
 	}
@@ -259,12 +259,12 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 *
 	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function destroy($reason = NULL) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
 		}
 		try {
 			$cookieInfo = session_get_cookie_params();
@@ -277,12 +277,12 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 			}
 
 			$cookieParameters = $this->settings['session']['PhpSession']['cookie'];
-			setcookie('TYPO3_FLOW3_Session_LastActivity', '', 1, $cookieParameters['path'], $cookieParameters['domain'], $cookieParameters['secure'], $cookieParameters['httponly']);
-			unset($_COOKIE['TYPO3_FLOW3_Session_LastActivity']);
+			setcookie('TYPO3_Flow_Session_LastActivity', '', 1, $cookieParameters['path'], $cookieParameters['domain'], $cookieParameters['secure'], $cookieParameters['httponly']);
+			unset($_COOKIE['TYPO3_Flow_Session_LastActivity']);
 
 			session_destroy();
 		} catch (\Exception $exception) {
-			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
+			throw new \TYPO3\Flow\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
 		}
 
 		$this->started = FALSE;
@@ -293,13 +293,13 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	/**
 	 * Destroys (file) data from all active PHP sessions.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return integer The number of session files which have been removed
 	 */
 	static public function destroyAll(Bootstrap $bootstrap) {
-		$settings = $bootstrap->getObjectManager()->get('TYPO3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
+		$settings = $bootstrap->getObjectManager()->get('TYPO3\Flow\Configuration\ConfigurationManager')->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 		if (empty($settings['session']['PhpSession']['savePath'])) {
-			$sessionsPath = Files::concatenatePaths(array($bootstrap->getObjectManager()->get('TYPO3\FLOW3\Utility\Environment')->getPathToTemporaryDirectory(), 'Sessions'));
+			$sessionsPath = Files::concatenatePaths(array($bootstrap->getObjectManager()->get('TYPO3\Flow\Utility\Environment')->getPathToTemporaryDirectory(), 'Sessions'));
 		} else {
 			$sessionsPath = $settings['session']['PhpSession']['savePath'];
 		}
@@ -321,7 +321,7 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 */
 	public function shutdownObject() {
 		if ($this->started === TRUE) {
-			$this->putData('TYPO3_FLOW3_Object_ObjectManager', $this->objectManager->getSessionInstances());
+			$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
 			$this->close();
 		}
 	}
@@ -334,11 +334,11 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	protected function autoExpire() {
 
 			// should never happen, but we handle this case gracefully:
-		if (!isset($_COOKIE['TYPO3_FLOW3_Session_LastActivity'])) {
+		if (!isset($_COOKIE['TYPO3_Flow_Session_LastActivity'])) {
 			return FALSE;
 		}
 
-		$lastActivitySecondsAgo = time() - $_COOKIE['TYPO3_FLOW3_Session_LastActivity'];
+		$lastActivitySecondsAgo = time() - $_COOKIE['TYPO3_Flow_Session_LastActivity'];
 		$timeout = $this->settings['session']['inactivityTimeout'];
 
 		$expired = FALSE;
@@ -365,17 +365,17 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 		$this->started = TRUE;
 
 		$previousInactivityInSeconds = TRUE;
-		if (isset($_COOKIE['TYPO3_FLOW3_Session_LastActivity'])) {
-			$previousInactivityInSeconds = time() - $_COOKIE['TYPO3_FLOW3_Session_LastActivity'];
+		if (isset($_COOKIE['TYPO3_Flow_Session_LastActivity'])) {
+			$previousInactivityInSeconds = time() - $_COOKIE['TYPO3_Flow_Session_LastActivity'];
 		}
 		$cookieParameters = $this->settings['session']['PhpSession']['cookie'];
-		setcookie('TYPO3_FLOW3_Session_LastActivity', time(), 0, $cookieParameters['path'], $cookieParameters['domain'], $cookieParameters['secure'], $cookieParameters['httponly']);
+		setcookie('TYPO3_Flow_Session_LastActivity', time(), 0, $cookieParameters['path'], $cookieParameters['domain'], $cookieParameters['secure'], $cookieParameters['httponly']);
 
-		if ($this->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
-			$sessionObjects = $this->getData('TYPO3_FLOW3_Object_ObjectManager');
+		if ($this->hasKey('TYPO3_Flow_Object_ObjectManager') === TRUE) {
+			$sessionObjects = $this->getData('TYPO3_Flow_Object_ObjectManager');
 			if (is_array($sessionObjects)) {
 				foreach ($sessionObjects as $object) {
-					if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface) {
+					if ($object instanceof \TYPO3\Flow\Object\Proxy\ProxyInterface) {
 						$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
 						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
 							$this->objectManager->setInstance($objectName, $object);
@@ -387,7 +387,7 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 			} else {
 					// Fallback for some malformed session data, if it is no array but something else.
 					// In this case, we reset all session objects (graceful degradation).
-				$this->putData('TYPO3_FLOW3_Object_ObjectManager', array());
+				$this->putData('TYPO3_Flow_Object_ObjectManager', array());
 			}
 		}
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,24 +11,24 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Command controller for tasks related to routing
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class RoutingCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Routing\RouterInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
 	 */
 	protected $router;
 
@@ -83,7 +83,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * This command takes package, controller and action and displays the
 	 * generated route path and the selected route:
 	 *
-	 * ./flow3 routing:getPath --format json Acme.Demo\\Sub\\Package
+	 * ./flow routing:getPath --format json Acme.Demo\\Sub\\Package
 	 *
 	 * @param string $package Package key and subpackage, subpackage parts are separated with backslashes
 	 * @param string $controller Controller name, default is 'Standard'
@@ -117,7 +117,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			try {
 				$resolves = $route->resolves($routeValues);
 				$controllerObjectName = $this->router->getControllerObjectName($package, $subpackage, $controller);
-			} catch (\TYPO3\FLOW3\Mvc\Routing\Exception\InvalidControllerException $e) {
+			} catch (\TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException $e) {
 				$resolves = FALSE;
 			}
 
@@ -197,7 +197,7 @@ class RoutingCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @return void
 	 */
 	protected function initializeRouter() {
-		$routesConfiguration = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$routesConfiguration = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 	}
 }

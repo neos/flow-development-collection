@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Xliff\Exception;
+namespace TYPO3\Flow\I18n\Xliff\Exception;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\I18n\Xliff\Exception;
  *
  * @api
  */
-class InvalidXliffDataException extends \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException {
+class InvalidXliffDataException extends \TYPO3\Flow\I18n\Exception\InvalidXmlFileException {
 
 }
 

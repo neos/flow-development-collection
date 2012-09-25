@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -48,20 +48,20 @@ interface MetaDataInterface {
 	public function getCategories();
 
 	/**
-	 * @return Array of TYPO3\FLOW3\Package\MetaData\Party The package parties
+	 * @return Array of TYPO3\Flow\Package\MetaData\Party The package parties
 	 */
 	public function getParties();
 
 	/**
 	 * @param string $constraintType Type of the constraints to get: CONSTRAINT_TYPE_*
-	 * @return Array of TYPO3\FLOW3\Package\MetaData\Constraint Package constraints
+	 * @return Array of TYPO3\Flow\Package\MetaData\Constraint Package constraints
 	 */
 	public function getConstraintsByType($constraintType);
 
 	/**
 	 * Get all constraints
 	 *
-	 * @return array An array of array of \TYPO3\FLOW3\Package\MetaData\Constraint Package constraints
+	 * @return array An array of array of \TYPO3\Flow\Package\MetaData\Constraint Package constraints
 	 */
 	public function getConstraints();
 }

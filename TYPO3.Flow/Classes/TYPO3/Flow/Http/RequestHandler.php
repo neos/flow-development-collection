@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http;
+namespace TYPO3\Flow\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,27 +11,27 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\Core\RequestHandlerInterface;
-use TYPO3\FLOW3\Configuration\ConfigurationManager;
-use TYPO3\FLOW3\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\RequestHandlerInterface;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
 
 /**
  * A request handler which can handle HTTP requests.
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Proxy(false)
+ * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  */
 class RequestHandler implements HttpRequestHandlerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
+	 * @var \TYPO3\Flow\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -41,17 +41,17 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	protected $routesConfiguration;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\Router
+	 * @var \TYPO3\Flow\Mvc\Routing\Router
 	 */
 	protected $router;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Request
+	 * @var \TYPO3\Flow\Http\Request
 	 */
 	protected $request;
 
@@ -72,7 +72,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -130,7 +130,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	/**
 	 * Returns the currently handled HTTP request
 	 *
-	 * @return \TYPO3\FLOW3\Http\Request
+	 * @return \TYPO3\Flow\Http\Request
 	 * @api
 	 */
 	public function getHttpRequest() {
@@ -140,7 +140,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	/**
 	 * Returns the HTTP response corresponding to the currently handled request
 	 *
-	 * @return \TYPO3\FLOW3\Http\Response
+	 * @return \TYPO3\Flow\Http\Response
 	 * @api
 	 */
 	public function getHttpResponse() {
@@ -148,7 +148,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	}
 
 	/**
-	 * Boots up FLOW3 to runtime
+	 * Boots up Flow to runtime
 	 *
 	 * @return void
 	 */
@@ -166,15 +166,15 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 */
 	protected function resolveDependencies() {
 		$objectManager = $this->bootstrap->getObjectManager();
-		$this->dispatcher = $objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher');
+		$this->dispatcher = $objectManager->get('TYPO3\Flow\Mvc\Dispatcher');
 
-		$configurationManager = $objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager');
-		$this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
+		$configurationManager = $objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+		$this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
 		$this->routesConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-		$this->router = $objectManager->get('TYPO3\FLOW3\Mvc\Routing\Router');
+		$this->router = $objectManager->get('TYPO3\Flow\Mvc\Routing\Router');
 
-		$this->securityContext = $objectManager->get('TYPO3\FLOW3\Security\Context');
+		$this->securityContext = $objectManager->get('TYPO3\Flow\Security\Context');
 	}
 }
 ?>

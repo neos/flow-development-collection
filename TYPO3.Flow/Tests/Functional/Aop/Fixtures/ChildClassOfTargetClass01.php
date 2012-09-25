@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Aop\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -33,8 +33,8 @@ class ChildClassOfTargetClass01 extends TargetClass01 {
 	/**
 	 * @return string
 	 */
-	public function sayWhatFlow3Is() {
-		return 'FLOW3 is not';
+	public function sayWhatFlowIs() {
+		return 'Flow is not';
 	}
 
 }

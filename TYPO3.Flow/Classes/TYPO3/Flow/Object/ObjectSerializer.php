@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object;
+namespace TYPO3\Flow\Object;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Object;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The object serializer. This serializer traverses an object tree and transforms
@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * is not annotated transient.
  * Afterwards it can reconstitute the objects from the array.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class ObjectSerializer {
 
@@ -48,49 +48,49 @@ class ObjectSerializer {
 
 	/**
 	 * The object manager
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * The reflection service
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The persistence manager
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Inject the persistence manager
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
+	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -125,7 +125,7 @@ class ObjectSerializer {
 				continue;
 			}
 
-			$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
+			$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection($className, $propertyName);
 			$propertyValue = $propertyReflection->getValue($object);
 
 			if (is_object($propertyValue) && isset($this->objectReferences[$propertyValue])) {
@@ -151,8 +151,8 @@ class ObjectSerializer {
 			} elseif (is_object($propertyValue)
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& (
-							$this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\FLOW3\Annotations\Entity')
-							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\FLOW3\Annotations\ValueObject')
+							$this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\Entity')
+							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'TYPO3\Flow\Annotations\ValueObject')
 							|| $this->reflectionService->isClassAnnotatedWith($propertyClassName, 'Doctrine\ORM\Mapping\Entity')
 						)) {
 
@@ -161,7 +161,7 @@ class ObjectSerializer {
 
 			} elseif (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
-				if ($this->objectManager->getScope($propertyObjectName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+				if ($this->objectManager->getScope($propertyObjectName) === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON) {
 					continue;
 				}
 

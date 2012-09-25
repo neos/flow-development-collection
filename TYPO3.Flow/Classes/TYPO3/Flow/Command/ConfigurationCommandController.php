@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,49 +11,49 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Configuration command controller for the TYPO3.FLOW3 package
+ * Configuration command controller for the TYPO3.Flow package
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\SchemaValidator
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\SchemaValidator
 	 */
 	protected $schemaValidator;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\SchemaGenerator
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\SchemaGenerator
 	 */
 	protected $schemaGenerator;
 
 	/**
 	 * Show the active configuration settings
 	 *
-	 * The command shows the configuration of the current context as it is used by FLOW3 itself.
+	 * The command shows the configuration of the current context as it is used by Flow itself.
 	 * You can specify the configuration type and path if you want to show parts of the configuration.
 	 *
-	 * ./flow3 configuration:show --type Settings --path TYPO3.FLOW3.persistence
+	 * ./flow configuration:show --type Settings --path TYPO3.Flow.persistence
 	 *
 	 * @param string $type Configuration type to show
-	 * @param string $path path to subconfiguration separated by "." like "TYPO3.FLOW3"
+	 * @param string $path path to subconfiguration separated by "." like "TYPO3.Flow"
 	 * @return void
 	 */
 	public function showCommand($type = NULL, $path = NULL) {
@@ -61,7 +61,7 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 		if (in_array($type, $availableConfigurationTypes)) {
 			$configuration = $this->configurationManager->getConfiguration($type);
 			if ($path !== NULL) {
-				$configuration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($configuration, $path);
+				$configuration = \TYPO3\Flow\Utility\Arrays::getValueByPath($configuration, $path);
 			}
 			$typeAndPath = $type . ($path ? ': ' . $path : '');
 			if ($configuration === NULL) {
@@ -81,7 +81,7 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 				$this->outputLine('  ' . $availableConfigurationType);
 			}
 			$this->outputLine();
-			$this->outputLine('Hint: <b>%s configuration:show --type <configurationType></b>', array($this->getFlow3InvocationString()));
+			$this->outputLine('Hint: <b>%s configuration:show --type <configurationType></b>', array($this->getFlowInvocationString()));
 			$this->outputLine('      shows the configuration of the specified type.');
 		}
 	}
@@ -89,18 +89,18 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 	/**
 	 * Validate the given configuration
 	 *
-	 * ./flow3 configuration:validate --type Settings --path TYPO3.FLOW3.persistence
+	 * ./flow configuration:validate --type Settings --path TYPO3.Flow.persistence
 	 *
 	 * The schemas are searched in the path "Resources/Private/Schema" of all
 	 * active Packages. The schema-filenames must match the pattern
 	 * __type__.__path__.schema.yaml. The type and/or the path can also be
 	 * expressed as subdirectories of Resources/Private/Schema. So
-	 * Settings/TYPO3/FLOW3.persistence.schema.yaml will match the same pathes
-	 * like Settings.TYPO3.FLOW3.persistence.schema.yaml or
-	 * Settings/TYPO3.FLOW3/persistence.schema.yaml
+	 * Settings/TYPO3/Flow.persistence.schema.yaml will match the same pathes
+	 * like Settings.TYPO3.Flow.persistence.schema.yaml or
+	 * Settings/TYPO3.Flow/persistence.schema.yaml
 	 *
 	 * @param string $type Configuration type to validate
-	 * @param string $path path to the subconfiguration separated by "." like "TYPO3.FLOW3"
+	 * @param string $path path to the subconfiguration separated by "." like "TYPO3.Flow"
 	 * @return void
 	 */
 	public function validateCommand($type = NULL, $path = NULL) {
@@ -116,7 +116,7 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 				$this->outputLine('  ' . $availableConfigurationType);
 			}
 			$this->outputLine();
-			$this->outputLine('Hint: <b>%s configuration:validate --type <configurationType></b>', array($this->getFlow3InvocationString()));
+			$this->outputLine('Hint: <b>%s configuration:validate --type <configurationType></b>', array($this->getFlowInvocationString()));
 			$this->outputLine('      validates the configuration of the specified type.');
 			return;
 		}
@@ -130,9 +130,9 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 		$activePackages = $this->packageManager->getActivePackages();
 		foreach ($activePackages as $package) {
 			$packageKey = $package->getPackageKey();
-			$packageSchemaPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
+			$packageSchemaPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
 			if (is_dir($packageSchemaPath)) {
-				$packageSchemaFiles = \TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($packageSchemaPath, '.schema.yaml');
+				$packageSchemaFiles = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($packageSchemaPath, '.schema.yaml');
 				foreach ($packageSchemaFiles as $schemaFile) {
 					$schemaName = substr($schemaFile, strlen($packageSchemaPath) + 1, -strlen('.schema.yaml'));
 					$schemaNameParts = explode('.', str_replace('/', '.' ,$schemaName), 2);
@@ -155,17 +155,17 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 		$this->outputLine();
 		if (count($schemaFileInfos) > 0) {
 			$this->outputLine('%s schema files were found:', array(count($schemaFileInfos)));
-			$result = new \TYPO3\FLOW3\Error\Result();
+			$result = new \TYPO3\Flow\Error\Result();
 			foreach ($schemaFileInfos as $schemaFileInfo) {
 
 				if ($schemaFileInfo['path'] !== NULL) {
-					$data = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($configuration, $schemaFileInfo['path']);
+					$data = \TYPO3\Flow\Utility\Arrays::getValueByPath($configuration, $schemaFileInfo['path']);
 				} else {
 					$data = $configuration;
 				}
 
 				if (empty($data)){
-					$result->forProperty($schemaFileInfo['path'])->addError(new \TYPO3\FLOW3\Error\Error('configuration in path ' . $schemaFileInfo['path'] . ' is empty'));
+					$result->forProperty($schemaFileInfo['path'])->addError(new \TYPO3\Flow\Error\Error('configuration in path ' . $schemaFileInfo['path'] . ' is empty'));
 					$this->outputLine(' - package: "' . $schemaFileInfo['packageKey'] . '" schema: "' . $schemaFileInfo['name'] . '" -> <b>configuration is empty</b>');
 				} else {
 					$parsedSchema = \Symfony\Component\Yaml\Yaml::parse($schemaFileInfo['file']);
@@ -206,12 +206,12 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 	/**
 	 * Generate a schema for the given configuration or YAML file.
 	 *
-	 * ./flow3 configuration:generateschema --type Settings --path TYPO3.FLOW3.persistence
+	 * ./flow configuration:generateschema --type Settings --path TYPO3.Flow.persistence
 	 *
 	 * The schema will be output to standard output.
 	 *
 	 * @param string $type Configuration type to create a schema for
-	 * @param string $path path to the subconfiguration separated by "." like "TYPO3.FLOW3"
+	 * @param string $path path to the subconfiguration separated by "." like "TYPO3.Flow"
 	 * @param string $yaml YAML file to create a schema for
 	 * @return void
 	 */
@@ -222,7 +222,7 @@ class ConfigurationCommandController extends \TYPO3\FLOW3\Cli\CommandController 
 		} elseif ($type !== NULL) {
 			$data = $this->configurationManager->getConfiguration($type);
 			if ($path !== NULL){
-				$data = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($data, $path);
+				$data = \TYPO3\Flow\Utility\Arrays::getValueByPath($data, $path);
 			}
 		}
 

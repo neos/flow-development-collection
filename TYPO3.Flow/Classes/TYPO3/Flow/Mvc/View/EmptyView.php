@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\View;
+namespace TYPO3\Flow\Mvc\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,16 +15,16 @@ namespace TYPO3\FLOW3\Mvc\View;
  * An empty view - a special case.
  *
  */
-final class EmptyView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
+final class EmptyView implements \TYPO3\Flow\Mvc\View\ViewInterface {
 
 	/**
 	 * Dummy method to satisfy the ViewInterface
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return void
 	 * @api
 	 */
-	public function setControllerContext(\TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext) {
+	public function setControllerContext(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 	}
 
 	/**
@@ -32,7 +32,7 @@ final class EmptyView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	 *
 	 * @param string $key
 	 * @param mixed $value
-	 * @return \TYPO3\FLOW3\Mvc\View\EmptyView instance of $this to allow chaining
+	 * @return \TYPO3\Flow\Mvc\View\EmptyView instance of $this to allow chaining
 	 * @api
 	 */
 	public function assign($key, $value) {
@@ -43,7 +43,7 @@ final class EmptyView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	 * Dummy method to satisfy the ViewInterface
 	 *
 	 * @param array $values
-	 * @return \TYPO3\FLOW3\Mvc\View\EmptyView instance of $this to allow chaining
+	 * @return \TYPO3\Flow\Mvc\View\EmptyView instance of $this to allow chaining
 	 * @api
 	 */
 	public function assignMultiple(array $values) {
@@ -53,11 +53,11 @@ final class EmptyView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	/**
 	 * This view can be used in any case.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE
 	 * @api
 	 */
-	public function canRender(\TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext) {
+	public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		return TRUE;
 	}
 

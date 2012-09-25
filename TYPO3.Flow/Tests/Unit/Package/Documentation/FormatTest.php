@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Package\Documentation;
+namespace TYPO3\Flow\Tests\Unit\Package\Documentation;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the documentation format class
  *
  */
-class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class FormatTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Sets up this test case
@@ -33,7 +33,7 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function constructSetsNameAndPathToFormat() {
 		$documentationPath = vfsStream::url('testDirectory') . '/';
 
-		$format = new \TYPO3\FLOW3\Package\Documentation\Format('DocBook', $documentationPath);
+		$format = new \TYPO3\Flow\Package\Documentation\Format('DocBook', $documentationPath);
 
 		$this->assertEquals('DocBook', $format->getFormatName());
 		$this->assertEquals($documentationPath, $format->getFormatPath());
@@ -45,9 +45,9 @@ class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getLanguagesScansFormatDirectoryAndReturnsLanguagesAsStrings() {
 		$formatPath = vfsStream::url('testDirectory') . '/';
 
-		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($formatPath . 'en');
+		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($formatPath . 'en');
 
-		$format = new \TYPO3\FLOW3\Package\Documentation\Format('DocBook', $formatPath);
+		$format = new \TYPO3\Flow\Package\Documentation\Format('DocBook', $formatPath);
 		$availableLanguages = $format->getAvailableLanguages();
 
 		$this->assertEquals(array('en'), $availableLanguages);

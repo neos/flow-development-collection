@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object;
+namespace TYPO3\Flow\Object;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,40 +11,40 @@ namespace TYPO3\FLOW3\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Object\Configuration\Configuration;
-use TYPO3\FLOW3\Object\Configuration\ConfigurationProperty as Property;
-use TYPO3\FLOW3\Reflection\ObjectAccess;
+use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Object\Configuration\ConfigurationProperty as Property;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
  * singleton scoped objects. This Object Manager is used during compile time when the proxy
  * class based DI mechanism is not yet available.
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Proxy(false)
+ * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  */
 class CompileTimeObjectManager extends ObjectManager {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $configurationCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -71,36 +71,36 @@ class CompileTimeObjectManager extends ObjectManager {
 	protected $cachedClassNamesByScope = array();
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\Flow\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
 	/**
 	 * Injects the configuration cache of the Object Framework
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $configurationCache
 	 * @return void
 	 */
-	public function injectConfigurationCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache) {
+	public function injectConfigurationCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $configurationCache) {
 		$this->configurationCache = $configurationCache;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -114,9 +114,9 @@ class CompileTimeObjectManager extends ObjectManager {
 		$this->registeredClassNames = $this->registerClassFiles($packages);
 		$this->reflectionService->buildReflectionData($this->registeredClassNames);
 
-		$rawCustomObjectConfigurations = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
+		$rawCustomObjectConfigurations = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
 
-		$configurationBuilder = new \TYPO3\FLOW3\Object\Configuration\ConfigurationBuilder();
+		$configurationBuilder = new \TYPO3\Flow\Object\Configuration\ConfigurationBuilder();
 		$configurationBuilder->injectReflectionService($this->reflectionService);
 		$configurationBuilder->injectSystemLogger($this->systemLogger);
 
@@ -177,7 +177,7 @@ class CompileTimeObjectManager extends ObjectManager {
 
 	/**
 	 * Traverses through all class files of the active packages and registers collects the class names as
-	 * "all available class names". If the respective FLOW3 settings say so, also function test classes
+	 * "all available class names". If the respective Flow settings say so, also function test classes
 	 * are registered.
 	 *
 	 * For performance reasons this function ignores classes whose name ends with "Exception".
@@ -192,7 +192,7 @@ class CompileTimeObjectManager extends ObjectManager {
 			if ($package->isObjectManagementEnabled()) {
 				$classFiles = $package->getClassFiles();
 				if (count($classFiles) > 0) {
-					if ($this->allSettings['TYPO3']['FLOW3']['object']['registerFunctionalTestClasses'] === TRUE) {
+					if ($this->allSettings['TYPO3']['Flow']['object']['registerFunctionalTestClasses'] === TRUE) {
 						$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
 					}
 					foreach (array_keys($classFiles) as $fullClassName) {
@@ -214,21 +214,21 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param array $classNames 2-level array - key of first level is package key, value of second level is classname (FQN)
 	 * @return array The input array with all configured to be excluded from object management filtered out
-	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException
-	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchOptionException
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException
+	 * @throws \TYPO3\Flow\Configuration\Exception\NoSuchOptionException
 	 */
 	protected function filterClassNamesFromConfiguration(array $classNames) {
-		if (isset($this->allSettings['TYPO3']['FLOW3']['object']) && isset($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'])) {
-			if (!is_array($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'])) {
-				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('The setting "TYPO3.FLOW3.object.excludeClasses" is invalid. Check the syntax in the YAML file.');
+		if (isset($this->allSettings['TYPO3']['Flow']['object']) && isset($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'])) {
+			if (!is_array($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'])) {
+				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The setting "TYPO3.Flow.object.excludeClasses" is invalid. Check the syntax in the YAML file.');
 			}
-			foreach ($this->allSettings['TYPO3']['FLOW3']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
+			foreach ($this->allSettings['TYPO3']['Flow']['object']['excludeClasses'] as $packageKey => $filterExpressions) {
 				if (!array_key_exists($packageKey, $classNames)) {
-					$this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "TYPO3.FLOW3.object.excludeClasses" does not exist or is not active.', LOG_DEBUG);
+					$this->systemLogger->log('The package "' . $packageKey . '" specified in the setting "TYPO3.Flow.object.excludeClasses" does not exist or is not active.', LOG_DEBUG);
 					continue;
 				}
 				if (!is_array($filterExpressions)) {
-					throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('The value given for setting "TYPO3.FLOW3.object.excludeClasses.\'' . $packageKey . '\'" is  invalid. Check the syntax in the YAML file.');
+					throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('The value given for setting "TYPO3.Flow.object.excludeClasses.\'' . $packageKey . '\'" is  invalid. Check the syntax in the YAML file.');
 				}
 				foreach ($filterExpressions as $filterExpression) {
 					$classNames[$packageKey] = array_filter(
@@ -301,9 +301,9 @@ class CompileTimeObjectManager extends ObjectManager {
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
-	 * @throws \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException
-	 * @throws \TYPO3\FLOW3\Object\Exception\UnresolvedDependenciesException
-	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
+	 * @throws \TYPO3\Flow\Object\Exception\CannotBuildObjectException
+	 * @throws \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException
+	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
 	 */
 	public function get($objectName) {
 		if (isset($this->objects[$objectName]['i'])) {
@@ -333,7 +333,7 @@ class CompileTimeObjectManager extends ObjectManager {
 					$value = $property->getValue();
 				break;
 				case Property::PROPERTY_TYPES_SETTING:
-					$value = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, explode('.', $property->getValue()));
+					$value = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->allSettings, explode('.', $property->getValue()));
 				break;
 				case Property::PROPERTY_TYPES_OBJECT:
 					$propertyObjectName = $property->getValue();

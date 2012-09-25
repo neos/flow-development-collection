@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Parser;
+namespace TYPO3\Flow\I18n\Parser;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\I18n\Parser;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Parser for date and time.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class DatetimeParser {
@@ -36,15 +36,15 @@ class DatetimeParser {
 	const PATTERN_MATCH_LENIENT_TIMEZONE_TZ = '/[A-z]+\/[A-z_]+(:?\/[A-z_]+)?/';
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
+	 * @var \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
 	 */
 	protected $datesReader;
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader
+	 * @param \TYPO3\Flow\I18n\Cldr\Reader\DatesReader $datesReader
 	 * @return void
 	 */
-	public function injectDatesReader(\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader) {
+	public function injectDatesReader(\TYPO3\Flow\I18n\Cldr\Reader\DatesReader $datesReader) {
 		$this->datesReader = $datesReader;
 	}
 
@@ -58,13 +58,13 @@ class DatetimeParser {
 	 *
 	 * @param string $datetimeToParse Date/time to be parsed
 	 * @param string $format Format string
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale used for finding literals array
+	 * @param \TYPO3\Flow\I18n\Locale $locale A locale used for finding literals array
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date / time elements, FALSE on failure
 	 * @api
-	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
+	 * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
 	 */
-	public function parseDatetimeWithCustomPattern($datetimeToParse, $format, \TYPO3\FLOW3\I18n\Locale $locale, $strictMode = TRUE) {
+	public function parseDatetimeWithCustomPattern($datetimeToParse, $format, \TYPO3\Flow\I18n\Locale $locale, $strictMode = TRUE) {
 		return $this->doParsingWithParsedFormat($datetimeToParse, $this->datesReader->parseCustomFormat($format), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
@@ -73,15 +73,15 @@ class DatetimeParser {
 	 * locale.
 	 *
 	 * @param string $dateToParse date to be parsed
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date elements, FALSE on failure
 	 * @api
 	 */
-	public function parseDate($dateToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
-		\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
-		return $this->doParsingWithParsedFormat($dateToParse, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
+	public function parseDate($dateToParse, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($dateToParse, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -89,15 +89,15 @@ class DatetimeParser {
 	 * locale.
 	 *
 	 * @param string $timeToParse Time to be parsed
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed time elements, FALSE on failure
 	 * @api
 	 */
-	public function parseTime($timeToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
-		\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
-		return $this->doParsingWithParsedFormat($timeToParse, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
+	public function parseTime($timeToParse, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($timeToParse, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -105,14 +105,14 @@ class DatetimeParser {
 	 * particular locale.
 	 *
 	 * @param string $dateAndTimeToParse Date and time to be parsed
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param boolean $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date and time elements, FALSE on failure
 	 */
-	public function parseDateAndTime($dateAndTimeToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
-		\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
-		return $this->doParsingWithParsedFormat($dateAndTimeToParse, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
+	public function parseDateAndTime($dateAndTimeToParse, \TYPO3\Flow\I18n\Locale $locale, $formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($dateAndTimeToParse, $this->datesReader->parseFormatFromCldr($locale, \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -135,8 +135,8 @@ class DatetimeParser {
 	 * @param array $parsedFormat Format parsed by DatesReader
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @return array Array of parsed date and / or time elements, FALSE on failure
-	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
-	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
+	 * @throws \TYPO3\Flow\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
+	 * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
 	 */
 	protected function doParsingInStrictMode($datetimeToParse, array $parsedFormat, array $localizedLiterals) {
 		$datetimeElements = array(
@@ -156,7 +156,7 @@ class DatetimeParser {
 			foreach ($parsedFormat as $subformat) {
 				if (is_array($subformat)) {
 						// This is literal string, should match exactly
-					if (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($datetimeToParse, $subformat[0])) {
+					if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $subformat[0])) {
 						$datetimeToParse = substr_replace($datetimeToParse, '', 0, strlen($subformat[0]));
 						continue;
 					} else return FALSE;
@@ -183,9 +183,9 @@ class DatetimeParser {
 						break;
 					case 'a':
 						$dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
-						if (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($datetimeToParse, $dayPeriods['am'])) {
+						if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $dayPeriods['am'])) {
 							$numberOfCharactersToRemove = strlen($dayPeriods['am']);
-						} elseif (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($datetimeToParse, $dayPeriods['pm'])) {
+						} elseif (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $dayPeriods['pm'])) {
 							$timeIsPm = TRUE;
 							$numberOfCharactersToRemove = strlen($dayPeriods['pm']);
 						} else return FALSE;
@@ -216,12 +216,12 @@ class DatetimeParser {
 
 							$month = 0;
 							foreach ($localizedLiterals['months'][$typeOfLiteral][$lengthOfLiteral] as $monthId => $monthName) {
-								if (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($datetimeToParse, $monthName)) {
+								if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $monthName)) {
 									$month = $monthId;
 									break;
 								}
 							}
-						} else throw new \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1279965245);
+						} else throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1279965245);
 
 						if ($month === 0) return FALSE;
 						$datetimeElements['month'] = $month;
@@ -285,7 +285,7 @@ class DatetimeParser {
 							// Silently ignore unsupported formats or formats that there is no need to parse
 						break;
 					default:
-						throw new \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965528);
+						throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965528);
 				}
 
 				if ($using12HourClock && $timeIsPm) {
@@ -297,7 +297,7 @@ class DatetimeParser {
 					$datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
 				}
 			}
-		} catch (\TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException $exception) {
+		} catch (\TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException $exception) {
 				// Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
 			return FALSE;
 		}
@@ -319,9 +319,9 @@ class DatetimeParser {
 	 * @param array $parsedFormat Format parsed by DatesReader
 	 * @param array $localizedLiterals Array of date / time literals from CLDR
 	 * @return array Array of parsed date and / or time elements (can be array of NULLs if nothing was parsed)
-	 * @throws \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException
-	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
-	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader
+	 * @throws \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException
+	 * @throws \TYPO3\Flow\I18n\Exception\InvalidArgumentException When unexpected symbol found in format
+	 * @see \TYPO3\Flow\I18n\Cldr\Reader\DatesReader
 	 */
 	protected function doParsingInLenientMode($datetimeToParse, array $parsedFormat, array $localizedLiterals) {
 		$datetimeElements = array(
@@ -380,7 +380,7 @@ class DatetimeParser {
 							if ((int)$hour === 24) $hour = 0;
 							$datetimeElements['hour'] = (int)$hour;
 							break;
-						} else throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Unable to match number string to any hour format.', 1280488645);
+						} else throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match number string to any hour format.', 1280488645);
 					case 'a':
 						$dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
 						$positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
@@ -391,24 +391,24 @@ class DatetimeParser {
 							if ($positionOfDayPeriod !== FALSE) {
 								$numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
 								$timeIsPm = TRUE;
-							} else throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Unable to match any day period.', 1280489183);
+							} else throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match any day period.', 1280489183);
 						}
 						break;
 					case 'm':
 						$minute = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-						if ($minute < 0 && $minute > 59) throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected minute is out of range.', 1280489411);
+						if ($minute < 0 && $minute > 59) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected minute is out of range.', 1280489411);
 						$numberOfCharactersToRemove = $position + strlen($minute);
 						$datetimeElements['minute'] = (int)$minute;
 						break;
 					case 's':
 						$second = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-						if ($second < 0 && $second > 59) throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected second is out of range.', 1280489412);
+						if ($second < 0 && $second > 59) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected second is out of range.', 1280489412);
 						$numberOfCharactersToRemove = $position + strlen($second);
 						$datetimeElements['second'] = (int)$second;
 						break;
 					case 'd':
 						$day = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-						if ($day < 1 && $day > 31) throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected day is out of range.', 1280489413);
+						if ($day < 1 && $day > 31) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected day is out of range.', 1280489413);
 						$numberOfCharactersToRemove = $position + strlen($day);
 						$datetimeElements['day'] = (int)$day;
 						break;
@@ -425,7 +425,7 @@ class DatetimeParser {
 										$datetimeElements['month'] = (int)$month;
 										break;
 									}
-								} catch (\TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException $exception) {
+								} catch (\TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException $exception) {
 										// Try to match month's name by cases below
 								}
 							case 3:
@@ -451,9 +451,9 @@ class DatetimeParser {
 									}
 								}
 
-								if ($datetimeElements['month'] === NULL) throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Neither month name or number were matched.', 1280497950);
+								if ($datetimeElements['month'] === NULL) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Neither month name or number were matched.', 1280497950);
 							default:
-								throw new \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1280495827);
+								throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1280495827);
 						}
 						break;
 					case 'y':
@@ -475,7 +475,7 @@ class DatetimeParser {
 
 						if (preg_match($firstPattern, $datetimeToParse, $matches) === 0) {
 							if (preg_match($secondPattern, $datetimeToParse, $matches) === 0) {
-								throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected timezone identifier was not found.', 1280492312);
+								throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected timezone identifier was not found.', 1280492312);
 							}
 						}
 
@@ -504,7 +504,7 @@ class DatetimeParser {
 							// Silently ignore unsupported formats or formats that there is no need to parse
 						break;
 					default:
-						throw new \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965529);
+						throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965529);
 				}
 
 				if ($using12HourClock && $timeIsPm) {
@@ -515,7 +515,7 @@ class DatetimeParser {
 				if ($numberOfCharactersToRemove > 0) {
 					$datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
 				}
-			} catch (\TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException $exception) {
+			} catch (\TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException $exception) {
 					// Matching failed, but in lenient mode we ignore it and try to match next element
 				continue;
 			}
@@ -538,7 +538,7 @@ class DatetimeParser {
 	 * @param int $minValue
 	 * @param int $maxValue
 	 * @return int Parsed number
-	 * @throws \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException When string cannot be parsed or number does not conforms constraints
+	 * @throws \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException When string cannot be parsed or number does not conforms constraints
 	 */
 	protected function extractAndCheckNumber($datetimeToParse, $isTwoDigits, $minValue, $maxValue) {
 		if ($isTwoDigits || is_numeric($datetimeToParse[1])) {
@@ -555,7 +555,7 @@ class DatetimeParser {
 			}
 		}
 
-		throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected one or two-digit number not found at the beginning of the string.', 1279963654);
+		throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected one or two-digit number not found at the beginning of the string.', 1279963654);
 	}
 
 	/**
@@ -567,7 +567,7 @@ class DatetimeParser {
 	 * @param string $datetimeToParse String to search number in
 	 * @param int $position Index of first digit in string
 	 * @return string Extracted number
-	 * @throws \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException When no digit found in string
+	 * @throws \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException When no digit found in string
 	 */
 	protected function extractNumberAndGetPosition($datetimeToParse, &$position) {
 		$characters = str_split($datetimeToParse);
@@ -590,7 +590,7 @@ class DatetimeParser {
 			return $number;
 		}
 
-		throw new \TYPO3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected number not found in the string.', 1280498431);
+		throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected number not found in the string.', 1280498431);
 	}
 }
 

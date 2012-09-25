@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Property\TypeConverter;
+namespace TYPO3\Flow\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Converter which transforms from different input formats into DateTime objects.
@@ -24,7 +24,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *  $this->arguments['<argumentName>']
  *    ->getPropertyMappingConfiguration()
  *    ->forProperty('<propertyName>') // this line can be skipped in order to specify the format for all properties
- *    ->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
+ *    ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
  *
  * If the source is of type array, it is possible to override the format in the source::
  *
@@ -52,7 +52,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *  );
  *
  * @api
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class DateTimeConverter extends AbstractTypeConverter {
 
@@ -107,11 +107,11 @@ class DateTimeConverter extends AbstractTypeConverter {
 	 * @param string|array $source the string to be converted to a \DateTime object
 	 * @param string $targetType must be "DateTime"
 	 * @param array $convertedChildProperties not used currently
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \DateTime
-	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException
+	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$dateFormat = $this->getDefaultDateFormat($configuration);
 		if (is_string($source)) {
 			$dateAsString = $source;
@@ -120,11 +120,11 @@ class DateTimeConverter extends AbstractTypeConverter {
 				$dateAsString = $source['date'];
 			} elseif($this->isDatePartKeysProvided($source)) {
 				if ($source['day'] < 1 || $source['month'] < 1 || $source['year'] < 1) {
-					return new \TYPO3\FLOW3\Validation\Error('Could not convert the given date parts into a DateTime object because one or more parts were 0.', 1333032779);
+					return new \TYPO3\Flow\Validation\Error('Could not convert the given date parts into a DateTime object because one or more parts were 0.', 1333032779);
 				}
 				$dateAsString = sprintf('%d-%d-%d', $source['year'], $source['month'], $source['day']);
 			} else {
-				throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('Could not convert the given source into a DateTime object because it was not an array with a valid date as a string', 1308003914);
+				throw new \TYPO3\Flow\Property\Exception\TypeConverterException('Could not convert the given source into a DateTime object because it was not an array with a valid date as a string', 1308003914);
 			}
 			if (isset($source['dateFormat']) && strlen($source['dateFormat']) > 0) {
 				$dateFormat = $source['dateFormat'];
@@ -137,14 +137,14 @@ class DateTimeConverter extends AbstractTypeConverter {
 			try {
 				$timezone = new \DateTimeZone($source['timezone']);
 			} catch (\Exception $e) {
-				throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
+				throw new \TYPO3\Flow\Property\Exception\TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
 			}
 			$date = $targetType::createFromFormat($dateFormat, $dateAsString, $timezone);
 		} else {
 			$date = $targetType::createFromFormat($dateFormat, $dateAsString);
 		}
 		if ($date === FALSE) {
-			return new \TYPO3\FLOW3\Validation\Error('The date "%s" was not recognized (for format "%s").', 1307719788, array($dateAsString, $dateFormat));
+			return new \TYPO3\Flow\Validation\Error('The date "%s" was not recognized (for format "%s").', 1307719788, array($dateAsString, $dateFormat));
 		}
 		if (is_array($source)) {
 			$this->overrideTimeIfSpecified($date, $source);
@@ -167,19 +167,19 @@ class DateTimeConverter extends AbstractTypeConverter {
 	 * Determines the default date format to use for the conversion.
 	 * If no format is specified in the mapping configuration DEFAULT_DATE_FORMAT is used.
 	 *
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException
+	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
-	protected function getDefaultDateFormat(\TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	protected function getDefaultDateFormat(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if ($configuration === NULL) {
 			return self::DEFAULT_DATE_FORMAT;
 		}
-		$dateFormat = $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', self::CONFIGURATION_DATE_FORMAT);
+		$dateFormat = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', self::CONFIGURATION_DATE_FORMAT);
 		if ($dateFormat === NULL) {
 			return self::DEFAULT_DATE_FORMAT;
 		} elseif ($dateFormat !== NULL && !is_string($dateFormat)) {
-			throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1307719569);
+			throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1307719569);
 		}
 		return $dateFormat;
 	}

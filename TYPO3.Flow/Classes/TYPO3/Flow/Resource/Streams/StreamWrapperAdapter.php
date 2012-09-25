@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource\Streams;
+namespace TYPO3\Flow\Resource\Streams;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,13 +14,13 @@ namespace TYPO3\FLOW3\Resource\Streams;
 
 /**
  * A generic stream wrapper sitting between PHP and stream wrappers implementing
- * \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface.
+ * \TYPO3\Flow\Resource\Streams\StreamWrapperInterface.
  *
  * The resource manager will register configured stream wrappers with this class,
- * enabling the use of FLOW3 goodies like DI in those stream wrappers.
+ * enabling the use of Flow goodies like DI in those stream wrappers.
  *
  * Instances of this class are created by PHP itself and therefore are unknown
- * to FLOW3's object registry.
+ * to Flow's object registry.
  *
  *
  */
@@ -37,7 +37,7 @@ class StreamWrapperAdapter {
 	public $context ;
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface
+	 * @var \TYPO3\Flow\Resource\Streams\StreamWrapperInterface
 	 */
 	protected $streamWrapper;
 

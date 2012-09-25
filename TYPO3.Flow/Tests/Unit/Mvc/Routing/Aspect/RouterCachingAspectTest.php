@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing\Aspect;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Routing\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,40 +15,40 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing\Aspect;
  * Testcase for the Router Caching Aspect
  *
  */
-class RouterCachingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\Aspect\RouterCachingAspect
+	 * @var \TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect
 	 */
 	protected $routerCachingAspect;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $mockFindMatchResultsCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\StringFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
 	 */
 	protected $mockResolveCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $mockPersistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $mockSystemLogger;
 
 	/**
-	 * @var \TYPO3\FLOW3\Aop\JoinPointInterface
+	 * @var \TYPO3\Flow\Aop\JoinPointInterface
 	 */
 	protected $mockJoinPoint;
 
 	/**
-	 * @var \TYPO3\FLOW3\Aop\Advice\AdviceChain
+	 * @var \TYPO3\Flow\Aop\Advice\AdviceChain
 	 */
 	protected $mockAdviceChain;
 
@@ -56,24 +56,24 @@ class RouterCachingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up this test case
 	 */
 	public function setUp() {
-		$this->routerCachingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\Aspect\RouterCachingAspect', array('dummy'));
-		$this->mockFindMatchResultsCache = $this->getMockBuilder('TYPO3\FLOW3\Cache\Frontend\VariableFrontend')->disableOriginalConstructor()->getMock();
+		$this->routerCachingAspect = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect', array('dummy'));
+		$this->mockFindMatchResultsCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\VariableFrontend')->disableOriginalConstructor()->getMock();
 		$this->routerCachingAspect->_set('findMatchResultsCache', $this->mockFindMatchResultsCache);
 
-		$this->mockResolveCache = $this->getMockBuilder('TYPO3\FLOW3\Cache\Frontend\StringFrontend')->disableOriginalConstructor()->getMock();
+		$this->mockResolveCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\StringFrontend')->disableOriginalConstructor()->getMock();
 		$this->routerCachingAspect->_set('resolveCache', $this->mockResolveCache);
 
-		$this->mockPersistenceManager  = $this->getMockBuilder('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->getMock();
+		$this->mockPersistenceManager  = $this->getMockBuilder('TYPO3\Flow\Persistence\PersistenceManagerInterface')->getMock();
 		$this->routerCachingAspect->_set('persistenceManager', $this->mockPersistenceManager);
 
-		$this->mockSystemLogger  = $this->getMockBuilder('TYPO3\FLOW3\Log\SystemLoggerInterface')->getMock();
+		$this->mockSystemLogger  = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
 		$this->routerCachingAspect->_set('systemLogger', $this->mockSystemLogger);
 
-		$this->mockAdviceChain = $this->getMockBuilder('TYPO3\FLOW3\Aop\Advice\AdviceChain')->disableOriginalConstructor()->getMock();
-		$this->mockJoinPoint = $this->getMockBuilder('TYPO3\FLOW3\Aop\JoinPointInterface')->getMock();
+		$this->mockAdviceChain = $this->getMockBuilder('TYPO3\Flow\Aop\Advice\AdviceChain')->disableOriginalConstructor()->getMock();
+		$this->mockJoinPoint = $this->getMockBuilder('TYPO3\Flow\Aop\JoinPointInterface')->getMock();
 		$this->mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($this->mockAdviceChain));
 
-		$mockRouter = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Routing\Router')->getMock();
+		$mockRouter = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Router')->getMock();
 		$this->mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($mockRouter));
 	}
 

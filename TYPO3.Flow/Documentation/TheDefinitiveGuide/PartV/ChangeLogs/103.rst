@@ -18,7 +18,7 @@ DBAL is at upstream 2.2.1 plus on of our changes, with Migrations at
 ORM is at upstream 2.2.0 plus three of our own changes on top.
 
 * Related: `#32608 <http://forge.typo3.org/issues/32608>`_
-* Commit: `6475cb6 <http://git.typo3.org/FLOW3/Packages/Doctrine.git?a=commit;h=6475cb6acfd24d1e5b1db51dfc7f501d4de173a5>`_
+* Commit: `6475cb6 <http://git.typo3.org/Flow/Packages/Doctrine.git?a=commit;h=6475cb6acfd24d1e5b1db51dfc7f501d4de173a5>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Symfony.Component.Yaml
@@ -27,7 +27,7 @@ Symfony.Component.Yaml
 No changes
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TYPO3.FLOW3
+TYPO3.Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [BUGFIX] Makes account expiry work as expected
@@ -38,7 +38,7 @@ enabled until after it's last day. Now it will expire exactly when
 it should.
 
 * Fixes: `#33707 <http://forge.typo3.org/issues/33707>`_
-* Commit: `873bdd5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=873bdd5376defbd863929258b2e52f63b8b73dbe>`_
+* Commit: `873bdd5 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=873bdd5376defbd863929258b2e52f63b8b73dbe>`_
 
 [BUGFIX] Fix default lifetime use in cache backend
 -----------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ ArrayAccess detection for configuration in AbstractBackend is fixed
 along the way and the RedisBackend code cleaned up a little.
 
 * Fixes: `#33562 <http://forge.typo3.org/issues/33562>`_
-* Commit: `f22d865 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f22d865d9d0c1bf66e65071b10398c357f21b909>`_
+* Commit: `f22d865 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=f22d865d9d0c1bf66e65071b10398c357f21b909>`_
 
 [TASK] Adjust to Doctrine 2.2 libraries
 -----------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ Also the proxy interface in Common is now used, the fixture
 needs to be adjusted.
 
 * Related: `#32608 <http://forge.typo3.org/issues/32608>`_
-* Commit: `3f66b47 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3f66b479bf6695a327f153154eab9359cb84ecbf>`_
+* Commit: `3f66b47 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=3f66b479bf6695a327f153154eab9359cb84ecbf>`_
 
 [BUGFIX] Fix FLOW3 1.0 Functional Tests
 -----------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ I introduced an error inside the functional tests in https://review.typo3.org/#c
 and this followup commit fixes it.
 
 * Related: `#32830 <http://forge.typo3.org/issues/32830>`_
-* Commit: `0736b6a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0736b6a449cf8b055e9725710fdce274b96d9855>`_
+* Commit: `0736b6a <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=0736b6a449cf8b055e9725710fdce274b96d9855>`_
 
 [BUGFIX] Hint at possible exception cause
 -----------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ Since FLOW3 needs the @Entity annotation even with a mapped superclass,
 this change adds a hint to the exception message.
 
 * Fixes: `#27285 <http://forge.typo3.org/issues/27285>`_
-* Commit: `68ac2a0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=68ac2a0194d087bd79072cb787867a7fe3acfe08>`_
+* Commit: `68ac2a0 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=68ac2a0194d087bd79072cb787867a7fe3acfe08>`_
 
 [BUGFIX] ArrayMergeRecursiveOverrule does not override arrays with simple types
 -----------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ A full example is given in issue #32984.
 I also added first unit tests for the ArrayMergeRecursiveOverrule function.
 
 * Fixes: `#32984 <http://forge.typo3.org/issues/32984>`_
-* Commit: `d65fe22 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d65fe22c195a8f16b579c33c965eb2c2d2dc78c3>`_
+* Commit: `d65fe22 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=d65fe22c195a8f16b579c33c965eb2c2d2dc78c3>`_
 
 [BUGFIX] Make updating a Doctrine Lazy Loading Proxy work
 -----------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ class name.
 A Functional Test reproducing the issue is included.
 
 * Fixes: `#32830 <http://forge.typo3.org/issues/32830>`_
-* Commit: `d7af18a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d7af18a9d8346dc7d6395e6eb91d9de1cfe61e93>`_
+* Commit: `d7af18a <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=d7af18a9d8346dc7d6395e6eb91d9de1cfe61e93>`_
 
 [BUGFIX] Fix UriBuilder with subrequests
 -----------------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ subrequests. The namespaces of all parent requests get added
 recursively.
 
 * Fixes: `#30536 <http://forge.typo3.org/issues/30536>`_
-* Commit: `6629f53 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6629f53025e73b73d2c04d043f561637b1fa23be>`_
+* Commit: `6629f53 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=6629f53025e73b73d2c04d043f561637b1fa23be>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Fluid
@@ -143,7 +143,7 @@ TYPO3.Party
 The PartyRepository lacked the Scope annotation it should have had.
 
 * Fixes: `#33600 <http://forge.typo3.org/issues/33600>`_
-* Commit: `3df5d04 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=3df5d045ff836d7f026dde207daa111b1f4114dd>`_
+* Commit: `3df5d04 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=3df5d045ff836d7f026dde207daa111b1f4114dd>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Welcome

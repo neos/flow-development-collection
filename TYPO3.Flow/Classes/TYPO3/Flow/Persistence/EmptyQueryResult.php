@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence;
+namespace TYPO3\Flow\Persistence;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -29,23 +29,23 @@ namespace TYPO3\FLOW3\Persistence;
 class EmptyQueryResult implements  QueryResultInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @var \TYPO3\Flow\Persistence\QueryInterface
 	 */
 	protected $query;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\Flow\Persistence\QueryInterface $query
 	 */
-	public function __construct(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
+	public function __construct(\TYPO3\Flow\Persistence\QueryInterface $query) {
 		$this->query = $query;
 	}
 
 	/**
 	 * Returns a clone of the query object
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function getQuery() {

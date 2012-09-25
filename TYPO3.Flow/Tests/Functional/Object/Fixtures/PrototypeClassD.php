@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class of scope prototype (but without explicit scope annotation)
@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class PrototypeClassD {
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
 	 */
 	protected $objectB;
 
@@ -29,10 +29,10 @@ class PrototypeClassD {
 	public $injectionRuns = 0;
 
 	/**
-	 * @param \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
 	 * @return void
 	 */
-	public function injectObjectB(\TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB $objectB) {
+	public function injectObjectB(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB) {
 		$this->injectionRuns++;
 		$this->objectB = $objectB;
 	}

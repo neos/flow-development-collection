@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -87,7 +87,7 @@ class DateTimeRangeValidator extends AbstractValidator {
 	 *
 	 * @param string $referenceDateString being one of <time>, <start>/<offset> or <offset>/<end>
 	 * @return \DateTime
-	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
 	 * @see isValid()
 	 */
 	protected function parseReferenceDate($referenceDateString) {
@@ -107,7 +107,7 @@ class DateTimeRangeValidator extends AbstractValidator {
 			$date = new \DateTime($referenceDateParts[0]);
 			return $date->add($interval);
 		} else {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException(sprintf('There is no valid interval declaration in "%s". Exactly one part must begin with "P".', $referenceDateString), 1324314462);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException(sprintf('There is no valid interval declaration in "%s". Exactly one part must begin with "P".', $referenceDateString), 1324314462);
 		}
 	}
 }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\Controller;
+namespace TYPO3\Flow\Security\Authentication\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,36 +11,36 @@ namespace TYPO3\FLOW3\Security\Authentication\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * An action controller for generic authentication in FLOW3
+ * An action controller for generic authentication in Flow
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @deprecated since 1.2 Instead you should inherit from the AbstractAuthenticationController from within your package
  */
 class AuthenticationController extends AbstractAuthenticationController {
 
 	/**
 	 * The authentication manager
-	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Context
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Context
+	 * @Flow\Inject
 	 */
 	protected $securityContext;
 
 	/**
 	 * Redirects to a potentially intercepted request. Returns an error message if there has been none.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
 	 * @return string
 	 */
-	protected function onAuthenticationSuccess(\TYPO3\FLOW3\Mvc\ActionRequest $originalRequest = NULL) {
+	protected function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = NULL) {
 		if ($originalRequest !== NULL) {
 			$this->redirectToRequest($originalRequest);
 		}

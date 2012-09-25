@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller;
+namespace TYPO3\Flow\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -23,41 +23,41 @@ namespace TYPO3\FLOW3\Mvc\Controller;
 class ControllerContext {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @var \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Response
+	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $response;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\Arguments
+	 * @var \TYPO3\Flow\Mvc\Controller\Arguments
 	 */
 	protected $arguments;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\UriBuilder
+	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\FlashMessageContainer
+	 * @var \TYPO3\Flow\Mvc\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
 
 	/**
 	 * Constructs this context
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
-	 * @param \TYPO3\FLOW3\Http\Response $response
-	 * @param \TYPO3\FLOW3\Mvc\Controller\Arguments $arguments
-	 * @param \TYPO3\FLOW3\Mvc\Routing\UriBuilder $uriBuilder
-	 * @param \TYPO3\FLOW3\Mvc\FlashMessageContainer $flashMessageContainer The flash messages
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $request
+	 * @param \TYPO3\Flow\Http\Response $response
+	 * @param \TYPO3\Flow\Mvc\Controller\Arguments $arguments
+	 * @param \TYPO3\Flow\Mvc\Routing\UriBuilder $uriBuilder
+	 * @param \TYPO3\Flow\Mvc\FlashMessageContainer $flashMessageContainer The flash messages
 	 */
-	public function __construct(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Http\Response $response, \TYPO3\FLOW3\Mvc\Controller\Arguments $arguments,
-			\TYPO3\FLOW3\Mvc\Routing\UriBuilder $uriBuilder, \TYPO3\FLOW3\Mvc\FlashMessageContainer $flashMessageContainer) {
+	public function __construct(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Http\Response $response, \TYPO3\Flow\Mvc\Controller\Arguments $arguments,
+			\TYPO3\Flow\Mvc\Routing\UriBuilder $uriBuilder, \TYPO3\Flow\Mvc\FlashMessageContainer $flashMessageContainer) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->arguments = $arguments;
@@ -68,7 +68,7 @@ class ControllerContext {
 	/**
 	 * Get the request of the controller
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @return \TYPO3\Flow\Mvc\RequestInterface
 	 * @api
 	 */
 	public function getRequest() {
@@ -78,7 +78,7 @@ class ControllerContext {
 	/**
 	 * Get the response of the controller
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ResponseInterface
+	 * @return \TYPO3\Flow\Mvc\ResponseInterface
 	 * @api
 	 */
 	public function getResponse() {
@@ -88,7 +88,7 @@ class ControllerContext {
 	/**
 	 * Get the arguments of the controller
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Arguments
+	 * @return \TYPO3\Flow\Mvc\Controller\Arguments
 	 * @api
 	 */
 	public function getArguments() {
@@ -98,7 +98,7 @@ class ControllerContext {
 	/**
 	 * Returns the URI Builder bound to this context
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder
 	 * @api
 	 */
 	public function getUriBuilder() {
@@ -108,7 +108,7 @@ class ControllerContext {
 	/**
 	 * Get the flash message container
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\FlashMessageContainer A container for flash messages
+	 * @return \TYPO3\Flow\Mvc\FlashMessageContainer A container for flash messages
 	 * @api
 	 */
 	public function getFlashMessageContainer() {

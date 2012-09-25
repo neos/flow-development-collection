@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,24 +11,24 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Error\Message;
-use TYPO3\FLOW3\Error\Notice;
-use TYPO3\FLOW3\Error\Warning;
-use TYPO3\FLOW3\Error\Error;
+use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Error\Notice;
+use TYPO3\Flow\Error\Warning;
+use TYPO3\Flow\Error\Error;
 
 /**
  * Testcase for the Flash Messages Container
  *
  */
-class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class FlashMessageContainerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\FlashMessageContainer
+	 * @var \TYPO3\Flow\Mvc\Controller\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
 
 	public function setUp() {
-		$this->flashMessageContainer = new \TYPO3\FLOW3\Mvc\FlashMessageContainer();
+		$this->flashMessageContainer = new \TYPO3\Flow\Mvc\FlashMessageContainer();
 	}
 
 	/**

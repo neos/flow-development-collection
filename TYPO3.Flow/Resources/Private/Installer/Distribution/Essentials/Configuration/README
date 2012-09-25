@@ -1,8 +1,8 @@
 =============================================================================
-FLOW3 Configuration Directory
+TYPO3 Flow Configuration Directory
 =============================================================================
 
-This directory contains the configuration for the FLOW3 framework and the
+This directory contains the configuration for the TYPO3 Flow framework and the
 application based on it.The configuration files only contain additions and
 modifications of the original configuration and therefore don't contain all
 possible configuration options.

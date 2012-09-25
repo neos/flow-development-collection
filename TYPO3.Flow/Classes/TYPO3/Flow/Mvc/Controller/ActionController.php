@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller;
+namespace TYPO3\Flow\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,9 +11,9 @@ namespace TYPO3\FLOW3\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\ActionRequest;
-use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * An HTTP based multi-action controller.
@@ -34,33 +34,33 @@ use TYPO3\FLOW3\Mvc\Routing\UriBuilder;
  * view - will be selected. By specifying patterns, custom view classes or an alternative
  * controller / action to template path mapping can be defined.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class ActionController extends AbstractController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfigurationService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService
 	 */
 	protected $mvcPropertyMappingConfigurationService;
 
 	/**
 	 * The current view, as resolved by resolveView()
 	 *
-	 * @var \TYPO3\FLOW3\Mvc\View\ViewInterface
+	 * @var \TYPO3\Flow\Mvc\View\ViewInterface
 	 * @api
 	 */
 	protected $view = NULL;
@@ -125,13 +125,13 @@ class ActionController extends AbstractController {
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request object
-	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The response, modified by this handler
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request object
+	 * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, modified by this handler
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException
+	 * @throws \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException
 	 * @api
 	 */
-	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
+	public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response) {
 		$this->initializeController($request, $response);
 
 		$this->actionMethodName = $this->resolveActionMethodName();
@@ -160,12 +160,12 @@ class ActionController extends AbstractController {
 	 * Resolves and checks the current action method name
 	 *
 	 * @return string Method name of the current action
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchActionException
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchActionException
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
 		if (!is_callable(array($this, $actionMethodName))) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+			throw new \TYPO3\Flow\Mvc\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		}
 		return $actionMethodName;
 	}
@@ -177,7 +177,7 @@ class ActionController extends AbstractController {
 	 * Don't override this method - use initializeAction() instead.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
 	 * @see initializeArguments()
 	 */
 	protected function initializeActionMethodArguments() {
@@ -191,7 +191,7 @@ class ActionController extends AbstractController {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
-			if ($dataType === NULL) throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
+			if ($dataType === NULL) throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
@@ -209,7 +209,7 @@ class ActionController extends AbstractController {
 	 */
 	protected function initializeActionMethodValidators() {
 		$validationGroups = array('Default', 'Controller');
-		$validationGroupsAnnotation = $this->reflectionService->getMethodAnnotation(get_class($this), $this->actionMethodName, 'TYPO3\FLOW3\Annotations\ValidationGroups');
+		$validationGroupsAnnotation = $this->reflectionService->getMethodAnnotation(get_class($this), $this->actionMethodName, 'TYPO3\Flow\Annotations\ValidationGroups');
 
 		if ($validationGroupsAnnotation !== NULL) {
 			$validationGroups = $validationGroupsAnnotation->validationGroups;
@@ -260,7 +260,7 @@ class ActionController extends AbstractController {
 		if (!$validationResult->hasErrors()) {
 			$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
 		} else {
-			$ignoreValidationAnnotations = $this->reflectionService->getMethodAnnotations(get_class($this), $this->actionMethodName, 'TYPO3\FLOW3\Annotations\IgnoreValidation');
+			$ignoreValidationAnnotations = $this->reflectionService->getMethodAnnotations(get_class($this), $this->actionMethodName, 'TYPO3\Flow\Annotations\IgnoreValidation');
 			$ignoredArguments = array_map(function($annotation) { return $annotation->argumentName; }, $ignoreValidationAnnotations);
 
 				// if there exists more errors than in ignoreValidationAnnotations_=> call error method
@@ -283,7 +283,7 @@ class ActionController extends AbstractController {
 			}
 		}
 
-		if ($actionResult === NULL && $this->view instanceof \TYPO3\FLOW3\Mvc\View\ViewInterface) {
+		if ($actionResult === NULL && $this->view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
 			$this->response->appendContent($this->view->render());
 		} elseif (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
@@ -297,7 +297,7 @@ class ActionController extends AbstractController {
 	 * By default, this method tries to locate a view with a name matching
 	 * the current action.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\View\ViewInterface the resolved view
+	 * @return \TYPO3\Flow\Mvc\View\ViewInterface the resolved view
 	 * @api
 	 */
 	protected function resolveView() {
@@ -315,7 +315,7 @@ class ActionController extends AbstractController {
 			}
 		}
 		if (!isset($view)) {
-			$view = $this->objectManager->get('TYPO3\FLOW3\Mvc\View\NotFoundView');
+			$view = $this->objectManager->get('TYPO3\Flow\Mvc\View\NotFoundView');
 			$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
 		}
 		$view->setControllerContext($this->controllerContext);
@@ -357,11 +357,11 @@ class ActionController extends AbstractController {
 	 * Override this method to solve assign variables common for all actions
 	 * or prepare the view in another way before the action is called.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\View\ViewInterface $view The view to be initialized
+	 * @param \TYPO3\Flow\Mvc\View\ViewInterface $view The view to be initialized
 	 * @return void
 	 * @api
 	 */
-	protected function initializeView(\TYPO3\FLOW3\Mvc\View\ViewInterface $view) {
+	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
 	}
 
 	/**
@@ -409,11 +409,11 @@ class ActionController extends AbstractController {
 	 * display no flash message at all on errors. Override this to customize
 	 * the flash message in your action controller.
 	 *
-	 * @return \TYPO3\FLOW3\Error\Message The flash message or FALSE if no flash message should be set
+	 * @return \TYPO3\Flow\Error\Message The flash message or FALSE if no flash message should be set
 	 * @api
 	 */
 	protected function getErrorFlashMessage() {
-		return new \TYPO3\FLOW3\Error\Error('An error occurred while trying to call %1$s->%2$s()', NULL, array(get_class($this), $this->actionMethodName));
+		return new \TYPO3\Flow\Error\Error('An error occurred while trying to call %1$s->%2$s()', NULL, array(get_class($this), $this->actionMethodName));
 	}
 }
 ?>

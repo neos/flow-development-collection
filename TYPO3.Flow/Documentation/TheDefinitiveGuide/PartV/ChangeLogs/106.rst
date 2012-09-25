@@ -9,7 +9,7 @@ Base Distribution
 [TASK] Update Upgrading.txt with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `3305214 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=33052141c09d9e814396a1b3c9af49182017fcc9>`_
+* Commit: `3305214 <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=33052141c09d9e814396a1b3c9af49182017fcc9>`_
 
 [TASK] Add Phoenix distribution build surf configuration
 -----------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ Base Distribution
 Note: This needs the corresponding change in BuildEssentials as well.
 
 * Resolves: `#38500 <http://forge.typo3.org/issues/38500>`_
-* Commit: `87fc975 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=87fc97555ff60219d2bdee72be4b763e197dbebd>`_
+* Commit: `87fc975 <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=87fc97555ff60219d2bdee72be4b763e197dbebd>`_
 
 [TASK] Refactor FLOW3 Distribution Build into generic and specific parts
 -----------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ we should refactor the common environment-variable handling into a base setup
 to be included in each individual deployment.
 
 * Resolves: `#38500 <http://forge.typo3.org/issues/38500>`_
-* Commit: `e6d8570 <http://git.typo3.org/FLOW3/Packages/Common.git?a=commit;h=e6d8570a6a8d2f84f3a38df7a5d95f2bfd724a2b>`_
+* Commit: `e6d8570 <http://git.typo3.org/Flow/Packages/Common.git?a=commit;h=e6d8570a6a8d2f84f3a38df7a5d95f2bfd724a2b>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Doctrine
@@ -42,13 +42,13 @@ Symfony.Component.Yaml
 No changes
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TYPO3.FLOW3
+TYPO3.Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `ba70207 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ba702074a4b7e4da2eac1686d605487721d262f8>`_
+* Commit: `ba70207 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=ba702074a4b7e4da2eac1686d605487721d262f8>`_
 
 [BUGFIX] Missing setting namespace in error message
 -----------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ When an invalid PHP binary is found, the error message hint at setting
 the path in settings misses the setting namespace TYPO3 in the beginning.
 
 * Fixes: `#39142 <http://forge.typo3.org/issues/39142>`_
-* Commit: `eec2d82 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=eec2d821e6705828a114fb91d13daa334a5d940c>`_
+* Commit: `eec2d82 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=eec2d821e6705828a114fb91d13daa334a5d940c>`_
 
 [BUGFIX] Fix broken links StandardView template
 -----------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ the path in settings misses the setting namespace TYPO3 in the beginning.
 The links pointed to URLs no longer working.
 
 * Fixes: `#39062 <http://forge.typo3.org/issues/39062>`_
-* Commit: `95a3317 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=95a33175c2f314fc7da32c1976dcbf53170b2969>`_
+* Commit: `95a3317 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=95a33175c2f314fc7da32c1976dcbf53170b2969>`_
 
 [BUGFIX] Allow PublishingConfiguration to be persisted
 -----------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ This change adds an AbstractPublishingConfiguration and the needed
 annotations, plus a schema migration.
 
 * Fixes: `#32826 <http://forge.typo3.org/issues/32826>`_
-* Commit: `1c0a3c4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1c0a3c41df4440a80dbc211f5614ef252649569f>`_
+* Commit: `1c0a3c4 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=1c0a3c41df4440a80dbc211f5614ef252649569f>`_
 
 [BUGFIX] Injections only on last level of class hierarchy
 -----------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ Property injections are no longer called for every level of your
 class hierarchy, which means they are only executed once now.
 
 * Fixes: `#31179 <http://forge.typo3.org/issues/31179>`_
-* Commit: `5a6703d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=5a6703dc5887ba89dd35406b05113fa9b98a479d>`_
+* Commit: `5a6703d <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=5a6703dc5887ba89dd35406b05113fa9b98a479d>`_
 
 [BUGFIX] Skip abstract classes in ensureAggregateRootInheritanceChainConsistency
 -----------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ ensureAggregateRootInheritanceChainConsistency() would fail, even though
 it is fine to have an abstract base class not being aggregate root.
 
 * Fixes: `#31522 <http://forge.typo3.org/issues/31522>`_
-* Commit: `d466d60 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d466d6036a9f19cd0dfbf1b7801fa90447b345e6>`_
+* Commit: `d466d60 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=d466d6036a9f19cd0dfbf1b7801fa90447b345e6>`_
 
 [BUGFIX] Fix code documentation of DatetimeParser
 -----------------------------------------------------------------------------------------
@@ -107,12 +107,12 @@ The parser code documentation would state the parse methods
 expect \\DateTime instances, but in fact strings are expected.
 
 * Fixes: `#34050 <http://forge.typo3.org/issues/34050>`_
-* Commit: `6af6a7f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=6af6a7f9372306c009b9765c17814e16bb85cad0>`_
+* Commit: `6af6a7f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=6af6a7f9372306c009b9765c17814e16bb85cad0>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `cbc3ba5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cbc3ba52c0c5336872ce56bfb401ed5f4b8b02de>`_
+* Commit: `cbc3ba5 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=cbc3ba52c0c5336872ce56bfb401ed5f4b8b02de>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Fluid
@@ -121,12 +121,12 @@ TYPO3.Fluid
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `e1bc492 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=e1bc4927b0f3566db74be3a88d20621cddd70d37>`_
+* Commit: `e1bc492 <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=e1bc4927b0f3566db74be3a88d20621cddd70d37>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `ba2f885 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=ba2f8851e3c1d474e752040c98ea30a6d3d6873d>`_
+* Commit: `ba2f885 <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=ba2f8851e3c1d474e752040c98ea30a6d3d6873d>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Kickstart
@@ -135,7 +135,7 @@ TYPO3.Kickstart
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `d6eff74 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=d6eff74f4a3b1c846573bf51e175604f2324c5fa>`_
+* Commit: `d6eff74 <http://git.typo3.org/Flow/Packages/TYPO3.Kickstart.git?a=commit;h=d6eff74f4a3b1c846573bf51e175604f2324c5fa>`_
 
 [BUGFIX] kickstart:package gives wrong hint for valid package key
 -----------------------------------------------------------------------------------------
@@ -145,12 +145,12 @@ may contain underscores. This patch corrects the respective
 messages.
 
 * Fixes: `#38999 <http://forge.typo3.org/issues/38999>`_
-* Commit: `5d05e14 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=5d05e147c6fd5fa3d679ecbed16e240e4ecbeae2>`_
+* Commit: `5d05e14 <http://git.typo3.org/Flow/Packages/TYPO3.Kickstart.git?a=commit;h=5d05e147c6fd5fa3d679ecbed16e240e4ecbeae2>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `422ff9b <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=422ff9b71a765ed3cca9ae1e2c2bb2888afaac9b>`_
+* Commit: `422ff9b <http://git.typo3.org/Flow/Packages/TYPO3.Kickstart.git?a=commit;h=422ff9b71a765ed3cca9ae1e2c2bb2888afaac9b>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Party
@@ -159,12 +159,12 @@ TYPO3.Party
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `4e9ac65 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=4e9ac659fb9833dfdb0ccfeb4cdd9e081847d220>`_
+* Commit: `4e9ac65 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=4e9ac659fb9833dfdb0ccfeb4cdd9e081847d220>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `5eb5991 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=5eb599138c8c1239e45f0f43650606200495bd54>`_
+* Commit: `5eb5991 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=5eb599138c8c1239e45f0f43650606200495bd54>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Welcome
@@ -173,10 +173,10 @@ TYPO3.Welcome
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `3f79629 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=3f79629c96fe8cec64d142c338408c0292d3cbf9>`_
+* Commit: `3f79629 <http://git.typo3.org/Flow/Packages/TYPO3.Welcome.git?a=commit;h=3f79629c96fe8cec64d142c338408c0292d3cbf9>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `624c0cc <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=624c0ccf6904238f0a787f3cb48a37e3eba37018>`_
+* Commit: `624c0cc <http://git.typo3.org/Flow/Packages/TYPO3.Welcome.git?a=commit;h=624c0ccf6904238f0a787f3cb48a37e3eba37018>`_
 

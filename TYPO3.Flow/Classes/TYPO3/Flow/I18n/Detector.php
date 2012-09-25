@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Detector class provides methods for automatic locale detection
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class Detector {
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Service
+	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
@@ -30,23 +30,23 @@ class Detector {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
-	 * @var \TYPO3\FLOW3\I18n\LocaleCollection
+	 * @var \TYPO3\Flow\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\Flow\I18n\Service $localizationService
 	 * @return void
 	 */
-	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\LocaleCollection $localeCollection
+	 * @param \TYPO3\Flow\I18n\LocaleCollection $localeCollection
 	 * @return void
 	 */
-	public function injectLocaleCollection(\TYPO3\FLOW3\I18n\LocaleCollection $localeCollection) {
+	public function injectLocaleCollection(\TYPO3\Flow\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
 	}
 
@@ -56,11 +56,11 @@ class Detector {
 	 * successful matches were done.
 	 *
 	 * @param string $acceptLanguageHeader The Accept-Language HTTP header
-	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
+	 * @return \TYPO3\Flow\I18n\Locale Best-matching existing Locale instance
 	 * @api
 	 */
 	public function detectLocaleFromHttpHeader($acceptLanguageHeader) {
-		$acceptableLanguages = \TYPO3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
+		$acceptableLanguages = \TYPO3\Flow\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
 
 		if ($acceptableLanguages === FALSE) {
 			return $this->localizationService->getConfiguration()->getDefaultLocale();
@@ -72,8 +72,8 @@ class Detector {
 			}
 
 			try {
-				$locale = new \TYPO3\FLOW3\I18n\Locale($languageIdentifier);
-			} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+				$locale = new \TYPO3\Flow\I18n\Locale($languageIdentifier);
+			} catch (\TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 				continue;
 			}
 
@@ -93,13 +93,13 @@ class Detector {
 	 * successful matches were done.
 	 *
 	 * @param string $localeIdentifier The locale identifier as used in Locale class
-	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
+	 * @return \TYPO3\Flow\I18n\Locale Best-matching existing Locale instance
 	 * @api
 	 */
 	public function detectLocaleFromLocaleTag($localeIdentifier) {
 		try {
-			return $this->detectLocaleFromTemplateLocale(new \TYPO3\FLOW3\I18n\Locale($localeIdentifier));
-		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
+			return $this->detectLocaleFromTemplateLocale(new \TYPO3\Flow\I18n\Locale($localeIdentifier));
+		} catch (\TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException $e) {
 			return $this->localizationService->getConfiguration()->getDefaultLocale();
 		}
 	}
@@ -109,11 +109,11 @@ class Detector {
 	 * provided as parameter. System default locale will be returned if no
 	 * successful matches were done.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The template Locale object
-	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
+	 * @param \TYPO3\Flow\I18n\Locale $locale The template Locale object
+	 * @return \TYPO3\Flow\I18n\Locale Best-matching existing Locale instance
 	 * @api
 	 */
-	public function detectLocaleFromTemplateLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function detectLocaleFromTemplateLocale(\TYPO3\Flow\I18n\Locale $locale) {
 		$bestMatchingLocale = $this->localeCollection->findBestMatchingLocale($locale);
 
 		if ($bestMatchingLocale !== NULL) {

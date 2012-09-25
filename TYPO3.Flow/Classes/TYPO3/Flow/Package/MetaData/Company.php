@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package\MetaData;
+namespace TYPO3\Flow\Package\MetaData;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Package\MetaData;
  * Package company party meta model
  *
  */
-class Company extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
+class Company extends \TYPO3\Flow\Package\MetaData\AbstractParty {
 
 	/**
 	 * Get the party type
@@ -24,7 +24,7 @@ class Company extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 	 * @return string Party type "company"
 	 */
 	public function getPartyType() {
-		return \TYPO3\FLOW3\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
+		return \TYPO3\Flow\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
 	}
 }
 ?>

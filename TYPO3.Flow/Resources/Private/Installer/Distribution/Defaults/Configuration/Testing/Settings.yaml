@@ -9,7 +9,7 @@
 #                                                                        #
 
 TYPO3:
-  FLOW3:
+  Flow:
     persistence:
       backendOptions:
-        dbname: 'flow3_functional_testing'
+        dbname: 'flow_functional_testing'

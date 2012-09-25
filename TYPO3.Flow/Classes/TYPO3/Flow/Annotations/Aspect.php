@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Annotations;
+namespace TYPO3\Flow\Annotations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Annotations;
 /**
  * Marks a class as an aspect.
  *
- * The class will be then by the AOP framework of FLOW3 and inspected for
+ * The class will be then by the AOP framework of Flow and inspected for
  * pointcut expressions and advice.
  *
  * @Annotation

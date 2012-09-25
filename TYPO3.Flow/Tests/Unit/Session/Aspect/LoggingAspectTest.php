@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Session\Aspect;
+namespace TYPO3\Flow\Tests\Unit\Session\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Session\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Aop\JoinPoint;
-use TYPO3\FLOW3\Session\TransientSession;
-use TYPO3\FLOW3\Session\Aspect\LoggingAspect;
+use TYPO3\Flow\Aop\JoinPoint;
+use TYPO3\Flow\Session\TransientSession;
+use TYPO3\Flow\Session\Aspect\LoggingAspect;
 
 /**
  * Testcase for the Logging Aspect implementation
  */
-class LoggingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class LoggingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Proofs correct logging behaviour
@@ -29,8 +29,8 @@ class LoggingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$testSession->start();
 		$testSessionId = $testSession->getId();
 
-		$mockJoinPoint = new JoinPoint($testSession, 'TYPO3\FLOW3\Session\TransientSession', 'destroy', array('reason' => 'session timed out'));
-		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$mockJoinPoint = new JoinPoint($testSession, 'TYPO3\Flow\Session\TransientSession', 'destroy', array('reason' => 'session timed out'));
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$mockSystemLogger
 			->expects($this->once())
 			->method('log')
@@ -51,8 +51,8 @@ class LoggingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$testSession->start();
 		$testSessionId = $testSession->getId();
 
-		$mockJoinPoint = new JoinPoint($testSession, 'TYPO3\FLOW3\Session\TransientSession', 'destroy', array());
-		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$mockJoinPoint = new JoinPoint($testSession, 'TYPO3\Flow\Session\TransientSession', 'destroy', array());
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$mockSystemLogger
 			->expects($this->once())
 			->method('log')

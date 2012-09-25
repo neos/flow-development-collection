@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Aop\Builder;
+namespace TYPO3\Flow\Tests\Unit\Aop\Builder;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Aop\Builder;
  * Testcase for the Abstract Method Interceptor Builder
  *
  */
-class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -72,7 +72,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 			),
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->will($this->returnValue($methodParameters));
 
 		$expectedCode = "
@@ -86,7 +86,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 				\$methodArguments['arg6'] = \$arg6;
 			";
 
-		$builder = $this->getAccessibleMock('TYPO3\FLOW3\Aop\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$actualCode = $builder->_call('buildMethodArgumentsArrayCode', $className, 'foo');
@@ -97,7 +97,7 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function buildMethodArgumentsArrayCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
-		$builder = $this->getAccessibleMock('TYPO3\FLOW3\Aop\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\Flow\Aop\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 
 		$actualCode = $builder->_call('buildMethodArgumentsArrayCode', NULL, 'foo');
 		$this->assertSame('', $actualCode);
@@ -151,13 +151,13 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 			),
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, '__construct')->will($this->returnValue($methodParameters));
 
-		$builder = $this->getAccessibleMock('TYPO3\FLOW3\Aop\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\Flow\Aop\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
-		$expectedCode = '$this->FLOW3_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->FLOW3_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->FLOW3_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->FLOW3_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->FLOW3_Aop_Proxy_originalConstructorArguments[\'arg5\']';
+		$expectedCode = '$this->Flow_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg5\']';
 		$actualCode = $builder->_call('buildSavedConstructorParametersCode', $className);
 
 		$this->assertSame($expectedCode, $actualCode);

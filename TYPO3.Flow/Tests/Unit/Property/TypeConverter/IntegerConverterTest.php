@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
+namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,17 +14,17 @@ namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
 /**
  * Testcase for the Integer converter
  *
- * @covers \TYPO3\FLOW3\Property\TypeConverter\IntegerConverter<extended>
+ * @covers \TYPO3\Flow\Property\TypeConverter\IntegerConverter<extended>
  */
-class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class IntegerConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\TypeConverterInterface
+	 * @var \TYPO3\Flow\Property\TypeConverterInterface
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\IntegerConverter();
+		$this->converter = new \TYPO3\Flow\Property\TypeConverter\IntegerConverter();
 	}
 
 	/**
@@ -62,7 +62,7 @@ class IntegerConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function convertFromReturnsAnErrorIfSpecifiedStringIsNotNumeric() {
-		$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $this->converter->convertFrom('not numeric', 'integer'));
+		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $this->converter->convertFrom('not numeric', 'integer'));
 	}
 
 	/**

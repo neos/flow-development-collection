@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Error;
+namespace TYPO3\Flow\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A quite exception handler which catches but ignores any exception.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class ProductionExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler {
+class ProductionExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 
 	/**
 	 * Echoes an exception for the web.
@@ -28,11 +28,11 @@ class ProductionExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHan
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		$statusCode = 500;
-		if ($exception instanceof \TYPO3\FLOW3\Exception) {
+		if ($exception instanceof \TYPO3\Flow\Exception) {
 			$statusCode = $exception->getStatusCode();
 		}
-		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
-		$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? $exception->getReferenceCode() : NULL;
+		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+		$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
 		if (!headers_sent()) {
 			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
@@ -53,7 +53,7 @@ class ProductionExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHan
 	 * @return string
 	 */
 	protected function renderStatically($statusCode, $referenceCode) {
-		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 		$referenceCodeMessage = ($referenceCode !== NULL) ? '<p>When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $referenceCode . '</p>' : '';
 
 		return '<!DOCTYPE html>

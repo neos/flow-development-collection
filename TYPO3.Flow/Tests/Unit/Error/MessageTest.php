@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\Flow\Tests\Unit\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Error;
  * Testcase for the Message object
  *
  */
-class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -23,7 +23,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function constructorSetsMessage() {
 		$someMessage = 'The message';
 		$someMessageCode = 12345;
-		$message = new \TYPO3\FLOW3\Error\Message($someMessage, $someMessageCode);
+		$message = new \TYPO3\Flow\Error\Message($someMessage, $someMessageCode);
 		$this->assertEquals($someMessage, $message->getMessage());
 	}
 
@@ -33,7 +33,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function constructorSetsArguments() {
 		$someArguments = array('Foo', 'Bar');
 		$someMessageCode = 12345;
-		$message = new \TYPO3\FLOW3\Error\Message('', $someMessageCode, $someArguments);
+		$message = new \TYPO3\Flow\Error\Message('', $someMessageCode, $someArguments);
 		$this->assertEquals($someArguments, $message->getArguments());
 	}
 
@@ -43,7 +43,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function constructorSetsCode() {
 		$someMessage = 'The message';
 		$someMessageCode = 12345;
-		$message = new \TYPO3\FLOW3\Error\Message($someMessage, $someMessageCode);
+		$message = new \TYPO3\Flow\Error\Message($someMessage, $someMessageCode);
 		$this->assertEquals($someMessageCode, $message->getCode());
 	}
 
@@ -53,7 +53,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function renderReturnsTheMessageTextIfNoArgumentsAreSpecified() {
 		$someMessage = 'The message';
 		$someMessageCode = 12345;
-		$message = new \TYPO3\FLOW3\Error\Message($someMessage, $someMessageCode);
+		$message = new \TYPO3\Flow\Error\Message($someMessage, $someMessageCode);
 		$this->assertEquals($someMessage, $message->render());
 	}
 
@@ -64,7 +64,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$someMessage = 'The message with %2$s and %1$s';
 		$someArguments = array('Foo', 'Bar');
 		$someMessageCode = 12345;
-		$message = new \TYPO3\FLOW3\Error\Message($someMessage, $someMessageCode, $someArguments);
+		$message = new \TYPO3\Flow\Error\Message($someMessage, $someMessageCode, $someArguments);
 
 		$expectedResult = 'The message with Bar and Foo';
 		$actualResult = $message->render();
@@ -78,7 +78,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$someMessage = 'The message with %2$s and %1$s';
 		$someArguments = array('Foo', 'Bar');
 		$someMessageCode = 12345;
-		$message = new \TYPO3\FLOW3\Error\Message($someMessage, $someMessageCode, $someArguments);
+		$message = new \TYPO3\Flow\Error\Message($someMessage, $someMessageCode, $someArguments);
 
 		$expectedResult = 'The message with Bar and Foo';
 		$actualResult = (string)$message;

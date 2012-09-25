@@ -4,22 +4,22 @@ Persistence
 
 .. sectionauthor:: Karsten Dambekalns <karsten@typo3.org>
 
-This chapter explains how to use object persistence in FLOW3. To do this, it focuses on
+This chapter explains how to use object persistence in TYPO3 Flow. To do this, it focuses on
 the persistence based on the *Doctrine* 2 ORM first. There is another mechanism available,
 called *Generic* persistence, which can be used to add your own persistence backends to
-FLOW3. It is explained separately later in the chapter.
+TYPO3 Flow. It is explained separately later in the chapter.
 
 .. tip::
 
 	If you have experience with Doctrine 2 already, your knowledge can
-	be applied fully in FLOW3. If you have not worked with Doctrine 2 in the
+	be applied fully in TYPO3 Flow. If you have not worked with Doctrine 2 in the
 	past, it might be helpful to learn more about it, as that might clear up
 	questions this documentation might leave open.
 
 Introductory Example
 ====================
 
-Let's look at the following example as an introduction to how FLOW3 handles persistence.
+Let's look at the following example as an introduction to how TYPO3 Flow handles persistence.
 We have a domain model of a Blog, consisting of Blog, Post, Comment and Tag objects:
 
 .. figure:: /Images/TheDefinitiveGuide/PartIII/Persistence_BlogDomainModel.png
@@ -74,14 +74,14 @@ need to write tons of XML, a few annotations in your code are enough:
 	/**
 	 * A Blog object
 	 *
-	 * @FLOW3\Entity
+	 * @Flow\Entity
 	 */
 	class Blog {
 
 	    /**
 	     * @var string
-	     * @FLOW3\Validate(type="Text")
-	     * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
+	     * @Flow\Validate(type="Text")
+	     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
 	     * @ORM\Column(length=80)
 	     */
 	    protected $title;
@@ -115,12 +115,12 @@ Let's conclude by taking a look at the BlogRepository code:
 	/**
 	 * A BlogRepository
 	 *
-	 * @FLOW3\Scope("singleton")
+	 * @Flow\Scope("singleton")
 	 */
-	class BlogRepository extends \TYPO3\FLOW3\Persistence\Repository {
+	class BlogRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
-As you can see we get away with very little code by simply extending the FLOW3-provided
+As you can see we get away with very little code by simply extending the TYPO3 Flow-provided
 repository class, and still we already have methods like ``findAll()`` and even magic
 calls like ``findOneBy<PropertyName>()`` available. If we need some specialized find
 methods in our repository, we can make use of the query building API:
@@ -130,14 +130,14 @@ methods in our repository, we can make use of the query building API:
 	/**
 	 * A PostRepository
 	 */
-	class PostRepository extends \TYPO3\FLOW3\Persistence\Repository {
+	class PostRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	    /**
 	     * Finds posts by the specified tag and blog
 	     *
 	     * @param \TYPO3\Blog\Domain\Model\Tag $tag
 	     * @param \TYPO3\Blog\Domain\Model\Blog $blog The blog the post must refer to
-	     * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The posts
+	     * @return \TYPO3\Flow\Persistence\QueryResultInterface The posts
 	     */
 	    public function findByTagAndBlog(\TYPO3\Blog\Domain\Model\Tag $tag,
 	      \TYPO3\Blog\Domain\Model\Blog $blog) {
@@ -149,18 +149,18 @@ methods in our repository, we can make use of the query building API:
 	            )
 	        )
 	        ->setOrderings(array(
-	            'date' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING)
+	            'date' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING)
 	        )
 	        ->execute();
 	    }
 	}
 
 If you like to do things the hard way you can get away with implementing
-``\TYPO3\FLOW3\Persistence\RepositoryInterface`` yourself, though that is
+``\TYPO3\Flow\Persistence\RepositoryInterface`` yourself, though that is
 something the normal developer never has to do.
 
-Basics of Persistence in FLOW3
-==============================
+Basics of Persistence in TYPO3 Flow
+===================================
 
 On the Principles of DDD
 ------------------------
@@ -207,7 +207,7 @@ changes to already persisted objects? As we have seen, those changes are only pe
 the changed object is given to ``update`` on the corresponding repository.
 
 Now, for objects that have no corresponding repository, how are changes persisted? In the
-same way you fetch those objects from their parent - by traversal. FLOW3 follows references
+same way you fetch those objects from their parent - by traversal. TYPO3 Flow follows references
 from objects managed in a repository (aggregate roots) for all persistence operations,
 unless the referenced object itself is an aggregate root.
 
@@ -218,7 +218,7 @@ root, you need to hand that aggregate root to ``update`` for the change to be pe
 Conventions for File and Class Names
 ====================================
 
-To allow FLOW3 to detect the object type a repository is responsible for, certain
+To allow TYPO3 Flow to detect the object type a repository is responsible for, certain
 conventions need to be followed:
 
 * Domain models should reside in a *Domain/Model* directory
@@ -226,9 +226,9 @@ conventions need to be followed:
   ``<ModelName>Repository``
 * Aside from ``Model`` versus ``Repository`` the qualified class class names should be the
   same for corresponding classes
-* Repositories must implement ``\TYPO3\FLOW3\Persistence\RepositoryInterface`` (which is
-  already the case when extending ``\TYPO3\FLOW3\Persistence\Repository`` or
-  ``\TYPO3\FLOW3\Persistence\Doctrine\Repository``)
+* Repositories must implement ``\TYPO3\Flow\Persistence\RepositoryInterface`` (which is
+  already the case when extending ``\TYPO3\Flow\Persistence\Repository`` or
+  ``\TYPO3\Flow\Persistence\Doctrine\Repository``)
 
 *Example: Conventions for model and repository naming*
 
@@ -252,7 +252,7 @@ Lazy Loading
 ============
 
 Lazy Loading is a feature that can be equally helpful and dangerous when it comes to
-optimizing your application. FLOW3 defaults to lazy loading when using Doctrine, i.e. it
+optimizing your application. TYPO3 Flow defaults to lazy loading when using Doctrine, i.e. it
 loads all the data in an object as soon as you fetch the object from the persistence layer
 but does not fetch data of associated objects. This avoids massive amounts of objects
 being reconstituted if you have a large object tree. Instead it defers property thawing in
@@ -267,22 +267,22 @@ operations in DQL or specifying the fetch mode in the mapping configuration.
 Doctrine Persistence
 ======================
 
-Doctrine 2 ORM is used by default in FLOW3. Aside from very few internal changes it
+Doctrine 2 ORM is used by default in TYPO3 Flow. Aside from very few internal changes it
 consists of the regular Doctrine ORM, DBAL, Migrations and Common libraries and is tied
-into FLOW3 by some glue code and (most important) a custom annotation driver for metadata
+into TYPO3 Flow by some glue code and (most important) a custom annotation driver for metadata
 consumption.
 
 Requirements and restrictions
 -----------------------------
 
-There are some rules imposed by Doctrine (and/or FLOW3) you need to follow for your
+There are some rules imposed by Doctrine (and/or TYPO3 Flow) you need to follow for your
 entities (and value objects). Most of them are good practice anyway, and thus are not
 really restrictions.
 
 * Entity classes must not be ``final`` or contain ``final`` methods.
 * Persistent properties of any entity class should always be ``protected``, not ``public``,
   otherwise lazy-loading might not work as expected.
-* Implementing ``__clone()`` or ``__wakeup()`` is not a problem with FLOW3, as the
+* Implementing ``__clone()`` or ``__wakeup()`` is not a problem with TYPO3 Flow, as the
   instances always have an identity. If using your own identity properties, you must
   wrap any code you intend to run in those methods in an identity check.
 * Entity classes in a class hierarchy that inherit directly or indirectly from one another
@@ -306,7 +306,7 @@ Metadata mapping
 
 The Doctrine 2 ORM needs to know a lot about your code to be able to persist it. Natively
 Doctrine 2 supports the use of annotations, XML, YAML and PHP to supply that information.
-In FLOW3, only annotations are supported, as this aligns with the philosophy behind the
+In TYPO3 Flow, only annotations are supported, as this aligns with the philosophy behind the
 framework.
 
 Annotations for the Doctrine Persistence
@@ -370,10 +370,10 @@ entities for the time being, with some differences:
 * Upon persisting Value Objects already present in the underlying database will be
   deduplicated.
 
-Differences between FLOW3 and plain Doctrine
---------------------------------------------
+Differences between TYPO3 Flow and plain Doctrine
+-------------------------------------------------
 
-The custom annotation driver used by FLOW3 to collect mapping information from the code
+The custom annotation driver used by TYPO3 Flow to collect mapping information from the code
 makes a number of things easier, compared to plain Doctrine 2.
 
 ``Entity``
@@ -405,7 +405,7 @@ makes a number of things easier, compared to plain Doctrine 2.
 
 ``JoinTable``, ``JoinColumn``
   Can usually be left out completely, the needed information is gathered automatically
-  But *when using a self-referencing association*, you will need to help FLOW3 a
+  But *when using a self-referencing association*, you will need to help TYPO3 Flow a
   little, so it doesn't generate a join table with only one column.
 
   *Example: JoinTable annotation for a self-referencing annotation* ::
@@ -434,14 +434,14 @@ we feel the gain when developing outweighs this easily.
 	of database tables to models.
 
 Here is an example to illustrate the things you can omit, due to the automatisms in the
-FLOW3 annotation driver.
+TYPO3 Flow annotation driver.
 
-*Example: Annotation equivalents in FLOW3 and plain Doctrine 2*
+*Example: Annotation equivalents in TYPO3 Flow and plain Doctrine 2*
 
-An entity with only the annotations needed in FLOW3::
+An entity with only the annotations needed in TYPO3 Flow::
 
 	/**
-	 * @FLOW3\Entity
+	 * @Flow\Entity
 	 */
 	class Post {
 
@@ -487,14 +487,14 @@ metadata::
 	  /**
 	   * @var string
 	   * @ORM\Id
-	   * @ORM\Column(name="flow3_persistence_identifier", type="string", length=40)
+	   * @ORM\Column(name="persistence_object_identifier", type="string", length=40)
 	   */
-	  protected $FLOW3_Persistence_Identifier;
+	  protected $Persistence_Object_Identifier;
 
 	  /**
 	   * @var \TYPO3\Blog\Domain\Model\Blog
 	   * @ORM\ManyToOne(targetEntity="TYPO3\Blog\Domain\Model\Blog", inversedBy="posts")
-	   * @ORM\JoinColumn(name="blog_blog", referencedColumnName="flow3_persistence_identifier")
+	   * @ORM\JoinColumn(name="blog_blog", referencedColumnName="persistence_object_identifier")
 	   */
 	  protected $blog;
 
@@ -529,7 +529,7 @@ Schema management
 
 Doctrine offers a *Migrations* system as an add-on part of its DBAL for versioning of
 database schemas and easy deployment of changes to them. There exist a number of commands
-in the FLOW3 CLI toolchain to create and deploy migrations.
+in the TYPO3 Flow CLI toolchain to create and deploy migrations.
 
 A Migration is a set of commands that bring the schema from one version to the next. In
 the simplest form that means creating a new table, but it can be as complex as renaming a
@@ -548,7 +548,7 @@ To learn about the current schema and migration status, run the following comman
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrationstatus
+	$ ./flow flow:doctrine:migrationstatus
 
 This will produce output similar to the following, obviously varying depending on the
 actual state of schema and active packages:
@@ -560,10 +560,10 @@ actual state of schema and active packages:
 	 == Configuration
 	    >> Name:                                               Doctrine Database Migrations
 	    >> Database Driver:                                    pdo_mysql
-	    >> Database Name:                                      flow3
+	    >> Database Name:                                      flow
 	    >> Configuration Source:                               manually configured
-	    >> Version Table Name:                                 flow3_doctrine_migrationstatus
-	    >> Migrations Namespace:                               TYPO3\FLOW3\Persistence\Doctrine\Migrations
+	    >> Version Table Name:                                 flow_doctrine_migrationstatus
+	    >> Migrations Namespace:                               TYPO3\Flow\Persistence\Doctrine\Migrations
 	    >> Migrations Target Directory:                        /path/to/Data/DoctrineMigrations
 	    >> Current Version:                                    0
 	    >> Latest Version:                                     2011-06-13 22:38:37 (20110613223837)
@@ -586,7 +586,7 @@ command:
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrate
+	$ ./flow flow:doctrine:migrate
 
 This will result in output that looks similar to the following:
 
@@ -596,10 +596,10 @@ This will result in output that looks similar to the following:
 
 	  ++ migrating 20110613223837
 
-	     -> CREATE TABLE flow3_resource_resourcepointer (hash VARCHAR(255) NOT NULL, ⏎
+	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, ⏎
 	     PRIMARY KEY(hash)) ENGINE = InnoDB
-	     -> ALTER TABLE flow3_resource_resource ADD FOREIGN KEY ⏎
-	     (flow3_resource_resourcepointer) REFERENCES flow3_resource_resourcepointer(hash)
+	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY ⏎
+	     (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
 
 	  ++ migrated (1.31s)
 
@@ -615,7 +615,7 @@ and a summary of the deployed migrations at the and. You can do a dry run using:
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrate --dry-run
+	$ ./flow flow:doctrine:migrate --dry-run
 
 This will result in output that looks similar to the following:
 
@@ -625,10 +625,10 @@ This will result in output that looks similar to the following:
 
 	  ++ migrating 20110613223837
 
-	     -> CREATE TABLE flow3_resource_resourcepointer (hash VARCHAR(255) NOT NULL, ⏎
+	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, ⏎
 	     PRIMARY KEY(hash)) ENGINE = InnoDB
-	     -> ALTER TABLE flow3_resource_resource ADD FOREIGN KEY ⏎
-	     (flow3_resource_resourcepointer) REFERENCES flow3_resource_resourcepointer(hash)
+	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY ⏎
+	     (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
 
 	  ++ migrated (0.09s)
 
@@ -644,7 +644,7 @@ you can write to a file:
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrate --path <where/to/write/the.sql>
+	$ ./flow flow:doctrine:migrate --path <where/to/write/the.sql>
 
 This will result in output that looks similar to the following:
 
@@ -654,10 +654,10 @@ This will result in output that looks similar to the following:
 
 .. important::
 
-	When actually making manual changes, you need to keep the ``flow3_doctrine_migrationstatus``
-	table updated as well! This is done with the ``flow3:doctrine:migrationversion`` command.
+	When actually making manual changes, you need to keep the ``flow_doctrine_migrationstatus``
+	table updated as well! This is done with the ``flow:doctrine:migrationversion`` command.
 	It takes a ``--version`` option together with either an ``--add`` or ``--delete`` flag to
-	add or remove the given version in the ``flow3_doctrine_migrationstatus`` table. It does
+	add or remove the given version in the ``flow_doctrine_migrationstatus`` table. It does
 	not execute any migration code but simply marks the given version as migrated or not.
 
 Reverting migrations
@@ -669,7 +669,7 @@ completely:
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrate --version <version> --dry-run
+	$ ./flow flow:doctrine:migrate --version <version> --dry-run
 
 This will result in output that looks similar to the following:
 
@@ -679,12 +679,12 @@ This will result in output that looks similar to the following:
 
 	  -- reverting 20110613223837
 
-	     -> ALTER TABLE flow3_resource_resource DROP FOREIGN KEY
-	     -> DROP TABLE flow3_resource_resourcepointer
-	     -> DROP TABLE flow3_resource_resource
-	     -> DROP TABLE flow3_security_account
-	     -> DROP TABLE flow3_resource_securitypublishingconfiguration
-	     -> DROP TABLE flow3_policy_role
+	     -> ALTER TABLE flow_resource_resource DROP FOREIGN KEY
+	     -> DROP TABLE flow_resource_resourcepointer
+	     -> DROP TABLE flow_resource_resource
+	     -> DROP TABLE flow_security_account
+	     -> DROP TABLE flow_resource_securitypublishingconfiguration
+	     -> DROP TABLE flow_policy_role
 
 	  -- reverted (0.05s)
 
@@ -701,7 +701,7 @@ Sometimes you need to deploy or revert a specific migration, this is possible as
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrationexecute --version <20110613223837> --direction <direction> --dry-run
+	$ ./flow flow:doctrine:migrationexecute --version <20110613223837> --direction <direction> --dry-run
 
 This will result in output that looks similar to the following:
 
@@ -709,19 +709,19 @@ This will result in output that looks similar to the following:
 
 	  -- reverting 20110613223837
 
-	     -> ALTER TABLE flow3_resource_resource DROP FOREIGN KEY
-	     -> DROP TABLE flow3_resource_resourcepointer
-	     -> DROP TABLE flow3_resource_resource
-	     -> DROP TABLE flow3_security_account
-	     -> DROP TABLE flow3_resource_securitypublishingconfiguration
-	     -> DROP TABLE flow3_policy_role
+	     -> ALTER TABLE flow_resource_resource DROP FOREIGN KEY
+	     -> DROP TABLE flow_resource_resourcepointer
+	     -> DROP TABLE flow_resource_resource
+	     -> DROP TABLE flow_security_account
+	     -> DROP TABLE flow_resource_securitypublishingconfiguration
+	     -> DROP TABLE flow_policy_role
 
 	  -- reverted (0.41s)
 
 As you can see you need to specify the migration ``--version`` you want to execute. If you
 want to revert a migration, you need to give the ``--direction`` as shown above, the
 default is to migrate "up". The ``--dry-run`` and and ``--output`` options work as with
-``flow3:doctrine:migrate``.
+``flow:doctrine:migrate``.
 
 Creating migrations
 -------------------
@@ -732,7 +732,7 @@ make sure you'll need to practice... The command to scaffold a migration is the 
 
 .. code-block:: bash
 
-	$ ./flow3 flow3:doctrine:migrationgenerate
+	$ ./flow flow:doctrine:migrationgenerate
 
 This will result in output that looks similar to the following:
 
@@ -745,7 +745,7 @@ detected between the current schema and the current models in the system:
 
 *Example: Migration generated based on schema/model differences* ::
 
-	namespace TYPO3\FLOW3\Persistence\Doctrine\Migrations;
+	namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
 	use Doctrine\DBAL\Migrations\AbstractMigration,
 	  Doctrine\DBAL\Schema\Schema;
@@ -803,12 +803,12 @@ there might be situations where their use is not possible (e.g. no migrations ar
 available yet for the RDBMS you are using) or not wanted (because of, um… something).
 The there are two simple commands you can use to create and update your schema.
 
-To create the needed tables you can call ``./flow3 flow3:doctrine:create`` and it will
+To create the needed tables you can call ``./flow flow:doctrine:create`` and it will
 create all needed tables. If any target table already exists, an error will be the
 result.
 
 To update an existing schema to match with the current mapping metadata (i.e. the current
-model structure), use ``./flow3 flow3:doctrine:update`` to have missing items (fields,
+model structure), use ``./flow flow:doctrine:update`` to have missing items (fields,
 indexes, ...) added. There is a flag to disable the safe mode used by default. In safe mode,
 Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 
@@ -823,13 +823,13 @@ Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 .. tip::
 
 	If you created or updated the schema this way, you should afterwards execute
-	``flow3:doctrine:migrationversion --version all --add`` to avoid migration
+	``flow:doctrine:migrationversion --version all --add`` to avoid migration
 	errors later.
 
 Generic Persistence
 ===================
 
-What is now called *Generic* Persistence, used to be the only persistence layer in FLOW3.
+What is now called *Generic* Persistence, used to be the only persistence layer in TYPO3 Flow.
 Back in those days there was no ORM available that fit our needs. That being said, with
 the advent of Doctrine 2, your best bet as a PHP developer is to use that instead of any
 home-brewn ORM.
@@ -842,24 +842,24 @@ target a RDBMS is still possible, but probably only useful for rare edge cases.
 Switching to Generic Persistence
 --------------------------------
 
-To switch to Generic persistence you need to configure FLOW3 like this.
+To switch to Generic persistence you need to configure TYPO3 Flow like this.
 
 *Objects.yaml*:
 
 .. code-block:: yaml
 
-	TYPO3\FLOW3\Persistence\PersistenceManagerInterface:
-	  className: 'TYPO3\FLOW3\Persistence\Generic\PersistenceManager'
+	TYPO3\Flow\Persistence\PersistenceManagerInterface:
+	  className: 'TYPO3\Flow\Persistence\Generic\PersistenceManager'
 
-	TYPO3\FLOW3\Persistence\QueryResultInterface:
+	TYPO3\Flow\Persistence\QueryResultInterface:
 	  scope: prototype
-	  className: 'TYPO3\FLOW3\Persistence\Generic\QueryResult'
+	  className: 'TYPO3\Flow\Persistence\Generic\QueryResult'
 
 *Settings.yaml*:
 
 .. code-block:: yaml
 
-	FLOW3:
+	Flow:
 	  persistence:
 	    doctrine:
 	      enable: FALSE
@@ -872,7 +872,7 @@ Metadata mapping
 ----------------
 
 The persistence layer needs to know a lot about your code to be able to persist it. In
-FLOW3, the needed data is given in the source code through annotations, as this aligns
+TYPO3 Flow, the needed data is given in the source code through annotations, as this aligns
 with the philosophy behind the framework.
 
 Annotations for the Generic Persistence
@@ -963,13 +963,13 @@ problems and develop more efficient client code.
 Persisting a Domain Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After an object has been added to a repository it will be seen when FLOW3 calls
+After an object has been added to a repository it will be seen when TYPO3 Flow calls
 ``persistAll()`` at the end of a script run. Internally all instances implementing the
-``\TYPO3\FLOW3\Persistence\RepositoryInterface`` will be fetched and asked for the objects
+``\TYPO3\Flow\Persistence\RepositoryInterface`` will be fetched and asked for the objects
 they hold. Those will then be handed to the persistence backend in use and processed by
 it.
 
-FLOW3 defines interfaces for persistence backends and queries, the details of how objects
+TYPO3 Flow defines interfaces for persistence backends and queries, the details of how objects
 are persisted and queried are up to the persistence backend implementation. Have a look at
 the documentation of the respective package for more information. The following diagram
 shows (most of) the way an object takes from creation until it is persisted when using the

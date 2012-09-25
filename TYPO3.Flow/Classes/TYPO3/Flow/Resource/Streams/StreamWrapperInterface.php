@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource\Streams;
+namespace TYPO3\Flow\Resource\Streams;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -26,7 +26,7 @@ interface StreamWrapperInterface {
 
 	/**
 	 * Returns the scheme ("protocol") this wrapper handles.
-	 * 
+	 *
 	 * @return string
 	 * @api
 	 */

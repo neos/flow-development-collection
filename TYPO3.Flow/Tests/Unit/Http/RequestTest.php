@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Http;
+namespace TYPO3\Flow\Tests\Unit\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Uri;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
 use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the Http Request class
  */
-class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -29,11 +29,11 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$_COOKIE = array();
 		$_FILES = array();
 		$_SERVER = array (
-			'REDIRECT_FLOW3_CONTEXT' => 'Development',
-			'REDIRECT_FLOW3_REWRITEURLS' => '1',
+			'REDIRECT_FLOW_CONTEXT' => 'Development',
+			'REDIRECT_FLOW_REWRITEURLS' => '1',
 			'REDIRECT_STATUS' => '200',
-			'FLOW3_CONTEXT' => 'Development',
-			'FLOW3_REWRITEURLS' => '1',
+			'FLOW_CONTEXT' => 'Development',
+			'FLOW_REWRITEURLS' => '1',
 			'HTTP_HOST' => 'dev.blog.rob',
 			'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7',
 			'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -47,9 +47,9 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'SERVER_ADDR' => '127.0.0.1',
 			'SERVER_PORT' => '80',
 			'REMOTE_ADDR' => '127.0.0.1',
-			'DOCUMENT_ROOT' => '/opt/local/apache2/htdocs/Development/FLOW3/Applications/Blog/Web/',
+			'DOCUMENT_ROOT' => '/opt/local/apache2/htdocs/Development/Flow/Applications/Blog/Web/',
 			'SERVER_ADMIN' => 'rl@robertlemke.de',
-			'SCRIPT_FILENAME' => '/opt/local/apache2/htdocs/Development/FLOW3/Applications/Blog/Web/index.php',
+			'SCRIPT_FILENAME' => '/opt/local/apache2/htdocs/Development/Flow/Applications/Blog/Web/index.php',
 			'REMOTE_PORT' => '51439',
 			'REDIRECT_QUERY_STRING' => 'getKey1=getValue1&getKey2=getValue2',
 			'REDIRECT_URL' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae',
@@ -115,18 +115,18 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createUsesReasonableDefaultsForCreatingANewRequest() {
-		$uri = new Uri('http://flow3.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+		$uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
 		$request = Request::create($uri);
 
 		$this->assertEquals('GET', $request->getMethod());
 		$this->assertEquals($uri, $request->getUri());
 
-		$uri = new Uri('https://flow3.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+		$uri = new Uri('https://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
 		$request = Request::create($uri);
 
 		$this->assertEquals($uri, $request->getUri());
 
-		$uri = new Uri('http://flow3.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+		$uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
 		$request = Request::create($uri, 'POST');
 
 		$this->assertEquals('POST', $request->getMethod());
@@ -138,7 +138,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createRejectsInvalidMethods() {
-		$uri = new Uri('http://flow3.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+		$uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
 		Request::create($uri, 'STEAL');
 	}
 
@@ -149,7 +149,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createSetsTheContentTypeHeaderToFormUrlEncodedByDefaultIfRequestMethodSuggestsIt() {
-		$uri = new Uri('http://flow3.typo3.org/foo');
+		$uri = new Uri('http://flow.typo3.org/foo');
 		$request = Request::create($uri, 'POST');
 
 		$this->assertEquals('application/x-www-form-urlencoded', $request->getHeaders()->get('Content-Type'));
@@ -159,11 +159,11 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createSubRequestCreatesAnMvcRequestConnectedToTheParentRequest() {
-		$uri = new Uri('http://flow3.typo3.org');
+		$uri = new Uri('http://flow.typo3.org');
 		$request = Request::create($uri);
 
 		$subRequest = $request->createActionRequest();
-		$this->assertInstanceOf('TYPO3\FLOW3\Mvc\ActionRequest', $subRequest);
+		$this->assertInstanceOf('TYPO3\Flow\Mvc\ActionRequest', $subRequest);
 		$this->assertSame($request, $subRequest->getParentRequest());
 	}
 
@@ -171,7 +171,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createSubRequestMapsTheArgumentsOfTheHttpRequestToTheNewActionRequest() {
-		$uri = new Uri('http://flow3.typo3.org/page.html?foo=bar&__baz=quux');
+		$uri = new Uri('http://flow.typo3.org/page.html?foo=bar&__baz=quux');
 		$request = Request::create($uri);
 
 		$subRequest = $request->createActionRequest();
@@ -198,7 +198,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function setMethodDoesNotAcceptInvalidRequestMethods($invalidMethod) {
-		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$request = Request::create(new Uri('http://flow.typo3.org'));
 		$request->setMethod($invalidMethod);
 	}
 
@@ -220,7 +220,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider validMethods
 	 */
 	public function setMethodAcceptsValidRequestMethods($validMethod) {
-		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$request = Request::create(new Uri('http://flow.typo3.org'));
 		$request->setMethod($validMethod);
 		$this->assertSame($validMethod, $request->getMethod());
 	}
@@ -253,7 +253,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$expectedContent = 'userid=joe&password=joh316';
 		file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$request = Request::create(new Uri('http://flow.typo3.org'));
 		$this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
 		$actualContent = $request->getContent();
@@ -269,7 +269,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$expectedContent = 'userid=joe&password=joh316';
 		file_put_contents('vfs://Foo/content.txt', $expectedContent);
 
-		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$request = Request::create(new Uri('http://flow.typo3.org'));
 		$this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
 		$resource = $request->getContent(TRUE);
@@ -280,14 +280,14 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Http\Exception
+	 * @expectedException \TYPO3\Flow\Http\Exception
 	 */
 	public function getContentThrowsAnExceptionOnTryingToRetrieveContentAsResourceAlthoughItHasBeenRetrievedPreviously() {
 		vfsStream::setup('Foo');
 
 		file_put_contents('vfs://Foo/content.txt', 'xy');
 
-		$request = Request::create(new Uri('http://flow3.typo3.org'));
+		$request = Request::create(new Uri('http://flow.typo3.org'));
 		$this->inject($request, 'inputStreamUri', 'vfs://Foo/content.txt');
 
 		$request->getContent(TRUE);
@@ -321,19 +321,19 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getClientIpAddressReturnsTheIpAddressDerivedFromSeveralServerEnvironmentVariables(array $serverEnvironment, $expectedIpAddress) {
 		$defaultServerEnvironment = array(
-			'HTTP_USER_AGENT' => 'FLOW3/' . FLOW3_VERSION_BRANCH . '.x',
-			'HTTP_HOST' => 'flow3.typo3.org',
+			'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
+			'HTTP_HOST' => 'flow.typo3.org',
 			'SERVER_NAME' => 'typo3.org',
 			'SERVER_ADDR' => '217.29.36.55',
 			'SERVER_PORT' => 80,
 			'REMOTE_ADDR' => '17.172.224.47',
-			'SCRIPT_FILENAME' => FLOW3_PATH_WEB . 'index.php',
+			'SCRIPT_FILENAME' => FLOW_PATH_WEB . 'index.php',
 			'SERVER_PROTOCOL' => 'HTTP/1.1',
 			'SCRIPT_NAME' => '/index.php',
 			'PHP_SELF' => '/index.php',
 		);
 
-		$request = Request::create(new Uri('http://flow3.typo3.org'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
+		$request = Request::create(new Uri('http://flow.typo3.org'), 'GET', array(), array(), array_replace($defaultServerEnvironment, $serverEnvironment));
 		$this->assertSame($expectedIpAddress, $request->getClientIpAddress());
 	}
 
@@ -377,7 +377,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('application/json; charset=UTF-8', array('text/html', 'application/json'), 'application/json'),
 			array(NULL, array('text/plain'), 'text/plain'),
 			array('', array('text/html', 'application/json'), 'text/html'),
-			array('application/flow3, application/json', array('text/html', 'application/json'), 'application/json'),
+			array('application/flow, application/json', array('text/html', 'application/json'), 'application/json'),
 		);
 	}
 
@@ -830,7 +830,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
 		$result = $request->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);
@@ -889,7 +889,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			),
 		);
 
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
 		$result = $request->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);
@@ -918,7 +918,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider qualityValues
 	 */
 	public function parseContentNegotiationQualityValuesReturnsNormalizedAndOrderListOfPreferredValues($rawValues, $expectedValues) {
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
 		$actualValues = $request->_call('parseContentNegotiationQualityValues', $rawValues);
 		$this->assertSame($expectedValues, $actualValues);
 	}
@@ -930,7 +930,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		return array(
 			array('text/html', array('type' => 'text', 'subtype' => 'html', 'parameters' => array())),
 			array('application/json; charset=UTF-8', array('type' => 'application', 'subtype' => 'json', 'parameters' => array('charset' => 'UTF-8'))),
-			array('application/vnd.org.flow3.coffee+json; kind =Arabica;weight= 15g;  sugar =none', array('type' => 'application', 'subtype' => 'vnd.org.flow3.coffee+json', 'parameters' => array('kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none'))),
+			array('application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', array('type' => 'application', 'subtype' => 'vnd.org.flow.coffee+json', 'parameters' => array('kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none'))),
 		);
 	}
 
@@ -939,7 +939,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider mediaTypesAndParsedPieces
 	 */
 	public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType($mediaType, $expectedPieces) {
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
 		$actualPieces = $request->_call('parseMediaType', $mediaType);
 		$this->assertSame($expectedPieces, $actualPieces);
 	}
@@ -968,7 +968,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider mediaRangesAndMatchingOrNonMatchingMediaTypes
 	 */
 	public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType($mediaRange, $mediaType, $expectedResult) {
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
 		$this->assertSame($expectedResult, $request->_call('mediaRangeMatches', $mediaRange, $mediaType));
 	}
 
@@ -979,7 +979,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		return array(
 			array('text/html', 'text/html'),
 			array('application/json; charset=UTF-8', 'application/json'),
-			array('application/vnd.org.flow3.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow3.coffee+json'),
+			array('application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow.coffee+json'),
 			array('invalid', NULL),
 			array('invalid/', NULL),
 		);
@@ -990,7 +990,7 @@ class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider mediaTypesWithAndWithoutParameters
 	 */
 	public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters($mediaType, $trimmedMediaType) {
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Http\Request', array('dummy'), array(), '', FALSE);
+		$request = $this->getAccessibleMock('TYPO3\Flow\Http\Request', array('dummy'), array(), '', FALSE);
 		$this->assertSame($trimmedMediaType, $request->_call('trimMediaType', $mediaType));
 	}
 

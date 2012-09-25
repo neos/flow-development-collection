@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
+namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the APC cache backend
  *
  */
-class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $mockEnvironment;
 
@@ -37,15 +37,15 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		if (ini_get('apc.slam_defense') == 1) {
 			$this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
 		}
-		$this->mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Cache\Exception
+	 * @expectedException \TYPO3\Flow\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
-		$backend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend(new ApplicationContext('Testing'));
+		$backend = new \TYPO3\Flow\Cache\Backend\ApcBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($this->mockEnvironment);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
@@ -196,15 +196,15 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushRemovesOnlyOwnEntries() {
-		$thisCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thisCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-		$thisBackend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend('Testing');
+		$thisBackend = new \TYPO3\Flow\Cache\Backend\ApcBackend('Testing');
 		$thisBackend->injectEnvironment($this->mockEnvironment);
 		$thisBackend->setCache($thisCache);
 
-		$thatCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thatCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-		$thatBackend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend('Testing');
+		$thatBackend = new \TYPO3\Flow\Cache\Backend\ApcBackend('Testing');
 		$thatBackend->injectEnvironment($this->mockEnvironment);
 		$thatBackend->setCache($thatCache);
 
@@ -235,11 +235,11 @@ class ApcBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up the APC backend used for testing
 	 *
-	 * @return \TYPO3\FLOW3\Cache\Backend\ApcBackend
+	 * @return \TYPO3\Flow\Cache\Backend\ApcBackend
 	 */
 	protected function setUpBackend() {
-		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \TYPO3\FLOW3\Cache\Backend\ApcBackend(new ApplicationContext('Testing'));
+		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$backend = new \TYPO3\Flow\Cache\Backend\ApcBackend(new ApplicationContext('Testing'));
 		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->setCache($cache);
 		return $backend;

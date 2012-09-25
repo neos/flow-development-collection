@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Backend;
+namespace TYPO3\Flow\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -142,13 +142,13 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	/**
 	 * Construct this backend
 	 *
-	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
+	 * @param \TYPO3\Flow\Core\ApplicationContext $context Flow's application context
 	 * @param array $options Configuration options
-	 * @throws \TYPO3\FLOW3\Cache\Exception if php redis module is not loaded
+	 * @throws \TYPO3\Flow\Cache\Exception if php redis module is not loaded
 	 */
-	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
+	public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array()) {
 		if (!extension_loaded('redis')) {
-			throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "redis" must be installed and loaded in order to use the phpredis redis backend.', 1279462933);
+			throw new \TYPO3\Flow\Cache\Exception('The PHP extension "redis" must be installed and loaded in order to use the phpredis redis backend.', 1279462933);
 		}
 
 		parent::__construct($context, $options);
@@ -157,7 +157,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	/**
 	 * Initializes the redis backend
 	 *
-	 * @throws \TYPO3\FLOW3\Cache\Exception if access to redis with password is denied or if database selection fails
+	 * @throws \TYPO3\Flow\Cache\Exception if access to redis with password is denied or if database selection fails
 	 * @return void
 	 */
 	public function initializeObject() {
@@ -166,21 +166,21 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 		try {
 			$this->connected = $this->redis->connect($this->hostname, $this->port);
 		} catch (\Exception $e) {
-			throw new \TYPO3\FLOW3\Cache\Exception('Could not connect to redis server.', 1294734537, $e);
+			throw new \TYPO3\Flow\Cache\Exception('Could not connect to redis server.', 1294734537, $e);
 		}
 
 		if ($this->connected) {
 			if (strlen($this->password)) {
 				$success = $this->redis->auth($this->password);
 				if (!$success) {
-					throw new \TYPO3\FLOW3\Cache\Exception('The given password was not accepted by the redis server.', 1279765134);
+					throw new \TYPO3\Flow\Cache\Exception('The given password was not accepted by the redis server.', 1279765134);
 				}
 			}
 
 			if ($this->database > 0) {
 				$success = $this->redis->select($this->database);
 				if (!$success) {
-					throw new \TYPO3\FLOW3\Cache\Exception('The given database "' . $this->database . '" could not be selected.', 1279765144);
+					throw new \TYPO3\Flow\Cache\Exception('The given database "' . $this->database . '" could not be selected.', 1279765144);
 				}
 			}
 		}
@@ -286,7 +286,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
 	 * @throws \InvalidArgumentException if identifier is not valid
-	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if data is not a string
+	 * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException if data is not a string
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
@@ -294,7 +294,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 			throw new \InvalidArgumentException('The specified identifier is of type "' . gettype($entryIdentifier) . '" but a string is expected.', 1279470252);
 		}
 		if (!is_string($data)) {
-			throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1279469941);
+			throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1279469941);
 		}
 
 		$lifetime = $lifetime === NULL ? $this->defaultLifetime : $lifetime;

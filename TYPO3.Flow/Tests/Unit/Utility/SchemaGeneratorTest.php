@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\Flow\Tests\Unit\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,15 +15,15 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  * Testcase for the Schema Generator
  *
  */
-class SchemaGeneratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\SchemaGenerator
+	 * @var \TYPO3\Flow\Utility\SchemaGenerator
 	 */
 	private $configurationGenerator;
 
 	public function setUp() {
-		$this->configurationGenerator = $this->getAccessibleMock('TYPO3\FLOW3\Utility\SchemaGenerator', array('getError'));
+		$this->configurationGenerator = $this->getAccessibleMock('TYPO3\Flow\Utility\SchemaGenerator', array('getError'));
 	}
 
 	/**

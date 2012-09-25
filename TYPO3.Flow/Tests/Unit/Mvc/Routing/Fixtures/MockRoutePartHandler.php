@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing\Fixtures;
+namespace TYPO3\Flow\Mvc\Routing\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Mvc\Routing\Fixtures;
  * A mock RoutePartHandler
  *
  */
-class MockRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
+class MockRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 
 	protected function matchValue($value) {
 		$this->value = '_match_invoked_';

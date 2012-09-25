@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Represents a Command
@@ -35,13 +35,13 @@ class Command {
 	protected $commandIdentifier;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\MethodReflection
+	 * @var \TYPO3\Flow\Reflection\MethodReflection
 	 */
 	protected $commandMethodReflection;
 
 	/**
 	 * Reflection service
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	private $reflectionService;
 
@@ -65,9 +65,9 @@ class Command {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService Reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService Reflection service
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -134,11 +134,11 @@ class Command {
 	}
 
 	/**
-	 * Returns an array of \TYPO3\FLOW3\Cli\CommandArgumentDefinition that contains
+	 * Returns an array of \TYPO3\Flow\Cli\CommandArgumentDefinition that contains
 	 * information about required/optional arguments of this command.
 	 * If the command does not expect any arguments, an empty array is returned
 	 *
-	 * @return array<\TYPO3\FLOW3\Cli\CommandArgumentDefinition>
+	 * @return array<\TYPO3\Flow\Cli\CommandArgumentDefinition>
 	 */
 	public function getArgumentDefinitions() {
 		if (!$this->hasArguments()) {
@@ -175,7 +175,7 @@ class Command {
 	/**
 	 * Tells if this command flushes all caches and thus needs special attention in the interactive shell.
 	 *
-	 * Note that neither this method nor the @FLOW3\FlushesCaches annotation is currently part of the official API.
+	 * Note that neither this method nor the @Flow\FlushesCaches annotation is currently part of the official API.
 	 *
 	 * @return boolean
 	 */
@@ -205,11 +205,11 @@ class Command {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Reflection\MethodReflection
+	 * @return \TYPO3\Flow\Reflection\MethodReflection
 	 */
 	protected function getCommandMethodReflection() {
 		if ($this->commandMethodReflection === NULL) {
-			$this->commandMethodReflection = new \TYPO3\FLOW3\Reflection\MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');
+			$this->commandMethodReflection = new \TYPO3\Flow\Reflection\MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');
 		}
 		return $this->commandMethodReflection;
 	}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Package;
  *                                                                        */
 
 /**
- * Interface for a FLOW3 Package class
+ * Interface for a Flow Package class
  *
  * @api
  */
@@ -31,7 +31,7 @@ interface PackageInterface {
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return \TYPO3\FLOW3\Package\MetaData
+	 * @return \TYPO3\Flow\Package\MetaData
 	 */
 	public function getPackageMetaData();
 
@@ -143,7 +143,7 @@ interface PackageInterface {
 	/**
 	 * Returns the available documentations for this package
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package\Documentation
+	 * @return array Array of \TYPO3\Flow\Package\Documentation
 	 * @api
 	 */
 	public function getPackageDocumentations();

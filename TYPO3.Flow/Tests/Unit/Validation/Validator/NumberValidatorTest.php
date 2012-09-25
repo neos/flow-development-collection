@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,12 +17,12 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the number validator
  *
  */
-class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\NumberValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\NumberValidator';
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
 	protected $sampleLocale;
 
@@ -33,9 +33,9 @@ class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
+		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
 
-		$this->mockNumberParser = $this->getMock('TYPO3\FLOW3\I18n\Parser\NumberParser');
+		$this->mockNumberParser = $this->getMock('TYPO3\Flow\I18n\Parser\NumberParser');
 
 	}
 
@@ -75,7 +75,7 @@ class NumberValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\A
 
 		$this->mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
 
-		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
+		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
 		$this->validator->injectNumberParser($this->mockNumberParser);
 
 		$this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));

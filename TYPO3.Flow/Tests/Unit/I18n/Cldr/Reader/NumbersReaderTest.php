@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr\Reader;
+namespace TYPO3\Flow\Tests\Unit\I18n\Cldr\Reader;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,12 +15,12 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr\Reader;
  * Testcase for the NumbersReader
  *
  */
-class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class NumbersReaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Dummy locale used in methods where locale is needed.
 	 *
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
 	protected $sampleLocale;
 
@@ -53,20 +53,20 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
+		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en');
 	}
 
 	/**
 	 * @test
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
-		$mockModel = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrModel', array(), array(array()));
+		$mockModel = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrModel', array(), array(array()));
 		$mockModel->expects($this->once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->will($this->returnValue('mockFormatString'));
 
-		$mockRepository = $this->getMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('TYPO3\Flow\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
 
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(2))->method('has')->with('localizedSymbols')->will($this->returnValue(TRUE));
@@ -77,13 +77,13 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->at(7))->method('set')->with('parsedFormatsIndices');
 		$mockCache->expects($this->at(8))->method('set')->with('localizedSymbols');
 
-		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('parseFormat'));
+		$reader = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader', array('parseFormat'));
 		$reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL);
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL);
 		$this->assertEquals('mockParsedFormat', $result);
 
 		$reader->shutdownObject();
@@ -108,7 +108,7 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider formatStringsAndParsedFormats
 	 */
 	public function formatStringsAreParsedCorrectly($format, array $expectedResult) {
-		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
+		$reader = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader', array('dummy'));
 
 		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals($expectedResult, $result);
@@ -132,10 +132,10 @@ class NumbersReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider unsupportedFormats
-	 * @expectedException \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException
+	 * @expectedException \TYPO3\Flow\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException
 	 */
 	public function throwsExceptionWhenUnsupportedFormatsEncountered($format) {
-		$reader = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
+		$reader = $this->getAccessibleMock('TYPO3\Flow\I18n\Cldr\Reader\NumbersReader', array('dummy'));
 
 		$reader->_call('parseFormat', $format);
 	}

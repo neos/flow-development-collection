@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security;
+namespace TYPO3\Flow\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,27 +14,27 @@ namespace TYPO3\FLOW3\Security;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An account model
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class Account {
 
 	/**
 	 * @var string
-	 * @FLOW3\Identity
-	 * @FLOW3\Validate(type="NotEmpty")
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @Flow\Identity
+	 * @Flow\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
 	 */
 	protected $accountIdentifier;
 
 	/**
 	 * @var string
-	 * @FLOW3\Identity
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Identity
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $authenticationProviderName;
 
@@ -62,7 +62,7 @@ class Account {
 	protected $expirationDate;
 
 	/**
-	 * @var array<\TYPO3\FLOW3\Security\Policy\Role>
+	 * @var array<\TYPO3\Flow\Security\Policy\Role>
 	 */
 	protected $roles = array();
 
@@ -152,12 +152,12 @@ class Account {
 	/**
 	 * Returns the roles this account has assigned
 	 *
-	 * @return array<\TYPO3\FLOW3\Security\Policy\Role> The assigned roles
+	 * @return array<\TYPO3\Flow\Security\Policy\Role> The assigned roles
 	 */
 	public function getRoles() {
 		$roles = array();
 		foreach ($this->roles as $role) {
-			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($role);
+			$roles[] = new \TYPO3\Flow\Security\Policy\Role($role);
 		}
 		return $roles;
 	}
@@ -165,7 +165,7 @@ class Account {
 	/**
 	 * Sets the roles for this account
 	 *
-	 * @param array $roles An array of TYPO3\FLOW3\Security\Policy\Role objects
+	 * @param array $roles An array of TYPO3\Flow\Security\Policy\Role objects
 	 * @return void
 	 */
 	public function setRoles(array $roles) {
@@ -178,20 +178,20 @@ class Account {
 	/**
 	 * Return if the account has a certain role
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
+	 * @param \TYPO3\Flow\Security\Policy\Role $role
 	 * @return boolean
 	 */
-	public function hasRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
+	public function hasRole(\TYPO3\Flow\Security\Policy\Role $role) {
 		return in_array((string) $role, $this->roles, TRUE);
 	}
 
 	/**
 	 * Adds a role to this account
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
+	 * @param \TYPO3\Flow\Security\Policy\Role $role
 	 * @return void
 	 */
-	public function addRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
+	public function addRole(\TYPO3\Flow\Security\Policy\Role $role) {
 		if (!$this->hasRole($role)) {
 			$this->roles[] = (string)$role;
 		}
@@ -200,10 +200,10 @@ class Account {
 	/**
 	 * Removes a role from this account
 	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
+	 * @param \TYPO3\Flow\Security\Policy\Role $role
 	 * @return void
 	 */
-	public function removeRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
+	public function removeRole(\TYPO3\Flow\Security\Policy\Role $role) {
 		if (($key = array_search((string)$role, $this->roles, TRUE)) !== FALSE) {
 			unset($this->roles[$key]);
 		}

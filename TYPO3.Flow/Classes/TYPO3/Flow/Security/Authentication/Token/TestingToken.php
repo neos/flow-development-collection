@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\Token;
+namespace TYPO3\Flow\Security\Authentication\Token;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,15 +15,15 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
 /**
  * An authentication token used for functional tests
  */
-class TestingToken extends \TYPO3\FLOW3\Security\Authentication\Token\AbstractToken {
+class TestingToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToken {
 
 	/**
 	 * Simply sets the authentication status to AUTHENTICATION_NEEDED
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $actionRequest The current action request instance
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request instance
 	 * @return void
 	 */
-	public function updateCredentials(\TYPO3\FLOW3\Mvc\ActionRequest $actionRequest) {
+	public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
 		$this->authenticationStatus = self::AUTHENTICATION_NEEDED;
 	}
 

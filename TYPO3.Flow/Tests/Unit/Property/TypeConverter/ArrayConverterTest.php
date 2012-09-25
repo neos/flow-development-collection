@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
+namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,16 +15,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
  * Testcase for the Array converter
  *
  */
-class ArrayConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\TypeConverter\ArrayConverter
+	 * @var \TYPO3\Flow\Property\TypeConverter\ArrayConverter
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\ArrayConverter();
+		$this->converter = new \TYPO3\Flow\Property\TypeConverter\ArrayConverter();
 	}
 
 	/**

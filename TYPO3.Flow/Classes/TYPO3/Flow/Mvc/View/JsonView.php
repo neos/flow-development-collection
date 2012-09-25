@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\View;
+namespace TYPO3\Flow\Mvc\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,17 +11,17 @@ namespace TYPO3\FLOW3\Mvc\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A JSON view
  *
  * @api
  */
-class JsonView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
+class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\ControllerContext
+	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -108,8 +108,8 @@ class JsonView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	protected $configuration = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
 
@@ -209,14 +209,14 @@ class JsonView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 		if ($object instanceof \DateTime) {
 			return $object->format('Y-m-d\TH:i:s');
 		} else {
-			$propertyNames = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($object);
+			$propertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($object);
 
 			$propertiesToRender = array();
 			foreach ($propertyNames as $propertyName) {
 				if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) continue;
 				if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) continue;
 
-				$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+				$propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName);
 
 				if (!is_array($propertyValue) && !is_object($propertyValue)) {
 					$propertiesToRender[$propertyName] = $propertyValue;

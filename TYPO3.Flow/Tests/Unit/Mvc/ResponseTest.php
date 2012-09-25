@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc;
+namespace TYPO3\Flow\Tests\Unit\Mvc;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,12 +15,12 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc;
  * Testcase for the MVC Generic Response
  *
  */
-class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
 	public function toStringReturnsContentOfResponse() {
-		$response = new \TYPO3\FLOW3\Mvc\Response();
+		$response = new \TYPO3\Flow\Mvc\Response();
 		$response->setContent('SomeContent');
 
 		$expected = 'SomeContent';

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic;
+namespace TYPO3\Flow\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -18,7 +18,7 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  *
  * @api
  */
-class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
+class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 
 	/**
 	 * @var string
@@ -26,30 +26,30 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	protected $type;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ClassSchema
+	 * @var \TYPO3\Flow\Reflection\ClassSchema
 	 */
 	protected $classSchema;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\QueryObjectModelFactory
+	 * @var \TYPO3\Flow\Persistence\Generic\Qom\QueryObjectModelFactory
 	 */
 	protected $qomFactory;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint
+	 * @var \TYPO3\Flow\Persistence\Generic\Qom\Constraint
 	 */
 	protected $constraint;
 
 	/**
 	 * The property names to order the result by. Expected like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @var array
@@ -70,30 +70,30 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Constructs a query object working on the given type
 	 *
 	 * @param string $type
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 */
-	public function __construct($type, \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function __construct($type, \TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->type = $type;
 		$this->classSchema = $reflectionService->getClassSchema($type);
 	}
 
 	/**
-	 * Injects the FLOW3 object factory
+	 * Injects the Flow object factory
 	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $qomFactory
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $qomFactory
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $qomFactory) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $qomFactory) {
 		$this->objectManager = $qomFactory;
 	}
 
 	/**
-	 * Injects the FLOW3 QOM factory
+	 * Injects the Flow QOM factory
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\QueryObjectModelFactory $qomFactory
+	 * @param \TYPO3\Flow\Persistence\Generic\Qom\QueryObjectModelFactory $qomFactory
 	 * @return void
 	 */
-	public function injectQomFactory(\TYPO3\FLOW3\Persistence\Generic\Qom\QueryObjectModelFactory $qomFactory) {
+	public function injectQomFactory(\TYPO3\Flow\Persistence\Generic\Qom\QueryObjectModelFactory $qomFactory) {
 		$this->qomFactory = $qomFactory;
 	}
 
@@ -110,11 +110,11 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Executes the query and returns the result
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
 	public function execute() {
-		return new \TYPO3\FLOW3\Persistence\Generic\QueryResult($this);
+		return new \TYPO3\Flow\Persistence\Generic\QueryResult($this);
 	}
 
 	/**
@@ -124,19 +124,19 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function count() {
-		$result = new \TYPO3\FLOW3\Persistence\Generic\QueryResult($this);
+		$result = new \TYPO3\Flow\Persistence\Generic\QueryResult($this);
 		return $result->count();
 	}
 
 	/**
 	 * Sets the property names to order the result by. Expected like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @param array $orderings The property names to order by
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function setOrderings(array $orderings) {
@@ -147,8 +147,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Returns the property names to order the result by, like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @return array
@@ -163,7 +163,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * for chaining (fluid interface)
 	 *
 	 * @param integer $limit
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -191,7 +191,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * allow for chaining (fluid interface)
 	 *
 	 * @param integer $offset
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -218,8 +218,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * The constraint used to limit the result set. Returns $this to allow
 	 * for chaining (fluid interface)
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @param \TYPO3\Flow\Persistence\Generic\Qom\Constraint $constraint
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function matching($constraint) {
@@ -230,7 +230,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Gets the constraint for this query.
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint, or null if none
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint the constraint, or null if none
 	 * @api
 	*/
 	public function getConstraint() {
@@ -243,8 +243,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalAnd
-	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidNumberOfConstraintsException
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\LogicalAnd
+	 * @throws \TYPO3\Flow\Persistence\Generic\Exception\InvalidNumberOfConstraintsException
 	 * @api
 	 */
 	public function logicalAnd($constraint1) {
@@ -257,7 +257,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		}
 
 		if ($resultingConstraint === NULL) {
-			throw new \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidNumberOfConstraintsException('There must be at least one constraint or a non-empty array of constraints given.', 1268056288);
+			throw new \TYPO3\Flow\Persistence\Generic\Exception\InvalidNumberOfConstraintsException('There must be at least one constraint or a non-empty array of constraints given.', 1268056288);
 		}
 
 		foreach ($constraints as $constraint) {
@@ -272,8 +272,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param object $constraint1 The first of multiple constraints or an array of constraints.
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalOr
-	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidNumberOfConstraintsException
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\LogicalOr
+	 * @throws \TYPO3\Flow\Persistence\Generic\Exception\InvalidNumberOfConstraintsException
 	 * @api
 	 */
 	public function logicalOr($constraint1) {
@@ -286,7 +286,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		}
 
 		if ($resultingConstraint === NULL) {
-			throw new \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidNumberOfConstraintsException('There must be at least one constraint or a non-empty array of constraints given.', 1268056289);
+			throw new \TYPO3\Flow\Persistence\Generic\Exception\InvalidNumberOfConstraintsException('There must be at least one constraint or a non-empty array of constraints given.', 1268056289);
 		}
 
 		foreach ($constraints as $constraint) {
@@ -299,7 +299,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Performs a logical negation of the given constraint
 	 *
 	 * @param object $constraint Constraint to negate
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalNot
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\LogicalNot
 	 * @api
 	 */
 	public function logicalNot($constraint) {
@@ -324,12 +324,12 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		if ($operand === NULL) {
 			$comparison = $this->qomFactory->comparison(
 				$this->qomFactory->propertyValue($propertyName, '_entity'),
-				\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL
+				\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_IS_NULL
 			);
 		} elseif (is_object($operand) || $caseSensitive) {
 			$comparison = $this->qomFactory->comparison(
 				$this->qomFactory->propertyValue($propertyName, '_entity'),
-				\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
+				\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
 				$operand
 			);
 		} else {
@@ -337,7 +337,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 				$this->qomFactory->lowerCase(
 					$this->qomFactory->propertyValue($propertyName, '_entity')
 				),
-				\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
+				\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
 				strtolower($operand)
 			);
 		}
@@ -354,17 +354,17 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the matching should be done case-sensitive
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a non-string property
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a non-string property
 	 * @api
 	 */
 	public function like($propertyName, $operand, $caseSensitive = TRUE) {
 		if (!is_string($operand)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a string, was ' . gettype($operand), 1276781107);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a string, was ' . gettype($operand), 1276781107);
 		}
 		if ($caseSensitive) {
 			$comparison = $this->qomFactory->comparison(
 				$this->qomFactory->propertyValue($propertyName, '_entity'),
-				\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE,
+				\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LIKE,
 				$operand
 			);
 		} else {
@@ -372,7 +372,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 				$this->qomFactory->lowerCase(
 					$this->qomFactory->propertyValue($propertyName, '_entity')
 				),
-				\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE,
+				\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LIKE,
 				strtolower($operand)
 			);
 		}
@@ -388,17 +388,17 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
 	public function contains($propertyName, $operand) {
 		if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276781026);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276781026);
 		}
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS,
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_CONTAINS,
 			$operand
 		);
 	}
@@ -409,16 +409,16 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the multivalued property to check
 	 * @return boolean
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
 	public function isEmpty($propertyName) {
 		if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276853547);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276853547);
 		}
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_IS_EMPTY
 		);
 	}
 
@@ -428,21 +428,21 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with, multivalued
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with single-valued operand
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with single-valued operand
 	 * @api
 	 */
 	public function in($propertyName, $operand) {
 		if (!is_array($operand) && (!$operand instanceof \ArrayAccess) && (!$operand instanceof \Traversable)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('The "in" constraint must be given a multi-valued operand (array, ArrayAccess, Traversable).', 1264678095);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('The "in" constraint must be given a multi-valued operand (array, ArrayAccess, Traversable).', 1264678095);
 		}
 		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued.', 1276777034);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued.', 1276777034);
 		}
 
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IN,
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_IN,
 			$operand
 		);
 	}
@@ -452,21 +452,21 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
 		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784963);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784963);
 		}
-		if (!($operand instanceof \DateTime) && !\TYPO3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784964);
+		if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784964);
 		}
 
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN,
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LESS_THAN,
 			$operand
 		);
 	}
@@ -476,21 +476,21 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
 		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784943);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784943);
 		}
-		if (!($operand instanceof \DateTime) && !\TYPO3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784944);
+		if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784944);
 		}
 
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
 			$operand
 		);
 	}
@@ -500,21 +500,21 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
 		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774885);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774885);
 		}
-		if (!($operand instanceof \DateTime) && !\TYPO3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774886);
+		if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774886);
 		}
 
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN,
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_GREATER_THAN,
 			$operand
 		);
 	}
@@ -524,21 +524,21 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Comparison
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {
 		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774883);
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774883);
 		}
-		if (!($operand instanceof \DateTime) && !\TYPO3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774884);
+		if (!($operand instanceof \DateTime) && !\TYPO3\Flow\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \TYPO3\Flow\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774884);
 		}
 
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+			\TYPO3\Flow\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
 			$operand
 		);
 	}

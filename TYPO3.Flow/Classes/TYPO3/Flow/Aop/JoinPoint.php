@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop;
+namespace TYPO3\Flow\Aop;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,12 +13,12 @@ namespace TYPO3\FLOW3\Aop;
 
 
 /**
- * In FLOW3 the join point object contains context information when a point cut
+ * In Flow the join point object contains context information when a point cut
  * matches and the registered advices are executed.
  *
  * @api
  */
-class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
+class JoinPoint implements \TYPO3\Flow\Aop\JoinPointInterface {
 
 	/**
 	 * A reference to the proxy object
@@ -46,7 +46,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 
 	/**
 	 * The advice chain for this join point
-	 * @var \TYPO3\FLOW3\Aop\Advice\AdviceChain
+	 * @var \TYPO3\Flow\Aop\Advice\AdviceChain
 	 */
 	protected $adviceChain;
 
@@ -69,7 +69,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	 * @param string $className Class name of the target class this join point refers to
 	 * @param string $methodName Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments Array of method arguments which have been passed to the target method
-	 * @param \TYPO3\FLOW3\Aop\Advice\AdviceChain $adviceChain The advice chain for this join point
+	 * @param \TYPO3\Flow\Aop\Advice\AdviceChain $adviceChain The advice chain for this join point
 	 * @param mixed $result The result of the method invocations (only used for After Returning advices)
 	 * @param \Exception $exception The exception thrown (only used for After Throwing advices)
 	 */
@@ -86,7 +86,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyInterface
+	 * @return \TYPO3\Flow\Object\Proxy\ProxyInterface
 	 * @api
 	 */
 	public function getProxy() {
@@ -133,7 +133,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	 */
 	public function getMethodArgument($argumentName) {
 		if (!array_key_exists($argumentName, $this->methodArguments)) {
-			throw new \TYPO3\FLOW3\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+			throw new \TYPO3\Flow\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
 		}
 		return $this->methodArguments[$argumentName];
 	}
@@ -149,7 +149,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	 */
 	public function setMethodArgument($argumentName, $argumentValue) {
 		if (!array_key_exists($argumentName, $this->methodArguments)) {
-			throw new \TYPO3\FLOW3\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1309260269);
+			throw new \TYPO3\Flow\Aop\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1309260269);
 		}
 		$this->methodArguments[$argumentName] = $argumentValue;
 	}
@@ -169,7 +169,7 @@ class JoinPoint implements \TYPO3\FLOW3\Aop\JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return \TYPO3\FLOW3\Aop\Advice\AdviceChain The advice chain
+	 * @return \TYPO3\Flow\Aop\Advice\AdviceChain The advice chain
 	 * @api
 	 */
 	public function getAdviceChain() {

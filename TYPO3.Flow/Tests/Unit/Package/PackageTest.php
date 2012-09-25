@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Package;
+namespace TYPO3\Flow\Tests\Unit\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Package\Package;
+use TYPO3\Flow\Package\Package;
 use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the package class
  *
  */
-class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 */
@@ -28,7 +28,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException
+	 * @expectedException \TYPO3\Flow\Package\Exception\InvalidPackagePathException
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
 		new Package('Vendor.TestPackage', './ThisPackageSurelyDoesNotExist');
@@ -39,8 +39,8 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function validPackageKeys() {
 		return array(
 			array('Doctrine'),
-			array('TYPO3.FLOW3'),
-			array('RobertLemke.FLOW3.Twitter'),
+			array('TYPO3.Flow'),
+			array('RobertLemke.Flow.Twitter'),
 			array('Sumphonos.Stem'),
 			array('Schalke04.Soccer.MagicTrainer')
 		);
@@ -62,8 +62,8 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function invalidPackageKeys() {
 		return array(
-			array('TYPO3..FLOW3'),
-			array('RobertLemke.FLOW3. Twitter'),
+			array('TYPO3..Flow'),
+			array('RobertLemke.Flow. Twitter'),
 			array('Schalke*4')
 		);
 	}
@@ -71,7 +71,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidPackageKeys
-	 * @expectedException \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException
+	 * @expectedException \TYPO3\Flow\Package\Exception\InvalidPackageKeyException
 	 */
 	public function constructRejectsInvalidPackageKeys($packageKey) {
 		$packagePath = 'vfs://Packages/' . str_replace('\\', '/', $packageKey) . '/';
@@ -93,7 +93,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getMetaPathReturnsPathToMetaDirectory() {
-		$package = new Package('TYPO3.FLOW3', FLOW3_PATH_FLOW3);
+		$package = new Package('TYPO3.Flow', FLOW_PATH_FLOW);
 		$packageMetaDataPath = $package->getMetaPath();
 		$this->assertSame($package->getPackagePath() . Package::DIRECTORY_METADATA, $packageMetaDataPath);
 	}
@@ -102,7 +102,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getDocumentationPathReturnsPathToDocumentationDirectory() {
-		$package = new Package('TYPO3.FLOW3', FLOW3_PATH_FLOW3);
+		$package = new Package('TYPO3.Flow', FLOW_PATH_FLOW);
 		$packageDocumentationPath = $package->getDocumentationPath();
 
 		$this->assertEquals($package->getPackagePath() . Package::DIRECTORY_DOCUMENTATION, $packageDocumentationPath);
@@ -112,7 +112,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getClassesPathReturnsPathToClasses() {
-		$package = new Package('TYPO3.FLOW3', FLOW3_PATH_FLOW3, Package::DIRECTORY_CLASSES);
+		$package = new Package('TYPO3.Flow', FLOW_PATH_FLOW, Package::DIRECTORY_CLASSES);
 		$packageClassesPath = $package->getClassesPath();
 		$expected = $package->getPackagePath() . Package::DIRECTORY_CLASSES;
 		$this->assertEquals($expected, $packageClassesPath);
@@ -142,7 +142,7 @@ class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$packagePath = vfsStream::url('testDirectory') . '/';
 
-		$package = new Package('TYPO3.FLOW3', $packagePath);
+		$package = new Package('TYPO3.Flow', $packagePath);
 		$documentations = $package->getPackageDocumentations();
 
 		$this->assertEquals(array(), $documentations);

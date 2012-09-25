@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session\Exception;
+namespace TYPO3\Flow\Session\Exception;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,11 +12,11 @@ namespace TYPO3\FLOW3\Session\Exception;
  *                                                                        */
 
 /**
- * A "\TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException" Exception
+ * A "\TYPO3\Flow\Session\Exception\SessionAutostartIsEnabledException" Exception
  *
  * @api
  */
-class SessionAutostartIsEnabledException extends \TYPO3\FLOW3\Session\Exception {
+class SessionAutostartIsEnabledException extends \TYPO3\Flow\Session\Exception {
 }
 
 ?>

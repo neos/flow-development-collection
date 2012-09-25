@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * Static Route Part
  *
  */
-class StaticRoutePart extends \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart {
+class StaticRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart {
 
 	/**
 	 * Gets default value of the Route Part.
@@ -55,7 +55,7 @@ class StaticRoutePart extends \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart {
 	/**
 	 * Sets the Route Part value to the Route Part name and returns TRUE if successful.
 	 *
-	 * @param array $routeValues not used but needed to implement \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart
+	 * @param array $routeValues not used but needed to implement \TYPO3\Flow\Mvc\Routing\AbstractRoutePart
 	 * @return boolean
 	 */
 	public function resolve(array &$routeValues) {

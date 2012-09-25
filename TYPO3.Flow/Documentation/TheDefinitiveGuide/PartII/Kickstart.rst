@@ -4,48 +4,48 @@ Kickstart
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-FLOW3 makes it easy to start with a new application. The ``Kickstart`` package provides
+TYPO3 Flow makes it easy to start with a new application. The ``Kickstart`` package provides
 template based scaffolding for generating an initial layout of packages, controllers,
 models and views.
 
 .. note::
 
-	At the time of this writing these functions are only available through FLOW3's command
+	At the time of this writing these functions are only available through TYPO3 Flow's command
 	line interface. This might change in the future as a graphical interface to the
 	kickstarter is developed.
 
 Command Line Tool
 =================
 
-The script *flow3* resides in the main directory of the FLOW3 distribution.
-From a shell you should be able to run the script by entering ``./flow3``:
+The script *flow* resides in the main directory of the TYPO3 Flow distribution.
+From a shell you should be able to run the script by entering ``./flow``:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3
-	FLOW3 1.0.0 ("Development" context)
-	usage: ./flow3 <command identifier>
+	myhost:tutorial johndoe$ ./flow
+	TYPO3 Flow 1.2.0 ("Development" context)
+	usage: ./flow <command identifier>
 
-	See './flow3 help' for a list of all available commands.
+	See './flow help' for a list of all available commands.
 
-To get an overview of all available commands, enter ``./flow3 help``:
+To get an overview of all available commands, enter ``./flow help``:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 help
-	FLOW3 1.0.0 ("Development" context)
-	usage: ./flow3 <command identifier>
+	myhost:tutorial johndoe$ ./flow help
+	TYPO3 Flow 1.2.0 ("Development" context)
+	usage: ./flow <command identifier>
 
 	The following commands are currently available:
 
-	PACKAGE "TYPO3.FLOW3":
+	PACKAGE "TYPO3.Flow":
 	-------------------------------------------------------------------------------
-	* flow3:cache:flush                        Flush all caches
+	* flow:cache:flush                         Flush all caches
 	  cache:warmup                             Warm up caches
 
-	* flow3:core:setfilepermissions            Adjust file permissions for CLI and
+	* flow:core:setfilepermissions             Adjust file permissions for CLI and
 	                                           web server access
-	* flow3:core:shell                         Run the interactive Shell
+	* flow:core:shell                          Run the interactive Shell
 
 	  doctrine:validate                        Validate the class/table mappings
 	  doctrine:create                          Create the database schema
@@ -86,9 +86,9 @@ To get an overview of all available commands, enter ``./flow3 help``:
 
 	* = compile time command
 
-	See './flow3 help <commandidentifier>' for more information about a specific command.
+	See './flow help <commandidentifier>' for more information about a specific command.
 
-Depending on your FLOW3 version you'll see more or less the above available
+Depending on your TYPO3 Flow version you'll see more or less the above available
 commands listed.
 
 
@@ -99,7 +99,7 @@ Let's create a new package **Blog** inside the Vendor namespace **TYPO3**:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 kickstart:package TYPO3.Blog
+	myhost:tutorial johndoe$ ./flow kickstart:package TYPO3.Blog
 
 The kickstarter will create two files:
 
@@ -140,7 +140,7 @@ generated controller produces some output:
 
 .. tip::
 	If you get an error at this point, like a "404 Not Found" this could be
-	caused by outdated cache entries. Because FLOW3 should be running in
+	caused by outdated cache entries. Because TYPO3 Flow should be running in
 	``Development`` context at this point, it is supposed to detect changes to
 	code and resource files, but this seems to sometimes fail... Before you go
 	crazy looking for an error on your side, **try clearing the cache manually**
@@ -155,7 +155,7 @@ which initially sets up the blog. Create them with the kickstarter as well:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 kickstart:actioncontroller TYPO3.Blog Setup
+	myhost:tutorial johndoe$ ./flow kickstart:actioncontroller TYPO3.Blog Setup
 
 resulting in:
 
@@ -169,7 +169,7 @@ have them created as well:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 kickstart:actioncontroller --generate-actions --generate-related TYPO3.Blog Post
+	myhost:tutorial johndoe$ ./flow kickstart:actioncontroller --generate-actions --generate-related TYPO3.Blog Post
 
 resulting in:
 

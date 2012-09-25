@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic;
+namespace TYPO3\Flow\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -22,7 +22,7 @@ interface QueryFactoryInterface {
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function create($className);

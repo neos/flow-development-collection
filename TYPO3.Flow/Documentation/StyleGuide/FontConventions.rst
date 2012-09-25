@@ -1,7 +1,7 @@
 Font conventions
 ================
 
-The following font conventions are used in FLOW3's documentation:
+The following font conventions are used in TYPO3 Flow's documentation:
 
 	*Italic*
 
@@ -21,5 +21,5 @@ The following font conventions are used in FLOW3's documentation:
 
 		.. code-block:: bash
 
-			$ ./flow3 kickstart:package Acme.MyPackage
+			$ ./flow kickstart:package Acme.MyPackage
 			Created .../Acme.Test/Classes/Controller/StandardController.php

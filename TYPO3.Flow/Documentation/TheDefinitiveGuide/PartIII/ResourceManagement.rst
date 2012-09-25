@@ -11,7 +11,7 @@ with deciphering the ``$_FILES`` superglobal and move the uploaded file from the
 location to a safer place. You also need to analyze the content (is it safe?), control web
 access and ultimately delete the file when it's not needed anymore.
 
-FLOW3 relieves you of this hassle and lets you deal with simple ``Resource`` objects
+TYPO3 Flow relieves you of this hassle and lets you deal with simple ``Resource`` objects
 instead. File uploads are handled automatically, enforcing the restrictions which were
 configured by means of validation rules. The publishing mechanism was designed to support
 a wide range of scenarios, starting from simple publication to the local file system up to
@@ -21,7 +21,7 @@ This all works without any further ado by you, the application developer.
 Static Resources
 ================
 
-FLOW3 packages may provide any amount of static resources. They might be images,
+TYPO3 Flow packages may provide any amount of static resources. They might be images,
 stylesheets, javascripts, templates or any other file which is used within the application
 or published to the web. Static resources may either be public or private:
 
@@ -46,7 +46,7 @@ to by their path and filename directly but are represented by ``Resource`` objec
 .. note::
 
 	It is important to completely ignore the fact that resources are stored as files
-	somewhere in FLOW3's directory structure – you should only deal with resource objects.
+	somewhere in TYPO3 Flow's directory structure – you should only deal with resource objects.
 
 New persistent resources can be created by either importing or uploading a file. In either
 case the result is a new ``Resource`` object which can be attached to any other object. A
@@ -67,8 +67,8 @@ provides a simple API method for this purpose:
 	class ImageController {
 
 		/**
-		 * @FLOW3\Inject
-		 * @var \TYPO3\FLOW3\Resource\ResourceManager
+		 * @Flow\Inject
+		 * @var \TYPO3\Flow\Resource\ResourceManager
 		 */
 		protected $resourceManager;
 
@@ -100,7 +100,7 @@ This is what happens in detail while executing the ``importImageAction`` method:
 
 #. The URI (in our case an absolute path and filename) is passed to the ``importResource()``
    method which analyzes the file found at that location.
-#. The file is imported into FLOW3's persistent resources storage  using the sha1 hash over
+#. The file is imported into TYPO3 Flow's persistent resources storage  using the sha1 hash over
    the file content as its filename. If a file with exactly the same content is imported
    it will reuse the already stored resource.
 #. The Resource Manager returns a new ``Resource`` object which refers to the newly
@@ -116,7 +116,7 @@ object, for example by unsetting ``originalResource`` in the ``Image`` object.
 Resource Uploads
 ----------------
 
-The second way to create new resources is uploading them via a POST request. FLOW3's MVC
+The second way to create new resources is uploading them via a POST request. TYPO3 Flow's MVC
 framework detects incoming file uploads and automatically converts them into ``Resource``
 objects. In order to persist an uploaded resource you only need to persist the resulting
 object.
@@ -163,7 +163,7 @@ above code will work just as expected::
 	   protected $title;
 
 	   /**
-	    * @var \TYPO3\FLOW3\Resource\Resource
+	    * @var \TYPO3\Flow\Resource\Resource
 	    */
 	   protected $originalResource;
 
@@ -183,15 +183,15 @@ above code will work just as expected::
 	   }
 
 	   /**
-	    * @param \TYPO3\FLOW3\Resource\Resource $originalResource
+	    * @param \TYPO3\Flow\Resource\Resource $originalResource
 	    * @return void
 	    */
-	   public function setOriginalResource(\TYPO3\FLOW3\Resource\Resource $originalResource) {
+	   public function setOriginalResource(\TYPO3\Flow\Resource\Resource $originalResource) {
 	      $this->originalResource = $originalResource;
 	   }
 
 	   /**
-	    * @return \TYPO3\FLOW3\Resource\Resource
+	    * @return \TYPO3\Flow\Resource\Resource
 	    */
 	   public function getOriginalResource() {
 	      return $this->originalResource;
@@ -200,7 +200,7 @@ above code will work just as expected::
 
 .. tip::
 
-	There are more API functions in FLOW3's ``ResourceManager`` which allow for retrieving
+	There are more API functions in TYPO3 Flow's ``ResourceManager`` which allow for retrieving
 	additional information about the circumstances of resource uploads. Please refer to
 	the API documentation for further details.
 
@@ -210,10 +210,10 @@ Resource Publishing
 The process of *resource publishing* makes the resources in the system available,
 and to provide an URL by which the given resource can be retrieved by the client.
 
-.. admonition:: Why FLOW3 requires your OS to support symbolic links
+.. admonition:: Why TYPO3 Flow requires your OS to support symbolic links
 
   Publishing resources basically means copying files from a private location to the public
-  web directory. FLOW3 instead creates symbolic links, making the resource publishing
+  web directory. TYPO3 Flow instead creates symbolic links, making the resource publishing
   process consume less disk space and work faster.
 
 Static Resources
@@ -246,7 +246,7 @@ package containing the currently active controller.
 Persistent Resources
 --------------------
 
-Persistent resources are published on demand because FLOW3 cannot know which resources are
+Persistent resources are published on demand because TYPO3 Flow cannot know which resources are
 meant to be public and which ones need to be kept private. The trigger for publishing
 persistent resources is the generation of its public web URI. A very common way to do that
 is displaying a resource in a Fluid template:
@@ -264,17 +264,17 @@ A published persistent resource is accessible through a web URI like
 One advantage of using the sha1 hash of the resource content as a filename is that once the
 resource changes it gets a new filename and is displayed correctly regardless of the cache
 settings in the user's web browser. Search engines on the other hand prefer more meaningful
-file names. That is why FLOW3 adds a "virtual" file name to the resource, like this:
+file names. That is why TYPO3 Flow adds a "virtual" file name to the resource, like this:
 ``http://example.local/_Resources/Persistent/107bed85ba5e9bae0edbae879bbc2c26d72033ab/my-speaking-title.jpg``.
-FLOW3 ships with a *mod_rewrite* rule to map the speaking titles to the hash files.
+TYPO3 Flow ships with a *mod_rewrite* rule to map the speaking titles to the hash files.
 
 Resource Stream Wrapper
 =======================
 
 Static resources are often used by packages internally. Typical use cases are templates,
 XML, YAML or other data files and images for further processing. You might be tempted to
-refer to these files by using one of the ``FLOW3_PATH_*`` constants or by creating a path
-relative to your package. A much better and more convenient way is using FLOW3's built-in
+refer to these files by using one of the ``FLOW_PATH_*`` constants or by creating a path
+relative to your package. A much better and more convenient way is using TYPO3 Flow's built-in
 stream package resources wrapper.
 
 The following example reads the content of the file

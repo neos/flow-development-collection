@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -20,28 +20,28 @@ namespace TYPO3\FLOW3\Validation\Validator;
 class DateTimeValidator extends AbstractValidator {
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Service
+	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Parser\DatetimeParser
+	 * @var \TYPO3\Flow\I18n\Parser\DatetimeParser
 	 */
 	protected $datetimeParser;
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\Flow\I18n\Service $localizationService
 	 * @return void
 	 */
-	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser
+	 * @param \TYPO3\Flow\I18n\Parser\DatetimeParser $datetimeParser
 	 * @return void
 	 */
-	public function injectDatetimeParser(\TYPO3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser) {
+	public function injectDatetimeParser(\TYPO3\Flow\I18n\Parser\DatetimeParser $datetimeParser) {
 		$this->datetimeParser = $datetimeParser;
 	}
 
@@ -60,8 +60,8 @@ class DateTimeValidator extends AbstractValidator {
 		if (!isset($this->options['locale'])) {
 			$locale = $this->localizationService->getConfiguration()->getDefaultLocale();
 		} elseif (is_string($this->options['locale'])) {
-			$locale = new \TYPO3\FLOW3\I18n\Locale($this->options['locale']);
-		} elseif ($this->options['locale'] instanceof \TYPO3\FLOW3\I18n\Locale) {
+			$locale = new \TYPO3\Flow\I18n\Locale($this->options['locale']);
+		} elseif ($this->options['locale'] instanceof \TYPO3\Flow\I18n\Locale) {
 			$locale = $this->options['locale'];
 		} else {
 			$this->addError('The "locale" option can be only set to string identifier, or Locale object.', 1281454676);
@@ -76,23 +76,23 @@ class DateTimeValidator extends AbstractValidator {
 
 		if (isset($this->options['formatLength'])) {
 			$formatLength = $this->options['formatLength'];
-			\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+			\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
 		} else {
-			$formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT;
+			$formatLength = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT;
 		}
 
 		if (isset($this->options['formatType'])) {
 			$formatType = $this->options['formatType'];
-			\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatType($formatType);
+			\TYPO3\Flow\I18n\Cldr\Reader\DatesReader::validateFormatType($formatType);
 		} else {
-			$formatType = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE;
+			$formatType = \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE;
 		}
 
-		if ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
+		if ($formatType === \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
 			if ($this->datetimeParser->parseTime($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid time is expected.', 1281454830);
 			}
-		} elseif ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
+		} elseif ($formatType === \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
 			if ($this->datetimeParser->parseDateAndTime($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid date and time is expected.', 1281454831);
 			}

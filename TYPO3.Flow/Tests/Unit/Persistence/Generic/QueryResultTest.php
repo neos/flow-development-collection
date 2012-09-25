@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic;
+namespace TYPO3\Flow\Tests\Unit\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "FLOW3".                      *
+ * This script belongs to the Flow package "Flow".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,18 +12,18 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic;
  *                                                                        */
 
 /**
- * Testcase for \TYPO3\FLOW3\Persistence\QueryResult
+ * Testcase for \TYPO3\Flow\Persistence\QueryResult
  *
  */
-class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\QueryResult
+	 * @var \TYPO3\Flow\Persistence\Generic\QueryResult
 	 */
 	protected $queryResult;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @var \TYPO3\Flow\Persistence\QueryInterface
 	 */
 	protected $query;
 
@@ -32,12 +32,12 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$this->persistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\Generic\PersistenceManager', array(), array(), '', FALSE);
+		$this->persistenceManager = $this->getMock('TYPO3\Flow\Persistence\Generic\PersistenceManager', array(), array(), '', FALSE);
 		$this->persistenceManager->expects($this->any())->method('getObjectDataByQuery')->will($this->returnValue(array('one', 'two')));
 		$this->persistenceManager->expects($this->any())->method('getObjectCountByQuery')->will($this->returnValue(2));
-		$this->dataMapper = $this->getMock('TYPO3\FLOW3\Persistence\Generic\DataMapper');
-		$this->query = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
-		$this->queryResult = new \TYPO3\FLOW3\Persistence\Generic\QueryResult($this->query);
+		$this->dataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
+		$this->query = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
+		$this->queryResult = new \TYPO3\Flow\Persistence\Generic\QueryResult($this->query);
 		$this->queryResult->injectPersistenceManager($this->persistenceManager);
 		$this->queryResult->injectDataMapper($this->dataMapper);
 		$this->sampleResult = array(array('foo' => 'Foo1', 'bar' => 'Bar1'), array('foo' => 'Foo2', 'bar' => 'Bar2'));
@@ -48,7 +48,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getQueryReturnsQueryObject() {
-		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\QueryInterface', $this->queryResult->getQuery());
+		$this->assertInstanceOf('TYPO3\Flow\Persistence\QueryInterface', $this->queryResult->getQuery());
 	}
 
 	/**
@@ -96,7 +96,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function countDoesNotInitializeProxy() {
-		$queryResult = $this->getMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
+		$queryResult = $this->getMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
 		$queryResult->injectPersistenceManager($this->persistenceManager);
 		$queryResult->expects($this->never())->method('initialize');
 		$queryResult->count();
@@ -106,7 +106,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function countCallsGetObjectCountByQueryOnPersistenceManager() {
-		$queryResult = $this->getMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
+		$queryResult = $this->getMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('initialize'), array($this->query));
 		$queryResult->injectPersistenceManager($this->persistenceManager);
 		$this->assertEquals(2, $queryResult->count());
 	}
@@ -136,7 +136,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeExecutesQueryWithArrayFetchMode() {
-		$queryResult = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
+		$queryResult = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
 		$queryResult->injectPersistenceManager($this->persistenceManager);
 		$queryResult->injectDataMapper($this->dataMapper);
 		$this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue(array('FAKERESULT')));
@@ -151,7 +151,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			new \stdClass(),
 			new \stdClass()
 		);
-		$queryResult = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
+		$queryResult = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
 		$queryResult->_set('queryResult', $initializedQueryResult);
 
 		$expectedResult = $initializedQueryResult[0];
@@ -164,7 +164,7 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getFirstReturnsNullIfResultSetIsEmptyAndQueryIsInitialized() {
 		$initializedQueryResult = array();
-		$queryResult = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
+		$queryResult = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
 		$queryResult->_set('queryResult', $initializedQueryResult);
 
 		$this->assertNull($queryResult->getFirst());
@@ -178,12 +178,12 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			new \stdClass(),
 			new \stdClass()
 		);
-		$queryResult = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
+		$queryResult = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
 		$this->query->expects($this->once())->method('setLimit')->with(1);
 
 		$queryResult->injectPersistenceManager($this->persistenceManager);
 
-		$mockDataMapper = $this->getMock('TYPO3\FLOW3\Persistence\Generic\DataMapper');
+		$mockDataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
 		$mockDataMapper->expects($this->once())->method('mapToObjects')->with(array('one', 'two'))->will($this->returnValue($initializedQueryResult));
 		$queryResult->injectDataMapper($mockDataMapper);
 
@@ -197,12 +197,12 @@ class QueryResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getFirstReturnsNullIfResultSetIsEmptyAndQueryIsNotInitialized() {
 		$initializedQueryResult = array();
-		$queryResult = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
+		$queryResult = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\QueryResult', array('dummy'), array($this->query));
 		$this->query->expects($this->once())->method('setLimit')->with(1);
 
 		$queryResult->injectPersistenceManager($this->persistenceManager);
 
-		$mockDataMapper = $this->getMock('TYPO3\FLOW3\Persistence\Generic\DataMapper');
+		$mockDataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
 		$mockDataMapper->expects($this->once())->method('mapToObjects')->with(array('one', 'two'))->will($this->returnValue($initializedQueryResult));
 		$queryResult->injectDataMapper($mockDataMapper);
 

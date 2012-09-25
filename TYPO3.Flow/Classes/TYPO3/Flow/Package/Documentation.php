@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -20,7 +20,7 @@ class Documentation {
 
 	/**
 	 * Reference to the package of this documentation
-	 * @var \TYPO3\FLOW3\Package\PackageInterface
+	 * @var \TYPO3\Flow\Package\PackageInterface
 	 */
 	protected $package;
 
@@ -38,7 +38,7 @@ class Documentation {
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Package\PackageInterface $package Reference to the package of this documentation
+	 * @param \TYPO3\Flow\Package\PackageInterface $package Reference to the package of this documentation
 	 * @param string $documentationName Name of the documentation
 	 * @param string $documentationPath Absolute path to the documentation directory
 	 */
@@ -51,7 +51,7 @@ class Documentation {
 	/**
 	 * Get the package of this documentation
 	 *
-	 * @return \TYPO3\FLOW3\Package\PackageInterface The package of this documentation
+	 * @return \TYPO3\Flow\Package\PackageInterface The package of this documentation
 	 * @api
 	 */
 	public function getPackage() {
@@ -81,7 +81,7 @@ class Documentation {
 	/**
 	 * Returns the available documentation formats for this documentation
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package\DocumentationFormat
+	 * @return array Array of \TYPO3\Flow\Package\DocumentationFormat
 	 * @api
 	 */
 	public function getDocumentationFormats() {
@@ -92,7 +92,7 @@ class Documentation {
 		while ($documentationFormatsDirectoryIterator->valid()) {
 			$filename = $documentationFormatsDirectoryIterator->getFilename();
 			if ($filename[0] != '.' && $documentationFormatsDirectoryIterator->isDir()) {
-				$documentationFormat = new \TYPO3\FLOW3\Package\Documentation\Format($filename, $this->documentationPath . $filename . '/');
+				$documentationFormat = new \TYPO3\Flow\Package\Documentation\Format($filename, $this->documentationPath . $filename . '/');
 				$documentationFormats[$filename] = $documentationFormat;
 			}
 			$documentationFormatsDirectoryIterator->next();

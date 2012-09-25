@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http;
+namespace TYPO3\Flow\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,20 +11,20 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\ResponseInterface;
+use TYPO3\Flow\Mvc\ResponseInterface;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Represents a HTTP Response
  *
  * @api
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class Response extends Message implements ResponseInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Response
+	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $parentResponse;
 
@@ -112,11 +112,11 @@ class Response extends Message implements ResponseInterface {
 	/**
 	 * Construct this Response
 	 *
-	 * @param \TYPO3\FLOW3\Http\Response $parentResponse
+	 * @param \TYPO3\Flow\Http\Response $parentResponse
 	 */
 	public function __construct(Response $parentResponse = NULL) {
 		$this->headers = new Headers();
-		$this->headers->set('X-FLOW3-Powered', 'FLOW3/' . FLOW3_VERSION_BRANCH);
+		$this->headers->set('X-Flow-Powered', 'Flow/' . FLOW_VERSION_BRANCH);
 		$this->headers->set('Content-Type', 'text/html; charset=' . $this->charset);
 		$this->parentResponse = $parentResponse;
 	}
@@ -125,10 +125,10 @@ class Response extends Message implements ResponseInterface {
 	 * Creates a response from the given raw, that is plain text, HTTP response.
 	 *
 	 * @param string $rawResponse
-	 * @param \TYPO3\FLOW3\Http\Response $parentResponse Parent response, if called recursively
+	 * @param \TYPO3\Flow\Http\Response $parentResponse Parent response, if called recursively
 	 *
 	 * @throws \InvalidArgumentException
-	 * @return \TYPO3\FLOW3\Http\Response
+	 * @return \TYPO3\Flow\Http\Response
 	 */
 	static public function createFromRaw($rawResponse, Response $parentResponse = NULL) {
 		$response = new static($parentResponse);
@@ -168,7 +168,7 @@ class Response extends Message implements ResponseInterface {
 	/**
 	 * Return the parent response or NULL if none exists.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Response the parent response, or NULL if none
+	 * @return \TYPO3\Flow\Http\Response the parent response, or NULL if none
 	 */
 	public function getParentResponse() {
 		return $this->parentResponse;
@@ -178,7 +178,7 @@ class Response extends Message implements ResponseInterface {
 	 * Appends content to the already existing content.
 	 *
 	 * @param string $content More response content
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function appendContent($content) {
@@ -201,7 +201,7 @@ class Response extends Message implements ResponseInterface {
 	 *
 	 * @param integer $code The status code
 	 * @param string $message If specified, this message is sent instead of the standard message
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @throws \InvalidArgumentException if the specified status code is not valid
 	 * @api
 	 */
@@ -240,7 +240,7 @@ class Response extends Message implements ResponseInterface {
 	/**
 	 * Replaces all possibly existing HTTP headers with the ones specified
 	 *
-	 * @param \TYPO3\FLOW3\Http\Headers
+	 * @param \TYPO3\Flow\Http\Headers
 	 * @return void
 	 * @api
 	 */
@@ -253,7 +253,7 @@ class Response extends Message implements ResponseInterface {
 	 *
 	 * This date / time is used internally for comparisons in order to determine the
 	 * freshness of this response. By default this DateTime object is set automatically
-	 * through dependency injection, configured in the Objects.yaml of the FLOW3 package.
+	 * through dependency injection, configured in the Objects.yaml of the Flow package.
 	 *
 	 * Unless you are mocking the current time in a test, there is probably no need
 	 * to use this function. Also note that this method must be called before any
@@ -277,7 +277,7 @@ class Response extends Message implements ResponseInterface {
 	 * time remains the same.
 	 *
 	 * @param string|\DateTime $date
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setDate($date) {
@@ -305,7 +305,7 @@ class Response extends Message implements ResponseInterface {
 	 * time remains the same.
 	 *
 	 * @param string|\DateTime $date
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setLastModified($date) {
@@ -341,7 +341,7 @@ class Response extends Message implements ResponseInterface {
 	 * to RFC 2616 / 14.21
 	 *
 	 * @param string|\DateTime $date
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setExpires($date) {
@@ -391,7 +391,7 @@ class Response extends Message implements ResponseInterface {
 	 * This method sets the "max-age" directive in the Cache-Control header.
 	 *
 	 * @param integer $age The maximum age in seconds
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setMaximumAge($age) {
@@ -419,7 +419,7 @@ class Response extends Message implements ResponseInterface {
 	 * This method sets the "s-maxage" directive in the Cache-Control header.
 	 *
 	 * @param integer $maximumAge The maximum age in seconds
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setSharedMaximumAge($maximumAge) {
@@ -467,7 +467,7 @@ class Response extends Message implements ResponseInterface {
 	 * A response flagged as "public" may be cached by any cache, even if it normally
 	 * wouldn't be cacheable in a shared cache.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setPublic() {
@@ -481,7 +481,7 @@ class Response extends Message implements ResponseInterface {
 	 * A response flagged as "private" tells that it is intended for a specific
 	 * user and must not be cached by a shared cache.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Response This response, for method chaining
+	 * @return \TYPO3\Flow\Http\Response This response, for method chaining
 	 * @api
 	 */
 	public function setPrivate() {
@@ -494,10 +494,10 @@ class Response extends Message implements ResponseInterface {
 	 * or removes certain headers in order to make the response compliant to
 	 * RFC 2616 and related standards.
 	 *
-	 * It is recommended to call this method before the response is sent and FLOW3
+	 * It is recommended to call this method before the response is sent and Flow
 	 * does so by default in its built-in HTTP request handler.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The corresponding request
+	 * @param \TYPO3\Flow\Http\Request $request The corresponding request
 	 * @return void
 	 * @api
 	 */

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping;
+namespace TYPO3\Flow\Persistence\Doctrine\Mapping;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -22,10 +22,10 @@ class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory {
 	 * Creates a new ClassMetadata instance for the given class name.
 	 *
 	 * @param string $className
-	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata
+	 * @return \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata
 	 */
 	protected function newClassMetadataInstance($className) {
-		return new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata($className);
+		return new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata($className);
 	}
 
 }

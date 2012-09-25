@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http;
+namespace TYPO3\Flow\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Container for HTTP header fields
  *
  * @api
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class Headers {
 
@@ -59,7 +59,7 @@ class Headers {
 	 * Creates a new Headers instance from the given $_SERVER-superglobal-like array.
 	 *
 	 * @param array $server An array similar or equal to $_SERVER, containing headers in the form of "HTTP_FOO_BAR"
-	 * @return \TYPO3\FLOW3\Http\Headers
+	 * @return \TYPO3\Flow\Http\Headers
 	 */
 	static public function createFromServer(array $server) {
 		$headerFields = array();
@@ -210,7 +210,7 @@ class Headers {
 	/**
 	 * Sets a cookie
 	 *
-	 * @param \TYPO3\FLOW3\Http\Cookie $cookie
+	 * @param \TYPO3\Flow\Http\Cookie $cookie
 	 * @return void
 	 * @api
 	 */
@@ -222,7 +222,7 @@ class Headers {
 	 * Returns a cookie specified by the given name
 	 *
 	 * @param string $name Name of the cookie
-	 * @return \TYPO3\FLOW3\Http\Cookie The cookie or NULL if no such cookie exists
+	 * @return \TYPO3\Flow\Http\Cookie The cookie or NULL if no such cookie exists
 	 * @api
 	 */
 	public function getCookie($name) {

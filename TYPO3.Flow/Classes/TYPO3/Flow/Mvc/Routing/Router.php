@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,20 +11,20 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\Arrays;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * The default web router
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
-class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
+class Router implements \TYPO3\Flow\Mvc\Routing\RouterInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @Flow\Inject
 	 */
 	protected $systemLogger;
 
@@ -34,7 +34,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	protected $controllerObjectNamePattern = '@package\@subpackage\Controller\@controllerController';
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -58,27 +58,27 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 
 	/**
 	 * The current request. Will be set in route()
-	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @var \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	protected $actionRequest;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\Route
+	 * @var \TYPO3\Flow\Mvc\Routing\Route
 	 */
 	protected $lastMatchedRoute;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\Route
+	 * @var \TYPO3\Flow\Mvc\Routing\Route
 	 */
 	protected $lastResolvedRoute;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -97,10 +97,10 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $httpRequest The web request to be analyzed. Will be modified by the router.
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @param \TYPO3\Flow\Http\Request $httpRequest The web request to be analyzed. Will be modified by the router.
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 */
-	public function route(\TYPO3\FLOW3\Http\Request $httpRequest) {
+	public function route(\TYPO3\Flow\Http\Request $httpRequest) {
 		$this->actionRequest = $httpRequest->createActionRequest();
 
 		$routePath = substr($httpRequest->getUri()->getPath(), strlen($httpRequest->getBaseUri()->getPath()));
@@ -137,7 +137,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	/**
 	 * Manually adds a route to the beginning of the configured routes
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Routing\Route $route
+	 * @param \TYPO3\Flow\Mvc\Routing\Route $route
 	 * @return void
 	 */
 	public function addRoute(Route $route) {
@@ -190,7 +190,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	 *
 	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
 	 * @return string
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoMatchingRouteException
 	 */
 	public function resolve(array $routeValues) {
 		$this->lastResolvedRoute = NULL;
@@ -203,7 +203,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 			}
 		}
 		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
-		throw new \TYPO3\FLOW3\Mvc\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
+		throw new \TYPO3\Flow\Mvc\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
 	}
 
 	/**
@@ -217,7 +217,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 	}
 
 	/**
-	 * Creates TYPO3\FLOW3\Mvc\Routing\Route objects from the injected routes
+	 * Creates TYPO3\Flow\Mvc\Routing\Route objects from the injected routes
 	 * configuration.
 	 *
 	 * @return void
@@ -226,7 +226,7 @@ class Router implements \TYPO3\FLOW3\Mvc\Routing\RouterInterface {
 		if ($this->routesCreated === FALSE) {
 			$this->routes = array();
 			foreach ($this->routesConfiguration as $routeConfiguration) {
-				$route = new \TYPO3\FLOW3\Mvc\Routing\Route();
+				$route = new \TYPO3\Flow\Mvc\Routing\Route();
 				if (isset($routeConfiguration['name'])) {
 					$route->setName($routeConfiguration['name']);
 				}

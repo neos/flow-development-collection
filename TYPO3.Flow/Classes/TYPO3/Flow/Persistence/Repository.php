@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence;
+namespace TYPO3\Flow\Persistence;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,14 +12,14 @@ namespace TYPO3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 default Repository
+ * The Flow default Repository
  *
  * @api
  */
-abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
+abstract class Repository implements \TYPO3\Flow\Persistence\RepositoryInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -50,10 +50,10 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -75,13 +75,13 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	 *
 	 * @param object $object The object to add
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function add($object) {
 		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
 			$type = (is_object($object) ? get_class($object) : gettype($object));
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
+			throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
 		}
 		$this->persistenceManager->add($object);
 	}
@@ -91,13 +91,13 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	 *
 	 * @param object $object The object to remove
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function remove($object) {
 		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
 			$type = (is_object($object) ? get_class($object) : gettype($object));
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
+			throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
 		}
 		$this->persistenceManager->remove($object);
 	}
@@ -105,9 +105,9 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	/**
 	 * Returns all objects of this repository
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
-	 * @see \TYPO3\FLOW3\Persistence\QueryInterface::execute()
+	 * @see \TYPO3\Flow\Persistence\QueryInterface::execute()
 	 */
 	public function findAll() {
 		return $this->createQuery()->execute();
@@ -127,7 +127,7 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function createQuery() {
@@ -165,8 +165,8 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	/**
 	 * Sets the property names to order results by. Expected like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @param array $defaultOrderings The property names to order by by default
@@ -181,13 +181,13 @@ abstract class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterfac
 	 * Schedules a modified object for persistence.
 	 *
 	 * @param object $object The modified object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function update($object) {
 		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
 			$type = (is_object($object) ? get_class($object) : gettype($object));
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
+			throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('The value given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
 		}
 
 		$this->persistenceManager->update($object);

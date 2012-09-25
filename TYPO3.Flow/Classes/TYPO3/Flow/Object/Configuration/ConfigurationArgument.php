@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Configuration;
+namespace TYPO3\Flow\Object\Configuration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,12 +12,12 @@ namespace TYPO3\FLOW3\Object\Configuration;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Injection (constructor-) argument as used in a Object Configuration
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class ConfigurationArgument {
 
@@ -45,7 +45,7 @@ class ConfigurationArgument {
 	/**
 	 * @var integer
 	 */
-	protected $autowiring = \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+	protected $autowiring = \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
 
 	/**
 	 * Constructor - sets the index, value and type of the argument
@@ -102,7 +102,7 @@ class ConfigurationArgument {
 	/**
 	 * Sets autowiring for this argument
 	 *
-	 * @param integer $autowiring One of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @param integer $autowiring One of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 * @return void
 	 */
 	public function setAutowiring($autowiring) {
@@ -112,7 +112,7 @@ class ConfigurationArgument {
 	/**
 	 * Returns the autowiring mode for this argument
 	 *
-	 * @return integer Value of one of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @return integer Value of one of the \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;

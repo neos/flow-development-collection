@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Cli;
+namespace TYPO3\Flow\Tests\Unit\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,20 +11,20 @@ namespace TYPO3\FLOW3\Tests\Unit\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cli\Command;
+use TYPO3\Flow\Cli\Command;
 
 /**
  * Testcase for the CLI Command class
  */
-class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\Command
+	 * @var \TYPO3\Flow\Cli\Command
 	 */
 	protected $command;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\MethodReflection
+	 * @var \TYPO3\Flow\Reflection\MethodReflection
 	 */
 	protected $mockMethodReflection;
 
@@ -32,8 +32,8 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->command = $this->getAccessibleMock('TYPO3\FLOW3\Cli\Command', array('getCommandMethodReflection'), array(), '', FALSE);
-		$this->mockMethodReflection = $this->getMock('TYPO3\FLOW3\Reflection\MethodReflection', array(), array(), '', FALSE);
+		$this->command = $this->getAccessibleMock('TYPO3\Flow\Cli\Command', array('getCommandMethodReflection'), array(), '', FALSE);
+		$this->mockMethodReflection = $this->getMock('TYPO3\Flow\Reflection\MethodReflection', array(), array(), '', FALSE);
 		$this->command->expects($this->any())->method('getCommandMethodReflection')->will($this->returnValue($this->mockMethodReflection));
 	}
 
@@ -42,7 +42,7 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function commandIdentifiers() {
 		return array(
-			array('TYPO3\FLOW3\Command\CacheCommandController', 'flush', 'typo3.flow3:cache:flush'),
+			array('TYPO3\Flow\Command\CacheCommandController', 'flush', 'typo3.flow:cache:flush'),
 			array('RobertLemke\Foo\Faa\Fuuum\Command\CoffeeCommandController', 'brew', 'robertlemke.foo.faa.fuuum:coffee:brew'),
 			array('SomePackage\Command\CookieCommandController', 'bake', 'somepackage:cookie:bake')
 		);
@@ -69,7 +69,7 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function hasArgumentsReturnsTrueIfCommandExpectsArguments() {
-		$mockParameterReflection = $this->getMock('TYPO3\FLOW3\Reflection\ParameterReflection', array(), array(), '', FALSE);
+		$mockParameterReflection = $this->getMock('TYPO3\Flow\Reflection\ParameterReflection', array(), array(), '', FALSE);
 		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($mockParameterReflection)));
 		$this->assertTrue($this->command->hasArguments());
 	}
@@ -86,8 +86,8 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments() {
-		$mockParameterReflection = $this->getMock('TYPO3\FLOW3\Reflection\ParameterReflection', array(), array(), '', FALSE);
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$mockParameterReflection = $this->getMock('TYPO3\Flow\Reflection\ParameterReflection', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockMethodParameters = array('argument1' => array('optional' => FALSE), 'argument2' => array('optional' => TRUE));
 		$mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($mockMethodParameters));
 		$this->command->injectReflectionService($mockReflectionService);
@@ -95,8 +95,8 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getTagsValues')->will($this->returnValue(array('param' => array('@param $argument1 argument1 description', '@param $argument2 argument2 description'))));
 
 		$expectedResult = array(
-			new \TYPO3\FLOW3\Cli\CommandArgumentDefinition('argument1', TRUE, 'argument1 description'),
-			new \TYPO3\FLOW3\Cli\CommandArgumentDefinition('argument2', FALSE, 'argument2 description')
+			new \TYPO3\Flow\Cli\CommandArgumentDefinition('argument1', TRUE, 'argument1 description'),
+			new \TYPO3\Flow\Cli\CommandArgumentDefinition('argument2', FALSE, 'argument2 description')
 		);
 		$actualResult = $this->command->getArgumentDefinitions();
 		$this->assertEquals($expectedResult, $actualResult);

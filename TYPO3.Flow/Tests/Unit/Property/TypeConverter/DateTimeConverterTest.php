@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
+namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,17 +14,17 @@ namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
 /**
  * Testcase for the DateTime converter
  *
- * @covers \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter<extended>
+ * @covers \TYPO3\Flow\Property\TypeConverter\DateTimeConverter<extended>
  */
-class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter
+	 * @var \TYPO3\Flow\Property\TypeConverter\DateTimeConverter
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter();
+		$this->converter = new \TYPO3\Flow\Property\TypeConverter\DateTimeConverter();
 	}
 
 	/**
@@ -65,7 +65,7 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function convertFromReturnsErrorIfGivenStringCantBeConverted() {
 		$error = $this->converter->convertFrom('1980-12-13', 'DateTime');
-		$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $error);
+		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $error);
 	}
 
 	/**
@@ -83,15 +83,15 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function convertFromUsesDefaultDateFormatIfItIsNotConfigured() {
 		$expectedResult = '1980-12-13T20:15:07+01:23';
-		$mockMappingConfiguration = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface');
+		$mockMappingConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
 		$mockMappingConfiguration
 				->expects($this->atLeastOnce())
 				->method('getConfigurationValue')
-				->with('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
+				->with('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
 				->will($this->returnValue(NULL));
 
 		$date = $this->converter->convertFrom($expectedResult, 'DateTime', array(), $mockMappingConfiguration);
-		$actualResult = $date->format(\TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT);
+		$actualResult = $date->format(\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT);
 		$this->assertSame($expectedResult, $actualResult);
 	}
 
@@ -129,24 +129,24 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function convertFromStringTests($source, $dateFormat, $isValid) {
 		if ($dateFormat !== NULL) {
-			$mockMappingConfiguration = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface');
+			$mockMappingConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
 			$mockMappingConfiguration
 					->expects($this->atLeastOnce())
 					->method('getConfigurationValue')
-					->with('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
+					->with('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
 					->will($this->returnValue($dateFormat));
 		} else {
 			$mockMappingConfiguration = NULL;
 		}
 		$date = $this->converter->convertFrom($source, 'DateTime', array(), $mockMappingConfiguration);
 		if ($isValid !== TRUE) {
-			$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $date);
+			$this->assertInstanceOf('TYPO3\Flow\Error\Error', $date);
 			return;
 		}
 		$this->assertInstanceOf('DateTime', $date);
 
 		if ($dateFormat === NULL) {
-			$dateFormat = \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
+			$dateFormat = \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
 		}
 		$this->assertSame($source, $date->format($dateFormat));
 	}
@@ -165,12 +165,12 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function convertFromReturnsErrorIfGivenArrayCantBeConverted() {
 		$error = $this->converter->convertFrom(array('date' => '1980-12-13'), 'DateTime');
-		$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $error);
+		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $error);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Property\Exception\TypeConverterException
+	 * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
 	public function convertFromThrowsExceptionIfGivenArrayDoesNotSpecifyTheDate() {
 		$this->converter->convertFrom(array('hour' => '12', 'minute' => '30'), 'DateTime');
@@ -191,10 +191,10 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function convertFromProperlyConvertsArrayWithDateAsArray() {
 		$source = array('day' => '13', 'month' => '10', 'year' => '2010');
-		$mappingConfiguration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
+		$mappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
 		$mappingConfiguration->setTypeConverterOption(
-				'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
-				\TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+				'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+				\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 				'Y-m-d'
 		);
 
@@ -240,7 +240,7 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Property\Exception\TypeConverterException
+	 * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
 	public function convertFromThrowsExceptionIfSpecifiedTimezoneIsInvalid() {
 		$source = array(
@@ -253,7 +253,7 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Property\Exception\TypeConverterException
+	 * @expectedException TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
 	public function convertFromArrayThrowsExceptionForEmptyArray() {
 		$this->converter->convertFrom(array(), 'DateTime', array(), NULL);
@@ -294,11 +294,11 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function convertFromArrayTests(array $source, $isValid) {
 		$dateFormat = isset($source['dateFormat']) && strlen($source['dateFormat']) > 0 ? $source['dateFormat'] : NULL;
 		if ($dateFormat !== NULL) {
-			$mockMappingConfiguration = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface');
+			$mockMappingConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
 			$mockMappingConfiguration
 					->expects($this->atLeastOnce())
 					->method('getConfigurationValue')
-					->with('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
+					->with('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT)
 					->will($this->returnValue($dateFormat));
 		} else {
 			$mockMappingConfiguration = NULL;
@@ -306,13 +306,13 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$date = $this->converter->convertFrom($source, 'DateTime', array(), $mockMappingConfiguration);
 
 		if ($isValid !== TRUE) {
-			$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $date);
+			$this->assertInstanceOf('TYPO3\Flow\Error\Error', $date);
 			return;
 		}
 
 		$this->assertInstanceOf('DateTime', $date);
 		if ($dateFormat === NULL) {
-			$dateFormat = \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
+			$dateFormat = \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
 		}
 		$dateAsString = isset($source['date']) ? $source['date'] : '';
 		$this->assertSame($dateAsString, $date->format($dateFormat));

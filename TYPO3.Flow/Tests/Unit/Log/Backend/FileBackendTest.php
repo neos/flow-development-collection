@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Log\Backend;
+namespace TYPO3\Flow\Tests\Unit\Log\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -18,7 +18,7 @@ use org\bovigo\vfs\vfsStreamWrapper;
  * Testcase for the File Backend
  *
  */
-class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 */
@@ -31,18 +31,18 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theLogFileIsOpenedWithOpen() {
 		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 		$this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException
+	 * @expectedException \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException
 	 */
 	public function openDoesNotCreateParentDirectoriesByDefault() {
 		$logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 	}
 
@@ -51,7 +51,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function openCreatesParentDirectoriesIfTheOptionSaysSo() {
 		$logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => TRUE));
+		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => TRUE));
 		$backend->open();
 		$this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
 	}
@@ -61,7 +61,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
 		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 
 		$backend->append('foo');
@@ -75,7 +75,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile() {
 		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->setLogIpAddress(TRUE);
 		$backend->open();
 
@@ -90,7 +90,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
 		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\Flow\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->setSeverityThreshold(LOG_EMERG);
 		$backend->open();
 
@@ -108,7 +108,7 @@ class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$logFileUrl = vfsStream::url('testDirectory') . '/test.log';
 		file_put_contents($logFileUrl, 'twentybytesofcontent');
 
-		$backend = $this->getAccessibleMock('TYPO3\FLOW3\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
+		$backend = $this->getAccessibleMock('TYPO3\Flow\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
 		$backend->_set('maximumLogFileSize', 10);
 		$backend->setLogFilesToKeep(1);
 		$backend->open();

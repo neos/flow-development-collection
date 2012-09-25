@@ -58,7 +58,7 @@ But the default date format can be overridden in the initialize*Action() method 
  $this->arguments['<argumentName>']
    ->getPropertyMappingConfiguration()
    ->forProperty('<propertyName>') // this line can be skipped in order to specify the format for all properties
-   ->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter', \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
+   ->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\DateTimeConverter', \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT, '<dateFormat>');
 
 If the source is of type array, it is possible to override the format in the source::
 
@@ -109,7 +109,7 @@ deviating decimal separators.
 
  public function initializeCreateAction() {
  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- 		'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', TRUE
+ 		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', TRUE
  	);
  }
 
@@ -121,7 +121,7 @@ for Germany for example, where a comma is used as decimal separator, the mention
 
  public function initializeCreateAction() {
  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- 		'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', 'fr'
+ 		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'fr'
  	);
  }
 
@@ -135,32 +135,32 @@ Default for strict mode is TRUE.
 *Example setting lenient mode (abridged)*::
 
  ->setTypeConverterOption(
- 	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'strictMode', FALSE
+ 	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'strictMode', FALSE
  );
 
 **Format type**
 
 Format type can be decimal, percent or currency; represented as class constant FORMAT_TYPE_DECIMAL,
-FORMAT_TYPE_PERCENT or FORMAT_TYPE_CURRENCY of class TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader.
+FORMAT_TYPE_PERCENT or FORMAT_TYPE_CURRENCY of class TYPO3\Flow\I18n\Cldr\Reader\NumbersReader.
 Default, if none given, is FORMAT_TYPE_DECIMAL.
 
 *Example setting format type `currency` (abridged)*::
 
  ->setTypeConverterOption(
- 	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'formatType', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+ 	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'formatType', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
  );
 
 **Format length**
 
 Format type can be default, full, long, medium or short; represented as class constant FORMAT_LENGTH_DEFAULT,
-FORMAT_LENGTH_FULL, FORMAT_LENGTH_LONG etc., of class  TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader.
+FORMAT_LENGTH_FULL, FORMAT_LENGTH_LONG etc., of class  TYPO3\Flow\I18n\Cldr\Reader\NumbersReader.
 The format length has a technical background in the CLDR repository, and specifies whether a different number
 pattern should be used. In most cases leaving this DEFAULT would be the correct choice.
 
 *Example setting format length (abridged)*::
 
  ->setTypeConverterOption(
- 	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'formatLength', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
+ 	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'formatLength', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
  );
 
 :Priority: 1

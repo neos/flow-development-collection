@@ -17,7 +17,7 @@ This changes disables both symlink tasks in the release
 deployment descriptor.
 
 * Fixes: `#37569 <http://forge.typo3.org/issues/37569>`_
-* Commit: `70608e7 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=70608e77eeb7ec75ad0e57e5c6fd9f034cefee96>`_
+* Commit: `70608e7 <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=70608e77eeb7ec75ad0e57e5c6fd9f034cefee96>`_
 
 [TASK] Adjust Surf deployment descriptor
 -----------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ deployment descriptor.
 The deployment descriptor used to release archives of FLOW3
 needed a little adjustment.
 
-* Commit: `abb312c <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=abb312c262cebcbec429262b8384ebbeb4c4602d>`_
+* Commit: `abb312c <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=abb312c262cebcbec429262b8384ebbeb4c4602d>`_
 
 [TASK] Amend upgrade instructions
 -----------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ amended version from the wiki.
 Some edits have been applied and also synced back to
 the wiki.
 
-* Commit: `7bd5832 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=7bd58320bd058ff7e2bbdcae1fa5ac471b3eb840>`_
+* Commit: `7bd5832 <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=7bd58320bd058ff7e2bbdcae1fa5ac471b3eb840>`_
 
 [TASK] Update to 2.2.2
 -----------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ the wiki.
 DataFixtures is at f201391349f3dc6bd9c9c698927ea7c78104c461.
 
 * Related: `#37468 <http://forge.typo3.org/issues/37468>`_
-* Commit: `63f85c6 <http://git.typo3.org/FLOW3/Packages/Doctrine.Common.git?a=commit;h=63f85c63a6f8d992b36c71a617213836d3b7ba77>`_
+* Commit: `63f85c6 <http://git.typo3.org/Flow/Packages/Doctrine.Common.git?a=commit;h=63f85c63a6f8d992b36c71a617213836d3b7ba77>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Doctrine.DBAL
@@ -59,7 +59,7 @@ for PHP < 5.3.6 (https://review.typo3.org/4587).
 Migrations is at fe98141b1e460baf5ab52f9139e1ae238101b28b.
 
 * Related: `#37468 <http://forge.typo3.org/issues/37468>`_
-* Commit: `dc5292c <http://git.typo3.org/FLOW3/Packages/Doctrine.DBAL.git?a=commit;h=dc5292c774dd8befcd77790baaa7b3259f9365e5>`_
+* Commit: `dc5292c <http://git.typo3.org/Flow/Packages/Doctrine.DBAL.git?a=commit;h=dc5292c774dd8befcd77790baaa7b3259f9365e5>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Doctrine.ORM
@@ -86,7 +86,7 @@ The effect will be constraint violations in join tables due to duplicate
 entries.
 
 * Fixes: `#37476 <http://forge.typo3.org/issues/37476>`_
-* Commit: `bb917bf <http://git.typo3.org/FLOW3/Packages/Doctrine.ORM.git?a=commit;h=bb917bf601df2baf220e0a9612c9f609d5ed16a4>`_
+* Commit: `bb917bf <http://git.typo3.org/Flow/Packages/Doctrine.ORM.git?a=commit;h=bb917bf601df2baf220e0a9612c9f609d5ed16a4>`_
 
 [TASK] Update to 2.2.2
 -----------------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ Upstream release plus two of our own changes on top:
 * f2b493f In proxies add docblocks and move __wakeup() call around
 
 * Related: `#37468 <http://forge.typo3.org/issues/37468>`_
-* Commit: `43d7993 <http://git.typo3.org/FLOW3/Packages/Doctrine.ORM.git?a=commit;h=43d79933ae2536ba9f07cc86fee7502af7c35ac5>`_
+* Commit: `43d7993 <http://git.typo3.org/Flow/Packages/Doctrine.ORM.git?a=commit;h=43d79933ae2536ba9f07cc86fee7502af7c35ac5>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Symfony.Component.DomCrawler
@@ -112,13 +112,13 @@ Symfony.Component.Yaml
 No changes
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TYPO3.FLOW3
+TYPO3.Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `99815da <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=99815da9f4e7edc5d663945b4bb83e875d534b2e>`_
+* Commit: `99815da <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=99815da9f4e7edc5d663945b4bb83e875d534b2e>`_
 
 [BUGFIX] Fix inconsistent Validate and IgnoreValidation behavior
 -----------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ IgnoreValidation annotation did not do. This change makes the two behave
 the same by adding that trim to IgnoreValidation as well.
 
 * Fixes: `#37385 <http://forge.typo3.org/issues/37385>`_
-* Commit: `4ae13b5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4ae13b54054bfeee87f3f3c1afad561f74ccd303>`_
+* Commit: `4ae13b5 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4ae13b54054bfeee87f3f3c1afad561f74ccd303>`_
 
 [BUGFIX] Fix error message about command controller classes
 -----------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ get an error saying "Invalid controller class name [...] 1305100019".
 This change makes the error message a little more helpful.
 
 * Fixes: `#33139 <http://forge.typo3.org/issues/33139>`_
-* Commit: `42f4e5e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=42f4e5ec0d5a071431d93a7e696956b172a7db91>`_
+* Commit: `42f4e5e <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=42f4e5ec0d5a071431d93a7e696956b172a7db91>`_
 
 [TASK] IdentityRoutePart should return __identity array
 -----------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ to an array in the format array('__identity' => '<Identifier>')
 * Fixes: `#37403 <http://forge.typo3.org/issues/37403>`_
 * Related: `#37402 <http://forge.typo3.org/issues/37402>`_
 
-* Commit: `c7da751 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c7da751a3cba3427acc14c6f5a3d568e05f7da49>`_
+* Commit: `c7da751 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=c7da751a3cba3427acc14c6f5a3d568e05f7da49>`_
 
 [TASK] Make "all" parameter optional in package:refreeze
 -----------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ For freeze, unfreeze and refreeze the default value for
 the packageKey is now "all".
 
 * Resolves: `#37358 <http://forge.typo3.org/issues/37358>`_
-* Commit: `0caf926 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0caf926f31d31f8753eb9f2977f3db92b0280f28>`_
+* Commit: `0caf926 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=0caf926f31d31f8753eb9f2977f3db92b0280f28>`_
 
 [BUGFIX] Fix IP address validation
 -----------------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ In that regard: hooray for PHP behavior changes. They actually
 exploit bad application code. Sometimes.
 
 * Related: `#37584 <http://forge.typo3.org/issues/37584>`_
-* Commit: `aa1a0c5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=aa1a0c5feb6a95691e3df2f40302b69b9c78dae0>`_
+* Commit: `aa1a0c5 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=aa1a0c5feb6a95691e3df2f40302b69b9c78dae0>`_
 
 [FEATURE] Provide way to determine client IP address
 -----------------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ which are present when using proxies or certain server setups
 for determining the actual client IP address.
 
 * Resolves: `#37584 <http://forge.typo3.org/issues/37584>`_
-* Commit: `253a939 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=253a939213dc6aaa8f4f18f6b364972fc82c9d6b>`_
+* Commit: `253a939 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=253a939213dc6aaa8f4f18f6b364972fc82c9d6b>`_
 
 [!!!][FEATURE] Content Negotiation for Media Types
 -----------------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ for a special purpose, you need to take care of setting
 it yourself.
 
 * Resolves: `#37561 <http://forge.typo3.org/issues/37561>`_
-* Commit: `29618c5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=29618c52b31a51acb1ddc4fb7796dfdab909cafe>`_
+* Commit: `29618c5 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=29618c52b31a51acb1ddc4fb7796dfdab909cafe>`_
 
 [TASK] Create configuration directories only on save
 -----------------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ up some unit tests related to ApplicationContext and
 ConfigurationManager.
 
 * Related: `#33581 <http://forge.typo3.org/issues/33581>`_
-* Commit: `2a22847 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2a2284752dc73b432e05bdac6197fc646935e2e4>`_
+* Commit: `2a22847 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2a2284752dc73b432e05bdac6197fc646935e2e4>`_
 
 [BUGFIX] Avoid validating instances more often than needed
 -----------------------------------------------------------------------------------------
@@ -265,7 +265,7 @@ so far.
 * Fixes: `#37363 <http://forge.typo3.org/issues/37363>`_
 * Related: `#34154 <http://forge.typo3.org/issues/34154>`_
 
-* Commit: `632685d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=632685da16e266bb1cfdabf223a938d3cf3476f8>`_
+* Commit: `632685d <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=632685da16e266bb1cfdabf223a938d3cf3476f8>`_
 
 [BUGFIX] Router overrides request arguments
 -----------------------------------------------------------------------------------------
@@ -291,7 +291,7 @@ with the route values instead, with precedence to the route
 values.
 
 * Fixes: `#37445 <http://forge.typo3.org/issues/37445>`_
-* Commit: `4ffcef3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4ffcef32bca0ee9d05c743126ce9c4fd0904d726>`_
+* Commit: `4ffcef3 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4ffcef32bca0ee9d05c743126ce9c4fd0904d726>`_
 
 [BUGFIX] Keep existing PackageStates.php
 -----------------------------------------------------------------------------------------
@@ -301,7 +301,7 @@ the loss of custom package states configuration on every request in
 development mode or initially in production.
 
 * Resolves: `#37607 <http://forge.typo3.org/issues/37607>`_
-* Commit: `d8bb6a4 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d8bb6a461e15cfbd5f6b9b4b1349d1528432171a>`_
+* Commit: `d8bb6a4 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=d8bb6a461e15cfbd5f6b9b4b1349d1528432171a>`_
 
 [!!!][TASK] Switch from MIME to Media Types
 -----------------------------------------------------------------------------------------
@@ -321,7 +321,7 @@ use the new ones instead is shipped with the change.
 * Related: `#37402 <http://forge.typo3.org/issues/37402>`_
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
 
-* Commit: `fc4c4ab <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=fc4c4ab510ddc1705f0c06a40e90335b5301ee4c>`_
+* Commit: `fc4c4ab <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=fc4c4ab510ddc1705f0c06a40e90335b5301ee4c>`_
 
 [BUGFIX] Fix QueryTest using add twice for the same object
 -----------------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ was buggy, adding the same object twice (instead of a different
 one).
 
 * Related: `#34527 <http://forge.typo3.org/issues/34527>`_
-* Commit: `96b49cb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=96b49cb6219d7cccd2bce479cec2f0bcc8c418bb>`_
+* Commit: `96b49cb <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=96b49cb6219d7cccd2bce479cec2f0bcc8c418bb>`_
 
 [!!!][BUGFIX] Float and Integer converters do not correctly handle errors and empty values
 ------------------------------------------------------------------------------------------
@@ -353,7 +353,7 @@ This is a breaking change if you relied upon the old behavior that
 empty values are converted to the number 0.
 
 * Fixes: `#35136 <http://forge.typo3.org/issues/35136>`_
-* Commit: `996f20c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=996f20ce3a61fd4c9f4645d64df44235246b79bf>`_
+* Commit: `996f20c <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=996f20ce3a61fd4c9f4645d64df44235246b79bf>`_
 
 [TASK] Tweak wrong docblock in PersistenceManager->add()
 -----------------------------------------------------------------------------------------
@@ -362,7 +362,7 @@ The change to fix #34527 introduced a wrong @throws clause in
 the method docblock.
 
 * Related: `#34527 <http://forge.typo3.org/issues/34527>`_
-* Commit: `102cee2 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=102cee20fc823c59f82249109f1898c4f41307db>`_
+* Commit: `102cee2 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=102cee20fc823c59f82249109f1898c4f41307db>`_
 
 [BUGFIX] Save relative package path in PackageStates.php
 -----------------------------------------------------------------------------------------
@@ -378,7 +378,7 @@ on development and production systems.
 * Fixes: `#37220 <http://forge.typo3.org/issues/37220>`_
 * Related: `#33719 <http://forge.typo3.org/issues/33719>`_
 
-* Commit: `1a688df <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=1a688df60b1b57077cdc1fdedbae245eae088dba>`_
+* Commit: `1a688df <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=1a688df60b1b57077cdc1fdedbae245eae088dba>`_
 
 [BUGFIX] PersistenceManager->add() now requires objects being new
 -----------------------------------------------------------------------------------------
@@ -388,7 +388,7 @@ this can be dangerous, as it allows an attacker to misuse creation
 forms (i.e. a register form) and change existing entities.
 
 * Fixes: `#34527 <http://forge.typo3.org/issues/34527>`_
-* Commit: `2290d9f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2290d9febc7b7fc9a5bb0d67d8f89e97c8a345f0>`_
+* Commit: `2290d9f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2290d9febc7b7fc9a5bb0d67d8f89e97c8a345f0>`_
 
 [FEATURE] Add getHttpResponse() to HttpRequestHandler
 -----------------------------------------------------------------------------------------
@@ -398,7 +398,7 @@ which allows for retrieving the response corresponding
 to the currently handled request.
 
 * Resolves: `#36696 <http://forge.typo3.org/issues/36696>`_
-* Commit: `3469127 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=34691272f6a2ea722d475762ada0a27c35eaa3d5>`_
+* Commit: `3469127 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=34691272f6a2ea722d475762ada0a27c35eaa3d5>`_
 
 [FEATURE] Make HTTP responses standards compliant
 -----------------------------------------------------------------------------------------
@@ -412,7 +412,7 @@ only introduces a first set of important checks which
 are all explained by a corresponding test.
 
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `462fec1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=462fec11312d0ad520e0ced8a201bf7adde2e544>`_
+* Commit: `462fec1 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=462fec11312d0ad520e0ced8a201bf7adde2e544>`_
 
 [FEATURE] Response setExpires() / getExpires()
 -----------------------------------------------------------------------------------------
@@ -422,7 +422,7 @@ API which allow for setting and retrieving the Expires
 HTTP header.
 
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `3e5836f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3e5836faa8fb8d70b301521ab6ccc0022d72ae55>`_
+* Commit: `3e5836f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=3e5836faa8fb8d70b301521ab6ccc0022d72ae55>`_
 
 [FEATURE] Make Message / Response setters chainable
 -----------------------------------------------------------------------------------------
@@ -431,7 +431,7 @@ This makes the setter methods of the Message and the
 Response class chainable.
 
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `11f8eb8 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=11f8eb8e96ad0f103b384734e17062bd57777d6b>`_
+* Commit: `11f8eb8 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=11f8eb8e96ad0f103b384734e17062bd57777d6b>`_
 
 [FEATURE] More convenience methods in Response
 -----------------------------------------------------------------------------------------
@@ -446,7 +446,7 @@ object:
 * setSharedMaximumAge() / getSharedMaximumAge()
 
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `c403439 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c403439441bd05ab025d3547fca2bf07c25d7d83>`_
+* Commit: `c403439 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=c403439441bd05ab025d3547fca2bf07c25d7d83>`_
 
 [FEATURE] Support for HTTP Cache-Control headers
 -----------------------------------------------------------------------------------------
@@ -473,13 +473,13 @@ This patch also adds the new API methods setPrivate()
 and setPublic() to the Response class.
 
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `27f1622 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=27f162261c23b560e4fe408a03b7237dede3454a>`_
+* Commit: `27f1622 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=27f162261c23b560e4fe408a03b7237dede3454a>`_
 
 [TASK] Remove debug output in log on configuration changes
 -----------------------------------------------------------------------------------------
 
 * Related: `#34875 <http://forge.typo3.org/issues/34875>`_
-* Commit: `c6fa1ba <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c6fa1ba536077670eee753ae67f9357819fa02d6>`_
+* Commit: `c6fa1ba <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=c6fa1ba536077670eee753ae67f9357819fa02d6>`_
 
 [TASK] Log skipped persistAll() due to closed EntityManager
 -----------------------------------------------------------------------------------------
@@ -489,7 +489,7 @@ able to spot errors more easily, this adds a log entry if the EM
 was closed and flushing was skipped.
 
 * Related: `#30934 <http://forge.typo3.org/issues/30934>`_
-* Commit: `9a8bc9b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=9a8bc9b1ae81ed85e5a86da3af377592367385df>`_
+* Commit: `9a8bc9b <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=9a8bc9b1ae81ed85e5a86da3af377592367385df>`_
 
 [BUGFIX] Make our var_dump() usable with Doctrine collections
 -----------------------------------------------------------------------------------------
@@ -498,7 +498,7 @@ For Doctrine\\Collection instances we use Doctrine's export()
 method now to render the dump.
 
 * Fixes: `#37481 <http://forge.typo3.org/issues/37481>`_
-* Commit: `55b5a55 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=55b5a555ec747466bbe83b3dfa7eea13f3a5010e>`_
+* Commit: `55b5a55 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=55b5a555ec747466bbe83b3dfa7eea13f3a5010e>`_
 
 [BUGFIX] Fix Wrong exception message in Repository->remove()
 -----------------------------------------------------------------------------------------
@@ -506,13 +506,13 @@ method now to render the dump.
 The message would say add() was involved, which is wrong.
 
 * Fixes: `#37448 <http://forge.typo3.org/issues/37448>`_
-* Commit: `91cb54f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=91cb54f9ca1c09e0adc42b4e554fcdea115dfa69>`_
+* Commit: `91cb54f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=91cb54f9ca1c09e0adc42b4e554fcdea115dfa69>`_
 
 [BUGFIX] Add hint on validator empty handling to migration
 -----------------------------------------------------------------------------------------
 
 * Fixes: `#37231 <http://forge.typo3.org/issues/37231>`_
-* Commit: `ce852a1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=ce852a134f31eed612780c76878feabfbc33ab87>`_
+* Commit: `ce852a1 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=ce852a134f31eed612780c76878feabfbc33ab87>`_
 
 [FEATURE] Support for HTTP PUT/DELETE arguments
 -----------------------------------------------------------------------------------------
@@ -534,7 +534,7 @@ supported:
 * Resolves: `#36913 <http://forge.typo3.org/issues/36913>`_
 * Related: `#37402 <http://forge.typo3.org/issues/37402>`_
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `8ce2f8d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=8ce2f8da04576f850dc1bb02c22fdd582f02df86>`_
+* Commit: `8ce2f8d <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=8ce2f8da04576f850dc1bb02c22fdd582f02df86>`_
 
 [TASK] Common base class Message for Request / Response
 -----------------------------------------------------------------------------------------
@@ -547,7 +547,7 @@ getting headers, charset handling and more.
 It is in line with the terminology in RFC 2616.
 
 * Related: `#37259 <http://forge.typo3.org/issues/37259>`_
-* Commit: `4f6850f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4f6850ffcf85c8984a2ba4236f0d8ad2b6ad7009>`_
+* Commit: `4f6850f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4f6850ffcf85c8984a2ba4236f0d8ad2b6ad7009>`_
 
 [TASK] Temporarily remove nested response code
 -----------------------------------------------------------------------------------------
@@ -558,7 +558,7 @@ to be implemented only when most of the other features,
 including Cache Control, are in place.
 
 * Related: `#33371 <http://forge.typo3.org/issues/33371>`_
-* Commit: `5151598 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=5151598fee6f1b4bd95aa6b750c04fa55e172a29>`_
+* Commit: `5151598 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=5151598fee6f1b4bd95aa6b750c04fa55e172a29>`_
 
 [FEATURE] Support for HTTP Age and Date header
 -----------------------------------------------------------------------------------------
@@ -569,13 +569,13 @@ RFC 2616. It also introduces the use of the "Now"
 singleton as a time reference for age calculations.
 
 * Related: `#37259 <http://forge.typo3.org/issues/37259>`_
-* Commit: `86350b1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=86350b16355bfced486d2ee2af64180ee62efc26>`_
+* Commit: `86350b1 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=86350b16355bfced486d2ee2af64180ee62efc26>`_
 
 [TASK] Annotation cleanup for http response __toString method
 -----------------------------------------------------------------------------------------
 
 * Related: `#34875 <http://forge.typo3.org/issues/34875>`_
-* Commit: `93a8b37 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=93a8b37e6a8a690587ccdc0766f9a42be3ff6556>`_
+* Commit: `93a8b37 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=93a8b37e6a8a690587ccdc0766f9a42be3ff6556>`_
 
 [TASK] Clean up some coding style issues
 -----------------------------------------------------------------------------------------
@@ -583,7 +583,7 @@ singleton as a time reference for age calculations.
 Add space to "foreach(".
 
 * Related: `#34875 <http://forge.typo3.org/issues/34875>`_
-* Commit: `3473e74 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=3473e746c7806c74fb120aeb5cea952d42164f3f>`_
+* Commit: `3473e74 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=3473e746c7806c74fb120aeb5cea952d42164f3f>`_
 
 [BUGFIX] Http Response can be cast to string again
 -----------------------------------------------------------------------------------------
@@ -593,7 +593,7 @@ Http Response. We currently rely on this behavior in the
 ActionController which combines response content by simple
 string concatenation.
 
-* Commit: `20c9c7e <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=20c9c7e92362c18dbbbf8aacc728e96223edbb1b>`_
+* Commit: `20c9c7e <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=20c9c7e92362c18dbbbf8aacc728e96223edbb1b>`_
 
 [TASK] HTTP Response: Status Code and Content Type
 -----------------------------------------------------------------------------------------
@@ -602,7 +602,7 @@ This adds a few new methods to the HTTP Response
 class - including the related unit tests.
 
 * Related: `#37259 <http://forge.typo3.org/issues/37259>`_
-* Commit: `03ccfed <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=03ccfedd23591b0ad8eba0cba6ac6032034e1802>`_
+* Commit: `03ccfed <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=03ccfedd23591b0ad8eba0cba6ac6032034e1802>`_
 
 [FEATURE] Introduce "Now" as unique time reference
 -----------------------------------------------------------------------------------------
@@ -614,19 +614,19 @@ of "now" is needed or where time needs to be mocked
 in related tests.
 
 * Resolves: `#37376 <http://forge.typo3.org/issues/37376>`_
-* Commit: `87120b3 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=87120b37fa21b92c02fcce53279a03cc0b0c987a>`_
+* Commit: `87120b3 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=87120b37fa21b92c02fcce53279a03cc0b0c987a>`_
 
 [BUGFIX] Correction of double-"ed" ending in isMethodAnnotatededWith
 -----------------------------------------------------------------------------------------
 
 * Fixes: `#37343 <http://forge.typo3.org/issues/37343>`_
-* Commit: `bca3a38 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=bca3a383ed47237caf8a2e0de4a9c629a775cff1>`_
+* Commit: `bca3a38 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=bca3a383ed47237caf8a2e0de4a9c629a775cff1>`_
 
 [BUGFIX] Correction of double-"ed" ending in isMethodAnnotatededWith
 -----------------------------------------------------------------------------------------
 
 * Fixes: `#37343 <http://forge.typo3.org/issues/37343>`_
-* Commit: `992cc65 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=992cc655b1088d379aea73fbb96b2630ed04653a>`_
+* Commit: `992cc65 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=992cc655b1088d379aea73fbb96b2630ed04653a>`_
 
 [BUGFIX] generateHmac method does not use safe getEncryptionKey
 -----------------------------------------------------------------------------------------
@@ -636,7 +636,7 @@ and not through the safe getEncryptionKey method, leading to
 uninitialized access without having an encryptionKey set.
 
 * Fixes: `#36767 <http://forge.typo3.org/issues/36767>`_
-* Commit: `7c1cadb <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=7c1cadb78710f05da01c9208ad39470edb8df310>`_
+* Commit: `7c1cadb <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=7c1cadb78710f05da01c9208ad39470edb8df310>`_
 
 [BUGFIX] generateHmac method does not use safe getEncryptionKey
 -----------------------------------------------------------------------------------------
@@ -646,7 +646,7 @@ and not through the safe getEncryptionKey method, leading to
 uninitialized access without having an encryptionKey set.
 
 * Fixes: `#36767 <http://forge.typo3.org/issues/36767>`_
-* Commit: `6631255 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=66312551e0797cfe255dd0acb1b7d33ca86cc9b4>`_
+* Commit: `6631255 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=66312551e0797cfe255dd0acb1b7d33ca86cc9b4>`_
 
 [BUGFIX] Package refreeze command is too verbose
 -----------------------------------------------------------------------------------------
@@ -660,7 +660,7 @@ The package commands now set this flag in order to skip output from
 cache:flush.
 
 * Fixes: `#37186 <http://forge.typo3.org/issues/37186>`_
-* Commit: `2810a6c <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2810a6cc168300f5381953631a1b953ca2b3b3ac>`_
+* Commit: `2810a6c <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2810a6cc168300f5381953631a1b953ca2b3b3ac>`_
 
 [BUGFIX] credentialsSource in Account should be nullable
 -----------------------------------------------------------------------------------------
@@ -669,13 +669,13 @@ Not all authentication mechanisms need a "credentials source" (e.g. the
 typo3.org SSO provider), so the column for the property should be nullable.
 
 * Fixes: `#37341 <http://forge.typo3.org/issues/37341>`_
-* Commit: `01f9e3d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=01f9e3d082fd7b72bc994dc5abd594b9a737f9b6>`_
+* Commit: `01f9e3d <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=01f9e3d082fd7b72bc994dc5abd594b9a737f9b6>`_
 
 [BUGFIX] Fix wrong hint in code migration
 -----------------------------------------------------------------------------------------
 
 * Fixes: `#37224 <http://forge.typo3.org/issues/37224>`_
-* Commit: `7592d25 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=7592d2542c72b24e1469e60787f8d31de121e7d4>`_
+* Commit: `7592d25 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=7592d2542c72b24e1469e60787f8d31de121e7d4>`_
 
 [TASK] Clean up some coding style issues
 -----------------------------------------------------------------------------------------
@@ -683,22 +683,22 @@ typo3.org SSO provider), so the column for the property should be nullable.
 Add spaces to "){"
 
 * Related: `#34875 <http://forge.typo3.org/issues/34875>`_
-* Commit: `0cae226 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=0cae2267b772bf4cc3678333d2edb081a5f01088>`_
+* Commit: `0cae226 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=0cae2267b772bf4cc3678333d2edb081a5f01088>`_
 
 [TASK] Add changelog for FLOW3 1.1.0-beta1
 -----------------------------------------------------------------------------------------
 
-* Commit: `f746c9b <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=f746c9b30b7309d54fc27b182926bac5b0323660>`_
+* Commit: `f746c9b <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=f746c9b30b7309d54fc27b182926bac5b0323660>`_
 
 [TASK] Add changelog for FLOW3 1.1.0-beta1
 -----------------------------------------------------------------------------------------
 
-* Commit: `d1cee8d <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d1cee8d66e04bf1bdb8b0a076ec50f4d4b0801be>`_
+* Commit: `d1cee8d <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=d1cee8d66e04bf1bdb8b0a076ec50f4d4b0801be>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `379bc96 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=379bc9697d30080c2530cb726c6ea9d1cc13ce4f>`_
+* Commit: `379bc96 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=379bc9697d30080c2530cb726c6ea9d1cc13ce4f>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Fluid
@@ -707,7 +707,7 @@ TYPO3.Fluid
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `9ea875e <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=9ea875e87938df580e06207755859297737c90fe>`_
+* Commit: `9ea875e <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=9ea875e87938df580e06207755859297737c90fe>`_
 
 [TASK] Standalone View: enable escaping for "html"
 -----------------------------------------------------------------------------------------
@@ -721,13 +721,13 @@ This change enables the escape interceptor if the format
 is *either* "html" or not set at all
 * Related: `#37561 <http://forge.typo3.org/issues/37561>`_
 
-* Commit: `6f1b39d <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=6f1b39d8c75a2ce37e3e5ef1a725790b4283c2ef>`_
+* Commit: `6f1b39d <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=6f1b39d8c75a2ce37e3e5ef1a725790b4283c2ef>`_
 
 [FEATURE] Allow access to attributes in TagBuilder
 -----------------------------------------------------------------------------------------
 
 * Resolves: `#37460 <http://forge.typo3.org/issues/37460>`_
-* Commit: `f533788 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=f5337883f083ff2ec7226a7f7fb4f0a5560701c8>`_
+* Commit: `f533788 <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=f5337883f083ff2ec7226a7f7fb4f0a5560701c8>`_
 
 [BUGFIX] Avoid empty output of TranslateViewHelper
 -----------------------------------------------------------------------------------------
@@ -737,7 +737,7 @@ returned if the view helper tag has no content. Before this change it would
 just return nothing (printable, at least).
 
 * Fixes: `#35041 <http://forge.typo3.org/issues/35041>`_
-* Commit: `cd86a2d <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=cd86a2dd032dc564e7a5eb10cbd75dfbcee478c5>`_
+* Commit: `cd86a2d <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=cd86a2dd032dc564e7a5eb10cbd75dfbcee478c5>`_
 
 [TASK] Clean up some coding style issues
 -----------------------------------------------------------------------------------------
@@ -746,12 +746,12 @@ Add spaces to "){" and to "foreach(", fixes some docblocks and
 indentation. Also avoids a possible uninitialised variable warning.
 
 * Related: `#34875 <http://forge.typo3.org/issues/34875>`_
-* Commit: `bca7ade <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=bca7ade025701e7de6bcc9d3ad1328bd8633a312>`_
+* Commit: `bca7ade <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=bca7ade025701e7de6bcc9d3ad1328bd8633a312>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `4ba7cda <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=4ba7cda690f79a9e68987c22acd42dfee7f1e81b>`_
+* Commit: `4ba7cda <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=4ba7cda690f79a9e68987c22acd42dfee7f1e81b>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Kickstart
@@ -760,12 +760,12 @@ TYPO3.Kickstart
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `b88e140 <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=b88e140f4a42c2ce39f4d4b3917611b35d255c75>`_
+* Commit: `b88e140 <http://git.typo3.org/Flow/Packages/TYPO3.Kickstart.git?a=commit;h=b88e140f4a42c2ce39f4d4b3917611b35d255c75>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `c23776a <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=c23776acf3b6d79edbb3e1c8ceff489cd2e61d55>`_
+* Commit: `c23776a <http://git.typo3.org/Flow/Packages/TYPO3.Kickstart.git?a=commit;h=c23776acf3b6d79edbb3e1c8ceff489cd2e61d55>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Party
@@ -774,7 +774,7 @@ TYPO3.Party
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `02a04f6 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=02a04f6e74de4e99009118e6e88a705214005bb3>`_
+* Commit: `02a04f6 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=02a04f6e74de4e99009118e6e88a705214005bb3>`_
 
 [TASK] Make usagetype on ElectronicAddress nullable
 -----------------------------------------------------------------------------------------
@@ -785,7 +785,7 @@ nullable to make "any" usage possible.
 Adds a functional test (thanks Adrian Föder) as well.
 
 * Related: `#35059 <http://forge.typo3.org/issues/35059>`_
-* Commit: `735ccef <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=735ccefcaf41c46f60cc2327a7ca259e22f34d6b>`_
+* Commit: `735ccef <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=735ccefcaf41c46f60cc2327a7ca259e22f34d6b>`_
 
 [BUGFIX] Duplicate email address throws exception
 -----------------------------------------------------------------------------------------
@@ -798,7 +798,7 @@ This change drops the unique indexes for "identifier", "type" and
 * Fixes: `#37266 <http://forge.typo3.org/issues/37266>`_
 * Related: `#29547 <http://forge.typo3.org/issues/29547>`_
 
-* Commit: `9d10e01 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=9d10e0135395325bdb6c6bf0d9bcc695b2f6e26e>`_
+* Commit: `9d10e01 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=9d10e0135395325bdb6c6bf0d9bcc695b2f6e26e>`_
 
 [TASK] Clean up some coding style issues
 -----------------------------------------------------------------------------------------
@@ -806,12 +806,12 @@ This change drops the unique indexes for "identifier", "type" and
 Add space to "foreach(".
 
 * Related: `#34875 <http://forge.typo3.org/issues/34875>`_
-* Commit: `7ddab64 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=7ddab64756f87ac50f9bc096eab076f0ccfc7d4f>`_
+* Commit: `7ddab64 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=7ddab64756f87ac50f9bc096eab076f0ccfc7d4f>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `4ec32e9 <http://git.typo3.org/FLOW3/Packages/TYPO3.Party.git?a=commit;h=4ec32e9c08bc0073b54b06c36c008d78c3c49d23>`_
+* Commit: `4ec32e9 <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=4ec32e9c08bc0073b54b06c36c008d78c3c49d23>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Welcome
@@ -820,10 +820,10 @@ TYPO3.Welcome
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `5ae0c32 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=5ae0c323a4d8783e221a1e4ac8b9687b77642577>`_
+* Commit: `5ae0c32 <http://git.typo3.org/Flow/Packages/TYPO3.Welcome.git?a=commit;h=5ae0c323a4d8783e221a1e4ac8b9687b77642577>`_
 
 [TASK] Update Package.xml with new version number
 -----------------------------------------------------------------------------------------
 
-* Commit: `e8998d5 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=e8998d5f7eb012be2dc43c580ba34440cfbf23c9>`_
+* Commit: `e8998d5 <http://git.typo3.org/Flow/Packages/TYPO3.Welcome.git?a=commit;h=e8998d5f7eb012be2dc43c580ba34440cfbf23c9>`_
 

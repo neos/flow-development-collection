@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop;
+namespace TYPO3\Flow\Aop;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Aop;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An aspect is represented by class tagged with the "aspect" annotation.
@@ -32,7 +32,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * If used on a property an introduction contains a pointcut expression and is
  * used to introduce the annotated property into the target class.
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class AspectContainer {
 
@@ -42,31 +42,31 @@ class AspectContainer {
 	protected $className;
 
 	/**
-	 * An array of \TYPO3\FLOW3\Aop\Advisor objects
+	 * An array of \TYPO3\Flow\Aop\Advisor objects
 	 * @var array
 	 */
 	protected $advisors = array();
 
 	/**
-	 * An array of \TYPO3\FLOW3\Aop\InterfaceIntroduction objects
+	 * An array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
 	 * @var array
 	 */
 	protected $interfaceIntroductions = array();
 
 	/**
-	 * An array of \TYPO3\FLOW3\Aop\PropertyIntroduction objects
+	 * An array of \TYPO3\Flow\Aop\PropertyIntroduction objects
 	 * @var array
 	 */
 	protected $propertyIntroductions = array();
 
 	/**
-	 * An array of explicitly declared \TYPO3\FLOW3\Pointcut objects
+	 * An array of explicitly declared \TYPO3\Flow\Pointcut objects
 	 * @var array
 	 */
 	protected $pointcuts = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @var \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
 	protected $cachedTargetClassNameCandidates;
 
@@ -91,7 +91,7 @@ class AspectContainer {
 	/**
 	 * Returns the advisors which were defined in the aspect
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Aop\Advisor objects
+	 * @return array Array of \TYPO3\Flow\Aop\Advisor objects
 	 */
 	public function getAdvisors() {
 		return $this->advisors;
@@ -100,7 +100,7 @@ class AspectContainer {
 	/**
 	 * Returns the interface introductions which were defined in the aspect
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Aop\InterfaceIntroduction objects
+	 * @return array Array of \TYPO3\Flow\Aop\InterfaceIntroduction objects
 	 */
 	public function getInterfaceIntroductions() {
 		return $this->interfaceIntroductions;
@@ -109,7 +109,7 @@ class AspectContainer {
 	/**
 	 * Returns the property introductions which were defined in the aspect
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Aop\PropertyIntroduction objects
+	 * @return array Array of \TYPO3\Flow\Aop\PropertyIntroduction objects
 	 */
 	public function getPropertyIntroductions() {
 		return $this->propertyIntroductions;
@@ -120,7 +120,7 @@ class AspectContainer {
 	 * does not contain the pointcuts which were made out of the pointcut
 	 * expressions for the advisors!
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Aop\Pointcut\Pointcut objects
+	 * @return array Array of \TYPO3\Flow\Aop\Pointcut\Pointcut objects
 	 */
 	public function getPointcuts() {
 		return $this->pointcuts;
@@ -129,48 +129,48 @@ class AspectContainer {
 	/**
 	 * Adds an advisor to this aspect container
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Advisor $advisor The advisor to add
+	 * @param \TYPO3\Flow\Aop\Advisor $advisor The advisor to add
 	 * @return void
 	 */
-	public function addAdvisor(\TYPO3\FLOW3\Aop\Advisor $advisor) {
+	public function addAdvisor(\TYPO3\Flow\Aop\Advisor $advisor) {
 		$this->advisors[] = $advisor;
 	}
 
 	/**
 	 * Adds an introduction declaration to this aspect container
 	 *
-	 * @param \TYPO3\FLOW3\Aop\InterfaceIntroduction $introduction
+	 * @param \TYPO3\Flow\Aop\InterfaceIntroduction $introduction
 	 * @return void
 	 */
-	public function addInterfaceIntroduction(\TYPO3\FLOW3\Aop\InterfaceIntroduction $introduction) {
+	public function addInterfaceIntroduction(\TYPO3\Flow\Aop\InterfaceIntroduction $introduction) {
 		$this->interfaceIntroductions[] = $introduction;
 	}
 
 	/**
 	 * Adds an introduction declaration to this aspect container
 	 *
-	 * @param \TYPO3\FLOW3\Aop\PropertyIntroduction $introduction
+	 * @param \TYPO3\Flow\Aop\PropertyIntroduction $introduction
 	 * @return void
 	 */
-	public function addPropertyIntroduction(\TYPO3\FLOW3\Aop\PropertyIntroduction $introduction) {
+	public function addPropertyIntroduction(\TYPO3\Flow\Aop\PropertyIntroduction $introduction) {
 		$this->propertyIntroductions[] = $introduction;
 	}
 
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Pointcut\Pointcut $pointcut The poincut to add
+	 * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The poincut to add
 	 * @return void
 	 */
-	public function addPointcut(\TYPO3\FLOW3\Aop\Pointcut\Pointcut $pointcut) {
+	public function addPointcut(\TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut) {
 		$this->pointcuts[] = $pointcut;
 	}
 
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
 	public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex) {
 		$result = new Builder\ClassNameIndex();
@@ -185,7 +185,7 @@ class AspectContainer {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
 	public function getCachedTargetClassNameCandidates() {
 		return $this->cachedTargetClassNameCandidates;

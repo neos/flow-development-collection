@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3;
+namespace TYPO3\Flow;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,10 +11,10 @@ namespace TYPO3\FLOW3;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Package\Package as BasePackage;
+use TYPO3\Flow\Package\Package as BasePackage;
 
 /**
- * The FLOW3 Package
+ * The TYPO3 Flow Package
  *
  */
 class Package extends BasePackage {
@@ -27,37 +27,37 @@ class Package extends BasePackage {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Cli\SlaveRequestHandler($bootstrap));
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Cli\CommandRequestHandler($bootstrap));
-		$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Http\RequestHandler($bootstrap));
+	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+		$bootstrap->registerRequestHandler(new \TYPO3\Flow\Cli\SlaveRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\Flow\Cli\CommandRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new \TYPO3\Flow\Http\RequestHandler($bootstrap));
 
 		if ($bootstrap->getContext()->isTesting()) {
-			$bootstrap->getEarlyInstance('TYPO3\FLOW3\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
-			$bootstrap->registerRequestHandler(new \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler($bootstrap));
+			$bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
+			$bootstrap->registerRequestHandler(new \TYPO3\Flow\Tests\FunctionalTestRequestHandler($bootstrap));
 		}
 
-		$bootstrap->registerCompiletimeCommand('typo3.flow3:core:*');
-		$bootstrap->registerCompiletimeCommand('typo3.flow3:cache:flush');
+		$bootstrap->registerCompiletimeCommand('typo3.flow:core:*');
+		$bootstrap->registerCompiletimeCommand('typo3.flow:cache:flush');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
-		$dispatcher->connect('TYPO3\FLOW3\Mvc\Dispatcher', 'afterControllerInvocation', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
-		$dispatcher->connect('TYPO3\FLOW3\Cli\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
-		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
-		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
-		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Reflection\ReflectionService', 'saveToCache');
+		$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', 'TYPO3\Flow\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\Flow\Cli\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\Flow\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Configuration\ConfigurationManager', 'shutdown');
+		$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Object\ObjectManagerInterface', 'shutdown');
+		$dispatcher->connect('TYPO3\Flow\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\Flow\Reflection\ReflectionService', 'saveToCache');
 
-		$dispatcher->connect('TYPO3\FLOW3\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\FLOW3\Security\Policy\PolicyService', 'savePolicyCache');
+		$dispatcher->connect('TYPO3\Flow\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\Flow\Security\Policy\PolicyService', 'savePolicyCache');
 
-		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', 'TYPO3\FLOW3\Session\SessionInterface', 'renewId');
-		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'loggedOut', 'TYPO3\FLOW3\Session\SessionInterface', 'destroy');
+		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', 'TYPO3\Flow\Session\SessionInterface', 'renewId');
+		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'loggedOut', 'TYPO3\Flow\Session\SessionInterface', 'destroy');
 
-		$dispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\FLOW3\Cache\CacheManager', 'flushSystemCachesByChangedFiles');
+		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\Flow\Cache\CacheManager', 'flushSystemCachesByChangedFiles');
 
-		$dispatcher->connect('TYPO3\FLOW3\Tests\FunctionalTestCase', 'functionalTestTearDown', 'TYPO3\FLOW3\Mvc\Routing\Aspect\RouterCachingAspect', 'flushCaches');
+		$dispatcher->connect('TYPO3\Flow\Tests\FunctionalTestCase', 'functionalTestTearDown', 'TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect', 'flushCaches');
 	}
 }
 

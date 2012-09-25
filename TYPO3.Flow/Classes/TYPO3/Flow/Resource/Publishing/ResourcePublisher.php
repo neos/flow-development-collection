@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource\Publishing;
+namespace TYPO3\Flow\Resource\Publishing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,27 +11,27 @@ namespace TYPO3\FLOW3\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Support functions for handling assets
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class ResourcePublisher {
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface
+	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface
 	 */
 	protected $resourcePublishingTarget;
 
 	/**
 	 * Injects the resource publishing target
-	 * 
-	 * @param \TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface $resourcePublishingTarget
+	 *
+	 * @param \TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface $resourcePublishingTarget
 	 * @return void
 	 */
-	public function injectResourcePublishingTarget(\TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface $resourcePublishingTarget) {
+	public function injectResourcePublishingTarget(\TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface $resourcePublishingTarget) {
 		$this->resourcePublishingTarget = $resourcePublishingTarget;
 	}
 
@@ -50,20 +50,20 @@ class ResourcePublisher {
 	/**
 	 * Publishes a persistent resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist
 	 */
-	public function publishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function publishPersistentResource(\TYPO3\Flow\Resource\Resource $resource) {
 		return $this->resourcePublishingTarget->publishPersistentResource($resource);
 	}
 
 	/**
 	 * Unpublishes a persistent resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to unpublish
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to unpublish
 	 * @return boolean TRUE if at least one file was removed, FALSE otherwise
 	 */
-	public function unpublishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function unpublishPersistentResource(\TYPO3\Flow\Resource\Resource $resource) {
 		return $this->resourcePublishingTarget->unpublishPersistentResource($resource);
 	}
 
@@ -79,7 +79,7 @@ class ResourcePublisher {
 	/**
 	 * Returns the URI pointing to the published persistent resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
 	public function getPersistentResourceWebUri($resource) {

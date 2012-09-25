@@ -16,7 +16,7 @@ But do you really want all these checks in your action methods? Shouldn't we
 rather separate the concerns [#]_ of the action methods (show, create,
 update, ...) from others like validation, logging and security?
 
-Fortunately FLOW3's validation framework doesn't ask you to add any additional
+Fortunately TYPO3 Flow's validation framework doesn't ask you to add any additional
 PHP code to your action methods. Validation has been extracted as a separated
 concern which does it's job almost transparently to the developer.
 
@@ -49,7 +49,7 @@ of annotations:
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=100 })
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=100 })
 	 */
 	protected $title;
 
@@ -57,7 +57,7 @@ of annotations:
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=50 })
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=50 })
 	 */
 	protected $author;
 
@@ -66,12 +66,12 @@ property. Multiple rules can be defined in dedicated lines by further ``Validate
 annotations.
 
 .. tip::
-	FLOW3 provides a range of built-in validators which can be found in the
-	*FLOW3\Validation\Validator* sub package. The names used in the
+	TYPO3 Flow provides a range of built-in validators which can be found in the
+	*Flow\Validation\Validator* sub package. The names used in the
 	``type`` attributes are just the unqualified class names of these validators.
 
 	It is possible and very simple to program custom validators by implementing
-	the ``TYPO3\FLOW3\Validation\Validator\ValidatorInterface``.
+	the ``TYPO3\Flow\Validation\Validator\ValidatorInterface``.
 	Such validators must, however, be referred to by their fully qualified
 	class name (i.e. including the namespace).
 
@@ -101,7 +101,7 @@ validation errors. Just add the ``<f:form.errors>`` view helper to your
 	<f:layout name="Default" />
 
 	<f:section name="mainbox">
-		<h2 class="flow3-firstHeader">Create a new post</h2>
+		<h2 class="flow-firstHeader">Create a new post</h2>
 		<f:flashMessages class="flashmessages"/>
 		<f:form.validationResults for="newPost">
 			<f:if condition="{validationResults.flattenedErrors}">
@@ -140,7 +140,7 @@ Now that you know how validation errors can be displayed, you should add a
 	<f:layout name="Default" />
 
 	<f:section name="mainbox">
-		<h2 class="flow3-firstHeader">Edit post</h2>
+		<h2 class="flow-firstHeader">Edit post</h2>
 		<f:flashMessages class="flashmessages"/>
 		<f:form.validationResults for="post">
 			<f:if condition="{validationResults.flattenedErrors}">
@@ -181,19 +181,19 @@ which displayed its current property values. Now you submitted the form with an
 empty title resulting in a new request, this time with the ``updateAction`` as
 its target.
 
-Before the ``updateAction`` could be called, FLOW3 analyzed the
+Before the ``updateAction`` could be called, TYPO3 Flow analyzed the
 incoming request. And because it recognized one argument as a ``Post`` object,
 it invoked the respective validation rules – which failed due to the
-empty title. In these cases FLOW3 forwards the request to the referring action
+empty title. In these cases TYPO3 Flow forwards the request to the referring action
 which is, in this case, the ``editAction``.
 
 The ``editAction`` expects a (valid) post as its argument but unfortunately the
-post is not valid. Because for FLOW3 this action call is like any other action
+post is not valid. Because for TYPO3 Flow this action call is like any other action
 call it does not execute the ``editAction`` but instead tries to dispatch the
 request to another action which can handle the error. This is, unfortunately,
 still the ``editAction`` which in the end results in an infinite loop.
 
-So the problem is that FLOW3 tries to validate the ``$post`` argument for the
+So the problem is that TYPO3 Flow tries to validate the ``$post`` argument for the
 ``editAction`` although we don't need a valid post at this point. What's
 important is that the post submitted to``updateAction`` or ``createAction`` is
 valid, but we don't really care about the ``editAction`` or ``newAction`` which
@@ -210,7 +210,7 @@ additional annotation the whole mechanism works as expected:
 	 * Shows a form for editing an existing post object
 	 *
 	 * @param \TYPO3\Blog\Domain\Model\Post $post The post to edit
-	 * @FLOW3\IgnoreValidation("$post")
+	 * @Flow\IgnoreValidation("$post")
 	 * @return void
 	 */
 	public function editAction(Post $post) {

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Cryptography;
+namespace TYPO3\Flow\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Security\Cryptography;
  * A PBKDF2 based password hashing strategy
  *
  */
-class Pbkdf2HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface {
+class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface {
 
 	/**
 	 * Length of the dynamic random salt to generate in bytes
@@ -65,8 +65,8 @@ class Pbkdf2HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 	 * @return string A Base64 encoded string with the derived key (hashed password) and dynamic salt
 	 */
 	public function hashPassword($password, $staticSalt = NULL) {
-		$dynamicSalt = \TYPO3\FLOW3\Utility\Algorithms::generateRandomBytes($this->dynamicSaltLength);
-		$result = \TYPO3\FLOW3\Security\Cryptography\Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
+		$dynamicSalt = \TYPO3\Flow\Utility\Algorithms::generateRandomBytes($this->dynamicSaltLength);
+		$result = \TYPO3\Flow\Security\Cryptography\Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
 		return base64_encode($dynamicSalt) . ',' . base64_encode($result);
 	}
 
@@ -88,7 +88,7 @@ class Pbkdf2HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\Passwo
 		$dynamicSalt = base64_decode($parts[0]);
 		$derivedKey = base64_decode($parts[1]);
 		$derivedKeyLength = strlen($derivedKey);
-		return $derivedKey === \TYPO3\FLOW3\Security\Cryptography\Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $derivedKeyLength, $this->algorithm);
+		return $derivedKey === \TYPO3\Flow\Security\Cryptography\Algorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $derivedKeyLength, $this->algorithm);
 	}
 
 }

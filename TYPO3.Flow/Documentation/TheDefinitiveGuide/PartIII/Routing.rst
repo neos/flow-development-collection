@@ -6,7 +6,7 @@ Routing
 
 .. sectionauthor:: Bastian Waidelich <bastian@typo3.org>
 
-As explained in the Model View Controller chapter, in FLOW3 the dispatcher passes the
+As explained in the Model View Controller chapter, in TYPO3 Flow the dispatcher passes the
 request to a controller which then calls the respective action. But how to tell, what
 controller of what package is the right one for the current request? This is were the
 Routing Framework comes into play.
@@ -60,7 +60,7 @@ But let's start with an easy example:
 
 If you insert these lines at the beginning of the file ``Configurations/Routes.yaml``,
 the ``indexAction`` of the ``StandardController`` in your *My.Demo* package will be called
-when you open up the homepage of your FLOW3 installation (``http://localhost/``).
+when you open up the homepage of your TYPO3 Flow installation (``http://localhost/``).
 
 .. note::
 
@@ -195,7 +195,7 @@ This will use the *identity* properties of the specified model to generate the U
 
 	If the model contains no identity, the technical identifier is used!
 
-Try adding the ``@FLOW3\Identity`` annotation to the name property of the product model.
+Try adding the ``@Flow\Identity`` annotation to the name property of the product model.
 The resulting URI will be ``http://localhost/products/the-product-name``
 
 .. note::
@@ -242,8 +242,8 @@ Route Part Handlers
 ===================
 
 Route part handlers are classes that implement
-``TYPO3\FLOW3\Mvc\Routing\DynamicRoutePartInterface``. But for most cases it will be
-sufficient to extend ``TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart`` and overwrite the
+``TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface``. But for most cases it will be
+sufficient to extend ``TYPO3\Flow\Mvc\Routing\DynamicRoutePart`` and overwrite the
 methods ``matchValue`` and ``resolveValue``.
 
 Let's have a look at a (very simple) route part handler that allows you to match values against
@@ -251,7 +251,7 @@ configurable regular expressions:
 
 *Example: RegexRoutePartHandler.php* ::
 
-	class RegexRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
+	class RegexRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 
 		/**
 		 * Checks whether the current URI section matches the configured RegEx pattern.
@@ -406,7 +406,7 @@ Now route values that are neither defined in the ``uriPattern`` nor specified in
 appended to the resulting URI: ``http://localhost/foo/dynamicValue?someOtherArgument=argumentValue``
 
 This setting is mostly useful for *fallback routes* and it is enabled for the default action route provided
-with FLOW3, so that most links will work out of the box.
+with TYPO3 Flow, so that most links will work out of the box.
 
 .. note::
 
@@ -418,7 +418,7 @@ Subroutes
 =========
 
 For security reasons and to avoid confusion, only routes configured in your global
-configuration folder are active. But FLOW3 supports what we call *SubRoutes* enabling you to
+configuration folder are active. But TYPO3 Flow supports what we call *SubRoutes* enabling you to
 provide custom routes with your package and reference them in the global routing setup.
 
 Imagine following routes in the ``Routes.yaml`` file inside your demo package:
@@ -487,11 +487,11 @@ all possible combinations.
 
 .. tip::
 
-	You can use the ``flow3:routing:list`` command to list all routes which are currently active:
+	You can use the ``flow:routing:list`` command to list all routes which are currently active:
 
 	.. code-block:: bash
 
-		$ ./flow3 routing:list
+		$ ./flow routing:list
 
 		Currently registered routes:
 		typo3/login(/{@action}.{@format})         TYPO3 :: Authentication
@@ -505,8 +505,8 @@ all possible combinations.
 		                                          TYPO3 :: Fallback rule – for when no site has been defined yet
 
 
-Route Loading Order and the FLOW3 Application Context
-=====================================================
+Route Loading Order and the TYPO3 Flow Application Context
+==========================================================
 
 - routes inside more specific contexts are loaded *first*
 - and *after* that, global ones, so you can specify context-specific routes

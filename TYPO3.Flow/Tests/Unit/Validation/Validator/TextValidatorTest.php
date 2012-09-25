@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,9 +17,9 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the text validator
  *
  */
-class TextValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\TextValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\TextValidator';
 
 	/**
 	 * @test
@@ -60,7 +60,7 @@ class TextValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 	 * @param string $input
 	 */
 	public function textValidatorAcceptsValidInput($input) {
-		$textValidator = new \TYPO3\FLOW3\Validation\Validator\TextValidator();
+		$textValidator = new \TYPO3\Flow\Validation\Validator\TextValidator();
 		$this->assertFalse($textValidator->validate($input)->hasErrors());
 	}
 
@@ -87,7 +87,7 @@ class TextValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\Abs
 	 * @test
 	 */
 	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities() {
-		$expected = array(new \TYPO3\FLOW3\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
+		$expected = array(new \TYPO3\Flow\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
 		$this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
 	}
 }

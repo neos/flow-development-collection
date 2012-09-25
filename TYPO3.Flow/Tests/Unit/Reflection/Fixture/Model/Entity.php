@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Reflection\Fixture\Model;
+namespace TYPO3\Flow\Tests\Reflection\Fixture\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Reflection\Fixture\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A model fixture which is used for testing the class schema building
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class Entity {
 
@@ -24,7 +24,7 @@ class Entity {
 	 * An identity property
 	 *
 	 * @var string
-	 * @FLOW3\Identity
+	 * @Flow\Identity
 	 */
 	protected $someIdentifier;
 
@@ -47,13 +47,13 @@ class Entity {
 
 	/**
 	 * @var \DateTime
-	 * @FLOW3\Identity
+	 * @Flow\Identity
 	 */
 	protected $someDate;
 
 	/**
 	 * @var \SplObjectStorage
-	 * @FLOW3\Lazy
+	 * @Flow\Lazy
 	 */
 	protected $someSplObjectStorage;
 
@@ -61,7 +61,7 @@ class Entity {
 	 * A transient string
 	 *
 	 * @var string
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $someTransientString;
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core;
+namespace TYPO3\Flow\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,25 +11,25 @@ namespace TYPO3\FLOW3\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Lock Manager controls the master lock of the whole site which is mainly
  * used to regenerate code caches in peace.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class LockManager {
 
 	const LOCKFILE_MAXIMUM_AGE = 90;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -46,20 +46,20 @@ class LockManager {
 	/**
 	 * Injects the environment utility
 	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\Flow\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -69,7 +69,7 @@ class LockManager {
 	 * @return void
 	 */
 	public function initializeObject() {
-		$this->lockPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'FLOW3.lock';
+		$this->lockPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Flow.lock';
 		if (file_exists($this->lockPathAndFilename)) {
 			if (filemtime($this->lockPathAndFilename) < (time() - self::LOCKFILE_MAXIMUM_AGE)) {
 				unlink($this->lockPathAndFilename);;
@@ -96,9 +96,9 @@ class LockManager {
 	 */
 	public function exitIfSiteLocked() {
 		if ($this->isSiteLocked() === TRUE) {
-			if (FLOW3_SAPITYPE === 'Web') {
+			if (FLOW_SAPITYPE === 'Web') {
 				header('HTTP/1.1 503 Service Temporarily Unavailable');
-				readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');
+				readfile(FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html');
 			} else {
 				$expiresIn = abs((time() - self::LOCKFILE_MAXIMUM_AGE - filemtime($this->lockPathAndFilename)));
 				echo 'Site is currently locked, exiting.' . PHP_EOL . 'The current lock will expire after ' . $expiresIn . ' seconds.' . PHP_EOL;

@@ -1,6 +1,6 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\Flow\Tests\Object\Fixture;
 
-class SomeImplementation implements \TYPO3\FLOW3\Tests\Object\Fixture\SomeInterface {}
+class SomeImplementation implements \TYPO3\Flow\Tests\Object\Fixture\SomeInterface {}
 
 ?>

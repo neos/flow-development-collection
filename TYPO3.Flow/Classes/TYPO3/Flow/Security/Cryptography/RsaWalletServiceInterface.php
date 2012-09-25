@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Cryptography;
+namespace TYPO3\Flow\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -48,8 +48,8 @@ interface RsaWalletServiceInterface {
 	 * Returns the public key for the given UUID
 	 *
 	 * @param string $uuid The UUID
-	 * @return \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey The public key
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @return \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey The public key
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function getPublicKey($uuid);
 
@@ -61,8 +61,8 @@ interface RsaWalletServiceInterface {
 	 * @param string $cypher Cypher text to decrypt
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @throws \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
 	 */
 	public function decrypt($cypher, $uuid);
 
@@ -72,7 +72,7 @@ interface RsaWalletServiceInterface {
 	 * @param string $plaintext The plaintext to sign
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The signature of the given plaintext
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
 	public function sign($plaintext, $uuid);
 
@@ -113,7 +113,7 @@ interface RsaWalletServiceInterface {
 	 *
 	 * @param string $uuid The UUID
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function destroyKeypair($uuid);
 }

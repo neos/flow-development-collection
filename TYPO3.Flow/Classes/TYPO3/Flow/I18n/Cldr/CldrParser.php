@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Cldr;
+namespace TYPO3\Flow\I18n\Cldr;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class which parses CLDR file to simple but useful array representation.
@@ -46,17 +46,17 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *   )
  * )
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
-class CldrParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
+class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XML data, starting from a root node.
 	 *
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed CLDR File
-	 * @see \TYPO3\FLOW3\Xml\AbstractXmlParser::doParsingFromRoot()
+	 * @see \TYPO3\Flow\Xml\AbstractXmlParser::doParsingFromRoot()
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
 		return $this->parseNode($root);

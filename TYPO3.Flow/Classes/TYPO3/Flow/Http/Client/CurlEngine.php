@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http\Client;
+namespace TYPO3\Flow\Http\Client;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,28 +11,28 @@ namespace TYPO3\FLOW3\Http\Client;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Response;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
 
 /**
  * A Request Engine which uses cURL in order to send requests to external
  * HTTP servers.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class CurlEngine implements RequestEngineInterface {
 
 	/**
 	 * Sends the given HTTP request
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request
-	 * @return \TYPO3\FLOW3\Http\Response The response or FALSE
+	 * @param \TYPO3\Flow\Http\Request $request
+	 * @return \TYPO3\Flow\Http\Response The response or FALSE
 	 * @api
 	 */
 	public function sendRequest(Request $request) {
 		if (!extension_loaded('curl')) {
-			throw new \TYPO3\FLOW3\Http\Exception('CurlEngine requires the PHP CURL extension to be installed and loaded.', 1346319808);
+			throw new \TYPO3\Flow\Http\Exception('CurlEngine requires the PHP CURL extension to be installed and loaded.', 1346319808);
 		}
 
 		$requestUri = $request->getUri();

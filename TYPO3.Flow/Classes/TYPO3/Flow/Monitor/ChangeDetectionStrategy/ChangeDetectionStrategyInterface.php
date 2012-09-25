@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
+namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
  * Public License for more details.                                       *
  *                                                                        */
 
-use TYPO3\FLOW3\Monitor\FileMonitor;
+use TYPO3\Flow\Monitor\FileMonitor;
 
 /**
  * Contract for a change detection strategy
@@ -40,7 +40,7 @@ interface ChangeDetectionStrategyInterface {
 	/**
 	 * Creates a link to the file monitor using the strategy
 	 *
-	 * @param \TYPO3\FLOW3\Monitor\FileMonitor $fileMonitor
+	 * @param \TYPO3\Flow\Monitor\FileMonitor $fileMonitor
 	 * @return mixed
 	 */
 	public function setFileMonitor(FileMonitor $fileMonitor);

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http;
+namespace TYPO3\Flow\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\ActionRequest;
-use TYPO3\FLOW3\Utility\Arrays;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Represents a HTTP request
  *
  * @api
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class Request extends Message {
 
@@ -32,12 +32,12 @@ class Request extends Message {
 	protected $method = 'GET';
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Uri
+	 * @var \TYPO3\Flow\Http\Uri
 	 */
 	protected $uri;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Uri
+	 * @var \TYPO3\Flow\Http\Uri
 	 */
 	protected $baseUri;
 
@@ -47,7 +47,7 @@ class Request extends Message {
 	protected $arguments;
 
 	/**
-	 * @var array<\TYPO3\FLOW3\Http\Cookie>
+	 * @var array<\TYPO3\Flow\Http\Cookie>
 	 */
 	protected $cookies;
 
@@ -95,12 +95,12 @@ class Request extends Message {
 	/**
 	 * Creates a new Request object from the given data.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Uri $uri The request URI
+	 * @param \TYPO3\Flow\Http\Uri $uri The request URI
 	 * @param string $method Request method, for example "GET"
 	 * @param array $arguments Arguments to send in the request body
 	 * @param array $files
 	 * @param array $server
-	 * @return \TYPO3\FLOW3\Http\Request
+	 * @return \TYPO3\Flow\Http\Request
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -115,13 +115,13 @@ class Request extends Message {
 		$isDefaultPort = $uri->getScheme() === 'https' ? ($uri->getPort() === 443) : ($uri->getPort() === 80);
 
 		$defaultServerEnvironment = array(
-			'HTTP_USER_AGENT' => 'FLOW3/' . FLOW3_VERSION_BRANCH . '.x',
+			'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
 			'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== TRUE ? ':' . $uri->getPort() : ''),
 			'SERVER_NAME' => $uri->getHost(),
 			'SERVER_ADDR' => '127.0.0.1',
 			'SERVER_PORT' => $uri->getPort() ?: 80,
 			'REMOTE_ADDR' => '127.0.0.1',
-			'SCRIPT_FILENAME' => FLOW3_PATH_WEB . 'index.php',
+			'SCRIPT_FILENAME' => FLOW_PATH_WEB . 'index.php',
 			'SERVER_PROTOCOL' => 'HTTP/1.1',
 			'SCRIPT_NAME' => '/index.php',
 			'PHP_SELF' => '/index.php',
@@ -149,11 +149,11 @@ class Request extends Message {
 	}
 
 	/**
-	 * Considers the environment information found in PHP's superglobals and FLOW3's
+	 * Considers the environment information found in PHP's superglobals and Flow's
 	 * environment configuration and creates a new instance of this Request class
 	 * matching that data.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Request
+	 * @return \TYPO3\Flow\Http\Request
 	 * @api
 	 */
 	static public function createFromEnvironment() {
@@ -174,7 +174,7 @@ class Request extends Message {
 	 * Creates a new Action Request request as a sub request to this HTTP request.
 	 * Maps the arguments of this request to the new Action Request.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	public function createActionRequest() {
 		$actionRequest = new ActionRequest($this);
@@ -185,7 +185,7 @@ class Request extends Message {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return \TYPO3\FLOW3\Http\Uri
+	 * @return \TYPO3\Flow\Http\Uri
 	 * @api
 	 */
 	public function getUri() {
@@ -195,7 +195,7 @@ class Request extends Message {
 	/**
 	 * Returns the detected base URI
 	 *
-	 * @return \TYPO3\FLOW3\Http\Uri
+	 * @return \TYPO3\Flow\Http\Uri
 	 * @api
 	 */
 	public function getBaseUri() {
@@ -477,7 +477,7 @@ class Request extends Message {
 	 * does, for example, accept "text/x-json" although "application/json" is the
 	 * only valid (that is, IANA registered) media type for JSON.
 	 *
-	 * In future versions of FLOW3, this part maybe extensible by third-party code.
+	 * In future versions of Flow, this part maybe extensible by third-party code.
 	 * For the time being, only the mentioned media types are supported.
 	 *
 	 * Errors are silently ignored and result in an empty array.

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\Flow\Tests\Unit\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,14 +15,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Error;
  * Testcase for the Error object
  *
  */
-class ErrorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ErrorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function theConstructorSetsTheErrorMessageCorrectly() {
 		$errorMessage = 'The message';
-		$error = new \TYPO3\FLOW3\Error\Error($errorMessage, 0);
+		$error = new \TYPO3\Flow\Error\Error($errorMessage, 0);
 
 		$this->assertEquals($errorMessage, $error->getMessage());
 	}
@@ -32,7 +32,7 @@ class ErrorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theConstructorSetsTheErrorCodeCorrectly() {
 		$errorCode = 123456789;
-		$error = new \TYPO3\FLOW3\Error\Error('', $errorCode);
+		$error = new \TYPO3\Flow\Error\Error('', $errorCode);
 
 		$this->assertEquals($errorCode, $error->getCode());
 	}

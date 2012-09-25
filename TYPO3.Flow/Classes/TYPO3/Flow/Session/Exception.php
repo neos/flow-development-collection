@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session;
+namespace TYPO3\Flow\Session;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,11 +12,11 @@ namespace TYPO3\FLOW3\Session;
  *                                                                        */
 
 /**
- * A "\TYPO3\FLOW3\Session\Exception" Exception
+ * A "\TYPO3\Flow\Session\Exception" Exception
  *
  * @api
  */
-class Exception extends \TYPO3\FLOW3\Exception {
+class Exception extends \TYPO3\Flow\Exception {
 }
 
 ?>

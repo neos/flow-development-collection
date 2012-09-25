@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping;
+namespace TYPO3\Flow\Persistence\Doctrine\Mapping;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -18,7 +18,7 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 	/**
 	 * Gets the ReflectionClass instance of the mapped class.
 	 *
-	 * @return \TYPO3\FLOW3\Reflection\ClassReflection
+	 * @return \TYPO3\Flow\Reflection\ClassReflection
 	 */
 	public function getReflectionClass() {
 		if ($this->reflClass === NULL) {
@@ -43,7 +43,7 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 	 * @return void
 	 */
 	protected function _initializeReflection() {
-		$this->reflClass = new \TYPO3\FLOW3\Reflection\ClassReflection($this->name);
+		$this->reflClass = new \TYPO3\Flow\Reflection\ClassReflection($this->name);
 		$this->namespace = $this->reflClass->getNamespaceName();
 		$this->name = $this->rootEntityName = $this->reflClass->getName();
 		$this->table['name'] = $this->reflClass->getShortName();

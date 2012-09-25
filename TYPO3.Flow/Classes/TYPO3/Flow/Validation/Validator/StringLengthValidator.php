@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -26,13 +26,13 @@ class StringLengthValidator extends AbstractValidator {
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
 	 * @api
 	 */
 	protected function isValid($value) {
 		if (isset($this->options['minimum']) && isset($this->options['maximum'])
 			&& $this->options['maximum'] < $this->options['minimum']) {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is less than the \'minimum\' in the StringLengthValidator.', 1238107096);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is less than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
 		if (is_object($value)) {

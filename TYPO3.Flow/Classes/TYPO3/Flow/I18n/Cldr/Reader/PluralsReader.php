@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Cldr\Reader;
+namespace TYPO3\Flow\I18n\Cldr\Reader;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A reader for data placed in "plurals" tag in CLDR.
@@ -24,7 +24,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * - subrule: one of the conditions of rule. One rule can have many conditions
  *   joined with "and" or "or" logical operator.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Language_Plural_Rules
  */
 class PluralsReader {
@@ -48,12 +48,12 @@ class PluralsReader {
 	const RULE_OTHER = 'other';
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Cldr\CldrRepository
+	 * @var \TYPO3\Flow\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -94,20 +94,20 @@ class PluralsReader {
 	protected $rulesetsIndices;
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository
+	 * @param \TYPO3\Flow\I18n\Cldr\CldrRepository $repository
 	 * @return void
 	 */
-	public function injectCldrRepository(\TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository) {
+	public function injectCldrRepository(\TYPO3\Flow\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
 	}
 
 	/**
-	 * Injects the FLOW3_I18n_Cldr_Reader_PluralsReader cache
+	 * Injects the Flow_I18n_Cldr_Reader_PluralsReader cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -135,10 +135,10 @@ class PluralsReader {
 	 * of the rules, or there is no rules for given locale.
 	 *
 	 * @param mixed $quantity A number to find plural form for (float or int)
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @return string One of plural form constants
 	 */
-	public function getPluralForm($quantity, \TYPO3\FLOW3\I18n\Locale $locale) {
+	public function getPluralForm($quantity, \TYPO3\Flow\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
 			return self::RULE_OTHER;
 		}
@@ -196,10 +196,10 @@ class PluralsReader {
 	/**
 	 * Returns array of plural forms available for particular locale.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to return plural forms for
+	 * @param \TYPO3\Flow\I18n\Locale $locale Locale to return plural forms for
 	 * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
 	 */
-	public function getPluralForms(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function getPluralForms(\TYPO3\Flow\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
 			return array(self::RULE_OTHER);
 		}
@@ -215,7 +215,7 @@ class PluralsReader {
 	 * running this method.
 	 *
 	 * @return void
-	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::$rulesets
+	 * @see \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader::$rulesets
 	 */
 	protected function generateRulesets() {
 		$model = $this->cldrRepository->getModel('supplemental/plurals');
@@ -266,7 +266,7 @@ class PluralsReader {
 	 *
 	 * @param string $rule
 	 * @return array Parsed rule
-	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
+	 * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
 	 */
 	protected function parseRule($rule) {
 		$parsedRule = array();
@@ -297,7 +297,7 @@ class PluralsReader {
 				$parsedRule[] = $subrule;
 			}
 		} else {
-			throw new \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
+			throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
 		}
 
 		return $parsedRule;

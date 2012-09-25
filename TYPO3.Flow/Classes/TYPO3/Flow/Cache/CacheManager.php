@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache;
+namespace TYPO3\Flow\Cache;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,25 +11,25 @@ namespace TYPO3\FLOW3\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Cache Manager
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class CacheManager {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\CacheFactory
+	 * @var \TYPO3\Flow\Cache\CacheFactory
 	 */
 	protected $cacheFactory;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -43,25 +43,25 @@ class CacheManager {
 	 */
 	protected $cacheConfigurations = array(
 		'Default' => array(
-			'frontend' => 'TYPO3\FLOW3\Cache\Frontend\VariableFrontend',
-			'backend' =>  'TYPO3\FLOW3\Cache\Backend\FileBackend',
+			'frontend' => 'TYPO3\Flow\Cache\Frontend\VariableFrontend',
+			'backend' =>  'TYPO3\Flow\Cache\Backend\FileBackend',
 			'backendOptions' => array()
 		)
 	);
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Cache\CacheFactory $cacheFactory
+	 * @param \TYPO3\Flow\Cache\CacheFactory $cacheFactory
 	 * @return void
 	 */
-	public function injectCacheFactory(\TYPO3\FLOW3\Cache\CacheFactory $cacheFactory) {
+	public function injectCacheFactory(\TYPO3\Flow\Cache\CacheFactory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
 	}
 
@@ -91,15 +91,15 @@ class CacheManager {
 	/**
 	 * Registers a cache so it can be retrieved at a later point.
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
+	 * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
+	 * @throws \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
 	 * @api
 	 */
-	public function registerCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+	public function registerCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		$identifier = $cache->getIdentifier();
 		if (isset($this->caches[$identifier])) {
-			throw new \TYPO3\FLOW3\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
+			throw new \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
 		}
 		$this->caches[$identifier] = $cache;
 	}
@@ -108,13 +108,13 @@ class CacheManager {
 	 * Returns the cache specified by $identifier
 	 *
 	 * @param string $identifier Identifies which cache to return
-	 * @return \TYPO3\FLOW3\Cache\Frontend\FrontendInterface The specified cache frontend
-	 * @throws \TYPO3\FLOW3\Cache\Exception\NoSuchCacheException
+	 * @return \TYPO3\Flow\Cache\Frontend\FrontendInterface The specified cache frontend
+	 * @throws \TYPO3\Flow\Cache\Exception\NoSuchCacheException
 	 * @api
 	 */
 	public function getCache($identifier) {
 		if ($this->hasCache($identifier) === FALSE) {
-			throw new \TYPO3\FLOW3\Cache\Exception\NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
+			throw new \TYPO3\Flow\Cache\Exception\NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
 		}
 		if (!isset($this->caches[$identifier])) {
 			$this->createCache($identifier);
@@ -169,7 +169,7 @@ class CacheManager {
 	 * defined in the bootstrap scripts.
 	 *
 	 * Note: Policy configuration handling is implemented here as well as other parts
-	 *       of FLOW3 (like the security framework) are not fully initialized at the
+	 *       of Flow (like the security framework) are not fully initialized at the
 	 *       time needed.
 	 *
 	 * @param string $fileMonitorIdentifier Identifier of the File Monitor
@@ -179,14 +179,14 @@ class CacheManager {
 	public function flushSystemCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
 		$modifiedClassNamesWithUnderscores = array();
 
-		$objectClassesCache = $this->getCache('FLOW3_Object_Classes');
-		$objectConfigurationCache = $this->getCache('FLOW3_Object_Configuration');
+		$objectClassesCache = $this->getCache('Flow_Object_Classes');
+		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
 
 		switch ($fileMonitorIdentifier) {
-			case 'FLOW3_ClassFiles' :
+			case 'Flow_ClassFiles' :
 				$modifiedAspectClassNamesWithUnderscores = array();
 				foreach ($changedFiles as $pathAndFilename => $status) {
-					$pathAndFilename = str_replace(FLOW3_PATH_PACKAGES, '', $pathAndFilename);
+					$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
 					$matches = array();
 					if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches) === 1) {
 						$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
@@ -205,7 +205,7 @@ class CacheManager {
 				}
 				$flushDoctrineProxyCache = FALSE;
 				if (count($modifiedClassNamesWithUnderscores) > 0) {
-					$reflectionStatusCache = $this->getCache('FLOW3_Reflection_Status');
+					$reflectionStatusCache = $this->getCache('Flow_Reflection_Status');
 					foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
 						$reflectionStatusCache->remove($classNameWithUnderscores);
 						if ($flushDoctrineProxyCache === FALSE && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
@@ -223,7 +223,7 @@ class CacheManager {
 					$objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
 				}
 			break;
-			case 'FLOW3_ConfigurationFiles' :
+			case 'Flow_ConfigurationFiles' :
 				$policyChangeDetected = FALSE;
 				$routesChangeDetected = FALSE;
 				foreach (array_keys($changedFiles) as $pathAndFilename) {
@@ -233,12 +233,12 @@ class CacheManager {
 					}
 					if ($policyChangeDetected === FALSE && basename($pathAndFilename) === 'Policy.yaml') {
 						$this->systemLogger->log('The security policies have changed, flushing the policy cache.', LOG_INFO);
-						$this->getCache('FLOW3_Security_Policy')->flush();
+						$this->getCache('Flow_Security_Policy')->flush();
 						$policyChangeDetected = TRUE;
 					} elseif ($routesChangeDetected === FALSE && basename($pathAndFilename) === 'Routes.yaml') {
 						$this->systemLogger->log('A Routes.yaml file has been changed, flushing the routing cache.', LOG_INFO);
-						$this->getCache('FLOW3_Mvc_Routing_FindMatchResults')->flush();
-						$this->getCache('FLOW3_Mvc_Routing_Resolve')->flush();
+						$this->getCache('Flow_Mvc_Routing_FindMatchResults')->flush();
+						$this->getCache('Flow_Mvc_Routing_Resolve')->flush();
 						$routesChangeDetected = TRUE;
 					}
 				}
@@ -248,12 +248,12 @@ class CacheManager {
 				$objectConfigurationCache->remove('allCompiledCodeUpToDate');
 				$objectClassesCache->flush();
 			break;
-			case 'FLOW3_TranslationFiles' :
+			case 'Flow_TranslationFiles' :
 				foreach ($changedFiles as $pathAndFilename => $status) {
 					$matches = array();
 					if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename, $matches) === 1) {
 						$this->systemLogger->log('The localization files have changed, thus flushing the I18n XML model cache.', LOG_INFO);
-						$this->getCache('FLOW3_I18n_XmlModelCache')->flush();
+						$this->getCache('Flow_I18n_XmlModelCache')->flush();
 						break;
 					}
 				}

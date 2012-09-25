@@ -221,7 +221,7 @@ Viewhelper that outputs its childnodes with \TYPO3\var_dump()
 Arguments
 *********
 
-* ``title`` (string, *optional*): 
+* ``title`` (string, *optional*):
 
 * ``typeOnly`` (boolean, *optional*): Whether only the type should be returned instead of the whole chain.
 
@@ -295,7 +295,7 @@ Arguments
 
 * ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
 
-* ``severity`` (string, *optional*): severity of the messages (One of the \TYPO3\FLOW3\Error\Message::SEVERITY_* constants)
+* ``severity`` (string, *optional*): severity of the messages (One of the \TYPO3\Flow\Error\Message::SEVERITY_* constants)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -1489,7 +1489,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*): 
+* ``encoding`` (string, *optional*):
 
 
 
@@ -1508,7 +1508,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*): 
+* ``encoding`` (string, *optional*):
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -1529,7 +1529,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*): 
+* ``encoding`` (string, *optional*):
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -2308,7 +2308,7 @@ f:renderChildren
 Arguments
 *********
 
-* ``arguments`` (array, *optional*): 
+* ``arguments`` (array, *optional*):
 
 
 
@@ -2759,7 +2759,7 @@ Arguments
 
 * ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
-* ``resource`` (TYPO3\FLOW3\Resource\Resource, *optional*): If specified, this resource object is used instead of the path and package information
+* ``resource`` (TYPO3\Flow\Resource\Resource, *optional*): If specified, this resource object is used instead of the path and package information
 
 * ``uri`` (string, *optional*): A resource URI, a relative / absolute path or URL
 
@@ -2865,13 +2865,13 @@ f:widget.autocomplete
 Arguments
 *********
 
-* ``objects`` (TYPO3\FLOW3\Persistence\QueryResultInterface): 
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface):
 
-* ``for`` (string): 
+* ``for`` (string):
 
-* ``searchProperty`` (string): 
+* ``searchProperty`` (string):
 
-* ``configuration`` (array, *optional*): 
+* ``configuration`` (array, *optional*):
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
@@ -2888,11 +2888,11 @@ This ViewHelper renders a Pagination of objects.
 Arguments
 *********
 
-* ``objects`` (TYPO3\FLOW3\Persistence\QueryResultInterface): 
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface):
 
-* ``as`` (string): 
+* ``as`` (string):
 
-* ``configuration`` (array, *optional*): 
+* ``configuration`` (array, *optional*):
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 

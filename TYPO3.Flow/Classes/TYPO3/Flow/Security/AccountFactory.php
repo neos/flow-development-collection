@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security;
+namespace TYPO3\Flow\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A factory for conveniently creating new accounts
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class AccountFactory {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Cryptography\HashService
+	 * @Flow\Inject
 	 */
 	protected $hashService;
 
@@ -34,15 +34,15 @@ class AccountFactory {
 	 * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
 	 * @param string $authenticationProviderName Optional name of the authentication provider the account is affiliated with
 	 * @param string $passwordHashingStrategy Optional password hashing strategy to use for the password
-	 * @return \TYPO3\FLOW3\Security\Account A new account, not yet added to the account repository
+	 * @return \TYPO3\Flow\Security\Account A new account, not yet added to the account repository
 	 */
 	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider', $passwordHashingStrategy = 'default') {
 		$roles = array();
 		foreach ($roleIdentifiers as $roleIdentifier) {
-			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
+			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleIdentifier);
 		}
 
-		$account = new \TYPO3\FLOW3\Security\Account();
+		$account = new \TYPO3\Flow\Security\Account();
 		$account->setAccountIdentifier($identifier);
 		$account->setCredentialsSource($this->hashService->hashPassword($password, $passwordHashingStrategy));
 		$account->setAuthenticationProviderName($authenticationProviderName);

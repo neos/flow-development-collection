@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Reflection;
+namespace TYPO3\Flow\Tests\Unit\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Reflection;
  * Testcase for MethodReflection
  *
  */
-class MethodReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var mixed
@@ -26,18 +26,18 @@ class MethodReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
-		$this->assertInstanceOf('TYPO3\FLOW3\Reflection\ClassReflection', $method->getDeclaringClass());
+	public function getDeclaringClassReturnsFlowsClassReflection() {
+		$method = new \TYPO3\Flow\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
+		$this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $method->getDeclaringClass());
 	}
 
 	/**
 	 * @test
 	 */
-	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
+	public function getParametersReturnsFlowsParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
+		$method = new \TYPO3\Flow\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
 		foreach ($method->getParameters() as $parameter) {
-			$this->assertInstanceOf('TYPO3\FLOW3\Reflection\ParameterReflection', $parameter);
+			$this->assertInstanceOf('TYPO3\Flow\Reflection\ParameterReflection', $parameter);
 			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
 		}
 	}

@@ -10,10 +10,10 @@ Base Distribution
 -----------------------------------------------------------------------------------------
 
 * Fixes: `#33031 <http://forge.typo3.org/issues/33031>`_
-* Commit: `0c887eb <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=0c887eb0e02343c7b90e512411ab2adbc4a5f760>`_
+* Commit: `0c887eb <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=0c887eb0e02343c7b90e512411ab2adbc4a5f760>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TYPO3.FLOW3
+TYPO3.Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [SECURITY] Protect arguments of form __referrer with HMAC
@@ -35,7 +35,7 @@ bugfix in sync.
 
 * Security-Bulletin: `FLOW3-SA-2012-001 <http://typo3.org/teams/security/security-bulletins/flow3/flow3-sa-2012-001/>`_
 * Fixes: `#35300 <http://forge.typo3.org/issues/35300>`_
-* Commit: `cd39af5 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cd39af5dddd1695b499ca038c5add38d46436e4c>`_
+* Commit: `cd39af5 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=cd39af5dddd1695b499ca038c5add38d46436e4c>`_
 
 [BUGFIX] typo in return statement for getAccessDecisionVoters()
 -----------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Fix return value to array.
 Fix type hinting for var $securityContext and $authenticationManager
 
 * Fixes: `#34620 <http://forge.typo3.org/issues/34620>`_
-* Commit: `7e055f0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=7e055f0b2c7e2d0f92992afd0c97007b50ef4aac>`_
+* Commit: `7e055f0 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=7e055f0b2c7e2d0f92992afd0c97007b50ef4aac>`_
 
 [BUGFIX] ResourceStreamWrapper returns wrong value for fseek
 -----------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ The stream_wrapper expects a boolean value. So 0 will be
 evaluated to false and -1 will be evaluated to true
 
 * Fixes: `#34608 <http://forge.typo3.org/issues/34608>`_
-* Commit: `461bb05 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=461bb056be2d6855aa3def46b4dcbe18fca28cd7>`_
+* Commit: `461bb05 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=461bb056be2d6855aa3def46b4dcbe18fca28cd7>`_
 
 [BUGFIX] Wrong variable name inside rename function
 -----------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ evaluated to false and -1 will be evaluated to true
 Use the proper variable name to create the stream wrapper.
 
 * Fixes: `#34547 <http://forge.typo3.org/issues/34547>`_
-* Commit: `93c28d81 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=93c28d81df8721ae1facc8d720dbc7c0a4048d5e>`_
+* Commit: `93c28d81 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=93c28d81df8721ae1facc8d720dbc7c0a4048d5e>`_
 
 [BUGFIX] Fixes duplicate error id in StringValidator
 -----------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ used in StringLengthValidator. This change makes the former
 use 1238108070 instead.
 
 * Fixes: `#33973 <http://forge.typo3.org/issues/33973>`_
-* Commit: `e1f1478 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=e1f1478eba905740584e9990a68cbf6b7d4c0b4c>`_
+* Commit: `e1f1478 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=e1f1478eba905740584e9990a68cbf6b7d4c0b4c>`_
 
 [BUGFIX] isAuthenticated should work in authentication request
 -----------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ and new sessions before returning FALSE, so it works also in the
 request that triggers the authentication.
 
 * Fixes: `#33311 <http://forge.typo3.org/issues/33311>`_
-* Commit: `27f00f6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=27f00f62768c2b322e87d815e5bef9f5bd2bb2ea>`_
+* Commit: `27f00f6 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=27f00f62768c2b322e87d815e5bef9f5bd2bb2ea>`_
 
 [BUGFIX] Now filters correctly for '__destruct' in pointcut filter
 -----------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ The filter for proxyable methods in SessionObjectMethodsPointcutFilter skips
 the method '__desctruct' instead of '__destruct'
 
 * Fixes: `#34293 <http://forge.typo3.org/issues/34293>`_
-* Commit: `55150fe <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=55150fe526b60d0200b6afd40731b8c36cef1bc4>`_
+* Commit: `55150fe <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=55150fe526b60d0200b6afd40731b8c36cef1bc4>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Fluid
@@ -113,5 +113,5 @@ exploit!
 
 * Security-Bulletin: `FLOW3-SA-2012-001 <http://typo3.org/teams/security/security-bulletins/flow3/flow3-sa-2012-001/>`_
 * Related: `#35300 <http://forge.typo3.org/issues/35300>`_
-* Commit: `7bc4e35 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=7bc4e35752779bab0c51fc82387088d9217277ba>`_
+* Commit: `7bc4e35 <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=7bc4e35752779bab0c51fc82387088d9217277ba>`_
 

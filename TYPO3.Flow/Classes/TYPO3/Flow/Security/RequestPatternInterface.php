@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security;
+namespace TYPO3\Flow\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -33,12 +33,12 @@ interface RequestPatternInterface {
 	public function setPattern($pattern);
 
 	/**
-	 * Matches a \TYPO3\FLOW3\Mvc\RequestInterface against its set pattern rules
+	 * Matches a \TYPO3\Flow\Mvc\RequestInterface against its set pattern rules
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 */
-	public function matchRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request);
+	public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request);
 }
 
 ?>

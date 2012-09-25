@@ -9,7 +9,7 @@
 #                                                                        #
 
 TYPO3:
-  FLOW3:
+  Flow:
     persistence:
 
       # It is good practice to not specify user name and password of the database

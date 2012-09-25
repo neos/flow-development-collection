@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller;
+namespace TYPO3\Flow\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,7 +13,7 @@ namespace TYPO3\FLOW3\Mvc\Controller;
 
 /**
  * Interface for "not found" controllers
- * @deprecated since FLOW3 1.2. Use the "renderingGroups" options of the exception handler configuration instead
+ * @deprecated since Flow 1.2. Use the "renderingGroups" options of the exception handler configuration instead
  */
 interface NotFoundControllerInterface extends ControllerInterface {
 
@@ -21,10 +21,10 @@ interface NotFoundControllerInterface extends ControllerInterface {
 	 * Sets an exception with technical information about the reason why
 	 * no controller could be resolved.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Controller\Exception $exception
+	 * @param \TYPO3\Flow\Mvc\Controller\Exception $exception
 	 * @return void
 	 */
-	public function setException(\TYPO3\FLOW3\Mvc\Controller\Exception $exception);
+	public function setException(\TYPO3\Flow\Mvc\Controller\Exception $exception);
 
 }
 

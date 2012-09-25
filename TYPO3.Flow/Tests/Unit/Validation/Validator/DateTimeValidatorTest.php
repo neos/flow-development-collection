@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,12 +17,12 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the DateTime validator
  *
  */
-class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class DateTimeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\DateTimeValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\DateTimeValidator';
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
 	protected $sampleLocale;
 
@@ -33,10 +33,10 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en_GB');
-		$this->mockObjectManagerReturnValues['TYPO3\FLOW3\I18n\Locale'] = $this->sampleLocale;
+		$this->sampleLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+		$this->mockObjectManagerReturnValues['TYPO3\Flow\I18n\Locale'] = $this->sampleLocale;
 
-		$this->mockDatetimeParser = $this->getMock('TYPO3\FLOW3\I18n\Parser\DatetimeParser');
+		$this->mockDatetimeParser = $this->getMock('TYPO3\Flow\I18n\Parser\DatetimeParser');
 	}
 
 	/**
@@ -73,7 +73,7 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 		$sampleInvalidTime = 'this is not a time string';
 
 		$this->mockDatetimeParser->expects($this->once())->method('parseTime', $sampleInvalidTime)->will($this->returnValue(FALSE));
-		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME));
+		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME));
 		$this->validator->injectDatetimeParser($this->mockDatetimeParser);
 
 		$this->assertTrue($this->validator->validate($sampleInvalidTime)->hasErrors());
@@ -86,7 +86,7 @@ class DateTimeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator
 		$sampleValidDateTime = '10.08.2010, 18:00 CEST';
 
 		$this->mockDatetimeParser->expects($this->once())->method('parseDateAndTime', $sampleValidDateTime)->will($this->returnValue(array('parsed datetime')));
-		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL, 'formatType' => \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME));
+		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL, 'formatType' => \TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME));
 		$this->validator->injectDatetimeParser($this->mockDatetimeParser);
 
 		$this->assertFalse($this->validator->validate($sampleValidDateTime)->hasErrors());

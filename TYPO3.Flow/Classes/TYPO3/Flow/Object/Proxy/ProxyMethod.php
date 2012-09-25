@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Proxy;
+namespace TYPO3\Flow\Object\Proxy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,12 +12,12 @@ namespace TYPO3\FLOW3\Object\Proxy;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Representation of a method within a proxy class
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class ProxyMethod {
 
@@ -61,7 +61,7 @@ class ProxyMethod {
 	protected $methodParametersCode = '';
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -79,10 +79,10 @@ class ProxyMethod {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -196,7 +196,7 @@ class ProxyMethod {
 			}
 			$methodAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName);
 			foreach ($methodAnnotations as $annotation) {
-				$methodDocumentation .= '	 * ' . \TYPO3\FLOW3\Object\Proxy\Compiler::renderAnnotation($annotation) . "\n";
+				$methodDocumentation .= '	 * ' . \TYPO3\Flow\Object\Proxy\Compiler::renderAnnotation($annotation) . "\n";
 			}
 		}
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Error;
+namespace TYPO3\Flow\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -18,7 +18,7 @@ namespace TYPO3\FLOW3\Error;
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -30,10 +30,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -102,7 +102,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 * @return \TYPO3\Fluid\View\StandaloneView
 	 */
 	protected function buildCustomFluidView(array $renderingOptions, $statusCode, $referenceCode) {
-		$statusMessage = \TYPO3\FLOW3\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 
 		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
 		$fluidView->setTemplatePathAndFilename($renderingOptions['fluidTemplate']);
@@ -137,7 +137,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 			}
 		}
 		foreach ($this->options['renderingGroups'] as $renderingGroupSettings) {
-			if ($exception instanceof \TYPO3\FLOW3\Exception && isset($renderingGroupSettings['matchingStatusCodes'])) {
+			if ($exception instanceof \TYPO3\Flow\Exception && isset($renderingGroupSettings['matchingStatusCodes'])) {
 				foreach ($renderingGroupSettings['matchingStatusCodes'] as $statusCode) {
 					if ($statusCode === $exception->getStatusCode()) {
 						return $renderingGroupSettings['options'];

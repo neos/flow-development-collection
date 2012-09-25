@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session\Aspect;
+namespace TYPO3\Flow\Session\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,39 +11,39 @@ namespace TYPO3\FLOW3\Session\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Pointcut filter matching proxyable methods in objects of scope session
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
+	 * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -98,11 +98,11 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\Aop\Pointcut\Po
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
-		$sessionClasses = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
+		$sessionClasses = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
 		return $classNameIndex->intersect($sessionClasses);
 	}

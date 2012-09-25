@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Utility;
+namespace TYPO3\Flow\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A general purpose Array Validator which can check PHP arrays for validity
@@ -44,7 +44,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * - null: --
  * - any: --
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class SchemaValidator {
 
@@ -58,10 +58,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value value to validate
 	 * @param mixed $schema type as string, schema or array of schemas
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	public function validate($value, $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 
 		if (is_string($schema) === TRUE) {
 			$result->merge($this->validateType($value, array('type'=>$schema)));
@@ -114,10 +114,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateType($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (isset($schema['type'])) {
 			switch ($schema['type']) {
 				case 'string':
@@ -160,10 +160,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateTypeArray($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		$isValid = FALSE;
 		foreach ($schema['type'] as $type) {
 			$partResult = $this->validate($value, $type);
@@ -189,11 +189,11 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateNumberType($value, array $schema) {
 
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (is_numeric($value) === FALSE) {
 			$result->addError($this->createError('type=number', 'type=' . gettype($value)));
 			return $result;
@@ -237,13 +237,13 @@ class SchemaValidator {
 	 * The following properties are handled in given $schema:
 	 * - all Properties from number type
 	 *
-	 * @see TYPO3\FLOW3\Utility\schemaValidator\validateNumberType
+	 * @see TYPO3\Flow\Utility\schemaValidator\validateNumberType
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateIntegerType($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (is_integer($value) === FALSE) {
 			$result->addError($this->createError('type=integer', 'type=' . gettype($value)));
 			return $result;
@@ -257,10 +257,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateBooleanType($value, array $schema){
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (is_bool($value) === FALSE) {
 			$result->addError($this->createError('type=boolean', 'type=' . gettype($value)));
 			return $result;
@@ -279,10 +279,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateArrayType($value, array $schema){
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (is_array($value) === FALSE || $this->isNumericallyIndexedArray($value) === FALSE) {
 			$result->addError($this->createError('type=array', 'type=' . gettype($value)));
 			return $result;
@@ -332,10 +332,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateDictionaryType($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (is_array($value) === FALSE || $this->isDictionary($value) === FALSE) {
 			$result->addError($this->createError('type=dictionary', 'type=' . gettype($value)));
 			return $result;
@@ -422,10 +422,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateStringType($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if (is_string($value) === FALSE) {
 			$result->addError($this->createError('type=string', 'type=' . gettype($value)));
 			return $result;
@@ -528,10 +528,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateNullType($value, array $schema) {
-		$result = new \TYPO3\FLOW3\Error\Result();
+		$result = new \TYPO3\Flow\Error\Result();
 		if ($value !== NULL) {
 			$result->addError($this->createError('type=NULL', 'type=' . gettype($value)));
 		}
@@ -543,10 +543,10 @@ class SchemaValidator {
 	 *
 	 * @param mixed $value
 	 * @param array $schema
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	protected function validateAnyType($value, array $schema) {
-		return new \TYPO3\FLOW3\Error\Result();
+		return new \TYPO3\Flow\Error\Result();
 	}
 
 	/**
@@ -554,13 +554,13 @@ class SchemaValidator {
 	 *
 	 * @param string $expectation
 	 * @param string $value
-	 * @return \TYPO3\FLOW3\Error\Error
+	 * @return \TYPO3\Flow\Error\Error
 	 */
 	protected function createError($expectation, $value = NULL) {
 		if ($value !== NULL) {
-			$error = new \TYPO3\FLOW3\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $value), 'Validation Error');
+			$error = new \TYPO3\Flow\Error\Error('expected: %s found: %s', 1328557141, array($expectation, $value), 'Validation Error');
 		} else {
-			$error = new \TYPO3\FLOW3\Error\Error($expectation, 1328557141, array(), 'Validation Error');
+			$error = new \TYPO3\Flow\Error\Error($expectation, 1328557141, array(), 'Validation Error');
 		}
 		return $error;
 	}

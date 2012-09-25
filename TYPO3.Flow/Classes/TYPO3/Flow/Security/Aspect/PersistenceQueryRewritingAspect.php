@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Aspect;
+namespace TYPO3\Flow\Security\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,49 +11,49 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An aspect which rewrites persistence query to filter objects one should not be able to retrieve.
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Aspect
+ * @Flow\Scope("singleton")
+ * @Flow\Aspect
  */
 class PersistenceQueryRewritingAspect {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Session\SessionInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Session\SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -71,7 +71,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Inject global settings, retrieves the registered global objects that might be used as operands
 	 *
-	 * @param array $settings The current FLOW3 settings
+	 * @param array $settings The current Flow settings
 	 * @return void
 	 */
 	public function injectSettings($settings) {
@@ -88,11 +88,11 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
-	 * @FLOW3\Around("setting(TYPO3.FLOW3.security.enable) && within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @Flow\Around("setting(TYPO3.Flow.security.enable) && within(TYPO3\Flow\Persistence\QueryInterface) && method(.*->(execute|count)())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed
 	 */
-	public function rewriteQomQuery(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function rewriteQomQuery(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
@@ -110,7 +110,7 @@ class PersistenceQueryRewritingAspect {
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
 			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) {
-				return ($joinPoint->getMethodName() === 'count') ? 0 : new \TYPO3\FLOW3\Persistence\EmptyQueryResult($query);
+				return ($joinPoint->getMethodName() === 'count') ? 0 : new \TYPO3\Flow\Persistence\EmptyQueryResult($query);
 			}
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
 			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
@@ -128,11 +128,11 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Checks, if the current policy allows the retrieval of the object fetched by getObjectDataByIdentifier()
 	 *
-	 * @FLOW3\Around("within(TYPO3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @Flow\Around("within(TYPO3\Flow\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.Flow.security.enable)")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 */
-	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		if ($this->securityContext->isInitialized() === FALSE) {
@@ -160,10 +160,10 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for an array of constraint expressions
 	 *
 	 * @param array $constraintDefinitions The constraint expressions
-	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint The build constraint object
+	 * @param \TYPO3\Flow\Persistence\QueryInterface $query The query object to build the constraint with
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint The build constraint object
 	 */
-	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
+	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\Flow\Persistence\QueryInterface $query) {
 		$resourceConstraintObjects = array();
 		foreach ($constraintDefinitions as $resourceConstraintsDefinition) {
 			$resourceConstraintObject = NULL;
@@ -212,11 +212,11 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for one single constraint expression
 	 *
 	 * @param array $constraintDefinition The constraint expression
-	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint The build constraint object
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
+	 * @param \TYPO3\Flow\Persistence\QueryInterface $query The query object to build the constraint with
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint The build constraint object
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
-	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
+	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \TYPO3\Flow\Persistence\QueryInterface $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);
@@ -224,7 +224,7 @@ class PersistenceQueryRewritingAspect {
 			$propertyName = substr($constraintDefinition['rightValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['leftValue']);
 		} else {
-			throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1267881842);
+			throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1267881842);
 		}
 
 		switch ($constraintDefinition['operator']) {
@@ -269,7 +269,7 @@ class PersistenceQueryRewritingAspect {
 				break;
 		}
 
-		throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1270483540);
+		throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1270483540);
 	}
 
 	/**
@@ -321,7 +321,7 @@ class PersistenceQueryRewritingAspect {
 	 * @param array $constraintDefinition The constraint definition array
 	 * @param object $result The result object returned by the persistence manager
 	 * @return boolean TRUE if the query result is valid for the given constraint
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	protected function checkSingleConstraintDefinitionOnResultObject(array $constraintDefinition, $result) {
 		$referenceToThisFound = FALSE;
@@ -342,11 +342,11 @@ class PersistenceQueryRewritingAspect {
 			$rightOperand = $this->getValueForOperand($constraintDefinition['rightValue']);
 		}
 
-		if ($referenceToThisFound === FALSE) throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
+		if ($referenceToThisFound === FALSE) throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
 			&& (
-				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'TYPO3\FLOW3\Annotations\Entity')
+				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'TYPO3\Flow\Annotations\Entity')
 					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'Doctrine\ORM\Mapping\Entity')
 			)
 		) {
@@ -355,7 +355,7 @@ class PersistenceQueryRewritingAspect {
 
 		if (is_object($rightOperand)
 			&& (
-				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'TYPO3\FLOW3\Annotations\Entity')
+				$this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'TYPO3\Flow\Annotations\Entity')
 					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'Doctrine\ORM\Mapping\Entity')
 			)
 		) {
@@ -392,7 +392,7 @@ class PersistenceQueryRewritingAspect {
 				break;
 		}
 
-		throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1277222521);
+		throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1277222521);
 	}
 
 	/**
@@ -427,7 +427,7 @@ class PersistenceQueryRewritingAspect {
 	}
 
 	/**
-	 * Redirects directly to \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($result, $propertyPath)
+	 * Redirects directly to \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($result, $propertyPath)
 	 * This is only needed for unit tests!
 	 *
 	 * @param mixed $object The object to fetch the property from
@@ -435,7 +435,7 @@ class PersistenceQueryRewritingAspect {
 	 * @return mixed The property value
 	 */
 	protected function getObjectValueByPath($object, $path) {
-		return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, $path);
+		return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($object, $path);
 	}
 }
 

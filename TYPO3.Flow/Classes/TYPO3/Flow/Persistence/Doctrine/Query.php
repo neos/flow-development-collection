@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  *
  * @api
  */
-class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
+class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 
 	/**
 	 * @var string
@@ -25,7 +25,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	protected $entityClassName;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -82,10 +82,10 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -111,11 +111,11 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Executes the query and returns the result.
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
 	public function execute() {
-		return new \TYPO3\FLOW3\Persistence\Doctrine\QueryResult($this);
+		return new \TYPO3\Flow\Persistence\Doctrine\QueryResult($this);
 	}
 
 	/**
@@ -125,7 +125,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * This should only ever be executed from the QueryResult class.
 	 *
 	 * @return array result set
-	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException
 	 */
 	public function getResult() {
 		try {
@@ -142,7 +142,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * Returns the query result count
 	 *
 	 * @return integer The query result count
-	 * @throws \TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException
 	 * @api
 	 */
 	public function count() {
@@ -150,7 +150,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 			$originalQuery = $this->queryBuilder->getQuery();
 			$dqlQuery = clone $originalQuery;
 			$dqlQuery->setParameters($originalQuery->getParameters());
-			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('TYPO3\FLOW3\Persistence\Doctrine\CountWalker'));
+			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('TYPO3\Flow\Persistence\Doctrine\CountWalker'));
 			return (int)$dqlQuery->getSingleScalarResult();
 		} catch (\Doctrine\ORM\ORMException $ormException) {
 			$this->systemLogger->logException($ormException);
@@ -163,12 +163,12 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Sets the property names to order the result by. Expected like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @param array $orderings The property names to order by
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function setOrderings(array $orderings) {
@@ -183,8 +183,8 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Returns the property names to order the result by, like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @return array
@@ -199,7 +199,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * for chaining (fluid interface)
 	 *
 	 * @param integer $limit
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function setLimit($limit) {
@@ -223,7 +223,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * allow for chaining (fluid interface)
 	 *
 	 * @param integer $offset
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function setOffset($offset) {
@@ -247,7 +247,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * for chaining (fluid interface)
 	 *
 	 * @param object $constraint Some constraint, depending on the backend
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function matching($constraint) {
@@ -259,7 +259,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Gets the constraint for this query.
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint, or null if none
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint the constraint, or null if none
 	 * @api
 	*/
 	public function getConstraint() {
@@ -345,7 +345,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the matching should be done case-sensitive
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a non-string property
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a non-string property
 	 * @todo implement case-sensitivity switch
 	 * @api
 	 */
@@ -362,7 +362,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
 	public function contains($propertyName, $operand) {
@@ -375,7 +375,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @return boolean
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
 	public function isEmpty($propertyName) {
@@ -389,7 +389,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with, multivalued
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property
 	 * @api
 	 */
 	public function in($propertyName, $operand) {
@@ -404,7 +404,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
@@ -417,7 +417,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
@@ -430,7 +430,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
@@ -443,7 +443,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
+	 * @throws \TYPO3\Flow\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {

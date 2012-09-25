@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Cli;
+namespace TYPO3\Flow\Tests\Unit\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,30 +15,30 @@ namespace TYPO3\FLOW3\Tests\Unit\Cli;
  * Testcase for the MVC CLI Request Builder
  *
  */
-class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\RequestBuilder
+	 * @var \TYPO3\Flow\Cli\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\Command
+	 * @var \TYPO3\Flow\Cli\Command
 	 */
 	protected $mockCommand;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\CommandManager
+	 * @var \TYPO3\Flow\Cli\CommandManager
 	 */
 	protected $mockCommandManager;
 
 	/**
-	 * @var \TYPO\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO\Flow\Reflection\ReflectionService
 	 */
 	protected $mockReflectionService;
 
@@ -47,19 +47,19 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$this->mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 
-		$this->mockCommand = $this->getMock('TYPO3\FLOW3\Cli\Command', array(), array(), '', FALSE);
+		$this->mockCommand = $this->getMock('TYPO3\Flow\Cli\Command', array(), array(), '', FALSE);
 		$this->mockCommand->expects($this->any())->method('getControllerClassName')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 		$this->mockCommand->expects($this->any())->method('getControllerCommandName')->will($this->returnValue('list'));
 
-		$this->mockCommandManager = $this->getMock('TYPO3\FLOW3\Cli\CommandManager');
+		$this->mockCommandManager = $this->getMock('TYPO3\Flow\Cli\CommandManager');
 		$this->mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('acme.test:default:list')->will($this->returnValue($this->mockCommand));
 
-		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 
-		$this->requestBuilder = new \TYPO3\FLOW3\Cli\RequestBuilder();
+		$this->requestBuilder = new \TYPO3\Flow\Cli\RequestBuilder();
 		$this->requestBuilder->injectObjectManager($this->mockObjectManager);
 		$this->requestBuilder->injectReflectionService($this->mockReflectionService);
 		$this->requestBuilder->injectCommandManager($this->mockCommandManager);
@@ -87,12 +87,12 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectManager->getObjectNameByClassName('Acme\Test\Command\DefaultCommandController');
 		$this->mockCommandManager->getCommandByIdentifier('acme.test:default:list');
 
-		$mockCommandManager = $this->getMock('TYPO3\FLOW3\Cli\CommandManager');
-		$mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('test:default:list')->will($this->throwException(new \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException()));
+		$mockCommandManager = $this->getMock('TYPO3\Flow\Cli\CommandManager');
+		$mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('test:default:list')->will($this->throwException(new \TYPO3\Flow\Mvc\Exception\NoSuchCommandException()));
 		$this->requestBuilder->injectCommandManager($mockCommandManager);
 
 		$request = $this->requestBuilder->build('test:default:list');
-		$this->assertSame('TYPO3\FLOW3\Command\HelpCommandController', $request->getControllerObjectName());
+		$this->assertSame('TYPO3\Flow\Command\HelpCommandController', $request->getControllerObjectName());
 	}
 
 	/**
@@ -283,7 +283,7 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentMixingException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException
 	 */
 	public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed() {
 		$methodParameters = array(
@@ -297,7 +297,7 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentMixingException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException
 	 */
 	public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed() {
 		$methodParameters = array(

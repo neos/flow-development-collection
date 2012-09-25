@@ -5,16 +5,16 @@ Essential Design Patterns
 .. sectionauthor:: Robert Lemke <robert@typo3.org>, Ryan J. Peterson <ryan@mathusee.com>
 
 
-FLOW3 Paradigm
-==============
+TYPO3 Flow Paradigm
+===================
 
-FLOW3 was designed from the ground up to be modular, adaptive and agile to
+TYPO3 Flow was designed from the ground up to be modular, adaptive and agile to
 enable developers of all skill levels to build maintainable, extensible and
 robust software through the implementation of several proven design paradigms.
 Building software based on these principles will allow for faster, better
 performing applications that can be extended to meet changing requirements while
 avoiding inherent problems introduced by traditional legacy code maintenance.
-FLOW3 aims to make what you "should" do what you "want" to do by providing the
+TYPO3 Flow aims to make what you "should" do what you "want" to do by providing the
 framework and community around best practices in the respective essential design
 patterns.
 

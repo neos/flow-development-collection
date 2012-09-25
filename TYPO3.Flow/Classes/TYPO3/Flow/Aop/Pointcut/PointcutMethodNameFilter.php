@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,19 +11,19 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A little filter which filters for method names
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
-class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PointcutMethodNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/^(|public|protected)$/';
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -38,7 +38,7 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	protected $methodVisibility = NULL;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -53,12 +53,12 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	 * @param string $methodNameFilterExpression A regular expression which filters method names
 	 * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
 	 * @param array $methodArgumentConstraints array of method constraints
-	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
+	 * @throws \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, array $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
 		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) {
-			throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier "' . $methodVisibility . '".', 1172494794);
+			throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier "' . $methodVisibility . '".', 1172494794);
 		}
 		$this->methodVisibility = $methodVisibility;
 		$this->methodArgumentConstraints = $methodArgumentConstraints;
@@ -67,18 +67,18 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -94,13 +94,13 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @throws \TYPO3\FLOW3\Aop\Exception
+	 * @throws \TYPO3\Flow\Aop\Exception
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
 
 		if ($matchResult === FALSE) {
-			throw new \TYPO3\FLOW3\Aop\Exception('Error in regular expression', 1168876915);
+			throw new \TYPO3\Flow\Aop\Exception('Error in regular expression', 1168876915);
 		} elseif ($matchResult !== 1) {
 			return FALSE;
 		}
@@ -184,10 +184,10 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilt
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		return $classNameIndex;
 	}
 }

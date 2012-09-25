@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http\Client;
+namespace TYPO3\Flow\Http\Client;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Http\Client;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Response;
-use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\Routing\Route;
 
 /**
- * A Request Engine which uses FLOW3's request dispatcher directly for processing
+ * A Request Engine which uses Flow's request dispatcher directly for processing
  * HTTP requests internally.
  *
  * This engine is particularly useful in functional test scenarios.
@@ -25,32 +25,32 @@ use TYPO3\FLOW3\Mvc\Routing\Route;
 class InternalRequestEngine implements RequestEngineInterface {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Routing\Router
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Routing\Router
 	 */
 	protected $router;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
@@ -60,21 +60,21 @@ class InternalRequestEngine implements RequestEngineInterface {
 	 * @return void
 	 */
 	public function initializeObject() {
-		$this->router->setRoutesConfiguration($this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
+		$this->router->setRoutesConfiguration($this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
 	}
 
 	/**
 	 * Sends the given HTTP request
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request
-	 * @return \TYPO3\FLOW3\Http\Response
-	 * @throws \TYPO3\FLOW3\Http\Exception
+	 * @param \TYPO3\Flow\Http\Request $request
+	 * @return \TYPO3\Flow\Http\Response
+	 * @throws \TYPO3\Flow\Http\Exception
 	 * @api
 	 */
 	public function sendRequest(Request $request) {
 		$requestHandler = $this->bootstrap->getActiveRequestHandler();
-		if (!$requestHandler instanceof \TYPO3\FLOW3\Tests\FunctionalTestRequestHandler) {
-			throw new \TYPO3\FLOW3\Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
+		if (!$requestHandler instanceof \TYPO3\Flow\Tests\FunctionalTestRequestHandler) {
+			throw new \TYPO3\Flow\Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
 		}
 
 		$response = new Response();
@@ -91,20 +91,20 @@ class InternalRequestEngine implements RequestEngineInterface {
 			$pathPosition = strpos($exception->getFile(), 'Packages/');
 			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
-			$content = PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
+			$content = PHP_EOL . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 			$content .= 'thrown in file ' . $filePathAndName . PHP_EOL;
 			$content .= 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
-			$content .= \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE, TRUE) . PHP_EOL;
+			$content .= \TYPO3\Flow\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE, TRUE) . PHP_EOL;
 
-			if ($exception instanceof \TYPO3\FLOW3\Exception) {
+			if ($exception instanceof \TYPO3\Flow\Exception) {
 				$statusCode = $exception->getStatusCode();
 			} else {
 				$statusCode = 500;
 			}
 			$response->setStatus($statusCode);
 			$response->setContent($content);
-			$response->setHeader('X-FLOW3-ExceptionCode', $exceptionCodeNumber);
-			$response->setHeader('X-FLOW3-ExceptionMessage', $exception->getMessage());
+			$response->setHeader('X-Flow-ExceptionCode', $exceptionCodeNumber);
+			$response->setHeader('X-Flow-ExceptionMessage', $exception->getMessage());
 		}
 		return $response;
 	}
@@ -112,7 +112,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 	/**
 	 * Returns the router used by this internal request engine
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\Routing\Router
+	 * @return \TYPO3\Flow\Mvc\Routing\Router
 	 */
 	public function getRouter() {
 		return $this->router;

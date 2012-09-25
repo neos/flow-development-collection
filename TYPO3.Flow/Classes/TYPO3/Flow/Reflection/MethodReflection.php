@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Reflection;
+namespace TYPO3\Flow\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,24 +11,24 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Extended version of the ReflectionMethod
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class MethodReflection extends \ReflectionMethod {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
+	 * @var \TYPO3\Flow\Reflection\DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
+	 * @return \TYPO3\Flow\Reflection\ClassReflection The declaring class
 	 */
 	public function getDeclaringClass() {
 		return new ClassReflection(parent::getDeclaringClass()->getName());
@@ -36,10 +36,10 @@ class MethodReflection extends \ReflectionMethod {
 
 	/**
 	 * Replacement for the original getParameters() method which makes sure
-	 * that \TYPO3\FLOW3\Reflection\ParameterReflection objects are returned instead of the
+	 * that \TYPO3\Flow\Reflection\ParameterReflection objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
-	 * @return array of \TYPO3\FLOW3\Reflection\ParameterReflection objects of the parameters of this method
+	 * @return array of \TYPO3\Flow\Reflection\ParameterReflection objects of the parameters of this method
 	 */
 	public function getParameters() {
 		$extendedParameters = array();
@@ -92,7 +92,7 @@ class MethodReflection extends \ReflectionMethod {
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
+	 * @return \TYPO3\Flow\Reflection\DocCommentParser
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

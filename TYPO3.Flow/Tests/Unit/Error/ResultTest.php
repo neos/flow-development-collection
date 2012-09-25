@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\Flow\Tests\Unit\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,16 +15,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Error;
  * Testcase for the Error Container object
  *
  */
-class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 *
-	 * @var \TYPO3\FLOW3\Error\Result
+	 * @var \TYPO3\Flow\Error\Result
 	 */
 	protected $result;
 
 	public function setUp() {
-		$this->result = new \TYPO3\FLOW3\Error\Result();
+		$this->result = new \TYPO3\Flow\Error\Result();
 	}
 
 	public function dataTypes() {
@@ -36,7 +36,7 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	protected function getMockMessage($type) {
-		return $this->getMock('TYPO3\FLOW3\Error\\' . $type, array(), array(), '', FALSE);
+		return $this->getMock('TYPO3\Flow\Error\\' . $type, array(), array(), '', FALSE);
 	}
 
 	/**
@@ -85,7 +85,7 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function forPropertyShouldReturnSubResult() {
 		$container2 = $this->result->forProperty('foo.bar');
-		$this->assertInstanceOf('TYPO3\FLOW3\Error\Result', $container2);
+		$this->assertInstanceOf('TYPO3\Flow\Error\Result', $container2);
 		$this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
 	}
 
@@ -207,7 +207,7 @@ class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$error2 = $this->getMockMessage('Error');
 		$error3 = $this->getMockMessage('Error');
 
-		$otherResult = new \TYPO3\FLOW3\Error\Result();
+		$otherResult = new \TYPO3\Flow\Error\Result();
 
 		$otherResult->addNotice($notice1);
 		$otherResult->forProperty('foo.bar')->addNotice($notice2);

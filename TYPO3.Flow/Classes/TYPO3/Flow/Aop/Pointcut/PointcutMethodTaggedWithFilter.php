@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A method filter which fires on methods tagged with a certain annotation
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  * @deprecated since 1.0
  */
-class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PointcutMethodTaggedWithFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -43,10 +43,10 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Pointc
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -58,7 +58,7 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Pointc
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @throws \TYPO3\FLOW3\Aop\Exception
+	 * @throws \TYPO3\Flow\Aop\Exception
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($methodDeclaringClassName === NULL || !method_exists($methodDeclaringClassName, $methodName)) {
@@ -67,7 +67,7 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Pointc
 		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {
 			$matchResult = preg_match('/^' . $this->methodTagFilterExpression . '$/i', $tag);
 			if ($matchResult === FALSE) {
-				throw new \TYPO3\FLOW3\Aop\Exception('Error in regular expression "' . $this->methodTagFilterExpression . '" in pointcut method tag filter', 1229343988);
+				throw new \TYPO3\Flow\Aop\Exception('Error in regular expression "' . $this->methodTagFilterExpression . '" in pointcut method tag filter', 1229343988);
 			}
 			if ($matchResult === 1) {
 				return TRUE;
@@ -97,10 +97,10 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Pointc
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		return $classNameIndex;
 	}
 }

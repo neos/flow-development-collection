@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Builder;
+namespace TYPO3\Flow\Aop\Builder;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Aop\Builder;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cache\CacheManager;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A filterable index of class names
  *
- * @FLOW3\Proxy(false)
- * @FLOW3\Scope("prototype")
+ * @Flow\Proxy(false)
+ * @Flow\Scope("prototype")
  */
 class ClassNameIndex {
 
@@ -72,8 +72,8 @@ class ClassNameIndex {
 	 * Returns a new index object with all class names contained in this and
 	 * the given index
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex A new index object
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex A new index object
 	 */
 	public function intersect(ClassNameIndex $classNameIndex) {
 		return new ClassNameIndex(array_intersect_key($this->classNames, $classNameIndex->classNames));
@@ -83,7 +83,7 @@ class ClassNameIndex {
 	 * Sets this index to all class names which are present currently and
 	 * contained in the given index
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
 	 * @return void
 	 */
 	public function applyIntersect(ClassNameIndex $classNameIndex) {
@@ -94,8 +94,8 @@ class ClassNameIndex {
 	 * Returns a new index object containing all class names of
 	 * this index and the given one
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex A new index object
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex A new index object
 	 */
 	public function union(ClassNameIndex $classNameIndex) {
 		$result = clone $classNameIndex;
@@ -107,7 +107,7 @@ class ClassNameIndex {
 	 * Sets this index to all class names which are either already present or are
 	 * contained in the given index
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
 	 * @return void
 	 */
 	public function applyUnion(ClassNameIndex $classNameIndex) {
@@ -143,7 +143,7 @@ class ClassNameIndex {
 	 * starting with the given prefix
 	 *
 	 * @param string $prefixFilter A prefix string to filter the class names of this index
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex A new index object
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex A new index object
 	 */
 	public function filterByPrefix($prefixFilter) {
 		$pointcuts = array_keys($this->classNames);

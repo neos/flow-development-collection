@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\SignalSlot;
+namespace TYPO3\Flow\SignalSlot;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,30 +11,30 @@ namespace TYPO3\FLOW3\SignalSlot;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Aspect which connects signal methods with the Signal Dispatcher
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Aspect
+ * @Flow\Scope("singleton")
+ * @Flow\Aspect
  */
 class SignalAspect {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\SignalSlot\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
 	 * Passes the signal over to the Dispatcher
 	 *
-	 * @FLOW3\AfterReturning("methodAnnotatedWith(TYPO3\FLOW3\Annotations\Signal)")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
+	 * @Flow\AfterReturning("methodAnnotatedWith(TYPO3\Flow\Annotations\Signal)")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 */
-	public function forwardSignalToDispatcher(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function forwardSignalToDispatcher(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$signalName = lcfirst(str_replace('emit', '', $joinPoint->getMethodName()));
 		$this->dispatcher->dispatch($joinPoint->getClassName(), $signalName, $joinPoint->getMethodArguments());
 	}

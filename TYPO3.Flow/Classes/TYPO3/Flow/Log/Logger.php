@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Log;
+namespace TYPO3\Flow\Log;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,11 +13,11 @@ namespace TYPO3\FLOW3\Log;
 
 
 /**
- * The default logger of the FLOW3 framework
+ * The default logger of the Flow framework
  *
  * @api
  */
-class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log\SecurityLoggerInterface {
+class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\SecurityLoggerInterface {
 
 	/**
 	 * @var \SplObjectStorage
@@ -37,11 +37,11 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 *
 	 * This method allows for conveniently injecting a backend through some Objects.yaml configuration.
 	 *
-	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @api
 	 */
-	public function setBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
+	public function setBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
 		$this->backends = new \SplObjectStorage();
 		$this->backends->attach($backend);
 	}
@@ -49,11 +49,11 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	/**
 	 * Adds the backend to which the logger sends the logging data
 	 *
-	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @api
 	 */
-	public function addBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
+	public function addBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
 		$this->backends->attach($backend);
 		$backend->open();
 	}
@@ -62,13 +62,13 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 	 * Runs the close() method of a backend and removes the backend
 	 * from the logger.
 	 *
-	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
+	 * @param \TYPO3\Flow\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
+	 * @throws \TYPO3\Flow\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
 	 * @api
 	 */
-	public function removeBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
-		if (!$this->backends->contains($backend)) throw new \TYPO3\FLOW3\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
+	public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
+		if (!$this->backends->contains($backend)) throw new \TYPO3\Flow\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
 		$backend->close();
 		$this->backends->detach($backend);
 	}
@@ -121,16 +121,16 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 			// FIXME: This is not really the package key:
 		$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
 
-		if (!file_exists(FLOW3_PATH_DATA . 'Logs/Exceptions')) {
-			mkdir(FLOW3_PATH_DATA . 'Logs/Exceptions');
+		if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+			mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
 		}
-		if (file_exists(FLOW3_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW3_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW3_PATH_DATA . 'Logs/Exceptions')) {
-			$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? $exception->getReferenceCode() : date('YmdHis' , $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
-			$exceptionDumpPathAndFilename = FLOW3_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
-			file_put_contents($exceptionDumpPathAndFilename, $message . PHP_EOL . PHP_EOL . \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE));
+		if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : date('YmdHis' , $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+			$exceptionDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
+			file_put_contents($exceptionDumpPathAndFilename, $message . PHP_EOL . PHP_EOL . \TYPO3\Flow\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE));
 			$message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
 		} else {
-			$this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW3_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'FLOW3', __CLASS__, __FUNCTION__);
+			$this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'Flow', __CLASS__, __FUNCTION__);
 		}
 
 		$this->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);

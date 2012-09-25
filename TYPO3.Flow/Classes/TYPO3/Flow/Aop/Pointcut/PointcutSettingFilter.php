@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,22 +11,22 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A settings filter which fires on configuration setting set to TRUE or equal to the given condition.
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
-class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PointcutSettingFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';
 	const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
 
 	/**
-	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
@@ -65,10 +65,10 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\Flow\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 		$this->parseConfigurationOptionPath($this->settingComparisonExpression);
 	}
@@ -114,7 +114,7 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 	 *
 	 * @param string $settingComparisonExpression The configuration expression (path + optional condition)
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException
+	 * @throws \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	protected function parseConfigurationOptionPath($settingComparisonExpression) {
 		$settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
@@ -126,7 +126,7 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 			} elseif (isset($matches['DoubleQuotedString']) && $matches['DoubleQuotedString'] !== '') {
 				$this->condition = $matches['DoubleQuotedString'];
 			} else {
-				throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
+				throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
 			}
 		}
 
@@ -134,10 +134,10 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 
 		if (count($configurationKeys) > 0) {
 			$settingPackageKey = array_shift($configurationKeys);
-			$settingValue = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
+			$settingValue = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
 			foreach ($configurationKeys as $currentKey) {
 				if (!isset($settingValue[$currentKey])) {
-					throw new \TYPO3\FLOW3\Aop\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
+					throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
 				}
 				$settingValue = $settingValue[$currentKey];
 			}
@@ -148,10 +148,10 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterI
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		return $classNameIndex;
 	}
 }

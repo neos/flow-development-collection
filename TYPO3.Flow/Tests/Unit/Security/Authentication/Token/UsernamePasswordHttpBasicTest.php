@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
+namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Uri;
-use TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic;
-use TYPO3\FLOW3\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
 
 /**
  * Testcase for username/password HTTP Basic Auth authentication token
  *
  */
-class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class UsernamePasswordHttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test

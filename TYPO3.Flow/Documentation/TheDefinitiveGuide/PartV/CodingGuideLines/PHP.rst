@@ -12,21 +12,21 @@ technically okay code or a well considered, mature solution.
 
 These guidelines try to cover both, the technical standards as well as giving incentives
 for a common development style. These guidelines must be followed by everyone who creates
-code for the FLOW3 core. Because TYPO3 is based on FLOW3, it follows the same principles -
-therefore, whenever we mention FLOW3 in the following sections, we equally refer to TYPO3.
+code for the TYPO3 Flow core. Because Phoenix is based on TYPO3 Flow, it follows the same principles -
+therefore, whenever we mention TYPO3 Flow in the following sections, we equally refer to Phoenix.
 We hope that you feel encouraged to follow these guidelines as well when creating your own
-packages and FLOW3 based applications.
+packages and TYPO3 Flow based applications.
 
 CGL on One Page
 ===============
 
-.. figure:: /Images/TheDefinitiveGuide/PartV/FLOW3_Coding_Guidelines_on_one_page.png
+.. figure:: /Images/TheDefinitiveGuide/PartV/TYPO3_Flow_Coding_Guidelines_on_one_page.png
 	:align: right
 	:class: intext right
 	:alt: CGL on one page
 
 The most important parts of our `Coding Guidelines in a one page document
-<http://flow3.typo3.org/_Resources/Static/Packages/TYPO3.Flow3Org/Assets/Content/FLOW3-CGL-on-one-page.pdf>`_
+<http://flow.typo3.org/_Resources/Static/Packages/TYPO3.FlowOrg/Assets/Content/TYPO3_Flow-CGL-on-one-page.pdf>`_
 you can print out and hang on your wall for easy reference.
 Does it get any easier than that?
 
@@ -42,14 +42,14 @@ programmers to contribute, but in the same style. This will help us to:
   programmers striving for excellence
 
 Some people may object to the visual guidelines since everyone has his own habits. You
-will have to overcome that in the case of FLOW3; the visual guidelines must be followed
+will have to overcome that in the case of TYPO3 Flow; the visual guidelines must be followed
 along with coding guidelines for security. We want all contributions to the project to be
 as similar in style and as secure as possible.
 
 General considerations
 ----------------------
 
-* Almost every PHP file in FLOW3 contains exactly one class and does not output anything
+* Almost every PHP file in TYPO3 Flow contains exactly one class and does not output anything
   if it is called directly. Therefore you start your file with a ``<?php`` tag and end it
   with the closing ``?>``.
 * Every file must contain a header stating namespace and licensing information
@@ -58,13 +58,13 @@ General considerations
   * The copyright header itself must not start with ``/**``, as this may confuse
     documentation generators!
 
-*The FLOW3 standard file header*::
+*The TYPO3 Flow standard file header*::
 
  <?php
  namespace YourCompany\Package\Stuff\Here;
 
  /*                                                                        *
-  * This script belongs to the FLOW3 package "Package".                    *
+  * This script belongs to the TYPO3 Flow package "Package".               *
   *                                                                        *
   * It is free software; you can redistribute it and/or modify it under    *
   * the terms of the GNU Lesser General Public License, either version 3   *
@@ -82,7 +82,7 @@ General considerations
 Make sure you use the correct license and mention the correct package in the header, we
 have some `some boilerplate text`_.
 
-.. _`some boilerplate text`: http://forge.typo3.org/projects/flow3/wiki/Licensing_boilerplates_to_use_with_your_code
+.. _`some boilerplate text`: http://forge.typo3.org/projects/flow/wiki/Licensing_boilerplates_to_use_with_your_code
 
 Indentation and line formatting
 _______________________________
@@ -129,16 +129,16 @@ languages.
 
 When using abbreviations or acronyms remember to make them camel-cased as needed, no
 all-uppercase stuff. Admittedly there are a few places where we violate that rule
-willingly (FLOW3, TYPO3 – will not change) and historically (e.g. AOP – might change).
+willingly (TYPO3 – will not change) and historically.
 
 
 Vendor namespaces
 -----------------
 
-The base for namespaces as well as package keys is the vendor namespace. Since FLOW3 is
+The base for namespaces as well as package keys is the vendor namespace. Since Flow is
 part of the TYPO3 project, the core team decided to choose "TYPO3" as our vendor
 namespace. The Object Manager for example is known under the class name
-``TYPO3\FLOW3\Object\ObjectManager``. In our examples you will find the ``Acme`` vendor
+``TYPO3\Flow\Object\ObjectManager``. In our examples you will find the ``Acme`` vendor
 namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
@@ -178,11 +178,11 @@ Namespace and Class names
 ==================================== ================ ===========================================
 Fully qualified class name           Unqualified name Remarks
 ==================================== ================ ===========================================
-\\TYPO3\\FLOW3\\Session\\Php         Php              The class is not a representation of PHP
-\\TYPO3\\FLOW3\\Cache\\Backend\\File File             The class doesn't represent a file!
-\\TYPO3\\FLOW3\\Session\\Interface   Interface        Not allowed, "Interface" is a reserved keyword
+\\TYPO3\\Flow\\Session\\Php          Php              The class is not a representation of PHP
+\\TYPO3\\Flow\\Cache\\Backend\\File  File             The class doesn't represent a file!
+\\TYPO3\\Flow\\Session\\Interface    Interface        Not allowed, "Interface" is a reserved keyword
 \\TYPO3\\Foo\\Controller\\Default    Default          Not allowed, "Default" is a reserved keyword
-\\TYPO3\\FLOW3\\Object\\Manager      Manager          Just "Manager" is too fuzzy
+\\TYPO3\\Flow\\Object\\Manager       Manager          Just "Manager" is too fuzzy
 ==================================== ================ ===========================================
 
 *Correct naming of namespaces and classes*
@@ -190,11 +190,11 @@ Fully qualified class name           Unqualified name Remarks
 ============================================ ================== ==========================
 Fully qualified class name                   Unqualified name   Remarks
 ============================================ ================== ==========================
-\\TYPO3\\FLOW3\\Session\\PhpSession          PHPSession         That's a PHP Session
-\\TYPO3\\FLOW3\\Cache\\Backend\\FileBackend  FileBackend        A File Backend
-\\TYPO3\\FLOW3\\Session\\SessionInterface    SessionInterface   Interface for a session
+\\TYPO3\\Flow\\Session\\PhpSession           PHPSession         That's a PHP Session
+\\TYPO3\\Flow\\Cache\\Backend\\FileBackend   FileBackend        A File Backend
+\\TYPO3\\Flow\\Session\\SessionInterface     SessionInterface   Interface for a session
 \\TYPO3\\Foo\\Controller\\StandardController StandardController The standard controller
-\\TYPO3\\FLOW3\\Object\\ObjectManager        ObjectController   "ObjectManager" is clearer
+\\TYPO3\\Flow\\Object\\ObjectManager         ObjectController   "ObjectManager" is clearer
 ============================================ ================== ==========================
 
 *Edge cases in naming of namespaces and classes*
@@ -202,10 +202,10 @@ Fully qualified class name                   Unqualified name   Remarks
 ===================================================== =================== ==========================
 Fully qualified class name                            Unqualified name    Remarks
 ===================================================== =================== ==========================
-\\TYPO3\\FLOW3\\Mvc\\ControllerInterface              ControllerInterface Consequently the interface belongs to all the controllers in the Controller sub namespace
-\\TYPO3\\FLOW3\\Mvc\\Controller\\ControllerInterface                      Better
-\\TYPO3\\FLOW3\\Cache\\AbstractBackend                AbstractBackend     Same here: In reality this class belongs to the backends
-\\TYPO3\\FLOW3\\Cache\\Backend\\AbstractBackend                           Better
+\\TYPO3\\Flow\\Mvc\\ControllerInterface               ControllerInterface Consequently the interface belongs to all the controllers in the Controller sub namespace
+\\TYPO3\\Flow\\Mvc\\Controller\\ControllerInterface                       Better
+\\TYPO3\\Flow\\Cache\\AbstractBackend                 AbstractBackend     Same here: In reality this class belongs to the backends
+\\TYPO3\\Flow\\Cache\\Backend\\AbstractBackend                            Better
 ===================================================== =================== ==========================
 
 .. note::
@@ -225,8 +225,8 @@ characters.
 All interface names are written in ``UpperCamelCase``. Interface names must be adjectives
 or nouns and have the Interface suffix. A few examples follow:
 
-* ``\TYPO3\FLOW3\Object\ObjectInterface``
-* ``\TYPO3\FLOW3\Object\ObjectManagerInterface``
+* ``\TYPO3\Flow\Object\ObjectInterface``
+* ``\TYPO3\Flow\Object\ObjectManagerInterface``
 * ``\MyCompany\MyPackage\MyObject\MySubObjectInterface``
 * ``\MyCompany\MyPackage\MyObject\MyHtmlParserInterface``
 
@@ -238,8 +238,8 @@ types of exceptions: generic exceptions and specific exceptions. Generic excepti
 be named "Exception" preceded by their namespace. Specific exceptions should reside in
 their own sub-namespace end with the word ``Exception``.
 
-* ``\TYPO3\FLOW3\Object\Exception``
-* ``\TYPO3\FLOW3\Object\Exception\InvalidClassNameException``
+* ``\TYPO3\Flow\Object\Exception``
+* ``\TYPO3\Flow\Object\Exception\InvalidClassNameException``
 * ``\MyCompany\MyPackage\MyObject\Exception``
 * ``\MyCompany\MyPackage\MyObject\Exception\OutOfCoffeeException``
 
@@ -314,26 +314,26 @@ These are the rules for naming files:
   tested, appended with "Test.php".
 * Files are placed in a directory structure representing the namespace structure.
 
-*File naming in FLOW3*
+*File naming in TYPO3 Flow*
 
 ``TYPO3.TemplateEngine/Classes/TemplateEngineInterface.php``
   Contains the interface ``\TYPO3\TemplateEngine\TemplateEngineInterface`` which is part
   of the package *TYPO3.TemplateEngine*
 
-``TYPO3.FLOW3/Classes/Error/RuntimeException.php``
-  Contains the ``\TYPO3\FLOW3\Error\RuntimeException`` being a part of the package
-  *TYPO3.FLOW3*
+``TYPO3.Flow/Classes/Error/RuntimeException.php``
+  Contains the ``\TYPO3\Flow\Error\RuntimeException`` being a part of the package
+  *TYPO3.Flow*
 
 ``DataAccess/Classes/Manager.php``
   Contains class ``\DataAccess\Manager`` which is part of the package
   *DataAccess*
 
-``TYPO3.FLOW3/Classes/Package/PackageManager.php``
-  Contains the class ``\TYPO3\FLOW3\Package\PackageManager`` which is part of the package
-  *TYPO3.FLOW3*
+``TYPO3.Flow/Classes/Package/PackageManager.php``
+  Contains the class ``\TYPO3\Flow\Package\PackageManager`` which is part of the package
+  *TYPO3.Flow*
 
-``TYPO3.FLOW3/Tests/Unit/Package/PackageManagerTest.php``
-	Contains the class ``\TYPO3\FLOW3\\Tests\Unit\Package\PackageManagerTest`` which
+``TYPO3.Flow/Tests/Unit/Package/PackageManagerTest.php``
+	Contains the class ``\TYPO3\Flow\\Tests\Unit\Package\PackageManagerTest`` which
 	is a PHPUnit testcase for ``Package\PackageManager``.
 
 
@@ -558,7 +558,7 @@ Classes have their own documentation block describing the classes purpose.
   ...
  }
 
-Additional tags or annotations, such as ``@see`` or ``@FLOW3\Aspect``, can be added as needed.
+Additional tags or annotations, such as ``@see`` or ``@Flow\Aspect``, can be added as needed.
 
 Documenting variables, constants, includes
 ------------------------------------------
@@ -619,8 +619,8 @@ Defining the Public API
 -----------------------
 
 Not all methods with a public visibility are necessarily part of the intended public API
-of a project. For FLOW3, only the methods explicitly defined as part of the public API
-will be kept stable and are intended for use by developers using FLOW3. Also the API
+of a project. For TYPO3 Flow, only the methods explicitly defined as part of the public API
+will be kept stable and are intended for use by developers using TYPO3 Flow. Also the API
 documentation we produce will only cover the public API.
 
 To mark a method as part of the public API, include an ``@api`` annotation for it in the
@@ -647,7 +647,7 @@ docblock.
 Overview of Documentation Annotations
 -------------------------------------
 
-There are not only documentation annotations that can be used. In FLOW3 annotations are
+There are not only documentation annotations that can be used. In TYPO3 Flow annotations are
 also used in the MVC component, for defining aspects and advices for the AOP framework as
 well as for giving instructions to the Persistence framework. See the individual chapters
 for information on their purpose and use.
@@ -666,18 +666,18 @@ the order given here should be kept for the sake of consistency.
 * @api
 * @since
 * @deprecated
-* @FLOW3\Entity
-* @FLOW3\ValueObject
-* @FLOW3\Scope
-* @FLOW3\Aspect
+* @Flow\Entity
+* @Flow\ValueObject
+* @Flow\Scope
+* @Flow\Aspect
 
 *Property Documentation*
 
 * @var
-* @FLOW3\Introduce
-* @FLOW3\Identity
-* @FLOW3\Transient
-* @FLOW3\Lazy
+* @Flow\Introduce
+* @Flow\Identity
+* @Flow\Transient
+* @Flow\Lazy
 * @api
 * @since
 * @deprecated
@@ -695,17 +695,17 @@ the order given here should be kept for the sake of consistency.
 * @param
 * @return
 * @throws
-* @FLOW3\Validate
-* @FLOW3\IgnoreValidation
-* @FLOW3\Signal
+* @Flow\Validate
+* @Flow\IgnoreValidation
+* @Flow\Signal
 * @api
 * @since
 * @deprecated
-* @FLOW3\Pointcut
-* @FLOW3\AfterReturning
-* @FLOW3\AfterThrowing
-* @FLOW3\Around
-* @FLOW3\Before
+* @Flow\Pointcut
+* @Flow\AfterReturning
+* @Flow\AfterThrowing
+* @Flow\Around
+* @Flow\Before
 
 *Testcase Documentation*
 
@@ -721,15 +721,15 @@ the order given here should be kept for the sake of consistency.
 Best Practices
 ==============
 
-FLOW3
------
+TYPO3 Flow
+----------
 
-This section gives you an overview of FLOW3's coding rules and best practices.
+This section gives you an overview of TYPO3 Flow's coding rules and best practices.
 
 Error Handling and Exceptions
 -----------------------------
 
-FLOW3 makes use of a hierarchy for its exception classes. The general rule is to throw
+TYPO3 Flow makes use of a hierarchy for its exception classes. The general rule is to throw
 preferably specific exceptions and usually let them bubble up until a place where more
 general exceptions are caught. Consider the following example:
 
@@ -737,14 +737,14 @@ Some method tried to retrieve an object from the object manager. However, instea
 providing a string containing the object name, the method passed an object (of course not
 on purpose - something went wrong). The object manager now throws an ``InvalidObjectName``
 exception. In order to catch this exception you can, of course, catch it specifically - or
-only consider a more general ``Object`` exception (or an even more general ``FLOW3``
+only consider a more general ``Object`` exception (or an even more general ``Flow``
 exception). This all works because we have the following hierarchy:
 
 .. code-block:: text
 
- + \TYPO3\FLOW3\Exception
- + \TYPO3\FLOW3\Object\Exception
- + \TYPO3\FLOW3\Object\Exception\InvalidObjectNameException
+ + \TYPO3\Flow\Exception
+ + \TYPO3\Flow\Object\Exception
+ + \TYPO3\Flow\Object\Exception\InvalidObjectNameException
 
 Throwing an exception
 ---------------------
@@ -771,7 +771,7 @@ Cross Platform Coding
 ---------------------
 
 * When concatenating paths, always use
-  ``\TYPO3\FLOW3\Utility\Files::concatenatePaths()`` to avoid trouble.
+  ``\TYPO3\Flow\Utility\Files::concatenatePaths()`` to avoid trouble.
 
 PHP in General
 --------------

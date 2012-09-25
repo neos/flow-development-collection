@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * abstract Route Part
  *
  */
-abstract class AbstractRoutePart implements \TYPO3\FLOW3\Mvc\Routing\RoutePartInterface {
+abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInterface {
 
 	/**
 	 * Name of the Route Part

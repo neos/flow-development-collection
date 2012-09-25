@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Reflection;
+namespace TYPO3\Flow\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * A service for acquiring reflection based information in a performant way. This
- * service also builds up class schema information which is used by the FLOW3's
+ * service also builds up class schema information which is used by the Flow's
  * persistence layer.
  *
  * Reflection of classes of all active packages is triggered through the bootstrap's
@@ -35,8 +35,8 @@ use TYPO3\FLOW3\Utility\Files;
  * speed by using constants which have an integer value.
  *
  * @api
- * @FLOW3\Scope("singleton")
- * @FLOW3\Proxy(false)
+ * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  */
 class ReflectionService {
 
@@ -80,7 +80,7 @@ class ReflectionService {
 	protected $annotationReader;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\ClassLoader
+	 * @var \TYPO3\Flow\Core\ClassLoader
 	 */
 	protected $classLoader;
 
@@ -90,42 +90,42 @@ class ReflectionService {
 	protected $availableClassNames = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\StringFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
 	 */
 	protected $statusCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $reflectionDataCompiletimeCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $reflectionDataRuntimeCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $classSchemataRuntimeCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\ApplicationContext
+	 * @var \TYPO3\Flow\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -154,7 +154,7 @@ class ReflectionService {
 
 	/**
 	 * Schemata of all classes which can be persisted
-	 * @var array<\TYPO3\FLOW3\Reflection\ClassSchema>
+	 * @var array<\TYPO3\Flow\Reflection\ClassSchema>
 	 */
 	protected $classSchemata = array();
 
@@ -181,10 +181,10 @@ class ReflectionService {
 	 *
 	 * The cache must be set before initializing the Reflection Service
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache Cache for the reflection service
+	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache Cache for the reflection service
 	 * @return void
 	 */
-	public function setStatusCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
+	public function setStatusCache(\TYPO3\Flow\Cache\Frontend\StringFrontend $cache) {
 		$this->statusCache = $cache;
 		$this->statusCache->getBackend()->initializeObject();
 	}
@@ -192,35 +192,35 @@ class ReflectionService {
 	/**
 	 * Sets the compiletime data cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
 	 * @return void
 	 */
-	public function setReflectionDataCompiletimeCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function setReflectionDataCompiletimeCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->reflectionDataCompiletimeCache = $cache;
 	}
 
 	/**
 	 * Sets the runtime data cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
 	 * @return void
 	 */
-	public function setReflectionDataRuntimeCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function setReflectionDataRuntimeCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->reflectionDataRuntimeCache = $cache;
 	}
 
 	/**
 	 * Sets the dedicated class schema cache for runtime purposes
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
-	public function setClassSchemataRuntimeCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function setClassSchemataRuntimeCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->classSchemataRuntimeCache = $cache;
 	}
 
 	/**
-	 * @param array $settings Settings of the FLOW3 package
+	 * @param array $settings Settings of the Flow package
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
@@ -228,34 +228,34 @@ class ReflectionService {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\ClassLoader $classLoader
+	 * @param \TYPO3\Flow\Core\ClassLoader $classLoader
 	 * @return void
 	 */
-	public function injectClassLoader(\TYPO3\FLOW3\Core\ClassLoader $classLoader) {
+	public function injectClassLoader(\TYPO3\Flow\Core\ClassLoader $classLoader) {
 		$this->classLoader = $classLoader;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\Flow\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -264,10 +264,10 @@ class ReflectionService {
 	 *
 	 * This method must be run only after all dependencies have been injected.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function initialize(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->context = $bootstrap->getContext();
 
 		if ($this->context->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen()) {
@@ -346,11 +346,11 @@ class ReflectionService {
 		if (count($classNamesFound) === 1) {
 			return $classNamesFound[0];
 		}
-		if (count($classNamesFound) === 2 && isset($this->classReflectionData['TYPO3\FLOW3\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
-			if (isset($this->classReflectionData['TYPO3\FLOW3\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
+		if (count($classNamesFound) === 2 && isset($this->classReflectionData['TYPO3\Flow\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
+			if (isset($this->classReflectionData['TYPO3\Flow\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
 				return $classNamesFound[0];
 			}
-			if (isset($this->classReflectionData['TYPO3\FLOW3\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
+			if (isset($this->classReflectionData['TYPO3\Flow\Object\Proxy\ProxyInterface'][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
 				return $classNamesFound[1];
 			}
 		}
@@ -419,7 +419,7 @@ class ReflectionService {
 	 * Searches for and returns all names of classes which are tagged by the specified
 	 * annotation. If no classes were found, an empty array is returned.
 	 *
-	 * @param string $annotationClassName Name of the annotation class, for example "TYPO3\FLOW3\Annotations\Aspect"
+	 * @param string $annotationClassName Name of the annotation class, for example "TYPO3\Flow\Annotations\Aspect"
 	 * @return array
 	 */
 	public function getClassNamesByAnnotation($annotationClassName) {
@@ -647,7 +647,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodTaggedWith($className, $methodName, $tag) {
-		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(trim($className, '\\'), $methodName);
+		$method = new \TYPO3\Flow\Reflection\MethodReflection(trim($className, '\\'), $methodName);
 		$tagsValues = $method->getTagsValues();
 		return isset($tagsValues[$tag]);
 	}
@@ -755,7 +755,7 @@ class ReflectionService {
 		if ($className[0] === '\\') {
 			$className = substr($className, 1);
 		}
-		$method = new \TYPO3\FLOW3\Reflection\MethodReflection($className, $methodName);
+		$method = new \TYPO3\Flow\Reflection\MethodReflection($className, $methodName);
 		return $method->getTagsValues();
 	}
 
@@ -975,7 +975,7 @@ class ReflectionService {
 	 * Returns the class schema for the given class
 	 *
 	 * @param mixed $classNameOrObject The class name or an object
-	 * @return \TYPO3\FLOW3\Reflection\ClassSchema
+	 * @return \TYPO3\Flow\Reflection\ClassSchema
 	 */
 	public function getClassSchema($classNameOrObject) {
 		if (is_object($classNameOrObject)) {
@@ -995,7 +995,7 @@ class ReflectionService {
 	 * this service, these classes will be reflected.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Reflection\Exception
+	 * @throws \TYPO3\Flow\Reflection\Exception
 	 */
 	protected function reflectEmergedClasses() {
 		$classNamesToReflect = array();
@@ -1018,10 +1018,10 @@ class ReflectionService {
 					$this->systemLogger->log('Could not reflect "' . $className . '" because the class could not be loaded.', LOG_DEBUG);
 					continue;
 				}
-				if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
-					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\FLOW3\Annotations\Scope');
+				if ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject')) {
+					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\Flow\Annotations\Scope');
 					if ($scopeAnnotation !== NULL && $scopeAnnotation->value !== 'prototype') {
-						throw new \TYPO3\FLOW3\Reflection\Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, $scopeAnnotation->value), 1264103349);
+						throw new \TYPO3\Flow\Reflection\Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, $scopeAnnotation->value), 1264103349);
 					}
 					$classNamesToBuildSchemaFor[] = $className;
 				}
@@ -1039,13 +1039,13 @@ class ReflectionService {
 	 *
 	 * @param string $className Full qualified name of the class to reflect
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\InvalidClassException
+	 * @throws \TYPO3\Flow\Reflection\Exception\InvalidClassException
 	 */
 	protected function reflectClass($className) {
 		$this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);
 
 		$className = trim($className, '\\');
-		if (strpos($className, 'TYPO3\FLOW3\Persistence\Doctrine\Proxies') === 0 && array_search('Doctrine\ORM\Proxy\Proxy', class_implements($className))) {
+		if (strpos($className, 'TYPO3\Flow\Persistence\Doctrine\Proxies') === 0 && array_search('Doctrine\ORM\Proxy\Proxy', class_implements($className))) {
 				// Somebody tried to reflect a doctrine proxy, which will have severe side effects.
 				// see bug http://forge.typo3.org/issues/29449 for details.
 				throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
@@ -1149,11 +1149,11 @@ class ReflectionService {
 	/**
 	 * Finds all parent classes of the given class
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ClassReflection $class The class to reflect
+	 * @param \TYPO3\Flow\Reflection\ClassReflection $class The class to reflect
 	 * @param array $parentClasses Array of parent classes
-	 * @return array<\TYPO3\FLOW3\Reflection\ClassReflection>
+	 * @return array<\TYPO3\Flow\Reflection\ClassReflection>
 	 */
-	protected function getParentClasses(\TYPO3\FLOW3\Reflection\ClassReflection $class, array $parentClasses = array()) {
+	protected function getParentClasses(\TYPO3\Flow\Reflection\ClassReflection $class, array $parentClasses = array()) {
 		$parentClass = $class->getParentClass();
 		if ($parentClass !== FALSE) {
 			$parentClasses[] = $parentClass;
@@ -1170,18 +1170,18 @@ class ReflectionService {
 	 */
 	protected function buildClassSchemata(array $classNames) {
 		foreach ($classNames as $className) {
-			$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema($className);
-			if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity')) {
-				$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-				$classSchema->setLazyLoadableObject($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Lazy'));
+			$classSchema = new \TYPO3\Flow\Reflection\ClassSchema($className);
+			if ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity')) {
+				$classSchema->setModelType(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_ENTITY);
+				$classSchema->setLazyLoadableObject($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Lazy'));
 
 				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
 				if ($this->isClassReflected($possibleRepositoryClassName) === TRUE) {
 					$classSchema->setRepositoryClassName($possibleRepositoryClassName);
 				}
-			} elseif ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
+			} elseif ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject')) {
 				$this->checkValueObjectRequirements($className);
-				$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+				$classSchema->setModelType(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 			}
 
 			$this->addPropertiesToClassSchema($classSchema);
@@ -1201,12 +1201,12 @@ class ReflectionService {
 	 * to existing classes will only be added if the target type is annotated as
 	 * entity or valueobject.
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ClassSchema $classSchema
+	 * @param \TYPO3\Flow\Reflection\ClassSchema $classSchema
 	 * @return void
 	 * @throws \InvalidArgumentException
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\InvalidPropertyTypeException
+	 * @throws \TYPO3\Flow\Reflection\Exception\InvalidPropertyTypeException
 	 */
-	protected function addPropertiesToClassSchema(\TYPO3\FLOW3\Reflection\ClassSchema $classSchema) {
+	protected function addPropertiesToClassSchema(\TYPO3\Flow\Reflection\ClassSchema $classSchema) {
 
 			// those are added as property even if not tagged with entity/valueobject
 		$propertyTypeWhiteList = array(
@@ -1219,35 +1219,35 @@ class ReflectionService {
 		$className = $classSchema->getClassName();
 		$needsArtificialIdentity = TRUE;
 		foreach ($this->getClassPropertyNames($className) as $propertyName) {
-			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Transient')) {
+			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Transient')) {
 				$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
 				if (preg_match('/\s/', $declaredType) === 1) {
-					throw new \TYPO3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
+					throw new \TYPO3\Flow\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
 				}
 				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'Doctrine\ORM\Mapping\Id')) {
 					$needsArtificialIdentity = FALSE;
 				}
 
 				try {
-					$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType($declaredType);
-				} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
+					$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($declaredType);
+				} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 					throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
 				}
 
 				if (!in_array($parsedType['type'], $propertyTypeWhiteList)
 						&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
-						&& !($this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\FLOW3\Annotations\ValueObject'))) {
+						&& !($this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\Flow\Annotations\ValueObject'))) {
 					continue;
 				}
 
-				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Lazy'));
-				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Identity')) {
+				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Lazy'));
+				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Identity')) {
 					$classSchema->markAsIdentityProperty($propertyName);
 				}
 			}
 		}
 		if ($needsArtificialIdentity === TRUE) {
-			$classSchema->addProperty('FLOW3_Persistence_Identifier', 'string');
+			$classSchema->addProperty('Persistence_Object_Identifier', 'string');
 		}
 	}
 
@@ -1266,12 +1266,12 @@ class ReflectionService {
 	 * @throws Exception\ClassSchemaConstraintViolationException
 	 */
 	protected function completeRepositoryAssignments() {
-		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassName) {
+		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\Flow\Persistence\RepositoryInterface') as $repositoryClassName) {
 				// need to be extra careful because this code could be called
 				// during a cache:flush run with corrupted reflection cache
 			if (class_exists($repositoryClassName) && !$this->isClassAbstract($repositoryClassName)) {
-				if (!$this->isClassAnnotatedWith($repositoryClassName, 'TYPO3\FLOW3\Annotations\Scope') || $this->getClassAnnotation($repositoryClassName, 'TYPO3\FLOW3\Annotations\Scope')->value !== 'singleton') {
-					throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
+				if (!$this->isClassAnnotatedWith($repositoryClassName, 'TYPO3\Flow\Annotations\Scope') || $this->getClassAnnotation($repositoryClassName, 'TYPO3\Flow\Annotations\Scope')->value !== 'singleton') {
+					throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
 				}
 				$claimedObjectType = $repositoryClassName::ENTITY_CLASSNAME;
 				if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
@@ -1291,10 +1291,10 @@ class ReflectionService {
 	 * Assigns the repository of any aggregate root to all it's
 	 * subclasses, unless they are aggregate root already.
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ClassSchema $classSchema
+	 * @param \TYPO3\Flow\Reflection\ClassSchema $classSchema
 	 * @return void
 	 */
-	protected function makeChildClassesAggregateRoot(\TYPO3\FLOW3\Reflection\ClassSchema $classSchema) {
+	protected function makeChildClassesAggregateRoot(\TYPO3\Flow\Reflection\ClassSchema $classSchema) {
 		foreach ($this->getAllSubClassNamesForClass($classSchema->getClassName()) as $childClassName) {
 			if ($this->classSchemata[$childClassName]->isAggregateRoot()) {
 				continue;
@@ -1310,7 +1310,7 @@ class ReflectionService {
 	 * have a repository assigned up to the tip of their hierarchy.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Reflection\Exception
+	 * @throws \TYPO3\Flow\Reflection\Exception
 	 */
 	protected function ensureAggregateRootInheritanceChainConsistency() {
 		foreach ($this->classSchemata as $className => $classSchema) {
@@ -1320,7 +1320,7 @@ class ReflectionService {
 
 			foreach (class_parents($className) as $parentClassName) {
 				if ($this->isClassAbstract($parentClassName) === FALSE && $this->classSchemata[$parentClassName]->isAggregateRoot() === FALSE) {
-					throw new \TYPO3\FLOW3\Reflection\Exception('In a class hierarchy either all or no classes must be an aggregate root, "' . $className . '" is one but the parent class "' . $parentClassName . '" is not. You probably want to add a repository for "' . $parentClassName . '"', 1316009511);
+					throw new \TYPO3\Flow\Reflection\Exception('In a class hierarchy either all or no classes must be an aggregate root, "' . $className . '" is one but the parent class "' . $parentClassName . '" is not. You probably want to add a repository for "' . $parentClassName . '"', 1316009511);
 				}
 			}
 		}
@@ -1332,16 +1332,16 @@ class ReflectionService {
 	 *
 	 * @param string $className
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\InvalidValueObjectException
+	 * @throws \TYPO3\Flow\Reflection\Exception\InvalidValueObjectException
 	 */
 	protected function checkValueObjectRequirements($className) {
 		$methods = get_class_methods($className);
 		if (array_search('__construct', $methods) === FALSE) {
-			throw new \TYPO3\FLOW3\Reflection\Exception\InvalidValueObjectException('A value object must have a constructor, "' . $className . '" does not have one.', 1268740874);
+			throw new \TYPO3\Flow\Reflection\Exception\InvalidValueObjectException('A value object must have a constructor, "' . $className . '" does not have one.', 1268740874);
 		}
 		foreach ($methods as $method) {
 			if (substr($method, 0, 3) === 'set') {
-				throw new \TYPO3\FLOW3\Reflection\Exception\InvalidValueObjectException('A value object must not have setters, "' . $className . '" does.', 1268740878);
+				throw new \TYPO3\Flow\Reflection\Exception\InvalidValueObjectException('A value object must not have setters, "' . $className . '" does.', 1268740878);
 			}
 		}
 	}
@@ -1373,11 +1373,11 @@ class ReflectionService {
 	/**
 	 * Converts the given parameter reflection into an information array
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ParameterReflection $parameter The parameter to reflect
-	 * @param \TYPO3\FLOW3\Reflection\MethodReflection $method The parameter's method
+	 * @param \TYPO3\Flow\Reflection\ParameterReflection $parameter The parameter to reflect
+	 * @param \TYPO3\Flow\Reflection\MethodReflection $method The parameter's method
 	 * @return array Parameter information array
 	 */
-	protected function convertParameterReflectionToArray(\TYPO3\FLOW3\Reflection\ParameterReflection $parameter, \TYPO3\FLOW3\Reflection\MethodReflection $method = NULL) {
+	protected function convertParameterReflectionToArray(\TYPO3\Flow\Reflection\ParameterReflection $parameter, \TYPO3\Flow\Reflection\MethodReflection $method = NULL) {
 		$parameterInformation = array(
 			self::DATA_PARAMETER_POSITION => $parameter->getPosition()
 		);
@@ -1531,7 +1531,7 @@ class ReflectionService {
 						if (file_exists($pathAndFilename)) {
 							$data = ($useIgBinary ? igbinary_unserialize(file_get_contents($pathAndFilename)) : unserialize(file_get_contents($pathAndFilename)));
 							foreach ($data as $propertyName => $propertyValue) {
-								$this->$propertyName = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
+								$this->$propertyName = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($this->$propertyName, $propertyValue);
 							}
 						}
 					}
@@ -1659,15 +1659,15 @@ class ReflectionService {
 	 * classes contained in frozen packages.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Reflection\Exception if no cache has been injected
+	 * @throws \TYPO3\Flow\Reflection\Exception if no cache has been injected
 	 */
 	public function saveToCache() {
 		if ($this->loadFromClassSchemaRuntimeCache === TRUE) {
 			return;
 		}
 
-		if (!($this->reflectionDataCompiletimeCache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface)) {
-			throw new \TYPO3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
+		if (!($this->reflectionDataCompiletimeCache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface)) {
+			throw new \TYPO3\Flow\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 		}
 
 		if (count($this->updatedReflectionData) > 0) {

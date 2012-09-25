@@ -5,10 +5,10 @@ View
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
 The view's responsibility is solely the visual presentation of data provided by
-the controller. In FLOW3 views are cleanly decoupled from the rest of the MVC
-framework. This allows you to either take advantage of Fluid (FLOW3's template
+the controller. In TYPO3 Flow views are cleanly decoupled from the rest of the MVC
+framework. This allows you to either take advantage of Fluid (TYPO3 Flow's template
 engine), write your own custom PHP view class or use almost any other template
-engine by writing a thin wrapper building a bridge between FLOW3's interfaces
+engine by writing a thin wrapper building a bridge between TYPO3 Flow's interfaces
 and the template engine's functions. In this tutorial we focus on Fluid-based
 templates as this is what you usually want to use.
 
@@ -20,7 +20,7 @@ resources our template is going to use (I'm talking about all the images, style
 sheets and javascript files which are referred to by your HTML code).
 You remember that only the ``Web`` directory is accessible from the web, right?
 And the resources are part of the package and thus hidden from the public.
-That's why FLOW3 comes with a powerful resource manager whose main task is to
+That's why TYPO3 Flow comes with a powerful resource manager whose main task is to
 manage access to your package's resources.
 
 The deal is this: All files which are located in the **public resources directory**
@@ -28,7 +28,7 @@ of your package will automatically be mirrored to the public resources
 directory below the ``Web`` folder. Let's take a look at the directory layout of
 the *Blog* package:
 
-.. table:: Directory structure of a FLOW3 package
+.. table:: Directory structure of a TYPO3 Flow package
 
 	======================	============================================================
 	Directory				Description
@@ -49,7 +49,7 @@ the next hit.
 .. tip::
  	There are more possible directories in a package and we do have some
  	conventions for naming certain sub directories. All that is explained in
- 	fine detail in the `FLOW3 reference manual <http://flow3.typo3.org/documentation/>`_.
+ 	fine detail in the `TYPO3 Flow reference manual <http://flow.typo3.org/documentation/>`_.
 
 .. important::
 	For the blog example in this tutorial we created some style sheets
@@ -108,8 +108,8 @@ the following code:
 				<div class="clear"></div>
 			</div>
 			<div id="footer">
-				<a href="http://flow3.typo3.org">Powered by FLOW3
-					<img src="{f:uri.resource(path: 'FLOW3-Logo-11px.png')}" width="11" height="11" />
+				<a href="http://flow.typo3.org">Powered by TYPO3 Flow
+					<img src="{f:uri.resource(path: 'TYPO3-Flow-Logo-11px.png')}" width="11" height="11" />
 				</a>
 			</div>
 		</body>
@@ -243,7 +243,7 @@ of our ``PostController``::
 	$this->addFlashMessage('Created a new post.');
 
 Flash messages are a great way to display success or error messages to
-the user. And because they are so useful, FLOW3 provides a ``FlashMessageContainer``
+the user. And because they are so useful, TYPO3 Flow provides a ``FlashMessageContainer``
 with some helper methods and Fluid offers the ``flashMessages`` view helper.
 Therefore, if you create a new post, you'll see the message *Your new post was
 created* at the top of your blog index on the next hit.
@@ -352,7 +352,7 @@ the ``Resources/Public/Templates/Post/`` folder:
 	<f:layout name="Default" />
 
 	<f:section name="mainbox">
-		<h2 class="flow3-firstHeader">Create a new post</h2>
+		<h2 class="flow-firstHeader">Create a new post</h2>
 		<f:flashMessages class="flashmessages"/>
 		<f:form method="post" action="create" object="{newPost}" name="newPost" enctype="multipart/form-data">
 			<f:form.hidden name="blog" value="{blog}" />
@@ -413,7 +413,7 @@ post object. The form's elements are named after the class properties of the
 
 It's important that the ``createAction`` uses the type hint
 ``\TYPO3\Blog\Domain\Model\Post`` and comes with a proper ``@param`` annotation
-because this is how FLOW3 determines the type to which the submitted form
+because this is how TYPO3 Flow determines the type to which the submitted form
 values must be converted. Because this action requires a ``Post`` it gets a
 post (object) - as long as the property names of the object and the form match.
 
@@ -467,7 +467,7 @@ HTML code:
 	<f:layout name="Default" />
 
 	<f:section name="mainbox">
-		<h2 class="flow3-firstHeader">Edit post "{post.title}"</h2>
+		<h2 class="flow-firstHeader">Edit post "{post.title}"</h2>
 		<f:form method="post" action="update" object="{post}" name="post" enctype="multipart/form-data">
 			<label for="author">Author</label><br />
 			<f:form.textbox property="author" id="author" /><br />
@@ -560,7 +560,7 @@ These modifications will **not be persisted** automatically. To persist the
 changes to the post object, call the PostRepository's ``update`` method. It schedules
 an object for the dirty check at the end of the request.
 
-If all these details didn't scare you, you might now ask yourself how FLOW3
+If all these details didn't scare you, you might now ask yourself how TYPO3 Flow
 could know that the ``updateAction`` expects a modified object and not the original?
 Great question. And the answer is – literally – hidden in the form generated
 by Fluid's form view helper:
@@ -596,5 +596,5 @@ submitted. This results in three different cases:
 	| properties present| Update        | given properties                      |
 	+-------------------+---------------+---------------------------------------+
 
-Because the edit form contained both identity and properties, FLOW3 prepared an
+Because the edit form contained both identity and properties, TYPO3 Flow prepared an
 instance with the given properties for our ``updateAction``.

@@ -1,8 +1,8 @@
 #                                                                        #
-# Object Configuration for the FLOW3 Framework                           #
+# Object Configuration for the TYPO3 Flow Framework                      #
 #                                                                        #
-# This file contains additions to the base configuration for the FLOW3   #
-# Framework when it runs in Testing context.                             #
+# This file contains additions to the base configuration for the TYPO3   #
+# Flow Framework when it runs in Testing context.                        #
 #                                                                        #
 # Don't modify this file - instead put your own additions into the       #
 # global Configuration directory and its sub directories.                #
@@ -11,44 +11,44 @@
 #
 # For functional tests we are going to use the InternalRequestEngine by default:
 #
-TYPO3\FLOW3\Http\Client\Browser:
+TYPO3\Flow\Http\Client\Browser:
   properties:
     requestEngine:
-      object: TYPO3\FLOW3\Http\Client\InternalRequestEngine
+      object: TYPO3\Flow\Http\Client\InternalRequestEngine
 
 #
 # Sessions should be transient in a test context:
 #
-TYPO3\FLOW3\Session\SessionInterface:
-  className: TYPO3\FLOW3\Session\TransientSession
+TYPO3\Flow\Session\SessionInterface:
+  className: TYPO3\Flow\Session\TransientSession
 
 #
 # Security and Resource handling need specialized testing classes:
 #
-TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
-  className: TYPO3\FLOW3\Tests\Functional\Security\Authorization\TestingAccessDecisionManager
+TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface:
+  className: TYPO3\Flow\Tests\Functional\Security\Authorization\TestingAccessDecisionManager
 
-TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
-  className: TYPO3\FLOW3\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
+TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface:
+  className: TYPO3\Flow\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
 
 #
 # Configuration of fixture classes:
 #
-TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
+TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
   arguments:
     1:
       value: 'this is required'
     3:
-      setting: TYPO3.FLOW3.tests.functional.dependencyInjection.singletonConstructorArgument
+      setting: TYPO3.Flow.tests.functional.dependencyInjection.singletonConstructorArgument
 
-TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
+TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
   scope: singleton
-  factoryObjectName: TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
+  factoryObjectName: TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
   arguments:
     1:
       value: 'value defined in Objects.yaml'
 
-TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC:
+TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassC:
   arguments:
     1:
-      setting: TYPO3.FLOW3.tests.functional.dependencyInjection.prototypeConstructorArgument
+      setting: TYPO3.Flow.tests.functional.dependencyInjection.prototypeConstructorArgument

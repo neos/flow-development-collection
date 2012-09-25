@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests;
+namespace TYPO3\Flow\Tests;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -21,9 +21,9 @@ namespace TYPO3\FLOW3\Tests;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\Bootstrap;
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Routing\Route;
 
 /**
  * A base test case for functional tests
@@ -33,18 +33,18 @@ use TYPO3\FLOW3\Mvc\Routing\Route;
  *
  * @api
  */
-abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
+abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 
 	/**
 	 * A functional instance of the Object Manager, for use in concrete test cases.
 	 *
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 * @api
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 * @api
 	 */
 	protected static $bootstrap;
@@ -62,7 +62,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 	/**
 	 * If enabled, this test case will automatically provide a virtual browser
-	 * for sending HTTP requests to FLOW3's request handler and MVC framework.
+	 * for sending HTTP requests to Flow's request handler and MVC framework.
 	 *
 	 * Note: testable security will implicitly enable this as well.
 	 *
@@ -84,7 +84,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * If testableHttpEnabled is set, contains a virtual, preinitialized browser
 	 *
-	 * @var \TYPO3\FLOW3\Http\Client\Browser
+	 * @var \TYPO3\Flow\Http\Client\Browser
 	 * @api
 	 */
 	protected $browser;
@@ -92,43 +92,43 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * If testableHttpEnabled is set, contains the router instance used in the browser's request engine
 	 *
-	 * @var \TYPO3\FLOW3\Mvc\Routing\Router
+	 * @var \TYPO3\Flow\Mvc\Routing\Router
 	 * @api
 	 */
 	protected $router;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
+	 * @var \TYPO3\Flow\Security\Authentication\Provider\TestingProvider
 	 */
 	protected $testingProvider;
 
 	/**
-	 * Initialize FLOW3
+	 * Initialize Flow
 	 *
 	 * @return void
 	 */
 	static public function setUpBeforeClass() {
-		self::$bootstrap = \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->get('TYPO3\FLOW3\Core\Bootstrap');
+		self::$bootstrap = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
 	}
 
 	/**
@@ -152,20 +152,20 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	public function setUp() {
 		$this->objectManager = self::$bootstrap->getObjectManager();
 
-		$session = $this->objectManager->get('TYPO3\FLOW3\Session\SessionInterface');
+		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
 		if ($session->isStarted()) {
 			$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
 		}
 
 		if (static::$testablePersistenceEnabled === TRUE) {
-			self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
-			if (is_callable(array(self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
-				$result = self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
+			self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->initialize();
+			if (is_callable(array(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface'), 'compile'))) {
+				$result = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->compile();
 				if ($result === FALSE) {
 					self::markTestSkipped('Test skipped because setting up the persistence failed.');
 				}
 			}
-			$this->persistenceManager = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+			$this->persistenceManager = $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		}
 
 			// HTTP must be initialized before security because security relies on an
@@ -184,15 +184,15 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$this->accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
 		$this->accessDecisionManager->setOverrideDecision(NULL);
 
-		$this->authenticationManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
+		$this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
 
-		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
+		$this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
 		$this->testingProvider->setName('TestingProvider');
 
-		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
+		$this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
 		$this->securityContext->clearContext();
 		$this->securityContext->refreshTokens();
 
@@ -205,7 +205,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * Tears down test requirements depending on the enabled tests
 	 *
 	 * Note: tearDown() is also called if an exception occurred in one of the tests. If the problem is caused by
-	 *       some security or persistence related part of FLOW3, the error might be hard to track because their
+	 *       some security or persistence related part of Flow, the error might be hard to track because their
 	 *       specialized tearDown() methods might cause fatal errors. In those cases just output the original
 	 *       exception message by adding an echo($this->statusMessage) as the first line of this method.
 	 *
@@ -216,7 +216,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 			$this->tearDownSecurity();
 		}
 
-		$persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
 			// Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
 			// has not been called during a test. This makes sure that for example certain repositories can clear
@@ -230,7 +230,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 			$persistenceManager->tearDown();
 		}
 
-		self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\FLOW3\Http\Client\InternalRequestEngine');
+		self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Http\Client\InternalRequestEngine');
 		$this->emitFunctionalTestTearDown();
 	}
 
@@ -265,7 +265,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
 		$this->setupHttp();
 
-		$route = new \TYPO3\FLOW3\Mvc\Routing\Route();
+		$route = new \TYPO3\Flow\Mvc\Routing\Route();
 		$route->setName('sendWebRequest Route');
 
 		$uriPattern = 'test/' . uniqid();
@@ -279,7 +279,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$route->setAppendExceedingArguments(TRUE);
 		$this->router->addRoute($route);
 
-		$uri = new \TYPO3\FLOW3\Http\Uri('http://baseuri/' . $uriPattern);
+		$uri = new \TYPO3\Flow\Http\Uri('http://baseuri/' . $uriPattern);
 		$response = $this->browser->request($uri, 'POST', $arguments);
 
 		return $response->getContent();
@@ -290,14 +290,14 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * The created account is returned for further modification, for example for attaching a Party object to it.
 	 *
 	 * @param array $roleNames A list of roles the new account should have
-	 * @return \TYPO3\FLOW3\Security\Account The created account
+	 * @return \TYPO3\Flow\Security\Account The created account
 	 * @api
 	 */
 	protected function authenticateRoles(array $roleNames) {
-		$account = new \TYPO3\FLOW3\Security\Account();
+		$account = new \TYPO3\Flow\Security\Account();
 		$roles = array();
 		foreach ($roleNames as $roleName) {
-			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleName);
+			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleName);
 		}
 		$account->setRoles($roles);
 		$this->authenticateAccount($account);
@@ -308,12 +308,12 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * Prepares the environment for and conducts an account authentication
 	 *
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
 	 * @api
 	 */
-	protected function authenticateAccount(\TYPO3\FLOW3\Security\Account $account) {
-		$this->testingProvider->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+	protected function authenticateAccount(\TYPO3\Flow\Security\Account $account) {
+		$this->testingProvider->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 		$this->testingProvider->setAccount($account);
 
 		$this->securityContext->clearContext();
@@ -367,11 +367,11 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$_COOKIE = array();
 		$_FILES = array();
 		$_SERVER = array (
-			'REDIRECT_FLOW3_CONTEXT' => 'Development',
-			'REDIRECT_FLOW3_REWRITEURLS' => '1',
+			'REDIRECT_FLOW_CONTEXT' => 'Development',
+			'REDIRECT_FLOW_REWRITEURLS' => '1',
 			'REDIRECT_STATUS' => '200',
-			'FLOW3_CONTEXT' => 'Testing',
-			'FLOW3_REWRITEURLS' => '1',
+			'FLOW_CONTEXT' => 'Testing',
+			'FLOW_REWRITEURLS' => '1',
 			'HTTP_HOST' => 'localhost',
 			'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7',
 			'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -401,19 +401,19 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 			'REQUEST_TIME' => 1326472534,
 		);
 
-		$this->browser = new \TYPO3\FLOW3\Http\Client\Browser();
-		$this->browser->setRequestEngine(new \TYPO3\FLOW3\Http\Client\InternalRequestEngine());
+		$this->browser = new \TYPO3\Flow\Http\Client\Browser();
+		$this->browser->setRequestEngine(new \TYPO3\Flow\Http\Client\InternalRequestEngine());
 		$this->router = $this->browser->getRequestEngine()->getRouter();
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
-		$requestHandler->setHttpRequest(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://localhost')));
+		$requestHandler->setHttpRequest(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://localhost')));
 	}
 
 	/**
 	 * Signals that the functional test case has been executed
 	 *
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	protected function emitFunctionalTestTearDown() {
 		self::$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'functionalTestTearDown');

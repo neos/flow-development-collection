@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Http;
+namespace TYPO3\Flow\Tests\Functional\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\Flow\Mvc\Routing\Route;
 
 /**
  * Functional tests for the HTTP Request Handler
  */
-class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -34,13 +34,13 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController() {
 		$foundRoute = FALSE;
 		foreach ($this->router->getRoutes() as $route) {
-			if ($route->getName() === 'FLOW3 :: Functional Test: HTTP - FooController') {
+			if ($route->getName() === 'Flow :: Functional Test: HTTP - FooController') {
 				$foundRoute = TRUE;
 			}
 		}
 
 		if (!$foundRoute) {
-			$this->markTestSkipped('In this distribution the FLOW3 routes are not included into the global configuration.');
+			$this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
 			return;
 		}
 
@@ -48,12 +48,12 @@ class RequestHandlerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'HTTP_HOST' => 'localhost',
 			'REQUEST_METHOD' => 'GET',
 			'QUERY_STRING' => '',
-			'REQUEST_URI' => '/typo3/flow3/test/http/foo',
+			'REQUEST_URI' => '/typo3/flow/test/http/foo',
 			'SCRIPT_NAME' => '/index.php',
 			'PHP_SELF' => '/index.php',
 		);
 
-		$requestHandler = $this->getAccessibleMock('TYPO3\FLOW3\Http\RequestHandler', array('boot'), array(self::$bootstrap));
+		$requestHandler = $this->getAccessibleMock('TYPO3\Flow\Http\RequestHandler', array('boot'), array(self::$bootstrap));
 		$requestHandler->exit = function() {};
 		$requestHandler->handleRequest();
 

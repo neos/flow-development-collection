@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,34 +11,34 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Repository for object path mapping objects
- * @see \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping
+ * @see \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class ObjectPathMappingRepository extends \TYPO3\FLOW3\Persistence\Repository {
+class ObjectPathMappingRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
 	 * @var string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping';
+	const ENTITY_CLASSNAME = 'TYPO3\Flow\Mvc\Routing\ObjectPathMapping';
 
 	/**
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
-		'objectType' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-		'uriPattern' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING
+		'objectType' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+		'uriPattern' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING
 	);
 
 	/**
 	 * @param string $objectType the object type of the ObjectPathMapping object
 	 * @param string $uriPattern the URI pattern of the ObjectPathMapping object
 	 * @param string $pathSegment the URI path segment of the ObjectPathMapping object
-	 * @return \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping
+	 * @return \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
 	 */
 	public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment) {
 		$query = $this->createQuery();
@@ -56,8 +56,8 @@ class ObjectPathMappingRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	/**
 	 * @param string $objectType the object type of the ObjectPathMapping object
 	 * @param string $uriPattern the URI pattern of the ObjectPathMapping object
-	 * @param mixed $identifier the identifier of the object, for example the UUID, @see \TYPO3\FLOW3\Persistence\PersistenceManagerInterface::getIdentifierByObject()
-	 * @return \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping
+	 * @param mixed $identifier the identifier of the object, for example the UUID, @see \TYPO3\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
+	 * @return \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
 	 * @throws \InvalidArgumentException
 	 */
 	public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier) {

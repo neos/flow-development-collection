@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence;
+namespace TYPO3\Flow\Tests\Functional\Persistence;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
-use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
-use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
 
 /**
  * Testcase for persistence
  *
  */
-class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -36,7 +36,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
 		$this->testEntityRepository = new TestEntityRepository();
@@ -50,7 +50,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->insertExampleEntity();
 
 		$testEntity = $this->testEntityRepository->findAll()->getFirst();
-		$this->assertEquals('FLOW3', $testEntity->getName());
+		$this->assertEquals('Flow', $testEntity->getName());
 	}
 
 	/**
@@ -61,11 +61,11 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->insertExampleEntity();
 
 		$allResults = $this->testEntityRepository->findAll();
-		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\Doctrine\QueryResult', $allResults);
+		$this->assertInstanceOf('TYPO3\Flow\Persistence\Doctrine\QueryResult', $allResults);
 		$this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
 
 		$allResultsArray = $allResults->toArray();
-		$this->assertEquals('FLOW3', $allResultsArray[0]->getName());
+		$this->assertEquals('Flow', $allResultsArray[0]->getName());
 		$this->assertAttributeInternalType('array', 'rows', $allResults);
 	}
 
@@ -94,7 +94,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$unserializedResults = unserialize(serialize($allResults));
 		$this->assertEquals(1, count($unserializedResults->toArray()));
-		$this->assertEquals('FLOW3', $unserializedResults[0]->getName());
+		$this->assertEquals('Flow', $unserializedResults[0]->getName());
 	}
 
 	/**
@@ -102,11 +102,11 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function getFirstShouldNotHaveSideEffects() {
 		$this->removeExampleEntities();
-		$this->insertExampleEntity('FLOW3');
+		$this->insertExampleEntity('Flow');
 		$this->insertExampleEntity('TYPO3');
 
 		$allResults = $this->testEntityRepository->findAll();
-		$this->assertEquals('FLOW3', $allResults->getFirst()->getName());
+		$this->assertEquals('Flow', $allResults->getFirst()->getName());
 
 		$numberOfTotalResults = count($allResults->toArray());
 		$this->assertEquals(2, $numberOfTotalResults);
@@ -129,7 +129,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function persistedEntitiesLyingInArraysAreNotSerializedButReferencedByTheirIdentifierAndReloadedFromPersistenceOnWakeup() {
 		$testEntityLyingInsideTheArray = new TestEntity();
-		$testEntityLyingInsideTheArray->setName('FLOW3');
+		$testEntityLyingInsideTheArray->setName('Flow');
 
 		$arrayProperty = array(
 			'some' => array(
@@ -166,7 +166,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier() {
 		$expectedEntity = new TestEntity();
 		$uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
-		$actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$actualEntity = $this->persistenceManager->getObjectByIdentifier($uuid, 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
 		$this->assertSame($expectedEntity, $actualEntity);
 	}
 
@@ -228,7 +228,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException
 	 */
 	public function validationIsDoneForNewEntities() {
 		$this->removeExampleEntities();
@@ -239,7 +239,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException
 	 */
 	public function validationIsDoneForReconstitutedEntities() {
 		$this->removeExampleEntities();
@@ -256,13 +256,13 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * Testcase for issue #32830 - Validation on persist breaks with Doctrine Lazy Loading Proxies
 	 *
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 * @expectedException \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException
 	 */
 	public function validationIsDoneForReconstitutedEntitiesWhichAreLazyLoadingProxies() {
 		$this->removeExampleEntities();
 		$this->insertExampleEntity();
 		$this->persistenceManager->persistAll();
-		$theObject = $this->testEntityRepository->findOneByName('FLOW3');
+		$theObject = $this->testEntityRepository->findOneByName('Flow');
 		$theObjectIdentifier = $this->persistenceManager->getIdentifierByObject($theObject);
 
 			// Here, we completely reset the persistence manager again and work
@@ -270,7 +270,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->persistenceManager->clearState();
 
 		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
-		$lazyLoadedEntity = $entityManager->getReference('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity', $theObjectIdentifier);
+		$lazyLoadedEntity = $entityManager->getReference('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity', $theObjectIdentifier);
 		$lazyLoadedEntity->setName('a');
 		$this->testEntityRepository->update($lazyLoadedEntity);
 		$this->persistenceManager->persistAll();
@@ -283,7 +283,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->removeExampleEntities();
 		$this->insertExampleEntity();
 		$this->persistenceManager->persistAll();
-		$testEntity = $this->testEntityRepository->findOneByName('FLOW3');
+		$testEntity = $this->testEntityRepository->findOneByName('Flow');
 
 			// We now make the TestEntitys Description *invalid*, and still
 			// expect that the saving works without exception.
@@ -297,7 +297,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 *
 	 * @param string $name
 	 */
-	protected function insertExampleEntity($name = 'FLOW3') {
+	protected function insertExampleEntity($name = 'Flow') {
 		$testEntity = new TestEntity();
 		$testEntity->setName($name);
 		$this->testEntityRepository->add($testEntity);

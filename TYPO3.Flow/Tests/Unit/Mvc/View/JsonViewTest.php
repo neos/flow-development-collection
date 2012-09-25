@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\View;
+namespace TYPO3\Flow\Tests\Unit\Mvc\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,20 +15,20 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\View;
  * Testcase for the JSON view
  *
  */
-class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\View\JsonView
+	 * @var \TYPO3\Flow\Mvc\View\JsonView
 	 */
 	protected $view;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\ControllerContext
+	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Response
+	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $response;
 
@@ -37,9 +37,9 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->view = $this->getMock('TYPO3\FLOW3\Mvc\View\JsonView', array('loadConfigurationFromYamlFile'));
-		$this->controllerContext = $this->getMock('TYPO3\FLOW3\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$this->response = $this->getMock('TYPO3\FLOW3\Http\Response', array());
+		$this->view = $this->getMock('TYPO3\Flow\Mvc\View\JsonView', array('loadConfigurationFromYamlFile'));
+		$this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
+		$this->response = $this->getMock('TYPO3\Flow\Http\Response', array());
 		$this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
 		$this->view->setControllerContext($this->controllerContext);
 	}
@@ -140,7 +140,7 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider jsonViewTestData
 	 */
 	public function testTransformValue($object, $configuration, $expected, $description) {
-		$jsonView = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
+		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
 
 		$actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -181,8 +181,8 @@ class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider objectIdentifierExposationTestData
 	 */
 	public function testTransformValueWithObjectIdentifierExposation($object, $configuration, $expected, $dummyIdentifier, $description) {
-		$persistenceManagerMock = $this->getMock('TYPO3\FLOW3\Persistence\Generic\PersistenceManager', array('getIdentifierByObject'));
-		$jsonView = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
+		$persistenceManagerMock = $this->getMock('TYPO3\Flow\Persistence\Generic\PersistenceManager', array('getIdentifierByObject'));
+		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
 		$jsonView->_set('persistenceManager', $persistenceManagerMock);
 
 		$persistenceManagerMock->expects($this->once())->method('getIdentifierByObject')->with($object->value1)->will($this->returnValue($dummyIdentifier));

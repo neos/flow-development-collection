@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Log\Backend;
+namespace TYPO3\Flow\Tests\Unit\Log\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,10 +15,10 @@ namespace TYPO3\FLOW3\Tests\Unit\Log\Backend;
  * Testcase for the abstract log backend
  *
  */
-class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\Backend\AbstractBackend
+	 * @var \TYPO3\Flow\Log\Backend\AbstractBackend
 	 */
 	protected $backendClassName;
 
@@ -28,7 +28,7 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $this->backendClassName . ' extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
+			class ' . $this->backendClassName . ' extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 				public function open() {}
 				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
 				public function close() {}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Utility;
+namespace TYPO3\Flow\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Configuration schema generator.
@@ -19,10 +19,10 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * The implementation is still simple and intends to be a kickstart for
  * writing schemas. In future this can be extended.
  *
- * See \TYPO3\FLOW3\Utility\SchemaValidator for a description of all features
+ * See \TYPO3\Flow\Utility\SchemaValidator for a description of all features
  * of the SchemaValidator
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class SchemaGenerator {
 
@@ -101,7 +101,7 @@ class SchemaGenerator {
 	 */
 	protected function generateStringSchema($stringValue) {
 		$schema = array('type' => 'string');
-		$schemaValidator = new \TYPO3\FLOW3\Utility\SchemaValidator();
+		$schemaValidator = new \TYPO3\Flow\Utility\SchemaValidator();
 		$detectedFormat = NULL;
 
 		$detectableFormats = array('uri','email','ip-address','class-name','interface-name');

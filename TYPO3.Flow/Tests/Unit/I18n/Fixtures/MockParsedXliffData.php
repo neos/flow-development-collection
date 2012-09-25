@@ -1,6 +1,6 @@
 <?php
 return array(
-	'sourceLocale' => new \TYPO3\FLOW3\I18n\Locale('en_US'),
+	'sourceLocale' => new \TYPO3\Flow\I18n\Locale('en_US'),
 	'translationUnits' => array(
 		'key1' => array(
 			0 => array(

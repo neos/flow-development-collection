@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,17 +11,17 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A method filter which fires on methods annotated with a certain annotation
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
-class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -33,7 +33,7 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Poi
 	/**
 	 * The constructor - initializes the method annotation filter with the expected annotation class
 	 *
-	 * @param string $annotation An annotation class (for example "TYPO3\FLOW3\Annotations\Lazy") which defines which method annotations should match
+	 * @param string $annotation An annotation class (for example "TYPO3\Flow\Annotations\Lazy") which defines which method annotations should match
 	 */
 	public function __construct($annotation) {
 		$this->annotation = $annotation;
@@ -42,10 +42,10 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Poi
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -86,12 +86,12 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\Aop\Pointcut\Poi
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		$classNames = $this->reflectionService->getClassesContainingMethodsAnnotatedWith($this->annotation);
-		$annotatedIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
+		$annotatedIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$annotatedIndex->setClassNames($classNames);
 		return $classNameIndex->intersect($annotatedIndex);
 	}

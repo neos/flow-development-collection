@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
+namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the abstract cache backend
  *
  */
-class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Backend\AbstractBackend
+	 * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
 	 */
 	protected $backend;
 
@@ -30,7 +30,7 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $className. ' extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
+			class ' . $className. ' extends \TYPO3\Flow\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}

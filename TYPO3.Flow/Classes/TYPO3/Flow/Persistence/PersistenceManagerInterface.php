@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence;
+namespace TYPO3\Flow\Persistence;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,14 +12,14 @@ namespace TYPO3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * The Flow Persistence Manager interface
  *
  * @api
  */
 interface PersistenceManagerInterface {
 
 	/**
-	 * Injects the FLOW3 settings, called by FLOW3.
+	 * Injects the Flow settings, called by Flow.
 	 *
 	 * @param array $settings
 	 * @return void
@@ -28,7 +28,7 @@ interface PersistenceManagerInterface {
 	public function injectSettings(array $settings);
 
 	/**
-	 * Initializes the persistence manager, called by FLOW3.
+	 * Initializes the persistence manager, called by Flow.
 	 *
 	 * @return void
 	 * @api
@@ -66,17 +66,17 @@ interface PersistenceManagerInterface {
 	/**
 	 * Registers an object which has been created or cloned during this request.
 	 *
-	 * The given object must contain the FLOW3_Persistence_Identifier property, thus
+	 * The given object must contain the Persistence_Object_Identifier property, thus
 	 * the PersistenceMagicInterface type hint. A "new" object does not necessarily
 	 * have to be known by any repository or be persisted in the end.
 	 *
 	 * Objects registered with this method must be known to the getObjectByIdentifier()
 	 * method.
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object The new object to register
+	 * @param \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object The new object to register
 	 * @return void
 	 */
-	public function registerNewObject(\TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object);
+	public function registerNewObject(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object);
 
 	/**
 	 * Returns the (internal) identifier for the object, if it is known to the
@@ -109,7 +109,7 @@ interface PersistenceManagerInterface {
 	 *
 	 * @param object $object The object to be converted
 	 * @return array The identity array in the format array('__identity' => '...')
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+	 * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
 	 * @api
 	 */
 	public function convertObjectToIdentityArray($object);
@@ -120,7 +120,7 @@ interface PersistenceManagerInterface {
 	 *
 	 * @param array $array The array to be iterated over
 	 * @return array The modified array without objects
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+	 * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
 	 * @api
 	 * @see convertObjectToIdentityArray()
 	 */
@@ -130,7 +130,7 @@ interface PersistenceManagerInterface {
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function createQueryForType($type);
@@ -158,7 +158,7 @@ interface PersistenceManagerInterface {
 	 *
 	 * @param object $object The modified object
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
+	 * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException
 	 * @api
 	 */
 	public function update($object);

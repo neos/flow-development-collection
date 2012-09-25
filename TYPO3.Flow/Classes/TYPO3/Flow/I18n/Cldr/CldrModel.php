@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Cldr;
+namespace TYPO3\Flow\I18n\Cldr;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -28,10 +28,10 @@ class CldrModel {
 	 *
 	 * @var string
 	 */
-	protected $cldrBasePath = 'resource://TYPO3.FLOW3/Private/I18n/CLDR/Sources/';
+	protected $cldrBasePath = 'resource://TYPO3.Flow/Private/I18n/CLDR/Sources/';
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -43,7 +43,7 @@ class CldrModel {
 	protected $cacheKey;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Cldr\CldrParser
+	 * @var \TYPO3\Flow\I18n\Cldr\CldrParser
 	 */
 	protected $cldrParser;
 
@@ -75,20 +75,20 @@ class CldrModel {
 	}
 
 	/**
-	 * Injects the FLOW3_I18n_Cldr_CldrModelCache cache
+	 * Injects the Flow_I18n_Cldr_CldrModelCache cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrParser $parser
+	 * @param \TYPO3\Flow\I18n\Cldr\CldrParser $parser
 	 * @return void
 	 */
-	public function injectParser(\TYPO3\FLOW3\I18n\Cldr\CldrParser $parser) {
+	public function injectParser(\TYPO3\Flow\I18n\Cldr\CldrParser $parser) {
 		$this->cldrParser = $parser;
 	}
 
@@ -123,7 +123,7 @@ class CldrModel {
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array or string of matching data, or FALSE on failure
-	 * @see \TYPO3\FLOW3\I18n\Cldr\CldrParser
+	 * @see \TYPO3\Flow\I18n\Cldr\CldrParser
 	 */
 	public function getRawData($path) {
 		if ($path === '/') {
@@ -152,8 +152,8 @@ class CldrModel {
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
-	 * @see \TYPO3\FLOW3\I18n\Cldr\CldrParser
-	 * @see \TYPO3\FLOW3\I18n\Cldr\CldrModel::getRawData()
+	 * @see \TYPO3\Flow\I18n\Cldr\CldrParser
+	 * @see \TYPO3\Flow\I18n\Cldr\CldrModel::getRawData()
 	 */
 	public function getRawArray($path) {
 		$data = $this->getRawData($path);
@@ -319,7 +319,7 @@ class CldrModel {
 	 * @param mixed $data Part of internal array to resolve aliases for (string if leaf, array otherwise)
 	 * @param string $currentPath Path to currently analyzed part of data
 	 * @return mixed Modified (or unchanged) $data
-	 * @throws \TYPO3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
+	 * @throws \TYPO3\Flow\I18n\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
 	 */
 	protected function resolveAliases($data, $currentPath) {
 		if (!is_array($data)) {

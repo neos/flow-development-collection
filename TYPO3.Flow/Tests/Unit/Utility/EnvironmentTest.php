@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\Flow\Tests\Unit\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,19 +11,19 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the Utility Environment class
  */
-class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class EnvironmentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
-		$environment = new \TYPO3\FLOW3\Utility\Environment(new ApplicationContext('Testing'));
-		$environment->setTemporaryDirectoryBase(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3EnvironmentTest')));
+		$environment = new \TYPO3\Flow\Utility\Environment(new ApplicationContext('Testing'));
+		$environment->setTemporaryDirectoryBase(\TYPO3\Flow\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FlowEnvironmentTest')));
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
 	}
@@ -32,8 +32,8 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
-		$environment = new \TYPO3\FLOW3\Utility\Environment(new ApplicationContext('Testing'));
-		$environment->setTemporaryDirectoryBase(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3EnvironmentTest')));
+		$environment = new \TYPO3\Flow\Utility\Environment(new ApplicationContext('Testing'));
+		$environment->setTemporaryDirectoryBase(\TYPO3\Flow\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FlowEnvironmentTest')));
 
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertTrue(file_exists($path), 'The temporary path does not exist.');
@@ -43,7 +43,7 @@ class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getMaximumPathLengthReturnsCorrectValue() {
-		$environment = new \TYPO3\FLOW3\Utility\Environment(new ApplicationContext('Testing'));
+		$environment = new \TYPO3\Flow\Utility\Environment(new ApplicationContext('Testing'));
 		$expectedValue = PHP_MAXPATHLEN;
 		if ((integer)$expectedValue <= 0) {
 			$this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a PHP bug report.');

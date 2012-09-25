@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security;
+namespace TYPO3\Flow\Tests\Unit\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Security\Account;
-use TYPO3\FLOW3\Security\Policy\Role;
+use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * Testcase for the account
  *
  */
-class AccountTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var Role

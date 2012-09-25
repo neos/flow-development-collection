@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Property;
+namespace TYPO3\Flow\Property;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -72,11 +72,11 @@ interface TypeConverterInterface {
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string the type of $propertyName in $targetType
 	 * @api
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration);
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration);
 
 	/**
 	 * Actually convert from $source to $targetType, taking into account the fully
@@ -86,17 +86,17 @@ interface TypeConverterInterface {
 	 * - an arbitrary object, or a simple type (which has been created while mapping).
 	 *   This is the normal case.
 	 * - NULL, indicating that this object should *not* be mapped (i.e. a "File Upload" Converter could return NULL if no file has been uploaded, and a silent failure should occur.
-	 * - An instance of \TYPO3\FLOW3\Error\Error -- This will be a user-visible error message later on.
+	 * - An instance of \TYPO3\Flow\Error\Error -- This will be a user-visible error message later on.
 	 * Furthermore, it should throw an Exception if an unexpected failure (like a security error) occurred or a configuration issue happened.
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return mixed|\TYPO3\FLOW3\Error\Error the target type, or an error object if a user-error occurred
-	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException thrown in case a developer error occurred
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return mixed|\TYPO3\Flow\Error\Error the target type, or an error object if a user-error occurred
+	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException thrown in case a developer error occurred
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL);
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL);
 }
 ?>

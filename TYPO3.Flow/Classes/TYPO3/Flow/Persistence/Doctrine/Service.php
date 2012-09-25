@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Service class for tasks related to Doctrine
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class Service {
 
@@ -32,20 +32,20 @@ class Service {
 	public $output = array();
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
@@ -163,20 +163,27 @@ class Service {
 			}
 		);
 
-		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($this->entityManager->getConnection(), $outputWriter);
-		$configuration->setMigrationsNamespace('TYPO3\FLOW3\Persistence\Doctrine\Migrations');
-		$configuration->setMigrationsDirectory(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_DATA, 'DoctrineMigrations')));
-		$configuration->setMigrationsTableName('flow3_doctrine_migrationstatus');
+		$connection = $this->entityManager->getConnection();
+		if ($connection->getSchemaManager()->tablesExist(array('flow3_doctrine_migrationstatus')) === TRUE) {
+			// works for SQLite, MySQL, PostgreSQL, Oracle
+			// does not work for SQL Server
+			$connection->exec('ALTER TABLE flow3_doctrine_migrationstatus RENAME TO flow_doctrine_migrationstatus');
+		}
+
+		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($connection, $outputWriter);
+		$configuration->setMigrationsNamespace('TYPO3\Flow\Persistence\Doctrine\Migrations');
+		$configuration->setMigrationsDirectory(\TYPO3\Flow\Utility\Files::concatenatePaths(array(FLOW_PATH_DATA, 'DoctrineMigrations')));
+		$configuration->setMigrationsTableName('flow_doctrine_migrationstatus');
 
 		$configuration->createMigrationTable();
 
 		$databasePlatformName = $this->getDatabasePlatformName();
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			$configuration->registerMigrationsFromDirectory(
-				\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(
-					 $package->getPackagePath(),
-					 'Migrations',
-					 $databasePlatformName
+				\TYPO3\Flow\Utility\Files::concatenatePaths(array(
+					$package->getPackagePath(),
+					'Migrations',
+					$databasePlatformName
 				))
 			);
 		}
@@ -392,10 +399,10 @@ class Service {
 		$up = $up === NULL ? '' : "\n		" . implode("\n		", explode("\n", $up));
 		$down = $down === NULL ? '' : "\n		" . implode("\n		", explode("\n", $down));
 
-		$path = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
+		$path = \TYPO3\Flow\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
 		try {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($path));
-		} catch (\TYPO3\FLOW3\Utility\Exception $exception) {
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($path));
+		} catch (\TYPO3\Flow\Utility\Exception $exception) {
 			throw new \RuntimeException(sprintf('Migration target directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
 		}
 
@@ -464,6 +471,87 @@ EOT;
 	 */
 	public function getDatabasePlatformName() {
 		return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
+	}
+
+	/**
+	 * This serves a rather strange use case: renaming columns used in FK constraints.
+	 *
+	 * For a column that is used in a FK constraint to be renamed, the FK constraint has to be
+	 * dropped first, then the column can be renamed and last the FK constraint needs to be
+	 * added back (using the new name, of course).
+	 *
+	 * This method helps with the task of handling the FK constraints during this. Given a list
+	 * of tables that contain columns to be renamed and a search/replace pair for the column name,
+	 * it will return an array with arrays with drop and add SQL statements.
+	 *
+	 * Use them like this before and after renaming the affected fields:
+	 *
+	 * // collect foreign keys pointing to "our" tables
+	 * $tableNames = array(...);
+	 * $foreignKeyHandlingSql = $this->getForeignKeyHandlingSql($schema, $tableNames, 'old_name', 'new_name');
+	 *
+	 * // drop FK constraints
+	 * foreach ($foreignKeyHandlingSql['drop'] as $sql) {
+	 *     $this->addSql($sql);
+	 * }
+	 *
+	 * // rename columns now
+	 *
+	 * // add back FK constraints
+	 * foreach ($foreignKeyHandlingSql['add'] as $sql) {
+	 *     $this->addSql($sql);
+	 * }
+	 *
+	 * @param \Doctrine\DBAL\Schema\Schema $schema
+	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
+	 * @param array $tableNames
+	 * @param string $search
+	 * @param string $replace
+	 * @return array
+	 */
+	static public function getForeignKeyHandlingSql(\Doctrine\DBAL\Schema\Schema $schema, \Doctrine\DBAL\Platforms\AbstractPlatform $platform, $tableNames, $search, $replace) {
+		$foreignKeyHandlingSql = array('drop' => array(), 'add' => array());
+		$tables = $schema->getTables();
+		foreach ($tables as $table) {
+			$foreignKeys = $table->getForeignKeys();
+			foreach ($foreignKeys as $foreignKey) {
+				if (!in_array($table->getName(), $tableNames) && !in_array($foreignKey->getForeignTableName(), $tableNames)) {
+					continue;
+				}
+
+				$localColumns = $foreignKey->getLocalColumns();
+				$foreignColumns = $foreignKey->getForeignColumns();
+				if (in_array($search, $foreignColumns) || in_array($search, $localColumns)) {
+					if (in_array($foreignKey->getLocalTableName(), $tableNames)) {
+						array_walk(
+							$localColumns,
+							function (&$value) use ($search, $replace) {
+								if ($value === $search) {
+									$value = $replace;
+								}
+							}
+						);
+					}
+					if (in_array($foreignKey->getForeignTableName(), $tableNames)) {
+						array_walk(
+							$foreignColumns,
+							function (&$value) use ($search, $replace) {
+								if ($value === $search) {
+									$value = $replace;
+								}
+							}
+						);
+					}
+					$newForeignKey = clone $foreignKey;
+					\TYPO3\Flow\Reflection\ObjectAccess::setProperty($newForeignKey, '_localColumnNames', $localColumns, TRUE);
+					\TYPO3\Flow\Reflection\ObjectAccess::setProperty($newForeignKey, '_foreignColumnNames', $foreignColumns, TRUE);
+					$foreignKeyHandlingSql['drop'][] = $platform->getDropForeignKeySQL($foreignKey, $table);
+					$foreignKeyHandlingSql['add'][] = $platform->getCreateForeignKeySQL($newForeignKey, $table);
+				}
+			}
+		}
+
+		return $foreignKeyHandlingSql;
 	}
 }
 

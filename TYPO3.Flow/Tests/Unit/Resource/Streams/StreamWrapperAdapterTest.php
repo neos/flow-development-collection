@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Resource\Streams;
+namespace TYPO3\Flow\Tests\Unit\Resource\Streams;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,22 +15,22 @@ namespace TYPO3\FLOW3\Tests\Unit\Resource\Streams;
  * Testcase for the StreamWrapperAdapter class
  *
  */
-class StreamWrapperAdapterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class StreamWrapperAdapterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter
+	 * @var \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter
 	 */
 	protected $streamWrapperAdapter;
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface
+	 * @var \TYPO3\Flow\Resource\Streams\StreamWrapperInterface
 	 */
 	protected $mockStreamWrapper;
 
 
 	public function setUp() {
-		$this->streamWrapperAdapter = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter', array('createStreamWrapper'));
-		$this->mockStreamWrapper = $this->getMock('TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface');
+		$this->streamWrapperAdapter = $this->getAccessibleMock('TYPO3\Flow\Resource\Streams\StreamWrapperAdapter', array('createStreamWrapper'));
+		$this->mockStreamWrapper = $this->getMock('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
 		$this->streamWrapperAdapter->_set('streamWrapper', $this->mockStreamWrapper);
 	}
 
@@ -39,13 +39,13 @@ class StreamWrapperAdapterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getRegisteredStreamWrappersReturnsRegisteredStreamWrappers() {
 		$mockStreamWrapper1ClassName = get_class($this->mockStreamWrapper);
-		$mockStreamWrapper2 = $this->getMock('TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface');
+		$mockStreamWrapper2 = $this->getMock('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
 		$mockStreamWrapper2ClassName = get_class($mockStreamWrapper2);
 
-		\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper('mockScheme1', $mockStreamWrapper1ClassName);
-		\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper('mockScheme2', $mockStreamWrapper2ClassName);
+		\TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper('mockScheme1', $mockStreamWrapper1ClassName);
+		\TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper('mockScheme2', $mockStreamWrapper2ClassName);
 
-		$registeredStreamWrappers = \TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers();
+		$registeredStreamWrappers = \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers();
 		$this->assertSame($mockStreamWrapper1ClassName, $registeredStreamWrappers['mockScheme1']);
 		$this->assertSame($mockStreamWrapper2ClassName, $registeredStreamWrappers['mockScheme2']);
 	}

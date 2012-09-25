@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic\Aspect;
+namespace TYPO3\Flow\Persistence\Generic\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -34,7 +34,7 @@ interface LazyLoadingObjectInterface {
 	 *
 	 * @return void
 	 */
-	public function FLOW3_Persistence_LazyLoadingObject_initialize();
+	public function Flow_Persistence_LazyLoadingObject_initialize();
 
 }
 ?>

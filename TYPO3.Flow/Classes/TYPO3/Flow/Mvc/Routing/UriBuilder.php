@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Utility\Arrays;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * An URI Builder
@@ -21,17 +21,17 @@ use TYPO3\FLOW3\Utility\Arrays;
 class UriBuilder {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\RouterInterface
+	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
 	 */
 	protected $router;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @var \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	protected $request;
 
@@ -83,32 +83,32 @@ class UriBuilder {
 	/**
 	 * Injects the Router
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Routing\RouterInterface $router
+	 * @param \TYPO3\Flow\Mvc\Routing\RouterInterface $router
 	 * @return void
 	 */
-	public function injectRouter(\TYPO3\FLOW3\Mvc\Routing\RouterInterface $router) {
+	public function injectRouter(\TYPO3\Flow\Mvc\Routing\RouterInterface $router) {
 		$this->router = $router;
 	}
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\Flow\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Sets the current request and resets the UriBuilder
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $request
 	 * @return void
 	 * @api
 	 * @see reset()
 	 */
-	public function setRequest(\TYPO3\FLOW3\Mvc\ActionRequest $request) {
+	public function setRequest(\TYPO3\Flow\Mvc\ActionRequest $request) {
 		$this->request = $request;
 		$this->reset();
 	}
@@ -116,7 +116,7 @@ class UriBuilder {
 	/**
 	 * Gets the current request
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	public function getRequest() {
 		return $this->request;
@@ -128,7 +128,7 @@ class UriBuilder {
 	 * array('prefix1' => array('foo' => 'bar')) gets "&prefix1[foo]=bar"
 	 *
 	 * @param array $arguments
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setArguments(array $arguments) {
@@ -148,7 +148,7 @@ class UriBuilder {
 	 * If specified, adds a given HTML anchor to the URI (#...)
 	 *
 	 * @param string $section
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setSection($section) {
@@ -168,7 +168,7 @@ class UriBuilder {
 	 * Specifies the format of the target (e.g. "html" or "xml")
 	 *
 	 * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setFormat($format) {
@@ -188,7 +188,7 @@ class UriBuilder {
 	 * If set, the URI is prepended with the current base URI. Defaults to FALSE.
 	 *
 	 * @param boolean $createAbsoluteUri
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setCreateAbsoluteUri($createAbsoluteUri) {
@@ -208,7 +208,7 @@ class UriBuilder {
 	 * If set, the current query parameters will be merged with $this->arguments. Defaults to FALSE.
 	 *
 	 * @param boolean $addQueryString
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setAddQueryString($addQueryString) {
@@ -229,7 +229,7 @@ class UriBuilder {
 	 * Only active if addQueryString is set
 	 *
 	 * @param array $argumentsToBeExcludedFromQueryString
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString) {
@@ -256,7 +256,7 @@ class UriBuilder {
 	 * general public or in specific situations where protected links are not feasible.
 	 *
 	 * @param boolean $flag If protection should be enabled
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function setLinkProtectionEnabled($flag) {
@@ -288,7 +288,7 @@ class UriBuilder {
 	 * Resets all UriBuilder options to their default value.
 	 * Note: This won't reset the Request that is attached to this UriBuilder (@see setRequest())
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
 	public function reset() {
@@ -465,11 +465,11 @@ class UriBuilder {
 	 * Get the path of the argument namespaces of all parent requests.
 	 * Example: mainrequest.subrequest.subsubrequest
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $request
 	 * @return string
 	 */
 	protected function getRequestNamespacePath($request) {
-		if (!$request instanceof \TYPO3\FLOW3\Http\Request) {
+		if (!$request instanceof \TYPO3\Flow\Http\Request) {
 			$parentPath = $this->getRequestNamespacePath($request->getParentRequest());
 			return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
 		} else {

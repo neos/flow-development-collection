@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
+namespace TYPO3\Flow\Tests\Unit\Security\Authorization\Interceptor;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,17 +15,17 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
  * Testcase for the authentication required security interceptor
  *
  */
-class RequireAuthenticationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RequireAuthenticationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function invokeCallsTheAuthenticationManagerToPerformAuthentication() {
-		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$authenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 
-		$interceptor = new \TYPO3\FLOW3\Security\Authorization\Interceptor\RequireAuthentication($authenticationManager);
+		$interceptor = new \TYPO3\Flow\Security\Authorization\Interceptor\RequireAuthentication($authenticationManager);
 		$interceptor->invoke();
 	}
 }

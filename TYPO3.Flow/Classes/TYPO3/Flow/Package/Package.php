@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * A Package
@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Utility\Files;
 class Package implements PackageInterface {
 
 	/**
-	 * Unique key of this package. Example for the FLOW3 package: "TYPO3.FLOW3"
+	 * Unique key of this package. Example for the Flow package: "TYPO3.Flow"
 	 * @var string
 	 */
 	protected $packageKey;
@@ -57,7 +57,7 @@ class Package implements PackageInterface {
 
 	/**
 	 * Meta information about this package
-	 * @var \TYPO3\FLOW3\Package\MetaData
+	 * @var \TYPO3\Flow\Package\MetaData
 	 */
 	protected $packageMetaData;
 
@@ -88,21 +88,21 @@ class Package implements PackageInterface {
 	 * @param string $packagePath Absolute path to the location of the package's composer manifest
 	 * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, read from Composer manifest if not set.
 	 * @param string $manifestPath Path the composer manifest of the package, relative to $packagePath. Optional, defaults to ''.
-	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
-	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
+	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
+	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 */
 	public function __construct($packageKey, $packagePath, $classesPath = NULL, $manifestPath = '') {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) {
-			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
-		if (!(is_dir($packagePath) || (\TYPO3\FLOW3\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) {
-			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
+		if (!(is_dir($packagePath) || (\TYPO3\Flow\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) {
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
 		}
 		if (substr($packagePath, -1, 1) !== '/') {
-			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
 		}
 		if (substr($classesPath, 1, 1) === '/') {
-			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package classes path has a leading forward slash.', 1334841320);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package classes path has a leading forward slash.', 1334841320);
 		}
 
 		$this->manifestPath = $manifestPath;
@@ -118,16 +118,16 @@ class Package implements PackageInterface {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 	}
 
 	/**
 	 * Returns the package meta data object of this package.
 	 *
-	 * @return \TYPO3\FLOW3\Package\MetaData
+	 * @return \TYPO3\Flow\Package\MetaData
 	 */
 	public function getPackageMetaData() {
 		if ($this->packageMetaData === NULL) {
@@ -186,7 +186,7 @@ class Package implements PackageInterface {
 					/**
 					 * @todo throw meaningful exception with proper description
 					 */
-					throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException('Multiple PHP namespaces in one package are not supported.', 1348053245);
+					throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('Multiple PHP namespaces in one package are not supported.', 1348053245);
 				}
 			} else {
 				$namespace = str_replace('.', '\\', $this->getPackageKey());
@@ -320,7 +320,7 @@ class Package implements PackageInterface {
 	/**
 	 * Returns the available documentations for this package
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package\Documentation
+	 * @return array Array of \TYPO3\Flow\Package\Documentation
 	 * @api
 	 */
 	public function getPackageDocumentations() {
@@ -333,7 +333,7 @@ class Package implements PackageInterface {
 				$filename = $documentationsDirectoryIterator->getFilename();
 				if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
 					$filename = $documentationsDirectoryIterator->getFilename();
-					$documentation = new \TYPO3\FLOW3\Package\Documentation($this, $filename, $documentationPath . $filename . '/');
+					$documentation = new \TYPO3\Flow\Package\Documentation($this, $filename, $documentationPath . $filename . '/');
 					$documentations[$filename] = $documentation;
 				}
 				$documentationsDirectoryIterator->next();
@@ -367,7 +367,7 @@ class Package implements PackageInterface {
 	 * @param string $subDirectory Used internally
 	 * @param integer $recursionLevel Used internally
 	 * @return array
-	 * @throws \TYPO3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
+	 * @throws \TYPO3\Flow\Package\Exception if recursion into directories was too deep or another error occurred
 	 */
 	protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0) {
 		$classFiles = array();
@@ -375,7 +375,7 @@ class Package implements PackageInterface {
 		$currentRelativePath = substr($currentPath, strlen($this->packagePath));
 
 		if (!is_dir($currentPath)) return array();
-		if ($recursionLevel > 100) throw new \TYPO3\FLOW3\Package\Exception('Recursion too deep.', 1166635495);
+		if ($recursionLevel > 100) throw new \TYPO3\Flow\Package\Exception('Recursion too deep.', 1166635495);
 
 		try {
 			$classesDirectoryIterator = new \DirectoryIterator($currentPath);
@@ -395,7 +395,7 @@ class Package implements PackageInterface {
 			}
 
 		} catch (\Exception $exception) {
-			throw new \TYPO3\FLOW3\Package\Exception($exception->getMessage(), 1166633720);
+			throw new \TYPO3\Flow\Package\Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
 	}

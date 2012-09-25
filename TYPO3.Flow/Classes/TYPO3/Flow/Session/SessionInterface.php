@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session;
+namespace TYPO3\Flow\Session;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -49,7 +49,7 @@ interface SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getId();
 
@@ -68,7 +68,7 @@ interface SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getData($key);
 
@@ -86,7 +86,7 @@ interface SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param object $data The data to be stored
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data);
 
@@ -94,7 +94,7 @@ interface SessionInterface {
 	 * Explicitly writes (persists) and closes the session
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function close();
 
@@ -103,8 +103,8 @@ interface SessionInterface {
 	 *
 	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function destroy($reason = NULL);
 
@@ -112,14 +112,14 @@ interface SessionInterface {
 	 * Explicitly destroy all session data of all sessions with one specific implementation.
 	 *
 	 * Note: The implementation of this method must work from the command line and
-	 *       during compile time as it will be invoked by the typo3.flow3:cache:flush
+	 *       during compile time as it will be invoked by the typo3.flow:cache:flush
 	 *       command. It is also not designed to be called from a regular runtime
 	 *       context as it is unclear what happens to any possible active action.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return integer|NULL Optional: The number of sessions which have been destroyed
 	 */
-	static public function destroyAll(\TYPO3\FLOW3\Core\Bootstrap $bootstrap);
+	static public function destroyAll(\TYPO3\Flow\Core\Bootstrap $bootstrap);
 
 }
 

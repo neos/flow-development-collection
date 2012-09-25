@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc;
+namespace TYPO3\Flow\Mvc;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Mvc;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * This is a container for all Flash Messages.
  *
- * @FLOW3\Scope("session")
+ * @Flow\Scope("session")
  * @api
  */
 class FlashMessageContainer {
@@ -29,20 +29,20 @@ class FlashMessageContainer {
 	/**
 	 * Add a flash message object.
 	 *
-	 * @param \TYPO3\FLOW3\Error\Message $message
+	 * @param \TYPO3\Flow\Error\Message $message
 	 * @return void
-	 * @FLOW3\Session(autoStart=true)
+	 * @Flow\Session(autoStart=true)
 	 * @api
 	 */
-	public function addMessage(\TYPO3\FLOW3\Error\Message $message) {
+	public function addMessage(\TYPO3\Flow\Error\Message $message) {
 		$this->messages[] = $message;
 	}
 
 	/**
 	 * Returns all currently stored flash messages.
 	 *
-	 * @param string $severity severity of messages (from \TYPO3\FLOW3\Error\Message::SEVERITY_* constants) to return.
-	 * @return array<\TYPO3\FLOW3\Error\Message>
+	 * @param string $severity severity of messages (from \TYPO3\Flow\Error\Message::SEVERITY_* constants) to return.
+	 * @return array<\TYPO3\Flow\Error\Message>
 	 * @api
 	 */
 	public function getMessages($severity = NULL) {
@@ -62,9 +62,9 @@ class FlashMessageContainer {
 	/**
 	 * Remove messages from this container.
 	 *
-	 * @param string $severity severity of messages (from \TYPO3\FLOW3\Error\Message::SEVERITY_* constants) to remove.
+	 * @param string $severity severity of messages (from \TYPO3\Flow\Error\Message::SEVERITY_* constants) to remove.
 	 * @return void
-	 * @FLOW3\Session(autoStart=true)
+	 * @Flow\Session(autoStart=true)
 	 * @api
 	 */
 	public function flush($severity = NULL) {
@@ -82,8 +82,8 @@ class FlashMessageContainer {
 	/**
 	 * Get all flash messages (with given severity) currently available and remove them from the container.
 	 *
-	 * @param string $severity severity of the messages (One of the \TYPO3\FLOW3\Error\Message::SEVERITY_* constants)
-	 * @return array<\TYPO3\FLOW3\Error\Message>
+	 * @param string $severity severity of the messages (One of the \TYPO3\Flow\Error\Message::SEVERITY_* constants)
+	 * @return array<\TYPO3\Flow\Error\Message>
 	 * @api
 	 */
 	public function getMessagesAndFlush($severity = NULL) {

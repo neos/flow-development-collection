@@ -9,13 +9,13 @@
 #                                                                        #
 
 TYPO3:
-  FLOW3:
+  Flow:
     persistence:
       backendOptions:
-        dbname: 'flow3' # adjust to your database name
+        dbname: 'flow'       # adjust to your database name
         user: ''             # adjust to your database user
         password: ''         # adjust to your database password
 
        # if you want to log executed SQL queries, enable the next 2 lines
 #      doctrine:
-#        sqlLogger: 'TYPO3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
+#        sqlLogger: 'TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger'

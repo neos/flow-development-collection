@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authorization;
+namespace TYPO3\Flow\Security\Authorization;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -18,7 +18,7 @@ namespace TYPO3\FLOW3\Security\Authorization;
 interface InterceptorInterface {
 
 	/**
-	 * Invokes the security interception (e.g. calls a \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface)
+	 * Invokes the security interception (e.g. calls a \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 */

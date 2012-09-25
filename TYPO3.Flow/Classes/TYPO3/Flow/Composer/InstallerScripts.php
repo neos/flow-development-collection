@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Composer;
+namespace TYPO3\Flow\Composer;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Composer;
  *                                                                        */
 
 use Composer\Script\Event;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Class for Composer install scripts
@@ -30,10 +30,10 @@ class InstallerScripts {
 		Files::createDirectoryRecursively('Configuration');
 		Files::createDirectoryRecursively('Data');
 
-		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.FLOW3/Resources/Private/Installer/Distribution/Essentials', '.', FALSE, TRUE);
-		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.FLOW3/Resources/Private/Installer/Distribution/Defaults', '.', TRUE, TRUE);
+		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Essentials', '.', FALSE, TRUE);
+		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Defaults', '.', TRUE, TRUE);
 
-		chmod('flow3', 0755);
+		chmod('flow', 0755);
 	}
 }
 ?>

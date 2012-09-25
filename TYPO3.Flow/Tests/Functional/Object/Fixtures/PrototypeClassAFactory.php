@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -20,7 +20,7 @@ class PrototypeClassAFactory {
 	 * Creates a new instance of PrototypeClassA
 	 *
 	 * @param string $someProperty
-	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\FLOWPrototypeClassA
+	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\FLOWPrototypeClassA
 	 */
 	public function create($someProperty) {
 		$object = new PrototypeClassA();

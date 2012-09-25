@@ -9,6 +9,6 @@ Part V: Appendixes
 	TypeConverterReference
 	FluidViewHelperReference
 	CommandReference
-	ContributingToFLOW3
+	ContributingToTYPO3Flow
 	CodingGuideLines/Index
 	ChangeLogs/Index

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -25,12 +25,12 @@ namespace TYPO3\FLOW3\I18n;
  *
  * Please note that this class represents locale identifier with valid syntax,
  * but it does not assures that represented locale is available (installed) in
- * current FLOW3 installation. In order to check that, various methods of
- * \TYPO3\FLOW3\I18n\Service class can be used.
+ * current Flow installation. In order to check that, various methods of
+ * \TYPO3\Flow\I18n\Service class can be used.
  *
  * @api
  * @see http://www.unicode.org/reports/tr35/
- * @see \TYPO3\FLOW3\I18n\Service
+ * @see \TYPO3\Flow\I18n\Service
  */
 class Locale {
 
@@ -83,12 +83,12 @@ class Locale {
 	 *
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
 	 * @throws \InvalidArgumentException When argument is not a string
-	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
+	 * @throws \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
 	 * @api
 	 */
 	public function __construct($localeIdentifier) {
 		if (!is_string($localeIdentifier)) throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) throw new \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
 		if (!empty($matches['script'])) $this->script = ucfirst(strtolower($matches['script']));

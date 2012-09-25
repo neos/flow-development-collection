@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An abstract class for all concrete classes that parses any kind of XML data.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 abstract class AbstractXmlParser {
 
@@ -47,11 +47,11 @@ abstract class AbstractXmlParser {
 	 *
 	 * @param string $sourcePath An absolute path to XML file
 	 * @return array Parsed XML file
-	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+	 * @throws \TYPO3\Flow\I18n\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
 	 */
 	protected function parseXmlFile($sourcePath) {
 		if (!file_exists($sourcePath)) {
-			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('The path "' . $sourcePath . '" does not point to an existing and accessible XML file.', 1328879703);
+			throw new \TYPO3\Flow\I18n\Exception\InvalidXmlFileException('The path "' . $sourcePath . '" does not point to an existing and accessible XML file.', 1328879703);
 		}
 		libxml_use_internal_errors(TRUE);
 		$rootXmlNode = simplexml_load_file($sourcePath, 'SimpleXmlElement', \LIBXML_NOWARNING);
@@ -64,7 +64,7 @@ abstract class AbstractXmlParser {
 				}
 				$errors[] = $errorMessage . ')';
 			}
-			throw new \TYPO3\FLOW3\I18n\Exception\InvalidXmlFileException('Parsing the XML file failed. These error were reported:' . PHP_EOL . implode(PHP_EOL, $errors), 1278155987);
+			throw new \TYPO3\Flow\I18n\Exception\InvalidXmlFileException('Parsing the XML file failed. These error were reported:' . PHP_EOL . implode(PHP_EOL, $errors), 1278155987);
 		}
 
 		return $this->doParsingFromRoot($rootXmlNode);

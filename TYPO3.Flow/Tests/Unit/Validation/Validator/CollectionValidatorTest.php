@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,15 +17,15 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the collection validator
  *
  */
-class CollectionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\CollectionValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\CollectionValidator';
 
 	protected $mockValidatorResolver;
 
 	public function setUp() {
 		parent::setUp();
-		$this->mockValidatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$this->mockValidatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$this->validator->_set('validatorResolver', $this->mockValidatorResolver);
 	}
 
@@ -48,7 +48,7 @@ class CollectionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validat
 	 */
 	public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator() {
 		$this->validator->_set('options', array('elementValidator' => 'EmailAddress'));
-		$this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new \TYPO3\FLOW3\Validation\Validator\EmailAddressValidator()));
+		$this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\EmailAddressValidator()));
 
 		$arrayOfEmailAddresses = array(
 			'andreas.foerthner@netlogix.de',
@@ -77,13 +77,13 @@ class CollectionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validat
 		$B->a = $A;
 		$B->c = array($A);
 
-		$this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will($this->returnValue(new \TYPO3\FLOW3\Validation\Validator\IntegerValidator()));
-		$this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will($this->returnValue(new \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator()));
+		$this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\IntegerValidator()));
+		$this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\GenericObjectValidator()));
 
 			// Create validators
-		$aValidator = new \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator(array());
+		$aValidator = new \TYPO3\Flow\Validation\Validator\GenericObjectValidator(array());
 		$this->validator->_set('options', array('elementValidator' => 'Integer'));
-		$integerValidator = new \TYPO3\FLOW3\Validation\Validator\IntegerValidator(array());
+		$integerValidator = new \TYPO3\Flow\Validation\Validator\IntegerValidator(array());
 
 			// Add validators to properties
 		$aValidator->addPropertyValidator('b', $this->validator);
@@ -100,7 +100,7 @@ class CollectionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validat
 		$entityManager = $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', FALSE);
 		$collection = new \Doctrine\Common\Collections\ArrayCollection(array());
 		$persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, '', $collection);
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($persistentCollection, 'initialized', FALSE, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($persistentCollection, 'initialized', FALSE, TRUE);
 
 		$this->mockValidatorResolver->expects($this->never())->method('createValidator');
 

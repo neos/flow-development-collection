@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security;
+namespace TYPO3\Flow\Tests\Functional\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Security;
  * Testcase for content security
  *
  */
-class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -37,7 +37,7 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
 		$this->restrictableEntityRepository = new Fixtures\RestrictableEntityRepository();
@@ -64,8 +64,8 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertTrue(count($result) === 2);
 
-		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
-		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
@@ -93,8 +93,8 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertEquals(1, count($result));
 
-		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
-		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
@@ -120,8 +120,8 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertTrue(count($result) === 0);
 
-		$this->assertNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
-		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
@@ -136,7 +136,7 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$ownAccount->setAccountIdentifier('ownAccount');
 		$ownAccount->setAuthenticationProviderName('SomeProvider');
 		$ownAccount->setCredentialsSource('foobar');
-		$otherAccount = new \TYPO3\FLOW3\Security\Account();
+		$otherAccount = new \TYPO3\Flow\Security\Account();
 		$otherAccount->setAccountIdentifier('othersAccount');
 		$otherAccount->setAuthenticationProviderName('SomeProvider');
 		$otherAccount->setCredentialsSource('foobar');
@@ -159,8 +159,8 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertTrue(count($result) === 1);
 
-		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
-		$this->assertNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();
@@ -175,7 +175,7 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$ownAccount->setAccountIdentifier('ownAccount');
 		$ownAccount->setAuthenticationProviderName('SomeProvider');
 		$ownAccount->setCredentialsSource('foobar');
-		$otherAccount = new \TYPO3\FLOW3\Security\Account();
+		$otherAccount = new \TYPO3\Flow\Security\Account();
 		$otherAccount->setAccountIdentifier('othersAccount');
 		$otherAccount->setAuthenticationProviderName('SomeProvider');
 		$otherAccount->setCredentialsSource('foobar');
@@ -198,8 +198,8 @@ class ContentSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertTrue(count($result) === 2);
 
-		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
-		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, 'TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
+		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 
 		$this->restrictableEntityRepository->removeAll();
 		$this->persistenceManager->persistAll();

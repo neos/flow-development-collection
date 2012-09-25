@@ -10,7 +10,7 @@ reached by the cumbersome address http://dev.tutorial.local/typo3.blog/post
 and the URL for editing a post refers to the post's UUID instead of the
 human-readable identifier.
 
-FLOW3's routing mechanism allows for beautifying these URIs by simple but
+TYPO3 Flow's routing mechanism allows for beautifying these URIs by simple but
 powerful configuration options.
 
 Post Index Route
@@ -58,24 +58,24 @@ all routes in one file can easily become confusing. To keep the global
 *Routes.yaml* clean you may define sub routes which include - if their own URI
 pattern matches - further routes provided by your package.
 
-The *FLOW3* sub route configuration for example includes further routes if
+The *Flow* sub route configuration for example includes further routes if
 the URI path starts with the string '``TYPO3CR``'. Only the URI part contained
 in the less-than and greater-than signs will be passed to the sub routes:
 
 .. code-block:: yaml
 
 	##
-	# FLOW3 subroutes
+	# Flow subroutes
 	#
 
 	-
-	  name: 'FLOW3'
-	  uriPattern: '<FLOW3Subroutes>'
+	  name: 'Flow'
+	  uriPattern: '<FlowSubroutes>'
 	  defaults:
 	    '@format': 'html'
 	  subRoutes:
-	    FLOW3Subroutes:
-	      package: 'TYPO3.FLOW3'
+	    FlowSubroutes:
+	      package: 'TYPO3.Flow'
 
 Let's define a similar configuration for the *Blog* package. Please replace
 the YAML code you just inserted (the blog index route) by the following sub
@@ -189,7 +189,7 @@ More on Routing
 ===============
 
 The more an application grows, the more complex routing can become and
-sometimes you'll wonder which route FLOW3 eventually chose. One way to get
+sometimes you'll wonder which route TYPO3 Flow eventually chose. One way to get
 this information is looking at the log file which is by default
 located in *Data/Logs/System_Development.log*:
 

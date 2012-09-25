@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,15 +17,15 @@ require_once 'AbstractValidatorTestcase.php';
  * Testcase for the number range validator
  *
  */
-class DateTimeRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class DateTimeRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
 	/**
 	 * @var string
 	 */
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\DateTimeRangeValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\DateTimeRangeValidator';
 
 	/**
-	 * @var \TYPO3\FLOW3\Validation\Validator\DateTimeRangeValidator
+	 * @var \TYPO3\Flow\Validation\Validator\DateTimeRangeValidator
 	 */
 	protected $accessibleValidator;
 
@@ -33,7 +33,7 @@ class DateTimeRangeValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Vali
 	 * Sets up this test case
 	 */
 	public function setUp() {
-		$this->accessibleValidator = $this->getAccessibleMock('TYPO3\FLOW3\Validation\Validator\DateTimeRangeValidator', array('dummy'));
+		$this->accessibleValidator = $this->getAccessibleMock('TYPO3\Flow\Validation\Validator\DateTimeRangeValidator', array('dummy'));
 	}
 
 	/**

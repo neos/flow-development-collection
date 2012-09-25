@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller;
+namespace TYPO3\Flow\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,10 +16,10 @@ namespace TYPO3\FLOW3\Mvc\Controller;
  *
  * @api
  */
-class Exception extends \TYPO3\FLOW3\Exception {
+class Exception extends \TYPO3\Flow\Exception {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @var \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	protected $request;
 
@@ -29,10 +29,10 @@ class Exception extends \TYPO3\FLOW3\Exception {
 	 * @param string $message
 	 * @param integer $code
 	 * @param \Exception $previousException
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $request
 	 * @see \Exception
 	 */
-	public function __construct($message = '', $code = 0, \Exception $previousException = NULL, \TYPO3\FLOW3\Mvc\RequestInterface $request) {
+	public function __construct($message = '', $code = 0, \Exception $previousException = NULL, \TYPO3\Flow\Mvc\RequestInterface $request) {
 		$this->request = $request;
 		parent::__construct($message, $code, $previousException);
 	}
@@ -40,7 +40,7 @@ class Exception extends \TYPO3\FLOW3\Exception {
 	/**
 	 * Returns the request object that exception belongs to.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @return \TYPO3\Flow\Mvc\RequestInterface
 	 */
 	protected function getRequest() {
 		return $this->request;

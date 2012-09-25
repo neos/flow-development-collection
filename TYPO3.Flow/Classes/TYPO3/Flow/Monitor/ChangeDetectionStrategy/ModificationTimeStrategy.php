@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
+namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -14,10 +14,10 @@ namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
  * Public License for more details.                                       *
  *                                                                        */
 
-use TYPO3\FLOW3\Cache\Frontend\VariableFrontend;
-use TYPO3\FLOW3\Monitor\FileMonitor;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Monitor\FileMonitor;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A change detection strategy based on modification times
@@ -25,12 +25,12 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Monitor\FileMonitor
+	 * @var \TYPO3\Flow\Monitor\FileMonitor
 	 */
 	protected $fileMonitor;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -46,9 +46,9 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	protected $modificationTimesChanged = FALSE;
 
 	/**
-	 * Injects the FLOW3_Monitor cache
+	 * Injects the Flow_Monitor cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
 	public function injectCache(VariableFrontend $cache) {

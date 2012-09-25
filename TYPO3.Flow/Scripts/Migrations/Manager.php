@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core\Migrations;
+namespace TYPO3\Flow\Core\Migrations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "FLOW3".                      *
+ * This script belongs to the Flow package "Flow".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,10 +11,10 @@ namespace TYPO3\FLOW3\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Utility\Files;
+use \TYPO3\Flow\Utility\Files;
 
 /**
- * The central hub of the code migration tool in FLOW3.
+ * The central hub of the code migration tool in Flow.
  */
 class Manager {
 
@@ -24,7 +24,7 @@ class Manager {
 	/**
 	 * @var string
 	 */
-	protected $packagesPath = FLOW3_PATH_PACKAGES;
+	protected $packagesPath = FLOW_PATH_PACKAGES;
 
 	/**
 	 * @var array
@@ -173,7 +173,7 @@ class Manager {
 			require_once($filenameAndPath);
 			$baseFilename = basename($filenameAndPath, '.php');
 			$version = substr($baseFilename, 7);
-			$classname = 'TYPO3\FLOW3\Core\Migrations\\' . $baseFilename;
+			$classname = 'TYPO3\Flow\Core\Migrations\\' . $baseFilename;
 			$this->migrations[$version] = new $classname($this, $packageKey);
 		}
 		ksort($this->migrations);

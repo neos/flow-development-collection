@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Core;
+namespace TYPO3\Flow\Tests\Unit\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Core\ApplicationContext;
+use \TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the ApplicationContext class
  */
-class ApplicationContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ApplicationContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Data provider with allowed contexts.
@@ -61,7 +61,7 @@ class ApplicationContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider forbiddenContexts
-	 * @expectedException TYPO3\FLOW3\Exception
+	 * @expectedException TYPO3\Flow\Exception
 	 */
 	public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext) {
 		new ApplicationContext($forbiddenContext);

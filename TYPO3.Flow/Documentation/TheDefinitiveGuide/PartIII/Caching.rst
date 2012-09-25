@@ -6,7 +6,7 @@ Cache Framework
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-FLOW3 offers a caching framework to cache data. The system offers a wide variety of
+TYPO3 Flow offers a caching framework to cache data. The system offers a wide variety of
 options and storage solutions for different caching needs. Each cache can be configured
 individually and can implement its own specific storage strategy.
 
@@ -97,18 +97,18 @@ System Architecture
 
 The caching framework architecture is based on these classes:
 
-``TYPO3\FLOW3\Cache\CacheFactory``
+``TYPO3\Flow\Cache\CacheFactory``
 	Factory class to instantiate caches.
 
-``TYPO3\FLOW3\Cache\CacheManager``
+``TYPO3\Flow\Cache\CacheManager``
 	Returns the cache frontend of a specific cache. Implements methods to handle cache
 	instances.
 
-``TYPO3\FLOW3\Cache\Frontend\FrontendInterface``
+``TYPO3\Flow\Cache\Frontend\FrontendInterface``
 	Interface to handle cache entries of a specific cache. Different frontends exist to
 	handle different data types.
 
-``TYPO3\FLOW3\Cache\Backend\BackendInterface``
+``TYPO3\Flow\Cache\Backend\BackendInterface``
 	Interface for different storage strategies. A set of implementations exist with
 	different characteristics.
 
@@ -118,7 +118,7 @@ Thus you deal mainly with the API defined in the ``FrontendInterface``.
 Configuration
 =============
 
-The cache framework is configured in the usual FLOW3 way through YAML files. The most
+The cache framework is configured in the usual TYPO3 Flow way through YAML files. The most
 important is *Caches.yaml*, although you may of course use *Objects.yaml* to further
 configure the way your caches are used. Caches are given a (unique) name and have three
 keys in their configuration:
@@ -143,8 +143,8 @@ any cache unless overridden:
 	# If no frontend, backend or options are specified for a cache, these values
 	# will be taken to create the cache.
 	Default:
-	  frontend: TYPO3\FLOW3\Cache\Frontend\VariableFrontend
-	  backend: TYPO3\FLOW3\Cache\Backend\FileBackend
+	  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
+	  backend: TYPO3\Flow\Cache\Backend\FileBackend
 	  backendOptions:
 	    defaultLifetime: 0
 
@@ -156,7 +156,7 @@ or package *Configuration* directory.
 *Example: Configuration to use RedisBackend for FooCache* ::
 
 	FooCache:
-	  backend: TYPO3\FLOW3\Cache\Backend\RedisBackend
+	  backend: TYPO3\Flow\Cache\Backend\RedisBackend
 	  backendOptions:
 	    database: 3
 
@@ -167,7 +167,7 @@ Frontend API
 ------------
 
 All frontends must implement the API defined in the interface
-``TYPO3\FLOW3\Cache\Frontend\FrontendInterface``. All cache operations must be done
+``TYPO3\Flow\Cache\Frontend\FrontendInterface``. All cache operations must be done
 with these methods.
 
 ``getIdentifier()``
@@ -212,10 +212,10 @@ Available Frontends
 Currently three different frontends are implemented, the main difference is the data types
 which can be stored using a specific frontend.
 
-``TYPO3\FLOW3\Cache\Frontend\StringFrontend``
+``TYPO3\Flow\Cache\Frontend\StringFrontend``
 	The string frontend accepts strings as data to be cached.
 
-``TYPO3\FLOW3\Cache\Frontend\VariableFrontend``
+``TYPO3\Flow\Cache\Frontend\VariableFrontend``
 	Strings, arrays and objects are accepted by this frontend. Data is serialized before
 	it is given to the backend. The igbinary serializer is used transparently (if
 	available in the system) which speeds up the serialization and unserialization and
@@ -224,7 +224,7 @@ which can be stored using a specific frontend.
 	string frontend should be used in this case to avoid the additional serialization done
 	by the variable frontend.
 
-``TYPO3\FLOW3\Cache\Frontend\PhpFrontend``
+``TYPO3\Flow\Cache\Frontend\PhpFrontend``
 	This is a special frontend to cache PHP files. It extends the string frontend with the
 	method ``requireOnce()`` and allows PHP files to be ``require()``'d if a cache entry
 	exists.
@@ -233,7 +233,7 @@ which can be stored using a specific frontend.
 	if a lot of reflection and dynamic PHP class construction is done. A backend to be used
 	with the PHP frontend must implement the
 
-``TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface``
+``TYPO3\Flow\Cache\Backend\PhpCapableBackendInterface``
 	Currently the file backend is the only backend which fulfills this requirement.
 
 .. note::
@@ -262,8 +262,8 @@ Common Options
 +                 + on set()                             +           +         +         +
 +-----------------+--------------------------------------+-----------+---------+---------+
 
-TYPO3\\FLOW3\\Cache\\Backend\\FileBackend
------------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\FileBackend
+----------------------------------------
 
 The file backend stores every cache entry as a single file to the file system. The
 lifetime and tags are added after the data part in the same file.
@@ -280,7 +280,7 @@ A disadvantage is that the performance of ``flushByTag()`` is bad and scales jus
 This basically means that with twice the number of entries the file backend needs double
 time to flush entries which are tagged with a given tag.
 This practically renders the file backend unusable for content caches. The reason for this
-design decision in FLOW3 is that the file backend is mainly used as AOP cache, where
+design decision in TYPO3 Flow is that the file backend is mainly used as AOP cache, where
 ``flushByTag()`` is only used if a PHP file changes. This happens very seldom on
 production systems, so get and set performance is much more important in this scenario.
 
@@ -296,8 +296,8 @@ Options
 
 The file backend has no options.
 
-TYPO3\\FLOW3\\Cache\\Backend\\PdoBackend
-----------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\PdoBackend
+---------------------------------------
 
 The PDO backend can be used as a native PDO interface to databases which are connected to
 PHP via PDO. The garbage collection is implemented for this backend and should be called
@@ -331,8 +331,8 @@ Options
 +                + connection                             +           +        +         +
 +----------------+----------------------------------------+-----------+--------+---------+
 
-TYPO3\\FLOW3\\Cache\\Backend\\RedisBackend
-------------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\RedisBackend
+-----------------------------------------
 
 `Redis`_ is a key-value storage/database. In contrast to memcached, it allows structured
 values.Data is stored in RAM but it allows persistence to disk and doesn't suffer from the
@@ -367,7 +367,7 @@ system. It is recommended to build this from the git repository. Currently redis
 
 	The redis implementation is pretty young and should be considered as experimental. The
 	redis project itself has a very high development speed and it might happen that the
-	FLOW3 implementation changes to adapt to new versions.
+	TYPO3 Flow implementation changes to adapt to new versions.
 
 Options
 ~~~~~~~
@@ -404,8 +404,8 @@ Options
 +                  + sufficient.                     +           +           +           +
 +------------------+---------------------------------+-----------+-----------+-----------+
 
-TYPO3\\FLOW3\\Cache\\Backend\\MemcachedBackend
-----------------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\MemcachedBackend
+---------------------------------------------
 
 `Memcached`_ is a simple key/value RAM database which scales across multiple servers. To
 use this backend, at least one memcache daemon must be reachable, and the PHP module
@@ -438,7 +438,7 @@ Furthermore memcache has no sort of namespacing. To distinguish entries of multi
 from each other, every entry is prefixed with the cache name. This can lead to very long
 runtimes if a big cache needs to be flushed, because every entry has to be handled
 separately and it is not possible to just truncate the whole cache with one call as this
-would clear the whole memcached data which might even hold non FLOW3 related entries.
+would clear the whole memcached data which might even hold non TYPO3 Flow related entries.
 
 Because of the mentioned drawbacks, the memcached backend should be used with care or in
 situations where cache integrity is not important or if a cache has no need to use tags at
@@ -489,8 +489,8 @@ Options
 +             + servers.                                 +           +         +         +
 +-------------+------------------------------------------+-----------+---------+---------+
 
-TYPO3\\FLOW3\\Cache\\Backend\\ApcBackend
-----------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\ApcBackend
+---------------------------------------
 
 `APC`_ is mostly known as an opcode cache for PHP source files but can be used to store
 user data as well. As main advantage the data can be shared between different PHP
@@ -505,7 +505,7 @@ from the same problems if APC runs out of memory.
 The garbage collection is currently not implemented. In its latest version, APC will fail
 to store data with a `PHP warning`_ if it runs out of memory. This may change in the
 future. Even without using the cache backend, it is advisable to increase the memory
-cache size of APC to at least 64MB when working with FLOW3, simply due to the large number
+cache size of APC to at least 64MB when working with TYPO3 Flow, simply due to the large number
 of PHP files to be cached. A minimum of 128MB is recommended when using the additional
 content cache. Cache TTL for file and user data should be set to zero (disabled) to avoid
 heavy memory fragmentation.
@@ -523,8 +523,8 @@ Options
 
 The APC backend has no options.
 
-TYPO3\\FLOW3\\Cache\\Backend\\TransientMemoryBackend
-----------------------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\TransientMemoryBackend
+---------------------------------------------------
 
 The transient memory backend stores data in a local array. It is only valid for one
 request. This becomes handy if code logic needs to do expensive calculations or must look
@@ -543,8 +543,8 @@ Options
 
 The transient memory backend has no options.
 
-TYPO3\\FLOW3\\Cache\\Backend\\NullBackend
------------------------------------------
+TYPO3\\Flow\\Cache\\Backend\\NullBackend
+----------------------------------------
 
 The null backend is a dummy backend which doesn't store any data and always returns
 ``FALSE`` on ``get()``.
@@ -567,9 +567,9 @@ Register a Cache
 To register a cache it must be configured in *Caches.yaml* of a package:::
 
 	MyPackage_FooCache:
-	  frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
+	  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
 
-In this case ``\TYPO3\FLOW3\Cache\Frontend\StringFrontend`` was chosen, but that depends
+In this case ``\TYPO3\Flow\Cache\Frontend\StringFrontend`` was chosen, but that depends
 on individual needs. This setting is usually not changed by users. Any option not given is
 inherited from the configuration of the "Default" cache. The name (``MyPackage_FooCache``
 in this case) can be chosen freely, but keep possible name clashes in mind and adopt a
@@ -591,7 +591,7 @@ configuration given above. First you need to configure the injection in *Setting
 	  properties:
 	    fooCache:
 	      object:
-	        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
+	        factoryObjectName: TYPO3\Flow\Cache\CacheManager
 	        factoryMethodName: getCache
 	        arguments:
 	          1:
@@ -602,10 +602,10 @@ This configures what will be injected into the following setter:::
 	/**
 	 * Sets the foo cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache Cache for foo data
+	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache Cache for foo data
 	 * @return void
 	 */
-	public function setFooCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
+	public function setFooCache(\TYPO3\Flow\Cache\Frontend\StringFrontend $cache) {
 		$this->fooCache = $cache;
 	}
 

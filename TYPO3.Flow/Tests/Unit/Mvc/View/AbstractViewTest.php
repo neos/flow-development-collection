@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\View;
+namespace TYPO3\Flow\Tests\Unit\Mvc\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,13 +15,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\View;
  * Testcase for the MVC AbstractView
  *
  */
-class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AbstractViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function assignAddsValueToInternalVariableCollection() {
-		$view = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
 		$view
 			->assign('foo', 'FooValue')
 			->assign('bar', 'BarValue');
@@ -35,7 +35,7 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignCanOverridePreviouslyAssignedValues() {
-		$view = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
 		$view->assign('foo', 'FooValue');
 		$view->assign('foo', 'FooValueOverridden');
 
@@ -48,7 +48,7 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignMultipleAddsValuesToInternalVariableCollection() {
-		$view = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
 		$view
 			->assignMultiple(array('foo' => 'FooValue', 'bar' => 'BarValue'))
 			->assignMultiple(array('baz' => 'BazValue'));
@@ -62,7 +62,7 @@ class AbstractViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function assignMultipleCanOverridePreviouslyAssignedValues() {
-		$view = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\View\AbstractView', array('setControllerContext', 'render'));
+		$view = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\AbstractView', array('setControllerContext', 'render'));
 		$view->assign('foo', 'FooValue');
 		$view->assignMultiple(array('foo' => 'FooValueOverridden', 'bar' => 'BarValue'));
 

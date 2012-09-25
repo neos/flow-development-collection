@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Identity Route Part
@@ -24,26 +24,26 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *     xyz:
  *       objectType: Some\Package\Domain\Model\Xyz
  *
- * @see \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping
+ * @see \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
  * @api
  */
-class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
+class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
+	 * @Flow\Inject
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\ObjectPathMappingRepository
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Mvc\Routing\ObjectPathMappingRepository
+	 * @Flow\Inject
 	 */
 	protected $objectPathMappingRepository;
 
@@ -159,7 +159,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 	 *
 	 * @param mixed $value
 	 * @return boolean TRUE if the object could be resolved and stored in $this->value, otherwise FALSE.
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InfiniteLoopException if no unique path segment could be found after 100 iterations
+	 * @throws \TYPO3\Flow\Mvc\Exception\InfiniteLoopException if no unique path segment could be found after 100 iterations
 	 */
 	protected function resolveValue($value) {
 		if (is_array($value) && isset($value['__identity'])) {
@@ -179,7 +179,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 		$pathSegmentLoopCount = 0;
 		do {
 			if ($pathSegmentLoopCount++ > 99) {
-				throw new \TYPO3\FLOW3\Mvc\Exception\InfiniteLoopException('No unique path segment could be found after ' . ($pathSegmentLoopCount - 1) . ' iterations.', 1316441798);
+				throw new \TYPO3\Flow\Mvc\Exception\InfiniteLoopException('No unique path segment could be found after ' . ($pathSegmentLoopCount - 1) . ' iterations.', 1316441798);
 			}
 			if ($uniquePathSegment !== '') {
 				$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $uniquePathSegment);
@@ -200,7 +200,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 	 *
 	 * @param mixed $object object of type $this->objectType
 	 * @return string URI representation (path segment) of the given object
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidUriPatternException
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidUriPatternException
 	 */
 	protected function createPathSegmentForObject($object) {
 		$uriPattern = $this->getUriPattern();
@@ -216,13 +216,13 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 			} else {
 				$dynamicPathSegmentParts = explode(':', $match['content']);
 				$propertyPath = $dynamicPathSegmentParts[0];
-				$dynamicPathSegment = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, $propertyPath);
+				$dynamicPathSegment = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($object, $propertyPath);
 				if (is_object($dynamicPathSegment)) {
 					if ($dynamicPathSegment instanceof \DateTime) {
 						$dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
 						$pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
 					} else {
-						throw new \TYPO3\FLOW3\Mvc\Exception\InvalidUriPatternException('Invalid uriPattern "' . $uriPattern . '" for route part "' . $this->getName() . '". Property "' . $propertyPath . '" must be of type string or \DateTime. "' . (is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)) . '" given.', 1316442409);
+						throw new \TYPO3\Flow\Mvc\Exception\InvalidUriPatternException('Invalid uriPattern "' . $uriPattern . '" for route part "' . $this->getName() . '". Property "' . $propertyPath . '" must be of type string or \DateTime. "' . (is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)) . '" given.', 1316442409);
 					}
 				} else {
 					$pathSegment .= $this->rewriteForUri($dynamicPathSegment);
@@ -240,7 +240,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 	 * @return void
 	 */
 	protected function storeObjectPathMapping($pathSegment, $identifier) {
-		$objectPathMapping = new \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping();
+		$objectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
 		$objectPathMapping->setObjectType($this->objectType);
 		$objectPathMapping->setUriPattern($this->getUriPattern());
 		$objectPathMapping->setPathSegment($pathSegment);

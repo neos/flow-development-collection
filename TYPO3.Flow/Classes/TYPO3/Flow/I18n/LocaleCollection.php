@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The LocaleCollection class contains all locales available in current
- * FLOW3 installation, and describes hierarchical relations between them.
+ * Flow installation, and describes hierarchical relations between them.
  *
  * This class maintans a hierarchical relation between locales. For
  * example, a locale "en_GB" will be a child of a locale "en".
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class LocaleCollection {
 
@@ -29,7 +29,7 @@ class LocaleCollection {
 	 *
 	 * The values are Locale objects, and the keys are these locale's tags.
 	 *
-	 * @var array<\TYPO3\FLOW3\I18n\Locale>
+	 * @var array<\TYPO3\Flow\I18n\Locale>
 	 */
 	protected $localeCollection = array();
 
@@ -40,17 +40,17 @@ class LocaleCollection {
 	 * the value which is a parent Locale object. If it's not set, there is no
 	 * parent for given locale, or no parent was searched before.
 	 *
-	 * @var array<\TYPO3\FLOW3\I18n\Locale>
+	 * @var array<\TYPO3\Flow\I18n\Locale>
 	 */
 	protected $localeParentCollection = array();
 
 	/**
 	 * Adds a locale to the collection.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to be inserted
+	 * @param \TYPO3\Flow\I18n\Locale $locale The Locale to be inserted
 	 * @return boolean FALSE when same locale was already inserted before
 	 */
-	public function addLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function addLocale(\TYPO3\Flow\I18n\Locale $locale) {
 		if (isset($this->localeCollection[(string)$locale])) {
 			return FALSE;
 		}
@@ -76,10 +76,10 @@ class LocaleCollection {
 	 * Note: to find a best-matching locale to one which doesn't exist in the
 	 * system, please use findBestMatchingLocale() method of this class.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
+	 * @param \TYPO3\Flow\I18n\Locale $locale The Locale to search parent for
+	 * @return mixed Existing \TYPO3\Flow\I18n\Locale instance or NULL on failure
 	 */
-	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function getParentLocaleOf(\TYPO3\Flow\I18n\Locale $locale) {
 		$localeIdentifier = (string)$locale;
 
 		if (!isset($this->localeCollection[$localeIdentifier])) {
@@ -107,10 +107,10 @@ class LocaleCollection {
 	 * Returns Locale object which represents one of locales installed and which
 	 * is most similar to the "template" Locale object given as parameter.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The "template" locale to be matched
-	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance on success, NULL on failure
+	 * @param \TYPO3\Flow\I18n\Locale $locale The "template" locale to be matched
+	 * @return mixed Existing \TYPO3\Flow\I18n\Locale instance on success, NULL on failure
 	 */
-	public function findBestMatchingLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function findBestMatchingLocale(\TYPO3\Flow\I18n\Locale $locale) {
 		$localeIdentifier = (string)$locale;
 
 		if (isset($this->localeCollection[$localeIdentifier])) {

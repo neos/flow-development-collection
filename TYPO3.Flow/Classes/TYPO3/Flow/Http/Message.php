@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http;
+namespace TYPO3\Flow\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,21 +11,21 @@ namespace TYPO3\FLOW3\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\ActionRequest;
-use TYPO3\FLOW3\Utility\Arrays;
-use TYPO3\FLOW3\Http\Cookie;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Http\Cookie;
 
 /**
  * Represents a HTTP message
  *
  * @api
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class Message {
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Headers
+	 * @var \TYPO3\Flow\Http\Headers
 	 */
 	protected $headers;
 
@@ -51,7 +51,7 @@ class Message {
 	/**
 	 * Returns the HTTP headers of this request
 	 *
-	 * @return \TYPO3\FLOW3\Http\Headers
+	 * @return \TYPO3\Flow\Http\Headers
 	 * @api
 	 */
 	public function getHeaders() {
@@ -99,7 +99,7 @@ class Message {
 	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
 	 * @param array|string|\DateTime $values An array of values or a single value for the specified header field
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
-	 * @return \TYPO3\FLOW3\Http\Message This message, for method chaining
+	 * @return \TYPO3\Flow\Http\Message This message, for method chaining
 	 * @api
 	 */
 	public function setHeader($name, $values, $replaceExistingHeader = TRUE) {
@@ -119,7 +119,7 @@ class Message {
 	 * Explicitly sets the content of the message body
 	 *
 	 * @param string $content The body content
-	 * @return \TYPO3\FLOW3\Http\Message This message, for method chaining
+	 * @return \TYPO3\Flow\Http\Message This message, for method chaining
 	 * @api
 	 */
 	public function setContent($content) {
@@ -144,7 +144,7 @@ class Message {
 	 * set in the respective Content-Type header will be updated by this method.
 	 *
 	 * @param string $charset A valid IANA character set identifier
-	 * @return \TYPO3\FLOW3\Http\Message This message, for method chaining
+	 * @return \TYPO3\Flow\Http\Message This message, for method chaining
 	 * @see http://www.iana.org/assignments/character-sets
 	 * @api
 	 */
@@ -168,7 +168,7 @@ class Message {
 	/**
 	 * Returns the character set of this response.
 	 *
-	 * Note that the default character in FLOW3 is UTF-8.
+	 * Note that the default character in Flow is UTF-8.
 	 *
 	 * @return string An IANA character set identifier
 	 * @api
@@ -182,7 +182,7 @@ class Message {
 	 *
 	 * This is a shortcut for $message->getHeaders()->setCookie($cookie);
 	 *
-	 * @param TYPO3\FLOW3\Http\Cookie $cookie The cookie to set
+	 * @param TYPO3\Flow\Http\Cookie $cookie The cookie to set
 	 * @return void
 	 * @api
 	 */
@@ -196,7 +196,7 @@ class Message {
 	 * This is a shortcut for $message->getHeaders()->getCookie($name);
 	 *
 	 * @param string $name Name of the cookie
-	 * @return \TYPO3\FLOW3\Http\Cookie The cookie or NULL if no such cookie exists
+	 * @return \TYPO3\Flow\Http\Cookie The cookie or NULL if no such cookie exists
 	 * @api
 	 */
 	public function getCookie($name) {

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Property\TypeConverter;
+namespace TYPO3\Flow\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Error\Error;
-use TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException;
-use TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
 
 /**
  * Converter which transforms a simple type to a float.
  *
  * This is basically done by simply casting it, except you provide some configuration options
- * which will make this converter use FLOW3's locale parsing capabilities in order to respect
+ * which will make this converter use Flow's locale parsing capabilities in order to respect
  * deviating decimal separators.
  *
  * **Advanced usage in action controller context**
@@ -29,7 +29,7 @@ use TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader;
  *
  *  public function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- *  		'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', TRUE
+ *  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', TRUE
  *  	);
  *  }
  *
@@ -41,7 +41,7 @@ use TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader;
  *
  *  public function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
- *  		'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', 'fr'
+ *  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'fr'
  *  	);
  *  }
  *
@@ -55,48 +55,48 @@ use TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader;
  * *Example setting lenient mode (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'strictMode', FALSE
+ *  	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'strictMode', FALSE
  *  );
  *
  * **Format type**
  *
  * Format type can be decimal, percent or currency; represented as class constant FORMAT_TYPE_DECIMAL,
- * FORMAT_TYPE_PERCENT or FORMAT_TYPE_CURRENCY of class TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader.
+ * FORMAT_TYPE_PERCENT or FORMAT_TYPE_CURRENCY of class TYPO3\Flow\I18n\Cldr\Reader\NumbersReader.
  * Default, if none given, is FORMAT_TYPE_DECIMAL.
  *
  * *Example setting format type `currency` (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'formatType', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+ *  	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'formatType', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
  *  );
  *
  * **Format length**
  *
  * Format type can be default, full, long, medium or short; represented as class constant FORMAT_LENGTH_DEFAULT,
- * FORMAT_LENGTH_FULL, FORMAT_LENGTH_LONG etc., of class  TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader.
+ * FORMAT_LENGTH_FULL, FORMAT_LENGTH_LONG etc., of class  TYPO3\Flow\I18n\Cldr\Reader\NumbersReader.
  * The format length has a technical background in the CLDR repository, and specifies whether a different number
  * pattern should be used. In most cases leaving this DEFAULT would be the correct choice.
  *
  * *Example setting format length (abridged)*::
  *
  *  ->setTypeConverterOption(
- *  	'TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'formatLength', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
+ *  	'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'formatLength', \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_FULL
  *  );
  *
  * @api
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class FloatConverter extends AbstractTypeConverter {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\I18n\Service
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\I18n\Parser\NumberParser
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\I18n\Parser\NumberParser
 	 */
 	protected $numberParser;
 
@@ -121,14 +121,14 @@ class FloatConverter extends AbstractTypeConverter {
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return float|\TYPO3\FLOW3\Error\Error
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return float|\TYPO3\Flow\Error\Error
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if ($source === NULL || strlen($source) === 0) {
 			return NULL;
-		} elseif (is_string($source) && $configuration instanceof \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface) {
+		} elseif (is_string($source) && $configuration instanceof \TYPO3\Flow\Property\PropertyMappingConfigurationInterface) {
 			$source = $this->parseUsingLocaleIfConfigured($source, $configuration);
 			if ($source instanceof Error) {
 				return $source;
@@ -145,10 +145,10 @@ class FloatConverter extends AbstractTypeConverter {
 	 * Tries to parse the input using the NumberParser.
 	 *
 	 * @param string $source
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return float|\TYPO3\FLOW3\Validation\Error Parsed float number or error
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return float|\TYPO3\Flow\Validation\Error Parsed float number or error
 	 */
-	protected function parseUsingLocaleIfConfigured($source, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	protected function parseUsingLocaleIfConfigured($source, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuration = $this->getConfigurationKeysAndValues($configuration, array('locale', 'strictMode', 'formatLength', 'formatType'));
 
 		if ($configuration['locale'] === NULL) {
@@ -156,13 +156,13 @@ class FloatConverter extends AbstractTypeConverter {
 		} elseif ($configuration['locale'] === TRUE) {
 			$locale = $this->localizationService->getConfiguration()->getCurrentLocale();
 		} elseif (is_string($configuration['locale'])) {
-			$locale = new \TYPO3\FLOW3\I18n\Locale($configuration['locale']);
-		} elseif ($configuration['locale'] instanceof \TYPO3\FLOW3\I18n\Locale) {
+			$locale = new \TYPO3\Flow\I18n\Locale($configuration['locale']);
+		} elseif ($configuration['locale'] instanceof \TYPO3\Flow\I18n\Locale) {
 			$locale = $configuration['locale'];
 		}
 
-		if (!($locale instanceof \TYPO3\FLOW3\I18n\Locale)) {
-			$exceptionMessage = 'Determined locale is not of type "\TYPO3\FLOW3\I18n\Locale", but of type "' . (is_object($locale) ? get_class($locale) : gettype($locale)) . '".';
+		if (!($locale instanceof \TYPO3\Flow\I18n\Locale)) {
+			$exceptionMessage = 'Determined locale is not of type "\TYPO3\Flow\I18n\Locale", but of type "' . (is_object($locale) ? get_class($locale) : gettype($locale)) . '".';
 			throw new InvalidPropertyMappingConfigurationException($exceptionMessage, 1334837413);
 		}
 
@@ -181,7 +181,7 @@ class FloatConverter extends AbstractTypeConverter {
 
 		if ($configuration['formatType'] !== NULL) {
 			$formatType = $configuration['formatType'];
-			\TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatType($formatType);
+			\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatType($formatType);
 		} else {
 			$formatType = NumbersReader::FORMAT_TYPE_DECIMAL;
 		}
@@ -204,14 +204,14 @@ class FloatConverter extends AbstractTypeConverter {
 	/**
 	 * Helper method to collect configuration for this class.
 	 *
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @param array $configurationKeys
 	 * @return array
 	 */
-	protected function getConfigurationKeysAndValues(\TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, array $configurationKeys) {
+	protected function getConfigurationKeysAndValues(\TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration, array $configurationKeys) {
 		$keysAndValues = array();
 		foreach ($configurationKeys as $configurationKey) {
-			$keysAndValues[$configurationKey] = $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\FloatConverter', $configurationKey);
+			$keysAndValues[$configurationKey] = $configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\FloatConverter', $configurationKey);
 		}
 		return $keysAndValues;
 	}

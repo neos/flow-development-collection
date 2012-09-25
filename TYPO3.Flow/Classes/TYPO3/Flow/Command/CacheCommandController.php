@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,81 +11,81 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Cli\Response;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\Response;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Command controller for managing caches
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\CacheManager
+	 * @var \TYPO3\Flow\Cache\CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\LockManager
+	 * @var \TYPO3\Flow\Core\LockManager
 	 */
 	protected $lockManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManager
+	 * @var \TYPO3\Flow\Object\ObjectManager
 	 */
 	protected $objectManager;
 
 	/**
-	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\LockManager $lockManager
+	 * @param \TYPO3\Flow\Core\LockManager $lockManager
 	 * @return void
 	 */
-	public function injectLockManager(\TYPO3\FLOW3\Core\LockManager $lockManager) {
+	public function injectLockManager(\TYPO3\Flow\Core\LockManager $lockManager) {
 		$this->lockManager = $lockManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager =  $packageManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -93,7 +93,7 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * Flush all caches
 	 *
 	 * The flush command flushes all caches (including code caches) which have been
-	 * registered with FLOW3's Cache Manager. It also removes any session data.
+	 * registered with Flow's Cache Manager. It also removes any session data.
 	 *
 	 * If fatal errors caused by a package prevent the compile time bootstrap
 	 * from running, the removal of any temporary data can be forced by specifying
@@ -104,17 +104,17 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param boolean $force Force flushing of any temporary data
 	 * @return void
-	 * @see typo3.flow3:cache:warmup
-	 * @see typo3.flow3:package:freeze
-	 * @see typo3.flow3:package:refreeze
+	 * @see typo3.flow:cache:warmup
+	 * @see typo3.flow:package:freeze
+	 * @see typo3.flow:package:refreeze
 	 */
 	public function flushCommand($force = FALSE) {
 
-			// Internal note: the $force option is evaluated early in the FLOW3
+			// Internal note: the $force option is evaluated early in the Flow
 			// bootstrap in order to reliably flush the temporary data before any
 			// other code can cause fatal errors.
 
-		$currentSessionImplementation = $this->objectManager->getClassNameByObjectName('TYPO3\FLOW3\Session\SessionInterface');
+		$currentSessionImplementation = $this->objectManager->getClassNameByObjectName('TYPO3\Flow\Session\SessionInterface');
 		$result = $currentSessionImplementation::destroyAll($this->bootstrap);
 		if ($result === NULL) {
 			$sessionDestroyMessage = ' and removed all potentially existing session data.';
@@ -143,7 +143,7 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$message = 'As code and configuration changes in these packages are not detected, the application may respond ';
 			$message .= 'unexpectedly if modifications were done anyway or the remaining code relies on these changes.' . PHP_EOL . PHP_EOL;
 			$message .= 'You may call <b>package:refreeze all</b> in order to refresh frozen packages or use the <b>--force</b> ';
-			$message .= 'option of this <b>cache:flush</b> command to flush caches if FLOW3 becomes unresponsive.' . PHP_EOL;
+			$message .= 'option of this <b>cache:flush</b> command to flush caches if Flow becomes unresponsive.' . PHP_EOL;
 			$this->outputFormatted($message, array($frozenPackages));
 		}
 
@@ -160,7 +160,7 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * rush.
 	 *
 	 * @return void
-	 * @see typo3.flow3:cache:flush
+	 * @see typo3.flow:cache:flush
 	 */
 	public function warmupCommand() {
 		$this->emitWarmupCaches();
@@ -170,7 +170,7 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Call system function
 	 *
-	 * @FLOW3\Internal
+	 * @Flow\Internal
 	 * @param integer $address
 	 * @return void
 	 */
@@ -194,7 +194,7 @@ class CacheCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * tasks for preparing the application for the first request.
 	 *
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	public function emitWarmupCaches() {
 	}

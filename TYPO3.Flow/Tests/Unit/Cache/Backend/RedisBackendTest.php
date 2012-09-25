@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
+namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the cache to redis backend
@@ -27,12 +27,12 @@ use TYPO3\FLOW3\Core\ApplicationContext;
  * The unit tests use and flush redis database numbers 0 and 1!
  *
  */
-class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * If set, the tearDown() method will flush the cache used by this unit test.
 	 *
-	 * @var \TYPO3\FLOW3\Cache\Backend\RedisBackend
+	 * @var \TYPO3\Flow\Cache\Backend\RedisBackend
 	 */
 	protected $backend = NULL;
 
@@ -69,10 +69,10 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @param array Options for the memcache backend
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
-		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-		$this->backend = new \TYPO3\FLOW3\Cache\Backend\RedisBackend(new ApplicationContext('Testing'), $backendOptions);
+		$this->backend = new \TYPO3\Flow\Cache\Backend\RedisBackend(new ApplicationContext('Testing'), $backendOptions);
 		$this->backend->setCache($mockCache);
 		$this->backend->initializeObject();
 	}
@@ -91,7 +91,7 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	public function tearDown() {
-		if ($this->backend instanceof \TYPO3\FLOW3\Cache\Backend\RedisBackend) {
+		if ($this->backend instanceof \TYPO3\Flow\Cache\Backend\RedisBackend) {
 			$this->backend->flush();
 		}
 	}
@@ -154,7 +154,7 @@ class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test Functional
-	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
+	 * @expectedException \TYPO3\Flow\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsExceptionIfDataIsNotAString() {
 		$this->setUpBackend();

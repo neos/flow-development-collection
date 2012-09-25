@@ -22,20 +22,20 @@ store a new blog once the index action is called:
 	<?php
 	namespace TYPO3\Blog\Controller;
 
-	use TYPO3\FLOW3\Annotations as FLOW3;
+	use TYPO3\Flow\Annotations as Flow;
 
 	// ...
 
-	class SetupController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+	class SetupController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		/**
-		 * @FLOW3\Inject
+		 * @Flow\Inject
 		 * @var \TYPO3\Blog\Domain\Repository\BlogRepository
 		 */
 		protected $blogRepository;
 
 		/**
-		 * @FLOW3\Inject
+		 * @Flow\Inject
 		 * @var \TYPO3\Blog\Domain\Repository\PostRepository
 		 */
 		protected $postRepository;
@@ -90,21 +90,21 @@ repositories from?
 .. code-block:: php
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Blog\Domain\Repository\BlogRepository
 	 */
 	protected $blogRepository;
 
 The property declarations for ``$blogRepository`` (and ``$postRepository``) is marked with
 an ``Inject`` annotation. This signals to the object framework: I need the blog
-repository here, please make sure it's stored in this member variable. In effect FLOW3
+repository here, please make sure it's stored in this member variable. In effect TYPO3 Flow
 will inject the blog repository into the ``$blogRepository`` property right after your
 controller has been instantiated. And because the blog repository's scope is *singleton*
 [#]_, the framework will always inject the same instance of the repository.
 
 There's a lot more to discover about **Dependency Injection** and we recommend
 that you read the whole chapter about objects in the
-`FLOW3 guide <http://flow3.typo3.org/documentation/guide>`_ once you start with
+`TYPO3 Flow guide <http://flow.typo3.org/documentation/guide>`_ once you start with
 your own coding.
 
 To create the required database tables we now use the command line support to generate the
@@ -112,7 +112,7 @@ tables for our package:
 
 .. code-block:: none
 
-	myhost:tutorial johndoe$ ./flow3 doctrine:update
+	myhost:tutorial johndoe$ ./flow doctrine:update
 
 Try out the ``SetupController`` by accessing
 http://dev.tutorial.local/typo3.blog/setup/index. If all went right you should see the
@@ -150,11 +150,11 @@ Now let us add some more code to *.../Classes/Controller/PostController.php*:
 
 	...
 
-	class PostController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+	class PostController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		/**
 		 * @var \TYPO3\Blog\Domain\Repository\BlogRepository
-		 * @FLOW3\Inject
+		 * @Flow\Inject
 		 */
 		protected $blogRepository;
 
@@ -226,7 +226,7 @@ http://dev.tutorial.local/typo3.blog/post/create:
 
 .. image:: /Images/GettingStarted/CreateActionWithoutArgument.png
 
-FLOW3 analyzed the new method signature and automatically registered ``$post``
+TYPO3 Flow analyzed the new method signature and automatically registered ``$post``
 as a required argument for ``createAction``. Because no such argument was
 passed to the action, the controller exits with an error.
 

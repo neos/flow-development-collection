@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Log\Backend;
+namespace TYPO3\Flow\Log\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Log\Backend;
  *
  * @api
  */
-class NullBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
+class NullBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 
 	/**
 	 * Does nothing

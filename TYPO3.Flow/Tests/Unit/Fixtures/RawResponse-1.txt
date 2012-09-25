@@ -1,7 +1,7 @@
 HTTP/1.1 200 OK
 Server: Apache/2.2.17 (Ubuntu)
 X-Powered-By: PHP/5.3.5-1ubuntu7.2
-X-FLOW3-Powered: FLOW3/1.2
+X-Flow-Powered: Flow/1.2
 Cache-Control: public, s-maxage=600
 Vary: Accept-Encoding
 Content-Encoding: gzip

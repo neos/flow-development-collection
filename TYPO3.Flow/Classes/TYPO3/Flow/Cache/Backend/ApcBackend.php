@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Backend;
+namespace TYPO3\Flow\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -29,8 +29,8 @@ namespace TYPO3\FLOW3\Cache\Backend;
  *
  * Each key is prepended with a prefix. By default prefix consists from two parts
  * separated by underscore character and ends in yet another underscore character:
- * - "FLOW3"
- * - MD5 of SAPI type, path to FLOW3 and user running FLOW3
+ * - "Flow"
+ * - MD5 of SAPI type, path to Flow and user running Flow
  * This prefix makes sure that keys from the different installations do not
  * conflict.
  *
@@ -47,13 +47,13 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	/**
 	 * Constructs this backend
 	 *
-	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
+	 * @param \TYPO3\Flow\Core\ApplicationContext $context Flow's application context
 	 * @param array $options Configuration options - unused here
-	 * @throws \TYPO3\FLOW3\Cache\Exception
+	 * @throws \TYPO3\Flow\Cache\Exception
 	 */
-	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
+	public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array()) {
 		if (!extension_loaded('apc')) {
-			throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
+			throw new \TYPO3\Flow\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
 		}
 		parent::__construct($context, $options);
 	}
@@ -61,14 +61,14 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	/**
 	 * Initializes the identifier prefix when setting the cache.
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache
 	 * @return void
 	 */
-	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$pathHash = substr(md5(FLOW3_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context), 0, 12);
-		$this->identifierPrefix = 'FLOW3_' . $pathHash;
+		$pathHash = substr(md5(FLOW_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context), 0, 12);
+		$this->identifierPrefix = 'Flow_' . $pathHash;
 	}
 
 	/**
@@ -79,17 +79,17 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
+	 * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
-	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
+	 * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException if $data is not a string
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) {
-			throw new \TYPO3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
 		}
 		if (!is_string($data)) {
-			throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
+			throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
 		}
 
 		$tags[] = '%APCBE%' . $this->cacheIdentifier;
@@ -100,7 +100,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 			$this->removeIdentifierFromAllTags($entryIdentifier);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
 		} else {
-			throw new \TYPO3\FLOW3\Cache\Exception('Could not set value.', 1232986877);
+			throw new \TYPO3\Flow\Cache\Exception('Could not set value.', 1232986877);
 		}
 	}
 
@@ -179,12 +179,12 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Cache\Exception
+	 * @throws \TYPO3\Flow\Cache\Exception
 	 * @api
 	 */
 	public function flush() {
-		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) {
-			throw new \TYPO3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\Flow\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
 		}
 		$this->flushByTag('%APCBE%' . $this->cacheIdentifier);
 	}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\Flow\Tests\Unit\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Error\Debugger;
+use TYPO3\Flow\Error\Debugger;
 
 /**
  * Testcase for the Debugger
  *
  */
-class DebuggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DebuggerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test

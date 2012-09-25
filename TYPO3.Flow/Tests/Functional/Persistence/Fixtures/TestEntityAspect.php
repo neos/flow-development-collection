@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,21 +11,21 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An aspect for testing aop within entities
  *
- * @FLOW3\Aspect
+ * @Flow\Aspect
  */
 class TestEntityAspect {
 
 	/**
-	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity->sayHello())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
+	 * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity->sayHello())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @return void
 	 */
-	public function concreteMethodInAbstractClassAdvice(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function concreteMethodInAbstractClassAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 		return $result . ' Andi!';
 	}

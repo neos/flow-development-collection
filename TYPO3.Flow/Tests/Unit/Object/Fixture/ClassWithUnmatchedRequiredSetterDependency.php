@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\Flow\Tests\Object\Fixture;
 
 class ClassWithUnmatchedRequiredSetterDependency {
 

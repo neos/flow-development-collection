@@ -1,13 +1,13 @@
 #
-# FLOW3 context setting
+# TYPO3 Flow context setting
 #
 
 # You can specify a default context by activating this option:
-# SetEnv FLOW3_CONTEXT Production
+# SetEnv FLOW_CONTEXT Production
 
-# If the root path is not the parent of the Web directory, FLOW3's root path must be
-# specified manually:
-# SetEnv FLOW3_ROOTPATH /var/www/myapp/
+# If the root path is not the parent of the Web directory,
+# TYPO3 Flow's root path must be specified manually:
+# SetEnv FLOW_ROOTPATH /var/www/myapp/
 
 #
 # mod_rewrite configuration
@@ -18,7 +18,7 @@
 	RewriteEngine On
 
 	# Set flag so we know URL rewriting is available
-	SetEnv FLOW3_REWRITEURLS 1
+	SetEnv FLOW_REWRITEURLS 1
 
 	# You will have to change the path in the following option if you
 	# experience problems while your installation is located in a subdirectory
@@ -31,7 +31,7 @@
 	# Stop rewrite process if the path points to a static file anyway
 	RewriteCond %{REQUEST_FILENAME} -f [OR]
 	RewriteCond %{REQUEST_FILENAME} -l [OR]
-	RewriteCond %{REQUEST_FILENAME} -d 
+	RewriteCond %{REQUEST_FILENAME} -d
 	RewriteRule .* - [L]
 
 	# Perform rewriting of persistent private resources
@@ -40,7 +40,7 @@
 	# Perform rewriting of persitent resource files
 	RewriteRule ^(_Resources/Persistent/.{40})/.+(\..+) $1$2 [L]
 
-	# Make sure that not existing resources don't execute FLOW3
+	# Make sure that not existing resources don't execute TYPO3 Flow
 	RewriteRule ^_Resources/.* - [L]
 
 	# Continue only if the file/symlink/directory does not exist
@@ -62,4 +62,4 @@
 
 </IfModule>
 
-ErrorDocument 500 "<h1>Application Error</h1><p>The FLOW3 application could not be launched.</p>"
+ErrorDocument 500 "<h1>Application Error</h1><p>The TYPO3 Flow application could not be launched.</p>"

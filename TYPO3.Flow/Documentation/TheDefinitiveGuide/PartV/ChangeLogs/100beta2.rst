@@ -7,7 +7,7 @@
 
 * Authored on Mon Sep 12 11:07:54 2011 +0200 by Karsten Dambekalns
 * Committed on Mon Sep 12 11:09:06 2011 +0200 by Karsten Dambekalns
-* Commit: `439d2e2 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=439d2e22e2a05689a1c69c1413f8d313d2f08bcb>`_
+* Commit: `439d2e2 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=439d2e22e2a05689a1c69c1413f8d313d2f08bcb>`_
 
 
 * Change-Id: `I6c67fdc1d55171b717791f7d558b41209653793c <https://review.typo3.org/#q,I6c67fdc1d55171b717791f7d558b41209653793c,n,z>`_
@@ -21,7 +21,7 @@
 
 * Authored on Thu Sep 1 15:16:56 2011 +0200 by Karsten Dambekalns
 * Committed on Fri Sep 9 15:14:28 2011 +0200 by Robert Lemke
-* Commit: `cb1ff88 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=cb1ff889fb940b4f8efb3f91677b5379ca43d12b>`_
+* Commit: `cb1ff88 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=cb1ff889fb940b4f8efb3f91677b5379ca43d12b>`_
 
 In type hints as well as @var and @param annotations it is better to
 use the Collection interface instead of concrete implementations like
@@ -42,7 +42,7 @@ to create an instance for Collection, it will create an ArrayCollection.
 
 * Authored on Fri Sep 9 13:20:23 2011 +0200 by Robert Lemke
 * Committed on Fri Sep 9 14:03:19 2011 +0200 by Karsten Dambekalns
-* Commit: `bdcb242 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=bdcb2420ac97d330accc646042a1b07589c44307>`_
+* Commit: `bdcb242 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=bdcb2420ac97d330accc646042a1b07589c44307>`_
 
 The TypeHandling::parseType() function will now throw a more specific
 exception which allows other code parts to display more meaningful
@@ -59,7 +59,7 @@ error messages if a variable type was declared wrongly.
 
 * Authored on Fri Sep 9 12:05:52 2011 +0200 by Robert Lemke
 * Committed on Fri Sep 9 12:05:52 2011 +0200 by Robert Lemke
-* Commit: `f7cc2c8 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=f7cc2c8861248157e89aa0d93a52c465b2bfa108>`_
+* Commit: `f7cc2c8 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=f7cc2c8861248157e89aa0d93a52c465b2bfa108>`_
 
 This changes the behavior of the setfilerpermissions
 command. Instead of using sudo right away, the bash
@@ -78,7 +78,7 @@ displays a message that it should.
 
 * Authored on Fri Sep 9 11:47:55 2011 +0200 by Robert Lemke
 * Committed on Fri Sep 9 11:47:55 2011 +0200 by Robert Lemke
-* Commit: `7874d79 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=7874d79e40b729444995987ce7a67bc243b0a964>`_
+* Commit: `7874d79 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=7874d79e40b729444995987ce7a67bc243b0a964>`_
 
 If the compile run fails, FLOW3 will display a long exception
 message stating that either the PHP binary could not be executed
@@ -99,7 +99,7 @@ PHP binary path.
 
 * Authored on Fri Sep 9 10:57:37 2011 +0200 by Karsten Dambekalns
 * Committed on Fri Sep 9 10:58:33 2011 +0200 by Karsten Dambekalns
-* Commit: `6da0628 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=6da0628400724c467a2560c680eda34f535f5e54>`_
+* Commit: `6da0628 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=6da0628400724c467a2560c680eda34f535f5e54>`_
 
 The name for the CSRF token did not follow our camelCase conventions.
 
@@ -115,7 +115,7 @@ The name for the CSRF token did not follow our camelCase conventions.
 
 * Authored on Wed Sep 7 15:47:39 2011 +0200 by Karsten Dambekalns
 * Committed on Fri Sep 9 10:25:26 2011 +0200 by Karsten Dambekalns
-* Commit: `883d023 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=883d02307c9f953476f31e775afb63fedaa89f17>`_
+* Commit: `883d023 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=883d02307c9f953476f31e775afb63fedaa89f17>`_
 
 
 * Change-Id: `I1fe74815ebf7554ad271f347200ab0dcfebc2edb <https://review.typo3.org/#q,I1fe74815ebf7554ad271f347200ab0dcfebc2edb,n,z>`_
@@ -128,7 +128,7 @@ The name for the CSRF token did not follow our camelCase conventions.
 
 * Authored on Thu Sep 8 14:51:05 2011 +0200 by Robert Lemke
 * Committed on Thu Sep 8 17:06:02 2011 +0200 by Robert Lemke
-* Commit: `15d6918 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=15d69186af3d0fdffbc45976aec3d85e31b9a96b>`_
+* Commit: `15d6918 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=15d69186af3d0fdffbc45976aec3d85e31b9a96b>`_
 
 This introduces support for styled output in the CLI response
 and some brushed up help functionality.
@@ -145,7 +145,7 @@ and some brushed up help functionality.
 
 * Authored on Thu Sep 8 15:03:24 2011 +0200 by Robert Lemke
 * Committed on Thu Sep 8 17:01:32 2011 +0200 by Bastian Waidelich
-* Commit: `79164d7 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=79164d7569f588b1b39e186fdfb5d66416b2447b>`_
+* Commit: `79164d7 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=79164d7569f588b1b39e186fdfb5d66416b2447b>`_
 
 This change set contains several fixes and enhancements of the doc
 comments of FLOW3's commands. These are mostly adjustments to the new
@@ -163,10 +163,10 @@ CLI help support.
 
 * Authored on Mon May 30 20:44:30 2011 +0200 by Lienhart Woitok
 * Committed on Thu Sep 8 15:50:16 2011 +0200 by Andreas Förthner
-* Commit: `ea09313 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=ea0931397852d76e99d6fa5a2543b49c6c207029>`_
+* Commit: `ea09313 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=ea0931397852d76e99d6fa5a2543b49c6c207029>`_
 
 If a method is overridden in a subclass that calls its advice parent class,
-but no proxy method is generated for this method, invokeJoinPoint has to 
+but no proxy method is generated for this method, invokeJoinPoint has to
 call invokeJoinPoint of the parent class. This has to be done regardless
 of the method being in advice mode or not.
 
@@ -181,7 +181,7 @@ of the method being in advice mode or not.
 
 * Authored on Tue Sep 6 16:17:17 2011 +0200 by Andreas Förthner
 * Committed on Thu Sep 8 14:20:54 2011 +0200 by Andreas Förthner
-* Commit: `2e39bf1 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=2e39bf1491f141ebe548a4db936a3733760d34ed>`_
+* Commit: `2e39bf1 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2e39bf1491f141ebe548a4db936a3733760d34ed>`_
 
 * Resolves: `#27015 <http://forge.typo3.org/issues/27015>`_
 
@@ -195,7 +195,7 @@ of the method being in advice mode or not.
 
 * Authored on Wed May 25 17:29:09 2011 +0200 by Andreas Förthner
 * Committed on Thu Sep 8 14:19:59 2011 +0200 by Andreas Förthner
-* Commit: `5fdd10a <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=5fdd10aff7bcc561dcd8df94004299c41cb26dcc>`_
+* Commit: `5fdd10a <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=5fdd10aff7bcc561dcd8df94004299c41cb26dcc>`_
 
 By this change the method is not limited to simply arrays
 anymore. Instead objects implementing \ArrayAccess are
@@ -212,7 +212,7 @@ also accepted.
 
 * Authored on Tue Sep 6 09:21:34 2011 +0200 by Sebastian Kurfuerst
 * Committed on Thu Sep 8 10:26:17 2011 +0200 by Karsten Dambekalns
-* Commit: `2d82dad <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=2d82dad18baef6741acb0d020b81b46059e18271>`_
+* Commit: `2d82dad <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2d82dad18baef6741acb0d020b81b46059e18271>`_
 
 In case a validation error happened, a forward() is done to the referring
 action, which then re-displays the form.
@@ -232,7 +232,7 @@ was broken.
 
 * Authored on Mon Sep 5 15:42:37 2011 +0200 by Robert Lemke
 * Committed on Wed Sep 7 15:54:24 2011 +0200 by Robert Lemke
-* Commit: `b207a55 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=b207a55abfc59eb8c691eee60d864c7394b5a66b>`_
+* Commit: `b207a55 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=b207a55abfc59eb8c691eee60d864c7394b5a66b>`_
 
 This adds a new command package:import which allows for importing
 a package from git.typo3.org. Currently only packages of the TYPO3
@@ -254,11 +254,11 @@ future versions of FLOW3.
 
 * Authored on Tue Sep 6 09:41:46 2011 +0200 by Sebastian Kurfuerst
 * Committed on Wed Sep 7 14:34:08 2011 +0200 by Karsten Dambekalns
-* Commit: `b47d1c6 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=b47d1c61aaaf67c6d9c3379d87fe132ff7bded80>`_
+* Commit: `b47d1c6 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=b47d1c61aaaf67c6d9c3379d87fe132ff7bded80>`_
 
 As described in the Property Mapper reference manual, DateTimeConverter should
 only throw exceptions when detecting *developer failures*. If *user failures*
-happen, such as invalid input, an \TYPO3\FLOW3\Error\Error object should instead
+happen, such as invalid input, an \TYPO3\Flow\Error\Error object should instead
 be returned, as this is shown to the end-user in a friendly way, and the original
 form is redisplayed.
 
@@ -280,7 +280,7 @@ in your model.
 
 * Authored on Thu Sep 1 17:55:48 2011 +0200 by Karsten Dambekalns
 * Committed on Wed Sep 7 11:04:54 2011 +0200 by Karsten Dambekalns
-* Commit: `8be02b2 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=8be02b2e553215e96542ff6badf2ac6c47ae7065>`_
+* Commit: `8be02b2 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=8be02b2e553215e96542ff6badf2ac6c47ae7065>`_
 
 Adds a leading backslash to a @var annotation and replaces one create()
 call on the ObjectManager by use of the new keyword.
@@ -299,7 +299,7 @@ a fixed unit test
 
 * Authored on Tue Sep 6 16:05:24 2011 +0200 by Christopher Hlubek
 * Committed on Tue Sep 6 16:05:24 2011 +0200 by Christopher Hlubek
-* Commit: `3659434 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=3659434563683fd0f865e06a29c558eaf966656b>`_
+* Commit: `3659434 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=3659434563683fd0f865e06a29c558eaf966656b>`_
 
 
 * Change-Id: `If6b952e484007ce035dd27aa4cae1010498e5ae0 <https://review.typo3.org/#q,If6b952e484007ce035dd27aa4cae1010498e5ae0,n,z>`_
@@ -312,7 +312,7 @@ a fixed unit test
 
 * Authored on Thu Apr 28 15:38:25 2011 +0200 by Karsten Dambekalns
 * Committed on Tue Sep 6 15:11:50 2011 +0200 by Christopher Hlubek
-* Commit: `9740863 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=974086360faccb442d270fb7a8370f94ccebce1b>`_
+* Commit: `9740863 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=974086360faccb442d270fb7a8370f94ccebce1b>`_
 
 Support for userland access to the framework-provided technical entity
 identifier was built for a specific use case not needed anymore, and the
@@ -331,7 +331,7 @@ identifier of an object from a custom property.
 
 * Authored on Mon Sep 5 16:52:58 2011 +0200 by Robert Lemke
 * Committed on Tue Sep 6 11:48:32 2011 +0200 by Robert Lemke
-* Commit: `2b52d22 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=2b52d22ee35312440284a09ed3557bd20c82ade7>`_
+* Commit: `2b52d22 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2b52d22ee35312440284a09ed3557bd20c82ade7>`_
 
 The interactive shell (flow3:core:shell) could not launch
 the sub process anymore because the name of the FLOW3 script
@@ -353,7 +353,7 @@ should work again.
 
 * Authored on Fri Jun 17 09:55:13 2011 +0200 by Andreas Förthner
 * Committed on Tue Sep 6 11:23:04 2011 +0200 by Andreas Förthner
-* Commit: `6c490de <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=6c490dec7bdd261a867dabd58bf855bebdbb25b4>`_
+* Commit: `6c490de <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=6c490dec7bdd261a867dabd58bf855bebdbb25b4>`_
 
 By this, persisted entities that are referenced
 in the session are (de)serialized as lazy loading
@@ -372,7 +372,7 @@ to serializing the original entities.
 
 * Authored on Fri Jun 17 09:54:04 2011 +0200 by Andreas Förthner
 * Committed on Tue Sep 6 11:22:53 2011 +0200 by Andreas Förthner
-* Commit: `ba3a473 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=ba3a4738cc1dad2b2fef2e17cc5e097834e650e0>`_
+* Commit: `ba3a473 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=ba3a4738cc1dad2b2fef2e17cc5e097834e650e0>`_
 
 Lazy loading can be switched on by a new optional parameter.
 
@@ -388,7 +388,7 @@ Lazy loading can be switched on by a new optional parameter.
 
 * Authored on Mon Sep 5 15:23:28 2011 +0200 by Robert Lemke
 * Committed on Tue Sep 6 11:10:46 2011 +0200 by Robert Lemke
-* Commit: `df34272 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=df34272c15e2a8d04ef0f15a896d1e13865cd883>`_
+* Commit: `df34272 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=df34272c15e2a8d04ef0f15a896d1e13865cd883>`_
 
 Most package:* commands and sometimes also the flow3:cache:flush
 command issued a fatal error. The actual command was executed
@@ -411,7 +411,7 @@ Revert "[TASK] Two small code (style) fixes"
 
 * Authored on Tue Sep 6 08:43:37 2011 +0200 by Robert Lemke
 * Committed on Tue Sep 6 08:43:37 2011 +0200 by Gerrit Code Review
-* Commit: `593ef34 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=593ef34f10168729c489bdee31d8d1dd99ec670a>`_
+* Commit: `593ef34 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=593ef34f10168729c489bdee31d8d1dd99ec670a>`_
 
 Breaks unit tests.
 
@@ -424,7 +424,7 @@ This reverts commit 784dae35ce078702ca088a85e569c3b44bbe74cb
 
 * Authored on Mon Sep 5 18:21:38 2011 +0200 by Robert Lemke
 * Committed on Mon Sep 5 18:21:38 2011 +0200 by Robert Lemke
-* Commit: `c850b2a <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=c850b2a033dcf382bf4607a95af29ecf03b99329>`_
+* Commit: `c850b2a <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=c850b2a033dcf382bf4607a95af29ecf03b99329>`_
 
 This fixes a bug caused by the Configuration Builder which resulted
 in settings of a wrong package being injected into classes under
@@ -442,7 +442,7 @@ certain circumstances.
 
 * Authored on Mon Sep 5 12:40:00 2011 +0200 by Christopher Hlubek
 * Committed on Mon Sep 5 12:40:35 2011 +0200 by Christopher Hlubek
-* Commit: `4dcf8f3 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=4dcf8f3e315e35c130db96ffda3b334cc1fbecaf>`_
+* Commit: `4dcf8f3 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4dcf8f3e315e35c130db96ffda3b334cc1fbecaf>`_
 
 The functional tests for Doctrine should only be run if the Doctrine
 persistence manager is actually configured. Otherwise this causes
@@ -458,7 +458,7 @@ the functional tests not to run with alternative implementations.
 
 * Authored on Fri Sep 2 18:44:16 2011 +0200 by Ferdinand Kuhl
 * Committed on Mon Sep 5 12:02:19 2011 +0200 by Robert Lemke
-* Commit: `1cf1c89 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=1cf1c8974f03f032b9d51ae36c219fb64690b6db>`_
+* Commit: `1cf1c89 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=1cf1c8974f03f032b9d51ae36c219fb64690b6db>`_
 
 By default, FLOW3 makes sure to convert any error into an exception
 so that even notices don't go undiscovered.
@@ -484,7 +484,7 @@ operator
 
 * Authored on Fri Sep 2 10:56:38 2011 +0200 by Karsten Dambekalns
 * Committed on Fri Sep 2 10:57:04 2011 +0200 by Karsten Dambekalns
-* Commit: `fcfd801 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=fcfd801d9521ddb7da46c9ae6d0c27fb3e6ce911>`_
+* Commit: `fcfd801 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=fcfd801d9521ddb7da46c9ae6d0c27fb3e6ce911>`_
 
 
 * Change-Id: `I21c89f0d801a2d92754a727805df44864f49cbf7 <https://review.typo3.org/#q,I21c89f0d801a2d92754a727805df44864f49cbf7,n,z>`_
@@ -497,7 +497,7 @@ operator
 
 * Authored on Fri Sep 2 10:08:37 2011 +0200 by Karsten Dambekalns
 * Committed on Fri Sep 2 10:10:31 2011 +0200 by Karsten Dambekalns
-* Commit: `aad9e63 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=aad9e634f78978b3967caa784f089cdfb73d5922>`_
+* Commit: `aad9e63 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=aad9e634f78978b3967caa784f089cdfb73d5922>`_
 
 There was a parameter given to sys_get_temp_dir(), but it accepts none.
 
@@ -513,7 +513,7 @@ There was a parameter given to sys_get_temp_dir(), but it accepts none.
 
 * Authored on Fri Sep 2 08:28:00 2011 +0200 by Sebastian Kurfuerst
 * Committed on Fri Sep 2 08:31:04 2011 +0200 by Sebastian Kurfuerst
-* Commit: `98f877b <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=98f877bb3524bff1db2c991b494d1cc10682c2ad>`_
+* Commit: `98f877b <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=98f877bb3524bff1db2c991b494d1cc10682c2ad>`_
 
 When calling the ReflectionService with a class name for a doctrine proxy,
 really weird side-effects can happen, as the Doctrine Proxy class is then
@@ -535,7 +535,7 @@ the issue from appearing in the first place.
 
 * Authored on Thu Sep 1 11:05:41 2011 +0200 by Karsten Dambekalns
 * Committed on Thu Sep 1 18:00:56 2011 +0200 by Karsten Dambekalns
-* Commit: `45cacad <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=45cacad12b8a14886e34dfeb64d9db61a34acace>`_
+* Commit: `45cacad <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=45cacad12b8a14886e34dfeb64d9db61a34acace>`_
 
 The generic persistence PDO backend is no longer maintained,
 there is no use for it. If you want to target a RDBMS, use the
@@ -553,7 +553,7 @@ Doctrine 2 integration.
 
 * Authored on Wed Aug 31 18:01:25 2011 +0200 by Karsten Dambekalns
 * Committed on Thu Sep 1 18:00:50 2011 +0200 by Karsten Dambekalns
-* Commit: `a149b64 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=a149b6426d4519cd246706518498ce7286b69809>`_
+* Commit: `a149b64 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=a149b6426d4519cd246706518498ce7286b69809>`_
 
 This changes makes checkPropertyValue() return the value it found, as
 expected in collectProperties() - both methods in AbstractBackend.
@@ -570,7 +570,7 @@ expected in collectProperties() - both methods in AbstractBackend.
 
 * Authored on Thu Sep 1 17:55:48 2011 +0200 by Karsten Dambekalns
 * Committed on Thu Sep 1 18:00:01 2011 +0200 by Karsten Dambekalns
-* Commit: `784dae3 <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=784dae35ce078702ca088a85e569c3b44bbe74cb>`_
+* Commit: `784dae3 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=784dae35ce078702ca088a85e569c3b44bbe74cb>`_
 
 Adds a leading backslash to a @var annotation and replaces one create()
 call on the ObjectManager by use of the new keyword.
@@ -586,7 +586,7 @@ call on the ObjectManager by use of the new keyword.
 
 * Authored on Tue Aug 30 19:46:02 2011 +0200 by Christopher Hlubek
 * Committed on Wed Aug 31 10:44:13 2011 +0200 by Christopher Hlubek
-* Commit: `afe640d <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=afe640d9ed35d1e005aabac542ee0824c007b50c>`_
+* Commit: `afe640d <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=afe640d9ed35d1e005aabac542ee0824c007b50c>`_
 
 This change fixes the introduces changedObjects properties by adding
 an additional collection and changes the abstract backend to ignore
@@ -604,7 +604,7 @@ object.
 
 * Authored on Tue Aug 30 18:11:07 2011 +0200 by Christian Müller
 * Committed on Tue Aug 30 18:11:07 2011 +0200 by Christian Müller
-* Commit: `ba62d0b <http://git.typo3.org/FLOW3/Packages/FLOW3.git?a=commit;h=ba62d0b91bb5140edc619332e0856deb73584442>`_
+* Commit: `ba62d0b <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=ba62d0b91bb5140edc619332e0856deb73584442>`_
 
 The ActionController should use the correct controller API in
 getErrorFlashMessage() so that arguments can be rendered.

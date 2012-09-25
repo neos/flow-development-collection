@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Object\Proxy;
+namespace TYPO3\Flow\Tests\Unit\Object\Proxy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,62 +14,62 @@ namespace TYPO3\FLOW3\Tests\Unit\Object\Proxy;
 /**
  *
  */
-class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CompilerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @return array
 	 */
 	public function annotationsAndStrings() {
-		$sessionWithAutoStart = new \TYPO3\FLOW3\Annotations\Session();
+		$sessionWithAutoStart = new \TYPO3\Flow\Annotations\Session();
 		$sessionWithAutoStart->autoStart = TRUE;
 		return array(
 			array(
-				new \TYPO3\FLOW3\Annotations\Signal(array()),
-				'@\TYPO3\FLOW3\Annotations\Signal'
+				new \TYPO3\Flow\Annotations\Signal(array()),
+				'@\TYPO3\Flow\Annotations\Signal'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Scope(array('value' => 'singleton')),
-				'@\TYPO3\FLOW3\Annotations\Scope("singleton")'
+				new \TYPO3\Flow\Annotations\Scope(array('value' => 'singleton')),
+				'@\TYPO3\Flow\Annotations\Scope("singleton")'
 			),
 			array(
 				new FooBarAnnotation(),
-				'@\TYPO3\FLOW3\Tests\Unit\Object\Proxy\FooBarAnnotation(1.2)'
+				'@\TYPO3\Flow\Tests\Unit\Object\Proxy\FooBarAnnotation(1.2)'
 			),
 			array(
 				new FooBarAnnotation(new FooBarAnnotation()),
-				'@\TYPO3\FLOW3\Tests\Unit\Object\Proxy\FooBarAnnotation(@\TYPO3\FLOW3\Tests\Unit\Object\Proxy\FooBarAnnotation(1.2))'
+				'@\TYPO3\Flow\Tests\Unit\Object\Proxy\FooBarAnnotation(@\TYPO3\Flow\Tests\Unit\Object\Proxy\FooBarAnnotation(1.2))'
 			),
 			array(
 				$sessionWithAutoStart,
-				'@\TYPO3\FLOW3\Annotations\Session(autoStart=true)'
+				'@\TYPO3\Flow\Annotations\Session(autoStart=true)'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Session(),
-				'@\TYPO3\FLOW3\Annotations\Session'
+				new \TYPO3\Flow\Annotations\Session(),
+				'@\TYPO3\Flow\Annotations\Session'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('value' => 'foo1', 'type' => 'bar1')),
-				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", argumentName="foo1")'
+				new \TYPO3\Flow\Annotations\Validate(array('value' => 'foo1', 'type' => 'bar1')),
+				'@\TYPO3\Flow\Annotations\Validate(type="bar1", argumentName="foo1")'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('minimum' => 2))),
-				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "minimum"=2 })'
+				new \TYPO3\Flow\Annotations\Validate(array('type' => 'bar1', 'options' => array('minimum' => 2))),
+				'@\TYPO3\Flow\Annotations\Validate(type="bar1", options={ "minimum"=2 })'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => array('bar' => 'baz')))),
-				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"={ "bar"="baz" } })'
+				new \TYPO3\Flow\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => array('bar' => 'baz')))),
+				'@\TYPO3\Flow\Annotations\Validate(type="bar1", options={ "foo"={ "bar"="baz" } })'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba', 'bar' => TRUE))),
-				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba", "bar"=true })'
+				new \TYPO3\Flow\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba', 'bar' => TRUE))),
+				'@\TYPO3\Flow\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba", "bar"=true })'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array(new \TYPO3\FLOW3\Annotations\Inject(array())))),
-				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ @\TYPO3\FLOW3\Annotations\Inject })'
+				new \TYPO3\Flow\Annotations\Validate(array('type' => 'bar1', 'options' => array(new \TYPO3\Flow\Annotations\Inject(array())))),
+				'@\TYPO3\Flow\Annotations\Validate(type="bar1", options={ @\TYPO3\Flow\Annotations\Inject })'
 			),
 			array(
-				new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array(new \TYPO3\FLOW3\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba')))))),
-				'@\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ @\TYPO3\FLOW3\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba" }) })'
+				new \TYPO3\Flow\Annotations\Validate(array('type' => 'bar1', 'options' => array(new \TYPO3\Flow\Annotations\Validate(array('type' => 'bar1', 'options' => array('foo' => 'hubbabubba')))))),
+				'@\TYPO3\Flow\Annotations\Validate(type="bar1", options={ @\TYPO3\Flow\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba" }) })'
 			),
 		);
 	}
@@ -79,7 +79,7 @@ class CompilerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function renderAnnotationRendersCorrectly($annotation, $expectedString) {
-		$this->assertEquals($expectedString, \TYPO3\FLOW3\Object\Proxy\Compiler::renderAnnotation($annotation));
+		$this->assertEquals($expectedString, \TYPO3\Flow\Object\Proxy\Compiler::renderAnnotation($annotation));
 	}
 
 }

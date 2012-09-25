@@ -20,7 +20,7 @@ commands that may be available, use::
 The following reference was automatically generated from code on 2012-07-18
 
 
-Package *TYPO3.FLOW3*
+Package *TYPO3.Flow*
 ---------------------
 
 
@@ -112,7 +112,7 @@ Related commands
 The command shows the configuration of the current context as it is used by FLOW3 itself.
 You can specify the configuration type and path if you want to show parts of the configuration.
 
-./flow3 configuration:show --type Settings --path TYPO3.FLOW3.persistence
+./flow3 configuration:show --type Settings --path TYPO3.Flow.persistence
 
 
 
@@ -122,7 +122,7 @@ Options
 ``--type``
   Configuration type to show
 ``--path``
-  path to subconfiguration separated by "." like "TYPO3.FLOW3
+  path to subconfiguration separated by "." like "TYPO3.Flow
 
 
 
@@ -133,15 +133,15 @@ Options
 
 **Validate the given configuration**
 
-./flow3 configuration:validate --type Settings --path TYPO3.FLOW3.persistence
+./flow3 configuration:validate --type Settings --path TYPO3.Flow.persistence
 
 The schemas are searched in the path "Resources/Private/Schema" of all
 active Packages. The schema-filenames must match the pattern
 __type__.__path__.schema.yaml. The type and/or the path can also be
 expressed as subdirectories of Resources/Private/Schema. So
 Settings/TYPO3/FLOW3.persistence.schema.yaml will match the same pathes
-like Settings.TYPO3.FLOW3.persistence.schema.yaml or
-Settings/TYPO3.FLOW3/persistence.schema.yaml
+like Settings.TYPO3.Flow.persistence.schema.yaml or
+Settings/TYPO3.Flow/persistence.schema.yaml
 
 
 
@@ -151,7 +151,7 @@ Options
 ``--type``
   Configuration type to validate
 ``--path``
-  path to the subconfiguration separated by "." like "TYPO3.FLOW3
+  path to the subconfiguration separated by "." like "TYPO3.Flow
 
 
 
@@ -162,7 +162,7 @@ Options
 
 **Generate a schema for the given configuration or YAML file.**
 
-./flow3 configuration:generateschema --type Settings --path TYPO3.FLOW3.persistence
+./flow3 configuration:generateschema --type Settings --path TYPO3.Flow.persistence
 
 The schema will be output to standard output.
 
@@ -174,7 +174,7 @@ Options
 ``--type``
   Configuration type to create a schema for
 ``--path``
-  path to the subconfiguration separated by "." like "TYPO3.FLOW3
+  path to the subconfiguration separated by "." like "TYPO3.Flow
 ``--yaml``
   YAML file to create a schema for
 
@@ -375,7 +375,7 @@ Related commands
 
 Any DQL queries passed after the parameters will be executed, the results will be output:
 
-doctrine:dql --limit 10 'SELECT a FROM TYPO3\FLOW3\Security\Account a'
+doctrine:dql --limit 10 'SELECT a FROM TYPO3\Flow\Security\Account a'
 
 
 

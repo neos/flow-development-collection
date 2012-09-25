@@ -6,31 +6,31 @@ Bootstrapping
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-This chapter outlines the bootstrapping mechanism FLOW3 uses on each request
+This chapter outlines the bootstrapping mechanism TYPO3 Flow uses on each request
 to initialize vital parts of the framework and the application. It explains
 the built-in request handlers which effectively control the boot sequence and
 demonstrates how custom request handlers can be developed and registered.
 
-The FLOW3 Application Context
-=============================
+The TYPO3 Flow Application Context
+==================================
 
 Each request, no matter if it runs from the command line or through HTTP,
-runs in a specific *application context*. FLOW3 provides exactly three built-in
+runs in a specific *application context*. TYPO3 Flow provides exactly three built-in
 contexts:
 
 * ``Development`` (default) - used for development
 * ``Production`` - should be used for a live site
 * ``Testing`` - is used for functional tests
 
-The context FLOW3 runs in is specified through the environment variable
-``FLOW3_CONTEXT``. It can be set per command at the command line or be part of the
+The context TYPO3 Flow runs in is specified through the environment variable
+``FLOW_CONTEXT``. It can be set per command at the command line or be part of the
 web server configuration::
 
-	# run the FLOW3 CLI commands in production context
-	FLOW3_CONTEXT=Production ./flow3 help
+	# run the TYPO3 Flow CLI commands in production context
+	FLOW_CONTEXT=Production ./flow help
 
 	# In your Apache configuration, you usually use:
-	SetEnv FLOW3_CONTEXT Production
+	SetEnv FLOW_CONTEXT Production
 
 Custom Contexts
 ---------------
@@ -63,16 +63,16 @@ explained in full detail inside the *Configuration* chapter.
 Boot Sequence
 =============
 
-There are basically two types of requests which are handled by a FLOW3
+There are basically two types of requests which are handled by a TYPO3 Flow
 application:
 
-* *command line* requests are passed to the ``flow3.php`` script which
-  resides in the ``Scripts`` folder of the FLOW3 package
+* *command line* requests are passed to the ``flow.php`` script which
+  resides in the ``Scripts`` folder of the TYPO3 Flow package
 * *HTTP requests* are first taken care of by the ``index.php`` script
   in the public ``Web`` directory.
 
 Both scripts set certain environment variables and then instantiate and run the
-``TYPO3\FLOW3\Core\Bootstrap`` class.
+``TYPO3\Flow\Core\Bootstrap`` class.
 
 The bootstrap's ``run()`` method initializes the bare minimum needed for any
 kind of operation. When it did that, it determines the actual request
@@ -91,8 +91,8 @@ handling the request.
 	}
 
 The request handler in charge executes a sequence of steps which need to be
-taken for initializing FLOW3 for the purpose defined by the specialized
-request handler. FLOW3's ``Bootstrap`` class provides convenience methods for
+taken for initializing TYPO3 Flow for the purpose defined by the specialized
+request handler. TYPO3 Flow's ``Bootstrap`` class provides convenience methods for
 building such a sequence and the result can be customized by adding further
 or removing unnecessary steps.
 
@@ -105,20 +105,20 @@ shut down important parts of the framework.
 Run Levels
 ==========
 
-There are two pre-defined levels to which FLOW3 can be initialized:
+There are two pre-defined levels to which TYPO3 Flow can be initialized:
 
-* *compiletime* brings FLOW3 into a state which allows for code generation
-  and other low-level tasks which can only be done while FLOW3 is not yet
+* *compiletime* brings TYPO3 Flow into a state which allows for code generation
+  and other low-level tasks which can only be done while TYPO3 Flow is not yet
   fully ready for serving user requests. Compile time has only limited support
   for Dependency Injection and lacks support for many other functions such as
   Aspect-Oriented Programming and Security.
 
-* *runtime* brings FLOW3 into a state which is fully capable of handling user
+* *runtime* brings TYPO3 Flow into a state which is fully capable of handling user
   requests and is optimized for speed. No changes to any of the code caches
   or configuration related to code is allowed during runtime.
 
 The bootstrap's methods ``buildCompiletimeSequence()`` and
-``buildRuntimeSequence()`` conveniently build a sequence which brings FLOW3
+``buildRuntimeSequence()`` conveniently build a sequence which brings TYPO3 Flow
 into either state on invocation.
 
 Request Handlers
@@ -126,7 +126,7 @@ Request Handlers
 
 A request handler is in charge of executing the boot sequence and ultimately
 answering the request it was designed for. It must implement the
-``\TYPO3\FLOW3\Core\RequestHandlerInterface`` interface which,
+``\TYPO3\Flow\Core\RequestHandlerInterface`` interface which,
 among others, contains the following methods::
 
 	public function handleRequest();
@@ -148,7 +148,7 @@ containing the request handler::
 
 	class Package extends BasePackage {
 
-		public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 			$bootstrap->registerRequestHandler(new \Acme\Foo\BarRequestHandler($bootstrap));
 		}
 
@@ -156,7 +156,7 @@ containing the request handler::
 
 .. tip::
 
-	The FLOW3 package contains meaningful working examples for registration of
+	The TYPO3 Flow package contains meaningful working examples for registration of
 	request handlers and building boot sequences. A good starting point is
-	the ``\TYPO3\FLOW3\Package`` class where the request handlers are
+	the ``\TYPO3\Flow\Package`` class where the request handlers are
 	registered.

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource\Publishing;
+namespace TYPO3\Flow\Resource\Publishing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Publishing target for a file system.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\AbstractResourcePublishingTarget {
+class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\AbstractResourcePublishingTarget {
 
 	/**
 	 * @var string
@@ -26,12 +26,12 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	protected $resourcesPublishingPath;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Uri
+	 * @var \TYPO3\Flow\Http\Uri
 	 */
 	protected $resourcesBaseUri;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
@@ -43,10 +43,10 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Injects the bootstrap
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
@@ -64,27 +64,27 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * Initializes this publishing target
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Resource\Exception
+	 * @throws \TYPO3\Flow\Resource\Exception
 	 */
 	public function initializeObject() {
 		if ($this->resourcesPublishingPath === NULL) {
-			$this->resourcesPublishingPath = FLOW3_PATH_WEB . '_Resources/';
+			$this->resourcesPublishingPath = FLOW_PATH_WEB . '_Resources/';
 		}
 
 		if (!is_writable($this->resourcesPublishingPath)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath);
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath);
 		}
 		if (!is_dir($this->resourcesPublishingPath) && !is_link($this->resourcesPublishingPath)) {
-			throw new \TYPO3\FLOW3\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" does not exist.', 1207124538);
+			throw new \TYPO3\Flow\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" does not exist.', 1207124538);
 		}
 		if (!is_writable($this->resourcesPublishingPath)) {
-			throw new \TYPO3\FLOW3\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" is not writable.', 1207124546);
+			throw new \TYPO3\Flow\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" is not writable.', 1207124546);
 		}
 		if (!is_dir($this->resourcesPublishingPath . 'Persistent') && !is_link($this->resourcesPublishingPath . 'Persistent')) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath . 'Persistent');
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath . 'Persistent');
 		}
 		if (!is_writable($this->resourcesPublishingPath . 'Persistent')) {
-			throw new \TYPO3\FLOW3\Resource\Exception('The directory "' . $this->resourcesPublishingPath . 'Persistent" is not writable.', 1260527881);
+			throw new \TYPO3\Flow\Resource\Exception('The directory "' . $this->resourcesPublishingPath . 'Persistent" is not writable.', 1260527881);
 		}
 	}
 
@@ -100,24 +100,24 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 		if (!is_dir($sourcePath)) {
 			return FALSE;
 		}
-		$sourcePath = rtrim(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->realpath($sourcePath)), '/');
-		$targetPath = rtrim(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
+		$sourcePath = rtrim(\TYPO3\Flow\Utility\Files::getUnixStylePath($this->realpath($sourcePath)), '/');
+		$targetPath = rtrim(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
 
 		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') {
-			if (\TYPO3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->realpath($targetPath)), '/') === $sourcePath)) {
+			if (\TYPO3\Flow\Utility\Files::is_link($targetPath) && (rtrim(\TYPO3\Flow\Utility\Files::getUnixStylePath($this->realpath($targetPath)), '/') === $sourcePath)) {
 				return TRUE;
 			} elseif (is_dir($targetPath)) {
-				\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($targetPath);
+				\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($targetPath);
 			} elseif (is_link($targetPath)) {
 				unlink($targetPath);
 			} else {
-				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPath));
+				\TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($targetPath));
 			}
 			symlink($sourcePath, $targetPath);
 		} else {
-			foreach (\TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
+			foreach (\TYPO3\Flow\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
 				if (substr(strtolower($sourcePathAndFilename), -4, 4) === '.php') continue;
-				$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
+				$targetPathAndFilename = \TYPO3\Flow\Utility\Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
 				if (!file_exists($targetPathAndFilename) || filemtime($sourcePathAndFilename) > filemtime($targetPathAndFilename)) {
 					$this->mirrorFile($sourcePathAndFilename, $targetPathAndFilename, TRUE);
 				}
@@ -130,10 +130,10 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Publishes a persistent resource to the web accessible resources directory.
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
-	public function publishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function publishPersistentResource(\TYPO3\Flow\Resource\Resource $resource) {
 		$publishedResourcePathAndFilename = $this->buildPersistentResourcePublishPathAndFilename($resource, TRUE);
 		$publishedResourceWebUri = $this->buildPersistentResourceWebUri($resource);
 
@@ -150,10 +150,10 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Unpublishes a persistent resource in the web accessible resources directory.
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to unpublish
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to unpublish
 	 * @return boolean TRUE if at least one file was removed, FALSE otherwise
 	 */
-	public function unpublishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function unpublishPersistentResource(\TYPO3\Flow\Resource\Resource $resource) {
 		$result = FALSE;
 		foreach (glob($this->buildPersistentResourcePublishPathAndFilename($resource, FALSE) . '*') as $publishedResourcePathAndFilename) {
 			unlink($publishedResourcePathAndFilename);
@@ -165,7 +165,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Returns the base URI where persistent resources are published an accessible from the outside.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Uri The base URI
+	 * @return \TYPO3\Flow\Http\Uri The base URI
 	 */
 	public function getResourcesBaseUri() {
 		if ($this->resourcesBaseUri === NULL) {
@@ -194,10 +194,10 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Returns the web URI pointing to the published persistent resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
-	public function getPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function getPersistentResourceWebUri(\TYPO3\Flow\Resource\Resource $resource) {
 		return $this->publishPersistentResource($resource);
 	}
 
@@ -210,12 +210,12 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 */
 	protected function detectResourcesBaseUri() {
 		$requestHandler = $this->bootstrap->getActiveRequestHandler();
-		if ($requestHandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
+		if ($requestHandler instanceof \TYPO3\Flow\Http\HttpRequestHandlerInterface) {
 			$uri = $requestHandler->getHttpRequest()->getBaseUri();
 		} else {
 			$uri = '';
 		}
-		$this->resourcesBaseUri = $uri . substr($this->resourcesPublishingPath, strlen(FLOW3_PATH_WEB));
+		$this->resourcesBaseUri = $uri . substr($this->resourcesPublishingPath, strlen(FLOW_PATH_WEB));
 	}
 
 	/**
@@ -226,11 +226,11 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	 * @param string $targetPathAndFilename
 	 * @param boolean $createDirectoriesIfNecessary
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Resource\Exception
+	 * @throws \TYPO3\Flow\Resource\Exception
 	 */
 	protected function mirrorFile($sourcePathAndFilename, $targetPathAndFilename, $createDirectoriesIfNecessary = FALSE) {
 		if ($createDirectoriesIfNecessary === TRUE) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
 
 		switch ($this->settings['resource']['publishing']['fileSystem']['mirrorMode']) {
@@ -240,7 +240,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 				break;
 			case 'link' :
 				if (file_exists($targetPathAndFilename)) {
-					if (\TYPO3\FLOW3\Utility\Files::is_link($targetPathAndFilename) && ($this->realpath($targetPathAndFilename) === $this->realpath($sourcePathAndFilename))) {
+					if (\TYPO3\Flow\Utility\Files::is_link($targetPathAndFilename) && ($this->realpath($targetPathAndFilename) === $this->realpath($sourcePathAndFilename))) {
 						break;
 					}
 					unlink($targetPathAndFilename);
@@ -250,21 +250,21 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 				}
 				break;
 			default :
-				throw new \TYPO3\FLOW3\Resource\Exception('An invalid mirror mode (' . $this->settings['resource']['publishing']['fileSystem']['mirrorMode'] . ') has been configured.', 1256133400);
+				throw new \TYPO3\Flow\Resource\Exception('An invalid mirror mode (' . $this->settings['resource']['publishing']['fileSystem']['mirrorMode'] . ') has been configured.', 1256133400);
 		}
 
 		if (!file_exists($targetPathAndFilename)) {
-			throw new \TYPO3\FLOW3\Resource\Exception('The resource "' . $sourcePathAndFilename . '" could not be mirrored.', 1207255453);
+			throw new \TYPO3\Flow\Resource\Exception('The resource "' . $sourcePathAndFilename . '" could not be mirrored.', 1207255453);
 		}
 	}
 
 	/**
 	 * Returns the web URI to be used to publish the specified persistent resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to build the URI for
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to build the URI for
 	 * @return string The web URI
 	 */
-	protected function buildPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource) {
+	protected function buildPersistentResourceWebUri(\TYPO3\Flow\Resource\Resource $resource) {
 		$filename = $resource->getFilename();
 		$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . $this->rewriteFilenameForUri($filename);
 		return $this->getResourcesBaseUri() . 'Persistent/' . $resource->getResourcePointer()->getHash() . $rewrittenFilename;
@@ -273,11 +273,11 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 	/**
 	 * Returns the publish path and filename to be used to publish the specified persistent resource
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to build the publish path and filename for
+	 * @param \TYPO3\Flow\Resource\Resource $resource The resource to build the publish path and filename for
 	 * @param boolean $returnFilename FALSE if only the directory without the filename should be returned
 	 * @return string The publish path and filename
 	 */
-	protected function buildPersistentResourcePublishPathAndFilename(\TYPO3\FLOW3\Resource\Resource $resource, $returnFilename) {
+	protected function buildPersistentResourcePublishPathAndFilename(\TYPO3\Flow\Resource\Resource $resource, $returnFilename) {
 		$publishPath = $this->resourcesPublishingPath . 'Persistent/';
 		if ($returnFilename === TRUE) return $publishPath . $resource->getResourcePointer()->getHash() . '.' . $resource->getFileExtension();
 		return $publishPath;

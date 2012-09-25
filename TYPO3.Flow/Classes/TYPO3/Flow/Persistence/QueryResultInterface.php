@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence;
+namespace TYPO3\Flow\Persistence;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -31,7 +31,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess {
 	/**
 	 * Returns a clone of the query object
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function getQuery();

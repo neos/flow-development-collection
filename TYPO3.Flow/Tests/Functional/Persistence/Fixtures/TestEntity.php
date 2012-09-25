@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,43 +12,43 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A simple entity for persistence tests
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  * @ORM\Table(name="persistence_testentity")
  */
 class TestEntity {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity
+	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
 	 * @ORM\ManyToOne
 	 */
 	protected $relatedEntity;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject
+	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject
 	 * @ORM\ManyToOne
 	 */
 	protected $relatedValueObject;
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={"minimum"=3})
+	 * @Flow\Validate(type="StringLength", options={"minimum"=3})
 	 */
 	protected $name = '';
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="NotEmpty", validationGroups={"SomeOther"})
+	 * @Flow\Validate(type="NotEmpty", validationGroups={"SomeOther"})
 	 */
 	protected $description = 'This is some text';
 
@@ -109,28 +109,28 @@ class TestEntity {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntities
+	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntities
 	 */
-	public function setRelatedEntity(\TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity) {
+	public function setRelatedEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity) {
 		$this->relatedEntity = $relatedEntity;
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity
+	 * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
 	 */
 	public function getRelatedEntity() {
 		return $this->relatedEntity;
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @return \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	public function getObjectManager() {
 		return $this->objectManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject $relatedValueObject
+	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject $relatedValueObject
 	 * @return void
 	 */
 	public function setRelatedValueObject($relatedValueObject) {
@@ -138,7 +138,7 @@ class TestEntity {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestValueObject
+	 * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject
 	 */
 	public function getRelatedValueObject() {
 		return $this->relatedValueObject;

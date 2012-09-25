@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\Flow\Persistence\Generic\Qom;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -57,10 +57,10 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  *
  * @api
  */
-class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
+class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand
+	 * @var \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand
 	 */
 	protected $operand1;
 
@@ -77,11 +77,11 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	/**
 	 * Constructs this Comparison instance
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand1
-	 * @param integer $operator one of \TYPO3\FLOW3\Persistence\QueryInterface.OPERATOR_*
+	 * @param \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1
+	 * @param integer $operator one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
 	 * @param mixed $operand2
 	 */
-	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
+	public function __construct(\TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
 		$this->operand1 = $operand1;
 		$this->operator = $operator;
 		$this->operand2 = $operand2;
@@ -91,7 +91,7 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	 *
 	 * Gets the first operand.
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand the operand; non-null
+	 * @return \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand the operand; non-null
 	 * @api
 	 */
 	public function getOperand1() {
@@ -101,7 +101,7 @@ class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 	/**
 	 * Gets the operator.
 	 *
-	 * @return integer one of \TYPO3\FLOW3\Persistence\QueryInterface.OPERATOR_*
+	 * @return integer one of \TYPO3\Flow\Persistence\QueryInterface.OPERATOR_*
 	 * @api
 	 */
 	public function getOperator() {

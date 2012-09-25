@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,25 +11,25 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
-use TYPO3\FLOW3\Cli\Command;
-use TYPO3\FLOW3\Cli\CommandManager;
+use TYPO3\Flow\Cli\Command;
+use TYPO3\Flow\Cli\CommandManager;
 
 /**
  * A Command Controller which provides help for available commands
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
@@ -39,18 +39,18 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $commandManager;
 
 	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
@@ -65,19 +65,19 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Displays a short, general help message
 	 *
-	 * This only outputs the FLOW3 version number, context and some hint about how to
+	 * This only outputs the Flow version number, context and some hint about how to
 	 * get more help about commands.
 	 *
 	 * @return void
-	 * @FLOW3\Internal
+	 * @Flow\Internal
 	 */
 	public function helpStubCommand() {
 		$context = $this->bootstrap->getContext();
 
-		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
-		$this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlow3InvocationString()));
+		$this->outputLine('<b>Flow %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.Flow')->getPackageMetaData()->getVersion(), $context));
+		$this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
 		$this->outputLine();
-		$this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlow3InvocationString()));
+		$this->outputLine('See "%s help" for a list of all available commands.', array($this->getFlowInvocationString()));
 		$this->outputLine();
 	}
 
@@ -85,7 +85,7 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * Display help for a command
 	 *
 	 * The help command displays help for a given command:
-	 * ./flow3 help <commandIdentifier>
+	 * ./flow help <commandIdentifier>
 	 *
 	 * @param string $commandIdentifier Identifier of a command for more details
 	 * @return void
@@ -118,8 +118,8 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected function displayHelpIndex() {
 		$context = $this->bootstrap->getContext();
 
-		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
-		$this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlow3InvocationString()));
+		$this->outputLine('<b>Flow %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.Flow')->getPackageMetaData()->getVersion(), $context));
+		$this->outputLine('<i>usage: %s <command identifier></i>', array($this->getFlowInvocationString()));
 		$this->outputLine();
 		$this->outputLine('The following commands are currently available:');
 
@@ -127,12 +127,12 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$this->outputLine('* = compile time command');
 		$this->outputLine();
-		$this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', array($this->getFlow3InvocationString()));
+		$this->outputLine('See "%s help <commandidentifier>" for more information about a specific command.', array($this->getFlowInvocationString()));
 		$this->outputLine();
 	}
 
 	/**
-	 * @param array<\TYPO3\FLOW3\Cli\Command> $commands
+	 * @param array<\TYPO3\Flow\Cli\Command> $commands
 	 * @return void
 	 */
 	protected function displayShortHelpForCommands(array $commands) {
@@ -156,10 +156,10 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Render help text for a single command
 	 *
-	 * @param \TYPO3\FLOW3\Cli\Command $command
+	 * @param \TYPO3\Flow\Cli\Command $command
 	 * @return void
 	 */
-	protected function displayHelpForCommand(\TYPO3\FLOW3\Cli\Command $command) {
+	protected function displayHelpForCommand(\TYPO3\Flow\Cli\Command $command) {
 		$this->outputLine();
 		$this->outputLine('<u>' . $command->getShortDescription() . '</u>');
 		$this->outputLine();
@@ -183,7 +183,7 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$this->outputLine();
 		$this->outputLine('<b>USAGE:</b>');
-		$this->outputLine('  %s %s', array($this->getFlow3InvocationString(), $usage));
+		$this->outputLine('  %s %s', array($this->getFlowInvocationString(), $usage));
 
 		$argumentDescriptions = array();
 		$optionDescriptions = array();
@@ -233,7 +233,7 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 				try {
 					$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
 					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
-				} catch (\TYPO3\FLOW3\Mvc\Exception\CommandException $exception) {
+				} catch (\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
 					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, '<i>Command not available</i>'));
 				}
 			}
@@ -245,26 +245,26 @@ class HelpCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Displays an error message
 	 *
-	 * @FLOW3\Internal
-	 * @param \TYPO3\FLOW3\Mvc\Exception\CommandException $exception
+	 * @Flow\Internal
+	 * @param \TYPO3\Flow\Mvc\Exception\CommandException $exception
 	 * @return void
 	 */
-	public function errorCommand(\TYPO3\FLOW3\Mvc\Exception\CommandException $exception) {
+	public function errorCommand(\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
 		$this->outputLine($exception->getMessage());
-		if ($exception instanceof \TYPO3\FLOW3\Mvc\Exception\AmbiguousCommandIdentifierException) {
+		if ($exception instanceof \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException) {
 			$this->outputLine('Please specify the complete command identifier. Matched commands:');
 			$this->displayShortHelpForCommands($exception->getMatchingCommands());
 		}
 		$this->outputLine();
-		$this->outputLine('Enter "%s help" for an overview of all available commands', array($this->getFlow3InvocationString()));
-		$this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', array($this->getFlow3InvocationString()));
+		$this->outputLine('Enter "%s help" for an overview of all available commands', array($this->getFlowInvocationString()));
+		$this->outputLine('or "%s help <commandIdentifier>" for a detailed description of the corresponding command.', array($this->getFlowInvocationString()));
 	}
 
 	/**
 	 * Builds an index of available commands. For each of them a Command object is
 	 * added to the commands array of this class.
 	 *
-	 * @param array<\TYPO3\FLOW3\Cli\Command> $commands
+	 * @param array<\TYPO3\Flow\Cli\Command> $commands
 	 * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
 	 */
 	protected function buildCommandsIndex(array $commands) {

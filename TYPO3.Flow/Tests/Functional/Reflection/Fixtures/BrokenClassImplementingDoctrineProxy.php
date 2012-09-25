@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -24,7 +24,7 @@ class BrokenClassImplementingDoctrineProxy {
 }
 
 
-namespace TYPO3\FLOW3\Persistence\Doctrine\Proxies;
+namespace TYPO3\Flow\Persistence\Doctrine\Proxies;
 
 /**
  * This is our fake "doctrine proxy class"; which is in the same namespace

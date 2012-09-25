@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Proxy;
+namespace TYPO3\Flow\Object\Proxy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cache\CacheManager;
+use TYPO3\Flow\Cache\CacheManager;
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Representation of a Proxy Class during rendering time
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class ProxyClass {
 
@@ -45,7 +45,7 @@ class ProxyClass {
 	protected $fullOriginalClassName;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\Proxy\ProxyConstructor
+	 * @var \TYPO3\Flow\Object\Proxy\ProxyConstructor
 	 */
 	protected $constructor;
 
@@ -62,7 +62,7 @@ class ProxyClass {
 	/**
 	 * @var array
 	 */
-	protected $interfaces = array('\TYPO3\FLOW3\Object\Proxy\ProxyInterface');
+	protected $interfaces = array('\TYPO3\Flow\Object\Proxy\ProxyInterface');
 
 	/**
 	 * @var array
@@ -70,7 +70,7 @@ class ProxyClass {
 	protected $properties = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -92,21 +92,21 @@ class ProxyClass {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Returns the ProxyConstructor for this ProxyClass. Creates it if needed.
 	 *
-	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyConstructor
+	 * @return \TYPO3\Flow\Object\Proxy\ProxyConstructor
 	 */
 	public function getConstructor() {
 		if (!isset($this->constructor)) {
-			$this->constructor = new \TYPO3\FLOW3\Object\Proxy\ProxyConstructor($this->fullOriginalClassName);
+			$this->constructor = new \TYPO3\Flow\Object\Proxy\ProxyConstructor($this->fullOriginalClassName);
 			$this->constructor->injectReflectionService($this->reflectionService);
 		}
 		return $this->constructor;
@@ -116,14 +116,14 @@ class ProxyClass {
 	 * Returns the named ProxyMethod for this ProxyClass. Creates it if needed.
 	 *
 	 * @param string $methodName The name of the methods to return
-	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyMethod
+	 * @return \TYPO3\Flow\Object\Proxy\ProxyMethod
 	 */
 	public function getMethod($methodName) {
 		if ($methodName === '__construct') {
 			return $this->getConstructor();
 		}
 		if (!isset($this->methods[$methodName])) {
-			$this->methods[$methodName] = new \TYPO3\FLOW3\Object\Proxy\ProxyMethod($this->fullOriginalClassName, $methodName);
+			$this->methods[$methodName] = new \TYPO3\Flow\Object\Proxy\ProxyMethod($this->fullOriginalClassName, $methodName);
 			$this->methods[$methodName]->injectReflectionService($this->reflectionService);
 		}
 		return $this->methods[$methodName];
@@ -161,7 +161,7 @@ class ProxyClass {
 	 * Adds one or more interfaces to the "implements" section of the class definition.
 	 *
 	 * Note that the passed interface names must already have a leading backslash,
-	 * for example "\TYPO3\FLOW3\Foo\BarInterface".
+	 * for example "\TYPO3\Flow\Foo\BarInterface".
 	 *
 	 * @param array $interfaceNames Fully qualified names of the interfaces to introduce
 	 * @return void
@@ -178,7 +178,7 @@ class ProxyClass {
 	public function render() {
 		$namespace = $this->namespace;
 		$proxyClassName = $this->originalClassName;
-		$originalClassName = $this->originalClassName . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX;
+		$originalClassName = $this->originalClassName . \TYPO3\Flow\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX;
 		$abstractKeyword = $this->reflectionService->isClassAbstract($this->fullOriginalClassName) ? 'abstract ' : '';
 
 		$constantsCode = $this->renderConstantsCode();
@@ -196,7 +196,7 @@ class ProxyClass {
 			"namespace $namespace;\n" .
 			"\n" .
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
-			"use TYPO3\\FLOW3\\Annotations as FLOW3;\n" .
+			"use TYPO3\\Flow\\Annotations as Flow;\n" .
 			"\n" .
 			$this->buildClassDocumentation() .
 			$abstractKeyword . "class $proxyClassName extends $originalClassName implements " . implode(', ', array_unique($this->interfaces)) ." {\n\n" .
@@ -215,12 +215,12 @@ class ProxyClass {
 	protected function buildClassDocumentation() {
 		$classDocumentation = "/**\n";
 
-		$classReflection = new \TYPO3\FLOW3\Reflection\ClassReflection($this->fullOriginalClassName);
+		$classReflection = new \TYPO3\Flow\Reflection\ClassReflection($this->fullOriginalClassName);
 		$classDescription = $classReflection->getDescription();
 		$classDocumentation .= ' * ' . str_replace("\n", "\n * ", $classDescription) . "\n";
 
 		foreach ($this->reflectionService->getClassAnnotations($this->fullOriginalClassName) as $annotation) {
-			$classDocumentation .= ' * ' . \TYPO3\FLOW3\Object\Proxy\Compiler::renderAnnotation($annotation) . "\n";
+			$classDocumentation .= ' * ' . \TYPO3\Flow\Object\Proxy\Compiler::renderAnnotation($annotation) . "\n";
 		}
 
 		$classDocumentation .= " */\n";

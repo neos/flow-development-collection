@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security;
+namespace TYPO3\Flow\Tests\Functional\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Functional\Security;
  * Testcase for method security
  *
  */
-class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -23,7 +23,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController
+	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController
 	 */
 	protected $restrictedController;
 
@@ -32,7 +32,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->restrictedController = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Security\Fixtures\Controller\RestrictedController');
+		$this->restrictedController = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController');
 	}
 
 	/**
@@ -66,7 +66,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function customerActionIsDeniedForEverybody() {
 		$this->restrictedController->customerAction();
@@ -94,7 +94,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function adminActionIsDeniedForEverybody() {
 		$this->restrictedController->adminAction();
@@ -102,7 +102,7 @@ class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function adminActionIsDeniedForCustomer() {
 		$this->authenticateRoles(array('Customer'));

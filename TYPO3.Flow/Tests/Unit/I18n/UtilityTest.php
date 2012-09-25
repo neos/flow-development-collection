@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\I18n;
+namespace TYPO3\Flow\Tests\Unit\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -25,7 +25,7 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n;
  * Testcase for the Locale Utility
  *
  */
-class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class UtilityTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Data provider with valid Accept-Language headers and expected results.
@@ -45,7 +45,7 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider sampleHttpAcceptLanguageHeaders
 	 */
 	public function httpAcceptLanguageHeadersAreParsedCorrectly($acceptLanguageHeader, array $expectedResult) {
-		$languages = \TYPO3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
+		$languages = \TYPO3\Flow\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
 		$this->assertEquals($expectedResult, $languages);
 	}
 
@@ -71,7 +71,7 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider filenamesWithLocale
 	 */
 	public function localeIdentifiersAreCorrectlyExtractedFromFilename($filename, $expectedResult) {
-		$result = \TYPO3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($filename);
+		$result = \TYPO3\Flow\I18n\Utility::extractLocaleTagFromFilename($filename);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -98,7 +98,7 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $comparison) {
 		$expectedResult = ($comparison === 'beginning' || $comparison === 'both') ? TRUE : FALSE;
-		$result = \TYPO3\FLOW3\I18n\Utility::stringBeginsWith($haystack, $needle);
+		$result = \TYPO3\Flow\I18n\Utility::stringBeginsWith($haystack, $needle);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -108,7 +108,7 @@ class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $comparison) {
 		$expectedResult = ($comparison === 'ending' || $comparison === 'both') ? TRUE : FALSE;
-		$result = \TYPO3\FLOW3\I18n\Utility::stringEndsWith($haystack, $needle);
+		$result = \TYPO3\Flow\I18n\Utility::stringEndsWith($haystack, $needle);
 		$this->assertEquals($expectedResult, $result);
 	}
 }

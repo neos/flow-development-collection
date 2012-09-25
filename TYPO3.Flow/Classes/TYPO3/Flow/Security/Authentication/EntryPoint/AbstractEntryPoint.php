@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
+namespace TYPO3\Flow\Security\Authentication\EntryPoint;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
 /**
  * An abstract authentication entry point.
  */
-abstract class AbstractEntryPoint implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterface {
+abstract class AbstractEntryPoint implements \TYPO3\Flow\Security\Authentication\EntryPointInterface {
 
 	/**
 	 * The configurations options

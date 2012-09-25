@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\Flow\Tests\Object\Fixture;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -172,7 +172,7 @@ class BasicClass {
 	 *
 	 * @param  array $someArray Some array
 	 * @return void
-	 * @see    \TYPO3\FLOW3\Aop\Builder\AdvicedMethodInterceptorBuilderTest
+	 * @see    \TYPO3\Flow\Aop\Builder\AdvicedMethodInterceptorBuilderTest
 	 */
 	public function methodWhichExpectsAnArrayArgument(array $someArray) {
 	}

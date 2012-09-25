@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Backend;
+namespace TYPO3\Flow\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -21,11 +21,11 @@ interface BackendInterface {
 	/**
 	 * Sets a reference to the cache frontend which uses this backend
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
+	 * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
 	 * @api
 	 */
-	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache);
+	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache);
 
 	/**
 	 * Saves data in the cache.
@@ -35,9 +35,9 @@ interface BackendInterface {
 	 * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
+	 * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
-	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
+	 * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException if $data is not a string
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL);

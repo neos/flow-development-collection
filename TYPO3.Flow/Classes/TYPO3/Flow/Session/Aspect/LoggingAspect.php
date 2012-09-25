@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session\Aspect;
+namespace TYPO3\Flow\Session\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,30 +11,30 @@ namespace TYPO3\FLOW3\Session\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An aspect which centralizes the logging of important session actions.
  *
- * @FLOW3\Aspect
- * @FLOW3\Scope("singleton")
+ * @Flow\Aspect
+ * @Flow\Scope("singleton")
  */
 class LoggingAspect {
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @Flow\Inject
 	 */
 	protected $systemLogger;
 
 	/**
 	 * Logs calls of start()
 	 *
-	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->start())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @Flow\After("within(TYPO3\Flow\Session\SessionInterface) && method(.*->start())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logStart(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function logStart(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$this->systemLogger->log(sprintf('Started session with id %s', $session->getId()), LOG_DEBUG);
@@ -44,11 +44,11 @@ class LoggingAspect {
 	/**
 	 * Logs calls of resume()
 	 *
-	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->resume())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @Flow\After("within(TYPO3\Flow\Session\SessionInterface) && method(.*->resume())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logResume(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function logResume(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$this->systemLogger->log(sprintf('Resumed session with id %s which was inactive for %s seconds.', $joinPoint->getProxy()->getId(), $joinPoint->getResult()), LOG_DEBUG);
@@ -58,11 +58,11 @@ class LoggingAspect {
 	/**
 	 * Logs calls of destroy()
 	 *
-	 * @FLOW3\Before("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->destroy())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @Flow\Before("within(TYPO3\Flow\Session\SessionInterface) && method(.*->destroy())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logDestroy(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function logDestroy(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$reason = $joinPoint->isMethodArgument('reason') ? $joinPoint->getMethodArgument('reason') : 'no reason given';
@@ -73,11 +73,11 @@ class LoggingAspect {
 	/**
 	 * Logs calls of renewId()
 	 *
-	 * @FLOW3\Around("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->renewId())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @Flow\Around("within(TYPO3\Flow\Session\SessionInterface) && method(.*->renewId())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
-	public function logRenewId(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function logRenewId(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		$newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
 		if ($session->isStarted()) {

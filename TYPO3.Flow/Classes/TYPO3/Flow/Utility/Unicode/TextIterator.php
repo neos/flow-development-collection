@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Utility\Unicode;
+namespace TYPO3\Flow\Utility\Unicode;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "PHP6".                       *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Utility\Unicode;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A PHP-based port of PHP6's built in TextIterator
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class TextIterator implements \Iterator {
 
@@ -77,7 +77,7 @@ class TextIterator implements \Iterator {
 	protected $iteratorCacheIterator;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement
+	 * @var \TYPO3\Flow\Utility\Unicode\TextIteratorElement
 	 */
 	protected $previousElement;
 
@@ -86,10 +86,10 @@ class TextIterator implements \Iterator {
 	 *
 	 * @param string $subject
 	 * @param integer $iteratorType The type of iterator
-	 * @throws \TYPO3\FLOW3\Error\Exception
+	 * @throws \TYPO3\Flow\Error\Exception
 	 */
 	public function __construct($subject, $iteratorType = self::CHARACTER) {
-		if ($iteratorType < 1 || $iteratorType > 6) throw new \TYPO3\FLOW3\Error\Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
+		if ($iteratorType < 1 || $iteratorType > 6) throw new \TYPO3\Flow\Error\Exception('Fatal error: Invalid iterator type in TextIterator constructor', 1210849014);
 
 		$this->iteratorType = $iteratorType;
 		$this->subject = (string)$subject;
@@ -253,21 +253,21 @@ class TextIterator implements \Iterator {
 	 * @throws UnsupportedFeatureException
 	 */
 	public function getRuleStatus() {
-		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getRuleStatus() is not supported.', 1210849057);
+		throw new \TYPO3\Flow\Utility\Unicode\UnsupportedFeatureException('getRuleStatus() is not supported.', 1210849057);
 	}
 
 	/**
 	 * @throws UnsupportedFeatureException
 	 */
 	public function getRuleStatusArray() {
-		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getRuleStatusArray() is not supported.', 1210849076);
+		throw new \TYPO3\Flow\Utility\Unicode\UnsupportedFeatureException('getRuleStatusArray() is not supported.', 1210849076);
 	}
 
 	/**
 	 * @throws UnsupportedFeatureException
 	 */
 	public function getAvailableLocales() {
-		throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('getAvailableLocales() is not supported.', 1210849105);
+		throw new \TYPO3\Flow\Utility\Unicode\UnsupportedFeatureException('getAvailableLocales() is not supported.', 1210849105);
 	}
 
 	/**
@@ -289,18 +289,18 @@ class TextIterator implements \Iterator {
 	private function generateIteratorElements() {
 
 		if ($this->subject == '') {
-			$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement(self::DONE, -1));
+			$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement(self::DONE, -1));
 			return;
 		}
 
-		if ($this->iteratorType == self::CODE_POINT) throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('Unsupported iterator type.', 1210849150);
-		elseif ($this->iteratorType == self::COMB_SEQUENCE)throw new \TYPO3\FLOW3\Utility\Unicode\UnsupportedFeatureException('Unsupported iterator type.', 1210849151);
+		if ($this->iteratorType == self::CODE_POINT) throw new \TYPO3\Flow\Utility\Unicode\UnsupportedFeatureException('Unsupported iterator type.', 1210849150);
+		elseif ($this->iteratorType == self::COMB_SEQUENCE)throw new \TYPO3\Flow\Utility\Unicode\UnsupportedFeatureException('Unsupported iterator type.', 1210849151);
 		elseif ($this->iteratorType == self::CHARACTER) $this->parseSubjectByCharacter();
 		elseif ($this->iteratorType == self::WORD) $this->parseSubjectByWord();
 		elseif ($this->iteratorType == self::LINE) $this->parseSubjectByLine();
 		elseif ($this->iteratorType == self::SENTENCE) $this->parseSubjectBySentence();
 
-		$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement(self::DONE, -1));
+		$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement(self::DONE, -1));
 	}
 
 	/**
@@ -311,7 +311,7 @@ class TextIterator implements \Iterator {
 		$i = 0;
 		foreach (preg_split('//u', $this->subject) as $currentCharacter) {
 			if ($currentCharacter == '') continue;
-			$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($currentCharacter, $i, 1, FALSE));
+			$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($currentCharacter, $i, 1, FALSE));
 			$i++;
 		}
 	}
@@ -329,16 +329,16 @@ class TextIterator implements \Iterator {
 			$haveProcessedCurrentWord = FALSE;
 
 			if (preg_match_all('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord, $delimitersMatches)) {
-				$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement(' ', $i, 1, TRUE));
+				$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement(' ', $i, 1, TRUE));
 
 				$j = 0;
 				$splittedWord = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord);
 				foreach ($splittedWord as $currentPart) {
 					if ($currentPart != '') {
-						$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($currentPart, $i, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentPart), FALSE));
-						$i += \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentPart);
+						$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($currentPart, $i, \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentPart), FALSE));
+						$i += \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentPart);
 					}
-					if ($j < count($delimitersMatches[0])) $this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($delimitersMatches[0][$j], $i, 1, TRUE));
+					if ($j < count($delimitersMatches[0])) $this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($delimitersMatches[0][$j], $i, 1, TRUE));
 					$i++;
 					$j++;
 				}
@@ -346,15 +346,15 @@ class TextIterator implements \Iterator {
 			}
 
 			if (!$isFirstIteration && !$haveProcessedCurrentWord) {
-				$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement(' ', $i, 1, TRUE));
+				$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement(' ', $i, 1, TRUE));
 				$i++;
 			} else {
 				$isFirstIteration = FALSE;
 			}
 
 			if (!$haveProcessedCurrentWord) {
-				$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($currentWord, $i, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentWord), FALSE));
-				$i += \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentWord);
+				$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($currentWord, $i, \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentWord), FALSE));
+				$i += \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentWord);
 			}
 
 			unset($delimitersMatches);
@@ -373,11 +373,11 @@ class TextIterator implements \Iterator {
 		$lines = explode("\n", $this->subject);
 		foreach ($lines as $currentLine) {
 
-			$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($currentLine, $i, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentLine), FALSE));
-			$i += \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentLine);
+			$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($currentLine, $i, \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentLine), FALSE));
+			$i += \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentLine);
 
 			if (count($lines) - 1 > $j) {
-				$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement("\n", $i, 1, TRUE));
+				$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement("\n", $i, 1, TRUE));
 				$i++;
 			}
 			$j++;
@@ -399,7 +399,7 @@ class TextIterator implements \Iterator {
 		$splittedSentence = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject);
 
 		if (count($splittedSentence) == 1) {
-			$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($splittedSentence[0], 0, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($splittedSentence[0]), FALSE));
+			$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($splittedSentence[0], 0, \TYPO3\Flow\Utility\Unicode\Functions::strlen($splittedSentence[0]), FALSE));
 			return;
 		}
 
@@ -408,16 +408,16 @@ class TextIterator implements \Iterator {
 
 			$whiteSpace = '';
 			for ($k = 0; $k < $count; $k++) $whiteSpace .= ' ';
-			if ($whiteSpace != '') $this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($whiteSpace, $i, $count, TRUE));
+			if ($whiteSpace != '') $this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($whiteSpace, $i, $count, TRUE));
 			$i += $count;
 
 			if ($currentPart != '' && $j < count($delimitersMatches[0])) {
-				$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($currentPart . $delimitersMatches[0][$j], $i, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]), FALSE));
-				$i += \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]);
+				$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($currentPart . $delimitersMatches[0][$j], $i, \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]), FALSE));
+				$i += \TYPO3\Flow\Utility\Unicode\Functions::strlen($currentPart . $delimitersMatches[0][$j]);
 				$j++;
 			}
 			elseif ($j < count($delimitersMatches[0])) {
-				$this->iteratorCache->append(new \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement($delimitersMatches[0][$j], $i, 1, TRUE));
+				$this->iteratorCache->append(new \TYPO3\Flow\Utility\Unicode\TextIteratorElement($delimitersMatches[0][$j], $i, 1, TRUE));
 				$i++;
 				$j++;
 			}
@@ -427,7 +427,7 @@ class TextIterator implements \Iterator {
 	/**
 	 * Helper function to get the current element from the cache.
 	 *
-	 * @return \TYPO3\FLOW3\Utility\Unicode\TextIteratorElement The current element of the cache
+	 * @return \TYPO3\Flow\Utility\Unicode\TextIteratorElement The current element of the cache
 	 */
 	private function getCurrentElement() {
 		return $this->iteratorCacheIterator->current();

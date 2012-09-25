@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -21,10 +21,10 @@ interface PackageManagerInterface {
 	/**
 	 * Initializes the package manager.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function initialize(\TYPO3\FLOW3\Core\Bootstrap $bootstrap);
+	public function initialize(\TYPO3\Flow\Core\Bootstrap $bootstrap);
 
 	/**
 	 * Returns TRUE if a package is available (the package's files exist in the packages directory)
@@ -46,30 +46,30 @@ interface PackageManagerInterface {
 	public function isPackageActive($packageKey);
 
 	/**
-	 * Returns a \TYPO3\FLOW3\Package\PackageInterface object for the specified package.
+	 * Returns a \TYPO3\Flow\Package\PackageInterface object for the specified package.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
 	 * @param string $packageKey
-	 * @return \TYPO3\FLOW3\Package\PackageInterface
+	 * @return \TYPO3\Flow\Package\PackageInterface
 	 * @api
 	 */
 	public function getPackage($packageKey);
 
 	/**
-	 * Returns an array of \TYPO3\FLOW3\Package\PackageInterface objects of all available packages.
+	 * Returns an array of \TYPO3\Flow\Package\PackageInterface objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package\PackageInterface
+	 * @return array Array of \TYPO3\Flow\Package\PackageInterface
 	 * @api
 	 */
 	public function getAvailablePackages();
 
 	/**
-	 * Returns an array of \TYPO3\FLOW3\PackageInterface objects of all active packages.
+	 * Returns an array of \TYPO3\Flow\PackageInterface objects of all active packages.
 	 * A package is active, if it is available and has been activated in the package
 	 * manager settings.
 	 *
-	 * @return array Array of \TYPO3\FLOW3\Package\PackageInterface
+	 * @return array Array of \TYPO3\Flow\Package\PackageInterface
 	 * @api
 	 */
 	public function getActivePackages();
@@ -96,11 +96,11 @@ interface PackageManagerInterface {
 	 * Create a new package, given the package key
 	 *
 	 * @param string $packageKey The package key to use for the new package
-	 * @param \TYPO3\FLOW3\Package\MetaData $packageMetaData Package metadata
-	 * @return \TYPO3\FLOW3\Package\Package The newly created package
+	 * @param \TYPO3\Flow\Package\MetaData $packageMetaData Package metadata
+	 * @return \TYPO3\Flow\Package\Package The newly created package
 	 * @api
 	 */
-	public function createPackage($packageKey, \TYPO3\FLOW3\Package\MetaData $packageMetaData = null);
+	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null);
 
 	/**
 	 * Deactivates a package if it is in the list of active packages
@@ -153,7 +153,7 @@ interface PackageManagerInterface {
 	public function refreezePackage($packageKey);
 
 	/**
-	 * Register a native FLOW3 package
+	 * Register a native Flow package
 	 *
 	 * @param string $packageKey The Package to be registered
 	 * @param boolean $sortAndSave allows for not saving packagestates when used in loops etc.

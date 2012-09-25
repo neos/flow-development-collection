@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A helper for CLI Commands
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class CommandManager {
 
@@ -31,28 +31,28 @@ class CommandManager {
 	protected $shortCommandIdentifiers = NULL;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
@@ -66,7 +66,7 @@ class CommandManager {
 		if ($this->availableCommands === NULL) {
 			$this->availableCommands = array();
 
-			$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\FLOW3\Cli\CommandController');
+			$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Cli\CommandController');
 			foreach ($commandControllerClassNames as $className) {
 				if (!class_exists($className)) {
 					continue;
@@ -87,26 +87,26 @@ class CommandManager {
 	 * If more than one Command matches an AmbiguousCommandIdentifierException is thrown that contains the matched Commands
 	 *
 	 * @param string $commandIdentifier command identifier in the format foo:bar:baz
-	 * @return \TYPO3\FLOW3\Mvc\Cli\Command
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException if no matching command is available
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
+	 * @return \TYPO3\Flow\Mvc\Cli\Command
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchCommandException if no matching command is available
+	 * @throws \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
 	 * @api
 	 */
 	public function getCommandByIdentifier($commandIdentifier) {
 		$commandIdentifier = strtolower(trim($commandIdentifier));
 		if ($commandIdentifier === 'help') {
-			$commandIdentifier = 'typo3.flow3:help:help';
+			$commandIdentifier = 'typo3.flow:help:help';
 		}
 		if ($commandIdentifier === 'sys') {
-			$commandIdentifier = 'typo3.flow3:cache:sys';
+			$commandIdentifier = 'typo3.flow:cache:sys';
 		}
 
 		$matchedCommands = $this->getCommandsByIdentifier($commandIdentifier);
 		if (count($matchedCommands) === 0) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException('No command could be found that matches the command identifier "' . $commandIdentifier . '".', 1310556663);
+			throw new \TYPO3\Flow\Mvc\Exception\NoSuchCommandException('No command could be found that matches the command identifier "' . $commandIdentifier . '".', 1310556663);
 		}
 		if (count($matchedCommands) > 1) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\AmbiguousCommandIdentifierException('More than one command matches the command identifier "' . $commandIdentifier . '"', 1310557169, NULL, $matchedCommands);
+			throw new \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException('More than one command matches the command identifier "' . $commandIdentifier . '"', 1310557169, NULL, $matchedCommands);
 		}
 		return current($matchedCommands);
 	}
@@ -116,7 +116,7 @@ class CommandManager {
 	 * If no Command could be found, an empty array is returned
 	 *
 	 * @param string $commandIdentifier command identifier in the format foo:bar:baz
-	 * @return array<\TYPO3\FLOW3\Mvc\Cli\Command>
+	 * @return array<\TYPO3\Flow\Mvc\Cli\Command>
 	 * @api
 	 */
 	public function getCommandsByIdentifier($commandIdentifier) {
@@ -138,7 +138,7 @@ class CommandManager {
 	 * @api
 	 */
 	public function getShortestIdentifierForCommand(Command $command) {
-		if ($command->getCommandIdentifier() === 'typo3.flow3:help:help') {
+		if ($command->getCommandIdentifier() === 'typo3.flow:help:help') {
 			return 'help';
 		}
 		$shortCommandIdentifiers = $this->getShortCommandIdentifiers();
@@ -176,7 +176,7 @@ class CommandManager {
 							$this->getCommandByIdentifier($shortCommandIdentifier);
 							$this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = $shortCommandIdentifier;
 							break;
-						} catch (\TYPO3\FLOW3\Mvc\Exception\CommandException $exception) {
+						} catch (\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
 						}
 					}
 				} else {

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Session;
+namespace TYPO3\Flow\Session;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Implementation of a transient session.
@@ -19,9 +19,9 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * This session behaves like any other session except that it only stores the
  * data during one request.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
+class TransientSession implements \TYPO3\Flow\Session\SessionInterface {
 
 	/**
 	 * The session Id
@@ -98,10 +98,10 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getId() {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034659);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034659);
 		return $this->sessionId;
 	}
 
@@ -110,10 +110,10 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The data associated with the given key or NULL
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getData($key) {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034660);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034660);
 		return (array_key_exists($key, $this->data)) ? $this->data[$key] : NULL;
 	}
 
@@ -133,10 +133,10 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param object $data The data to be stored
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data) {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034661);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034661);
 		$this->data[$key] = $data;
 	}
 
@@ -144,10 +144,10 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 * Closes the session
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function close() {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034662);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034662);
 		$this->started = FALSE;
 	}
 
@@ -156,11 +156,11 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 *
 	 * @param string $reason A reason for destroying the session – used by the LoggingAspect
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Session\Exception
-	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function destroy($reason = NULL) {
-		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
+		if ($this->started !== TRUE) throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
 		$this->data = array();
 		$this->started = FALSE;
 	}
@@ -168,10 +168,10 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	/**
 	 * No operation for transient session.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	static public function destroyAll(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {}
+	static public function destroyAll(\TYPO3\Flow\Core\Bootstrap $bootstrap) {}
 
 }
 

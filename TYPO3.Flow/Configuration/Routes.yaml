@@ -1,23 +1,23 @@
 #                                                                        #
-# Default subroutes configuration for the FLOW3 package                  #
+# Default subroutes configuration for the TYPO3 Flow package             #
 #                                                                        #
 
 ##
-# Default route to the FLOW3 Authentication Controller
+# Default route to the Flow Authentication Controller
 
 -
   name: 'Authentication with action'
-  uriPattern: 'flow3/authentication/{@action}'
+  uriPattern: 'flow/authentication/{@action}'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Security\Authentication'
     '@controller': 'Authentication'
 
 -
   name: 'Authentication'
-  uriPattern: 'flow3/authentication'
+  uriPattern: 'flow/authentication'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Security\Authentication'
     '@controller': 'Authentication'
     '@action':     'authenticate'
@@ -65,7 +65,7 @@
   name: 'fallback'
   uriPattern: ''
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Mvc'
     '@controller': 'Standard'
     '@action':     'index'

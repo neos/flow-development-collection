@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing;
  * Testcase for the MVC Web Routing StaticRoutePart Class
  *
  */
-class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class StaticRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/*                                                                        *
 	 * URI matching                                                           *
@@ -25,7 +25,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotMatchIfRequestPathIsNullOrEmpty() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 
 		$routePath = NULL;
@@ -39,7 +39,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotMatchIfRequestPathIsEmptyEvenIfDefaultValueIsSet() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('bar');
 
@@ -51,7 +51,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotMatchIfUnnamed() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePath = 'foo/bar';
 		$this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not set.');
 	}
@@ -60,7 +60,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotMatchIfNameIsNotEqualToBeginningOfRequestPath() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routePath = 'bar/foo';
 
@@ -71,7 +71,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartMatchesIfNameIsEqualToBeginningOfRequestPath() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routePath = 'foo/bar';
 
@@ -82,7 +82,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotMatchIfCaseOfRequestPathIsNotEqualToTheName() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('SomeName');
 		$routePath = 'somename';
 
@@ -93,7 +93,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 
 		$routePath = 'foo/bar';
@@ -108,7 +108,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function routePathIsNotModifiedAfterUnsuccessfulMatch() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('bar');
 
 		$routePath = 'foo/bar';
@@ -120,7 +120,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function routePathIsShortenedByMatchingPartOnSuccessfulMatch() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('bar/');
 		$routePath = 'bar/foo/test';
 
@@ -132,7 +132,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function matchResetsValueBeforeProcessingTheRoutePath() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routeValues = array();
 		$routePart->resolve($routeValues);
@@ -151,7 +151,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartCanResolveEmptyArray() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routeValues = array();
 
@@ -163,7 +163,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartCanResolveNonEmptyArray() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routeValues = array('@controller' => 'foo', '@action' => 'bar');
 
@@ -175,7 +175,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotResolveIfUnnamed() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routeValues = array();
 		$this->assertFalse($routePart->resolve($routeValues), 'Static Route Part should not resolve if name is not set');
 	}
@@ -184,7 +184,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotAlterRouteValuesWhenCallingResolve() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routeValues = array('@controller' => 'foo', '@action' => 'bar');
 
@@ -196,7 +196,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartLowerCasesValueByDefault() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('SomeName');
 		$routeValues = array();
 
@@ -208,7 +208,7 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function staticRoutePartDoesNotAlterCaseIfLowerCaseIsFalse() {
-		$routePart = new \TYPO3\FLOW3\Mvc\Routing\StaticRoutePart();
+		$routePart = new \TYPO3\Flow\Mvc\Routing\StaticRoutePart();
 		$routePart->setName('SomeName');
 		$routePart->setLowerCase(FALSE);
 		$routeValues = array();

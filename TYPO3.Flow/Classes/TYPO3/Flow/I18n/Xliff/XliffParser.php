@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Xliff;
+namespace TYPO3\Flow\I18n\Xliff;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class which parses XLIFF file to simple but useful array representation.
@@ -22,12 +22,12 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *   forms
  * - reads only "source" and "target" in "trans-unit" tags
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @throws Exception\InvalidXliffDataException
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
-class XliffParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
+class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XLIFF data, starting from a root node.
@@ -39,7 +39,7 @@ class XliffParser extends \TYPO3\FLOW3\I18n\AbstractXmlParser {
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
 		$parsedData = array(
-			'sourceLocale' => new \TYPO3\FLOW3\I18n\Locale((string)$root->file['source-language'])
+			'sourceLocale' => new \TYPO3\Flow\I18n\Locale((string)$root->file['source-language'])
 		);
 
 		foreach ($root->file->body->children() as $translationElement) {

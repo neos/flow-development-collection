@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class for translating messages
@@ -32,63 +32,63 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Actual translating is done by injected TranslationProvider instance, so
  * storage format depends on concrete implementation.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
- * @see \TYPO3\FLOW3\I18n\FormatResolver
- * @see \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
- * @see \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader
+ * @see \TYPO3\Flow\I18n\FormatResolver
+ * @see \TYPO3\Flow\I18n\TranslationProvider\TranslationProviderInterface
+ * @see \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader
  */
 class Translator {
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Service
+	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
+	 * @var \TYPO3\Flow\I18n\TranslationProvider\TranslationProviderInterface
 	 */
 	protected $translationProvider;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\FormatResolver
+	 * @var \TYPO3\Flow\I18n\FormatResolver
 	 */
 	protected $formatResolver;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader
+	 * @var \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader
 	 */
 	protected $pluralsReader;
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\Flow\I18n\Service $localizationService
 	 * @return void
 	 */
-	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider
+	 * @param \TYPO3\Flow\I18n\TranslationProvider\TranslationProviderInterface $translationProvider
 	 * @return void
 	 */
-	public function injectTranslationProvider(\TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider) {
+	public function injectTranslationProvider(\TYPO3\Flow\I18n\TranslationProvider\TranslationProviderInterface $translationProvider) {
 		$this->translationProvider = $translationProvider;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\FormatResolver $formatResolver
+	 * @param \TYPO3\Flow\I18n\FormatResolver $formatResolver
 	 * @return void
 	 */
-	public function injectFormatResolver(\TYPO3\FLOW3\I18n\FormatResolver $formatResolver) {
+	public function injectFormatResolver(\TYPO3\Flow\I18n\FormatResolver $formatResolver) {
 		$this->formatResolver = $formatResolver;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
+	 * @param \TYPO3\Flow\I18n\Cldr\Reader\PluralsReader $pluralsReader
 	 * @return void
 	 */
-	public function injectPluralsReader(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
+	public function injectPluralsReader(\TYPO3\Flow\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
 		$this->pluralsReader = $pluralsReader;
 	}
 
@@ -112,13 +112,13 @@ class Translator {
 	 * @param string $originalLabel Untranslated message
 	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
 	 * @param string $packageKey Key of the package containing the source file
 	 * @return string Translated $originalLabel or $originalLabel itself on failure
 	 * @api
 	 */
-	public function translateByOriginalLabel($originalLabel, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
+	public function translateByOriginalLabel($originalLabel, array $arguments = array(), $quantity = NULL, \TYPO3\Flow\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.Flow') {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getConfiguration()->getCurrentLocale();
 		}
@@ -155,14 +155,14 @@ class Translator {
 	 * @param string $labelId Key to use for finding translation
 	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param \TYPO3\Flow\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
 	 * @param string $packageKey Key of the package containing the source file
 	 * @return string Translated message or $labelId on failure
 	 * @api
-	 * @see \TYPO3\FLOW3\I18n\Translator::translateByOriginalLabel()
+	 * @see \TYPO3\Flow\I18n\Translator::translateByOriginalLabel()
 	 */
-	public function translateById($labelId, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
+	public function translateById($labelId, array $arguments = array(), $quantity = NULL, \TYPO3\Flow\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.Flow') {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getConfiguration()->getCurrentLocale();
 		}
@@ -191,7 +191,7 @@ class Translator {
 	 *
 	 * @param mixed $quantity
 	 * @param array $arguments
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @return string
 	 */
 	protected function getPluralForm($quantity, array $arguments, Locale $locale) {

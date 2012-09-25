@@ -1,20 +1,20 @@
----------
-FLOW3 1.2
----------
+--------------
+TYPO3 Flow 1.2
+--------------
 
-Welcome to FLOW3!
+Welcome to TYPO3 Flow!
 
-There are a few things you need to know to get started with FLOW3.
-All necessary steps are explained in the FLOW3 Getting Started tutorial
-which you find on http://flow3.typo3.org/documentation/quickstart.html
+There are a few things you need to know to get started with TYPO3 Flow.
+All necessary steps are explained in the Getting Started tutorial which
+you find on http://flow.typo3.org/documentation/quickstart.html
 
 In short here's what you need to do:
 
 1) Set up a virtual host for your web server and let it point to the Web/
-   directory of FLOW3.
+   directory of TYPO3 Flow.
 2) Adjust the file permissions. On Linux / Mac just run
-   sudo ./flow3 flow3:core:setfilepermissions johndoe wwwuser wwwgroup
-   from FLOW3's main directory (replace the user names by some matching
+   sudo ./flow flow:core:setfilepermissions johndoe wwwuser wwwgroup
+   from TYPO3 Flow's main directory (replace the user names by some matching
    your system environment!).
 3) Call the URL leading to your virtual host from a browser
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing\Aspect;
+namespace TYPO3\Flow\Mvc\Routing\Aspect;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,48 +11,48 @@ namespace TYPO3\FLOW3\Mvc\Routing\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
  *
- * @FLOW3\Aspect
- * @FLOW3\Scope("singleton")
+ * @Flow\Aspect
+ * @Flow\Scope("singleton")
  */
 class RouterCachingAspect {
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @Flow\Inject
 	 */
 	protected $findMatchResultsCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\StringFrontend
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+	 * @Flow\Inject
 	 */
 	protected $resolveCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @Flow\Inject
 	 */
 	protected $systemLogger;
 
 	/**
 	 * Around advice
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\Mvc\Routing\Router->findMatchResults())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
+	 * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\Router->findMatchResults())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return array Result of the target method
 	 */
-	public function cacheMatchingCall(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function cacheMatchingCall(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$routePath = $joinPoint->getMethodArgument('routePath');
 
 		$cacheIdentifier = md5($routePath);
@@ -77,16 +77,16 @@ class RouterCachingAspect {
 	/**
 	 * Around advice
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\Mvc\Routing\Router->resolve())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
+	 * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\Router->resolve())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return string Result of the target method
 	 */
-	public function cacheResolveCall(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function cacheResolveCall(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$cacheIdentifier = NULL;
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
 		try {
 			$routeValues = $this->convertObjectsToHashes($routeValues);
-			\TYPO3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
+			\TYPO3\Flow\Utility\Arrays::sortKeysRecursively($routeValues);
 			$cacheIdentifier = md5(http_build_query($routeValues));
 			if ($this->resolveCache->has($cacheIdentifier)) {
 				return $this->resolveCache->get($cacheIdentifier);

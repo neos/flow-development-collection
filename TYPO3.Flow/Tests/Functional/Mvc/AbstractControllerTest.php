@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Mvc;
+namespace TYPO3\Flow\Tests\Functional\Mvc;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Client\Browser;
-use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\Flow\Http\Client\Browser;
+use TYPO3\Flow\Mvc\Routing\Route;
 
 /**
  * Functional tests for the ActionController
  */
-class AbstractControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class AbstractControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -39,7 +39,7 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$route->setName('AbstractControllerTest Route 1');
 		$route->setUriPattern('test/mvc/abstractcontrollertesta/{@action}');
 		$route->setDefaults(array(
-			'@package' => 'TYPO3.FLOW3',
+			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
 			'@controller' => 'AbstractControllerTestA',
 			'@format' =>'html'
@@ -77,7 +77,7 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function forwardPassesRequestToActionWithInternalArgumentsContainingObjects() {
 		$response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=fourth&passSomeObjectArguments=1&arguments[nonObject1]=First&arguments[nonObject2]=42');
-		$this->assertEquals('fourthAction-First-42-TYPO3\FLOW3\Error\Message', $response->getContent());
+		$this->assertEquals('fourthAction-First-42-TYPO3\Flow\Error\Message', $response->getContent());
 	}
 
 }

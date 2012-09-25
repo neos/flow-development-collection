@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Core;
+namespace TYPO3\Flow\Tests\Unit\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,27 +11,27 @@ namespace TYPO3\FLOW3\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * Testcase for the Bootstrap class
  */
-class BootstrapTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class BootstrapTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @return array
 	 */
 	public function commandIdentifiersAndCompiletimeControllerInfo() {
 		return array(
-			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'typo3.flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'core:shell', FALSE),
-			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:flush'), 'typo3.flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:flush'), 'flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'typo3.flow3:help:help', FALSE),
-			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:*'), 'flow3:cache:flush', TRUE),
-			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:*'), 'flow5:core:shell', FALSE),
-			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:*'), 'typo3:core:shell', FALSE),
+			array(array('typo3.flow:core:shell', 'typo3.flow:cache:flush'), 'typo3.flow:core:shell', TRUE),
+			array(array('typo3.flow:core:shell', 'typo3.flow:cache:flush'), 'flow:core:shell', TRUE),
+			array(array('typo3.flow:core:shell', 'typo3.flow:cache:flush'), 'core:shell', FALSE),
+			array(array('typo3.flow:core:*', 'typo3.flow:cache:flush'), 'typo3.flow:core:shell', TRUE),
+			array(array('typo3.flow:core:*', 'typo3.flow:cache:flush'), 'flow:core:shell', TRUE),
+			array(array('typo3.flow:core:shell', 'typo3.flow:cache:flush'), 'typo3.flow:help:help', FALSE),
+			array(array('typo3.flow:core:*', 'typo3.flow:cache:*'), 'flow:cache:flush', TRUE),
+			array(array('typo3.flow:core:*', 'typo3.flow:cache:*'), 'flow5:core:shell', FALSE),
+			array(array('typo3.flow:core:*', 'typo3.flow:cache:*'), 'typo3:core:shell', FALSE),
 		);
 	}
 

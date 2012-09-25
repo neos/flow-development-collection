@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Reflection;
+namespace TYPO3\Flow\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Extended version of the ReflectionParameter
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class ParameterReflection extends \ReflectionParameter {
 
@@ -28,7 +28,7 @@ class ParameterReflection extends \ReflectionParameter {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
+	 * @return \TYPO3\Flow\Reflection\ClassReflection The declaring class
 	 */
 	public function getDeclaringClass() {
 		return new ClassReflection(parent::getDeclaringClass()->getName());
@@ -37,7 +37,7 @@ class ParameterReflection extends \ReflectionParameter {
 	/**
 	 * Returns the parameter class
 	 *
-	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The parameter class
+	 * @return \TYPO3\Flow\Reflection\ClassReflection The parameter class
 	 */
 	public function getClass() {
 		try {

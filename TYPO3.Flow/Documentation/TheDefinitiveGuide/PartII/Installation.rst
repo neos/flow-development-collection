@@ -4,38 +4,38 @@ Installation
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-FLOW3 Download
-==============
+TYPO3 Flow Download
+===================
 
-The most recent FLOW3 release can be obtained from http://flow3.typo3.org/download as a
+The most recent TYPO3 Flow release can be obtained from http://flow.typo3.org/download as a
 .tgz, .zip or .bz2 archive. Once you downloaded the distribution just unpack the archive
 in a directory of your choice, e.g. like this for the gzipped tar archive:
 
 .. code-block:: none
 
 	mkdir -p /var/apache2/htdocs/tutorial
-	tar xfz FLOW3-1.0.0-beta1.tgz /var/apache2/htdocs/tutorial/
+	tar xfz Flow-1.0.0-beta1.tgz /var/apache2/htdocs/tutorial/
 
 On Windows you create a directory (e.g. *c:\\xampp\\htdocs\\tutorial*), move
 the .zip file into the new directory and unzip it with the Windows Explorer.
 
-The FLOW3 distributions can also be cloned from our Git repository. The
-following Unix command would download the FLOW3 distribution:
+The TYPO3 Flow distributions can also be cloned from our Git repository. The
+following Unix command would download the TYPO3 Flow distribution:
 
 .. code-block:: none
 
-	git clone --recursive git://git.typo3.org/FLOW3/Distributions/Base.git \
+	git clone --recursive git://git.typo3.org/Flow/Distributions/Base.git \
 	/var/apache2/htdocs/tutorial/
 
 .. note::
-	Throughout this tutorial we assume that you installed the FLOW3 distribution in
+	Throughout this tutorial we assume that you installed the TYPO3 Flow distribution in
 	*/var/apache2/htdocs/tutorial* and that */var/apache2/htdocs* is the document root
 	of your web server. On a Windows machine you might use *c:\\xampp\\htdocs* instead.
 
 Directory Structure
 ===================
 
-Let's take a look at the directory structure of a FLOW3 application:
+Let's take a look at the directory structure of a TYPO3 Flow application:
 
 ======================	===================================================================================
 Directory				Description
@@ -43,17 +43,17 @@ Directory				Description
 Configuration/			Application specific configuration, grouped by contexts
 Data/					Persistent and temporary data, including caches, logs, resources and the database
 Packages/				Contains sub directories which in turn contain package directories
-Packages/Framework/		Packages which are part of the official FLOW3 distribution
+Packages/Framework/		Packages which are part of the official TYPO3 Flow distribution
 Packages/Application/	Application specific packages
 Web/					Public web root
 ======================	===================================================================================
 
-A FLOW3 application usually consists of the above directories. As you see, most
+A TYPO3 Flow application usually consists of the above directories. As you see, most
 of them contain data which is specific to your application, therefore upgrading
-the FLOW3 distribution is a matter of replacing *Packages/Framework/* by
+the TYPO3 Flow distribution is a matter of replacing *Packages/Framework/* by
 a new release.
 
-FLOW3 is a package based system which means that all code, documentation and
+TYPO3 Flow is a package based system which means that all code, documentation and
 other resources are bundled in packages. Each package has its own directory
 with a defined sub structure. Your own PHP code and resources will usually end
 up in a package residing below *Packages/Application/*. You're free to create
@@ -71,21 +71,21 @@ File Permissions
 ================
 
 Most of the directories and files must be readable and writable for the user
-you're running FLOW3 with. This user will usually be the same one running your
+you're running TYPO3 Flow with. This user will usually be the same one running your
 web server (``httpd``, ``www`` or ``_www`` on most Unix based systems). However it
-can and usually will happen that FLOW3 is launched from the command line by a
+can and usually will happen that TYPO3 Flow is launched from the command line by a
 different user. Therefore it is important that both, the web server user and
 the command line user are members of a common group and the file permissions
 are set accordingly.
 
 We recommend setting ownership of directories and files to the web server's
-group. All users who also need to launch FLOW3 must also be added this group.
-But don't worry, this is simply done by changing to the FLOW3 base directory
+group. All users who also need to launch TYPO3 Flow must also be added this group.
+But don't worry, this is simply done by changing to the TYPO3 Flow base directory
 and calling the following command (this command must be called as super user):
 
 .. code-block:: none
 
-	sudo ./flow3 core:setfilepermissions john www-data www-data
+	sudo ./flow core:setfilepermissions john www-data www-data
 
 .. note::
 
@@ -93,7 +93,7 @@ and calling the following command (this command must be called as super user):
 	For Apache to be able to create symlinks, you need to use Windows Vista (or
 	newer) and Apache needs to be started with Administrator privileges.
 
-Now that the file permissions are set, all users who plan using FLOW3 from the
+Now that the file permissions are set, all users who plan using TYPO3 Flow from the
 command line need to join the web server's group. On a Linux machine this can
 be done by typing:
 
@@ -120,7 +120,7 @@ new group membership to take effect.
 Web Server Configuration
 ========================
 
-As you have seen previously, FLOW3 uses a directory called *Web* as the public
+As you have seen previously, TYPO3 Flow uses a directory called *Web* as the public
 web root. We highly recommend that you create a virtual host which points to
 this directory and thereby assure that all other directories are not accessible
 from the web. For testing purposes on your local machine it is okay (but not
@@ -147,12 +147,12 @@ loaded with ``Include`` in ``httpd.conf``):
 This virtual host will later be accessible via the URL http://dev.tutorial.local.
 
 .. note::
-	FLOW3 runs per default in the ``Development`` context. That's why the *ServerName*
+	TYPO3 Flow runs per default in the ``Development`` context. That's why the *ServerName*
 	in this example is  *dev.*tutorial.local. Later you will add another virtual
 	host for the ``Production`` context. The concept of contexts is explained in the
 	next section *Configuration*.
 
-Because FLOW3 provides an ``.htaccess`` file with ``mod_rewrite`` rules in it,
+Because TYPO3 Flow provides an ``.htaccess`` file with ``mod_rewrite`` rules in it,
 you need to make sure that the directory grants the neccessary rights:
 
 *httpd.conf*:
@@ -163,9 +163,9 @@ you need to make sure that the directory grants the neccessary rights:
 		AllowOverride FileInfo
 	</Directory>
 
-The way FLOW3 addresses resources on the web makes it incompatible with the ``MultiViews``
+The way TYPO3 Flow addresses resources on the web makes it incompatible with the ``MultiViews``
 feature of Apache. This needs to be turned off, the default ``.htaccess`` file distributed
-with FLOW3 contains this code already
+with TYPO3 Flow contains this code already
 
 .. code-block:: none
 
@@ -179,7 +179,7 @@ with FLOW3 contains this code already
 Configure a Context
 -------------------
 
-As you'll learn soon, FLOW3 can be launched in different **contexts**, the most
+As you'll learn soon, TYPO3 Flow can be launched in different **contexts**, the most
 popular being ``Production``, ``Development`` and ``Testing``. Although there
 are various ways to choose the current context, the most convenient is to setup
 a dedicated virtual host defining an environment variable. Just add the
@@ -192,7 +192,7 @@ following virtual host to your Apache configuration:
 	<VirtualHost *:80>
 		DocumentRoot /var/apache2/htdocs/tutorial/Web/
 		ServerName tutorial.local
-		SetEnv FLOW3_CONTEXT Production
+		SetEnv FLOW_CONTEXT Production
 	</VirtualHost>
 
 You'll be able to access the same application running in ``Production``
@@ -218,19 +218,19 @@ machine. Add the following line to your */etc/hosts* file
 .. code-block:: none
 
 	# You can specify a default context by activating this option:
-	SetEnv FLOW3_CONTEXT Production
+	SetEnv FLOW_CONTEXT Production
 
-Welcome to FLOW3
-----------------
+Welcome to TYPO3 Flow
+---------------------
 
 Restart Apache and test your new configuration by accessing
-http://dev.tutorial.local in a web browser. You should be greeted by FLOW3's
+http://dev.tutorial.local in a web browser. You should be greeted by TYPO3 Flow's
 welcome screen:
 
 .. image:: /Images/GettingStarted/Welcome.png
 
 .. tip::
 	If you get in trouble during the installation check out the `installation hints
-	<http://forge.typo3.org/projects/flow3/wiki/Installation_hints>`_ on forge. On
+	<http://forge.typo3.org/projects/flow/wiki/Installation_hints>`_ on forge. On
 	Windows you will most likely have to check the section *Running on Windows OS's*
 	of that page.

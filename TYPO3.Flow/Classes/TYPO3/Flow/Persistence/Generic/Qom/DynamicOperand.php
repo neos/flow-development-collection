@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\Flow\Persistence\Generic\Qom;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * An operand whose value can only be determined in evaluating the query.
  *
  */
-class DynamicOperand extends \TYPO3\FLOW3\Persistence\Generic\Qom\Operand {
+class DynamicOperand extends \TYPO3\Flow\Persistence\Generic\Qom\Operand {
 
 }
 

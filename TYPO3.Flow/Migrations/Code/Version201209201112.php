@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core\Migrations;
+namespace TYPO3\Flow\Core\Migrations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "FLOW3".                      *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,24 @@ namespace TYPO3\FLOW3\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Move all code to PSR-0 compatible directory structure, remove Package.xml,
  * add composer.json.
  */
 class Version201209201112 extends AbstractMigration {
+
+	/**
+	 * Returns the identifier of this migration.
+	 *
+	 * Hardcoded to be stable after the rename to TYPO3 Flow.
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.FLOW3-201209201112';
+	}
 
 	/**
 	 * @return void

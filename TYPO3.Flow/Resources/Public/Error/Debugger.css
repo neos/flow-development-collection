@@ -1,24 +1,14 @@
 /*                                                                        *
- * This style sheet belongs to the FLOW3 framework.                       *
+ * This style sheet belongs to the TYPO3 Flow framework.                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License as published by the *
- * Free Software Foundation, either version 3 of the License, or (at your *
- * option) any later version.                                             *
- *                                                                        *
- * This script is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
- * General Public License for more details.                               *
- *                                                                        *
- * You should have received a copy of the GNU Lesser General Public       *
- * License along with the script.                                         *
- * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ * the terms of the GNU Lesser General Public License, either version 3   *
+ * of the License, or (at your option) any later version.                 *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-.FLOW3-Error-Debugger-VarDump {
+.Flow-Error-Debugger-VarDump {
 	display: block;
 	text-align: left;
 	background: #b9b9b9;
@@ -34,81 +24,81 @@
 	color: black;
 }
 
-.FLOW3-Error-Debugger-VarDump-Inline {
+.Flow-Error-Debugger-VarDump-Inline {
 
 }
 
-.FLOW3-Error-Debugger-VarDump-Floating {
+.Flow-Error-Debugger-VarDump-Floating {
 	float: left;
 	position: relative;
 	left: 150px;
 	width: 80%;
 }
 
-.FLOW3-Error-Debugger-VarDump-Top {
+.Flow-Error-Debugger-VarDump-Top {
 	background: #eee;
 	font: normal bold 12px "Lucida Grande", sans-serif;
 	padding: 5px;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center {
-	background: #b9b9b9 url("/_Resources/Static/Packages/TYPO3.FLOW3/Error/LinesBackground.png") 0 18px repeat;
+.Flow-Error-Debugger-VarDump-Center {
+	background: #b9b9b9 url("/_Resources/Static/Packages/TYPO3.Flow/Error/LinesBackground.png") 0 18px repeat;
 	font: normal normal 11px/18px Monospaced, "Lucida Console", monospace;
 	padding: 18px 10px;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center pre {
+.Flow-Error-Debugger-VarDump-Center pre {
 	margin: 0;
 	background-color: transparent;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center, .FLOW3-Error-Debugger-VarDump-Center pre, .FLOW3-Error-Debugger-VarDump-Center p, .FLOW3-Error-Debugger-VarDump-Center a, .FLOW3-Error-Debugger-VarDump-Center strong, .FLOW3-Error-Debugger-VarDump-Center .debug-string{
+.Flow-Error-Debugger-VarDump-Center, .Flow-Error-Debugger-VarDump-Center pre, .Flow-Error-Debugger-VarDump-Center p, .Flow-Error-Debugger-VarDump-Center a, .Flow-Error-Debugger-VarDump-Center strong, .Flow-Error-Debugger-VarDump-Center .debug-string{
 	font: normal normal 11px/18px Monospaced, "Lucida Console", monospace;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-string {
+.Flow-Error-Debugger-VarDump-Center .debug-string {
 	color: black;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-object {
+.Flow-Error-Debugger-VarDump-Center .debug-object {
 	color: #004fb0;
 	padding: 0px 4px;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-unregistered {
+.Flow-Error-Debugger-VarDump-Center .debug-unregistered {
 	background-color: #dce1e8;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-scope, .FLOW3-Error-Debugger-VarDump-Center .debug-ptype, .FLOW3-Error-Debugger-VarDump-Center .debug-proxy, .FLOW3-Error-Debugger-VarDump-Center .debug-filtered {
+.Flow-Error-Debugger-VarDump-Center .debug-scope, .Flow-Error-Debugger-VarDump-Center .debug-ptype, .Flow-Error-Debugger-VarDump-Center .debug-proxy, .Flow-Error-Debugger-VarDump-Center .debug-filtered {
 	color: white;
 	font-size: 10px;
 	line-height: 16px;
 	padding: 1px 4px;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-scope {
+.Flow-Error-Debugger-VarDump-Center .debug-scope {
 	background-color: #3e7fe1;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-ptype {
+.Flow-Error-Debugger-VarDump-Center .debug-ptype {
 	background-color: #87cd3b;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-proxy {
+.Flow-Error-Debugger-VarDump-Center .debug-proxy {
 	background-color: #b0000a;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-filtered {
+.Flow-Error-Debugger-VarDump-Center .debug-filtered {
 	background-color: #8c8c8c;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-seeabove {
+.Flow-Error-Debugger-VarDump-Center .debug-seeabove {
 	text-decoration: none;
 	font-style: italic;
 	font-weight: normal;
 }
 
-.FLOW3-Error-Debugger-VarDump-Center .debug-property {
+.Flow-Error-Debugger-VarDump-Center .debug-property {
 	color: #555555;
 	line-height: 16px;
 	padding: 1px 2px;

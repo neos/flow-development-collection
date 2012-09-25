@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Property\TypeConverter;
+namespace TYPO3\Flow\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Type converter which provides sensible default implementations for most methods. If you extend this class
@@ -22,9 +22,9 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * - implement convertFrom()
  *
  * @api
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-abstract class AbstractTypeConverter implements \TYPO3\FLOW3\Property\TypeConverterInterface {
+abstract class AbstractTypeConverter implements \TYPO3\Flow\Property\TypeConverterInterface {
 
 	/**
 	 * The source types this converter can convert.
@@ -110,11 +110,11 @@ abstract class AbstractTypeConverter implements \TYPO3\FLOW3\Property\TypeConver
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @api
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
 	}
 }
 ?>

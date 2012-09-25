@@ -1,13 +1,13 @@
 {
-    "name": "typo3/flow3",
-    "type": "flow3-framework",
-    "description": "FLOW3 - TYPO3's Application Framework",
-    "homepage": "http://flow3.typo3.org",
+    "name": "typo3/flow",
+    "type": "typo3-flow-framework",
+    "description": "TYPO3 Flow Application Framework",
+    "homepage": "http://flow.typo3.org",
     "keywords": ["framework"],
     "license": ["LGPL-3.0+"],
     "authors": [
         {
-            "name": "FLOW3 Development Team",
+            "name": "TYPO3 Flow Development Team",
             "homepage": "http://typo3.org/teams/core-development-team/"
         }
     ],
@@ -20,7 +20,7 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "flow3/composer-installers": "*",
+        "typo3/flow-composer-installers": "*",
         "typo3/fluid": "*",
         "typo3/party": "*",
 
@@ -32,7 +32,7 @@
     },
     "autoload": {
         "psr-0": {
-            "TYPO3\\FLOW3": "Classes"
+            "TYPO3\\Flow": "Classes"
         }
     }
 }

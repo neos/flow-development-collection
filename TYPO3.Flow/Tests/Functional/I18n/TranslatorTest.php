@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\I18n;
+namespace TYPO3\Flow\Tests\Functional\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,16 +11,16 @@ namespace TYPO3\FLOW3\Tests\Functional\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\I18n;
+use TYPO3\Flow\I18n;
 
 /**
  * Testcase for the I18N translations
  *
  */
-class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class TranslatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Translator
+	 * @var \TYPO3\Flow\I18n\Translator
 	 */
 	protected $translator;
 
@@ -29,7 +29,7 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->translator = $this->objectManager->get('TYPO3\FLOW3\I18n\Translator');
+		$this->translator = $this->objectManager->get('TYPO3\Flow\I18n\Translator');
 	}
 
 	/**
@@ -49,7 +49,7 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @dataProvider idAndLocaleForTranslation
 	 */
 	public function simpleTranslationByIdWorks($id, $locale, $translation) {
-		$result = $this->translator->translateById($id, array(), NULL, $locale, 'Main', 'TYPO3.FLOW3');
+		$result = $this->translator->translateById($id, array(), NULL, $locale, 'Main', 'TYPO3.Flow');
 		$this->assertEquals($translation, $result);
 	}
 
@@ -68,7 +68,7 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @dataProvider labelAndLocaleForTranslation
 	 */
 	public function simpleTranslationByLabelWorks($label, $locale, $translation) {
-		$result = $this->translator->translateByOriginalLabel($label, array(), NULL, $locale, 'Main', 'TYPO3.FLOW3');
+		$result = $this->translator->translateByOriginalLabel($label, array(), NULL, $locale, 'Main', 'TYPO3.Flow');
 		$this->assertEquals($translation, $result);
 	}
 

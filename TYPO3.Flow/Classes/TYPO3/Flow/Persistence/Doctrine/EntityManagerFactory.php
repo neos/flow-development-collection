@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,27 +11,27 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * EntityManager factory for Doctrine integration
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class EntityManagerFactory {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
@@ -41,31 +41,31 @@ class EntityManagerFactory {
 	protected $settings = array();
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\Flow\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
-	 * Injects the FLOW3 settings, the persistence part is kept
+	 * Injects the Flow settings, the persistence part is kept
 	 * for further use.
 	 *
 	 * @param array $settings
@@ -82,7 +82,7 @@ class EntityManagerFactory {
 	 */
 	public function create() {
 		$config = new \Doctrine\ORM\Configuration();
-		$config->setClassMetadataFactoryName('TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadataFactory');
+		$config->setClassMetadataFactoryName('TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
 		if (class_exists($this->settings['doctrine']['cacheImplementation'])) {
 				// safeguard against apc being disabled in CLI...
@@ -98,17 +98,17 @@ class EntityManagerFactory {
 		}
 
 			// must use ObjectManager in compile phase...
-		$flow3AnnotationDriver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$config->setMetadataDriverImpl($flow3AnnotationDriver);
+		$flowAnnotationDriver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$config->setMetadataDriverImpl($flowAnnotationDriver);
 
-		$proxyDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
-		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($proxyDirectory);
+		$proxyDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
+		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($proxyDirectory);
 		$config->setProxyDir($proxyDirectory);
-		$config->setProxyNamespace('TYPO3\FLOW3\Persistence\Doctrine\Proxies');
+		$config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
 		$config->setAutoGenerateProxyClasses(FALSE);
 
 		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
-		$flow3AnnotationDriver->setEntityManager($entityManager);
+		$flowAnnotationDriver->setEntityManager($entityManager);
 		return $entityManager;
 	}
 

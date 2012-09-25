@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Error;
+namespace TYPO3\Flow\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Global error handler for FLOW3
+ * Global error handler for Flow
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class ErrorHandler {
 
@@ -54,7 +54,7 @@ class ErrorHandler {
 	 * @param string $errorFile Name of the file the error occurred in
 	 * @param integer $errorLine Line number where the error occurred
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Error\Exception with the data passed to this method
+	 * @throws \TYPO3\Flow\Error\Exception with the data passed to this method
 	 * @throws \Exception
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
@@ -73,8 +73,8 @@ class ErrorHandler {
 		);
 
 		if (in_array($errorLevel, (array)$this->exceptionalErrors)) {
-			if (class_exists('TYPO3\FLOW3\Error\Exception')) {
-				throw new \TYPO3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			if (class_exists('TYPO3\Flow\Error\Exception')) {
+				throw new \TYPO3\Flow\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 			} else {
 				throw new \Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 			}

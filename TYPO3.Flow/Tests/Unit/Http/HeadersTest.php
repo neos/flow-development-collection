@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Http;
+namespace TYPO3\Flow\Tests\Unit\Http;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,14 +12,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Http;
  *                                                                        */
 
 
-use TYPO3\FLOW3\Http\Headers;
-use TYPO3\FLOW3\Http\Cookie;
-use TYPO3\FLOW3\Http\Uri;
+use TYPO3\Flow\Http\Headers;
+use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Http\Uri;
 
 /**
  * Testcase for the Http Headers class
  */
-class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class HeadersTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -77,9 +77,9 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function headerFieldsCanExistMultipleTimes() {
 		$headers = new Headers();
-		$headers->set('X-Powered-By', 'FLOW3');
+		$headers->set('X-Powered-By', 'Flow');
 		$headers->set('X-Powered-By', 'TYPO3', FALSE);
-		$this->assertSame(array('FLOW3', 'TYPO3'), $headers->get('X-Powered-By'));
+		$this->assertSame(array('Flow', 'TYPO3'), $headers->get('X-Powered-By'));
 	}
 
 	/**
@@ -87,7 +87,7 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getReturnsNullForNonExistingHeader() {
 		$headers = new Headers();
-		$headers->set('X-Powered-By', 'FLOW3');
+		$headers->set('X-Powered-By', 'Flow');
 		$this->assertFalse($headers->has('X-Empowered-By'));
 		$this->assertNull($headers->get('X-Empowered-By'));
 	}
@@ -221,8 +221,8 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array('public', 'public'),
 			array('private', 'private'),
 			array('no-cache', 'no-cache'),
-			array('private="X-FLOW3-Powered"', 'private="X-FLOW3-Powered"'),
-			array('no-cache= "X-FLOW3-Powered" ', 'no-cache="X-FLOW3-Powered"'),
+			array('private="X-Flow-Powered"', 'private="X-Flow-Powered"'),
+			array('no-cache= "X-Flow-Powered" ', 'no-cache="X-Flow-Powered"'),
 			array('max-age = 3600, must-revalidate', 'max-age=3600, must-revalidate'),
 			array('private, max-age=0, must-revalidate', 'private, max-age=0, must-revalidate'),
 			array('max-age=60, private,  proxy-revalidate', 'private, max-age=60, proxy-revalidate')
@@ -267,11 +267,11 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$headers->setCacheControlDirective('private');
 		$this->assertEquals('private', $headers->get('Cache-Control'));
 
-		$headers->setCacheControlDirective('private', 'X-FLOW3-Powered');
-		$this->assertEquals('private="X-FLOW3-Powered"', $headers->get('Cache-Control'));
+		$headers->setCacheControlDirective('private', 'X-Flow-Powered');
+		$this->assertEquals('private="X-Flow-Powered"', $headers->get('Cache-Control'));
 
-		$headers->setCacheControlDirective('no-cache', 'X-FLOW3-Powered');
-		$this->assertEquals('no-cache="X-FLOW3-Powered"', $headers->get('Cache-Control'));
+		$headers->setCacheControlDirective('no-cache', 'X-Flow-Powered');
+		$this->assertEquals('no-cache="X-Flow-Powered"', $headers->get('Cache-Control'));
 
 		$headers->setCacheControlDirective('no-cache');
 		$this->assertEquals('no-cache', $headers->get('Cache-Control'));
@@ -379,9 +379,9 @@ class HeadersTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		return array(
 			array('public', TRUE),
 			array('private', TRUE),
-			array('private', 'X-FLOW3'),
+			array('private', 'X-Flow'),
 			array('no-cache', TRUE),
-			array('no-cache', 'X-FLOW3'),
+			array('no-cache', 'X-Flow'),
 			array('max-age', 60),
 			array('s-maxage', 120),
 			array('must-revalidate', TRUE),

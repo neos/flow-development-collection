@@ -1,6 +1,6 @@
 <?php
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,11 +14,11 @@
  * Utility\MediaTypes from the mime.types file in the Apache HTTPD SVN
  * repository.
  *
- * It is a tool for use by the FLOW3 maintainers and can safely be ignored
- * by FLOW3 users.
+ * It is a tool for use by the Flow maintainers and can safely be ignored
+ * by Flow users.
  */
 
-$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/TYPO3/FLOW3/Utility/MediaTypes.php';
+$mediaTypesClassPathAndFilename = __DIR__ . '/../Classes/TYPO3/Flow/Utility/MediaTypes.php';
 
 $rawList = file_get_contents('http://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=HEAD&view=co');
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * A Service which provides further information about a given locale
  * and the current state of the i18n and L10n components.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class Service {
@@ -29,7 +29,7 @@ class Service {
 	protected $settings;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -37,17 +37,17 @@ class Service {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
-	 * @var \TYPO3\FLOW3\I18n\LocaleCollection
+	 * @var \TYPO3\Flow\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Configuration
+	 * @var \TYPO3\Flow\I18n\Configuration
 	 */
 	protected $configuration;
 
@@ -67,28 +67,28 @@ class Service {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\LocaleCollection $localeCollection
+	 * @param \TYPO3\Flow\I18n\LocaleCollection $localeCollection
 	 * @return void
 	 */
-	public function injectLocaleCollection(\TYPO3\FLOW3\I18n\LocaleCollection $localeCollection) {
+	public function injectLocaleCollection(\TYPO3\Flow\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
 	}
 
 	/**
-	 * Injects the FLOW3_I18n_Service cache
+	 * Injects the Flow_I18n_Service cache
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -110,7 +110,7 @@ class Service {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\I18n\Configuration
+	 * @return \TYPO3\Flow\I18n\Configuration
 	 * @api
 	 */
 	public function getConfiguration() {
@@ -132,7 +132,7 @@ class Service {
 	 * any change.
 	 *
 	 * @param string $filename Path to the file
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of localized file
+	 * @param \TYPO3\Flow\I18n\Locale $locale Desired locale of localized file
 	 * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
 	 * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
 	 * @see Configuration::setFallbackRule()
@@ -183,7 +183,7 @@ class Service {
 	 *
 	 * @param string $path Base directory to the translation files
 	 * @param string $sourceName name of the translation source
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of XLIFF file
+	 * @param \TYPO3\Flow\I18n\Locale $locale Desired locale of XLIFF file
 	 * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
 	 * @see Configuration::setFallbackRule()
 	 * @api
@@ -205,7 +205,7 @@ class Service {
 	/**
 	 * Build a chain of locale objects according to the fallback rule and
 	 * the available locales.
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @return array
 	 */
 	public function getLocaleChain(Locale $locale) {
@@ -240,30 +240,30 @@ class Service {
 	/**
 	 * Returns a parent Locale object of the locale provided.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
-	 * @return \TYPO3\FLOW3\I18n\Locale Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
+	 * @param \TYPO3\Flow\I18n\Locale $locale The Locale to search parent for
+	 * @return \TYPO3\Flow\I18n\Locale Existing \TYPO3\Flow\I18n\Locale instance or NULL on failure
 	 * @api
 	 */
-	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function getParentLocaleOf(\TYPO3\Flow\I18n\Locale $locale) {
 		return $this->localeCollection->getParentLocaleOf($locale);
 	}
 
 	/**
 	 * Returns Locale object which is the most similar to the "template" Locale
 	 * object given as parameter, from the collection of locales available in
-	 * the current FLOW3 installation.
+	 * the current Flow installation.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance on success, NULL on failure
+	 * @param \TYPO3\Flow\I18n\Locale $locale The "template" Locale to be matched
+	 * @return mixed Existing \TYPO3\Flow\I18n\Locale instance on success, NULL on failure
 	 * @api
 	 */
-	public function findBestMatchingLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
+	public function findBestMatchingLocale(\TYPO3\Flow\I18n\Locale $locale) {
 		return $this->localeCollection->findBestMatchingLocale($locale);
 	}
 
 	/**
 	 * Finds all Locale objects representing locales available in the
-	 * FLOW3 installation. This is done by scanning all Private and Public
+	 * Flow installation. This is done by scanning all Private and Public
 	 * resource files of all active packages, in order to find localized files.
 	 *
 	 * Localized files have a locale identifier added before their extension

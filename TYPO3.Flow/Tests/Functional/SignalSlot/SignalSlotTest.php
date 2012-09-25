@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\SignalSlot;
+namespace TYPO3\Flow\Tests\Functional\SignalSlot;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Functional\SignalSlot;
  * Test suite for Signal Slot
  *
  */
-class SignalSlotTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class SignalSlotTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
@@ -23,8 +23,8 @@ class SignalSlotTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function signalsDeclaredInAbstractClassesAreFunctionalInSubClasses() {
 		$subClass = new Fixtures\SubClass();
 
-		$dispatcher = $this->objectManager->get('TYPO3\FLOW3\SignalSlot\Dispatcher');
-		$dispatcher->connect('TYPO3\FLOW3\Tests\Functional\SignalSlot\Fixtures\SubClass', 'something', $subClass, 'somethingSlot');
+		$dispatcher = $this->objectManager->get('TYPO3\Flow\SignalSlot\Dispatcher');
+		$dispatcher->connect('TYPO3\Flow\Tests\Functional\SignalSlot\Fixtures\SubClass', 'something', $subClass, 'somethingSlot');
 
 		$subClass->triggerSomethingSignalFromSubClass();
 		$this->assertTrue($subClass->slotWasCalled, 'from sub class');

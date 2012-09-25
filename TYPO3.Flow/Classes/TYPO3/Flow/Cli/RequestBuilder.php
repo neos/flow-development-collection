@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,35 +11,35 @@ namespace TYPO3\FLOW3\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cli\Command;
-use TYPO3\FLOW3\Cli\CommandManager;
+use TYPO3\Flow\Cli\Command;
+use TYPO3\Flow\Cli\CommandManager;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Builds a CLI request object from the raw command call
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class RequestBuilder {
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -49,34 +49,34 @@ class RequestBuilder {
 	protected $commandManager;
 
 	/**
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\Flow\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -96,11 +96,11 @@ class RequestBuilder {
 	 * name (like in $argv) but start with command right away.
 	 *
 	 * @param mixed $commandLine The command line, either as a string or as an array
-	 * @return \TYPO3\FLOW3\Cli\Request The CLI request as an object
+	 * @return \TYPO3\Flow\Cli\Request The CLI request as an object
 	 */
 	public function build($commandLine) {
 		$request = new Request();
-		$request->setControllerObjectName('TYPO3\FLOW3\Command\HelpCommandController');
+		$request->setControllerObjectName('TYPO3\Flow\Command\HelpCommandController');
 
 		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
 		if (count($rawCommandLineArguments) === 0) {
@@ -110,7 +110,7 @@ class RequestBuilder {
 		$commandIdentifier = trim(array_shift($rawCommandLineArguments));
 		try {
 			$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
-		} catch (\TYPO3\FLOW3\Mvc\Exception\CommandException $exception) {
+		} catch (\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
 			$request->setArgument('exception', $exception);
 			$request->setControllerCommandName('error');
 			return $request;
@@ -135,7 +135,7 @@ class RequestBuilder {
 	 * @param string $controllerObjectName Object name of the designated command controller
 	 * @param string $controllerCommandName Command name of the recognized command (ie. method name without "Command" suffix)
 	 * @return array All and exceeding command line arguments
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentMixingException
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException
 	 */
 	protected function parseRawCommandLineArguments(array $rawCommandLineArguments, $controllerObjectName, $controllerCommandName) {
 		$commandLineArguments = array();
@@ -175,7 +175,7 @@ class RequestBuilder {
 					$commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
 				} elseif(isset($requiredArguments[$argumentName])) {
 					if ($decidedToUseUnnamedArguments) {
-						throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
+						throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
 					}
 					$decidedToUseNamedArguments = TRUE;
 					$argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
@@ -185,7 +185,7 @@ class RequestBuilder {
 			} else {
 				if (count($requiredArguments) > 0) {
 					if ($decidedToUseNamedArguments) {
-						throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
+						throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
 					}
 					$argument = array_shift($requiredArguments);
 					$commandLineArguments[$argument['parameterName']] = $rawArgument;

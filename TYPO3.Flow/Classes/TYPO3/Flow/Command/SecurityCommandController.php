@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Command controller for tasks related to security
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class SecurityCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp
+	 * @Flow\Inject
 	 */
 	protected $rsaWalletService;
 
@@ -33,7 +33,7 @@ class SecurityCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * RSAWalletService.
 	 *
 	 * @return void
-	 * @see typo3.flow3:security:importprivatekey
+	 * @see typo3.flow:security:importprivatekey
 	 */
 	public function importPublicKeyCommand() {
 		$keyData = '';
@@ -58,7 +58,7 @@ class SecurityCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param boolean $usedForPasswords If the private key should be used for passwords
 	 * @return void
-	 * @see typo3.flow3:security:importpublickey
+	 * @see typo3.flow:security:importpublickey
 	 */
 	public function importPrivateKeyCommand($usedForPasswords = FALSE) {
 		$keyData = '';

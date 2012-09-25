@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Resource;
+namespace TYPO3\Flow\Tests\Unit\Resource;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the resource manager
  *
  */
-class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 */
@@ -39,18 +39,18 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function initializeRegistersFoundStreamWrappers() {
 		$wrapperClassName = 'MockWrapper' . md5(uniqid(mt_rand(), TRUE));
 		$wrapperSchemeName = $wrapperClassName . 'scheme';
-		eval('class ' . $wrapperClassName . ' extends \TYPO3\FLOW3\Resource\Streams\ResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
+		eval('class ' . $wrapperClassName . ' extends \TYPO3\Flow\Resource\Streams\ResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
 		$mockStreamWrapperAdapter = new $wrapperClassName();
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
-		$resourceManager = new \TYPO3\FLOW3\Resource\ResourceManager();
+		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
 		$resourceManager->injectReflectionService($mockReflectionService);
 		$resourceManager->initialize();
 
-		$this->assertContains(get_class($mockStreamWrapperAdapter), \TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());
-		$this->assertArrayHasKey($wrapperSchemeName, \TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());
+		$this->assertContains(get_class($mockStreamWrapperAdapter), \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());
+		$this->assertArrayHasKey($wrapperSchemeName, \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());
 		$this->assertContains($wrapperSchemeName, stream_get_wrappers());
 		stream_wrapper_unregister($wrapperSchemeName);
 	}
@@ -61,18 +61,18 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function publishPublicPackageResourcesPublishesStaticResourcesOfActivePackages() {
 		$settings = array('resource' => array('publishing' => array('detectPackageResourceChanges' => TRUE)));
 
-		$mockStatusCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE);
-		$mockStatusCache->expects($this->once())->method('set')->with('packageResourcesPublished', 'y', array(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
+		$mockStatusCache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array(), array(), '', FALSE);
+		$mockStatusCache->expects($this->once())->method('set')->with('packageResourcesPublished', 'y', array(\TYPO3\Flow\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
 
-		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface', array(), array(), '', FALSE);
+		$mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface', array(), array(), '', FALSE);
 		$mockPackage->expects($this->exactly(2))->method('getResourcesPath')->will($this->onConsecutiveCalls('Packages/Foo/Resources/', 'Packages/Bar/Resources/'));
 
-		$mockResourcePublisher = $this->getMock('TYPO3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
+		$mockResourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$mockResourcePublisher->expects($this->at(0))->method('publishStaticResources')->with('Packages/Foo/Resources/Public/', 'Packages/Foo/');
 		$mockResourcePublisher->expects($this->at(1))->method('publishStaticResources')->with('Packages/Bar/Resources/Public/', 'Packages/Bar/');
 
 
-		$resourceManager = new \TYPO3\FLOW3\Resource\ResourceManager();
+		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
 		$resourceManager->injectResourcePublisher($mockResourcePublisher);
 		$resourceManager->injectStatusCache($mockStatusCache);
 		$resourceManager->injectSettings($settings);
@@ -86,16 +86,16 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function publishPublicPackageResourcesStoresThePublishingStatusInACacheDoesntPublishResourcesAgainIfSettingsSaySo() {
 		$settings = array('resource' => array('publishing' => array('detectPackageResourceChanges' => FALSE)));
 
-		$mockStatusCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE);
+		$mockStatusCache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array(), array(), '', FALSE);
 		$mockStatusCache->expects($this->once())->method('has')->with('packageResourcesPublished')->will($this->returnValue(TRUE));
 
-		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface', array(), array(), '', FALSE);
+		$mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface', array(), array(), '', FALSE);
 
-		$mockResourcePublisher = $this->getMock('TYPO3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
+		$mockResourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$mockResourcePublisher->expects($this->never())->method('publishStaticResource');
 
 
-		$resourceManager = new \TYPO3\FLOW3\Resource\ResourceManager();
+		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
 		$resourceManager->injectResourcePublisher($mockResourcePublisher);
 		$resourceManager->injectStatusCache($mockStatusCache);
 		$resourceManager->injectSettings($settings);
@@ -107,7 +107,7 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPersistentResourcesStorageBaseUriProvidesTheUriAtAWellKnownPlace() {
-		$resourceManager = $this->getAccessibleMock('\TYPO3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
+		$resourceManager = $this->getAccessibleMock('\TYPO3\Flow\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Bar/');
 
 		$actualUri = $resourceManager->getPersistentResourcesStorageBaseUri();
@@ -115,7 +115,7 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Resource\ResourceManager
+	 * @return \TYPO3\Flow\Resource\ResourceManager
 	 */
 	protected function setupResourceManager() {
 		file_put_contents('vfs://Foo/SomeResource.txt', '12345');
@@ -124,18 +124,18 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Persistent');
 		mkdir('vfs://Foo/Persistent/Resources');
 
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
-		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$mockLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
-		$resourceManager = $this->getAccessibleMock('\TYPO3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
+		$resourceManager = $this->getAccessibleMock('\TYPO3\Flow\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
 		$resourceManager->_set('importedResources', new \SplObjectStorage());
 		$resourceManager->injectEnvironment($mockEnvironment);
 		$resourceManager->injectSystemLogger($mockLogger);
 
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$resourceManager->injectPersistenceManager($mockPersistenceManager);
 
 		return $resourceManager;
@@ -212,7 +212,7 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		file_put_contents('vfs://Foo/bar', 'Hello world');
 
 		$resource = $resourceManager->importResource('vfs://Foo/bar');
-		$this->assertInstanceOf('TYPO3\FLOW3\Resource\Resource', $resource);
+		$this->assertInstanceOf('TYPO3\Flow\Resource\Resource', $resource);
 
 		$hash = sha1_file('vfs://Foo/bar');
 

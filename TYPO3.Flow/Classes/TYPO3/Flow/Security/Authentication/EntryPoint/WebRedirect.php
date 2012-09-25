@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
+namespace TYPO3\Flow\Security\Authentication\EntryPoint;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,9 +11,9 @@ namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Http\Request;
-use TYPO3\FLOW3\Http\Response;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
 
 /**
  * An authentication entry point, that redirects to another webpage.
@@ -21,24 +21,24 @@ use TYPO3\FLOW3\Http\Response;
 class WebRedirect extends AbstractEntryPoint {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Routing\UriBuilder
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
 
 	/**
 	 * Starts the authentication: Redirect to login page
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request The current request
-	 * @param \TYPO3\FLOW3\Http\Response $response The current response
+	 * @param \TYPO3\Flow\Http\Request $request The current request
+	 * @param \TYPO3\Flow\Http\Response $response The current response
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
+	 * @throws \TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthentication(Request $request, Response $response) {
 		if (isset($this->options['routeValues'])) {
 			$routeValues = $this->options['routeValues'];
 			if (!is_array($routeValues)) {
-				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException(sprintf('The configuration for the WebRedirect authentication entry point is incorrect. "routeValues" must be an array, got "%s".', gettype($routeValues)), 1345040415);
+				throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException(sprintf('The configuration for the WebRedirect authentication entry point is incorrect. "routeValues" must be an array, got "%s".', gettype($routeValues)), 1345040415);
 			}
 			$actionRequest = $request->createActionRequest();
 			$this->uriBuilder->setRequest($actionRequest);
@@ -51,7 +51,7 @@ class WebRedirect extends AbstractEntryPoint {
 		} elseif (isset($this->options['uri'])) {
 			$uri = (strpos('://', $this->options['uri'] !== FALSE)) ? $this->options['uri'] : $request->getBaseUri() . $this->options['uri'];
 		} else {
-			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing. You need to specify either the target "uri" or "routeValues".', 1237282583);
+			throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing. You need to specify either the target "uri" or "routeValues".', 1237282583);
 		}
 
 		$response->setContent(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8')));

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
+namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,23 +11,23 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request,
-	TYPO3\FLOW3\Http\Uri,
-	TYPO3\FLOW3\Security\Authentication\TokenInterface,
-	TYPO3\FLOW3\Security\Authentication\Token\PasswordToken;
+use TYPO3\Flow\Http\Request,
+	TYPO3\Flow\Http\Uri,
+	TYPO3\Flow\Security\Authentication\TokenInterface,
+	TYPO3\Flow\Security\Authentication\Token\PasswordToken;
 
 /**
  * Testcase for password authentication token
  *
  */
-class PasswordTokenTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PasswordTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function credentialsAreSetCorrectlyFromPostArguments() {
 		$arguments = array();
-		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
 		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
 
@@ -43,7 +43,7 @@ class PasswordTokenTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
 		$arguments = array();
-		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
 		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
 
@@ -58,7 +58,7 @@ class PasswordTokenTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function updateCredentialsIgnoresAnythingOtherThanPostRequests() {
 		$arguments = array();
-		$arguments['__authentication']['TYPO3']['FLOW3']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
 		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
 		$token = new PasswordToken();

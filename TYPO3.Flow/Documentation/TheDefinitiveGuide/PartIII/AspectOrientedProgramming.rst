@@ -23,7 +23,7 @@ implementing any security themselves.
 
 Aspect-Oriented Programming has been around in other programming languages for
 quite some time now and sophisticated solutions taking advantage of AOP exist.
-FLOW3's AOP framework allows you to use of the most popular AOP techniques in
+TYPO3 Flow's AOP framework allows you to use of the most popular AOP techniques in
 your own PHP application. In contrast to other approaches it doesn't require any
 special PHP extensions or manual compile steps – and it's a breeze to configure.
 
@@ -48,7 +48,7 @@ Let's imagine you want to log a message inside methods of your domain model:
 	class Forum {
 
 		/**
-		 * @FLOW3\Inject
+		 * @Flow\Inject
 		 * @var \Examples\Forum\Logger\ApplicationLoggerInterface
 		 */
 		protected $applicationLogger;
@@ -103,12 +103,12 @@ and has many possibilities, even for complex scenarios.
 	namespace Examples\Forum\Logging;
 
 	/**
-	 * @FLOW3\Aspect
+	 * @Flow\Aspect
 	 */
 	class LoggingAspect {
 
 		/**
-		 * @FLOW3\Inject
+		 * @Flow\Inject
 		 * @var \Examples\Forum\Logger\ApplicationLoggerInterface
 		 */
 		protected $applicationLogger;
@@ -116,11 +116,11 @@ and has many possibilities, even for complex scenarios.
 		/**
 		 * Log a message if a post is deleted
 		 *
-		 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
-		 * @FLOW3\Before("method(Examples\Forum\Domain\Model\Forum->deletePost())")
+		 * @param \TYPO3\Flow\AOP\JoinPointInterface $joinPoint
+		 * @Flow\Before("method(Examples\Forum\Domain\Model\Forum->deletePost())")
 		 * @return void
 		 */
-		public function logDeletePost(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		public function logDeletePost(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 			$post = $joinPoint->getMethodArgument('post');
 			$this->applicationLogger->log('Removing post ' . $post->getTitle(), LOG_INFO);
 		}
@@ -140,14 +140,14 @@ developers. Here they are:
 
 Aspect
 	An aspect is the part of the application which cross-cuts the core concerns
-	of multiple objects. In FLOW3, aspects are implemented as regular classes
+	of multiple objects. In TYPO3 Flow, aspects are implemented as regular classes
 	which are tagged by the ``@aspect`` annotation. The methods of an aspect class
 	represent advices, the properties may be used for introductions.
 
 Join point
 	A join point is a point in the flow of a program. Examples are the execution
-	of a method or the throw of an exception. In FLOW3, join points are
-	represented by the ``TYPO3\FLOW3\AOP\JoinPoint`` object which contains more
+	of a method or the throw of an exception. In TYPO3 Flow, join points are
+	represented by the ``TYPO3\Flow\AOP\JoinPoint`` object which contains more
 	information about the circumstances like name of the called method, the
 	passed arguments or type of the exception thrown. A join point is an event
 	which occurs during the program flow, not a definition which defines that
@@ -161,7 +161,7 @@ Advice
 Pointcut
 	The pointcut defines a set of join points which need to be matched before
 	running an advice. The pointcut is configured by a *pointcut expression*
-	which defines when and where an advice should be executed. FLOW3 uses
+	which defines when and where an advice should be executed. TYPO3 Flow uses
 	methods in an aspect class as anchors for pointcut declarations.
 
 Pointcut expression
@@ -219,21 +219,21 @@ Advice chain
 	returns the result to the initiator of the method call. Any around advice
 	may decide to proceed or break the chain and modify results if necessary.
 
-FLOW3 AOP concepts
-------------------
+TYPO3 Flow AOP concepts
+-----------------------
 
 Aspect-Oriented Programming was, of course, not invented by us [#]_. Since the
 initial release of the concept, dozens of implementations for various
 programming languages evolved. Although a few PHP-based AOP frameworks do exist,
-they followed concepts which did not match the goals of FLOW3 (to provide a
+they followed concepts which did not match the goals of TYPO3 Flow (to provide a
 powerful, yet developer-friendly solution) when the development of TYPO3 5.0
 began. We therefore decided to create a sophisticated but pragmatic
 implementation which adopts the concepts of AOP but takes PHP's specialties and
-the requirements of typical FLOW3 applications into account. In a few cases this
+the requirements of typical TYPO3 Flow applications into account. In a few cases this
 even lead to new features or simplifications because they were easier to
 implement in PHP compared to Java.
 
-FLOW3 pragmatically implements a reduced subset of AOP, which satisfies most
+TYPO3 Flow pragmatically implements a reduced subset of AOP, which satisfies most
 needs of web applications. The join point model allows for intercepting method
 executions but provides no special support for advising field access [#]_.
 Pointcut expressions are based on well-known regular expressions instead of
@@ -244,12 +244,12 @@ requirements should arise in the future.
 Implementation overview
 =======================
 
-FLOW3's AOP framework does not require a pre-processor or an aspect-aware PHP
+TYPO3 Flow's AOP framework does not require a pre-processor or an aspect-aware PHP
 interpreter to weave in advices. It is implemented and based on pure PHP and
 doesn't need any specific PHP extension. However, it does require the Object
 Manager to fulfill its task.
 
-FLOW3 uses PHP's reflection capabilities to analyze declarations of aspects,
+TYPO3 Flow uses PHP's reflection capabilities to analyze declarations of aspects,
 pointcuts and advices and implements method interceptors as a dynamic proxy. In
 accordance to the GoF patterns [#]_, the proxy classes act as a placeholders for
 the target object. They are true subclasses of the original and override adviced
@@ -266,7 +266,7 @@ Aspects
 =======
 
 Aspects are abstract containers which accommodate pointcut-, introduction- and
-advice declarations. In most frameworks, including FLOW3, aspects are defined as
+advice declarations. In most frameworks, including TYPO3 Flow, aspects are defined as
 plain classes which are tagged (annotated) as an aspect. The following example
 shows the definition of a hypothetical ``FooSecurity`` aspect:
 
@@ -277,7 +277,7 @@ shows the definition of a hypothetical ``FooSecurity`` aspect:
 	/**
 	 * An aspect implementing security for Foo
 	 *
-	 * @FLOW3\Aspect
+	 * @Flow\Aspect
 	 */
 	class FooSecurityAspect {
 
@@ -316,7 +316,7 @@ in which class they are defined:
 	/**
 	 * A pointcut which matches all methods whose name starts with "delete".
 	 *
-	 * @FLOW3\Pointcut("method(.*->delete.*())")
+	 * @Flow\Pointcut("method(.*->delete.*())")
 	 */
 	public function deleteMethods() {}
 
@@ -331,7 +331,7 @@ the pointcut matches and advices which refer to this pointcut become active.
 
 .. Note::
 	The AOP framework AspectJ provides a complete pointcut language with dozens
-	of pointcut types and expression constructs. FLOW3 makes do with only a
+	of pointcut types and expression constructs. TYPO3 Flow makes do with only a
 	small subset of that language, which we think already suffice for even
 	complex enterprise applications. If you're interested in the original
 	feature set, it doesn't hurt throwing a glance at the AspectJ Programming
@@ -341,7 +341,7 @@ Pointcut designators
 --------------------
 
 A pointcut expression always consists of two parts: The poincut designator and
-its parameter(s). The following designators are supported by FLOW3:
+its parameter(s). The following designators are supported by TYPO3 Flow:
 
 method()
 ^^^^^^^^
@@ -379,7 +379,7 @@ Matches all methods except injectors in class ``Example\MyPackage\MyObject``:
 .. Note::
 	In other AOP frameworks, including AspectJ™ and Spring™, the method
 	designator does not exist. They rather use a more fine grained approach
-	with designators such as execution, call and cflow. As FLOW3 only supports
+	with designators such as execution, call and cflow. As TYPO3 Flow only supports
 	matching to method execution join points anyway, we decided to simplify
 	things by allowing only a more general method designator.
 
@@ -392,7 +392,7 @@ give you an idea how this works:
 
 -----
 
-``method(Example\MyPackage\MyClass->update(title == "FLOW3", override == TRUE))``
+``method(Example\MyPackage\MyClass->update(title == "Flow", override == TRUE))``
 
 -----
 
@@ -441,11 +441,11 @@ simple syntax:
 
 Matches all methods in classes which implement the logger interface:
 
-``within(Example\FLOW3\Log\LoggerInterface)``
+``within(Example\Flow\Log\LoggerInterface)``
 
 Matches all methods in classes which are part of the Foo layer:
 
-``within(Example\FLOW3\FooLayerInterface)``
+``within(Example\Flow\FooLayerInterface)``
 
 ------
 
@@ -467,9 +467,9 @@ arguments of the annotation cannot be specified:
 
 -----
 
-Matches all classes which are tagged with FLOW3's ``Entity`` annotation:
+Matches all classes which are tagged with TYPO3 Flow's ``Entity`` annotation:
 
-``classAnnotatedWith(TYPO3\FLOW3\Annotations\Entity)``
+``classAnnotatedWith(TYPO3\Flow\Annotations\Entity)``
 
 Matches all classes which are tagged with a custom annotation:
 
@@ -503,7 +503,7 @@ setting()
 The setting() designator matches if the given configuration option is set to
 TRUE, or if an optional given comparison value equals to its configured value.
 This is helpful to make advices configurable and switch them off in a
-specific FLOW3 context or just for testing. You can use this designator
+specific TYPO3 Flow context or just for testing. You can use this designator
 as follows:
 
 *Example: setting() pointcut designator*
@@ -573,14 +573,14 @@ Matches if at least one of the entries in the first array exists in the second o
 
 .. note::
 	It is possible to register arbitrary singletons to be available as global
-	objects with the FLOW3 configuration setting ``TYPO3.FLOW3.aop.globalObjects``.
+	objects with the TYPO3 Flow configuration setting ``TYPO3.Flow.aop.globalObjects``.
 
 filter()
 ^^^^^^^^
 
 If the built-in filters don't suit your needs you can even define your own
 custom filters. All you need to do is create a class implementing the
-``TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface`` and develop your own logic
+``TYPO3\Flow\AOP\Pointcut\PointcutFilterInterface`` and develop your own logic
 for the ``matches()`` method. The custom filter can then be invoked by using
 the ``filter()`` designator:
 
@@ -616,7 +616,7 @@ conveniently in advice declarations:
 	/**
 	 * Fixture class for testing pointcut definitions
 	 *
-	 * @FLOW3\Aspect
+	 * @Flow\Aspect
 	 */
 	class PointcutTestingAspect {
 
@@ -625,7 +625,7 @@ conveniently in advice declarations:
 		 * PointcutTestingTargetClasses except those from Target
 		 * Class number 3.
 		 *
-		 * @FLOW3\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && ⏎
+		 * @Flow\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && ⏎
 		  !method(Example\TestPackage\PointcutTestingTargetClass3->.*())")
 		 */
 		public function pointcutTestingTargetClasses() {}
@@ -634,14 +634,14 @@ conveniently in advice declarations:
 		 * Pointcut which consists of only the
 		 * Example\TestPackage\OtherPointcutTestingTargetClass.
 		 *
-		 * @FLOW3\Pointcut("method(Example\TestPackage\OtherPointcutTestingTargetClass->.*())")
+		 * @Flow\Pointcut("method(Example\TestPackage\OtherPointcutTestingTargetClass->.*())")
 		 */
 		public function otherPointcutTestingTargetClass() {}
 
 		/**
 		 * A combination of both above pointcuts
 		 *
-		 * @FLOW3\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses ⏎
+		 * @Flow\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses ⏎
 		  || Example\TestPackage\PointcutTestingAspect->otherPointcutTestingTargetClass")
 		 */
 		public function bothPointcuts() {}
@@ -649,7 +649,7 @@ conveniently in advice declarations:
 		/**
 		 * A pointcut which matches all classes from the service layer
 		 *
-		 * @FLOW3\Pointcut("within(Example\FLOW3\ServiceLayerInterface)")
+		 * @Flow\Pointcut("within(Example\Flow\ServiceLayerInterface)")
 		 */
 		public function serviceLayerClasses() {}
 
@@ -657,7 +657,7 @@ conveniently in advice declarations:
 		 * A pointcut which matches any method from the BasicClass and all classes
 		 * from the service layer
 		 *
-		 * @FLOW3\Pointcut("method(Example\TestPackage\Basic.*->.*()) || within(TYPO3\FLOW3\Service.*)")
+		 * @Flow\Pointcut("method(Example\TestPackage\Basic.*->.*()) || within(TYPO3\Flow\Service.*)")
 		 */
 		public function basicClassOrServiceLayerClasses() {}
 	}
@@ -690,9 +690,9 @@ can it take influence on other before advices at the same join point.
 	 * Before advice which is invoked before any method call within the News
 	 * package
 	 *
-	 * @FLOW3\Before("class(Example\News\.*->.*())")
+	 * @Flow\Before("class(Example\News\.*->.*())")
 	 */
-	public function myBeforeAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface ⏎
+	public function myBeforeAdvice(\TYPO3\Flow\AOP\JoinPointInterface ⏎
 		$joinPoint) {
 	}
 
@@ -709,10 +709,10 @@ advices may read the result of the target method, but can't modify it.
 	/**
 	 * After returning advice
 	 *
-	 * @FLOW3\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) ⏎
+	 * @Flow\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) ⏎
 		  || Example\MyPackage\MyAspect->someOtherPointcut")
 	 */
-	public function myAfterReturningAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface ⏎
+	public function myAfterReturningAdvice(\TYPO3\Flow\AOP\JoinPointInterface ⏎
 		$joinPoint) {
 	}
 
@@ -728,9 +728,9 @@ after method execution, but only if an exception was thrown.
 	/**
 	 * After throwing advice
 	 *
-	 * @FLOW3\AfterThrowing("within(Example\News\ImportantLayer)")
+	 * @Flow\AfterThrowing("within(Example\News\ImportantLayer)")
 	 */
-	public function myAfterThrowingAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface ⏎
+	public function myAfterThrowingAdvice(\TYPO3\Flow\AOP\JoinPointInterface ⏎
 		$joinPoint) {
 	}
 
@@ -747,9 +747,9 @@ was thrown or not.
 	/**
 	 * After advice
 	 *
-	 * @FLOW3\After("Example\MyPackage\MyAspect->justAPointcut")
+	 * @Flow\After("Example\MyPackage\MyAspect->justAPointcut")
 	 */
-	public function myAfterAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function myAfterAdvice(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -768,9 +768,9 @@ You might already guess how an around advice is declared:
 	/**
 	 * Around advice
 	 *
-	 * @FLOW3\Around("Example\MyPackage\MyAspect->justAPointcut")
+	 * @Flow\Around("Example\MyPackage\MyAspect->justAPointcut")
 	 */
-	public function myAroundAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function myAroundAdvice(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 	}
 
 
@@ -780,14 +780,14 @@ Implementing advice
 The final step after declaring aspects, pointcuts and advices is to fill the
 advices with life. The implementation of an advice is located in the same
 method it has been declared. In that regard, an aspect class behaves like any
-other object in FLOW3 – you therefore can take advantage of dependency
+other object in TYPO3 Flow – you therefore can take advantage of dependency
 injection in case you need other objects to fulfill the task of your advice.
 
 Accessing join points
 ---------------------
 
 As you have seen in the previous section, advice methods always expect an
-argument of the type ``TYPO3\FLOW3\AOP\JoinPointInterface``. This join point object
+argument of the type ``TYPO3\Flow\AOP\JoinPointInterface``. This join point object
 contains all important information about the current join point. Methods like
 getClassName() or getMethodArguments() let the advice method classify the
 current context and enable you to implement advices in a way that they can be
@@ -821,12 +821,12 @@ code will just do that:
 	/**
 	 * A logging aspect
 	 *
-	 * @FLOW3\Aspect
+	 * @Flow\Aspect
 	 */
 	class LoggingAspect {
 
 		/**
-		 * @var \TYPO3\FLOW3\Log\LoggerInterface A logger implementation
+		 * @var \TYPO3\Flow\Log\LoggerInterface A logger implementation
 		 */
 		protected $logger;
 
@@ -834,10 +834,10 @@ code will just do that:
 		 * For logging we need a logger, which we will get injected automatically by
 		 * the Object Manager
 		 *
-		 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $logger The System Logger
+		 * @param \TYPO3\Flow\Log\SystemLoggerInterface $logger The System Logger
 		 * @return void
 		 */
-		public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface ⏎
+		public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface ⏎
 			$systemLogger) {
 			$this->logger = $systemLogger;
 		}
@@ -845,11 +845,11 @@ code will just do that:
 		/**
 		 * Before advice, logs all access to public methods of our package
 		 *
-		 * @param  \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point
+		 * @param  \TYPO3\Flow\AOP\JoinPointInterface $joinPoint: The current join point
 		 * @return void
-		 * @FLOW3\Before("method(public Example\MyPackage\.*->.*())")
+		 * @Flow\Before("method(public Example\MyPackage\.*->.*())")
 		 */
-		public function logMethodExecution(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		public function logMethodExecution(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 			$logMessage = 'The method ' . $joinPoint->getMethodName() . ' in class ' . ⏎
 				$joinPoint->getClassName() . ' has been called.';
 			$this->logger->log($logMessage);
@@ -875,25 +875,25 @@ place but refer to a named pointcut.
 	/**
 	 * A lastname rejection aspect
 	 *
-	 * @FLOW3\Aspect
+	 * @Flow\Aspect
 	 */
 	class LastNameRejectionAspect {
 
 		/**
 		 * A pointcut which matches all guestbook submission method invocations
 		 *
-		 * @FLOW3\Pointcut("method(Example\Guestbook\SubmissionHandlingThingy->submit())")
+		 * @Flow\Pointcut("method(Example\Guestbook\SubmissionHandlingThingy->submit())")
 		 */
 		public function guestbookSubmissionPointcut() {}
 
 		/**
 		 * Around advice, rejects the last name "Sarkosh"
 		 *
-		 * @param  \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+		 * @param  \TYPO3\Flow\AOP\JoinPointInterface $joinPoint The current join point
 		 * @return mixed Result of the target method
-		 * @FLOW3\Around("Example\Guestbook\LastNameRejectionAspect->guestbookSubmissionPointcut")
+		 * @Flow\Around("Example\Guestbook\LastNameRejectionAspect->guestbookSubmissionPointcut")
 		 */
-		public function rejectLastName(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		public function rejectLastName(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 			if ($joinPoint->getMethodArgument('lastName') === 'Sarkosh') {
 				throw new \Exception('Sarkosh is not a valid last name - should be Skårhøj!');
 			}
@@ -925,7 +925,7 @@ Like advices, introductions are declared by annotations. But in contrast to
 advices, the anchor for an introduction declaration is the class declaration of
 the aspect class. The annotation tag follows this syntax:
 
-``@FLOW3\Introduce("PointcutExpression", interfaceName="NewInterfaceName")``
+``@Flow\Introduce("PointcutExpression", interfaceName="NewInterfaceName")``
 
 Although the PointcutExpression is just a normal pointcut expression, which may
 also refer to named pointcuts, be aware that only expressions filtering for
@@ -944,8 +944,8 @@ The following example introduces a new interface ``NewInterface`` to the class
 	 *
 	 * Introduces Example\MyPackage\NewInterface to the class Example\MyPackage\OldClass:
 	 *
-	 * @FLOW3\Introduce("class(Example\MyPackage\OldClass)", interfaceName="Example\MyPackage\NewInterface")
-	 * @FLOW3\Aspect
+	 * @Flow\Introduce("class(Example\MyPackage\OldClass)", interfaceName="Example\MyPackage\NewInterface")
+	 * @Flow\Aspect
 	 */
 	class IntroductionAspect {
 
@@ -953,11 +953,11 @@ The following example introduces a new interface ``NewInterface`` to the class
 		 * Around advice, implements the new method "newMethod" of the
 		 * "NewInterface" interface
 		 *
-		 * @param  \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+		 * @param  \TYPO3\Flow\AOP\JoinPointInterface $joinPoint The current join point
 		 * @return void
-		 * @FLOW3\Around("method(Example\MyPackage\OldClass->newMethod())")
+		 * @Flow\Around("method(Example\MyPackage\OldClass->newMethod())")
 		 */
-		public function newMethodImplementation(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		public function newMethodImplementation(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
 				// We call the advice chain, in case any other advice is declared for
 				// this method, but we don't care about the result.
 			$someResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -977,7 +977,7 @@ Form of the declaration::
 
 	/**
 	 * @var type
-	 * @FLOW3\Introduce("PointcutExpression")
+	 * @Flow\Introduce("PointcutExpression")
 	 */
 	protected $propertyName;
 
@@ -993,14 +993,14 @@ The following example introduces a new property "subtitle" to the class
 	/**
 	 * An aspect for demonstrating property introductions
 	 *
-	 * @FLOW3\Aspect
+	 * @Flow\Aspect
 	 */
 	class PropertyIntroductionAspect {
 
 		/**
 		 * @var string
 		 * @Column(length=40)
-		 * @FLOW3\Introduce("class(Example\Blog\Domain\Model\Post)")
+		 * @Flow\Introduce("class(Example\Blog\Domain\Model\Post)")
 		 */
 		protected $subtitle;
 

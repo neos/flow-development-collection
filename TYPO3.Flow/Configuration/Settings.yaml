@@ -1,7 +1,7 @@
 #                                                                        #
-# Configuration for the FLOW3 Framework                                  #
+# Configuration for the TYPO3 Flow Framework                             #
 #                                                                        #
-# This file contains the default base configuration for the FLOW3        #
+# This file contains the default base configuration for the TYPO3 Flow   #
 # Framework. Don't modify this file but add configuration options to     #
 # the Settings.yaml file in the in global Configuration/ directory       #
 # instead.                                                               #
@@ -9,14 +9,14 @@
 
 TYPO3:
 
-  FLOW3:
+  Flow:
 
     aop:
 
       # Registers global objects to be evaluated for dynamic pointcut expressions
       globalObjects:
 
-        securityContext: TYPO3\FLOW3\Security\Context
+        securityContext: TYPO3\Flow\Security\Context
 
     configuration:
 
@@ -28,7 +28,7 @@ TYPO3:
 
     core:
 
-      # FLOW3's application context
+      # TYPO3 Flow's application context
       # This setting is automatically set by the configuration manager and can't be set manually.
       context: ''
 
@@ -36,7 +36,7 @@ TYPO3:
       # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
       phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
 
-      # optional list of variables (key: value) that will be set for all FLOW3 CLI sub requests
+      # optional list of variables (key: value) that will be set for all Flow CLI sub requests
       subRequestEnvironmentVariables: []
 
     error:
@@ -44,8 +44,8 @@ TYPO3:
       exceptionHandler:
 
         # Defines the global, last-resort exception handler.
-        # The specified class must implement \TYPO3\FLOW3\Error\ExceptionHandlerInterface
-        className: TYPO3\FLOW3\Error\ProductionExceptionHandler
+        # The specified class must implement \TYPO3\Flow\Error\ExceptionHandlerInterface
+        className: TYPO3\Flow\Error\ProductionExceptionHandler
 
         # Rendering groups can define special renderings depending on status code or class of the
         # thrown exception. This is only used by the Production Exception Handler
@@ -54,14 +54,14 @@ TYPO3:
           notFoundExceptions:
             matchingStatusCodes: [404]
             options:
-              fluidTemplate: 'resource://TYPO3.FLOW3/Private/Templates/Error/Default.html'
+              fluidTemplate: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the page you requested was not found.'
 
           databaseConnectionExceptions:
-            matchingExceptionClassNames: ['TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException']
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
             options:
-              fluidTemplate: 'resource://TYPO3.FLOW3/Private/Error/Default_Template.html'
+              fluidTemplate: 'resource://TYPO3.Flow/Private/Error/Default_Template.html'
               variables:
                 errorDescription: 'Sorry, the database connection couldn''t be established.'
 
@@ -83,11 +83,11 @@ TYPO3:
 
     log:
 
-      # Settings for FLOW3's default loggers
+      # Settings for TYPO3 Flow's default loggers
       systemLogger:
-        backend: TYPO3\FLOW3\Log\Backend\FileBackend
+        backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
-           logFileURL: %FLOW3_PATH_DATA%Logs/System.log
+           logFileURL: %FLOW_PATH_DATA%Logs/System.log
            createParentDirectories: TRUE
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
@@ -95,9 +95,9 @@ TYPO3:
            logMessageOrigin: FALSE
 
       securityLogger:
-        backend: TYPO3\FLOW3\Log\Backend\FileBackend
+        backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
-           logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
+           logFileURL: %FLOW_PATH_DATA%Logs/Security.log
            createParentDirectories: TRUE
            severityThreshold: %LOG_INFO%
            maximumLogFileSize: 10485760
@@ -105,9 +105,9 @@ TYPO3:
            logIpAddress: TRUE
 
       sqlLogger:
-        backend: TYPO3\FLOW3\Log\Backend\FileBackend
+        backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
-          logFileURL: %FLOW3_PATH_DATA%Logs/Query.log
+          logFileURL: %FLOW_PATH_DATA%Logs/Query.log
           createParentDirectories: TRUE
           severityThreshold: %LOG_INFO%
           maximumLogFileSize: 10485760
@@ -146,14 +146,14 @@ TYPO3:
        'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
        'mikey179.vfsStream' : ['.*']
        # workaround, should rather be deactivated
-       'flow3.composerinstallers': ['.*']
+       'typo3.flowcomposerinstallers': ['.*']
 
     package:
 
       # This can be used to make packages inactive, even though they would be
       # activated automatically otherwise.
       inactiveByDefault:
-        - 'flow3.composerinstallers'
+        - 'typo3.flowcomposerinstallers'
 
     persistence:
 
@@ -166,7 +166,7 @@ TYPO3:
         password: NULL
         charset: 'utf8'
       doctrine:
-        # By default Doctrine proxy compilation is done in the FLOW3 bootstrap
+        # By default Doctrine proxy compilation is done in the Flow bootstrap
         enable: TRUE
         cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
         sqlLogger: NULL
@@ -217,7 +217,7 @@ TYPO3:
         #     patternValue: /some/url/blocked.*
         #     interceptor:  AccessDeny
         #
-        # If the objects are in the namespace "\TYPO3\FLOW3\Security" it is enough to specify
+        # If the objects are in the namespace "\TYPO3\Flow\Security" it is enough to specify
         # the last name of the class name, e.g. AccessGrant
         filters:
           -
@@ -230,7 +230,7 @@ TYPO3:
         # Array of authentication providers that should be used for authentication.
         # If you define a request pattern, the provider will only be called if the pattern
         # matches the current request. If the objects are in the namespace
-        # "\TYPO3\FLOW3\Security" it is sufficient to specify the last part of the class name,
+        # "\TYPO3\Flow\Security" it is sufficient to specify the last part of the class name,
         # e.g. PersistedUsernamePasswordProvider
         # Note: Authentication will be performed in the given order of the providers.
         # So make sure, that the primary authentication method is the first array entry.
@@ -277,14 +277,14 @@ TYPO3:
 
       authorization:
         # An array of access decision voters that should vote when access decisions are made
-        accessDecisionVoters: [TYPO3\FLOW3\Security\Authorization\Voter\Policy]
+        accessDecisionVoters: [TYPO3\Flow\Security\Authorization\Voter\Policy]
 
         # If this is set to TRUE access will be granted even if all voters abstain
         allowAccessIfAllVotersAbstain: FALSE
 
       # "Cross-site request forgery" is an attack method to have authorized users trigger
       # actions without them knowing it. This section is configuring the built-in CSRF
-      # protection in FLOW3.
+      # protection in Flow.
       csrf:
         # The strategy to use for generating and using the CSRF protection token. Available are
         # onePerSession, onePerUri and onePerRequest.
@@ -299,12 +299,12 @@ TYPO3:
 
           # If a fallback strategy is configured, it will be used to validate passwords without a strategy identifier.
           # This should be configured to the hashing strategy that was used before strategy identifiers were introduced
-          # with FLOW3 1.1 (pbkdf2 by default) to allow for a seamless migration.
+          # with Flow 1.1 (pbkdf2 by default) to allow for a seamless migration.
           fallback: pbkdf2
 
-          pbkdf2: TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy
-          bcrypt: TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy
-          saltedmd5: TYPO3\FLOW3\Security\Cryptography\SaltedMd5HashingStrategy
+          pbkdf2: TYPO3\Flow\Security\Cryptography\Pbkdf2HashingStrategy
+          bcrypt: TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy
+          saltedmd5: TYPO3\Flow\Security\Cryptography\SaltedMd5HashingStrategy
 
         Pbkdf2HashingStrategy:
 
@@ -327,7 +327,7 @@ TYPO3:
 
           # Path to the file where RSA keys shall be stored
           # Note: This file must not be accessible by the public!
-          keystorePath: %FLOW3_PATH_DATA%Persistent/RsaWalletData
+          keystorePath: %FLOW_PATH_DATA%Persistent/RsaWalletData
 
           # Defines the openSSL configuration used for key handling.
           # See the PHP openSSL documentation for possible settings.
@@ -347,7 +347,7 @@ TYPO3:
         # character – not only numbers.
         #
         # If left empty, the session name will be determined from the base URL.
-        name: 'FLOW3'
+        name: 'Flow'
 
         # Where to store session data in the filesystem. If this is empty, a default
         # location is used (Data/Temporary/<context>/Sessions/).
@@ -381,8 +381,8 @@ TYPO3:
     utility:
       environment:
 
-        # Defines the base directory which FLOW3 may use for storing different kinds
+        # Defines the base directory which Flow may use for storing different kinds
         # of temporary files.
-        # The directory must be writable and FLOW3 will automatically create a sub
+        # The directory must be writable and Flow will automatically create a sub
         # directory (named after the context) which will contain the actual temporary files.
-        temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/
+        temporaryDirectoryBase: %FLOW_PATH_DATA%Temporary/

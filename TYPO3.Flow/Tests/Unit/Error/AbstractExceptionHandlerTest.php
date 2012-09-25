@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\Flow\Tests\Unit\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Error;
  * Testcase for the Abstract Exception Handler
  *
  */
-class AbstractExceptionHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AbstractExceptionHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -24,10 +24,10 @@ class AbstractExceptionHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function handleExceptionLogsInformationAboutTheExceptionInTheSystemLog() {
 		$exception = new \Exception('The Message', 12345);
 
-		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$mockSystemLogger->expects($this->once())->method('logException')->with($exception);
 
-		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\FLOW3\Error\AbstractExceptionHandler', array(), '', FALSE);
+		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
 		$exceptionHandler->handleException($exception);
 	}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Http\Request;
+use TYPO3\Flow\Http\Request;
 
 /**
  * Contract for a Web Router
@@ -24,8 +24,8 @@ interface RouterInterface {
 	 * When a corresponding route is found, package, controller, action and possible parameters
 	 * are set on the $request object
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $httpRequest
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	public function route(Request $httpRequest);
 

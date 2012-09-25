@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Http\Client;
+namespace TYPO3\Flow\Http\Client;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,9 +11,9 @@ namespace TYPO3\FLOW3\Http\Client;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Http\Uri;
-use TYPO3\FLOW3\Http\Request;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http\Request;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -25,12 +25,12 @@ use Symfony\Component\DomCrawler\Form;
 class Browser {
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Request
+	 * @var \TYPO3\Flow\Http\Request
 	 */
 	protected $lastRequest;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Response
+	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $lastResponse;
 
@@ -40,14 +40,14 @@ class Browser {
 	protected $cookies = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Client\RequestEngineInterface
+	 * @var \TYPO3\Flow\Http\Client\RequestEngineInterface
 	 */
 	protected $requestEngine;
 
 	/**
 	 * Inject the request engine
 	 *
-	 * @param \TYPO3\FLOW3\Http\Client\RequestEngineInterface $requestEngine
+	 * @param \TYPO3\Flow\Http\Client\RequestEngineInterface $requestEngine
 	 * @return void
 	 */
 	public function setRequestEngine(RequestEngineInterface $requestEngine) {
@@ -57,13 +57,13 @@ class Browser {
 	/**
 	 * Requests the given URI with the method and other parameters as specified.
 	 *
-	 * @param string|\TYPO3\FLOW3\Http\Uri $uri
+	 * @param string|\TYPO3\Flow\Http\Uri $uri
 	 * @param string $method
 	 * @param array $arguments
 	 * @param array $files
 	 * @param array $server
 	 * @param string $content
-	 * @return \TYPO3\FLOW3\Http\Response The HTTP response
+	 * @return \TYPO3\Flow\Http\Response The HTTP response
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -85,8 +85,8 @@ class Browser {
 	/**
 	 * Sends a prepared request and returns the respective response.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request
-	 * @return \TYPO3\FLOW3\Http\Response
+	 * @param \TYPO3\Flow\Http\Request $request
+	 * @return \TYPO3\Flow\Http\Response
 	 * @api
 	 */
 	public function sendRequest(Request $request) {
@@ -98,7 +98,7 @@ class Browser {
 	/**
 	 * Returns the response received after the last request.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Response The HTTP response or NULL if there wasn't a response yet
+	 * @return \TYPO3\Flow\Http\Response The HTTP response or NULL if there wasn't a response yet
 	 * @api
 	 */
 	public function getLastResponse() {
@@ -108,7 +108,7 @@ class Browser {
 	/**
 	 * Returns the last request executed.
 	 *
-	 * @return \TYPO3\FLOW3\Http\Request The HTTP request or NULL if there wasn't a request yet
+	 * @return \TYPO3\Flow\Http\Request The HTTP request or NULL if there wasn't a request yet
 	 * @api
 	 */
 	public function getLastRequest() {
@@ -159,7 +159,7 @@ class Browser {
 	 * Submit a form
 	 *
 	 * @param \Symfony\Component\DomCrawler\Form $form
-	 * @return \TYPO3\FLOW3\Http\Response
+	 * @return \TYPO3\Flow\Http\Response
 	 * @api
 	 */
 	public function submit(Form $form) {

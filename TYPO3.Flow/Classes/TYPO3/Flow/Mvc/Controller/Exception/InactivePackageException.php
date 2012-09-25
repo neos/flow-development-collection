@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller\Exception;
+namespace TYPO3\Flow\Mvc\Controller\Exception;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Mvc\Controller\Exception;
  * An Inactive Package Exception
  *
  */
-class InactivePackageException extends \TYPO3\FLOW3\Mvc\Controller\Exception {
+class InactivePackageException extends \TYPO3\Flow\Mvc\Controller\Exception {
 }
 
 ?>

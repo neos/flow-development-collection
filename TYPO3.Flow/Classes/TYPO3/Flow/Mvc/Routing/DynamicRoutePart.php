@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Routing;
+namespace TYPO3\Flow\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Dynamic Route Part
  *
  * @api
  */
-class DynamicRoutePart extends \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart implements \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePartInterface {
+class DynamicRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
 
@@ -146,7 +146,7 @@ class DynamicRoutePart extends \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart implem
 		if ($this->lowerCase) {
 			$this->value = strtolower($this->value);
 		}
-		$routeValues = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
+		$routeValues = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
 		return TRUE;
 	}
 
@@ -159,7 +159,7 @@ class DynamicRoutePart extends \TYPO3\FLOW3\Mvc\Routing\AbstractRoutePart implem
 	 * @api
 	 */
 	protected function findValueToResolve(array $routeValues) {
-		return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($routeValues, $this->name);
+		return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($routeValues, $this->name);
 	}
 
 	/**

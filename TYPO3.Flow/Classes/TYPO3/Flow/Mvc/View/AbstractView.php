@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\View;
+namespace TYPO3\Flow\Mvc\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Mvc\View;
  *
  * @api
  */
-abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
+abstract class AbstractView implements \TYPO3\Flow\Mvc\View\ViewInterface {
 
 	/**
 	 * View variables and their values
@@ -27,7 +27,7 @@ abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	protected $variables = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\ControllerContext
+	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -37,7 +37,7 @@ abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	 *
 	 * @param string $key Key of variable
 	 * @param mixed $value Value of object
-	 * @return \TYPO3\FLOW3\Mvc\View\AbstractView an instance of $this, to enable chaining
+	 * @return \TYPO3\Flow\Mvc\View\AbstractView an instance of $this, to enable chaining
 	 * @api
 	 */
 	public function assign($key, $value) {
@@ -49,7 +49,7 @@ abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	 * Add multiple variables to $this->variables.
 	 *
 	 * @param array $values array in the format array(key1 => value1, key2 => value2)
-	 * @return \TYPO3\FLOW3\Mvc\View\AbstractView an instance of $this, to enable chaining
+	 * @return \TYPO3\Flow\Mvc\View\AbstractView an instance of $this, to enable chaining
 	 * @api
 	 */
 	public function assignMultiple(array $values) {
@@ -62,11 +62,11 @@ abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	/**
 	 * Sets the current controller context
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return void
 	 * @api
 	 */
-	public function setControllerContext(\TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext) {
+	public function setControllerContext(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
 	}
 
@@ -76,11 +76,11 @@ abstract class AbstractView implements \TYPO3\FLOW3\Mvc\View\ViewInterface {
 	 * By default we assume that the view implementation can handle all kinds of
 	 * contexts. Override this method if that is not the case.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE if the view has something useful to display, otherwise FALSE
 	 * @api
 	 */
-	public function canRender(\TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext) {
+	public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		return TRUE;
 	}
 

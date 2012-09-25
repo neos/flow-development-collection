@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Advice;
+namespace TYPO3\Flow\Aop\Advice;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -20,7 +20,7 @@ namespace TYPO3\FLOW3\Aop\Advice;
 class AdviceChain {
 
 	/**
-	 * An array of \TYPO3\FLOW3\Aop\Advice objects which form the advice chain
+	 * An array of \TYPO3\Flow\Aop\Advice objects which form the advice chain
 	 * @var array
 	 */
 	protected $advices;
@@ -34,7 +34,7 @@ class AdviceChain {
 	/**
 	 * Initializes the advice chain
 	 *
-	 * @param array $advices An array of \TYPO3\FLOW3\Aop\Advice\AdviceInterface compatible objects which form the chain of advices
+	 * @param array $advices An array of \TYPO3\Flow\Aop\Advice\AdviceInterface compatible objects which form the chain of advices
 	 */
 	public function __construct($advices) {
 		$this->advices = $advices;
@@ -46,15 +46,15 @@ class AdviceChain {
 	 * left in the chain, the proxy classes' method invokeJoinpoint() will finally
 	 * be called.
 	 *
-	 * @param  \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point (ie. the context)
+	 * @param  \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point (ie. the context)
 	 * @return mixed Result of the advice or the original method of the target class
 	 */
-	public function proceed(\TYPO3\FLOW3\Aop\JoinPointInterface &$joinPoint) {
+	public function proceed(\TYPO3\Flow\Aop\JoinPointInterface &$joinPoint) {
 		$this->adviceIndex++;
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);
 		} else {
-			$result = $joinPoint->getProxy()->FLOW3_Aop_Proxy_invokeJoinpoint($joinPoint);
+			$result = $joinPoint->getProxy()->Flow_Aop_Proxy_invokeJoinpoint($joinPoint);
 		}
 		return $result;
 	}

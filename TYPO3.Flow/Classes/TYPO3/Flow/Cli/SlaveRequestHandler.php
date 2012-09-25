@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,27 +11,27 @@ namespace TYPO3\FLOW3\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * A special request handler which handles "slave" command requests as used by
  * the interactive shell.
  *
- * @FLOW3\Proxy(false)
- * @FLOW3\Scope("singleton")
+ * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
  */
-class SlaveRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
+class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -67,7 +67,7 @@ class SlaveRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 		$sequence->invoke($this->bootstrap);
 
 		$objectManager = $this->bootstrap->getObjectManager();
-		$systemLogger = $objectManager->get('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$systemLogger = $objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface');
 
 		$systemLogger->log('Running sub process loop.', LOG_DEBUG);
 		echo "\nREADY\n";
@@ -79,12 +79,12 @@ class SlaveRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 				if ($commandLine === "QUIT\n") {
 					break;
 				}
-				$request = $objectManager->get('TYPO3\FLOW3\Cli\RequestBuilder')->build($commandLine);
-				$response = new \TYPO3\FLOW3\Cli\Response();
+				$request = $objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build($commandLine);
+				$response = new \TYPO3\Flow\Cli\Response();
 				if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
 					echo "This command must be executed during compiletime.\n";
 				} else {
-					$objectManager->get('TYPO3\FLOW3\Mvc\Dispatcher')->dispatch($request, $response);
+					$objectManager->get('TYPO3\Flow\Mvc\Dispatcher')->dispatch($request, $response);
 					$response->send();
 
 					$this->emitDispatchedCommandLineSlaveRequest();
@@ -104,7 +104,7 @@ class SlaveRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 * Emits a signal that a CLI slave request was dispatched.
 	 *
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	protected function emitDispatchedCommandLineSlaveRequest() {
 		$this->bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', array());
@@ -118,13 +118,13 @@ class SlaveRequestHandler implements \TYPO3\FLOW3\Core\RequestHandlerInterface {
 	 * @return void
 	 */
 	protected function handleException(\Exception $exception) {
-		$response = new \TYPO3\FLOW3\Cli\Response();
+		$response = new \TYPO3\Flow\Cli\Response();
 
 		$exceptionMessage = '';
 		$exceptionReference = "\n<b>More Information</b>\n";
 		$exceptionReference .= "  Exception code      #" . $exception->getCode() . "\n";
 		$exceptionReference .= "  File                " . $exception->getFile() . ($exception->getLine() ? ' line ' . $exception->getLine() : '') . "\n";
-		$exceptionReference .= ($exception instanceof \TYPO3\FLOW3\Exception ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
+		$exceptionReference .= ($exception instanceof \TYPO3\Flow\Exception ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
 		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
 			 $exceptionMessage .= "  $messageLine\n";
 		}

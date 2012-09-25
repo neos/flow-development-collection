@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Cryptography;
+namespace TYPO3\Flow\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Security\Cryptography;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A hash service which should be used to generate and validate hashes.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class HashService {
 
@@ -37,8 +37,8 @@ class HashService {
 	protected $strategySettings;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $objectManager;
 
@@ -57,11 +57,11 @@ class HashService {
 	 *
 	 * @param string $string The string for which a hash should be generated
 	 * @return string The hash of the string
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
 	 */
 	public function generateHmac($string) {
 		if (!is_string($string)) {
-			throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
+			throw new \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
 		}
 
 		return hash_hmac('sha1', $string, $this->getEncryptionKey());
@@ -101,20 +101,20 @@ class HashService {
 	 * @param string $string The string with the HMAC appended (in the format 'string<HMAC>')
 	 * @return string the original string without the HMAC, if validation was successful
 	 * @see validateHmac()
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if the given string is not well-formatted
-	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidHashException if the hash did not fit to the data.
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException if the given string is not well-formatted
+	 * @throws \TYPO3\Flow\Security\Exception\InvalidHashException if the hash did not fit to the data.
 	 * @todo Mark as API once it is more stable
 	 */
 	public function validateAndStripHmac($string) {
 		if (!is_string($string)) {
-			throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
+			throw new \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
 		}
 		if (strlen($string) < 40) {
-			throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hashed string must contain at least 40 characters, the given string was only ' . strlen($string) . ' characters long.', 1320830276);
+			throw new \TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException('A hashed string must contain at least 40 characters, the given string was only ' . strlen($string) . ' characters long.', 1320830276);
 		}
 		$stringWithoutHmac = substr($string, 0, -40);
 		if ($this->validateHmac($stringWithoutHmac, substr($string, -40)) !== TRUE) {
-			throw new \TYPO3\FLOW3\Security\Exception\InvalidHashException('The given string was not appended with a valid HMAC.', 1320830018);
+			throw new \TYPO3\Flow\Security\Exception\InvalidHashException('The given string was not appended with a valid HMAC.', 1320830018);
 		}
 		return $stringWithoutHmac;
 	}
@@ -155,8 +155,8 @@ class HashService {
 	 *
 	 * @param string $strategyIdentifier
 	 * @param boolean $validating TRUE if the password is validated, FALSE if the password is hashed
-	 * @return array Array of \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface and string
-	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
+	 * @return array Array of \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface and string
+	 * @throws \TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	protected function getPasswordHashingStrategyAndIdentifier($strategyIdentifier = 'default', $validating) {
 		if (isset($this->passwordHashingStrategies[$strategyIdentifier])) {
@@ -168,14 +168,14 @@ class HashService {
 				$strategyIdentifier = $this->strategySettings['fallback'];
 			} else {
 				if (!isset($this->strategySettings['default'])) {
-					throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No default hashing strategy configured', 1320758427);
+					throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('No default hashing strategy configured', 1320758427);
 				}
 				$strategyIdentifier = $this->strategySettings['default'];
 			}
 		}
 
 		if (!isset($this->strategySettings[$strategyIdentifier])) {
-			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No hashing strategy with identifier "' . $strategyIdentifier . '" configured', 1320758776);
+			throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('No hashing strategy with identifier "' . $strategyIdentifier . '" configured', 1320758776);
 		}
 		$strategyObjectName = $this->strategySettings[$strategyIdentifier];
 		$this->passwordHashingStrategies[$strategyIdentifier] = $this->objectManager->get($strategyObjectName);
@@ -184,17 +184,17 @@ class HashService {
 
 	/**
 	 * @return string The configured encryption key stored in Data/Persistent/EncryptionKey
-	 * @throws \TYPO3\FLOW3\Security\Exception\MissingConfigurationException
+	 * @throws \TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	protected function getEncryptionKey() {
 		if ($this->encryptionKey === NULL) {
-			if (!file_exists(FLOW3_PATH_DATA . 'Persistent/EncryptionKey')) {
-				file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\TYPO3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
+			if (!file_exists(FLOW_PATH_DATA . 'Persistent/EncryptionKey')) {
+				file_put_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\TYPO3\Flow\Utility\Algorithms::generateRandomBytes(96)));
 			}
-			$this->encryptionKey = file_get_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey');
+			$this->encryptionKey = file_get_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey');
 
 			if ($this->encryptionKey === FALSE || $this->encryptionKey === '') {
-				throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
+				throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
 			}
 		}
 

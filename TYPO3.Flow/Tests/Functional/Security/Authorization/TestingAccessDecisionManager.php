@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security\Authorization;
+namespace TYPO3\Flow\Tests\Functional\Security\Authorization;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,14 +12,14 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Authorization;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An access decision manager that can be overriden for functional tests
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager {
+class TestingAccessDecisionManager extends \TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager {
 
 	/**
 	 * @var boolean
@@ -29,13 +29,13 @@ class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\A
 	/**
 	 * Decides on a joinpoint
 	 *
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function decideOnJoinPoint(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function decideOnJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		if ($this->overrideDecision === FALSE) {
-			throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
+			throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
 		} elseif ($this->overrideDecision === TRUE) {
 			return;
 		}
@@ -47,11 +47,11 @@ class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\A
 	 *
 	 * @param string $resource The resource to decide on
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function decideOnResource($resource) {
 		if ($this->overrideDecision === FALSE) {
-			throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
+			throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
 		} elseif ($this->overrideDecision === TRUE) {
 			return;
 		}

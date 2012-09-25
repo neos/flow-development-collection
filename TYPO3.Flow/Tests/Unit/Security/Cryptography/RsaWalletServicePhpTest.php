@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
+namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,10 +16,10 @@ use org\bovigo\vfs\vfsStream;
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
  */
-class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp
+	 * @var \TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp
 	 */
 	protected $rsaWalletService;
 
@@ -36,7 +36,7 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			vfsStream::setup('Foo');
 			$settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
 
-			$this->rsaWalletService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
+			$this->rsaWalletService = $this->getAccessibleMock('TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
 			$this->rsaWalletService->injectSettings($settings);
 
 			$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();
@@ -80,7 +80,7 @@ class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException
 	 */
 	public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException() {
 		$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair(TRUE);

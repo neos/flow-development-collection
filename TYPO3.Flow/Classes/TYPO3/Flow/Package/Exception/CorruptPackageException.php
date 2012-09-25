@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package\Exception;
+namespace TYPO3\Flow\Package\Exception;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Package\Exception;
  * "Corrupt Package" Exception
  *
  */
-class CorruptPackageException extends \TYPO3\FLOW3\Package\Exception {
+class CorruptPackageException extends \TYPO3\Flow\Package\Exception {
 
 }
 ?>

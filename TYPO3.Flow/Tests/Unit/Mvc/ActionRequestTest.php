@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc;
+namespace TYPO3\Flow\Tests\Unit\Mvc;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\ActionRequest;
-use TYPO3\FLOW3\Http\Uri;
-use TYPO3\FLOW3\Http\Request as HttpRequest;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http\Request as HttpRequest;
 
 /**
  * Testcase for the MVC Request class
  */
-class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * By design, the root request will always be an HTTP request because it is
@@ -94,9 +94,9 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 		$actionRequest = new ActionRequest($httpRequest);
 
-		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
+		$mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
 		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
 
@@ -113,7 +113,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getControllerObjectNameReturnsObjectNameDerivedFromPreviouslySetControllerInformation() {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('somepackage\Package')
 				->will($this->returnValue('SomePackage\Package'));
 		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
@@ -135,13 +135,13 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('somepackage\Package')
 				->will($this->returnValue('SomePackage\Package'));
 		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
 				->will($this->returnValue(FALSE));
 
-		$actionRequest = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\ActionRequest', array('dummy'), array($httpRequest));
+		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($httpRequest));
 		$actionRequest->_set('objectManager', $mockObjectManager);
 
 		$actionRequest = $httpRequest->createActionRequest();
@@ -161,11 +161,11 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with($objectName)->will($this->returnValue($objectName));
 		$mockObjectManager->expects($this->any())->method('getPackageKeyByObjectName')->with($objectName)->will($this->returnValue($parts['controllerPackageKey']));
 
-		$actionRequest = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\ActionRequest', array('dummy'), array($httpRequest));
+		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($httpRequest));
 		$actionRequest->_set('objectManager', $mockObjectManager);
 
 		$actionRequest->setControllerObjectName($objectName);
@@ -224,15 +224,15 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Object\Exception\UnknownObjectException
+	 * @expectedException TYPO3\Flow\Object\Exception\UnknownObjectException
 	 */
 	public function setControllerObjectNameThrowsExceptionOnUnknownObjectName() {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		$actionRequest = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\ActionRequest', array('dummy'), array($httpRequest));
+		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($httpRequest));
 		$actionRequest->_set('objectManager', $mockObjectManager);
 
 		$actionRequest->setControllerObjectName('SomeUnknownControllerObjectName');
@@ -242,7 +242,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
 		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
 
 		$request->setControllerName('foo\bar');
@@ -253,7 +253,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function ifNoControllerObjectNameCouldBeDeterminedTheUnknownCasesControllerNameIsReturned() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
 		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
 		$request->setControllerName('foo\bar');
@@ -274,7 +274,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidControllerNames
-	 * @expectedException TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException
+	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidControllerNameException
 	 */
 	public function setControllerNameThrowsExceptionOnInvalidControllerNames($invalidControllerName) {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
@@ -287,7 +287,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
-		$request = $this->getMock('TYPO3\FLOW3\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
 		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
 		$request->setControllerActionName('theAction');
@@ -308,7 +308,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidActionNames
-	 * @expectedException TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException
+	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidActionNameException
 	 */
 	public function setControllerActionNameThrowsExceptionOnInvalidActionNames($invalidActionName) {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
@@ -323,20 +323,20 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function theActionNamesCaseIsFixedIfItIsAllLowerCaseAndTheControllerObjectNameIsKnown() {
 		$mockControllerClassName = 'Mock' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $mockControllerClassName . ' extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+			class ' . $mockControllerClassName . ' extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				public function someGreatAction() {}
 			}
 		');
 
 		$mockController = $this->getMock($mockControllerClassName, array('someGreatAction'), array(), '', FALSE);
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')
-			->with('TYPO3\FLOW3\MyControllerObjectName')
+			->with('TYPO3\Flow\MyControllerObjectName')
 			->will($this->returnValue(get_class($mockController)));
 
-		$request = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\FLOW3\MyControllerObjectName'));
+		$request = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\MyControllerObjectName'));
 		$request->_set('objectManager', $mockObjectManager);
 
 		$request->setControllerActionName('somegreat');
@@ -356,7 +356,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException
+	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
 	 */
 	public function setArgumentThrowsAnExceptionOnInvalidArgumentNames() {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
@@ -367,7 +367,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException
+	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
 	 */
 	public function setArgumentDoesNotAllowObjectValuesForRegularArguments() {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
@@ -427,10 +427,10 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 
 		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('--typo3-flow3-foo-viewhelper-paginate', array('@controller' => 'Foo', 'page' => 5));
+		$actionRequest->setArgument('--typo3-flow-foo-viewhelper-paginate', array('@controller' => 'Foo', 'page' => 5));
 
-		$this->assertFalse($actionRequest->hasArgument('--typo3-flow3-foo-viewhelper-paginate'));
-		$this->assertEquals(array('typo3-flow3-foo-viewhelper-paginate' => array('@controller' => 'Foo', 'page' => 5)), $actionRequest->getPluginArguments());
+		$this->assertFalse($actionRequest->hasArgument('--typo3-flow-foo-viewhelper-paginate'));
+		$this->assertEquals(array('typo3-flow-foo-viewhelper-paginate' => array('@controller' => 'Foo', 'page' => 5)), $actionRequest->getPluginArguments());
 	}
 
 	/**
@@ -478,7 +478,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidHashException
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid() {
 		$referrer = array(
@@ -490,7 +490,7 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$httpRequest = HttpRequest::create(new Uri('http://acme.com', 'GET'));
 		$request = new ActionRequest($httpRequest);
 		$request->setArgument('__referrer', $referrer);
-		$this->inject($request, 'hashService', new \TYPO3\FLOW3\Security\Cryptography\HashService());
+		$this->inject($request, 'hashService', new \TYPO3\Flow\Security\Cryptography\HashService());
 		$request->getReferringRequest();
 	}
 
@@ -501,10 +501,10 @@ class ActionRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
 		$actionRequest = new ActionRequest($httpRequest);
 
-		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
-		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\FLOW3\Mvc\ActionRequest', 'requestDispatched', array($actionRequest));
+		$mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
+		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Mvc\ActionRequest', 'requestDispatched', array($actionRequest));
 
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
 		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
 

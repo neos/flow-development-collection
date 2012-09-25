@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Utility;
+namespace TYPO3\Flow\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -47,7 +47,7 @@ class TypeHandling {
 			$elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : NULL;
 
 			if ($elementType !== NULL && !in_array($type, self::$collectionTypes)) {
-				throw new \TYPO3\FLOW3\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
+				throw new \TYPO3\Flow\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
 			}
 
 			return array(
@@ -55,7 +55,7 @@ class TypeHandling {
 				'elementType' => $elementType
 			);
 		} else {
-			throw new \TYPO3\FLOW3\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, TRUE) . '" does not exist.', 1264093630);
+			throw new \TYPO3\Flow\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. A type "' . var_export($type, TRUE) . '" does not exist.', 1264093630);
 		}
 	}
 

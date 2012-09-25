@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Configuration;
+namespace TYPO3\Flow\Tests\Unit\Configuration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,28 +11,28 @@ namespace TYPO3\FLOW3\Tests\Unit\Configuration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the configuration manager
  *
  */
-class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function getConfigurationForSettingsLoadsConfigurationIfNecessary() {
 		$initialConfigurations = array(
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(),
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(),
 		);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(new ApplicationContext('Testing')), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(new ApplicationContext('Testing')), '', FALSE);
 		$configurationManager->_set('configurations', $initialConfigurations);
 
-		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
-		$configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Foo');
+		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+		$configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Foo');
 	}
 
 	/**
@@ -41,15 +41,15 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getConfigurationForTypeSettingsReturnsRespectiveConfigurationArray() {
 		$expectedConfiguration = array('foo' => 'bar');
 		$configurations = array(
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(
 				'SomePackage' => $expectedConfiguration
 			)
 		);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $configurations);
 
-		$actualConfiguration = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
+		$actualConfiguration = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
 		$this->assertSame($expectedConfiguration, $actualConfiguration);
 	}
 
@@ -57,28 +57,28 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getConfigurationForTypeSettingsLoadsConfigurationIfNecessary() {
-		$packages = array('SomePackage' => $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE));
+		$packages = array('SomePackage' => $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE));
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
-		$configurationManager->_set('configurations', array(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array()));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurations', array(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array()));
 		$configurationManager->setPackages($packages);
-		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $packages);
+		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $packages);
 
-		$configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
+		$configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
 	}
 
 	/**
 	 * @test
 	 */
 	public function getConfigurationForTypeObjectLoadsConfiguration() {
-		$packages = array('SomePackage' => $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE));
+		$packages = array('SomePackage' => $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE));
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
-		$configurationManager->_set('configurations', array(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS => array()));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurations', array(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS => array()));
 		$configurationManager->setPackages($packages);
-		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packages);
+		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packages);
 
-		$configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'SomePackage');
+		$configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'SomePackage');
 	}
 
 	/**
@@ -86,17 +86,17 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getConfigurationForRoutesAndCachesLoadsConfigurationIfNecessary() {
 		$initialConfigurations = array(
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('foo' => 'bar'),
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('foo' => 'bar'),
 		);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $initialConfigurations);
 
-		$configurationManager->expects($this->at(0))->method('loadConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES);
+		$configurationManager->expects($this->at(0))->method('loadConfiguration')->with(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES);
 
 		$configurationTypes = array(
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES
 		);
 		foreach ($configurationTypes as $configurationType) {
 			$configurationManager->getConfiguration($configurationType);
@@ -108,11 +108,11 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getConfigurationForRoutesAndCachesReturnsRespectiveConfigurationArray() {
 		$expectedConfigurations = array(
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('routes'),
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES => array('caches')
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('routes'),
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES => array('caches')
 		);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $expectedConfigurations);
 		$configurationManager->expects($this->never())->method('loadConfiguration');
 
@@ -126,10 +126,10 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function loadConfigurationOverridesSettingsByContext() {
-		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
-		$mockPackageA = $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackageA = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE);
 		$mockPackageA->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageA/Configuration/'));
 		$mockPackageA->expects($this->any())->method('getPackageKey')->will($this->returnValue('PackageA'));
 
@@ -137,12 +137,12 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'PackageA' => $mockPackageA,
 		);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
 
 		$configurationManager->expects($this->once())->method('postProcessConfiguration');
 
-		$configurationManager->_call('loadConfiguration', \TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
 
 		$actualConfigurations = $configurationManager->_get('configurations');
 		$expectedSettings = array(
@@ -150,22 +150,22 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'bar' => 'A'
 		);
 
-		$this->assertSame($expectedSettings, $actualConfigurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['PackageA']);
+		$this->assertSame($expectedSettings, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['PackageA']);
 	}
 
 	/**
 	 * @test
 	 */
 	public function loadConfigurationOverridesGlobalSettingsByContext() {
-		$configurationManager = $this->getConfigurationManagerWithFlow3Package('packageSettingsCallback', 'Testing/System1');
+		$configurationManager = $this->getConfigurationManagerWithFlowPackage('packageSettingsCallback', 'Testing/System1');
 		$mockPackages = $this->getMockPackages();
 
-		$configurationManager->_call('loadConfiguration', \TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
 
 		$actualConfigurations = $configurationManager->_get('configurations');
 		$expectedSettings = array(
 			'TYPO3' => array(
-				'FLOW3' => array(
+				'Flow' => array(
 					'ex1' => 'global',
 					'foo' => 'quux',
 					'example' => 'fromTestingSystem1',
@@ -174,7 +174,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$this->assertSame($expectedSettings, $actualConfigurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+		$this->assertSame($expectedSettings, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
 	}
 
 	/**
@@ -184,27 +184,27 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function packageSettingsCallback() {
 		$filenameAndPath = func_get_arg(0);
 
-		$settingsFlow3 = array(
+		$settingsFlow = array(
 			'TYPO3' => array(
-				'FLOW3' => array(
+				'Flow' => array(
 					'ex1' => 'global',
 					'foo' => 'global stuff'
 				)
 			)
 		);
 
-		$settingsFlow3Testing = array(
+		$settingsFlowTesting = array(
 			'TYPO3' => array(
-				'FLOW3' => array(
+				'Flow' => array(
 					'foo' => 'quux',
 					'example' => 'fromTesting'
 				)
 			)
 		);
 
-		$settingsFlow3TestingSystem1 = array(
+		$settingsFlowTestingSystem1 = array(
 			'TYPO3' => array(
-				'FLOW3' => array(
+				'Flow' => array(
 					'foo' => 'quux',
 					'example' => 'fromTestingSystem1'
 				)
@@ -245,17 +245,17 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$globalSettings = array(
 			'TYPO3' => arraY(
-				'FLOW3' => array(
+				'Flow' => array(
 					'foo' => 'bar'
 				)
 			)
 		);
 
 		switch ($filenameAndPath) {
-			case 'FLOW3/Configuration/Settings' : return $settingsFlow3;
-			case 'FLOW3/Configuration/SomeContext/Settings' : return array();
-			case 'FLOW3/Configuration/Testing/Settings' : return $settingsFlow3Testing;
-			case 'FLOW3/Configuration/Testing/System1/Settings' : return $settingsFlow3TestingSystem1;
+			case 'Flow/Configuration/Settings' : return $settingsFlow;
+			case 'Flow/Configuration/SomeContext/Settings' : return array();
+			case 'Flow/Configuration/Testing/Settings' : return $settingsFlowTesting;
+			case 'Flow/Configuration/Testing/System1/Settings' : return $settingsFlowTestingSystem1;
 
 			case 'PackageA/Configuration/Settings' : return $settingsA;
 			case 'PackageA/Configuration/SomeContext/Settings' : return array();
@@ -267,10 +267,10 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			case 'PackageC/Configuration/SomeContext/Settings' : return array();
 			case 'PackageC/Configuration/Testing/Settings' : return array();
 
-			case FLOW3_PATH_CONFIGURATION . 'Settings' : return $globalSettings;
-			case FLOW3_PATH_CONFIGURATION . 'SomeContext/Settings' : return array();
-			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings' : return array();
-			case FLOW3_PATH_CONFIGURATION . 'Testing/System1/Settings' : return array();
+			case FLOW_PATH_CONFIGURATION . 'Settings' : return $globalSettings;
+			case FLOW_PATH_CONFIGURATION . 'SomeContext/Settings' : return array();
+			case FLOW_PATH_CONFIGURATION . 'Testing/Settings' : return array();
+			case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings' : return array();
 			default:
 				throw new \Exception('Unexpected filename: ' . $filenameAndPath);
 		}
@@ -280,15 +280,15 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function loadConfigurationForObjectsOverridesConfigurationByContext() {
-		$configurationManager = $this->getConfigurationManagerWithFlow3Package('packageObjectsCallback', 'Testing/System1');
+		$configurationManager = $this->getConfigurationManagerWithFlowPackage('packageObjectsCallback', 'Testing/System1');
 		$mockPackages = $this->getMockPackages();
 
-		$configurationManager->_call('loadConfiguration', \TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $mockPackages);
 
 		$actualConfigurations = $configurationManager->_get('configurations');
 		$expectedSettings = array(
-			'TYPO3.FLOW3' => array(
-				'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3.Flow' => array(
+				'TYPO3\Flow\SomeClass' => array(
 					'className' => 'Bar',
 					'configPackageObjects' => 'correct',
 					'configGlobalObjects' => 'correct',
@@ -300,7 +300,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$this->assertSame($expectedSettings, $actualConfigurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
+		$this->assertSame($expectedSettings, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
 	}
 
 	/**
@@ -317,7 +317,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			// - $packageSubContextObjects
 			// - $globalSubContextObjects
 		$packageObjects = array(
-			'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3\Flow\SomeClass' => array(
 				'className' => 'Foo',
 				'configPackageObjects' => 'correct',
 
@@ -330,7 +330,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$globalObjects = array(
-			'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3\Flow\SomeClass' => array(
 				'configGlobalObjects' => 'correct',
 
 				'configPackageContextObjects' => 'overriddenWronglyFromGlobalObjects',
@@ -341,7 +341,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$packageContextObjects = array(
-			'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3\Flow\SomeClass' => array(
 				'className' => 'Bar',
 
 				'configPackageContextObjects' => 'correct',
@@ -353,7 +353,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$globalContextObjects = array(
-			'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3\Flow\SomeClass' => array(
 				'configGlobalContextObjects' => 'correct',
 
 				'configPackageSubContextObjects' => 'overriddenWronglyFromGlobalContextObjects',
@@ -362,7 +362,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$packageSubContextObjects = array(
-			'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3\Flow\SomeClass' => array(
 				'configPackageSubContextObjects' => 'correct',
 
 				'configGlobalSubContextObjects' => 'overriddenWronglyFromPackageSubContextObjects',
@@ -370,18 +370,18 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$globalSubContextObjects = array(
-			'TYPO3\FLOW3\SomeClass' => array(
+			'TYPO3\Flow\SomeClass' => array(
 				'configGlobalSubContextObjects' => 'correct',
 			)
 		);
 
 		switch ($filenameAndPath) {
-			case 'FLOW3/Configuration/Objects' : return $packageObjects;
-			case 'FLOW3/Configuration/Testing/Objects' : return $packageContextObjects;
-			case 'FLOW3/Configuration/Testing/System1/Objects' : return $packageSubContextObjects;
-			case FLOW3_PATH_CONFIGURATION . 'Objects' : return $globalObjects;
-			case FLOW3_PATH_CONFIGURATION . 'Testing/Objects' : return $globalContextObjects;
-			case FLOW3_PATH_CONFIGURATION . 'Testing/System1/Objects' : return $globalSubContextObjects;
+			case 'Flow/Configuration/Objects' : return $packageObjects;
+			case 'Flow/Configuration/Testing/Objects' : return $packageContextObjects;
+			case 'Flow/Configuration/Testing/System1/Objects' : return $packageSubContextObjects;
+			case FLOW_PATH_CONFIGURATION . 'Objects' : return $globalObjects;
+			case FLOW_PATH_CONFIGURATION . 'Testing/Objects' : return $globalContextObjects;
+			case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects' : return $globalSubContextObjects;
 			default:
 				throw new \Exception('Unexpected filename: ' . $filenameAndPath);
 		}
@@ -392,14 +392,14 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function loadConfigurationForCachesOverridesConfigurationByContext() {
-		$configurationManager = $this->getConfigurationManagerWithFlow3Package('packageCachesCallback', 'Testing/System1');
+		$configurationManager = $this->getConfigurationManagerWithFlowPackage('packageCachesCallback', 'Testing/System1');
 		$mockPackages = $this->getMockPackages();
 
-		$configurationManager->_call('loadConfiguration', \TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES, $mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES, $mockPackages);
 
 		$actualConfigurations = $configurationManager->_get('configurations');
 		$expectedCachesConfiguration = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configPackageCaches' => 'correct',
 				'configGlobalCaches' => 'correct',
 				'configPackageContextCaches' => 'correct',
@@ -409,7 +409,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$this->assertSame($expectedCachesConfiguration, $actualConfigurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES]);
+		$this->assertSame($expectedCachesConfiguration, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES]);
 	}
 
 	/**
@@ -426,7 +426,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			// - $packageSubContextCaches
 			// - $globalSubContextCaches
 		$packageCaches = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configPackageCaches' => 'correct',
 
 				'configGlobalCaches' => 'overriddenWronglyFromPackageCaches',
@@ -438,7 +438,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$globalCaches = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configGlobalCaches' => 'correct',
 
 				'configPackageContextCaches' => 'overriddenWronglyFromGlobalCaches',
@@ -449,7 +449,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$packageContextCaches = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configPackageContextCaches' => 'correct',
 
 				'configGlobalContextCaches' => 'overriddenWronglyFromPackageContextCaches',
@@ -459,7 +459,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$globalContextCaches = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configGlobalContextCaches' => 'correct',
 
 				'configPackageSubContextCaches' => 'overriddenWronglyFromGlobalContextCaches',
@@ -468,7 +468,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$packageSubContextCaches = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configPackageSubContextCaches' => 'correct',
 
 				'configGlobalSubContextCaches' => 'overriddenWronglyFromPackageSubContextCaches',
@@ -476,18 +476,18 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$globalSubContextCaches = array(
-			'TYPO3_FLOW3_SomeCache' => array(
+			'TYPO3_Flow_SomeCache' => array(
 				'configGlobalSubContextCaches' => 'correct',
 			)
 		);
 
 		switch ($filenameAndPath) {
-			case 'FLOW3/Configuration/Caches' : return $packageCaches;
-			case 'FLOW3/Configuration/Testing/Caches' : return $packageContextCaches;
-			case 'FLOW3/Configuration/Testing/System1/Caches' : return $packageSubContextCaches;
-			case FLOW3_PATH_CONFIGURATION . 'Caches' : return $globalCaches;
-			case FLOW3_PATH_CONFIGURATION . 'Testing/Caches' : return $globalContextCaches;
-			case FLOW3_PATH_CONFIGURATION . 'Testing/System1/Caches' : return $globalSubContextCaches;
+			case 'Flow/Configuration/Caches' : return $packageCaches;
+			case 'Flow/Configuration/Testing/Caches' : return $packageContextCaches;
+			case 'Flow/Configuration/Testing/System1/Caches' : return $packageSubContextCaches;
+			case FLOW_PATH_CONFIGURATION . 'Caches' : return $globalCaches;
+			case FLOW_PATH_CONFIGURATION . 'Testing/Caches' : return $globalContextCaches;
+			case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches' : return $globalSubContextCaches;
 			default:
 				throw new \Exception('Unexpected filename: ' . $filenameAndPath);
 		}
@@ -497,7 +497,7 @@ class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists() {
-		vfsStream::setup('FLOW3');
+		vfsStream::setup('Flow');
 
 		$configurationsCode = <<< "EOD"
 <?php
@@ -505,10 +505,10 @@ return array('bar' => 'touched');
 ?>
 EOD;
 
-		$includeCachedConfigurationsPathAndFilename = vfsStream::url('FLOW3/IncludeCachedConfigurations.php');
+		$includeCachedConfigurationsPathAndFilename = vfsStream::url('Flow/IncludeCachedConfigurations.php');
 		file_put_contents($includeCachedConfigurationsPathAndFilename, $configurationsCode);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 
 		$configurationManager->_set('includeCachedConfigurationsPathAndFilename', 'notfound.php');
 		$configurationManager->_set('configurations', array('foo' => 'untouched'));
@@ -524,35 +524,35 @@ EOD;
 	 * @test
 	 */
 	public function loadConfigurationCorrectlyMergesSettings() {
-		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Testing')));
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
 
-		$configurationManager->_call('loadConfiguration', \TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array());
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array());
 	}
 
 	/**
 	 * @test
 	 */
 	public function saveConfigurationCacheSavesTheCurrentConfigurationAsPhpCode() {
-		vfsStream::setup('FLOW3');
-		mkdir(vfsStream::url('FLOW3/Configuration'));
+		vfsStream::setup('Flow');
+		mkdir(vfsStream::url('Flow/Configuration'));
 
-		$temporaryDirectoryPath = vfsStream::url('FLOW3/TemporaryDirectory') . '/';
-		$includeCachedConfigurationsPathAndFilename = vfsStream::url('FLOW3/Configuration/IncludeCachedConfigurations.php');
+		$temporaryDirectoryPath = vfsStream::url('Flow/TemporaryDirectory') . '/';
+		$includeCachedConfigurationsPathAndFilename = vfsStream::url('Flow/Configuration/IncludeCachedConfigurations.php');
 
 		$mockConfigurations = array(
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('routes'),
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES => array('caches'),
-			\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array('settings' => array('foo' => 'bar'))
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES => array('routes'),
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES => array('caches'),
+			\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array('settings' => array('foo' => 'bar'))
 		);
 
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getPathToTemporaryDirectory'), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array('getPathToTemporaryDirectory'), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->injectEnvironment($mockEnvironment);
 		$configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
 		$configurationManager->_set('context', 'FooContext');
@@ -562,14 +562,14 @@ EOD;
 
 		$expectedInclusionCode = <<< "EOD"
 <?php
-if (FLOW3_PATH_ROOT !== 'XXX' || !file_exists('vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
+if (FLOW_PATH_ROOT !== 'XXX' || !file_exists('vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
 	unlink(__FILE__);
 	return array();
 }
-return require 'vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php';
+return require 'vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php';
 ?>
 EOD;
-		$expectedInclusionCode = str_replace('XXX', FLOW3_PATH_ROOT, $expectedInclusionCode);
+		$expectedInclusionCode = str_replace('XXX', FLOW_PATH_ROOT, $expectedInclusionCode);
 		$this->assertTrue(file_exists($temporaryDirectoryPath . 'Configuration'));
 		$this->assertStringEqualsFile($includeCachedConfigurationsPathAndFilename, $expectedInclusionCode);
 		$this->assertFileExists($temporaryDirectoryPath . 'Configuration/FooContextConfigurations.php');
@@ -585,16 +585,16 @@ EOD;
 			'baz' => '%PHP_VERSION%',
 			'inspiring' => array(
 				'people' => array(
-					'to' => '%FLOW3_PATH_ROOT%'
+					'to' => '%FLOW_PATH_ROOT%'
 				)
 			)
 		);
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->_callRef('postProcessConfiguration', $settings);
 
 		$this->assertSame(PHP_VERSION, $settings['baz']);
-		$this->assertSame(FLOW3_PATH_ROOT, $settings['inspiring']['people']['to']);
+		$this->assertSame(FLOW_PATH_ROOT, $settings['inspiring']['people']['to']);
 	}
 
 	/**
@@ -603,10 +603,10 @@ EOD;
 	 * @test
 	 */
 	public function loadConfigurationForRoutesLoadsContextSpecificRoutesFirst() {
-		$configurationManager = $this->getConfigurationManagerWithFlow3Package('packageRoutesCallback', 'Testing/System1');
+		$configurationManager = $this->getConfigurationManagerWithFlowPackage('packageRoutesCallback', 'Testing/System1');
 		$mockPackages = $this->getMockPackages();
 
-		$configurationManager->_call('loadConfiguration', \TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 
 		$actualConfigurations = $configurationManager->_get('configurations');
 		$expectedRoutesConfiguration = array(
@@ -658,7 +658,7 @@ EOD;
 			)
 		);
 
-		$this->assertSame($expectedRoutesConfiguration, $actualConfigurations[\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+		$this->assertSame($expectedRoutesConfiguration, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
 	}
 
 	/**
@@ -720,7 +720,7 @@ EOD;
 				'uriPattern' => 'globalContextRoute1/<PackageSubroutes>',
 				'subRoutes' => array(
 					'PackageSubroutes' => array(
-						'package' => 'TYPO3.FLOW3'
+						'package' => 'TYPO3.Flow'
 					)
 				),
 			),
@@ -742,12 +742,12 @@ EOD;
 		);
 
 		switch ($filenameAndPath) {
-			case 'FLOW3/Configuration/Routes' : return $packageRoutes;
-			case 'FLOW3/Configuration/Testing/Routes' : return $packageContextRoutes;
-			case 'FLOW3/Configuration/Testing/System1/Routes' : return $packageSubContextRoutes;
-			case FLOW3_PATH_CONFIGURATION . 'Routes' : return $globalRoutes;
-			case FLOW3_PATH_CONFIGURATION . 'Testing/Routes' : return $globalContextRoutes;
-			case FLOW3_PATH_CONFIGURATION . 'Testing/System1/Routes' : return $globalSubContextRoutes;
+			case 'Flow/Configuration/Routes' : return $packageRoutes;
+			case 'Flow/Configuration/Testing/Routes' : return $packageContextRoutes;
+			case 'Flow/Configuration/Testing/System1/Routes' : return $packageSubContextRoutes;
+			case FLOW_PATH_CONFIGURATION . 'Routes' : return $globalRoutes;
+			case FLOW_PATH_CONFIGURATION . 'Testing/Routes' : return $globalContextRoutes;
+			case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes' : return $globalSubContextRoutes;
 			default:
 				throw new \Exception('Unexpected filename: ' . $filenameAndPath);
 		}
@@ -756,7 +756,7 @@ EOD;
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
+	 * @expectedException \TYPO3\Flow\Configuration\Exception\ParseErrorException
 	 */
 	public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages() {
 		$routesConfiguration = array(
@@ -772,7 +772,7 @@ EOD;
 		);
 		$subRoutesConfiguration = array();
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
 		$configurationManager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
 	}
 
@@ -804,7 +804,7 @@ EOD;
 		$subRoutesConfiguration = array(
 			array(
 				'name' => 'Standard route',
-				'uriPattern' => 'flow3/welcome',
+				'uriPattern' => 'flow/welcome',
 				'defaults' => array(
 					'@package' => 'OverriddenPackage',
 					'@controller' => 'Standard',
@@ -831,7 +831,7 @@ EOD;
 		$expectedResult = array(
 			array(
 				'name' => 'Welcome :: Standard route',
-				'uriPattern' => 'flow3/welcome',
+				'uriPattern' => 'flow/welcome',
 				'defaults' => array(
 					'@package' => 'OverriddenPackage',
 					'@controller' => 'Standard',
@@ -864,7 +864,7 @@ EOD;
 				'appendExceedingArguments' => TRUE
 			)
 		);
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
 		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes');
 
 		$this->assertEquals($expectedResult, $actualResult);
@@ -873,13 +873,13 @@ EOD;
 	/**
 	 * @param string $configurationSourceCallbackName
 	 * @param string $contextName
-	 * @return \TYPO3\FLOW3\Configuration\ConfigurationManager
+	 * @return \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
-	protected function getConfigurationManagerWithFlow3Package($configurationSourceCallbackName, $contextName) {
-		$mockConfigurationSource = $this->getMock('TYPO3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
+	protected function getConfigurationManagerWithFlowPackage($configurationSourceCallbackName, $contextName) {
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, $configurationSourceCallbackName)));
 
-		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext($contextName)));
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext($contextName)));
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
 
 		$configurationManager->expects($this->once())->method('postProcessConfiguration');
@@ -891,12 +891,12 @@ EOD;
 	 * @return array
 	 */
 	protected function getMockPackages() {
-		$mockPackageFlow3 = $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE);
-		$mockPackageFlow3->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('FLOW3/Configuration/'));
-		$mockPackageFlow3->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.FLOW3'));
+		$mockPackageFlow = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE);
+		$mockPackageFlow->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
+		$mockPackageFlow->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
 
 		$mockPackages = array(
-			'TYPO3.FLOW3' => $mockPackageFlow3
+			'TYPO3.Flow' => $mockPackageFlow
 		);
 
 		return $mockPackages;

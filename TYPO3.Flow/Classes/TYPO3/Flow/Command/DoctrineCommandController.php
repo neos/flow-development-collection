@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,14 +11,14 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Command controller for tasks related to Doctrine
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @var array
@@ -26,13 +26,13 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $settings = array();
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\Doctrine\Service
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\Doctrine\Service
 	 */
 	protected $doctrineService;
 
 	/**
-	 * Injects the FLOW3 settings, only the persistence part is kept for further use
+	 * Injects the Flow settings, only the persistence part is kept for further use
 	 *
 	 * @param array $settings
 	 * @return void
@@ -45,7 +45,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * Compile the Doctrine proxy classes
 	 *
 	 * @return void
-	 * @FLOW3\Internal
+	 * @Flow\Internal
 	 */
 	public function compileProxiesCommand() {
 		$this->doctrineService->compileProxies();
@@ -62,7 +62,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * any way.
 	 *
 	 * @return void
-	 * @see typo3.flow3:doctrine:entitystatus
+	 * @see typo3.flow:doctrine:entitystatus
 	 */
 	public function validateCommand() {
 		$this->outputLine();
@@ -91,8 +91,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @return void
-	 * @see typo3.flow3:doctrine:update
-	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow:doctrine:update
+	 * @see typo3.flow:doctrine:migrate
 	 */
 	public function createCommand($output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -120,8 +120,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param boolean $unsafeMode If set, foreign keys, sequences and tables can potentially be dropped.
 	 * @param string $output A file to write SQL to, instead of executing the update directly
 	 * @return void
-	 * @see typo3.flow3:doctrine:create
-	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow:doctrine:create
+	 * @see typo3.flow:doctrine:migrate
 	 */
 	public function updateCommand($unsafeMode = FALSE, $output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -149,7 +149,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param boolean $dumpMappingData If set, the mapping data will be output
 	 * @return void
-	 * @see typo3.flow3:doctrine:validate
+	 * @see typo3.flow:doctrine:validate
 	 */
 	public function entityStatusCommand($dumpMappingData = FALSE) {
 		$info = $this->doctrineService->getEntityStatus();
@@ -163,8 +163,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 				if ($entityStatus instanceof \Doctrine\Common\Persistence\Mapping\ClassMetadata) {
 					$this->outputLine('[OK]   %s', array($entityClassName));
 					if ($dumpMappingData) {
-						\TYPO3\FLOW3\Error\Debugger::clearState();
-						$this->outputLine(\TYPO3\FLOW3\Error\Debugger::renderDump($entityStatus, 0, TRUE, TRUE));
+						\TYPO3\Flow\Error\Debugger::clearState();
+						$this->outputLine(\TYPO3\Flow\Error\Debugger::renderDump($entityStatus, 0, TRUE, TRUE));
 					}
 				} else {
 					$this->outputLine('[FAIL] %s', array($entityClassName));
@@ -180,7 +180,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * Any DQL queries passed after the parameters will be executed, the results will be output:
 	 *
-	 * doctrine:dql --limit 10 'SELECT a FROM TYPO3\FLOW3\Security\Account a'
+	 * doctrine:dql --limit 10 'SELECT a FROM TYPO3\Flow\Security\Account a'
 	 *
 	 * @param integer $depth How many levels deep the result should be dumped
 	 * @param string $hydrationMode One of: object, array, scalar, single-scalar, simpleobject
@@ -216,10 +216,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * available, executed and pending migrations.
 	 *
 	 * @return void
-	 * @see typo3.flow3:doctrine:migrate
-	 * @see typo3.flow3:doctrine:migrationexecute
-	 * @see typo3.flow3:doctrine:migrationgenerate
-	 * @see typo3.flow3:doctrine:migrationversion
+	 * @see typo3.flow:doctrine:migrate
+	 * @see typo3.flow:doctrine:migrationexecute
+	 * @see typo3.flow:doctrine:migrationgenerate
+	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrationStatusCommand() {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -243,10 +243,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @param boolean $quiet If set, only the executed migration versions will be output, one per line
 	 * @return void
-	 * @see typo3.flow3:doctrine:migrationstatus
-	 * @see typo3.flow3:doctrine:migrationexecute
-	 * @see typo3.flow3:doctrine:migrationgenerate
-	 * @see typo3.flow3:doctrine:migrationversion
+	 * @see typo3.flow:doctrine:migrationstatus
+	 * @see typo3.flow:doctrine:migrationexecute
+	 * @see typo3.flow:doctrine:migrationgenerate
+	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE, $quiet = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -280,10 +280,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @return void
-	 * @see typo3.flow3:doctrine:migrate
-	 * @see typo3.flow3:doctrine:migrationstatus
-	 * @see typo3.flow3:doctrine:migrationgenerate
-	 * @see typo3.flow3:doctrine:migrationversion
+	 * @see typo3.flow:doctrine:migrate
+	 * @see typo3.flow:doctrine:migrationstatus
+	 * @see typo3.flow:doctrine:migrationgenerate
+	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrationExecuteCommand($version, $direction = 'up', $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -307,10 +307,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param boolean $delete The migration to mark as not migrated
 	 * @return void
 	 * @throws \InvalidArgumentException
-	 * @see typo3.flow3:doctrine:migrate
-	 * @see typo3.flow3:doctrine:migrationstatus
-	 * @see typo3.flow3:doctrine:migrationexecute
-	 * @see typo3.flow3:doctrine:migrationgenerate
+	 * @see typo3.flow:doctrine:migrate
+	 * @see typo3.flow:doctrine:migrationstatus
+	 * @see typo3.flow:doctrine:migrationexecute
+	 * @see typo3.flow:doctrine:migrationgenerate
 	 */
 	public function migrationVersionCommand($version, $add = FALSE, $delete = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -336,10 +336,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
 	 * @return void
-	 * @see typo3.flow3:doctrine:migrate
-	 * @see typo3.flow3:doctrine:migrationstatus
-	 * @see typo3.flow3:doctrine:migrationexecute
-	 * @see typo3.flow3:doctrine:migrationversion
+	 * @see typo3.flow:doctrine:migrate
+	 * @see typo3.flow:doctrine:migrationstatus
+	 * @see typo3.flow:doctrine:migrationexecute
+	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrationGenerateCommand($diffAgainstCurrent = TRUE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -351,7 +351,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->outputLine('Next Steps:');
 			$this->outputLine(sprintf('- Move <b>%s</b> to YourPackage/<b>Migrations/%s/</b>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
 			$this->outputLine('- Review and adjust the generated migration.');
-			$this->outputLine('- (optional) execute the migration using <b>%s doctrine:migrate</b>', array($this->getFlow3InvocationString()));
+			$this->outputLine('- (optional) execute the migration using <b>%s doctrine:migrate</b>', array($this->getFlowInvocationString()));
 		} else {
 			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);

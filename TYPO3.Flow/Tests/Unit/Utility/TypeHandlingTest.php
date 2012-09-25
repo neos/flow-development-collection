@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\Flow\Tests\Unit\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,22 +15,22 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  * Testcase for the Utility\TypeHandling class
  *
  */
-class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Utility\Exception\InvalidTypeException
+	 * @expectedException \TYPO3\Flow\Utility\Exception\InvalidTypeException
 	 */
 	public function parseTypeThrowsExceptionOnInvalidType() {
-		\TYPO3\FLOW3\Utility\TypeHandling::parseType('something not a type');
+		\TYPO3\Flow\Utility\TypeHandling::parseType('something not a type');
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Utility\Exception\InvalidTypeException
+	 * @expectedException \TYPO3\Flow\Utility\Exception\InvalidTypeException
 	 */
 	public function parseTypeThrowsExceptionOnInvalidElementTypeHint() {
-		\TYPO3\FLOW3\Utility\TypeHandling::parseType('string<integer>');
+		\TYPO3\Flow\Utility\TypeHandling::parseType('string<integer>');
 	}
 
 	/**
@@ -56,7 +56,7 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function parseTypeReturnsArrayWithInformation($type, $expectedResult) {
 		$this->assertEquals(
-			\TYPO3\FLOW3\Utility\TypeHandling::parseType($type),
+			\TYPO3\Flow\Utility\TypeHandling::parseType($type),
 			$expectedResult
 		);
 	}
@@ -78,7 +78,7 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider normalizeTypes
 	 */
 	public function normalizeTypesReturnsNormalizedType($type, $normalized) {
-		$this->assertEquals(\TYPO3\FLOW3\Utility\TypeHandling::normalizeType($type), $normalized);
+		$this->assertEquals(\TYPO3\Flow\Utility\TypeHandling::normalizeType($type), $normalized);
 	}
 
 	/**
@@ -99,7 +99,7 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider nonliteralTypes
 	 */
 	public function isLiteralReturnsFalseForNonLiteralTypes($type) {
-		$this->assertFalse(\TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type));
+		$this->assertFalse(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type));
 	}
 
 	/**
@@ -122,7 +122,7 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider literalTypes
 	 */
 	public function isLiteralReturnsTrueForLiteralType($type) {
-		$this->assertTrue(\TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type));
+		$this->assertTrue(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type));
 	}
 }
 ?>

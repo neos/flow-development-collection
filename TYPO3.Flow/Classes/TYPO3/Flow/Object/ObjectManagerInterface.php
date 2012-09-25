@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object;
+namespace TYPO3\Flow\Object;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -24,7 +24,7 @@ interface ObjectManagerInterface {
 	/**
 	 * Returns the currently set context.
 	 *
-	 * @return \TYPO3\FLOW3\Core\ApplicationContext the current context
+	 * @return \TYPO3\Flow\Core\ApplicationContext the current context
 	 * @api
 	 */
 	public function getContext();
@@ -70,7 +70,7 @@ interface ObjectManagerInterface {
 	 * case insensitive object name. If no object of that name exists,
 	 * FALSE is returned.
 	 *
-	 * In general, the case sensitive variant is used everywhere in FLOW3,
+	 * In general, the case sensitive variant is used everywhere in Flow,
 	 * however there might be special situations in which the
 	 * case sensitive name is not available. This method helps you in these
 	 * rare cases.

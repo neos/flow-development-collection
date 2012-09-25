@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Error;
+namespace TYPO3\Flow\Error;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -21,7 +21,7 @@ namespace TYPO3\FLOW3\Error;
  *
  * @api
  */
-class Error extends \TYPO3\FLOW3\Error\Message {
+class Error extends \TYPO3\Flow\Error\Message {
 
 	/**
 	 * The severity of this message ('Error').

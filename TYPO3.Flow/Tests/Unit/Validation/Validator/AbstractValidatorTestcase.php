@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,13 +15,13 @@ namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
  * Testcase for the Abstract Validator
  *
  */
-abstract class AbstractValidatorTestcase extends \TYPO3\FLOW3\Tests\UnitTestCase {
+abstract class AbstractValidatorTestcase extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	protected $validatorClassName;
 
 	/**
 	 *
-	 * @var \TYPO3\FLOW3\Validation\Validator\ValidatorInterface
+	 * @var \TYPO3\Flow\Validation\Validator\ValidatorInterface
 	 */
 	protected $validator;
 

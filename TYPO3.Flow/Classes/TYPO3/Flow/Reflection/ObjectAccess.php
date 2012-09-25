@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Reflection;
+namespace TYPO3\Flow\Reflection;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -48,7 +48,7 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess Directly access property using reflection(!)
 	 * @return mixed Value of the property
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
+	 * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
 	 */
 	static public function getProperty($subject, $propertyName, $forceDirectAccess = FALSE) {
 		if (!is_object($subject) && !is_array($subject)) {
@@ -63,7 +63,7 @@ class ObjectAccess {
 		if ($propertyExists === TRUE) {
 			return $propertyValue;
 		}
-		throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
+		throw new \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
 	 * @return mixed Value of the property
-	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
+	 * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
 	 * @see getProperty()
 	 */
 	static public function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
@@ -93,12 +93,12 @@ class ObjectAccess {
 		}
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
-				$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection(get_class($subject), $propertyName);
 				return $propertyReflection->getValue($subject);
 			} elseif (property_exists($subject, $propertyName)) {
 				return $subject->$propertyName;
 			} else {
-				throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
+				throw new \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
 			}
 		}
 		if ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
@@ -174,7 +174,7 @@ class ObjectAccess {
 
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
-				$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection(get_class($subject), $propertyName);
 				$propertyReflection->setValue($subject, $propertyValue);
 			} else {
 				$subject->$propertyName = $propertyValue;

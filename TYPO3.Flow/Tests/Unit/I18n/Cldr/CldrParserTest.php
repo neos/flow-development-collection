@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
+namespace TYPO3\Flow\Tests\Unit\I18n\Cldr;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
  * Testcase for the CldrParser
  *
  */
-class CldrParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CldrParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -24,7 +24,7 @@ class CldrParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
 		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
-		$parser = new \TYPO3\FLOW3\I18n\Cldr\CldrParser();
+		$parser = new \TYPO3\Flow\I18n\Cldr\CldrParser();
 
 		$result = $parser->getParsedData($sampleFilenamePath);
 		$this->assertEquals($sampleParsedData, $result);

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication\Provider;
+namespace TYPO3\Flow\Security\Authentication\Provider;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,25 +11,25 @@ namespace TYPO3\FLOW3\Security\Authentication\Provider;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A singleton authentication provider for functional tests with
  * mockable authentication.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\AbstractProvider {
+class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Account
+	 * @var \TYPO3\Flow\Security\Account
 	 */
 	protected $account;
 
 	/**
 	 * @var integer
 	 */
-	protected $authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+	protected $authenticationStatus = \TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
 
 	/**
 	 * Returns the class names of the tokens this provider can authenticate.
@@ -37,19 +37,19 @@ class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\Abst
 	 * @return array
 	 */
 	public function getTokenClassNames() {
-		return array('TYPO3\FLOW3\Security\Authentication\Token\TestingToken');
+		return array('TYPO3\Flow\Security\Authentication\Token\TestingToken');
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
-	 * @FLOW3\Session(autoStart=true)
+	 * @Flow\Session(autoStart=true)
 	 */
-	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken) {
 		$authenticationToken->setAuthenticationStatus($this->authenticationStatus);
-		if ($this->authenticationStatus === \TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+		if ($this->authenticationStatus === \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
 			$authenticationToken->setAccount($this->account);
 		} else {
 			$authenticationToken->setAccount(NULL);
@@ -59,7 +59,7 @@ class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\Abst
 	/**
 	 * Set the account that will be authenticated
 	 *
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
 	 */
 	public function setAccount($account) {
@@ -93,7 +93,7 @@ class TestingProvider extends \TYPO3\FLOW3\Security\Authentication\Provider\Abst
 	 */
 	public function reset() {
 		$this->account = NULL;
-		$this->authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+		$this->authenticationStatus = \TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
 	}
 
 }

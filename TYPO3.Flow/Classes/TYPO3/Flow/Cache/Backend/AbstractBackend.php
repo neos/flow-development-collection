@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Backend;
+namespace TYPO3\Flow\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,14 +16,14 @@ namespace TYPO3\FLOW3\Cache\Backend;
  *
  * @api
  */
-abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInterface {
+abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInterface {
 
 	const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
 	const UNLIMITED_LIFETIME = 0;
 
 	/**
 	 * Reference to the cache frontend which uses this backend
-	 * @var \TYPO3\FLOW3\Cache\Frontend\FrontendInterface
+	 * @var \TYPO3\Flow\Cache\Frontend\FrontendInterface
 	 */
 	protected $cache;
 
@@ -34,7 +34,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 
 	/**
 	 * The current application context
-	 * @var \TYPO3\FLOW3\Core\ApplicationContext
+	 * @var \TYPO3\Flow\Core\ApplicationContext
 	 */
 	protected $context;
 
@@ -45,19 +45,19 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	protected $defaultLifetime = 3600;
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
 	 * Constructs this backend
 	 *
-	 * @param \TYPO3\FLOW3\Core\ApplicationContext $context FLOW3's application context
+	 * @param \TYPO3\Flow\Core\ApplicationContext $context Flow's application context
 	 * @param array $options Configuration options - depends on the actual backend
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
-	public function __construct(\TYPO3\FLOW3\Core\ApplicationContext $context, array $options = array()) {
+	public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array()) {
 		$this->context = $context;
 		if (is_array($options) || $options instanceof \ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {
@@ -74,21 +74,21 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInte
 	/**
 	 * Injects the Environment object
 	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\Flow\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Sets a reference to the cache frontend which uses this backend
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
+	 * @param \TYPO3\Flow\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
 	 * @api
 	 */
-	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		$this->cache = $cache;
 		$this->cacheIdentifier = $this->cache->getIdentifier();
 	}

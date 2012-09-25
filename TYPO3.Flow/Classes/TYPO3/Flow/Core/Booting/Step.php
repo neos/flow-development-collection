@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core\Booting;
+namespace TYPO3\Flow\Core\Booting;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Core\Booting;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Step within a Sequence
@@ -42,10 +42,10 @@ class Step {
 	/**
 	 * Invokes / executes this step
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function __invoke(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function __invoke(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		call_user_func($this->callback, $bootstrap);
 	}
 

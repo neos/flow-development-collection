@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Class for building Packages
@@ -25,7 +25,7 @@ class PackageFactory {
 	 * @param string $manifestPath path to the package's Composer manifest, relative to base path
 	 * @param string $packageKey key / name of the package
 	 * @param string $classesPath path to the classes directory, relative to the package path
-	 * @return \TYPO3\FLOW3\Package\PackageInterface
+	 * @return \TYPO3\Flow\Package\PackageInterface
 	 * @throws Exception\CorruptPackageException
 	 */
 	public static function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath) {
@@ -38,10 +38,10 @@ class PackageFactory {
 			 */
 			$packageClassName = str_replace('.', '\\', $packageKey) . '\Package';
 			if (!class_exists($packageClassName)) {
-				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class called "%s".', $packageKey, $packageClassPathAndFilename, $packageClassName), 1327587091);
+				throw new \TYPO3\Flow\Package\Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class called "%s".', $packageKey, $packageClassPathAndFilename, $packageClassName), 1327587091);
 			}
 		} else {
-			$packageClassName = 'TYPO3\FLOW3\Package\Package';
+			$packageClassName = 'TYPO3\Flow\Package\Package';
 		}
 		$packagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
 
@@ -52,7 +52,7 @@ class PackageFactory {
 	/**
 	 * Resolves package key from Composer manifest
 	 *
-	 * If it is a FLOW3 package the name of the containing directory will be used.
+	 * If it is a Flow package the name of the containing directory will be used.
 	 *
 	 * Else if the composer name of the package matches the first part of the lowercased namespace of the package, the mixed
 	 * case version of the composer name / namespace will be used, with backslashes replaced by dots.
@@ -65,13 +65,13 @@ class PackageFactory {
 	 */
 	public static function getPackageKeyFromManifest($manifest, $packagePath, $packagesBasePath) {
 		if (!is_object($manifest)) {
-			throw new  \TYPO3\FLOW3\Package\Exception\InvalidPackageManifestException('Invalid composer manifest.', 1348146450);
+			throw new  \TYPO3\Flow\Package\Exception\InvalidPackageManifestException('Invalid composer manifest.', 1348146450);
 		}
 		if (!isset($manifest->name)) {
 				// manifest found but no valid package, skip it
 			return NULL;
 		}
-		if (isset($manifest->type) && substr($manifest->type, 0, 6) === 'flow3-') {
+		if (isset($manifest->type) && substr($manifest->type, 0, 6) === 'flow-') {
 			$relativePackagePath = substr($packagePath, strlen($packagesBasePath));
 			$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
 			/**

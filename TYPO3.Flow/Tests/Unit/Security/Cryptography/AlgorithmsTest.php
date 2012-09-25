@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
+namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
  * Testcase for the cryptographic algorithms
  *
  */
-class AlgorithmsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class AlgorithmsTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Data provider for pbkdf2TestVectorsAreCorrect()
@@ -41,7 +41,7 @@ class AlgorithmsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider pbkdf2TestVectors
 	 */
 	public function pbkdf2TestVectorsAreCorrect($password, $salt, $iterationCount, $derivedKeyLength, $output) {
-		$result = \TYPO3\FLOW3\Security\Cryptography\Algorithms::pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, 'sha1');
+		$result = \TYPO3\Flow\Security\Cryptography\Algorithms::pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, 'sha1');
 		$this->assertEquals(unpack('H*', pack('H*', $output)), unpack('H*', $result));
 	}
 

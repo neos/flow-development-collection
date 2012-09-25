@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Property;
+namespace TYPO3\Flow\Tests\Functional\Property;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,11 +15,11 @@ namespace TYPO3\FLOW3\Tests\Functional\Property;
  * Testcase for Property Mapper
  *
  */
-class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 *
-	 * @var \TYPO3\FLOW3\Property\PropertyMapper
+	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
@@ -30,7 +30,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->propertyMapper = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMapper');
+		$this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 	}
 
 	/**
@@ -43,7 +43,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'averageNumberOfKids' => '1.5'
 		);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity');
 		$this->assertSame('Robert Skaarhoj', $result->getName());
 		$this->assertSame(25, $result->getAge());
 		$this->assertSame(1.5, $result->getAverageNumberOfKids());
@@ -59,7 +59,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'signedCla' => TRUE
 		);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass');
 		$this->assertSame('Christopher', $result->getName());
 		$this->assertSame(187, $result->getSize());
 		$this->assertSame(TRUE, $result->getSignedCla());
@@ -75,7 +75,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'age' => '28'
 		);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestValueobject');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestValueobject');
 		$this->assertSame('Christopher', $result->getName());
 		$this->assertSame(28, $result->getAge());
 	}
@@ -89,7 +89,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'size' => 23
 		);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass');
 		$this->assertSame('42', $result->getName());
 		$this->assertSame(23, $result->getSize());
 	}
@@ -99,32 +99,32 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function targetTypeForEntityCanBeOverridenIfConfigured() {
 		$source = array(
-			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntitySubclass',
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclass',
 			'name' => 'Arthur',
 			'age' => '42'
 		);
 
-		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
-		$this->assertInstanceOf('\TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntitySubclass', $result);
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+		$this->assertInstanceOf('\TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclass', $result);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Property\Exception
+	 * @expectedException \TYPO3\Flow\Property\Exception
 	 */
 	public function overridenTargetTypeForEntityMustBeASubclass() {
 		$source = array(
-			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass',
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass',
 			'name' => 'A horse'
 		);
 
-		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
 
-		$this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
+		$this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
 	}
 
 	/**
@@ -132,31 +132,31 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function targetTypeForSimpleObjectCanBeOverridenIfConfigured() {
 		$source = array(
-			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestSubclass',
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestSubclass',
 			'name' => 'Tower of Pisa'
 		);
 
-		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\ObjectConverter', \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass', $configuration);
-		$this->assertInstanceOf('TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestSubclass', $result);
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass', $configuration);
+		$this->assertInstanceOf('TYPO3\Flow\Tests\Functional\Property\Fixtures\TestSubclass', $result);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Property\Exception
+	 * @expectedException \TYPO3\Flow\Property\Exception
 	 */
 	public function overridenTargetTypeForSimpleObjectMustBeASubclass() {
 		$source = array(
-			'__type' => 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity',
+			'__type' => 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity',
 			'name' => 'A horse'
 		);
 
-		$configuration = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder')->build();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\ObjectConverter', \TYPO3\Flow\Property\TypeConverter\ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
 
-		$this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass', $configuration);
+		$this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestClass', $configuration);
 	}
 
 	/**
@@ -170,7 +170,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'averageNumberOfKids' => '5.5'
 		);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity');
 		$this->assertSame('Egon Olsen', $result->getName());
 		$this->assertSame(42, $result->getAge());
 		$this->assertSame(5.5, $result->getAverageNumberOfKids());
@@ -187,7 +187,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 			'averageNumberOfKids' => ''
 		);
 
-		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity');
 		$this->assertSame('Egon Olsen', $result->getName());
 		$this->assertSame(42, $result->getAge());
 		$this->assertSame(NULL, $result->getAverageNumberOfKids());
@@ -203,7 +203,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$entity = new Fixtures\TestEntity();
 		$entity->setName('Egon Olsen');
 
-		$result = $this->propertyMapper->convert($entity, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$result = $this->propertyMapper->convert($entity, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity');
 		$this->assertSame($entity, $result);
 	}
 
@@ -216,7 +216,7 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$entity = new Fixtures\TestEntity();
 		$entity->setName('Egon Olsen');
 
-		$result = $this->propertyMapper->convert(array($entity), 'array<TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity>');
+		$result = $this->propertyMapper->convert(array($entity), 'array<TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity>');
 		$this->assertSame(array($entity), $result);
 	}
 

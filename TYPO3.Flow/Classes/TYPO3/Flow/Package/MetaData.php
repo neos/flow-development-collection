@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package;
+namespace TYPO3\Flow\Package;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Package;
  * The default TYPO3 Package MetaData implementation
  *
  */
-class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
+class MetaData implements \TYPO3\Flow\Package\MetaDataInterface {
 
 	/**
 	 * @var array
@@ -136,7 +136,7 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	}
 
 	/**
-	 * @return Array of TYPO3\FLOW3\Package\MetaData\AbstractParty The package parties
+	 * @return Array of TYPO3\Flow\Package\MetaData\AbstractParty The package parties
 	 */
 	public function getParties() {
 		return $this->parties;
@@ -145,10 +145,10 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * Add a party
 	 *
-	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractParty $party
+	 * @param \TYPO3\Flow\Package\MetaData\AbstractParty $party
 	 * @return void
 	 */
-	public function addParty(\TYPO3\FLOW3\Package\MetaData\AbstractParty $party) {
+	public function addParty(\TYPO3\Flow\Package\MetaData\AbstractParty $party) {
 		$this->parties[] = $party;
 	}
 
@@ -175,10 +175,10 @@ class MetaData implements \TYPO3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * Add a constraint
 	 *
-	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to add
+	 * @param \TYPO3\Flow\Package\MetaData\AbstractConstraint $constraint The constraint to add
 	 * @return void
 	 */
-	public function addConstraint(\TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
+	public function addConstraint(\TYPO3\Flow\Package\MetaData\AbstractConstraint $constraint) {
 		$this->constraints[$constraint->getConstraintType()][] = $constraint;
 	}
 }

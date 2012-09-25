@@ -817,7 +817,7 @@ A XSD schema file for your ViewHelpers can be created by executing
 
 .. code-block:: text
 
-	./flow3 documenation:generatexsd <Your>\\<Package>\\ViewHelpers
+	./flow documenation:generatexsd <Your>\\<Package>\\ViewHelpers
 		--target-file /some/directory/your.package.xsd
 
 Then import the XSD file in your favorite IDE and map it to the namespace

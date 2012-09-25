@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A fixture for testing class schema building
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class ClassSchemaFixture {
 
@@ -42,9 +42,9 @@ class ClassSchemaFixture {
 	 *
 	 * @param string $name
 	 * @return void
-	 * @FLOW3\Validate("$name", type="foo1")
-	 * @FLOW3\Validate("$name", type="foo2")
-	 * @FLOW3\SkipCsrfProtection
+	 * @Flow\Validate("$name", type="foo1")
+	 * @Flow\Validate("$name", type="foo2")
+	 * @Flow\SkipCsrfProtection
 	 */
 	public function setName($name) {
 		$this->name = $name;

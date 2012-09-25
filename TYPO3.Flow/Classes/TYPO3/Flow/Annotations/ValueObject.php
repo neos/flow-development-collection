@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Annotations;
+namespace TYPO3\Flow\Annotations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Annotations;
 /**
  * Marks the annotate class as a value object.
  *
- * Regarding Doctrine the object is treated like an entity, but FLOW3
+ * Regarding Doctrine the object is treated like an entity, but Flow
  * applies some optimizations internally, e.g. to store only one instance
  * of a value object.
  *

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Frontend;
+namespace TYPO3\Flow\Cache\Frontend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Cache\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cache\CacheManager;
-use TYPO3\FLOW3\Cache\Backend\TaggableBackendInterface;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 
 /**
  * An abstract cache
  *
  * @api
  */
-abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendInterface {
+abstract class AbstractFrontend implements \TYPO3\Flow\Cache\Frontend\FrontendInterface {
 
 	/**
 	 * Identifies this cache
@@ -28,7 +28,7 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	protected $identifier;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Backend\AbstractBackend
+	 * @var \TYPO3\Flow\Cache\Backend\AbstractBackend
 	 */
 	protected $backend;
 
@@ -36,10 +36,10 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend Backend to be used for this cache
+	 * @param \TYPO3\Flow\Cache\Backend\BackendInterface $backend Backend to be used for this cache
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
 	 */
-	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend) {
+	public function __construct($identifier, \TYPO3\Flow\Cache\Backend\BackendInterface $backend) {
 		if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
 			throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		}
@@ -61,7 +61,7 @@ abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendI
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return \TYPO3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
+	 * @return \TYPO3\Flow\Cache\Backend\BackendInterface The backend used by this cache
 	 * @api
 	 */
 	public function getBackend() {

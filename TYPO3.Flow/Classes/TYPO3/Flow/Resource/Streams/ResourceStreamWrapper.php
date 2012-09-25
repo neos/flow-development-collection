@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Resource\Streams;
+namespace TYPO3\Flow\Resource\Streams;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Resource\Streams;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A stream wrapper for package resources.
  *
  */
-class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface {
+class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrapperInterface {
 
 	/**
 	 */
@@ -34,19 +34,19 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	protected $handle;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Uri
+	 * @var \TYPO3\Flow\Http\Uri
 	 */
 	protected $uri;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Resource\ResourceManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
 	protected $resourceManager;
 
@@ -442,7 +442,7 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	 * @param string $requestedPath
 	 * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
 	 * @return mixed The full path and filename or FALSE if the file doesn't exist
-	 * @throws \TYPO3\FLOW3\Resource\Exception
+	 * @throws \TYPO3\Flow\Resource\Exception
 	 * @throws \InvalidArgumentException
 	 */
 	protected function evaluateResourcePath($requestedPath, $checkForExistence = TRUE) {
@@ -465,11 +465,11 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 		}
 
 		if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
-			throw new \TYPO3\FLOW3\Resource\Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
+			throw new \TYPO3\Flow\Resource\Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
 		}
 
 		$package = $this->packageManager->getPackage($uriParts['host']);
-		$resourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
+		$resourcePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
 
 		if ($checkForExistence === FALSE || file_exists($resourcePath)) {
 			return $resourcePath;

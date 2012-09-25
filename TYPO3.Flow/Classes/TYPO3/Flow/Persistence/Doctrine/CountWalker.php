@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * This source file is subject to the new BSD license that is bundled     *
  * with this package in the file License-BSD.txt.                             *
@@ -15,12 +15,12 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  *                                                                        */
 
 use Doctrine\ORM\Query\AST\PathExpression;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A walker to transform a select query into a count query.
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 

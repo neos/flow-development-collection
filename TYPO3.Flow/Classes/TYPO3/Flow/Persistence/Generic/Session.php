@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic;
+namespace TYPO3\Flow\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The persistence session - acts as a UoW and Identity Map for FLOW3's
+ * The persistence session - acts as a UoW and Identity Map for Flow's
  * persistence framework.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class Session {
 
@@ -46,7 +46,7 @@ class Session {
 	protected $identifierMap = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -62,10 +62,10 @@ class Session {
 	/**
 	 * Injects a Reflection Service instance
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -142,14 +142,14 @@ class Session {
 			return TRUE;
 		}
 
-		if (property_exists($object, 'FLOW3_Persistence_LazyLoadingObject_thawProperties')) {
+		if (property_exists($object, 'Flow_Persistence_LazyLoadingObject_thawProperties')) {
 			return FALSE;
 		}
 
-		$currentValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
+		$currentValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 		$cleanData =& $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
 
-		if ($currentValue instanceof \TYPO3\FLOW3\Persistence\Generic\LazySplObjectStorage && !$currentValue->isInitialized()
+		if ($currentValue instanceof \TYPO3\Flow\Persistence\Generic\LazySplObjectStorage && !$currentValue->isInitialized()
 				|| ($currentValue === NULL && $cleanData['value'] === NULL)) {
 			return FALSE;
 		}
@@ -309,9 +309,9 @@ class Session {
 		$idPropertyNames = $this->reflectionService->getPropertyNamesByTag(get_class($object), 'id');
 		if (count($idPropertyNames) === 1) {
 			$idPropertyName = $idPropertyNames[0];
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $idPropertyName, TRUE);
-		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $idPropertyName, TRUE);
+		} elseif (property_exists($object, 'Persistence_Object_Identifier')) {
+			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
 		}
 
 		return NULL;

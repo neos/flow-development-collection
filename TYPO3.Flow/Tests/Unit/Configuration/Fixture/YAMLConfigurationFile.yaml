@@ -1,6 +1,6 @@
 configurationFileHasBeenLoaded: TRUE
 TYPO3:
-  FLOW3:
+  Flow:
     something: 'foo'
     '@bar': 1
     aboolean: TRUE

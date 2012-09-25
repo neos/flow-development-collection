@@ -28,7 +28,7 @@ Example Usage
 The most simple usage is to convert simple types to different simple types, i.e.
 converting a numeric ``string`` to a ``float`` number::
 
-	// $propertyMapper is of class TYPO3\FLOW3\Property\PropertyMapper
+	// $propertyMapper is of class TYPO3\Flow\Property\PropertyMapper
 	$result = $propertyMapper->convert('12.5', 'float');
 	// $result == (float)12.5
 
@@ -39,7 +39,7 @@ Our next example goes a bit further and shows how we can use the Property Mapper
 to convert an array of data into a domain model::
 
 	/**
-	 * @FLOW3\Entity
+	 * @Flow\Entity
 	 */
 	class TYPO3\MyPackage\Domain\Model\Person {
 		/**
@@ -150,7 +150,7 @@ In most cases, you should use the ``PropertyMappingConfigurationBuilder`` to cre
 PropertyMappingConfiguration, so that you get a convenient default configuration::
 
 		// Here $propertyMappingConfigurationBuilder is an instance of
-		// \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
+		// \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
 	$propertyMappingConfiguration = $propertyMappingConfigurationBuilder->build();
 
 		// modify $propertyMappingConfiguration here
@@ -178,8 +178,8 @@ The following configuration options exist:
   date format::
 
 	$propertyMappingConfiguration->setTypeConverterOption(
-		'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
-		\TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+		'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+		\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 		'Y-m-d'
 	);
 
@@ -208,8 +208,8 @@ configures the ``DateTime`` converter for the ``birthDate`` property::
 	$propertyMappingConfiguration
 		->forProperty('birthDate')
 		->setTypeConverterOption(
-			'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
-			\TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+			'TYPO3\Flow\Property\TypeConverter\DateTimeConverter',
+			\TYPO3\Flow\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
 			'Y-m-d'
 		);
 
@@ -222,8 +222,8 @@ the path syntax supports an asterisk as a placeholder::
 	$propertyMappingConfiguration
 		->forProperty('items.*')
 		->setTypeConverterOption(
-			'TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
-			\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+			'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+			\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 			TRUE
 		);
 
@@ -234,7 +234,7 @@ the path syntax supports an asterisk as a placeholder::
 
 	If you use Fluid forms, normally no adjustments are needed. However, when programming
 	a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
-	manually. You can access them using the ``\TYPO3\FLOW3\Mvc\Controller\Argument``
+	manually. You can access them using the ``\TYPO3\Flow\Mvc\Controller\Argument``
 	object -- and this configuration takes place inside the corresponding ``initialize*Action``
 	of the controller, as in the following example:
 
@@ -245,8 +245,8 @@ the path syntax supports an asterisk as a placeholder::
 			$commentConfiguration->allowAllProperties();
 			$commentConfiguration
 				->setTypeConverterOption(
-				'TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
-				\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+				'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter',
+				\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
 				TRUE
 			);
 		}
@@ -370,7 +370,7 @@ Automatic resolving of type converters
 Automatic Resolving of Type Converters
 --------------------------------------
 
-All type converters which implement ``TYPO3\FLOW3\Property\TypeConverterInterface``
+All type converters which implement ``TYPO3\Flow\Property\TypeConverterInterface``
 are automatically found in the resolving process. There are four API methods in
 each ``TypeConverter`` which influence the resolving process:
 
@@ -419,13 +419,13 @@ Writing Your Own TypeConverters
 -------------------------------
 
 Often, it is enough to subclass
-``TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter``
+``TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter``
 instead of implementing ``TypeConverterInterface``.
 
 Besides, good starting points for own type converters are the ``DateTimeConverter``
 or the ``IntegerConverter``. If you write your own type converter, you should set
 it to a priority greater than 100, to make sure it is used before the standard
-converters by FLOW3.
+converters by TYPO3 Flow.
 
 TypeConverters should not contain any internal state, as they are re-used by the
 property mapper, even recursively during the same run.
@@ -443,7 +443,7 @@ possibilities what can be returned in ``convertFrom()``:
   this.
 
 * If the error is recoverable, and the user should re-submit his data, return a
-  ``TYPO3\FLOW3\Error\Error`` object (or a subclass thereof), containing information
+  ``TYPO3\Flow\Error\Error`` object (or a subclass thereof), containing information
   about the error. In this case, the property is not mapped at all (``NULL`` is
   returned, like above).
 
@@ -457,5 +457,5 @@ possibilities what can be returned in ``convertFrom()``:
 .. warning::
 
 	Inside a type converter it is not allowed to use an (injected) instance
-	of ``TYPO3\FLOW3\Property\PropertyMapper`` because it can lead to an
+	of ``TYPO3\Flow\Property\PropertyMapper`` because it can lead to an
 	infinite recursive invocation.

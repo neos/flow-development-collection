@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,12 +12,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A restrictable entity for tests
  *
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class RestrictableEntity {
 
@@ -32,7 +32,7 @@ class RestrictableEntity {
 	protected $name;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Account
+	 * @var \TYPO3\Flow\Security\Account
 	 * @ORM\ManyToOne
 	 */
 	protected $ownerAccount;
@@ -76,14 +76,14 @@ class RestrictableEntity {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Security\Account $ownerAccount
+	 * @param \TYPO3\Flow\Security\Account $ownerAccount
 	 */
 	public function setOwnerAccount($ownerAccount) {
 		$this->ownerAccount = $ownerAccount;
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Security\Account
+	 * @return \TYPO3\Flow\Security\Account
 	 */
 	public function getOwnerAccount() {
 		return $this->ownerAccount;

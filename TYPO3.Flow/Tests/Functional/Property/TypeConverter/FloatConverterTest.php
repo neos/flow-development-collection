@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Property\TypeConverter;
+namespace TYPO3\Flow\Tests\Functional\Property\TypeConverter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,16 +15,16 @@ namespace TYPO3\FLOW3\Tests\Functional\Property\TypeConverter;
  * Testcase for the Float converter
  *
  */
-class FloatConverterTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class FloatConverterTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\TypeConverter\FloatConverter
+	 * @var \TYPO3\Flow\Property\TypeConverter\FloatConverter
 	 */
 	protected $converter;
 
 	public function setUp() {
 		parent::setUp();
-		$this->converter = $this->objectManager->get('TYPO3\FLOW3\Property\TypeConverter\FloatConverter');
+		$this->converter = $this->objectManager->get('TYPO3\Flow\Property\TypeConverter\FloatConverter');
 	}
 
 	/**
@@ -46,13 +46,13 @@ class FloatConverterTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 * @dataProvider localeParsingDataProvider
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale|string $locale
+	 * @param \TYPO3\Flow\I18n\Locale|string $locale
 	 * @param $source
 	 * @param $expectedResult
 	 */
 	public function convertFromUsingVariousLocalesParsesFloatCorrectly($locale, $source, $expectedResult) {
-		$configuration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', $locale);
+		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', $locale);
 
 		$actualResult = $this->converter->convertFrom($source, 'float', array(), $configuration);
 		$this->assertEquals($expectedResult, $actualResult);
@@ -62,22 +62,22 @@ class FloatConverterTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function convertFromReturnsErrorIfFormatIsInvalid() {
-		$configuration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', 'de');
+		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'de');
 
 		$actualResult = $this->converter->convertFrom('12,777777', 'float', array(), $configuration);
-		$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $actualResult);
+		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actualResult);
 
-		$this->assertInstanceOf('TYPO3\FLOW3\Error\Error', $this->converter->convertFrom('84,00', 'float'));
+		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $this->converter->convertFrom('84,00', 'float'));
 	}
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException
+	 * @expectedException TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException
 	 */
 	public function convertFromThrowsExceptionIfLocaleIsInvalid() {
-		$configuration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
-		$configuration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\FloatConverter', 'locale', 'some-non-existent-locale-identifier');
+		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+		$configuration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'some-non-existent-locale-identifier');
 
 		$this->converter->convertFrom('84,42', 'float', array(), $configuration);
 	}

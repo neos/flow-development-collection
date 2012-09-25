@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\Flow\Tests\Unit\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,25 +15,25 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  * Testcase for the configuration validator
  *
  */
-class SchemaValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\SchemaValidator
+	 * @var \TYPO3\Flow\Utility\SchemaValidator
 	 */
 	protected $configurationValidator;
 
 	public function setUp() {
-		$this->configurationValidator = $this->getAccessibleMock('TYPO3\FLOW3\Utility\SchemaValidator', array('getError'));
+		$this->configurationValidator = $this->getAccessibleMock('TYPO3\Flow\Utility\SchemaValidator', array('getError'));
 	}
 
 	/**
 	 * Handle the assertion that the given result object has errors
 	 *
-	 * @param \TYPO3\FLOW3\Error\Result $result
+	 * @param \TYPO3\Flow\Error\Result $result
 	 * @param boolean $expectError
 	 * @return void
 	 */
-	protected function assertError(\TYPO3\FLOW3\Error\Result $result, $expectError = TRUE) {
+	protected function assertError(\TYPO3\Flow\Error\Result $result, $expectError = TRUE) {
 		if ($expectError === TRUE) {
 			$this->assertTrue($result->hasErrors());
 		} else {
@@ -44,11 +44,11 @@ class SchemaValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Handle the assertation that the given result object has no errors
 	 *
-	 * @param \TYPO3\FLOW3\Error\Result $result
+	 * @param \TYPO3\Flow\Error\Result $result
 	 * @param boolean $expectSuccess
 	 * @return void
 	 */
-	protected function assertSuccess(\TYPO3\FLOW3\Error\Result $result, $expectSuccess = TRUE) {
+	protected function assertSuccess(\TYPO3\Flow\Error\Result $result, $expectSuccess = TRUE) {
 		if ($expectSuccess === TRUE) {
 			$this->assertFalse($result->hasErrors());
 		} else {
@@ -569,12 +569,12 @@ class SchemaValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function validateHandlesStringTypePropertyWithFormatClassNameConstraintDataProvider() {
 		return array(
-			array('\TYPO3\FLOW3\Package\PackageManager', TRUE),
-			array('\TYPO3\FLOW3\UnknownClass', FALSE),
+			array('\TYPO3\Flow\Package\PackageManager', TRUE),
+			array('\TYPO3\Flow\UnknownClass', FALSE),
 			array('foobar', FALSE),
 			array('foo bar', FALSE),
 			array('foo/bar', FALSE),
-			array('flow3/welcome', FALSE),
+			array('flow/welcome', FALSE),
 			array(123, FALSE)
 		);
 	}
@@ -596,12 +596,12 @@ class SchemaValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function validateHandlesStringTypePropertyWithFormatInterfaceNameConstraintDataProvider() {
 		return array(
-			array('\TYPO3\FLOW3\Package\PackageManagerInterface', TRUE),
-			array('\TYPO3\FLOW3\UnknownClass', FALSE),
+			array('\TYPO3\Flow\Package\PackageManagerInterface', TRUE),
+			array('\TYPO3\Flow\UnknownClass', FALSE),
 			array('foobar', FALSE),
 			array('foo bar', FALSE),
 			array('foo/bar', FALSE),
-			array('flow3/welcome', FALSE),
+			array('flow/welcome', FALSE),
 			array(123, FALSE)
 		);
 	}

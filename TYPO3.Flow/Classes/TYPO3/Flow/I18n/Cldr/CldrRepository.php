@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n\Cldr;
+namespace TYPO3\Flow\I18n\Cldr;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The CldrRepository class
@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * CldrRepository manages CldrModel instances across the framework, so there is
  * only one instance of CldrModel for every unique CLDR data file or file group.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class CldrRepository {
 
@@ -29,10 +29,10 @@ class CldrRepository {
 	 *
 	 * @var string
 	 */
-	protected $cldrBasePath = 'resource://TYPO3.FLOW3/Private/I18n/CLDR/Sources/';
+	protected $cldrBasePath = 'resource://TYPO3.Flow/Private/I18n/CLDR/Sources/';
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Service
+	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
@@ -49,15 +49,15 @@ class CldrRepository {
 	 * reside and 'locale' is used to define which files are included in the
 	 * relation (e.g. for locale 'en_GB' files would be: root + en + en_GB).
 	 *
-	 * @var array<\TYPO3\FLOW3\I18n\Cldr\CldrModel>
+	 * @var array<\TYPO3\Flow\I18n\Cldr\CldrModel>
 	 */
 	protected $models;
 
 	/**
-	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\Flow\I18n\Service $localizationService
 	 * @return void
 	 */
-	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
@@ -70,10 +70,10 @@ class CldrRepository {
 	 * file.
 	 *
 	 * @param string $filename Relative (from CLDR root) path to existing CLDR file
-	 * @return \TYPO3\FLOW3\I18n\Cldr\CldrModel|boolean A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
+	 * @return \TYPO3\Flow\I18n\Cldr\CldrModel|boolean A \TYPO3\Flow\I18n\Cldr\CldrModel instance or FALSE on failure
 	 */
 	public function getModel($filename) {
-		$filename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $filename . '.xml'));
+		$filename = \TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, $filename . '.xml'));
 
 		if (isset($this->models[$filename])) {
 			return $this->models[$filename];
@@ -83,7 +83,7 @@ class CldrRepository {
 			return FALSE;
 		}
 
-		return $this->models[$filename] = new \TYPO3\FLOW3\I18n\Cldr\CldrModel(array($filename));
+		return $this->models[$filename] = new \TYPO3\Flow\I18n\Cldr\CldrModel(array($filename));
 	}
 
 	/**
@@ -98,12 +98,12 @@ class CldrRepository {
 	 *
 	 * Returns FALSE when $directoryPath doesn't point to existing directory.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale A locale
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return \TYPO3\FLOW3\I18n\Cldr\CldrModel A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or NULL on failure
+	 * @return \TYPO3\Flow\I18n\Cldr\CldrModel A \TYPO3\Flow\I18n\Cldr\CldrModel instance or NULL on failure
 	 */
-	public function getModelForLocale(\TYPO3\FLOW3\I18n\Locale $locale, $directoryPath = 'main') {
-		$directoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
+	public function getModelForLocale(\TYPO3\Flow\I18n\Locale $locale, $directoryPath = 'main') {
+		$directoryPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
 
 		if (isset($this->models[$directoryPath][(string)$locale])) {
 			return $this->models[$directoryPath][(string)$locale];
@@ -115,7 +115,7 @@ class CldrRepository {
 
 		$filesInHierarchy = $this->findLocaleChain($locale, $directoryPath);
 
-		return $this->models[$directoryPath][(string)$locale] = new \TYPO3\FLOW3\I18n\Cldr\CldrModel($filesInHierarchy);
+		return $this->models[$directoryPath][(string)$locale] = new \TYPO3\Flow\I18n\Cldr\CldrModel($filesInHierarchy);
 	}
 
 	/**
@@ -125,21 +125,21 @@ class CldrRepository {
 	 * set of CLDR data. For example, for 'en_GB' locale, files 'root', 'en',
 	 * and 'en_GB' should be merged.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale A locale
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
 	 * @return array<string> Absolute paths to CLDR files in hierarchy
 	 */
-	protected function findLocaleChain(\TYPO3\FLOW3\I18n\Locale $locale, $directoryPath) {
-		$filesInHierarchy = array(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
+	protected function findLocaleChain(\TYPO3\Flow\I18n\Locale $locale, $directoryPath) {
+		$filesInHierarchy = array(\TYPO3\Flow\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
 
 		$localeIdentifier = (string)$locale;
 		while ($localeIdentifier = substr($localeIdentifier, 0, (int)strrpos($localeIdentifier, '_'))) {
-			$possibleFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, $localeIdentifier . '.xml'));
+			$possibleFilename = \TYPO3\Flow\Utility\Files::concatenatePaths(array($directoryPath, $localeIdentifier . '.xml'));
 			if (file_exists($possibleFilename)) {
 				array_unshift($filesInHierarchy, $possibleFilename);
 			}
 		}
-		array_unshift($filesInHierarchy, \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
+		array_unshift($filesInHierarchy, \TYPO3\Flow\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
 
 		return $filesInHierarchy;
 	}

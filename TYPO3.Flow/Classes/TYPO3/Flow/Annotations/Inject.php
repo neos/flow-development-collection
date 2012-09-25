@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Annotations;
+namespace TYPO3\Flow\Annotations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\FLOW3\Annotations;
 /**
  * Used to enable property injection.
  *
- * FLOW3 will build Dependency Injection code for the property and try
+ * Flow will build Dependency Injection code for the property and try
  * to inject a value as specified by the var annotation.
  *
  * @Annotation

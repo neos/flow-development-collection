@@ -7,9 +7,9 @@
 
 -
   name: 'Functional Test: HTTP - FooController'
-  uriPattern: 'typo3/flow3/test/http/foo'
+  uriPattern: 'typo3/flow/test/http/foo'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Http\Fixtures'
     '@controller': 'Foo'
     '@action':     'index'
@@ -17,56 +17,56 @@
 
 -
   name: 'Functional Test: dynamic part without default'
-  uriPattern: 'typo3/flow3/test/dynamic/part/without/default/{dynamic}'
+  uriPattern: 'typo3/flow/test/dynamic/part/without/default/{dynamic}'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'
 
 -
   name: 'Functional Test: dynamic part with default'
-  uriPattern: 'typo3/flow3/test/dynamic/part/with/default/{dynamic}'
+  uriPattern: 'typo3/flow/test/dynamic/part/with/default/{dynamic}'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'
     dynamic: 'DynamicDefault'
 
 -
   name: 'Functional Test: optional dynamic part with default'
-  uriPattern: 'typo3/flow3/test/optional/dynamic/part/with/default(/{dynamic})'
+  uriPattern: 'typo3/flow/test/optional/dynamic/part/with/default(/{dynamic})'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'
     dynamic: 'DynamicDefault'
 
 -
   name: 'Functional Test: dynamic part case'
-  uriPattern: 'typo3/flow3/test/dynamic/part/case/{dynamic1}/{dynamic2}'
+  uriPattern: 'typo3/flow/test/dynamic/part/case/{dynamic1}/{dynamic2}'
   toLowerCase: false
   routeParts:
     dynamic2:
       toLowerCase: true
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'
 
 -
   name: 'Functional Test: exceeding arguments 01'
-  uriPattern: 'typo3/flow3/test/exceeding/arguments1/{dynamic}'
+  uriPattern: 'typo3/flow/test/exceeding/arguments1/{dynamic}'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'
   appendExceedingArguments: true
 
 -
   name: 'Functional Test: exceeding arguments 02'
-  uriPattern: 'typo3/flow3/test/exceeding/arguments2'
+  uriPattern: 'typo3/flow/test/exceeding/arguments2'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'
     dynamic: 'DynamicDefault'
@@ -74,12 +74,12 @@
 
 -
   name: 'Functional Test: static route parts are case sensitive'
-  uriPattern: 'typo3/flow3/test/Upper/Camel/Case'
+  uriPattern: 'typo3/flow/test/Upper/Camel/Case'
 
 -
   name: 'Functional Test: controller route parts are case insensitive'
-  uriPattern: 'typo3/flow3/test/{@package}/{@controller}/{@action}.{@format}'
+  uriPattern: 'typo3/flow/test/{@package}/{@controller}/{@action}.{@format}'
   defaults:
-    '@package':    'TYPO3.FLOW3'
+    '@package':    'TYPO3.Flow'
     '@subpackage': 'Tests\Functional\Mvc\Fixtures'
     '@controller': 'RoutingTestA'

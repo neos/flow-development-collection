@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,17 +11,17 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class type filter which fires on class or interface names
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
-class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterInterface {
+class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -41,13 +41,13 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	 * The constructor - initializes the class type filter with the class or interface name
 	 *
 	 * @param string $interfaceOrClassName Interface or a class name to match against
-	 * @throws \TYPO3\FLOW3\Aop\Exception
+	 * @throws \TYPO3\Flow\Aop\Exception
 	 */
 	public function __construct($interfaceOrClassName) {
 		$this->interfaceOrClassName = $interfaceOrClassName;
 		if (!interface_exists($this->interfaceOrClassName)) {
 			if (!class_exists($this->interfaceOrClassName)) {
-				throw new \TYPO3\FLOW3\Aop\Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
+				throw new \TYPO3\Flow\Aop\Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
 			}
 			$this->isInterface = FALSE;
 		}
@@ -56,10 +56,10 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -101,10 +101,10 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		if (interface_exists($this->interfaceOrClassName)) {
 			$classNames = $this->reflectionService->getAllImplementationClassNamesForInterface($this->interfaceOrClassName);
 		} elseif (class_exists($this->interfaceOrClassName)) {
@@ -113,7 +113,7 @@ class PointcutClassTypeFilter implements \TYPO3\FLOW3\Aop\Pointcut\PointcutFilte
 		} else {
 			$classNames = array();
 		}
-		$filteredIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
+		$filteredIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$filteredIndex->setClassNames($classNames);
 
 		return $classNameIndex->intersect($filteredIndex);

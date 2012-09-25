@@ -4,7 +4,7 @@ Part II: Getting Started
 
 .. sectionauthor:: Robert Lemke <robert@typo3.org>
 
-This tutorial gets you started with FLOW3. The most important concepts such as
+This tutorial gets you started with TYPO3 Flow. The most important concepts such as
 the MVC framework, object management, persistence and templating are explained
 on the basis of a sample application.
 

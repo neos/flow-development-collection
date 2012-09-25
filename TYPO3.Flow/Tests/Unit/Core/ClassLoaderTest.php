@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Core;
+namespace TYPO3\Flow\Tests\Unit\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,10 +17,10 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the object class loader
  *
  */
-class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\ClassLoader
+	 * @var \TYPO3\Flow\Core\ClassLoader
 	 */
 	protected $classLoader;
 
@@ -37,11 +37,11 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		vfsStream::setup('Test');
 
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/', 0770, TRUE);
-		$package1 = new \TYPO3\FLOW3\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
+		$package1 = new \TYPO3\Flow\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
 		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/', 0770, TRUE);
-		$package2 = new \TYPO3\FLOW3\Package\Package('Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
+		$package2 = new \TYPO3\Flow\Package\Package('Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
 
-		$this->classLoader = new \TYPO3\FLOW3\Core\ClassLoader();
+		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
 		$this->inject($this->classLoader, 'packagesPath', 'vfs://Test/Packages/');
 		$this->classLoader->setPackages(array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2));
 	}

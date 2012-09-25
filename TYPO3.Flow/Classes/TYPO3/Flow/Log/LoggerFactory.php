@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Log;
+namespace TYPO3\Flow\Log;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Log;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The logger factory used to create logger instances.
  *
  * @api
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class LoggerFactory {
 
@@ -28,7 +28,7 @@ class LoggerFactory {
 	 * @param string $loggerObjectName Object name of the log frontend
 	 * @param mixed $backendObjectNames Object name (or array of object names) of the log backend(s)
 	 * @param array $backendOptions (optional) Array of backend options. If more than one backend is specified, this is an array of array.
-	 * @return \TYPO3\FLOW3\Log\LoggerInterface The created logger frontend
+	 * @return \TYPO3\Flow\Log\LoggerInterface The created logger frontend
 	 * @api
 	 */
 	static public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {

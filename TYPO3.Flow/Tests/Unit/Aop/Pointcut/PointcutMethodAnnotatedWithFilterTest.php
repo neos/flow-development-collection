@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Aop\Pointcut;
+namespace TYPO3\Flow\Tests\Unit\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,16 +15,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Aop\Pointcut;
  * Testcase for the Pointcut Method-Annotated-With Filter
  *
  */
-class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation() {
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('getMethodAnnotations'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('getMethodAnnotations'), array(), '', FALSE, TRUE);
 		$mockReflectionService->expects($this->any())->method('getMethodAnnotations')->with(__CLASS__, __FUNCTION__, 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(array('SomeAnnotation'), array()));
 
-		$filter = new \TYPO3\FLOW3\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
+		$filter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
 		$filter->injectReflectionService($mockReflectionService);
 
 		$this->assertTrue($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
@@ -35,9 +35,9 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	 * @test
 	 */
 	public function matchesReturnsFalseIfMethodDoesNotExistOrDeclardingClassHasNotBeenSpecified() {
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE, TRUE);
 
-		$filter = new \TYPO3\FLOW3\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
+		$filter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
 		$filter->injectReflectionService($mockReflectionService);
 
 		$this->assertFalse($filter->matches(__CLASS__, __FUNCTION__, NULL, 1234));
@@ -55,13 +55,13 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestC
 			'TestPackage\Subpackage2\Class4'
 		);
 		sort($availableClassNames);
-		$availableClassNamesIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
+		$availableClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$availableClassNamesIndex->setClassNames($availableClassNames);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassesContainingMethodsAnnotatedWith')->with('SomeAnnotationClass')->will($this->returnValue(array('TestPackage\Subpackage\Class1','TestPackage\Subpackage\SubSubPackage\Class3','SomeMoreClass')));
 
-		$methodAnnotatedWithFilter = new \TYPO3\FLOW3\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('SomeAnnotationClass');
+		$methodAnnotatedWithFilter = new \TYPO3\Flow\Aop\Pointcut\PointcutMethodAnnotatedWithFilter('SomeAnnotationClass');
 		$methodAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 
 		$expectedClassNames = array(
@@ -69,7 +69,7 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestC
 			'TestPackage\Subpackage\SubSubPackage\Class3'
 		);
 		sort($expectedClassNames);
-		$expectedClassNamesIndex = new \TYPO3\FLOW3\Aop\Builder\ClassNameIndex();
+		$expectedClassNamesIndex = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$expectedClassNamesIndex->setClassNames($expectedClassNames);
 
 		$result = $methodAnnotatedWithFilter->reduceTargetClassNames($availableClassNamesIndex);

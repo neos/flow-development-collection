@@ -9,10 +9,10 @@ Security
 Security Framework
 ==================
 
-All tasks related to security of a FLOW3 application are handled centrally by the security
+All tasks related to security of a TYPO3 Flow application are handled centrally by the security
 framework. Besides other functionality, this includes especially features like
 authentication, authorization, channel security and a powerful policy component. This
-chapter describes how you can use FLOW3's security features and how they work internally.
+chapter describes how you can use TYPO3 Flow's security features and how they work internally.
 
 Activation and initialization
 =============================
@@ -24,12 +24,12 @@ following value in *Settings.yaml* configuration file:
 
 .. code-block:: yaml
 
-	FLOW3:
+	Flow:
 	  security:
 	    enable:
 		  TRUE
 
-If set to "yes", which is the default, the security framework engages with FLOW3
+If set to "yes", which is the default, the security framework engages with TYPO3 Flow
 by vowing in two AOP advices into the MVC dispatcher and another two into the
 persistence layer classes.
 
@@ -37,9 +37,9 @@ Security context
 ----------------
 
 The first security advice (``initializeSecurity`` in the
-``TYPO3\FLOW3\Security\Aspect\RequestDispatchingAspect``) initializes the security context
-for the current request. The security context (``TYPO3\FLOW3\Security\Context``) shipped
-with FLOW3, lies in session scope and holds context data like the current authentication
+``TYPO3\Flow\Security\Aspect\RequestDispatchingAspect``) initializes the security context
+for the current request. The security context (``TYPO3\Flow\Security\Context``) shipped
+with TYPO3 Flow, lies in session scope and holds context data like the current authentication
 status. That means, if you need data related to security, the security context (you can
 get it easily with dependency injection) will be your main information source. The details
 of the context's data will be described in the next chapters.
@@ -48,7 +48,7 @@ Authentication
 ==============
 
 One of the main things people associate with security is authentication. That means to
-identify your communication partner - the one sending a request to FLOW3. Therefore the
+identify your communication partner - the one sending a request to TYPO3 Flow. Therefore the
 framework provides an infrastructure to easily use different mechanisms for such a
 plausibility proof. The most important achievement of the provided infrastructure is its
 flexible extensibility. You can easily write your own authentication mechanisms and
@@ -60,22 +60,22 @@ details are explained in the section  :ref:`Implementing your own authentication
 Using the authentication controller
 -----------------------------------
 
-First, let's see how you can use FLOW3's authentication features. There is a special
+First, let's see how you can use TYPO3 Flow's authentication features. There is a special
 controller in the security package: the ``AuthenticationController``. This controller has
 two actions, namely ``authenticateAction()`` and ``logoutAction()``, an appropriate route
-is configured. If you call ``http://localhost/flow3/authenticate`` in your Browser, the
+is configured. If you call ``http://localhost/flow/authenticate`` in your Browser, the
 default authentication mechanism will be triggered. This mechanism, implemented in a so
 called authentication provider, authenticates a user account by checking a username and
 password against accounts stored in the content repository. [#]_
 
-The configuration for this default provider, which is shipped with FLOW3's default
+The configuration for this default provider, which is shipped with TYPO3 Flow's default
 configuration looks like this:
 
 *Example: Configuration of the default username/password authentication mechanism in Settings.yaml*
 
 .. code-block:: yaml
 
-	FLOW3:
+	Flow:
 	  security:
 	    authentication:
 	      providers:
@@ -93,12 +93,12 @@ form you can use for that:
 
 .. code-block:: html
 
-	<form action="flow3/authenticate" method="post" name="loginform">
+	<form action="flow/authenticate" method="post" name="loginform">
 		<input type="text" id="username"
-			name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]"
+			name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]"
 			value="" tabindex="1" />
 		<input type="password" id="password"
-			name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]"
+			name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]"
 			value="" tabindex="2" />
 		<input type="submit" value="Login" tabindex="3" />
 	</form>
@@ -139,7 +139,7 @@ example it receives the credentials (e.g. a username and password) needed for
 authentication and stores one of the following authentication states in the session. [#]_
 
 These constants are defined in the authentication token interface
-(``TYPO3\FLOW3\Security\Authentication\TokenInterface``) and the status can be obtained
+(``TYPO3\Flow\Security\Authentication\TokenInterface``) and the status can be obtained
 from the ``getAuthenticationStatus()`` method of any token.
 
 .. tip::
@@ -160,8 +160,8 @@ from the ``getAuthenticationStatus()`` method of any token.
 Now you might ask yourself, how a token receives its credentials. The simple answer
 is: It's up to the token, to fetch them from somewhere. The default ``UsernamePassword``
 token for example looks for a username and password in the two POST parameters:
-``__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]`` and
-``__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]`` (see
+``__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]`` and
+``__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]`` (see
 :ref:`Using the authentication controller`). The framework only makes sure that
 ``updateCredentials()`` is called on every token, then the token has to set possibly
 available credentials itself, e.g. from available headers or parameters or anything else
@@ -172,8 +172,8 @@ Authentication manager and provider
 
 After the tokens have been initialized the original request will be processed by the
 resolved controller. In our case this is the special authentication controller
-(``TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController``)
-of FLOW3, which will call the authentication manager to authenticate the tokens. In turn
+(``TYPO3\Flow\Security\Authentication\Controller\AuthenticationController``)
+of TYPO3 Flow, which will call the authentication manager to authenticate the tokens. In turn
 the authentication manager calls all authentication providers in the configured order. A
 provider implements a specific authentication mechanism and is therefore responsible for
 a specific token type. E.g. the already mentioned ``PersistedUsernamePasswordProvider``
@@ -181,7 +181,7 @@ provider is able to authenticate the ``UsernamePassword`` token.
 
 After checking the credentials, it is the responsibility of an authentication provider to
 set the correct authentication status (see above) and ``Roles`` in its corresponding token.
-The role implementation resides in the ``TYPO3\FLOW3\Security\Policy`` namespace. (see the
+The role implementation resides in the ``TYPO3\Flow\Security\Policy`` namespace. (see the
 Policy section for details).
 
 .. _Account management:
@@ -189,15 +189,15 @@ Policy section for details).
 Account management
 ------------------
 
-In the previous section you have seen, how accounts can be authenticated in FLOW3. What
+In the previous section you have seen, how accounts can be authenticated in TYPO3 Flow. What
 was concealed so far is, how these accounts are created or what is exactly meant by the
-word "account". First of all let's define what accounts are in FLOW3 and how they are used
+word "account". First of all let's define what accounts are in TYPO3 Flow and how they are used
 for authentication. Following the OASIS CIQ V3.0 [#]_ specification, an account used for
 authentication is separated from a user or more
 general a party. The advantage of this separation is the possibility of one user having
 more than one account. E.g. a user could have an account for the ``UsernamePassword``
 provider and one account connected to an LDAP authentication provider. Another scenario
-would be to have different accounts for different parts of your FLOW3 application. Read
+would be to have different accounts for different parts of your TYPO3 Flow application. Read
 the next section :ref:`Advanced authentication configuration` to see how this can be
 accomplished.
 
@@ -226,13 +226,13 @@ the authentication status of this account.
 .. note::
 
 	The ``DefaultProvider`` authentication provider used in the examples is not shipped
-	with FLOW3, you have to configure all available authentication providers in your application.
+	with TYPO3 Flow, you have to configure all available authentication providers in your application.
 
 Creating accounts
 ~~~~~~~~~~~~~~~~~
 
 Creating an account is as easy as creating a new account object and add it to the account
-repository. Look at the following example, which uses the ``TYPO3\FLOW3\Security\AccountFactory``
+repository. Look at the following example, which uses the ``TYPO3\Flow\Security\AccountFactory``
 to create a simple username/password account for the DefaultProvider:
 
 *Example: Add a new username/password account* ::
@@ -247,11 +247,11 @@ to create a simple username/password account for the DefaultProvider:
 
 The way the credentials are stored internally is completely up to the authentication provider.
 The ``PersistedUsernamePasswordProvider`` uses the
-``TYPO3\FLOW3\Security\Cryptography\HashService`` to verify the given password. In the
+``TYPO3\Flow\Security\Cryptography\HashService`` to verify the given password. In the
 example above, the given plaintext password will be securely hashed by the ``HashService``.
 The hashing is the main magic happening in the ``AccountFactory`` and the reason why we don't
 create  the account object directly. If you want to learn more about secure password hashing
-in FLOW3, you should read the section about :ref:`Cryptography` below. You can also see, that there
+in TYPO3 Flow, you should read the section about :ref:`Cryptography` below. You can also see, that there
 is an array of roles added to the account. This is used by the policy system and will be
 explained in the according section below.
 
@@ -410,7 +410,7 @@ controllers will be authenticated by the default username/password provider.
 .. tip::
 
 	You can easily implement your own pattern. Just implement the interface
-	``TYPO3\FLOW3\Security\RequestPatternInterface`` and configure the pattern with its
+	``TYPO3\Flow\Security\RequestPatternInterface`` and configure the pattern with its
 	full qualified namespace.
 
 :title:`Available request patterns`
@@ -457,7 +457,7 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 
 .. note::
 
-	Prior to FLOW3 version 1.2 the option ``routeValues`` was not supported by the WebRedirect
+	Prior to TYPO3 Flow version 1.2 the option ``routeValues`` was not supported by the WebRedirect
 	entry point. Instead you could provide the option ``uri`` containing a relative or absolute
 	URI to redirect to. This is still possible, but we recommend to use ``routeValues`` in
 	order to make your configuration more independent from the routing configuration.
@@ -466,13 +466,13 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 
 	Of course you can implement your own entry point and configure it by using its full
 	qualified class name. Just make sure to implement the
-	``TYPO3\FLOW3\Security\Authentication\EntryPointInterface`` interface.
+	``TYPO3\Flow\Security\Authentication\EntryPointInterface`` interface.
 
 .. tip::
 
 	If a request has been intercepted by an ``AuthenticationRequired`` exception, this
 	request will be stored in the security context. By this, the authentication process
-	can resume this request afterwards. Have a look at the FLOW3 authentication controller
+	can resume this request afterwards. Have a look at the TYPO3 Flow authentication controller
 	if you want to see this feature in action.
 
 :title:`Available authentication entry points`
@@ -494,12 +494,12 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 +              + form.                     +                                             +
 +--------------+---------------------------+---------------------------------------------+
 
-.. _Authentication mechanisms shipped with FLOW3:
+.. _Authentication mechanisms shipped with TYPO3 Flow:
 
-Authentication mechanisms shipped with FLOW3
---------------------------------------------
+Authentication mechanisms shipped with TYPO3 Flow
+-------------------------------------------------
 
-This section explains the details of each authentication mechanism shipped with FLOW3.
+This section explains the details of each authentication mechanism shipped with TYPO3 Flow.
 Mainly the configuration options and usage will be exposed, if you want to know more about
 the entire authentication process and how the components will work together, please have a
 look in the previous sections.
@@ -510,9 +510,9 @@ Simple username/password authentication
 *Provider*
 
 The implementation of the corresponding authentication provider resides in the class
-``TYPO3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider``.
+``TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider``.
 It is able to authenticate tokens of the type
-``TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword``. It expects a credentials
+``TYPO3\Flow\Security\Authentication\Token\UsernamePassword``. It expects a credentials
 array in the token which looks like that::
 
 	array(
@@ -520,17 +520,17 @@ array in the token which looks like that::
 	  'password' => 'plaintextPassword'
 	);
 
-It will try to find an account in the ``TYPO3\FLOW3\Security\AccountRepository`` that has
+It will try to find an account in the ``TYPO3\Flow\Security\AccountRepository`` that has
 the username value as account identifier and fetch the credentials source, which has to be
 in the following format: ``HashOfThePassword,Salt``
 
 .. tip::
 
-	You should always use the FLOW3 hash service to generate hashes! This will make sure
+	You should always use the TYPO3 Flow hash service to generate hashes! This will make sure
 	that you really have secure hashes.
 
 The provider will explode the credentials source by the "," and try to authenticate the
-token by asking the FLOW3 hash service to verify the hashed password against the given
+token by asking the TYPO3 Flow hash service to verify the hashed password against the given
 plaintext password in from the token.
 If you want to know more about accounts and how you can create them, look in the
 corresponding section above.
@@ -538,14 +538,14 @@ corresponding section above.
 * Token*
 
 The username/password token is implemented in the class
-``TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword``. It fetches the credentials
+``TYPO3\Flow\Security\Authentication\Token\UsernamePassword``. It fetches the credentials
 from the HTTP POST data, look at the following program listing for details::
 
 	$postArguments = $this->environment->getRawPostArguments();
-	$username = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments,
-	    '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
-	$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments,
-	    '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password'');
+	$username = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($postArguments,
+	    '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
+	$password = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($postArguments,
+	    '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password'');
 
 .. note::
 
@@ -566,7 +566,7 @@ here find the steps needed to implement your own authentication mechanism:
 *Authentication token*
 
 You'll have to provide an authentication token, that implements the interface
-``TYPO3\FLOW3\Security\Authentication\TokenInterface``:
+``TYPO3\Flow\Security\Authentication\TokenInterface``:
 
 #. The most interesting method is ``updateCredentials()``. There you'll get the current
 request and you'll have to make sure that credentials sent from the client will be
@@ -574,14 +574,14 @@ fetched and stored in the token.
 
 #. Implement the remaining methods of the interface. These are  mostly getters and setters,
 have a look in one of the existing  tokens (for example
-``TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword``), if you need more
+``TYPO3\Flow\Security\Authentication\Token\UsernamePassword``), if you need more
 information.
 
 *Authentication provider*
 
 After that you'll have to implement your own authentication strategy by providing a class,
 that implements the interface
-``TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface``:
+``TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface``:
 
 #. In the constructor you will get the name, that has been configured for the provider and
 an optional options array. Basically you can decide on your own which options you need
@@ -625,7 +625,7 @@ deviate from this procedure.
 Authorization
 =============
 
-In this section we will deal with the authorization features of FLOW3. You won't find any
+In this section we will deal with the authorization features of TYPO3 Flow. You won't find any
 advices, how to configure access rights here, please refer to the next section about
 :ref:`Access Control Lists`, which form the default method to model and configure access
 rules.
@@ -638,9 +638,9 @@ application is the invocation of certain methods. By controlling, which
 methods are allowed to be called and which not, it can be globally
 ensured, that no unprivileged action will be executed at any time. This
 is what you would usually do, by adding an access check at the beginning
-of your privileged method. In FLOW3, there is the opportunity to enforce
+of your privileged method. In TYPO3 Flow, there is the opportunity to enforce
 these checks without touching the actual method at all. Of course
-FLOW3's AOP features are used to realize this completely new perspective
+TYPO3 Flow's AOP features are used to realize this completely new perspective
 on authorization. If you want to learn more about AOP, please refer to
 the corresponding chapter in this reference.
 
@@ -650,24 +650,24 @@ happening when an authorization decision is formed and enforced:
 .. figure:: /Images/TheDefinitiveGuide/PartIII/Security_BasicAuthorizationProcess.png
 	:align: center
 	:width: 400pt
-	:alt: How an authorization decision is formed and enforced in FLOW3
+	:alt: How an authorization decision is formed and enforced in TYPO3 Flow
 
-	How an authorization decision is formed and enforced in FLOW3
+	How an authorization decision is formed and enforced in TYPO3 Flow
 
 As already said, the whole authorization starts with an intercepted method, or in other
 words with a method that should be protected and only be called by privileged users. In
 the chapter about AOP you've already read, that every method interception is implemented
 in a so called advice, which resides in an aspect class. Here we are: the
-``TYPO3\FLOW3\Security\Aspect\PolicyEnforcementAspect``. Inside this aspect there is the
-``enforcePolicy()`` advice, which hands over to FLOW3's authorization components.
+``TYPO3\Flow\Security\Aspect\PolicyEnforcementAspect``. Inside this aspect there is the
+``enforcePolicy()`` advice, which hands over to TYPO3 Flow's authorization components.
 
 The next thing to be called is a security interceptor. This interceptor calls the
 authentication manager before it continues with the authorization process, to make sure
 that the authentication status is up to date. Then an access decision manager is called,
 which has to decide, if it is allowed to call the intercepted method. If not it throws an
 access denied exception. If you want, you could implement your own access decision manager.
-However, there is a very flexible one shipped with FLOW3
-(``TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager``), which uses the
+However, there is a very flexible one shipped with TYPO3 Flow
+(``TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager``), which uses the
 following voting process to meet its decision:
 
 #. Check for registered access decision voters.
@@ -682,22 +682,22 @@ following voting process to meet its decision:
 As you have seen, the default way of deciding on access is done by voting. This makes the
 whole authorization process very flexible and very easily extensible. You can at any time
 write your own voter classes and register them, just make sure to implement the interface
-``TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface``. Then you have to
+``TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface``. Then you have to
 register your custom voter as shown below:
 
 .. code-block:: yaml
 
 	security:
 	  authorization:
-	    accessDecisionVoters: [TYPO3\FLOW3\Security\Authorization\Voter\Policy, MyCompany\MyPackage\Security\MyCustomVoter]
+	    accessDecisionVoters: [TYPO3\Flow\Security\Authorization\Voter\Policy, MyCompany\MyPackage\Security\MyCustomVoter]
 
 .. note::
 
 	By default there is always one voter registered:
-	``TYPO3\FLOW3\Security\Authorization\Voter\Policy``. This voter connects the
+	``TYPO3\Flow\Security\Authorization\Voter\Policy``. This voter connects the
 	authorization system to the policy component, by returning a vote depending on the
 	configured security policy. Read the section about Policies, to learn more about the
-	default policy handling in FLOW3.
+	default policy handling in TYPO3 Flow.
 
 If asked, each voter has to return one of the three possibles votes: grant, deny or
 abstain. There are appropriate constants defined in the voter interface, which you should
@@ -739,9 +739,9 @@ that a minimal amount of potentially insecure code will be executed before that.
 .. figure:: /Images/TheDefinitiveGuide/PartIII/Security_FilterFirewall.png
 	:align: center
 	:width: 400pt
-	:alt: Blocking request with FLOW3's filter firewall
+	:alt: Blocking request with TYPO3 Flow's filter firewall
 
-	Blocking request with FLOW3's filter firewall
+	Blocking request with TYPO3 Flow's filter firewall
 
 The firewall itself is added to the MVC dispatcher by AOP, to completely decouple security
 from the MVC framework and to have the possibility of disabling security. Blocking
@@ -751,14 +751,14 @@ is: if the pattern matches on the request, the interceptor is invoked.
 :ref:`Request Patterns` are also used by the authentication components and are explained
 in detail there. Talking about security interceptors: you already know the policy
 enforcement interceptor, which triggers the authorization process. Here is a table of
-available interceptors, shipped with FLOW3:
+available interceptors, shipped with TYPO3 Flow:
 
 .. note::
 
 	Of course you can implement your own interceptor. Just make sure to implement the
-	interface: ``TYPO3\FLOW3\Security\Authorization\InterceptorInterface``.
+	interface: ``TYPO3\Flow\Security\Authorization\InterceptorInterface``.
 
-:title:`FLOW3's built-in security interceptors`
+:title:`TYPO3 Flow's built-in security interceptors`
 
 +-----------------------+---------------------------------------+
 + Security interceptor  + Invocation action                     +
@@ -780,7 +780,7 @@ firewall configuration will look like:
 .. code-block:: yaml
 
 	TYPO3:
-	  FLOW3:
+	  Flow:
 	    security:
 	      firewall:
 	        rejectAll: FALSE
@@ -814,7 +814,7 @@ Policies aka Access Control Lists (ACLs)
 ========================================
 
 This section will introduce the recommended and default way of connecting authentication
-with authorization. The special and really powerful part of FLOW3's way is the possibility
+with authorization. The special and really powerful part of TYPO3 Flow's way is the possibility
 to do that completely declarative. This gives you the possibility to change the security
 policy of your application without touching any PHP code. The policy system deals with
 three major objects, which are explained below: roles, resources and acl entries. All
@@ -825,8 +825,8 @@ policy definitions are configured in the ``Policy.yaml`` files.
 In the section about authentication so called roles were introduced. A role can be
 attached to a user's security context, to determine which privileges should be granted to
 her. I.e. the access rights of a user are decoupled from the user object itself, making it
-a lot more flexible, if you want to change them. In FLOW3 a role is mainly just a string,
-which must be unique in the whole FLOW3 instance. Following there is an example
+a lot more flexible, if you want to change them. In TYPO3 Flow a role is mainly just a string,
+which must be unique in the whole TYPO3 Flow instance. Following there is an example
 configuration, that will proclaim the roles ``Administrator``, ``Customer``, and
 ``PrivilegedCustomer`` to the system.
 
@@ -842,7 +842,7 @@ configuration, that will proclaim the roles ``Administrator``, ``Customer``, and
 The role ``PrivilegedCustomer`` is configured as a sub role of ``Customer``, for
 example it will inherit the privileges from the ``Customer`` role.
 
-FLOW3 will always add the magic ``Everybody`` role, which you don't have to
+TYPO3 Flow will always add the magic ``Everybody`` role, which you don't have to
 configure yourself. This role will also be present, if no account is authenticated.
 
 Likewise, the magic role ``Anonymous`` is added to the security context if a user
@@ -923,7 +923,7 @@ when writing your policies:
 
 *Runtime constraints*
 
-Runtime constraints are a very powerful feature of FLOW3's AOP framework. A full reference
+Runtime constraints are a very powerful feature of TYPO3 Flow's AOP framework. A full reference
 of the possibilities can be found in the AOP chapter of this documentation. However, this
 features was mainly implemented to support sophisticated policy definitions and therefore
 here is a short introduction by two simple examples on how to use it:
@@ -935,11 +935,11 @@ here is a short introduction by two simple examples on how to use it:
 	-
 	  resources:
 	    methods:
-	      TYPO3_FooPackage_firstResource: 'method(TYPO3\FooPackage\SomeClass->updateProject(title != "FLOW3"))'
+	      TYPO3_FooPackage_firstResource: 'method(TYPO3\FooPackage\SomeClass->updateProject(title != "TYPO3 Flow"))'
 	      TYPO3_FooPackage_secondResource: TYPO3_FooPackage_firstResource && evaluate(current.securityContext.party.name == "Andi")
 
 The above configuration defines a resource that matches on the ``updateProject`` method
-only if it is not called with the ``title`` argument equal to "FLOW3". The second resource
+only if it is not called with the ``title`` argument equal to "TYPO3 Flow". The second resource
 matches if the first one matches and the ``name`` property of the currently authenticated
 ``party`` is equal to "Andi".
 
@@ -1002,7 +1002,7 @@ Now that the policy is technically enforced, these rules should also be reflecte
 view. E.g. a button or link to delete a customer should not be shown, if the user has not
 the privilege to do so. If you are using the recommended Fluid templating engine, you can
 simply use the security view helpers shipped with Fluid. Otherwise you would have to ask
-the policy service (``TYPO3\FLOW3\Security\Policy\PolicyService``) for the current
+the policy service (``TYPO3\Flow\Security\Policy\PolicyService``) for the current
 privilege situation and implement the view logic on your own, however this seems not to be
 the best idea one can have. Below you'll find a short description of the available Fluid
 view helpers.
@@ -1087,7 +1087,7 @@ RSA wallet service
 -----
 
 .. [#] The details about the ``PersistedUsernamePasswordProvider`` provider are explained
-	below, in the section about :ref:`Authentication mechanisms shipped with FLOW3`.
+	below, in the section about :ref:`Authentication mechanisms shipped with TYPO3 Flow`.
 
 .. [#] If you don't know any credentials, you'll have to read the section about
 	:ref:`Account management`
@@ -1097,7 +1097,7 @@ RSA wallet service
 
 .. [#] The specification can be downloaded from
 	`http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq`_. The implementation of
-	this specification resides in the "Party" package, which is part of the official FLOW3
+	this specification resides in the "Party" package, which is part of the official TYPO3 Flow
 	distribution.
 
 .. [#] The ``AccountRepository`` provides a convenient find method called

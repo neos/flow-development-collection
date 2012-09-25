@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cache\Backend;
+namespace TYPO3\Flow\Cache\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -37,13 +37,13 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException
-	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
+	 * @throws \TYPO3\Flow\Cache\Exception\InvalidDataException
+	 * @throws \TYPO3\Flow\Cache\Exception if no cache frontend has been set.
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) throw new \TYPO3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
-		if (!is_string($data)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
+		if (!is_string($data)) throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
 		$this->entries[$entryIdentifier] = $data;
 		foreach ($tags as $tag) {
 			$this->tagsAndEntries[$tag][$entryIdentifier] = TRUE;

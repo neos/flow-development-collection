@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,14 +12,14 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  *                                                                        */
 
 /**
- * The FLOW3 default Repository, based on Doctrine 2
+ * The Flow default Repository, based on Doctrine 2
  *
  * @api
  */
-abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
+abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\Flow\Persistence\RepositoryInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -58,10 +58,10 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -100,7 +100,7 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	/**
 	 * Finds all entities in the repository.
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
 	public function findAll() {
@@ -121,11 +121,11 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\Flow\Persistence\Doctrine\Query
 	 * @api
 	 */
 	public function createQuery() {
-		$query = new \TYPO3\FLOW3\Persistence\Doctrine\Query($this->objectType);
+		$query = new \TYPO3\Flow\Persistence\Doctrine\Query($this->objectType);
 		if ($this->defaultOrderings) {
 			$query->setOrderings($this->defaultOrderings);
 		}
@@ -159,8 +159,8 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	/**
 	 * Sets the property names to order results by. Expected like this:
 	 * array(
-	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @param array $defaultOrderings The property names to order by by default
@@ -176,12 +176,12 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	 *
 	 * @param object $object The modified object
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
 	public function update($object) {
 		if (!($object instanceof $this->objectType)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
+			throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
 		}
 		$this->persistenceManager->update($object);
 	}

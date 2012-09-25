@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authorization\Resource;
+namespace TYPO3\Flow\Security\Authorization\Resource;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ use org\bovigo\vfs\vfsStream;
  * Testcase for the Apache2 access restriction publisher
  *
  */
-class Apache2AccessRestrictionPublisherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class Apache2AccessRestrictionPublisherTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 */
@@ -31,7 +31,7 @@ class Apache2AccessRestrictionPublisherTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	public function publishAccessRestrictionsForPathPublishesAHtaccessFileInTheGivenDirectory() {
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.234';
 
-		$publisher = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authorization\Resource\Apache2AccessRestrictionPublisher', array('dummy'));
+		$publisher = $this->getAccessibleMock('TYPO3\Flow\Security\Authorization\Resource\Apache2AccessRestrictionPublisher', array('dummy'));
 		$publisher->publishAccessRestrictionsForPath('vfs://Foo/');
 
 		$expectedFileContents = 'Deny from all' . chr(10) . 'Allow from 192.168.1.234';

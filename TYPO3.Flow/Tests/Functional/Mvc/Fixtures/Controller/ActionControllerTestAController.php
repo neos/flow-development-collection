@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller;
+namespace TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\Mvc\Fixtures\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\Controller\ActionController;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 
 /**
  * A controller fixture
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class ActionControllerTestAController extends ActionController {
 
@@ -71,10 +71,10 @@ class ActionControllerTestAController extends ActionController {
 	}
 
 	/**
-	 * @FLOW3\Validate("brokenArgument1", type="StringLength", options={"maximum": 3})
-	 * @FLOW3\Validate("brokenArgument2", type="StringLength", options={"minimum": 100})
-	 * @FLOW3\IgnoreValidation("brokenArgument1")
-	 * @FLOW3\IgnoreValidation("$brokenArgument2")
+	 * @Flow\Validate("brokenArgument1", type="StringLength", options={"maximum": 3})
+	 * @Flow\Validate("brokenArgument2", type="StringLength", options={"minimum": 100})
+	 * @Flow\IgnoreValidation("brokenArgument1")
+	 * @Flow\IgnoreValidation("$brokenArgument2")
 	 * @param string $brokenArgument1
 	 * @param string $brokenArgument2
 	 * @return string

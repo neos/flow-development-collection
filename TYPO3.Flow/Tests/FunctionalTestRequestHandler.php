@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests;
+namespace TYPO3\Flow\Tests;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,11 +11,11 @@ namespace TYPO3\FLOW3\Tests;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Core\Bootstrap;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
- * A request handler which boots up FLOW3 into a basic runtime level and then returns
+ * A request handler which boots up Flow into a basic runtime level and then returns
  * without actually further handling command line commands.
  *
  * As this request handler will be the "active" request handler returned by
@@ -28,30 +28,30 @@ use TYPO3\FLOW3\Core\Bootstrap;
  * The virtual browser's InternalRequestEngine will also set the current request
  * via the setRequest() method.
  *
- * @FLOW3\Proxy(false)
- * @FLOW3\Scope("singleton")
+ * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
  */
-class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandlerInterface {
+class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandlerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Request
+	 * @var \TYPO3\Flow\Http\Request
 	 */
 	protected $httpRequest;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Response
+	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $httpResponse;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -92,7 +92,7 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	/**
 	 * Returns the currently processed HTTP request
 	 *
-	 * @return \TYPO3\FLOW3\Http\Request
+	 * @return \TYPO3\Flow\Http\Request
 	 */
 	public function getHttpRequest() {
 		return $this->httpRequest;
@@ -101,7 +101,7 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	/**
 	 * Returns the HTTP response corresponding to the currently handled request
 	 *
-	 * @return \TYPO3\FLOW3\Http\Response
+	 * @return \TYPO3\Flow\Http\Response
 	 * @api
 	 */
 	public function getHttpResponse() {
@@ -112,11 +112,11 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	 * Allows to set the currently processed HTTP request by the base functional
 	 * test case.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Request $request
+	 * @param \TYPO3\Flow\Http\Request $request
 	 * @return void
 	 * @see InternalRequestEngine::sendRequest()
 	 */
-	public function setHttpRequest(\TYPO3\FLOW3\Http\Request $request) {
+	public function setHttpRequest(\TYPO3\Flow\Http\Request $request) {
 		$this->httpRequest = $request;
 	}
 
@@ -124,11 +124,11 @@ class FunctionalTestRequestHandler implements \TYPO3\FLOW3\Http\HttpRequestHandl
 	 * Allows to set the currently processed HTTP response by the base functional
 	 * test case.
 	 *
-	 * @param \TYPO3\FLOW3\Http\Response $response
+	 * @param \TYPO3\Flow\Http\Response $response
 	 * @return void
 	 * @see InternalRequestEngine::sendRequest()
 	 */
-	public function setHttpResponse(\TYPO3\FLOW3\Http\Response $response) {
+	public function setHttpResponse(\TYPO3\Flow\Http\Response $response) {
 		$this->httpResponse = $response;
 	}
 }

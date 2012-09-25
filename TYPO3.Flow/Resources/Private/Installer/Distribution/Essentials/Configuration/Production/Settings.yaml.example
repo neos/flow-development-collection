@@ -9,10 +9,10 @@
 #                                                                        #
 
 TYPO3:
-  FLOW3:
+  Flow:
     persistence:
       backendOptions:
-        dbname: 'flow3' # adjust to your database name
+        dbname: 'flow'       # adjust to your database name
         user: ''             # adjust to your database user
         password: ''         # adjust to your database password
 

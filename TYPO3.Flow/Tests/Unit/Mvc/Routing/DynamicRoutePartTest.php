@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,22 +15,22 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing;
  * Testcase for the MVC Web Routing DynamicRoutePart Class
  *
  */
-class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart
+	 * @var \TYPO3\Flow\Mvc\Routing\DynamicRoutePart
 	 */
 	protected $dynamicRoutPart;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $mockPersistenceManager;
 
 	public function setUp() {
-		$this->dynamicRoutPart = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart', array('dummy'));
+		$this->dynamicRoutPart = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\DynamicRoutePart', array('dummy'));
 
-		$this->mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$this->dynamicRoutPart->_set('persistenceManager', $this->mockPersistenceManager);
 	}
 

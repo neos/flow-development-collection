@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Validation\Validator;
+namespace TYPO3\Flow\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -35,7 +35,7 @@ abstract class AbstractValidator implements ValidatorInterface {
 	protected $options = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Error\Result
+	 * @var \TYPO3\Flow\Error\Result
 	 */
 	protected $result;
 
@@ -54,11 +54,11 @@ abstract class AbstractValidator implements ValidatorInterface {
 	 * the Error Messages object which occurred.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 * @api
 	 */
 	public function validate($value) {
-		$this->result = new \TYPO3\FLOW3\Error\Result();
+		$this->result = new \TYPO3\Flow\Error\Result();
 		if ($this->acceptsEmptyValues === FALSE || $this->isEmpty($value) === FALSE) {
 			$this->isValid($value);
 		}
@@ -71,7 +71,7 @@ abstract class AbstractValidator implements ValidatorInterface {
 	 *
 	 * @param mixed $value
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException if invalid validation options have been specified in the constructor
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException if invalid validation options have been specified in the constructor
 	 */
 	abstract protected function isValid($value);
 
@@ -85,7 +85,7 @@ abstract class AbstractValidator implements ValidatorInterface {
 	 * @api
 	 */
 	protected function addError($message, $code, array $arguments = array()) {
-		$this->result->addError(new \TYPO3\FLOW3\Validation\Error($message, $code, $arguments));
+		$this->result->addError(new \TYPO3\Flow\Validation\Error($message, $code, $arguments));
 	}
 
 	/**

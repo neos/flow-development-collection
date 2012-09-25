@@ -1,11 +1,11 @@
 HTTP Foundation
 ===============
 
-Most applications which are based on FLOW3 are web applications. As the HTTP
+Most applications which are based on TYPO3 Flow are web applications. As the HTTP
 protocol is the foundation of the World Wide Web, it also plays an important role in
-the architecture of the FLOW3 framework.
+the architecture of the TYPO3 Flow framework.
 
-This chapter describes the mechanics behind FLOW3's request-response model, how it
+This chapter describes the mechanics behind TYPO3 Flow's request-response model, how it
 relates to the Model View Controller framework and which API functions you can use
 to deal with specific aspects of the HTTP request and response.
 
@@ -25,14 +25,14 @@ conscience, or even claim that you developed a true `REST`_ service.
 Application Flow
 ----------------
 
-The basic walk through a FLOW3-based web application is as follows:
+The basic walk through a TYPO3 Flow-based web application is as follows:
 
 * the browser sends an HTTP request to a webserver
-* the webserver calls Web/index.php and passes control over to FLOW3
+* the webserver calls Web/index.php and passes control over to TYPO3 Flow
 * the Bootstrap [#]_ initializes the bare minimum and passes control to a suitable
   request handler
 * by default, the HTTP Request Handler [#]_ takes over and runs a boot sequence
-  which initializes all important parts of FLOW3
+  which initializes all important parts of TYPO3 Flow
 * the HTTP Request Handler builds an HTTP Request and Response object. The Request
   object [#]_ contains all important properties of the real HTTP request. The
   Response object [#]_ in turn is empty and will be filled with information by a
@@ -66,18 +66,18 @@ Request Handler
 The request handler is responsible for taking a request and responding in a manner
 the client understands. The default HTTP Request Handler routes requests to
 controllers and their actions. Other request handlers may choose a completely
-different way to handle requests. Although FLOW3 also supports other types of
+different way to handle requests. Although TYPO3 Flow also supports other types of
 requests (most notably, from the comannd line interface), this chapter only deals
 with HTTP requests.
 
-FLOW3 comes with a very slim bootstrap, which resulst in  few code being executed
+TYPO3 Flow comes with a very slim bootstrap, which resulst in  few code being executed
 before control is handed over to the request handler. This pays off in situations
 where a specialized request handler is supposed to handle specific requests in a
 very effective way. In fact, the request handler is responsible for executing big
 parts of the initialization procedures and thus can optimize the boot process by
 choosing only the parts it actually needs.
 
-A request handler must implement the ``\TYPO3\FLOW3\Core\RequestHandlerInterface``
+A request handler must implement the ``\TYPO3\Flow\Core\RequestHandlerInterface``
 interface which, among others, contains the following methods::
 
 	public function handleRequest();
@@ -99,7 +99,7 @@ containing the request handler::
 
 	class Package extends BasePackage {
 
-		public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 			$bootstrap->registerRequestHandler(new \Acme\Foo\BarRequestHandler($bootstrap));
 		}
 
@@ -108,7 +108,7 @@ containing the request handler::
 Request
 -------
 
-The ``TYPO3\FLOW3\Http\Request`` class is, like most other classes in the ``Http``
+The ``TYPO3\Flow\Http\Request`` class is, like most other classes in the ``Http``
 sub package, a relatively close match of a request according to the HTTP 1.1
 specification. You'll be best off studying the API of the class and reading the
 respective comments for getting an idea about the available functions. That being
@@ -160,7 +160,7 @@ actions. If you, however, need to access the raw data, these API function are th
 to retrieve them.
 
 Arguments provided by POST or PUT requests are usually encoded in one or the other
-way. FLOW3 detects the encoding through the ``Content-Type`` header and decodes the
+way. TYPO3 Flow detects the encoding through the ``Content-Type`` header and decodes the
 arguments and their values automatically.
 
 getContent()
@@ -206,7 +206,7 @@ also known as ``UTC``. UTC is also sometimes referred to as ``GMT``, but in fact
 things a bit more, according to the standards the HTTP headers will contain dates
 with the timezone declared as ``GMT`` – which in reality refers to ``UTC``.
 
-FLOW3 will always return dates related to HTTP as UTC times. Keep that in mind if
+TYPO3 Flow will always return dates related to HTTP as UTC times. Keep that in mind if
 you pass dates from a different standard and then retrieve them again: the
 ``DateTime`` objects will mark the same point in time, but have a different time
 zone set.
@@ -295,17 +295,17 @@ Consider the following examples:
 
 A URI specifying a resource:
 
-	* http://flow3.typo3.org/images/logo
+	* http://flow.typo3.org/images/logo
 
 A URL specifying two different representations of that resource:
 
-	* http://flow3.typo3.org/images/logo.png
-	* http://flow3.typo3.org/images/logo.gif
+	* http://flow.typo3.org/images/logo.png
+	* http://flow.typo3.org/images/logo.gif
 
 Throughout the framework we use the term ``URI`` instead of ``URL`` because it is
 more generic and more often than not, the correct term to use.
 
-All methods in FLOW3 returning a URI will do so in form of a URI object. Most
+All methods in TYPO3 Flow returning a URI will do so in form of a URI object. Most
 methods requiring a URI will also accept a string representation.
 
 You are encouraged to use the ``Uri`` class for your own purposes – you'll get a
@@ -318,13 +318,13 @@ The HTTP foundation comes with a virtual browser which allows for sending and
 receiving HTTP requests and responses. The browser's API basically follows the
 functions of a typical web browser. The requests and responses are used in form of
 ``Http\Request`` and ``Http\Response`` instances, similar to the requests and
-responses used by FLOW3's request handling mechanism.
+responses used by TYPO3 Flow's request handling mechanism.
 
 Request Engines
 ~~~~~~~~~~~~~~~
 
 The engine responsible for actually sending the request is pluggable. Currently
-there are two engines delivered with FLOW3:
+there are two engines delivered with TYPO3 Flow:
 
 	* ``InternalRequestEngine`` simulates requests for use in functional tests
 	* ``CurlEngine`` uses the cURL extension to send real requests to other servers
@@ -337,14 +337,14 @@ Sending a request and processing the response is a matter of a few lines::
 	class MyController extends ActionController {
 
 		/**
-		 * @FLOW3\Inject
-		 * @var \TYPO3\FLOW3\Http\Client\Browser
+		 * @Flow\Inject
+		 * @var \TYPO3\Flow\Http\Client\Browser
 		 */
 		protected $browser;
 
 		/**
-		 * @FLOW3\Inject
-		 * @var \TYPO3\FLOW3\Http\Client\CurlEngine
+		 * @Flow\Inject
+		 * @var \TYPO3\Flow\Http\Client\CurlEngine
 		 */
 		protected $browserRequestEngine;
 
@@ -353,8 +353,8 @@ Sending a request and processing the response is a matter of a few lines::
 		 */
 		public function testAction() {
 			$this->browser->setRequestEngine($this->browserRequestEngine);
-			$response = $this->browser->request('http://flow3.typo3.org');
-			return ($response->hasHeader('X-FLOW3-Powered') ? 'yes' : 'no');
+			$response = $this->browser->request('http://flow.typo3.org');
+			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
 		}
 
 As there is no default engine selected for the browser, you need to set one
@@ -374,7 +374,7 @@ via HTTP. This browser has the ``InternalRequestEngine`` set by default::
 	/**
 	 * Some functional tests
 	 */
-	class SomeTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+	class SomeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		/**
 		 * @var boolean
@@ -383,7 +383,7 @@ via HTTP. This browser has the ``InternalRequestEngine`` set by default::
 
 		/**
 		 * Send a request to a controller of my application.
-		 * Hint: The host name is not evaluated by FLOW3 and thus doesn't matter
+		 * Hint: The host name is not evaluated by TYPO3 Flow and thus doesn't matter
 		 *
 		 * @test
 		 */
@@ -400,11 +400,11 @@ via HTTP. This browser has the ``InternalRequestEngine`` set by default::
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 
-.. [#] TYPO3\FLOW3\Core\Bootstrap
-.. [#] TYPO3\FLOW3\Http\RequestHandler
-.. [#] TYPO3\FLOW3\Http\Request
-.. [#] TYPO3\FLOW3\Http\Response
-.. [#] TYPO3\FLOW3\Mvc\Routing\Router
-.. [#] TYPO3\FLOW3\Mvc\ActionRequest
-.. [#] TYPO3\FLOW3\Mvc\Dispatcher
-.. [#] TYPO3\FLOW3\Mvc\Controller\ActionController
+.. [#] TYPO3\Flow\Core\Bootstrap
+.. [#] TYPO3\Flow\Http\RequestHandler
+.. [#] TYPO3\Flow\Http\Request
+.. [#] TYPO3\Flow\Http\Response
+.. [#] TYPO3\Flow\Mvc\Routing\Router
+.. [#] TYPO3\Flow\Mvc\ActionRequest
+.. [#] TYPO3\Flow\Mvc\Dispatcher
+.. [#] TYPO3\Flow\Mvc\Controller\ActionController

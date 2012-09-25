@@ -114,7 +114,7 @@ such titles.
 
 		- Articles (``a, an, the``), unless an article is the first word or follows a colon
 		- Coordinating conjunctions(``and, but, or, nor, for, yet`` and ``so``)
-		- The word *to* in infinitives (``How to Install FLOW3``)
+		- The word *to* in infinitives (``How to Install TYPO3 Flow``)
 		- The word *as*, regardless of the part of speech
 		- Words that always begin with a lower case letter, such as ``iPad``
 		- Prepositions of four letters or fewer (``at, by, for, from, in, into, of, off, on,

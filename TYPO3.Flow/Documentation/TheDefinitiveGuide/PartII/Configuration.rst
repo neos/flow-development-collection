@@ -10,8 +10,8 @@ Contexts
 Once you start developing an application you'll want to launch it in different
 contexts: in a production context the configuration must be optimized for speed
 and security while in a development context debugging capabilities and
-convenience are more important. FLOW3 supports the notion of contexts which
-allow for bundling configuration for different purposes. Each FLOW3 request
+convenience are more important. TYPO3 Flow supports the notion of contexts which
+allow for bundling configuration for different purposes. Each TYPO3 Flow request
 acts in exactly one context. However, it is possible to use the same
 installation on the same server in distinct contexts by accessing it through a
 different host name, port or passing special arguments.
@@ -33,7 +33,7 @@ different host name, port or passing special arguments.
 	methods. What you do in this case is sharing most of the configuration and
 	define the difference in dedicated contexts.
 
-FLOW3 provides configuration for the Production and Development context.
+TYPO3 Flow provides configuration for the Production and Development context.
 In the standard distribution a reasonable configuration is defined for
 each context:
 
@@ -47,7 +47,7 @@ each context:
 	are given for effective development.
 
 .. tip::
-	If FLOW3 throws some strange errors at you after you made code changes,
+	If TYPO3 Flow throws some strange errors at you after you made code changes,
 	make sure to either manually flush the cache or run the application in
 	``Development`` context - because caches are not flushed automatically
 	in ``Production`` context.
@@ -64,34 +64,34 @@ Directory						Description
 *Configuration/Production/*		Configuration for the ``Production`` context
 ============================	==================================================
 
-Configuring FLOW3
-=================
+Configuring TYPO3 Flow
+======================
 
 One thing you certainly need to adjust is the database configuration. Aside from that
-FLOW3 should work fine with the default configuration delivered with the distribution.
+TYPO3 Flow should work fine with the default configuration delivered with the distribution.
 However, there are many switches you can adjust: specify another location for logging,
 select a faster cache backend and much more.
 
 The easiest way to find out which options are available is taking a look at the default
-configuration of the FLOW3 package and other packages. The respective files are located in
+configuration of the TYPO3 Flow package and other packages. The respective files are located in
 ``Packages/Framework/<packageKey>/Configuration/``. Don't modify these files directly but
 rather copy the setting you'd like to change and insert it into a file within the global
 or context configuration directories.
 
-FLOW3 uses the YAML format [#]_ for its configuration files. If you never edited
+TYPO3 Flow uses the YAML format [#]_ for its configuration files. If you never edited
 a YAML file, there are two things you should know at least:
 
 * Indentation has a meaning: by different levels of indentation, a structure is
   defined.
 * Spaces, not tabs: you must indent with exactly 2 spaces per level, don't use tabs.
 
-More detailed information about FLOW3's configuration management can be found
-in the `Reference Manual <http://flow3.typo3.org/documentation/>`_.
+More detailed information about TYPO3 Flow's configuration management can be found
+in the `Reference Manual <http://flow.typo3.org/documentation/>`_.
 
 .. note::
-	If you're running FLOW3 on a Windows machine, you do have to make some
+	If you're running TYPO3 Flow on a Windows machine, you do have to make some
 	adjustments to the standard configuration because it will cause problems
-	with long paths and filenames. By default FLOW3 caches files within the
+	with long paths and filenames. By default TYPO3 Flow caches files within the
 	``Data/Temporary/<Context>/Caches/`` directory
 	whose absolute path can eventually become too long for Windows.
 
@@ -109,8 +109,8 @@ in the `Reference Manual <http://flow3.typo3.org/documentation/>`_.
 
 .. important::
 	Parsing the YAML configuration files takes a bit of time which remarkably
-	slows down the initialization of FLOW3. That's why all configuration is
-	cached by default when FLOW3 is running in Production context. Because this
+	slows down the initialization of TYPO3 Flow. That's why all configuration is
+	cached by default when TYPO3 Flow is running in Production context. Because this
 	cache cannot be cleared automatically it is important to know that changes
 	to any configuration file won't have any effect until you manually flush
 	the respective caches.
@@ -122,9 +122,9 @@ in the `Reference Manual <http://flow3.typo3.org/documentation/>`_.
 Database Setup
 --------------
 
-Before you can store anything, you need to set up a database and tell FLOW3 how
+Before you can store anything, you need to set up a database and tell TYPO3 Flow how
 to access it. The credentials and driver options need to be specified in the global
-FLOW3 settings.
+TYPO3 Flow settings.
 
 .. tip::
 	You should make it a habit to specify database settings in context-specific
@@ -142,7 +142,7 @@ for a common MySQL setup, it would look similar to this:
 .. code-block:: yaml
 
 	TYPO3:
-	  FLOW3:
+	  Flow:
 	    persistence:
 	     backendOptions:
 	      dbname: 'gettingstarted'
@@ -153,16 +153,16 @@ For global settings and Production context, the relevant files would be directly
 in ``Configuration`` respectively ``Configuration/Production```.`
 
 If you configured everything correctly, the following command will create the initial
-table structure needed by FLOW3:
+table structure needed by TYPO3 Flow:
 
 .. code-block:: none
 
-	$ ./flow3 doctrine:migrate
+	$ ./flow doctrine:migrate
 	Migrating up to 2011xxxxxxxxxx from 0
 
 	++ migrating 20110613223837
-		-> CREATE TABLE flow3_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY
-		-> CREATE TABLE flow3_resource_resource (flow3_persistence_identifier VARCHAR(40)
+		-> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY
+		-> CREATE TABLE flow_resource_resource (persistence_object_identifier VARCHAR(40)
 
 	...
 

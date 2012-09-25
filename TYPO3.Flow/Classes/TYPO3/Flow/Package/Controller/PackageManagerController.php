@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Package\Controller;
+namespace TYPO3\Flow\Package\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,32 +11,32 @@ namespace TYPO3\FLOW3\Package\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Package controller to handle packages from CLI (create/activate/deactivate packages)
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class PackageManagerController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+class PackageManagerController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('TYPO3\FLOW3\Cli\Request');
+	protected $supportedRequestTypes = array('TYPO3\Flow\Cli\Request');
 
 	/**
 	 * Injects the package manager
 	 *
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
@@ -160,8 +160,8 @@ class PackageManagerController extends \TYPO3\FLOW3\Mvc\Controller\ActionControl
 	 */
 	public function helpAction() {
 		return PHP_EOL .
-			'FLOW3 Package CLI Controller' . PHP_EOL .
-			'Usage: php Public/index.php FLOW3 Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL.
+			'Flow Package CLI Controller' . PHP_EOL .
+			'Usage: php Public/index.php Flow Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL.
 			PHP_EOL .
 			'<command>:' . PHP_EOL .
 			'  create     - create a new package' . PHP_EOL.

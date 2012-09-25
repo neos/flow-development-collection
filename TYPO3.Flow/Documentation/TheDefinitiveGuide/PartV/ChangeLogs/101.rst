@@ -13,12 +13,12 @@ This updates the Surf configuration to interact with
 the TYPO3.Release package on the FLOW3 website.
 
 * Resolves: `#31896 <http://forge.typo3.org/issues/31896>`_
-* Commit: `0303a6d <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=0303a6d8b4eed7412485f33b88327eec2496aa4e>`_
+* Commit: `0303a6d <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=0303a6d8b4eed7412485f33b88327eec2496aa4e>`_
 
 [TASK] Adjust Readme.txt and Upgrading.txt for 1.0.1
 -----------------------------------------------------------------------------------------
 
-* Commit: `ae0c819 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=ae0c8190e7cb0f71e1876c65013c9f79407a4f20>`_
+* Commit: `ae0c819 <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=ae0c8190e7cb0f71e1876c65013c9f79407a4f20>`_
 
 [BUGFIX] Clean up configuration README
 -----------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ the TYPO3.Release package on the FLOW3 website.
 Removes mentions of the non-used files FLOW3.yaml and Packages.yaml.
 
 * Fixes: `#31215 <http://forge.typo3.org/issues/31215>`_
-* Commit: `46af2d3 <http://git.typo3.org/FLOW3/Distributions/Base.git?a=commit;h=46af2d3dc756fc60c004c818a15372ea7a4f8f5b>`_
+* Commit: `46af2d3 <http://git.typo3.org/Flow/Distributions/Base.git?a=commit;h=46af2d3dc756fc60c004c818a15372ea7a4f8f5b>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Common
@@ -47,7 +47,7 @@ Symfony.Component.Yaml
 No changes
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TYPO3.FLOW3
+TYPO3.Flow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [BUGFIX] Fix link to issue tracker
@@ -56,7 +56,7 @@ TYPO3.FLOW3
 Adapts the project link after a renaming of the FLOW3 package in forge.
 
 * Fixes: `#31781 <http://forge.typo3.org/issues/31781>`_
-* Commit: `365ddb6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=365ddb6d0e40dc8ca02840fd836206f70fd54770>`_
+* Commit: `365ddb6 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=365ddb6d0e40dc8ca02840fd836206f70fd54770>`_
 
 [BUGFIX] Fix Persistence\\\\\\\\Doctrine\\\\\\\\Query serialization cycle
 -----------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ and reapplies them after wakeup. A functional test is
 included.
 
 * Fixes: `#31696 <http://forge.typo3.org/issues/31696>`_
-* Commit: `d1c5cd6 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=d1c5cd65f218da7441d1e7ee68417eacb49e699b>`_
+* Commit: `d1c5cd6 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=d1c5cd65f218da7441d1e7ee68417eacb49e699b>`_
 
 [BUGFIX] Escape phpBinaryPathAndFilename in Command execution
 -----------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ This is fixed by putting the command in quotes and replacing
 backslashes.
 
 * Fixes: `#30040 <http://forge.typo3.org/issues/30040>`_
-* Commit: `cfc654f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=cfc654feff6c8926d72160a797a98ec35355a79a>`_
+* Commit: `cfc654f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=cfc654feff6c8926d72160a797a98ec35355a79a>`_
 
 [BUGFIX] Allow usage of query parameter "_"
 -----------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ Assert that the length of $argumentName is >= 2 before accessing it at
 position 1
 
 * Fixes: `#31773 <http://forge.typo3.org/issues/31773>`_
-* Commit: `dfebde2 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=dfebde272d181e0f7c6b3acc6bb959de4069fd9a>`_
+* Commit: `dfebde2 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=dfebde272d181e0f7c6b3acc6bb959de4069fd9a>`_
 
 [BUGFIX] Symlink related Unit Tests fail on some Windows systems
 -----------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ use symlinks to avoid them from failing on some Windows
 environments.
 
 * Fixes: `#31070 <http://forge.typo3.org/issues/31070>`_
-* Commit: `4c9bcc0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4c9bcc0b97bc8690379ff4d82b6b7cad51e60bac>`_
+* Commit: `4c9bcc0 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4c9bcc0b97bc8690379ff4d82b6b7cad51e60bac>`_
 
 [BUGFIX] CLI arguments should be usable with equals sign (=)
 -----------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ the other test cases have been strengthened by replacing assertEquals()
 by assertSame().
 
 * Fixes: `#30493 <http://forge.typo3.org/issues/30493>`_
-* Commit: `2b137a0 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=2b137a04202b0cbbee6001f532083f8e5c6087a1>`_
+* Commit: `2b137a0 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2b137a04202b0cbbee6001f532083f8e5c6087a1>`_
 
 [BUGFIX] Reset argument list before initializing action arguments
 -----------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ It also refactors a unit test to use the actual arguments class instead
 of a mock which is more expressive.
 
 * Fixes: `#31134 <http://forge.typo3.org/issues/31134>`_
-* Commit: `4cafbe1 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4cafbe10de7382e5c48742fa6f4857c19cbdf05e>`_
+* Commit: `4cafbe1 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4cafbe10de7382e5c48742fa6f4857c19cbdf05e>`_
 
 [BUGFIX] Enhance entity classname detection in repository constructor
 -----------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ out during the automatic retrieval of the entity classname. This changes
 the behavior in the way, that only removes the last occurrence.
 
 * Fixes: `#30312 <http://forge.typo3.org/issues/30312>`_
-* Commit: `6858907 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=685890765cf92d18fe58da6ca59dd3ced9bf997e>`_
+* Commit: `6858907 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=685890765cf92d18fe58da6ca59dd3ced9bf997e>`_
 
 [BUGFIX] Use annotations in ActionController for IgnoreValidation
 -----------------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ which return wrong results if an explicit argumentName is given
 to the annotation. See the functional test that is added.
 
 * Fixes: `#31452 <http://forge.typo3.org/issues/31452>`_
-* Commit: `52d1e37 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=52d1e370f7145050ac002f274614416759a777f0>`_
+* Commit: `52d1e37 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=52d1e370f7145050ac002f274614416759a777f0>`_
 
 [BUGFIX] Proxy class builder should retain original annotations
 -----------------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ to allow for code inspection and usage of metadata for dynamic code
 generation.
 
 * Fixes: `#31270 <http://forge.typo3.org/issues/31270>`_
-* Commit: `72dd3de <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=72dd3de06a8f6bcc7f26e83b8e4f29c04edb36d6>`_
+* Commit: `72dd3de <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=72dd3de06a8f6bcc7f26e83b8e4f29c04edb36d6>`_
 
 [BUGFIX] Use correct method to get CLI arguments for DQL command
 -----------------------------------------------------------------------------------------
@@ -170,13 +170,13 @@ Call TYPO3\\\\\\\\FLOW3\\\\\\\\MVC\\\\\\\\CLI\\\\\\\\Request::getExceedingArgume
 removed TYPO3\\\\\\\\FLOW3\\\\\\\\MVC\\\\\\\\CLI\\\\\\\\Request::getCommandLineArguments()
 
 * Fixes: `#31474 <http://forge.typo3.org/issues/31474>`_
-* Commit: `4c91d3f <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=4c91d3f317e65d821e25757c858cb5563c678b04>`_
+* Commit: `4c91d3f <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=4c91d3f317e65d821e25757c858cb5563c678b04>`_
 
 [TASK] Display line number of exception in command line mode
 -----------------------------------------------------------------------------------------
 
 * Related: `#31269 <http://forge.typo3.org/issues/31269>`_
-* Commit: `94ecbf9 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=94ecbf9922fa602c03c7c46215ffb8f1ced43f1c>`_
+* Commit: `94ecbf9 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=94ecbf9922fa602c03c7c46215ffb8f1ced43f1c>`_
 
 [TASK] Optimized AOP Pointcut Filter matching
 -----------------------------------------------------------------------------------------
@@ -191,7 +191,7 @@ against annotations does not support regular expressions any more
 expressions has been optimized.
 
 * Related: `#9568 <http://forge.typo3.org/issues/9568>`_
-* Commit: `66df069 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=66df0697686cd344c266e93eee78ad0f25639366>`_
+* Commit: `66df069 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=66df0697686cd344c266e93eee78ad0f25639366>`_
 
 [BUGFIX] Logout must not rely on a session
 -----------------------------------------------------------------------------------------
@@ -202,7 +202,7 @@ This change fixes this by checking whether the Security Context
 has been initialized.
 
 * Resolves: `#31311 <http://forge.typo3.org/issues/31311>`_
-* Commit: `93b608a <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=93b608a41770d9ce4993eaaa42f9c5ec2f4853f5>`_
+* Commit: `93b608a <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=93b608a41770d9ce4993eaaa42f9c5ec2f4853f5>`_
 
 [FEATURE] Make path for migrate-annotations configurable
 -----------------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ Optional parameter --packages-path to configure an individual absolute
 path to the folder with the packages.
 
 * Fixes: `#31160 <http://forge.typo3.org/issues/31160>`_
-* Commit: `c8e6c97 <http://git.typo3.org/FLOW3/Packages/TYPO3.FLOW3.git?a=commit;h=c8e6c9771f40ec344164978275d2792eac5875ad>`_
+* Commit: `c8e6c97 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=c8e6c9771f40ec344164978275d2792eac5875ad>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Fluid
@@ -245,7 +245,7 @@ each GUI representation interacts with only the last rendered PHP object.
 A test case has been committed to Viewhelpertest with http://review.typo3.org/6594
 
 * Fixes: `#31667 <http://forge.typo3.org/issues/31667>`_
-* Commit: `79e1d93 <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=79e1d93532d8d77920a68085a4188c5eeb3571a5>`_
+* Commit: `79e1d93 <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=79e1d93532d8d77920a68085a4188c5eeb3571a5>`_
 
 [BUGFIX] pre-selecting entities does not work with multiple flag set
 -----------------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ The SelectViewHelper is not able to retrieve the selected uuid values for
 a collection of objects
 
 * Fixes: `#29395 <http://forge.typo3.org/issues/29395>`_
-* Commit: `2a960bf <http://git.typo3.org/FLOW3/Packages/TYPO3.Fluid.git?a=commit;h=2a960bfe6818f55516dcb1eb2f340a7a13960666>`_
+* Commit: `2a960bf <http://git.typo3.org/Flow/Packages/TYPO3.Fluid.git?a=commit;h=2a960bfe6818f55516dcb1eb2f340a7a13960666>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Kickstart
@@ -268,7 +268,7 @@ $newSomething, while the docblock says it's $something. This leads to
 e.g. a warning in some IDEs.
 
 * Fixes: `#31494 <http://forge.typo3.org/issues/31494>`_
-* Commit: `005f8fd <http://git.typo3.org/FLOW3/Packages/TYPO3.Kickstart.git?a=commit;h=005f8fd46ad4e58e111132cf41b2eb7948d779ea>`_
+* Commit: `005f8fd <http://git.typo3.org/Flow/Packages/TYPO3.Kickstart.git?a=commit;h=005f8fd46ad4e58e111132cf41b2eb7948d779ea>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Party
@@ -297,5 +297,5 @@ Note: Some infos have been added to the exception wiki page at
 http://wiki.typo3.org/wiki/Exception1318414040
 
 * Resolves: `#31284 <http://forge.typo3.org/issues/31284>`_
-* Commit: `5360a38 <http://git.typo3.org/FLOW3/Packages/TYPO3.Welcome.git?a=commit;h=5360a38035c5b427af2769d8a03bd0c1b8146194>`_
+* Commit: `5360a38 <http://git.typo3.org/Flow/Packages/TYPO3.Welcome.git?a=commit;h=5360a38035c5b427af2769d8a03bd0c1b8146194>`_
 

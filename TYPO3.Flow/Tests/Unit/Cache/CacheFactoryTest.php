@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Cache;
+namespace TYPO3\Flow\Tests\Unit\Cache;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,17 +12,17 @@ namespace TYPO3\FLOW3\Tests\Unit\Cache;
  *                                                                        */
 
 require_once ('Backend/MockBackend.php');
-use TYPO3\FLOW3\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the Cache Factory
  *
  */
-class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CacheFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $mockEnvironment;
 
@@ -32,7 +32,7 @@ class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		vfsStream::setup('Foo');
 
-		$this->mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
 		$this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 		$this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 	}
@@ -41,36 +41,36 @@ class CacheFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createReturnsInstanceOfTheSpecifiedCacheFrontend() {
-		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
 
-		$factory = new \TYPO3\FLOW3\Cache\CacheFactory(new ApplicationContext('Testing'), $mockCacheManager, $this->mockEnvironment);
+		$factory = new \TYPO3\Flow\Cache\CacheFactory(new ApplicationContext('Testing'), $mockCacheManager, $this->mockEnvironment);
 
-		$cache = $factory->create('TYPO3_FLOW3_Cache_FactoryTest_Cache', 'TYPO3\FLOW3\Cache\Frontend\VariableFrontend', 'TYPO3\FLOW3\Cache\Backend\NullBackend');
-		$this->assertInstanceOf('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', $cache);
+		$cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', 'TYPO3\Flow\Cache\Frontend\VariableFrontend', 'TYPO3\Flow\Cache\Backend\NullBackend');
+		$this->assertInstanceOf('TYPO3\Flow\Cache\Frontend\VariableFrontend', $cache);
 	}
 
 	/**
 	 * @test
 	 */
 	public function createInjectsAnInstanceOfTheSpecifiedBackendIntoTheCacheFrontend() {
-		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
 
-		$factory = new \TYPO3\FLOW3\Cache\CacheFactory(new ApplicationContext('Testing'), $mockCacheManager, $this->mockEnvironment);
+		$factory = new \TYPO3\Flow\Cache\CacheFactory(new ApplicationContext('Testing'), $mockCacheManager, $this->mockEnvironment);
 
-		$cache = $factory->create('TYPO3_FLOW3_Cache_FactoryTest_Cache', 'TYPO3\FLOW3\Cache\Frontend\VariableFrontend', 'TYPO3\FLOW3\Cache\Backend\FileBackend');
-		$this->assertInstanceOf('TYPO3\FLOW3\Cache\Backend\FileBackend', $cache->getBackend());
+		$cache = $factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', 'TYPO3\Flow\Cache\Frontend\VariableFrontend', 'TYPO3\Flow\Cache\Backend\FileBackend');
+		$this->assertInstanceOf('TYPO3\Flow\Cache\Backend\FileBackend', $cache->getBackend());
 	}
 
 	/**
 	 * @test
 	 */
 	public function createRegistersTheCacheAtTheCacheManager() {
-		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\Flow\Cache\CacheManager', array('registerCache'), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('registerCache');
 
-		$factory = new \TYPO3\FLOW3\Cache\CacheFactory(new ApplicationContext('Testing'), $mockCacheManager, $this->mockEnvironment);
+		$factory = new \TYPO3\Flow\Cache\CacheFactory(new ApplicationContext('Testing'), $mockCacheManager, $this->mockEnvironment);
 
-		$factory->create('TYPO3_FLOW3_Cache_FactoryTest_Cache', 'TYPO3\FLOW3\Cache\Frontend\VariableFrontend', 'TYPO3\FLOW3\Cache\Backend\FileBackend');
+		$factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', 'TYPO3\Flow\Cache\Frontend\VariableFrontend', 'TYPO3\Flow\Cache\Backend\FileBackend');
 	}
 }
 ?>

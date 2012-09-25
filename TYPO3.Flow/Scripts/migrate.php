@@ -1,7 +1,7 @@
 <?php
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "FLOW3".                      *
+ * This script belongs to the Flow package "Flow".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -10,37 +10,37 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require (__DIR__ . '/../Classes/TYPO3/FLOW3/Exception.php');
-require (__DIR__ . '/../Classes/TYPO3/FLOW3/Utility/Exception.php');
-require (__DIR__ . '/../Classes/TYPO3/FLOW3/Utility/Files.php');
+require (__DIR__ . '/../Classes/TYPO3/Flow/Exception.php');
+require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Exception.php');
+require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Files.php');
 
 require(__DIR__ . '/Migrations/AbstractMigration.php');
 require(__DIR__ . '/Migrations/Manager.php');
 require(__DIR__ . '/Migrations/Tools.php');
 require(__DIR__ . '/Migrations/Git.php');
 
-define('FLOW3_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
+define('FLOW_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
 
-if (FLOW3_SAPITYPE !== 'CLI') exit ('The migrate tool can only be run from the command line (with a CLI PHP binary).');
+if (FLOW_SAPITYPE !== 'CLI') exit ('The migrate tool can only be run from the command line (with a CLI PHP binary).');
 
-define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../') . '/'))));
-define('FLOW3_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../') . '/'))));
-define('FLOW3_PATH_WEB', FLOW3_PATH_ROOT . 'Web/');
-define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
-define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
+define('FLOW_PATH_FLOW', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../') . '/'))));
+define('FLOW_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../') . '/'))));
+define('FLOW_PATH_WEB', FLOW_PATH_ROOT . 'Web/');
+define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');
+define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
 
 if(flagIsSet('packages-path')) {
-	define('FLOW3_PATH_PACKAGES', getFlagValue('packages-path'));
+	define('FLOW_PATH_PACKAGES', getFlagValue('packages-path'));
 } else {
-	define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+	define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 }
 
-if (\TYPO3\FLOW3\Core\Migrations\Git::isGitAvailable() === FALSE) {
+if (\TYPO3\Flow\Core\Migrations\Git::isGitAvailable() === FALSE) {
 	echo 'No executable git binary found, exiting.';
 	exit(255);
 }
 
-$migrationsManager = new \TYPO3\FLOW3\Core\Migrations\Manager();
+$migrationsManager = new \TYPO3\Flow\Core\Migrations\Manager();
 
 if (flagIsSet('status')) {
 	$status = $migrationsManager->getStatus();
@@ -50,7 +50,7 @@ if (flagIsSet('status')) {
 	foreach ($status as $packageKey => $migrations) {
 		$output .= PHP_EOL . ' ==  for ' . $packageKey . PHP_EOL;
 		foreach ($migrations as $versionNumber => $migration) {
-			$status = $migration['state'] === \TYPO3\FLOW3\Core\Migrations\Manager::STATE_MIGRATED ? 'migrated' : 'not migrated';
+			$status = $migration['state'] === \TYPO3\Flow\Core\Migrations\Manager::STATE_MIGRATED ? 'migrated' : 'not migrated';
 			$output .= '    >> ' . formatVersion($versionNumber) . ' (' . $migration['source'] . ')' . str_repeat(' ', 30 - strlen($status)) . $status . PHP_EOL;
 		}
 	}

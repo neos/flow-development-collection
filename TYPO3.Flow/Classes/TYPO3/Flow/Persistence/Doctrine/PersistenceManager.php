@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * FLOW3's Doctrine PersistenceManager
+ * Flow's Doctrine PersistenceManager
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
-class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceManager {
+class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceManager {
 
 	/**
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -32,12 +32,12 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	protected $entityManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
+	 * @var \TYPO3\Flow\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -50,31 +50,31 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @param \TYPO3\Flow\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 */
-	public function injectValidatorResolver(\TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+	public function injectValidatorResolver(\TYPO3\Flow\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * Initializes the persistence manager, called by FLOW3.
+	 * Initializes the persistence manager, called by Flow.
 	 *
 	 * @return void
 	 */
@@ -95,7 +95,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		$validatedInstancesContainer = new \SplObjectStorage();
 		$knownValueObjects = array();
 		foreach ($entityInsertions as $entity) {
-			if ($this->reflectionService->getClassSchema($entity)->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+			if ($this->reflectionService->getClassSchema($entity)->getModelType() === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 				$identifier = $this->getIdentifierByObject($entity);
 				$className = $this->reflectionService->getClassNameByObject($entity);
 
@@ -109,7 +109,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 			$this->validateObject($entity, $validatedInstancesContainer);
 		}
 
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, TRUE);
 
 		foreach ($unitOfWork->getScheduledEntityUpdates() AS $entity) {
 			$this->validateObject($entity, $validatedInstancesContainer);
@@ -122,7 +122,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * @param object $object
 	 * @param \SplObjectStorage $validatedInstancesContainer
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException
+	 * @throws \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException
 	 */
 	protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer) {
 		$className = $this->entityManager->getClassMetadata(get_class($object))->getName();
@@ -140,7 +140,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 					$errorMessages .= (string)$error . PHP_EOL;
 				}
 			}
-			throw new \TYPO3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
+			throw new \TYPO3\Flow\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($errors) . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
 		}
 	}
 
@@ -204,8 +204,8 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 			} catch (\Doctrine\ORM\ORMException $e) {
 				return NULL;
 			}
-		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+		} elseif (property_exists($object, 'Persistence_Object_Identifier')) {
+			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
 		} else {
 			return NULL;
 		}
@@ -240,10 +240,10 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\Flow\Persistence\Doctrine\Query
 	 */
 	public function createQueryForType($type) {
-		return new \TYPO3\FLOW3\Persistence\Doctrine\Query($type);
+		return new \TYPO3\Flow\Persistence\Doctrine\Query($type);
 	}
 
 	/**
@@ -251,18 +251,18 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The object to add
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\KnownObjectException if the given $object is not new
-	 * @throws \TYPO3\FLOW3\Persistence\Exception if another error occurs
+	 * @throws \TYPO3\Flow\Persistence\Exception\KnownObjectException if the given $object is not new
+	 * @throws \TYPO3\Flow\Persistence\Exception if another error occurs
 	 * @api
 	 */
 	public function add($object) {
 		if (!$this->isNewObject($object)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
+			throw new \TYPO3\Flow\Persistence\Exception\KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
 		} else {
 			try {
 				$this->entityManager->persist($object);
 			} catch (\Exception $exception) {
-				throw new \TYPO3\FLOW3\Persistence\Exception('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
+				throw new \TYPO3\Flow\Persistence\Exception('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
 			}
 		}
 	}
@@ -283,18 +283,18 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The modified object
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if the given $object is new
-	 * @throws \TYPO3\FLOW3\Persistence\Exception if another error occurs
+	 * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException if the given $object is new
+	 * @throws \TYPO3\Flow\Persistence\Exception if another error occurs
 	 * @api
 	 */
 	public function update($object) {
 		if ($this->isNewObject($object)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
+			throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
 		}
 		try {
 			$this->entityManager->persist($object);
 		} catch (\Exception $exception) {
-			throw new \TYPO3\FLOW3\Persistence\Exception('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
+			throw new \TYPO3\Flow\Persistence\Exception('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
 		}
 	}
 
@@ -326,7 +326,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
-	 * Called after a functional test in FLOW3, dumps everything in the database.
+	 * Called after a functional test in Flow, dumps everything in the database.
 	 *
 	 * @return void
 	 */
@@ -347,7 +347,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Signals that all persistAll() has been executed successfully.
 	 *
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 * @return void
 	 */
 	protected function emitAllObjectsPersisted() {

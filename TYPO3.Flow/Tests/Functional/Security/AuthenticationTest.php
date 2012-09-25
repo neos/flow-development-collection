@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Security;
+namespace TYPO3\Flow\Tests\Functional\Security;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\Routing\Route;
+use TYPO3\Flow\Mvc\Routing\Route;
 
 /**
  * Testcase for Authentication
  */
-class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -39,8 +39,8 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$accountRepository = $this->objectManager->get('\TYPO3\FLOW3\Security\AccountRepository');
-		$accountFactory = $this->objectManager->get('\TYPO3\FLOW3\Security\AccountFactory');
+		$accountRepository = $this->objectManager->get('\TYPO3\Flow\Security\AccountRepository');
+		$accountFactory = $this->objectManager->get('\TYPO3\Flow\Security\AccountFactory');
 
 		$account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'TestingProvider');
 		$accountRepository->add($account);
@@ -50,7 +50,7 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$route->setName('Functional Test - Security::Restricted');
 		$route->setUriPattern('test/security/restricted(/{@action})');
 		$route->setDefaults(array(
-			'@package' => 'TYPO3.FLOW3',
+			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Restricted',
 			'@action' => 'public',
@@ -63,7 +63,7 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$route2->setName('Functional Test - Security::Authentication');
 		$route2->setUriPattern('test/security/authentication(/{@action})');
 		$route2->setDefaults(array(
-			'@package' => 'TYPO3.FLOW3',
+			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Authentication',
 			'@action' => 'authenticate',
@@ -74,7 +74,7 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * On trying to access a restricted resource FLOW3 should first store the
+	 * On trying to access a restricted resource Flow should first store the
 	 * current request in the session and then redirect to the entry point. After
 	 * successful authentication the intercepted request should be contained in
 	 * the security context and can be fetched from there.
@@ -98,10 +98,10 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function successfulAuthenticationCallsOnAuthenticationSuccessMethod() {
-		$providers = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->authenticationManager, 'providers', TRUE);
+		$providers = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->authenticationManager, 'providers', TRUE);
 		foreach ($providers as $provider) {
-			if ($provider instanceof \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider) {
-				$provider->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+			if ($provider instanceof \TYPO3\Flow\Security\Authentication\Provider\TestingProvider) {
+				$provider->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 			}
 		}
 
@@ -115,7 +115,7 @@ class AuthenticationTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function failedAuthenticationCallsOnAuthenticationFailureMethod() {
 		$result = $this->browser->request('http://localhost/test/security/authentication');
-		$this->assertContains('Uncaught Exception in FLOW3 #42: Failure Method Exception', $result->getContent());
+		$this->assertContains('Uncaught Exception in Flow #42: Failure Method Exception', $result->getContent());
 	}
 
 }

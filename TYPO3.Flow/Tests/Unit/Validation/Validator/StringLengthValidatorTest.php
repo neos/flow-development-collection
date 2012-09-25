@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,9 +17,9 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the string length validator
  *
  */
-class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\StringLengthValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\StringLengthValidator';
 
 	/**
 	 * @test
@@ -117,10 +117,10 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
+	 * @expectedException TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength() {
-		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
+		$this->validator = $this->getMock('TYPO3\Flow\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$this->validatorOptions(array('minimum' => 101, 'maximum' => 100));
 		$this->validator->validate('1234567890');
 	}
@@ -138,7 +138,7 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	 * @test
 	 */
 	public function stringLengthValidatorCanHandleAnObjectWithAToStringMethod() {
-		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
+		$this->validator = $this->getMock('TYPO3\Flow\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
 
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
@@ -159,7 +159,7 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	 * @test
 	 */
 	public function validateReturnsErrorsIfTheGivenObjectCanNotBeConvertedToAString() {
-		$this->validator = $this->getMock('TYPO3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
+		$this->validator = $this->getMock('TYPO3\Flow\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
 
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));

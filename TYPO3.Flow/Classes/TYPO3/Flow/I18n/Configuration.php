@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\I18n;
+namespace TYPO3\Flow\I18n;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -42,16 +42,16 @@ class Configuration {
 	 */
 	public function __construct($defaultLocaleIdentifier) {
 		try {
-			$this->defaultLocale = new \TYPO3\FLOW3\I18n\Locale($defaultLocaleIdentifier);
-		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-			throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('The default locale identifier "' . $defaultLocaleIdentifier . '" given is invalid.', 1280935191);
+			$this->defaultLocale = new \TYPO3\Flow\I18n\Locale($defaultLocaleIdentifier);
+		} catch (\TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+			throw new \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException('The default locale identifier "' . $defaultLocaleIdentifier . '" given is invalid.', 1280935191);
 		}
 	}
 
 	/**
 	 * Returns the default locale of this configuration.
 	 *
-	 * @return \TYPO3\FLOW3\I18n\Locale
+	 * @return \TYPO3\Flow\I18n\Locale
 	 */
 	public function getDefaultLocale() {
 		return $this->defaultLocale;
@@ -60,7 +60,7 @@ class Configuration {
 	/**
 	 * Sets the current locale of this configuration.
 	 *
-	 * @param \TYPO3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @return void
 	 */
 	public function setCurrentLocale(Locale $locale) {
@@ -72,10 +72,10 @@ class Configuration {
 	 * no current lcoale has been set or the set current locale has
 	 * a language code of "mul".
 	 *
-	 * @return \TYPO3\FLOW3\I18n\Locale
+	 * @return \TYPO3\Flow\I18n\Locale
 	 */
 	public function getCurrentLocale() {
-		if (!$this->currentLocale instanceof \TYPO3\FLOW3\I18n\Locale
+		if (!$this->currentLocale instanceof \TYPO3\Flow\I18n\Locale
 			|| $this->currentLocale->getLanguage() === 'mul') {
 			return $this->defaultLocale;
 		}
@@ -86,7 +86,7 @@ class Configuration {
 	 * Allows to set a fallback order for locale resolving. If not set,
 	 * the implicit inheritance of locales will be used. That is, if a
 	 * locale of en_UK is requested, matches will be searched for in en_UK
-	 * and en before trying the default locale configured in FLOW3.
+	 * and en before trying the default locale configured in Flow.
 	 *
 	 * If this is given an order of [dk, za, fr_CA] a request for en_UK will
 	 * be looked up in en_UK, en, dk, za, fr_CA, fr before trying the default

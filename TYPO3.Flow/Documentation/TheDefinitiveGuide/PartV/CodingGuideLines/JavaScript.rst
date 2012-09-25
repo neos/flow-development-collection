@@ -3,7 +3,7 @@ JavaScript Coding Guidelines
 ============================
 
 Here, you will find an explanation of the JavaScript Coding Guidelines we use.
-Generally, we strive to follow the FLOW3 Coding Guidelines as closely as
+Generally, we strive to follow the TYPO3 Flow Coding Guidelines as closely as
 possible, with exceptions which make sense in the JavaScript context.
 
 This guideline explains mostly how we want JavaScript code to be formatted;
@@ -16,12 +16,12 @@ Development" book.
 Naming Conventions
 ==================
 
-- one class per file, with the same naming convention as FLOW3.
+- one class per file, with the same naming convention as TYPO3 Flow.
 - This means all classes are built like this:
   ``<PackageKey>.<SubNamespace>.<ClassName>``, and this class is
   implemented in a JavaScript file located at
   ``<Package>/.../JavaScript/<SubNamespace>/<ClassName>.js``
-- Right now, the base directory for JavaScript in FLOW3 packages
+- Right now, the base directory for JavaScript in TYPO3 Flow packages
   ``Resources/Public/JavaScript``, but this might still change.
 - We suggest that the base directory for JavaScript files is *JavaScript*.
 - Files have to be encoded in UTF-8.
@@ -107,21 +107,12 @@ Example of a prototype class definition::
 	Ext.ns("TYPO3.TYPO3.Content");
 
 	/*                                                                        *
-	 * This script belongs to the FLOW3 package "TYPO3".                      *
+	 * This script belongs to the TYPO3 Flow package "TYPO3".                 *
 	 *                                                                        *
 	 * It is free software; you can redistribute it and/or modify it under    *
 	 * the terms of the GNU General Public License as published by the Free   *
 	 * Software Foundation, either version 3 of the License, or (at your      *
 	 * option) any later version.                                             *
-	 *                                                                        *
-	 * This script is distributed in the hope that it will be useful, but     *
-	 * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
-	 * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
-	 * Public License for more details.                                       *
-	 *                                                                        *
-	 * You should have received a copy of the GNU General Public License      *
-	 * along with the script.                                                 *
-	 * If not, see http://www.gnu.org/licenses/gpl.html                       *
 	 *                                                                        *
 	 * The TYPO3 project - inspiring people to share!                         *
 	 *                                                                        */
@@ -177,21 +168,12 @@ prototype class definition, we will only highlight the differences.
 	Ext.ns("TYPO3.TYPO3.Core");
 
 	/*                                                                        *
-	 * This script belongs to the FLOW3 package "TYPO3".                      *
+	 * This script belongs to the TYPO3 Flow package "TYPO3".                 *
 	 *                                                                        *
 	 * It is free software; you can redistribute it and/or modify it under    *
 	 * the terms of the GNU General Public License as published by the Free   *
 	 * Software Foundation, either version 3 of the License, or (at your      *
 	 * option) any later version.                                             *
-	 *                                                                        *
-	 * This script is distributed in the hope that it will be useful, but     *
-	 * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
-	 * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
-	 * Public License for more details.                                       *
-	 *                                                                        *
-	 * You should have received a copy of the GNU General Public License      *
-	 * along with the script.                                                 *
-	 * If not, see http://www.gnu.org/licenses/gpl.html                       *
 	 *                                                                        *
 	 * The TYPO3 project - inspiring people to share!                         *
 	 *                                                                        */
@@ -296,7 +278,7 @@ Methods should be documented the following way, with a blank line between method
 	}
 	...
 
-Contrary to what is defined in the FLOW3 PHP Coding Guidelines, methods which are public
+Contrary to what is defined in the TYPO3 Flow PHP Coding Guidelines, methods which are public
 **automatically belong to the public API**, without an ``@api`` annotation. Contrary,
 methods which do **not belong to the public API** need to begin with an underscore and
 have the ``@private`` annotation.
@@ -389,7 +371,7 @@ Code Style
 	}
 
 - Whitespace around control structures like ``if``, ``else``, ... should be inserted like
-  in the FLOW3 CGLs::
+  in the TYPO3 Flow CGLs::
 
 	if (myExpression) {
 		// if part

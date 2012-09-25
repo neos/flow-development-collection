@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Log\Backend;
+namespace TYPO3\Flow\Log\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Log\Backend;
  *
  * @api
  */
-class ConsoleBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
+class ConsoleBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 
 	/**
 	 * An array of severity labels, indexed by their integer constant
@@ -41,7 +41,7 @@ class ConsoleBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 * the log file or opening a database connection.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException
+	 * @throws \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException
 	 * @api
 	 */
 	public function open() {
@@ -57,7 +57,7 @@ class ConsoleBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 		);
 
 		$this->streamHandle = fopen('php://' . $this->streamName, 'w');
-		if (!is_resource($this->streamHandle)) throw new \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open stream "' . $this->streamName . '" for write access.', 1310986609);
+		if (!is_resource($this->streamHandle)) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open stream "' . $this->streamName . '" for write access.', 1310986609);
 	}
 
 	/**

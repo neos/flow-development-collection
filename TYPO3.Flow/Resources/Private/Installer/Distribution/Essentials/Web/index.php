@@ -1,7 +1,7 @@
 <?php
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -10,9 +10,9 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-$rootPath = isset($_SERVER['FLOW3_ROOTPATH']) ? $_SERVER['FLOW3_ROOTPATH'] : FALSE;
-if ($rootPath === FALSE && isset($_SERVER['REDIRECT_FLOW3_ROOTPATH'])) {
-	$rootPath = $_SERVER['REDIRECT_FLOW3_ROOTPATH'];
+$rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : FALSE;
+if ($rootPath === FALSE && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
+	$rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
 }
 if ($rootPath === FALSE) {
 	$rootPath = dirname(__FILE__) . '/../';
@@ -20,10 +20,10 @@ if ($rootPath === FALSE) {
 	$rootPath .= '/';
 }
 
-require($rootPath . 'Packages/Framework/TYPO3.FLOW3/Classes/TYPO3/FLOW3/Core/Bootstrap.php');
+require($rootPath . 'Packages/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Core/Bootstrap.php');
 
-$context = getenv('FLOW3_CONTEXT') ?: (getenv('REDIRECT_FLOW3_CONTEXT') ?: 'Development');
-$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap($context);
+$context = getenv('FLOW_CONTEXT') ?: (getenv('REDIRECT_FLOW_CONTEXT') ?: 'Development');
+$bootstrap = new \TYPO3\Flow\Core\Bootstrap($context);
 $bootstrap->run();
 
 ?>

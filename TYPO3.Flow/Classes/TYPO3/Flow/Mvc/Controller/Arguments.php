@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc\Controller;
+namespace TYPO3\Flow\Mvc\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -36,7 +36,7 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function offsetSet($offset, $value) {
-		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\FLOW3\Mvc\Controller\Argument objects.', 1187953786);
+		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\Flow\Mvc\Controller\Argument objects.', 1187953786);
 
 		$argumentName = $value->getName();
 		parent::offsetSet($argumentName, $value);
@@ -52,7 +52,7 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function append($value) {
-		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\FLOW3\Mvc\Controller\Argument objects.', 1187953786);
+		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\Flow\Mvc\Controller\Argument objects.', 1187953786);
 		$this->offsetSet(NULL, $value);
 	}
 
@@ -89,13 +89,13 @@ class Arguments extends \ArrayObject {
 	 * Returns the value at the specified index
 	 *
 	 * @param mixed $offset Offset
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument The requested argument object
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchArgumentException if the argument does not exist
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument The requested argument object
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException if the argument does not exist
 	 * @api
 	 */
 	public function offsetGet($offset) {
 		$translatedOffset = $this->translateToLongArgumentName($offset);
-		if ($translatedOffset === '') throw new \TYPO3\FLOW3\Mvc\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
+		if ($translatedOffset === '') throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
 		return parent::offsetGet($translatedOffset);
 	}
 
@@ -108,7 +108,7 @@ class Arguments extends \ArrayObject {
 	 * @param string $dataType Name of one of the built-in data types
 	 * @param boolean $isRequired TRUE if this argument should be marked as required
 	 * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==FALSE
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument The new argument
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument The new argument
 	 * @api
 	 */
 	public function addNewArgument($name, $dataType = 'string', $isRequired = TRUE, $defaultValue = NULL) {
@@ -127,11 +127,11 @@ class Arguments extends \ArrayObject {
 	 *
 	 * Note that the argument will be cloned, not referenced.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\Controller\Argument $argument The argument to add
+	 * @param \TYPO3\Flow\Mvc\Controller\Argument $argument The argument to add
 	 * @return void
 	 * @api
 	 */
-	public function addArgument(\TYPO3\FLOW3\Mvc\Controller\Argument $argument) {
+	public function addArgument(\TYPO3\Flow\Mvc\Controller\Argument $argument) {
 		$this->offsetSet(NULL, $argument);
 	}
 
@@ -139,8 +139,8 @@ class Arguments extends \ArrayObject {
 	 * Returns an argument specified by name
 	 *
 	 * @param string $argumentName Name of the argument to retrieve
-	 * @return \TYPO3\FLOW3\Mvc\Controller\Argument
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchArgumentException
+	 * @return \TYPO3\Flow\Mvc\Controller\Argument
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException
 	 * @api
 	 */
 	public function getArgument($argumentName) {
@@ -239,10 +239,10 @@ class Arguments extends \ArrayObject {
 	/**
 	 * Get all property mapping / validation errors
 	 *
-	 * @return \TYPO3\FLOW3\Error\Result
+	 * @return \TYPO3\Flow\Error\Result
 	 */
 	public function getValidationResults() {
-		$results = new \TYPO3\FLOW3\Error\Result();
+		$results = new \TYPO3\Flow\Error\Result();
 
 		foreach ($this as $argument) {
 			$argumentValidationResults = $argument->getValidationResults();

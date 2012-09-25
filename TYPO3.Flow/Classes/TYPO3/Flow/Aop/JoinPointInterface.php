@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop;
+namespace TYPO3\Flow\Aop;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -20,7 +20,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyInterface
+	 * @return \TYPO3\Flow\Object\Proxy\ProxyInterface
 	 */
 	public function getProxy();
 
@@ -74,7 +74,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return \TYPO3\FLOW3\Aop\Advice\AdviceChain The advice chain
+	 * @return \TYPO3\Flow\Aop\Advice\AdviceChain The advice chain
 	 */
 	public function getAdviceChain();
 

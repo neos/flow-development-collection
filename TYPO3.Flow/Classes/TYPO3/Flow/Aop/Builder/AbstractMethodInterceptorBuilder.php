@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Builder;
+namespace TYPO3\Flow\Aop\Builder;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -19,30 +19,30 @@ namespace TYPO3\FLOW3\Aop\Builder;
 abstract class AbstractMethodInterceptorBuilder {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\Proxy\Compiler
+	 * @var \TYPO3\Flow\Object\Proxy\Compiler
 	 */
 	protected $compiler;
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\Proxy\Compiler $compiler
+	 * @param \TYPO3\Flow\Object\Proxy\Compiler $compiler
 	 * @return void
 	 */
-	public function injectCompiler(\TYPO3\FLOW3\Object\Proxy\Compiler $compiler) {
+	public function injectCompiler(\TYPO3\Flow\Object\Proxy\Compiler $compiler) {
 		$this->compiler = $compiler;
 	}
 
@@ -134,7 +134,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		if ($methodParametersCount > 0) {
 			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
 				$methodParametersCount--;
-				$parametersCode .= '$this->FLOW3_Aop_Proxy_originalConstructorArguments[\'' . $methodParameterName . '\']' . ($methodParametersCount > 0 ? ', ' : '');
+				$parametersCode .= '$this->Flow_Aop_Proxy_originalConstructorArguments[\'' . $methodParameterName . '\']' . ($methodParametersCount > 0 ? ', ' : '');
 			}
 		}
 		return $parametersCode;
@@ -152,16 +152,16 @@ abstract class AbstractMethodInterceptorBuilder {
 	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName, $declaringClassName) {
 		$advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
 			$advicesCode .= "\n\t\t\$result = NULL;\n\t\t\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";
 		}
 
 		$methodArgumentsCode = '$methodArguments';
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\BeforeAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\BeforeAdvice'])) {
 			$advicesCode .= '
-					$advices = $this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\FLOW3\Aop\Advice\BeforeAdvice\'];
-					$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode.');
+					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\BeforeAdvice\'];
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode.');
 					foreach ($advices as $advice) {
 						$advice->invoke($joinPoint);
 					}
@@ -169,27 +169,27 @@ abstract class AbstractMethodInterceptorBuilder {
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AroundAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AroundAdvice'])) {
 			$advicesCode .= '
-					$adviceChains = $this->FLOW3_Aop_Proxy_getAdviceChains(\'' . $methodName . '\');
-					$adviceChain = $adviceChains[\'TYPO3\FLOW3\Aop\Advice\AroundAdvice\'];
+					$adviceChains = $this->Flow_Aop_Proxy_getAdviceChains(\'' . $methodName . '\');
+					$adviceChain = $adviceChains[\'TYPO3\Flow\Aop\Advice\AroundAdvice\'];
 					$adviceChain->rewind();
-					$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', $adviceChain);
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', $adviceChain);
 					$result = $adviceChain->proceed($joinPoint);
 ';
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		} else {
 			$advicesCode .= '
-					$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode.');
-					$result = $this->FLOW3_Aop_Proxy_invokeJoinPoint($joinPoint);
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode.');
+					$result = $this->Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
 ';
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterReturningAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterReturningAdvice'])) {
 			$advicesCode .= '
-					$advices = $this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\FLOW3\Aop\Advice\AfterReturningAdvice\'];
-					$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, $result);
+					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterReturningAdvice\'];
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, $result);
 					foreach ($advices as $advice) {
 						$advice->invoke($joinPoint);
 					}
@@ -197,10 +197,10 @@ abstract class AbstractMethodInterceptorBuilder {
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
 			$advicesCode .= '
-					$advices = $this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\FLOW3\Aop\Advice\AfterAdvice\'];
-					$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, $result);
+					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterAdvice\'];
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, $result);
 					$afterAdviceInvoked = TRUE;
 					foreach ($advices as $advice) {
 						$advice->invoke($joinPoint);
@@ -209,16 +209,16 @@ abstract class AbstractMethodInterceptorBuilder {
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
 			$advicesCode .= '
 			} catch (\Exception $exception) {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterThrowingAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice'])) {
 			$advicesCode .= '
-				$advices = $this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\FLOW3\Aop\Advice\AfterThrowingAdvice\'];
-				$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, NULL, $exception);
+				$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterThrowingAdvice\'];
+				$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, NULL, $exception);
 				foreach ($advices as $advice) {
 					$advice->invoke($joinPoint);
 				}
@@ -226,11 +226,11 @@ abstract class AbstractMethodInterceptorBuilder {
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
 			$advicesCode .= '
 				if (!$afterAdviceInvoked) {
-					$advices = $this->FLOW3_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\FLOW3\Aop\Advice\AfterAdvice\'];
-					$joinPoint = new \TYPO3\FLOW3\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, NULL, $exception);
+					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\AfterAdvice\'];
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ', NULL, NULL, $exception);
 					foreach ($advices as $advice) {
 						$advice->invoke($joinPoint);
 					}
@@ -238,7 +238,7 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
-		if (isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\FLOW3\Aop\Advice\AfterAdvice'])) {
+		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\AfterAdvice'])) {
 			$advicesCode .= '
 				throw $exception;
 		}

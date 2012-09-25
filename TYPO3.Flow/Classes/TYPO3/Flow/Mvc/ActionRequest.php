@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc;
+namespace TYPO3\Flow\Mvc;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,9 +11,9 @@ namespace TYPO3\FLOW3\Mvc;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Http\Uri;
-use TYPO3\FLOW3\Http\Request as HttpRequest;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http\Request as HttpRequest;
 
 /**
  * Represents an internal request targeted to a controller action
@@ -23,14 +23,14 @@ use TYPO3\FLOW3\Http\Request as HttpRequest;
 class ActionRequest implements RequestInterface {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Security\Cryptography\HashService
+	 * @Flow\Inject
 	 */
 	protected $hashService;
 
@@ -114,7 +114,7 @@ class ActionRequest implements RequestInterface {
 
 	/**
 	 * Cached pointer to a request referring to this one (if any)
-	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @var \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	protected $referringRequest;
 
@@ -145,7 +145,7 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Returns the top level request: the HTTP request object
 	 *
-	 * @return \TYPO3\FLOW3\Http\Request
+	 * @return \TYPO3\Flow\Http\Request
 	 * @api
 	 */
 	public function getHttpRequest() {
@@ -158,7 +158,7 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Returns the top level ActionRequest: the one just below the HTTP request
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 * @api
 	 */
 	public function getMainRequest() {
@@ -181,9 +181,9 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * The referring request is not set or determined automatically but must be
 	 * explicitly set through the corresponding internal argument "__referrer".
-	 * This mechanism is used by FLOW3's form and validation mechanisms.
+	 * This mechanism is used by Flow's form and validation mechanisms.
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest the referring request, or NULL if no referrer found
+	 * @return \TYPO3\Flow\Mvc\ActionRequest the referring request, or NULL if no referrer found
 	 */
 	public function getReferringRequest() {
 		if ($this->referringRequest !== NULL) {
@@ -205,7 +205,7 @@ class ActionRequest implements RequestInterface {
 				unset($referrerArray['arguments']);
 			}
 
-			$referringRequest->setArguments(\TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
+			$referringRequest->setArguments(\TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
 			return $referringRequest;
 		} else {
 			$this->referringRequest = $this->internalArguments['__referrer'];
@@ -265,14 +265,14 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param string $unknownCasedControllerObjectName The fully qualified controller object name
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
+	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
 	 * @api
 	 */
 	public function setControllerObjectName($unknownCasedControllerObjectName) {
 		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
 
 		if ($controllerObjectName === FALSE) {
-			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
+			throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
 		}
 
 		$this->controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
@@ -348,14 +348,14 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param string $controllerName Name of the controller
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException
 	 */
 	public function setControllerName($controllerName) {
 		if (!is_string($controllerName)) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
 		}
 		if (strpos($controllerName, '_') !== FALSE) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
 		}
 		$this->controllerName = $controllerName;
 	}
@@ -387,17 +387,17 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param string $actionName Name of the action to execute by the controller
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException if the action name is not valid
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidActionNameException if the action name is not valid
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
 		}
 		if ($actionName === '') {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
 		}
 		if ($actionName[0] !== strtolower($actionName[0])) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		}
 		$this->controllerActionName = $actionName;
 	}
@@ -429,12 +429,12 @@ class ActionRequest implements RequestInterface {
 	 * @param string $argumentName Name of the argument to set
 	 * @param mixed $value The new value
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException if the given argument name is no string
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException if the given argument value is an object
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException if the given argument name is no string
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException if the given argument value is an object
 	 */
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || strlen($argumentName) === 0) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
 		}
 
 		if (substr($argumentName, 0, 2) === '__') {
@@ -443,7 +443,7 @@ class ActionRequest implements RequestInterface {
 		}
 
 		if (is_object($value)) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
 		}
 
 		if (substr($argumentName, 0, 2) === '--') {
@@ -478,11 +478,11 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param string $argumentName Name of the argument
 	 * @return string Value of the argument
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchArgumentException if such an argument does not exist
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException if such an argument does not exist
 	 * @api
 	 */
 	public function getArgument($argumentName) {
-		if (!isset($this->arguments[$argumentName])) throw new \TYPO3\FLOW3\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
+		if (!isset($this->arguments[$argumentName])) throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
 		return $this->arguments[$argumentName];
 	}
 
@@ -505,8 +505,8 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentNameException if an argument name is no string
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException if an argument value is an object
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException if an argument name is no string
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException if an argument value is an object
 	 */
 	public function setArguments(array $arguments) {
 		$this->arguments = array();
@@ -552,7 +552,7 @@ class ActionRequest implements RequestInterface {
 	 * Sets a namespace for the arguments of this request.
 	 *
 	 * This doesn't affect the actual behavior of argument handling within this
-	 * classes' methods but is used in other parts of FLOW3 and its libraries to
+	 * classes' methods but is used in other parts of Flow and its libraries to
 	 * render argument names which don't conflict with each other.
 	 *
 	 * @param string $namespace Argument namespace
@@ -606,15 +606,15 @@ class ActionRequest implements RequestInterface {
 	 * The action request is not proxyable, so the signal is dispatched manually here.
 	 * The safeguard allows unit tests without the dispatcher dependency.
 	 *
-	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	protected function emitRequestDispatched($request) {
 		if ($this->objectManager !== NULL) {
-			$dispatcher = $this->objectManager->get('TYPO3\FLOW3\SignalSlot\Dispatcher');
+			$dispatcher = $this->objectManager->get('TYPO3\Flow\SignalSlot\Dispatcher');
 			if ($dispatcher !== NULL) {
-				$dispatcher->dispatch('TYPO3\FLOW3\Mvc\ActionRequest', 'requestDispatched', array($request));
+				$dispatcher->dispatch('TYPO3\Flow\Mvc\ActionRequest', 'requestDispatched', array($request));
 			}
 		}
 	}

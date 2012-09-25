@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Proxy;
+namespace TYPO3\Flow\Object\Proxy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,17 +11,17 @@ namespace TYPO3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Cache\CacheManager;
+use TYPO3\Flow\Cache\CacheManager;
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
  * Aspect-Oriented Programming
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Proxy(false)
+ * @Flow\Scope("singleton")
+ * @Flow\Proxy(false)
  */
 class Compiler {
 
@@ -36,17 +36,17 @@ class Compiler {
 	protected $settings = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\CompileTimeObjectManager
+	 * @var \TYPO3\Flow\Object\CompileTimeObjectManager
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\PhpFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
 	 */
 	protected $classesCache;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -56,13 +56,13 @@ class Compiler {
 	protected $proxyClasses = array();
 
 	/**
-	 * Hardcoded list of FLOW3 sub packages (first 15 characters) which must be immune proxying for security, technical or conceptual reasons.
+	 * Hardcoded list of Flow sub packages (first 15 characters) which must be immune proxying for security, technical or conceptual reasons.
 	 * @var array
 	 */
-	protected $blacklistedSubPackages = array('TYPO3\FLOW3\Aop', 'TYPO3\FLOW3\Con', 'TYPO3\FLOW3\Cor', 'TYPO3\FLOW3\Obj', 'TYPO3\FLOW3\Pac', 'TYPO3\FLOW3\Ref', 'TYPO3\FLOW3\Uti');
+	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop', 'TYPO3\Flow\Con', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti');
 
 	/**
-	 * Injects the FLOW3 settings
+	 * Injects the Flow settings
 	 *
 	 * @param array $settings The settings
 	 * @return void
@@ -72,29 +72,29 @@ class Compiler {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
+	 * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
+	public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the cache for storing the renamed original classes and proxy classes
 	 *
-	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
+	 * @param \TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
-	 * @FLOW3\Autowiring(false)
+	 * @Flow\Autowiring(false)
 	 */
-	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
+	public function injectClassesCache(\TYPO3\Flow\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -107,10 +107,10 @@ class Compiler {
 	 * If the class is not proxable, FALSE will be returned
 	 *
 	 * @param string $fullClassName Name of the original class
-	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyClass|boolean
+	 * @return \TYPO3\Flow\Object\Proxy\ProxyClass|boolean
 	 */
 	public function getProxyClass($fullClassName) {
-		if (interface_exists($fullClassName) || in_array('TYPO3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
+		if (interface_exists($fullClassName) || in_array('TYPO3\Flow\Tests\BaseTestCase', class_parents($fullClassName))) {
 			return FALSE;
 		}
 
@@ -123,7 +123,7 @@ class Compiler {
 			return FALSE;
 		}
 
-		$proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, 'TYPO3\FLOW3\Annotations\Proxy');
+		$proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, 'TYPO3\Flow\Annotations\Proxy');
 		if ($proxyAnnotation !== NULL && $proxyAnnotation->enabled === FALSE) {
 			return FALSE;
 		}

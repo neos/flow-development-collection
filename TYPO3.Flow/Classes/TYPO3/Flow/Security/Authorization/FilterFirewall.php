@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authorization;
+namespace TYPO3\Flow\Security\Authorization;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,27 +11,27 @@ namespace TYPO3\FLOW3\Security\Authorization;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Default Firewall which analyzes the request with a RequestFilter chain.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInterface {
+class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager = NULL;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\RequestPatternResolver
+	 * @var \TYPO3\Flow\Security\RequestPatternResolver
 	 */
 	protected $requestPatternResolver = NULL;
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Authorization\InterceptorResolver
+	 * @var \TYPO3\Flow\Security\Authorization\InterceptorResolver
 	 */
 	protected $interceptorResolver = NULL;
 
@@ -42,7 +42,7 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 
 	/**
 	 * If set to TRUE the firewall will reject any request except the ones explicitly
-	 * whitelisted by a \TYPO3\FLOW3\Security\Authorization\AccessGrantInterceptor
+	 * whitelisted by a \TYPO3\Flow\Security\Authorization\AccessGrantInterceptor
 	 * @var boolean
 	 */
 	protected $rejectAll = FALSE;
@@ -50,13 +50,13 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	/**
 	 * Constructor.
 	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
-	 * @param \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
-	 * @param \TYPO3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param \TYPO3\Flow\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
 	 */
-	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager,
-			\TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
-			\TYPO3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver) {
+	public function __construct(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager,
+			\TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver,
+			\TYPO3\Flow\Security\Authorization\InterceptorResolver $interceptorResolver) {
 
 		$this->objectManager = $objectManager;
 		$this->requestPatternResolver = $requestPatternResolver;
@@ -78,16 +78,16 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $request The request to be analyzed
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $request The request to be analyzed
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException if the
+	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException if the
 	 */
-	public function blockIllegalRequests(\TYPO3\FLOW3\Mvc\ActionRequest $request) {
+	public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request) {
 		$filterMatched = FALSE;
 		foreach ($this->filters as $filter) {
 			if ($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
-		if ($this->rejectAll && !$filterMatched) throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
+		if ($this->rejectAll && !$filterMatched) throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
 	}
 
 	/**
@@ -102,7 +102,7 @@ class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInte
 			$requestPattern->setPattern($singleFilterSettings['patternValue']);
 			$interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
 
-			$this->filters[] = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\RequestFilter', $requestPattern, $interceptor);
+			$this->filters[] = $this->objectManager->get('TYPO3\Flow\Security\Authorization\RequestFilter', $requestPattern, $interceptor);
 		}
 	}
 }

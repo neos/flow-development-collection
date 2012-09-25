@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authorization\Voter;
+namespace TYPO3\Flow\Security\Authorization\Voter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,36 +11,36 @@ namespace TYPO3\FLOW3\Security\Authorization\Voter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An access decision voter, that always grants access for specific objects.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class AccessDeny implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
+class AccessDeny implements \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface {
 
 	/**
 	 * Votes to deny access, if the given object is one of the supported types
 	 *
-	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer VOTE_DENY
-	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function voteForJoinPoint(\TYPO3\Flow\Security\Context $securityContext, \TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 
 	}
 
 	/**
 	 * Votes to deny access, if the resource exists
 	 *
-	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
+	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
 	 * @param string $resource The resource to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForResource(\TYPO3\FLOW3\Security\Context $securityContext, $resource) {
+	public function voteForResource(\TYPO3\Flow\Security\Context $securityContext, $resource) {
 
 	}
 }

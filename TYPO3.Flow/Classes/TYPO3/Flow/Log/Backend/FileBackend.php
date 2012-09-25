@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Log\Backend;
+namespace TYPO3\Flow\Log\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ namespace TYPO3\FLOW3\Log\Backend;
  *
  * @api
  */
-class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
+class FileBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 
 	/**
 	 * An array of severity labels, indexed by their integer constant
@@ -123,7 +123,7 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 * the log file or opening a database connection.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException
+	 * @throws \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException
 	 * @api
 	 */
 	public function open() {
@@ -147,12 +147,12 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 		} else {
 			$logPath = dirname($this->logFileUrl);
 			if (!is_dir($logPath) && !is_link($logPath)) {
-				if ($this->createParentDirectories === FALSE) throw new \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
-				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($logPath);
+				if ($this->createParentDirectories === FALSE) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
+				\TYPO3\Flow\Utility\Files::createDirectoryRecursively($logPath);
 			}
 
 			$this->fileHandle = fopen($this->logFileUrl, 'ab');
-			if ($this->fileHandle === FALSE) throw new \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
+			if ($this->fileHandle === FALSE) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
 
 			$streamMeta = stream_get_meta_data($this->fileHandle);
 			if ($streamMeta['wrapper_type'] === 'plainfile') {
@@ -161,7 +161,7 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 				$this->fileHandle = fopen($this->logFileUrl, 'ab');
 			}
 		}
-		if ($this->fileHandle === FALSE) throw new \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
+		if ($this->fileHandle === FALSE) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
 	}
 
 	/**

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\Flow\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,9 +17,9 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the regular expression validator
  *
  */
-class RegularExpressionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class RegularExpressionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\RegularExpressionValidator';
+	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\RegularExpressionValidator';
 
 	/**
 	 * @test
@@ -54,7 +54,7 @@ class RegularExpressionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\
 		$this->validatorOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 		$subject = 'some subject that will not match';
 		$errors = $this->validator->validate($subject)->getErrors();
-		$this->assertEquals(array(new \TYPO3\FLOW3\Validation\Error('The given subject did not match the pattern. Got: %1$s', 1221565130, array($subject))), $errors);
+		$this->assertEquals(array(new \TYPO3\Flow\Validation\Error('The given subject did not match the pattern. Got: %1$s', 1221565130, array($subject))), $errors);
 	}
 }
 

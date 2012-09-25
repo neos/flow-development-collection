@@ -4,7 +4,7 @@ Object-Oriented Programming
 
 .. sectionauthor:: Patrick Lobacher
 
-Object-oriented programming is a Programming Paradigm, applied in FLOW3 and
+Object-oriented programming is a Programming Paradigm, applied in TYPO3 Flow and
 the Packages built on it. In this section we will give an overview of the
 basic concepts of Object Orientation.
 
@@ -126,7 +126,7 @@ word ``public`` further down.
 .. tip::
 	For methods and properties we use a notation called **lowerCamelCase**: The
 	first letter is lower case and all other parts are added without blank or
-	underscore in upper case. This is a convention used in FLOW3.
+	underscore in upper case. This is a convention used in TYPO3 Flow.
 
 We can also switch on the engine (``startEngine()``\ ), travel with the ship to
 the desired destination (``moveTo($location)``) and switch off the engine
@@ -548,8 +548,8 @@ cabins to 1000 and classification to ``NORMAL`` - and our ship would end up
 being inconsistent.
 
 .. tip::
-	In FLOW3 you'll find getter and setter methods all over. No property in
-	FLOW3 is set to ``public``.
+	In TYPO3 Flow you'll find getter and setter methods all over. No property in
+	TYPO3 Flow is set to ``public``.
 
 
 Static Methods and Properties
@@ -620,9 +620,9 @@ are connatural and solved in a similar way. Clever people thought about **design
 patterns** aiming to be a general solution to a problem. Each design pattern is
 so to speak a solution template for a specific problem. We by now have multiple
 design patterns that are successfully approved in practice and therefore have
-found there way in modern programming and especially FLOW3. In the following we
+found there way in modern programming and especially TYPO3 Flow. In the following we
 don't want to focus on concrete implementation of the design patterns, for this
-knowledge is not necessary for the usage of FLOW3. Nevertheless deeper knowledge
+knowledge is not necessary for the usage of TYPO3 Flow. Nevertheless deeper knowledge
 in design patterns in general is indispensable for modern programming style, so
 it might be fruitful for you to learn about them.
 
@@ -632,21 +632,21 @@ it might be fruitful for you to learn about them.
 	Schmidt, published by O'Reilly.
 
 From the big number of design patterns, we will have a closer look on two that
-are essential when programming with FLOW3: **Singleton** & **Prototype**.
+are essential when programming with TYPO3 Flow: **Singleton** & **Prototype**.
 
 Singleton
 ---------
 
 This design pattern makes sure, that only one instance of a class  can exist
-**at a time**. In FLOW3 you can mark a class as singleton by annotating it
-with ``@FLOW3\Scope("singleton")``. An example: our luxury liners are all constructed
+**at a time**. In TYPO3 Flow you can mark a class as singleton by annotating it
+with ``@Flow\Scope("singleton")``. An example: our luxury liners are all constructed
 in the same shipyard. So there is no sense in having more than one instance of
 the shipyard object:
 
 PHP Code::
 
 	/**
-	 * @FLOW3\Scope("singleton")
+	 * @Flow\Scope("singleton")
 	 */
 	class LuxuslinerShipyard {
 	   protected $numberOfShipsBuilt = 0;
@@ -676,7 +676,7 @@ Prototype
 Prototype is sort of the antagonist to Singleton. While for each class only one
 object is instantiated when using Singleton, it is explicitly allowed to have
 multiple instances when using Prototype. Each class annotated with
-``@FLOW3\Scope("prototype")`` is of type **Prototype**. Since this is the default
+``@Flow\Scope("prototype")`` is of type **Prototype**. Since this is the default
 scope, you can safely leave this one out.
 
 .. tip::
@@ -687,6 +687,6 @@ scope, you can safely leave this one out.
 	any difference: We invariably get back a new instance of a class.
 
 Now that we refreshed your knowledge of object oriented programming, we can
-take a look at the deeper concepts of FLOW3: Domain Driven Design,
+take a look at the deeper concepts of TYPO3 Flow: Domain Driven Design,
 Model View Controller and Test Driven Development. You'll spot the basics we
 just talked about in the following frequently.

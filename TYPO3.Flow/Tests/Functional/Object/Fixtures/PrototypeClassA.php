@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A class of scope prototype
  *
- * @FLOW3\Scope("prototype")
- * @FLOW3\Entity
+ * @Flow\Scope("prototype")
+ * @Flow\Entity
  */
 class PrototypeClassA implements PrototypeClassAishInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
 	 */
 	protected $singletonA;
 
@@ -32,15 +32,15 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	protected $someProperty;
 
 	/**
-	 * @param \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
+	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
 	 * @return void
 	 */
-	public function injectSingletonA(\TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA) {
+	public function injectSingletonA(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA) {
 		$this->singletonA = $singletonA;
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
+	 * @return \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA The singleton class A
 	 */
 	public function getSingletonA() {
 		return $this->singletonA;
@@ -49,7 +49,7 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	/**
 	 * @param string $someProperty The property value
 	 * @return void
-	 * @FLOW3\Session(autoStart=true)
+	 * @Flow\Session(autoStart=true)
 	 */
 	public function setSomeProperty($someProperty) {
 		$this->someProperty = $someProperty;

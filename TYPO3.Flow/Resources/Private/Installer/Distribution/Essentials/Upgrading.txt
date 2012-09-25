@@ -1,8 +1,8 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your FLOW3 1.1 based
-applications to FLOW3 1.2.
+This file contains instructions for upgrading your TYPO3 Flow 1.1 based
+applications to TYPO3 Flow 1.2.
 
 Session configuration changes
 -----------------------------

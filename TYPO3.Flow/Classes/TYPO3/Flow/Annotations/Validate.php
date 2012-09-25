@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Annotations;
+namespace TYPO3\Flow\Annotations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,7 +12,7 @@ namespace TYPO3\FLOW3\Annotations;
  *                                                                        */
 
 /**
- * Controls how a property or method argument will be validated by FLOW3.
+ * Controls how a property or method argument will be validated by Flow.
  *
  * @Annotation
  * @Target({"METHOD", "PROPERTY"})
@@ -20,7 +20,7 @@ namespace TYPO3\FLOW3\Annotations;
 final class Validate {
 
 	/**
-	 * The validator type, either a FQCN or a FLOW3 validator class name.
+	 * The validator type, either a FQCN or a Flow validator class name.
 	 * @var string
 	 */
 	public $type;

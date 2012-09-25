@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Aop\Pointcut;
+namespace TYPO3\Flow\Aop\Pointcut;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\FLOW3\Aop\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The pointcut defines the set of join points (ie. "situations") in which certain
@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * join points is defined by a poincut expression which is matched against class
  * and method signatures.
  *
- * @FLOW3\Proxy(false)
+ * @Flow\Proxy(false)
  */
 class Pointcut implements PointcutFilterInterface {
 
@@ -33,7 +33,7 @@ class Pointcut implements PointcutFilterInterface {
 
 	/**
 	 * The filter composite object, created from the pointcut expression
-	 * @var \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite
+	 * @var \TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite
 	 */
 	protected $pointcutFilterComposite;
 
@@ -65,11 +65,11 @@ class Pointcut implements PointcutFilterInterface {
 	 * The constructor
 	 *
 	 * @param string $pointcutExpression A pointcut expression which configures the pointcut
-	 * @param \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite
+	 * @param \TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite
 	 * @param string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
 	 * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
 	 */
-	public function __construct($pointcutExpression, \TYPO3\FLOW3\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite, $aspectClassName, $pointcutMethodName = NULL) {
+	public function __construct($pointcutExpression, \TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite, $aspectClassName, $pointcutMethodName = NULL) {
 		$this->pointcutExpression = $pointcutExpression;
 		$this->pointcutFilterComposite = $pointcutFilterComposite;
 		$this->aspectClassName = $aspectClassName;
@@ -85,13 +85,13 @@ class Pointcut implements PointcutFilterInterface {
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
-	 * @throws \TYPO3\FLOW3\Aop\Exception\CircularPointcutReferenceException if a circular pointcut reference was detected
+	 * @throws \TYPO3\Flow\Aop\Exception\CircularPointcutReferenceException if a circular pointcut reference was detected
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
 			$this->recursionLevel ++;
 			if ($this->recursionLevel > self::MAXIMUM_RECURSIONS) {
-				throw new \TYPO3\FLOW3\Aop\Exception\CircularPointcutReferenceException('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
+				throw new \TYPO3\Flow\Aop\Exception\CircularPointcutReferenceException('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
 			}
 		} else {
 			$this->pointcutQueryIdentifier = $pointcutQueryIdentifier;
@@ -159,10 +159,10 @@ class Pointcut implements PointcutFilterInterface {
 	/**
 	 * This method is used to optimize the matching process.
 	 *
-	 * @param \TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex
-	 * @return \TYPO3\FLOW3\Aop\Builder\ClassNameIndex
+	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex
 	 */
-	public function reduceTargetClassNames(\TYPO3\FLOW3\Aop\Builder\ClassNameIndex $classNameIndex) {
+	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex) {
 		return $this->pointcutFilterComposite->reduceTargetClassNames($classNameIndex);
 	}
 }

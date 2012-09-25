@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,30 +11,30 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A lazy result list that is returned by Query::execute()
  *
  * @api
  */
-class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
+class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 
 	/**
 	 * @var array
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $rows;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Doctrine\Query
+	 * @var \TYPO3\Flow\Persistence\Doctrine\Query
 	 */
 	protected $query;
 
 	/**
-	 * @param \TYPO3\FLOW3\Persistence\Doctrine\Query $query
+	 * @param \TYPO3\Flow\Persistence\Doctrine\Query $query
 	 */
-	public function __construct(\TYPO3\FLOW3\Persistence\Doctrine\Query $query) {
+	public function __construct(\TYPO3\Flow\Persistence\Doctrine\Query $query) {
 		$this->query = $query;
 	}
 
@@ -52,7 +52,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * Returns a clone of the query object
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\Flow\Persistence\Doctrine\Query
 	 * @api
 	 */
 	public function getQuery() {

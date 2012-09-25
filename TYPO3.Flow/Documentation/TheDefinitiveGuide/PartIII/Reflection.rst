@@ -16,10 +16,10 @@ Additionally it's possible to gain information about what arguments a method
 expects, and whether these are required or optional.
 
 
-Reflection in FLOW3
-===================
+Reflection in TYPO3 Flow
+========================
 
-FLOW3 provides a powerful extension to PHP's own basic reflection
+TYPO3 Flow provides a powerful extension to PHP's own basic reflection
 functionality, not only adding more capabilities, but also speeding up
 reflection massively. It makes heavy use of the annotations (tags) found in the
 documentation blocks, which is another important reason why you should exercise care
@@ -30,7 +30,7 @@ about a correct formatting and respecting some rules when applying these.
   A specific description about these DocComment formatting requirements is
   available in the `Coding Guidelines`.
 
-The reflection of FLOW3 is handled via the *Reflection Service* which can be
+The reflection of TYPO3 Flow is handled via the *Reflection Service* which can be
 injected as usual.
 
 *Example: defining and accessing simple reflection information* ::
@@ -81,7 +81,7 @@ injected as usual.
 
 
 In an application, after wiring $reflectionService with
-``\TYPO3\FLOW3\Reflection\ReflectionService`` via, for example, Dependency
+``\TYPO3\Flow\Reflection\ReflectionService`` via, for example, Dependency
 Injection, there are a couple of options available. The following two examples
 just should give a slight overview.
 
@@ -109,7 +109,7 @@ Custom annotation classes
 
 A powerful feature is the ability to introduce customized annotation classes;
 this achieves, for example, what across the framework often can be seen with
-the ``@FLOW3\…`` or ``@ORM\…`` annotations.
+the ``@Flow\…`` or ``@ORM\…`` annotations.
 
 
 Create an annotation class
@@ -210,8 +210,8 @@ itself! So complying with the walkthrough, the following approach is possible::
 
 It's even possible to collect all annotation classes of a particular class, done via
 ``reflectionService->getClassAnnotations('Magrathea\Erp\Domain\Model\CustomizedGoodsOrder');``
-which returns an array of annotations, in this case  ``TYPO3\FLOW3\Annotations\Entity``
+which returns an array of annotations, in this case  ``TYPO3\Flow\Annotations\Entity``
 and our ``Magrathea\Erp\Annotations\Reportable``.
 
 
-.. _Coding Guidelines:                   http://flow3.typo3.org/documentation/codingguidelines.html
+.. _Coding Guidelines:                   http://flow.typo3.org/documentation/codingguidelines.html

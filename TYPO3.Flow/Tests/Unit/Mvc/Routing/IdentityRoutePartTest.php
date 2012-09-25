@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing;
+namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,30 +15,30 @@ namespace TYPO3\FLOW3\Tests\Unit\Mvc\Routing;
  * Testcase for the MVC Web Routing IdentityRoutePart Class
  *
  */
-class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class IdentityRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\IdentityRoutePart
+	 * @var \TYPO3\Flow\Mvc\Routing\IdentityRoutePart
 	 */
 	protected $identityRoutePart;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $mockPersistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $mockReflectionService;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ClassSchema
+	 * @var \TYPO3\Flow\Reflection\ClassSchema
 	 */
 	protected $mockClassSchema;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Routing\ObjectPathMappingRepository
+	 * @var \TYPO3\Flow\Mvc\Routing\ObjectPathMappingRepository
 	 */
 	protected $mockObjectPathMappingRepository;
 
@@ -46,17 +46,17 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Sets up this test case
 	 */
 	public function setUp() {
-		$this->identityRoutePart = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\IdentityRoutePart', array('createPathSegmentForObject'));
+		$this->identityRoutePart = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\IdentityRoutePart', array('createPathSegmentForObject'));
 
-		$this->mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$this->identityRoutePart->_set('persistenceManager', $this->mockPersistenceManager);
 
-		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
-		$this->mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
+		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$this->mockClassSchema = $this->getMock('TYPO3\Flow\Reflection\ClassSchema', array(), array(), '', FALSE);
 		$this->mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->mockClassSchema));
 		$this->identityRoutePart->_set('reflectionService', $this->mockReflectionService);
 
-		$this->mockObjectPathMappingRepository = $this->getMock('TYPO3\FLOW3\Mvc\Routing\ObjectPathMappingRepository');
+		$this->mockObjectPathMappingRepository = $this->getMock('TYPO3\Flow\Mvc\Routing\ObjectPathMappingRepository');
 		$this->identityRoutePart->_set('objectPathMappingRepository', $this->mockObjectPathMappingRepository);
 	}
 
@@ -109,7 +109,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function matchValueSetsTheIdentifierOfTheObjectPathMappingAndReturnsTrueIfAMatchingObjectPathMappingWasFound() {
-		$mockObjectPathMapping = $this->getMock('TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping');
+		$mockObjectPathMapping = $this->getMock('TYPO3\Flow\Mvc\Routing\ObjectPathMapping');
 		$mockObjectPathMapping->expects($this->once())->method('getIdentifier')->will($this->returnValue('TheIdentifier'));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('SomeObjectType', 'SomeUriPattern', 'TheRoutePath')->will($this->returnValue($mockObjectPathMapping));
 		$this->identityRoutePart->setObjectType('SomeObjectType');
@@ -187,7 +187,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveValueAcceptsIdentityArrays() {
 		$value = array('__identity' => 'SomeIdentifier');
-		$mockObjectPathMapping = $this->getMock('TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping');
+		$mockObjectPathMapping = $this->getMock('TYPO3\Flow\Mvc\Routing\ObjectPathMapping');
 		$mockObjectPathMapping->expects($this->once())->method('getPathSegment')->will($this->returnValue('ThePathSegment'));
 		$this->mockPersistenceManager->expects($this->never())->method('getIdentifierByObject');
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'SomeIdentifier')->will($this->returnValue($mockObjectPathMapping));
@@ -211,7 +211,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveValueSetsTheValueToThePathSegmentOfTheObjectPathMappingAndReturnsTrueIfAMatchingObjectPathMappingWasFound() {
 		$object = new \stdClass();
-		$mockObjectPathMapping = $this->getMock('TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping');
+		$mockObjectPathMapping = $this->getMock('TYPO3\Flow\Mvc\Routing\ObjectPathMapping');
 		$mockObjectPathMapping->expects($this->once())->method('getPathSegment')->will($this->returnValue('ThePathSegment'));
 		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue($mockObjectPathMapping));
@@ -233,7 +233,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->identityRoutePart->expects($this->once())->method('createPathSegmentForObject')->with($object)->will($this->returnValue('The/Path/Segment'));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment')->will($this->returnValue(NULL));
 
-		$expectedObjectPathMapping = new \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping();
+		$expectedObjectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
 		$expectedObjectPathMapping->setObjectType('stdClass');
 		$expectedObjectPathMapping->setUriPattern('SomeUriPattern');
 		$expectedObjectPathMapping->setPathSegment('The/Path/Segment');
@@ -255,7 +255,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
-		$existingObjectPathMapping = new \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping();
+		$existingObjectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
 		$existingObjectPathMapping->setObjectType('stdClass');
 		$existingObjectPathMapping->setUriPattern('SomeUriPattern');
 		$existingObjectPathMapping->setPathSegment('The/Path/Segment');
@@ -266,7 +266,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectPathMappingRepository->expects($this->at(2))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment-1')->will($this->returnValue($existingObjectPathMapping));
 		$this->mockObjectPathMappingRepository->expects($this->at(3))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment-2')->will($this->returnValue(NULL));
 
-		$expectedObjectPathMapping = new \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping();
+		$expectedObjectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
 		$expectedObjectPathMapping->setObjectType('stdClass');
 		$expectedObjectPathMapping->setUriPattern('SomeUriPattern');
 		$expectedObjectPathMapping->setPathSegment('The/Path/Segment-2');
@@ -291,7 +291,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->identityRoutePart->expects($this->once())->method('createPathSegmentForObject')->with($object)->will($this->returnValue(''));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', '-1')->will($this->returnValue(NULL));
 
-		$expectedObjectPathMapping = new \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping();
+		$expectedObjectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
 		$expectedObjectPathMapping->setObjectType('stdClass');
 		$expectedObjectPathMapping->setUriPattern('SomeUriPattern');
 		$expectedObjectPathMapping->setPathSegment('-1');
@@ -307,14 +307,14 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\InfiniteLoopException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InfiniteLoopException
 	 */
 	public function resolveValueThrowsInfiniteLoopExceptionIfNoUniquePathSegmentCantBeFound() {
 		$object = new \stdClass();
 		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
-		$existingObjectPathMapping = new \TYPO3\FLOW3\Mvc\Routing\ObjectPathMapping();
+		$existingObjectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
 		$existingObjectPathMapping->setObjectType('stdClass');
 		$existingObjectPathMapping->setUriPattern('SomeUriPattern');
 		$existingObjectPathMapping->setPathSegment('The/Path/Segment');
@@ -332,7 +332,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createPathSegmentForObjectReturnsTheCleanedUpObjectIdentifierIfUriPatternIsEmpty() {
-		$identityRoutePart = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\IdentityRoutePart', array('dummy'));
+		$identityRoutePart = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\IdentityRoutePart', array('dummy'));
 		$identityRoutePart->_set('persistenceManager', $this->mockPersistenceManager);
 		$identityRoutePart->setUriPattern('');
 
@@ -378,7 +378,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function createPathSegmentForObjectTests($object, $uriPattern, $expectedResult) {
-		$identityRoutePart = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\IdentityRoutePart', array('dummy'));
+		$identityRoutePart = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\IdentityRoutePart', array('dummy'));
 		$identityRoutePart->setUriPattern($uriPattern);
 		$actualResult = $identityRoutePart->_call('createPathSegmentForObject', $object);
 		$this->assertSame($expectedResult, $actualResult);
@@ -386,10 +386,10 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Mvc\Exception\InvalidUriPatternException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidUriPatternException
 	 */
 	public function createPathSegmentForObjectThrowsInvalidUriPatterExceptionIfItSpecifiedPropertiesContainObjects() {
-		$identityRoutePart = $this->getAccessibleMock('TYPO3\FLOW3\Mvc\Routing\IdentityRoutePart', array('dummy'));
+		$identityRoutePart = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\IdentityRoutePart', array('dummy'));
 		$object = new \stdClass();
 		$object->objectProperty = new \stdClass();
 		$identityRoutePart->setUriPattern('{objectProperty}');

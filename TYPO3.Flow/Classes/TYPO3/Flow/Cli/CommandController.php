@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Cli;
+namespace TYPO3\Flow\Cli;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,31 +11,31 @@ namespace TYPO3\FLOW3\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Mvc\Controller\ControllerInterface;
-use TYPO3\FLOW3\Mvc\Controller\Arguments;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Mvc\Controller\ControllerInterface;
+use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A controller which processes requests from the command line
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class CommandController implements ControllerInterface {
 
 	const MAXIMUM_LINE_LENGTH = 79;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\Request
+	 * @var \TYPO3\Flow\Cli\Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cli\Response
+	 * @var \TYPO3\Flow\Cli\Response
 	 */
 	protected $response;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\Arguments
+	 * @var \TYPO3\Flow\Mvc\Controller\Arguments
 	 */
 	protected $arguments;
 
@@ -47,7 +47,7 @@ class CommandController implements ControllerInterface {
 	protected $commandMethodName = '';
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -62,25 +62,25 @@ class CommandController implements ControllerInterface {
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Processes a command line request.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\RequestInterface $request The request object
-	 * @param \TYPO3\FLOW3\Mvc\ResponseInterface $response The response, modified by this handler
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request object
+	 * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, modified by this handler
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
+	 * @throws \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
 	 * @api
 	 */
-	public function processRequest(\TYPO3\FLOW3\Mvc\RequestInterface $request, \TYPO3\FLOW3\Mvc\ResponseInterface $response) {
-		if (!$request instanceof \TYPO3\FLOW3\Cli\Request) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports command line requests – requests of type "' . get_class($request) . '" given.', 1300787096);
+	public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response) {
+		if (!$request instanceof \TYPO3\Flow\Cli\Request) {
+			throw new \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports command line requests – requests of type "' . get_class($request) . '" given.', 1300787096);
 		}
 
 		$this->request = $request;
@@ -100,12 +100,12 @@ class CommandController implements ControllerInterface {
 	 *       case insensitive regarding method names.
 	 *
 	 * @return string Method name of the current command
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException
+	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchCommandException
 	 */
 	protected function resolveCommandMethodName() {
 		$commandMethodName = $this->request->getControllerCommandName() . 'Command';
 		if (!is_callable(array($this, $commandMethodName))) {
-			throw new \TYPO3\FLOW3\Mvc\Exception\NoSuchCommandException('A command method "' . $commandMethodName . '()" does not exist in controller "' . get_class($this) . '".', 1300902143);
+			throw new \TYPO3\Flow\Mvc\Exception\NoSuchCommandException('A command method "' . $commandMethodName . '()" does not exist in controller "' . get_class($this) . '".', 1300902143);
 		}
 		return $commandMethodName;
 	}
@@ -115,7 +115,7 @@ class CommandController implements ControllerInterface {
 	 * method arguments found in the designated command method.
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException
+	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
 	 */
 	protected function initializeCommandMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->commandMethodName);
@@ -128,7 +128,7 @@ class CommandController implements ControllerInterface {
 				$dataType = 'array';
 			}
 			if ($dataType === NULL) {
-				throw new \TYPO3\FLOW3\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->commandMethodName . '() could not be detected.', 1306755296);
+				throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->commandMethodName . '() could not be detected.', 1306755296);
 			}
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
@@ -147,8 +147,8 @@ class CommandController implements ControllerInterface {
 			if ($this->request->hasArgument($argumentName)) {
 				$argument->setValue($this->request->getArgument($argumentName));
 			} elseif ($argument->isRequired()) {
-				$exception = new \TYPO3\FLOW3\Mvc\Exception\CommandException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
-				$this->forward('error', 'TYPO3\FLOW3\Command\HelpCommandController', array('exception' => $exception));
+				$exception = new \TYPO3\Flow\Mvc\Exception\CommandException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
+				$this->forward('error', 'TYPO3\Flow\Command\HelpCommandController', array('exception' => $exception));
 			}
 		}
 	}
@@ -163,7 +163,7 @@ class CommandController implements ControllerInterface {
 	 * @param string $controllerObjectName
 	 * @param array $arguments
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	protected function forward($commandName, $controllerObjectName = NULL, array $arguments = array()) {
 		$this->request->setDispatched(FALSE);
@@ -174,7 +174,7 @@ class CommandController implements ControllerInterface {
 		$this->request->setArguments($arguments);
 
 		$this->arguments->removeAll();
-		throw new \TYPO3\FLOW3\Mvc\Exception\StopActionException();
+		throw new \TYPO3\Flow\Mvc\Exception\StopActionException();
 	}
 
 	/**
@@ -202,15 +202,15 @@ class CommandController implements ControllerInterface {
 	}
 
 	/**
-	 * Returns the CLI FLOW3 command depending on the environment
+	 * Returns the CLI Flow command depending on the environment
 	 *
 	 * @return string
 	 */
-	public function getFlow3InvocationString() {
+	public function getFlowInvocationString() {
 		if (DIRECTORY_SEPARATOR === '/' || (isset($_SERVER['MSYSTEM']) && $_SERVER['MSYSTEM'] === 'MINGW32')) {
-			return './flow3';
+			return './flow';
 		} else {
-			return 'flow3.bat';
+			return 'flow.bat';
 		}
 	}
 
@@ -267,11 +267,11 @@ class CommandController implements ControllerInterface {
 	 *
 	 * @param integer $exitCode Exit code to return on exit
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	protected function quit($exitCode = 0) {
 		$this->response->setExitCode($exitCode);
-		throw new \TYPO3\FLOW3\Mvc\Exception\StopActionException();
+		throw new \TYPO3\Flow\Mvc\Exception\StopActionException();
 	}
 
 	/**

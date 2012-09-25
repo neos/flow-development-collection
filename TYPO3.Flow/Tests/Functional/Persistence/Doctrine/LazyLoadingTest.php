@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine;
+namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 
 /**
  * Testcase for proxy initialization within doctrine lazy loading
  */
-class LazyLoadingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -24,7 +24,7 @@ class LazyLoadingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
 	 */
 	protected $testEntityRepository;
 
@@ -33,10 +33,10 @@ class LazyLoadingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
-		$this->testEntityRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository');
+		$this->testEntityRepository = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository');
 	}
 
 	/**

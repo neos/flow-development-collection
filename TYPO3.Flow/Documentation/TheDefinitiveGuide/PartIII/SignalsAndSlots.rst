@@ -9,8 +9,8 @@ for easy implementation of the Observer pattern in software.
 
 A *signal*, which contains event information as it makes sense in the case at hand, can be
 emitted (sent) by any part of the code and is received by one or more *slots*, which can be
-any function in FLOW3. Almost no registration, deregistration or invocation code need be
-written, because FLOW3 automatically generates the needed infrastructure using AOP.
+any function in TYPO3 Flow. Almost no registration, deregistration or invocation code need be
+written, because TYPO3 Flow automatically generates the needed infrastructure using AOP.
 
 Defining and Using Signals
 ==========================
@@ -23,7 +23,7 @@ annotate it with a ``Signal`` annotation:
 	/**
 	 * @param Comment $comment
 	 * @return void
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 */
 	protected function emitCommentCreated(Comment $comment) {} 
 
@@ -89,7 +89,7 @@ slots, but also wiring any other signal to any other slot is possible. You shoul
 little careful when wiring your own or even other package's signals to slots in other
 packages, as the results could be non-obvious to someone using your package.
 
-When FLOW3 initializes, it runs the ``boot()`` method in a package's ``Package`` class. This
+When TYPO3 Flow initializes, it runs the ``boot()`` method in a package's ``Package`` class. This
 is the place to wire signals to slots as needed for your package:
 
 *Example: Wiring signals and slots together* ::
@@ -97,10 +97,10 @@ is the place to wire signals to slots as needed for your package:
 	/**
 	 * Boot the package. We wire some signals to slots here.
 	 *
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect(
 			'Some\Package\Controller\CommentController', 'commentCreated',

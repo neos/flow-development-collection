@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Monitor\ChangeDetectionStrategy;
+namespace TYPO3\Flow\Tests\Unit\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,15 +21,15 @@ use org\bovigo\vfs\vfsStreamWrapper;
  * Testcase for the Modification Time Change Detection Strategy
  *
  */
-class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ModificationTimeStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime
+	 * @var \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTime
 	 */
 	protected $strategy;
 
 	/**
-	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -38,9 +38,9 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		vfsStream::setup('testDirectory');
 
-		$this->cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$this->cache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 
-		$this->strategy = new \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
+		$this->strategy = new \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
 		$this->strategy->injectCache($this->cache);
 	}
 
@@ -51,7 +51,7 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$fileUrl = vfsStream::url('testDirectory') . '/test.txt';
 
 		$status = $this->strategy->getFileStatus($fileUrl);
-		$this->assertSame(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
+		$this->assertSame(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
 	}
 
 	/**
@@ -65,7 +65,7 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		clearstatcache();
 		$status = $this->strategy->getFileStatus($fileUrl);
 
-		$this->assertSame(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
+		$this->assertSame(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		file_put_contents($fileUrl, 'test data');
 
 		$status = $this->strategy->getFileStatus($fileUrl);
-		$this->assertSame(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
+		$this->assertSame(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
 	}
 
 	/**
@@ -90,7 +90,7 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		unlink($fileUrl);
 		$status = $this->strategy->getFileStatus($fileUrl);
 
-		$this->assertSame(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
+		$this->assertSame(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
 	}
 
 	/**
@@ -105,7 +105,7 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		clearstatcache();
 		$status = $this->strategy->getFileStatus($fileUrl);
 
-		$this->assertSame(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
+		$this->assertSame(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
 	}
 }
 ?>

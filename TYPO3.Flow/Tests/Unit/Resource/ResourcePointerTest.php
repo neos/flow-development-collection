@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Resource;
+namespace TYPO3\Flow\Tests\Unit\Resource;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,14 +15,14 @@ namespace TYPO3\FLOW3\Tests\Unit\Resource;
  * Testcase for the Resource Pointer class
  *
  */
-class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ResourcePointerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructThrowsExceptionOnFormallyInvalidHash() {
-		new \TYPO3\FLOW3\Resource\ResourcePointer('69e73da3ce0ad08c717b7b9f1c759182d64');
+		new \TYPO3\Flow\Resource\ResourcePointer('69e73da3ce0ad08c717b7b9f1c759182d64');
 	}
 
 	/**
@@ -30,7 +30,7 @@ class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getHashReturnsTheResourceHash() {
 		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
-		$resourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer($hash);
+		$resourcePointer = new \TYPO3\Flow\Resource\ResourcePointer($hash);
 		$this->assertSame($hash, $resourcePointer->getHash());
 	}
 
@@ -40,7 +40,7 @@ class ResourcePointerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function toStringReturnsTheResourceHashObject() {
 		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
 
-		$resourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer($hash);
+		$resourcePointer = new \TYPO3\Flow\Resource\ResourcePointer($hash);
 		$this->assertSame($hash, (string)$resourcePointer);
 	}
 }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Mvc;
+namespace TYPO3\Flow\Mvc;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -51,7 +51,7 @@ interface RequestInterface {
 	/**
 	 * Returns the top level Request: the one just below the HTTP request
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\RequestInterface
+	 * @return \TYPO3\Flow\Mvc\RequestInterface
 	 * @api
 	 */
 	public function getMainRequest();

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Log\Exception;
+namespace TYPO3\Flow\Log\Exception;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -16,7 +16,7 @@ namespace TYPO3\FLOW3\Log\Exception;
  *
  * @api
  */
-class NoSuchBackendException extends \TYPO3\FLOW3\Cache\Exception {
+class NoSuchBackendException extends \TYPO3\Flow\Cache\Exception {
 
 }
 ?>

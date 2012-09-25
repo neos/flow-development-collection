@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic;
+namespace TYPO3\Flow\Tests\Unit\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -20,16 +20,16 @@ require_once(__DIR__ . '/../Fixture/Model/CleanEntity.php');
  * Testcase for the Persistence Manager
  *
  */
-class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function initializeInitializesBackendWithBackendOptions() {
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('initialize')->with(array('Foo' => 'Bar'));
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectBackend($mockBackend);
 
 		$manager->injectSettings(array('persistence' => array('backendOptions' => array('Foo' => 'Bar'))));
@@ -40,13 +40,13 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function persistAllPassesAddedObjectsToBackend() {
-		$entity2 = new \TYPO3\FLOW3\Tests\Persistence\Fixture\Model\Entity2();
+		$entity2 = new \TYPO3\Flow\Tests\Persistence\Fixture\Model\Entity2();
 		$objectStorage = new \SplObjectStorage();
 		$objectStorage->attach($entity2);
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectBackend($mockBackend);
 		$manager->add($entity2);
 
@@ -57,13 +57,13 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function persistAllPassesRemovedObjectsToBackend() {
-		$entity2 = new \TYPO3\FLOW3\Tests\Persistence\Fixture\Model\Entity2();
+		$entity2 = new \TYPO3\Flow\Tests\Persistence\Fixture\Model\Entity2();
 		$objectStorage = new \SplObjectStorage();
 		$objectStorage->attach($entity2);
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('setDeletedEntities')->with($objectStorage);
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectBackend($mockBackend);
 		$manager->remove($entity2);
 
@@ -77,10 +77,10 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$fakeUuid = 'fakeUuid';
 		$object = new \stdClass();
 
-		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession = $this->getMock('TYPO3\Flow\Persistence\Generic\Session');
 		$mockSession->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue($fakeUuid));
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectPersistenceSession($mockSession);
 
 		$this->assertEquals($manager->getIdentifierByObject($object), $fakeUuid);
@@ -93,11 +93,11 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$fakeUuid = 'fakeUuid';
 		$object = new \stdClass();
 
-		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession = $this->getMock('TYPO3\Flow\Persistence\Generic\Session');
 		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(TRUE));
 		$mockSession->expects($this->once())->method('getObjectByIdentifier')->with($fakeUuid)->will($this->returnValue($object));
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectPersistenceSession($mockSession);
 
 		$this->assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
@@ -110,16 +110,16 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$fakeUuid = 'fakeUuid';
 		$object = new \stdClass();
 
-		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession = $this->getMock('TYPO3\Flow\Persistence\Generic\Session');
 		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
 
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(array()));
 
-		$mockDataMapper = $this->getMock('TYPO3\FLOW3\Persistence\Generic\DataMapper');
+		$mockDataMapper = $this->getMock('TYPO3\Flow\Persistence\Generic\DataMapper');
 		$mockDataMapper->expects($this->once())->method('mapToObject')->will($this->returnValue($object));
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectPersistenceSession($mockSession);
 		$manager->injectBackend($mockBackend);
 		$manager->injectDataMapper($mockDataMapper);
@@ -133,13 +133,13 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getObjectByIdentifierReturnsNullForUnknownObject() {
 		$fakeUuid = 'fakeUuid';
 
-		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession = $this->getMock('TYPO3\Flow\Persistence\Generic\Session');
 		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
 
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
 
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$manager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$manager->injectPersistenceSession($mockSession);
 		$manager->injectBackend($mockBackend);
 
@@ -151,7 +151,7 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function addActuallyAddsAnObjectToTheInternalObjectsArray() {
 		$someObject = new \stdClass();
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->add($someObject);
 
 		$this->assertAttributeContains($someObject, 'addedObjects', $persistenceManager);
@@ -165,7 +165,7 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$object2 = new \stdClass();
 		$object3 = new \stdClass();
 
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->add($object1);
 		$persistenceManager->add($object2);
 		$persistenceManager->add($object3);
@@ -185,7 +185,7 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$object2 = new \ArrayObject(array('val' => '2'));
 		$object3 = new \ArrayObject(array('val' => '3'));
 
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->add($object1);
 		$persistenceManager->add($object2);
 		$persistenceManager->add($object3);
@@ -208,7 +208,7 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function removeRetainsObjectForObjectsNotInCurrentSession() {
 		$object = new \ArrayObject(array('val' => '1'));
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->remove($object);
 
 		$this->assertAttributeContains($object, 'removedObjects', $persistenceManager);
@@ -225,15 +225,15 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function clearStateForgetsAboutNewObjects() {
-		$mockObject = $this->getMock('TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface');
-		$mockObject->FLOW3_Persistence_Identifier = 'abcdefg';
+		$mockObject = $this->getMock('TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface');
+		$mockObject->Persistence_Object_Identifier = 'abcdefg';
 
-		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession = $this->getMock('TYPO3\Flow\Persistence\Generic\Session');
 		$mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(FALSE));
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->any())->method('getObjectDataByIdentifier')->will($this->returnValue(FALSE));
 
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->injectPersistenceSession($mockSession);
 		$persistenceManager->injectBackend($mockBackend);
 
@@ -248,10 +248,10 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function tearDownWithBackendNotSupportingTearDownDoesNothing() {
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface');
 		$mockBackend->expects($this->never())->method('tearDown');
 
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->injectBackend($mockBackend);
 
 		$persistenceManager->tearDown();
@@ -261,11 +261,11 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function tearDownWithBackendSupportingTearDownDelegatesCallToBackend() {
-		$methods = array_merge(get_class_methods('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface'), array('tearDown'));
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface', $methods);
+		$methods = array_merge(get_class_methods('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface'), array('tearDown'));
+		$mockBackend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\BackendInterface', $methods);
 		$mockBackend->expects($this->once())->method('tearDown');
 
-		$persistenceManager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
+		$persistenceManager = new \TYPO3\Flow\Persistence\Generic\PersistenceManager();
 		$persistenceManager->injectBackend($mockBackend);
 
 		$persistenceManager->tearDown();

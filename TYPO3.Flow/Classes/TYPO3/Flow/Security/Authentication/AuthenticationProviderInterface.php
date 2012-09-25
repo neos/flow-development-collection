@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Security\Authentication;
+namespace TYPO3\Flow\Security\Authentication;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,9 +12,9 @@ namespace TYPO3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * Contract for an authentication provider used by the \TYPO3\FLOW3\Security\Authenticaton\ProviderManager.
- * Has to add a \TYPO3\FLOW3\Security\Authentication\TokenInterface to the security context, which contains
- * a \TYPO3\FLOW3\Security\Authentication\UserDetailsInterface.
+ * Contract for an authentication provider used by the \TYPO3\Flow\Security\Authenticaton\ProviderManager.
+ * Has to add a \TYPO3\Flow\Security\Authentication\TokenInterface to the security context, which contains
+ * a \TYPO3\Flow\Security\Authentication\UserDetailsInterface.
  */
 interface AuthenticationProviderInterface {
 
@@ -31,10 +31,10 @@ interface AuthenticationProviderInterface {
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
+	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 */
-	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $token);
+	public function canAuthenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $token);
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
@@ -46,10 +46,10 @@ interface AuthenticationProviderInterface {
 	/**
 	 * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 */
-	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
+	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken);
 
 }
 ?>

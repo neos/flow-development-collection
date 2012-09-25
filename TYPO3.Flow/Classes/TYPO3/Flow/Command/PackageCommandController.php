@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Command;
+namespace TYPO3\Flow\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,18 +11,18 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Core\Booting\Scripts;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Booting\Scripts;
 
 /**
  * Package command controller to handle packages from CLI (create/activate/deactivate packages)
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -32,12 +32,12 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $settings;
 
 	/**
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @param array $settings The FLOW3 settings
+	 * @param array $settings The Flow settings
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
@@ -45,17 +45,17 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 */
-	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager =  $packageManager;
 	}
 
@@ -65,7 +65,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * This command creates a new package which contains only the mandatory
 	 * directories and files.
 	 *
-	 * @FLOW3\FlushesCaches
+	 * @Flow\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @see typo3.kickstart:kickstart:package
@@ -88,7 +88,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * This command deletes an existing package identified by the package key.
 	 *
-	 * @FLOW3\FlushesCaches
+	 * @Flow\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 */
@@ -99,7 +99,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		}
 		$this->packageManager->deletePackage($packageKey);
 		$this->outputLine('Deleted package "%s".', array($packageKey));
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
+		Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 
@@ -108,10 +108,10 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * This command activates an existing, but currently inactive package.
 	 *
-	 * @FLOW3\FlushesCaches
+	 * @Flow\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @see typo3.flow3:package:deactivate
+	 * @see typo3.flow:package:deactivate
 	 */
 	public function activateCommand($packageKey) {
 		if ($this->packageManager->isPackageActive($packageKey)) {
@@ -121,7 +121,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$this->packageManager->activatePackage($packageKey);
 		$this->outputLine('Activated package "%s".', array($packageKey));
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
+		Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 
@@ -130,10 +130,10 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * This command deactivates a currently active package.
 	 *
-	 * @FLOW3\FlushesCaches
+	 * @Flow\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @see typo3.flow3:package:activate
+	 * @see typo3.flow:package:activate
 	 */
 	public function deactivateCommand($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -143,7 +143,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$this->packageManager->deactivatePackage($packageKey);
 		$this->outputLine('Deactivated package "%s".', array($packageKey));
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
+		Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 
@@ -154,8 +154,8 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * package title and its state – active or inactive.
 	 *
 	 * @return string The list of packages
-	 * @see typo3.flow3:package:activate
-	 * @see typo3.flow3:package:deactivate
+	 * @see typo3.flow:package:activate
+	 * @see typo3.flow:package:deactivate
 	 */
 	public function listCommand() {
 		$activePackages = array();
@@ -222,8 +222,8 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param string $packageKey Key of the package to freeze
 	 * @return void
-	 * @see typo3.flow3:package:unfreeze
-	 * @see typo3.flow3:package:refreeze
+	 * @see typo3.flow:package:unfreeze
+	 * @see typo3.flow:package:refreeze
 	 */
 	public function freezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
@@ -283,8 +283,8 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param string $packageKey Key of the package to unfreeze, or 'all'
 	 * @return void
-	 * @see typo3.flow3:package:freeze
-	 * @see typo3.flow3:cache:flush
+	 * @see typo3.flow:package:freeze
+	 * @see typo3.flow:cache:flush
 	 */
 	public function unfreezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
@@ -340,8 +340,8 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param string $packageKey Key of the package to refreeze, or 'all'
 	 * @return void
-	 * @see typo3.flow3:package:freeze
-	 * @see typo3.flow3:cache:flush
+	 * @see typo3.flow:package:freeze
+	 * @see typo3.flow:cache:flush
 	 */
 	public function refreezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
@@ -383,7 +383,7 @@ class PackageCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->outputLine('Refroze package "%s".', array($packageKey));
 		}
 
-		Scripts::executeCommand('typo3.flow3:cache:flush', $this->settings, FALSE);
+		Scripts::executeCommand('typo3.flow:cache:flush', $this->settings, FALSE);
 		$this->sendAndExit(0);
 	}
 }

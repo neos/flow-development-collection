@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Core\Migrations;
+namespace TYPO3\Flow\Core\Migrations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "FLOW3".                      *
+ * This script belongs to the Flow package "Flow".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,8 +11,8 @@ namespace TYPO3\FLOW3\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Core\Migrations\Tools;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Core\Migrations\Tools;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * The base class for code migrations.
@@ -55,10 +55,10 @@ abstract class AbstractMigration {
 	protected $warnings = array();
 
 	/**
-	 * @param \TYPO3\FLOW3\Core\Migrations\Manager $manager
+	 * @param \TYPO3\Flow\Core\Migrations\Manager $manager
 	 * @param string $packageKey
 	 */
-	public function __construct(\TYPO3\FLOW3\Core\Migrations\Manager $manager, $packageKey) {
+	public function __construct(\TYPO3\Flow\Core\Migrations\Manager $manager, $packageKey) {
 		$this->migrationsManager = $manager;
 		$this->sourcePackageKey = $packageKey;
 	}
@@ -84,7 +84,7 @@ abstract class AbstractMigration {
 	}
 
 	/**
-	 * Returns the identifier of this migration, e.g. 'FLOW3-201201261636'.
+	 * Returns the identifier of this migration, e.g. 'TYPO3.Flow-201201261636'.
 	 *
 	 * @return string
 	 */
@@ -150,7 +150,6 @@ abstract class AbstractMigration {
 		$this->notes[sha1($note)] = $note;
 	}
 
-	/**
 	/**
 	 * This can be used to show a warning to the developer.
 	 *

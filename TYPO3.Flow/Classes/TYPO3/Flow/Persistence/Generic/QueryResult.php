@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic;
+namespace TYPO3\Flow\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,62 +11,62 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A lazy result list that is returned by Query::execute()
  *
  * @api
  */
-class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
+class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\DataMapper
+	 * @var \TYPO3\Flow\Persistence\Generic\DataMapper
 	 */
 	protected $dataMapper;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @var \TYPO3\Flow\Persistence\QueryInterface
 	 */
 	protected $query;
 
 	/**
 	 * @var array
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $queryResult;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\Flow\Persistence\QueryInterface $query
 	 */
-	public function __construct(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
+	public function __construct(\TYPO3\Flow\Persistence\QueryInterface $query) {
 		$this->query = $query;
 	}
 
 	/**
 	 * Injects the DataMapper to map records to objects
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper
+	 * @param \TYPO3\Flow\Persistence\Generic\DataMapper $dataMapper
 	 * @return void
 	 */
-	public function injectDataMapper(\TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {
+	public function injectDataMapper(\TYPO3\Flow\Persistence\Generic\DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
 	}
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -84,7 +84,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * Returns a clone of the query object
 	 *
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 * @api
 	 */
 	public function getQuery() {

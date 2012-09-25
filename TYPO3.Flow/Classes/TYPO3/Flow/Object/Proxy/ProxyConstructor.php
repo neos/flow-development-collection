@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Object\Proxy;
+namespace TYPO3\Flow\Object\Proxy;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\FLOW3\Object\Proxy;
  * Representation of a constructor method within a proxy class
  *
  */
-class ProxyConstructor extends \TYPO3\FLOW3\Object\Proxy\ProxyMethod {
+class ProxyConstructor extends \TYPO3\Flow\Object\Proxy\ProxyMethod {
 
 	/**
 	 * Name of the original method

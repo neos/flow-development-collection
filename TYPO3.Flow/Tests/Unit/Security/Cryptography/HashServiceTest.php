@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
+namespace TYPO3\Flow\Tests\Unit\Security\Cryptography;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,10 +15,10 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
  * Testcase for the Hash Service
  *
  */
-class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 */
 	protected $hashService;
 
@@ -28,7 +28,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->hashService = new \TYPO3\FLOW3\Security\Cryptography\HashService();
+		$this->hashService = new \TYPO3\Flow\Security\Cryptography\HashService();
 	}
 
 	/**
@@ -58,7 +58,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function generateHmacThrowsExceptionIfNoStringGiven() {
 		$this->hashService->generateHmac(NULL);
@@ -92,19 +92,19 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 					'hashingStrategies' => array(
 						'default' => 'TestStrategy',
 						'fallback' => 'LegacyStrategy',
-						'TestStrategy' => 'TYPO3\FLOW3\Test\TestStrategy',
-						'LegacyStrategy' => 'TYPO3\FLOW3\Test\LegacyStrategy'
+						'TestStrategy' => 'TYPO3\Flow\Test\TestStrategy',
+						'LegacyStrategy' => 'TYPO3\Flow\Test\LegacyStrategy'
 					)
 				)
 			)
 		);
 		$this->hashService->injectSettings($settings);
 
-		$mockStrategy = $this->getMock('TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface');
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
+		$mockStrategy = $this->getMock('TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
 
-		$mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\FLOW3\Test\TestStrategy')->will($this->returnValue($mockStrategy));
+		$mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\Flow\Test\TestStrategy')->will($this->returnValue($mockStrategy));
 		$mockStrategy->expects($this->atLeastOnce())->method('hashPassword')->will($this->returnValue('---hashed-password---'));
 
 		$this->hashService->hashPassword('myTestPassword');
@@ -120,19 +120,19 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 					'hashingStrategies' => array(
 						'default' => 'TestStrategy',
 						'fallback' => 'LegacyStrategy',
-						'TestStrategy' => 'TYPO3\FLOW3\Test\TestStrategy',
-						'LegacyStrategy' => 'TYPO3\FLOW3\Test\LegacyStrategy'
+						'TestStrategy' => 'TYPO3\Flow\Test\TestStrategy',
+						'LegacyStrategy' => 'TYPO3\Flow\Test\LegacyStrategy'
 					)
 				)
 			)
 		);
 		$this->hashService->injectSettings($settings);
 
-		$mockStrategy = $this->getMock('TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface');
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
+		$mockStrategy = $this->getMock('TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
 
-		$mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\FLOW3\Test\LegacyStrategy')->will($this->returnValue($mockStrategy));
+		$mockObjectManager->expects($this->atLeastOnce())->method('get')->with('TYPO3\Flow\Test\LegacyStrategy')->will($this->returnValue($mockStrategy));
 		$mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->will($this->returnValue(TRUE));
 
 		$this->hashService->validatePassword('myTestPassword', '---hashed-password---');
@@ -146,18 +146,18 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'security' => array(
 				'cryptography' => array(
 					'hashingStrategies' => array(
-						'TestStrategy' => 'TYPO3\FLOW3\Test\TestStrategy'
+						'TestStrategy' => 'TYPO3\Flow\Test\TestStrategy'
 					)
 				)
 			)
 		);
 		$this->hashService->injectSettings($settings);
 
-		$mockStrategy = $this->getMock('TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface');
+		$mockStrategy = $this->getMock('TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface');
 		$mockStrategy->expects($this->any())->method('hashPassword')->will($this->returnValue('---hashed-password---'));
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
 
 		$result = $this->hashService->hashPassword('myTestPassword', 'TestStrategy');
 		$this->assertEquals('TestStrategy=>---hashed-password---', $result);
@@ -171,17 +171,17 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'security' => array(
 				'cryptography' => array(
 					'hashingStrategies' => array(
-						'TestStrategy' => 'TYPO3\FLOW3\Test\TestStrategy'
+						'TestStrategy' => 'TYPO3\Flow\Test\TestStrategy'
 					)
 				)
 			)
 		);
 		$this->hashService->injectSettings($settings);
 
-		$mockStrategy = $this->getMock('TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface');
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockStrategy = $this->getMock('TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface');
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->hashService, 'objectManager', $mockObjectManager, TRUE);
 
 		$mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->will($this->returnValue(TRUE));
 
@@ -199,7 +199,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function appendHmacThrowsExceptionIfNoStringGiven() {
 		$this->hashService->appendHmac(NULL);
@@ -216,7 +216,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfNoStringGiven() {
 		$this->hashService->validateAndStripHmac(NULL);
@@ -224,7 +224,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException TYPO3\Flow\Security\Exception\InvalidArgumentForHashGenerationException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfGivenStringIsTooShort() {
 		$this->hashService->validateAndStripHmac('string with less than 40 characters');
@@ -232,7 +232,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidHashException
+	 * @expectedException TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfGivenStringHasNoHashAppended() {
 		$this->hashService->validateAndStripHmac('string with exactly a length 40 of chars');
@@ -240,7 +240,7 @@ class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidHashException
+	 * @expectedException TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function validateAndStripHmacThrowsExceptionIfTheAppendedHashIsInvalid() {
 		$this->hashService->validateAndStripHmac('some Stringac43682075d36592d4cb320e69ff0aa515886eab');

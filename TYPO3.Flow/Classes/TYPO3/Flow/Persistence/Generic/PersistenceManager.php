@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Generic;
+namespace TYPO3\Flow\Persistence\Generic;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,15 +11,15 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The generic FLOW3 Persistence Manager
+ * The generic Flow Persistence Manager
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
-class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceManager {
+class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceManager {
 
 	/**
 	 * @var \SplObjectStorage
@@ -37,22 +37,22 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	protected $removedObjects;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface
+	 * @var \TYPO3\Flow\Persistence\Generic\QueryFactoryInterface
 	 */
 	protected $queryFactory;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\DataMapper
+	 * @var \TYPO3\Flow\Persistence\Generic\DataMapper
 	 */
 	protected $dataMapper;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface
+	 * @var \TYPO3\Flow\Persistence\Generic\Backend\BackendInterface
 	 */
 	protected $backend;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\Generic\Session
+	 * @var \TYPO3\Flow\Persistence\Generic\Session
 	 */
 	protected $persistenceSession;
 
@@ -68,20 +68,20 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Injects a QueryFactory instance
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory
+	 * @param \TYPO3\Flow\Persistence\Generic\QueryFactoryInterface $queryFactory
 	 * @return void
 	 */
-	public function injectQueryFactory(\TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory) {
+	public function injectQueryFactory(\TYPO3\Flow\Persistence\Generic\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
 	}
 
 	/**
 	 * Injects the data mapper
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper
+	 * @param \TYPO3\Flow\Persistence\Generic\DataMapper $dataMapper
 	 * @return void
 	 */
-	public function injectDataMapper(\TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {
+	public function injectDataMapper(\TYPO3\Flow\Persistence\Generic\DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
 		$this->dataMapper->setPersistenceManager($this);
 	}
@@ -89,21 +89,21 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Injects the backend to use
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
+	 * @param \TYPO3\Flow\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
 	 * @return void
-	 * @FLOW3\Autowiring(false)
+	 * @Flow\Autowiring(false)
 	 */
-	public function injectBackend(\TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
+	public function injectBackend(\TYPO3\Flow\Persistence\Generic\Backend\BackendInterface $backend) {
 		$this->backend = $backend;
 	}
 
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
+	 * @param \TYPO3\Flow\Persistence\Generic\Session $persistenceSession The persistence session
 	 * @return void
 	 */
-	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
+	public function injectPersistenceSession(\TYPO3\Flow\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
 	}
 
@@ -111,10 +111,10 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Initializes the persistence manager
 	 *
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Generic\Exception\MissingBackendException
+	 * @throws \TYPO3\Flow\Persistence\Generic\Exception\MissingBackendException
 	 */
 	public function initialize() {
-		if (!$this->backend instanceof \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface) throw new \TYPO3\FLOW3\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		if (!$this->backend instanceof \TYPO3\Flow\Persistence\Generic\Backend\BackendInterface) throw new \TYPO3\Flow\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
 		$this->backend->setPersistenceManager($this);
 		$this->backend->initialize($this->settings['backendOptions']);
 	}
@@ -122,22 +122,22 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Returns the number of records matching the query.
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\Flow\Persistence\QueryInterface $query
 	 * @return integer
 	 * @api
 	 */
-	public function getObjectCountByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectCountByQuery(\TYPO3\Flow\Persistence\QueryInterface $query) {
 		return $this->backend->getObjectCountByQuery($query);
 	}
 
 	/**
 	 * Returns the object data matching the $query.
 	 *
-	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\Flow\Persistence\QueryInterface $query
 	 * @return array
 	 * @api
 	 */
-	public function getObjectDataByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectDataByQuery(\TYPO3\Flow\Persistence\QueryInterface $query) {
 		return $this->backend->getObjectDataByQuery($query);
 	}
 
@@ -251,7 +251,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
 	 */
 	public function createQueryForType($type) {
 		return $this->queryFactory->create($type);
@@ -289,12 +289,12 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param object $object The modified object
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
+	 * @throws \TYPO3\Flow\Persistence\Exception\UnknownObjectException
 	 * @api
 	 */
 	public function update($object) {
 		if ($this->isNewObject($object)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1249479819);
+			throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1249479819);
 		}
 		$this->changedObjects->attach($object);
 	}
@@ -302,7 +302,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Signals that all persistAll() has been executed successfully.
 	 *
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 * @return void
 	 */
 	protected function emitAllObjectsPersisted() {

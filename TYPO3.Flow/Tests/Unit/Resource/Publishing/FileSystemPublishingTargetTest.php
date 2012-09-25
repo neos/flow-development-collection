@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Unit\Resource\Publishing;
+namespace TYPO3\Flow\Tests\Unit\Resource\Publishing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,9 +17,9 @@ use org\bovigo\vfs\vfsStreamWrapper;
 /**
  * Testcase for the File System Publishing Target
  *
- * @covers \TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget<extended>
+ * @covers \TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget<extended>
  */
-class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 */
@@ -33,7 +33,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initalizeObjectCreatesDirectories() {
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/_Resources/');
 		$publishingTarget->initializeObject();
@@ -46,7 +46,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getResourcesBaseUriDetectsTheResourcesBaseUriIfNotYetDetected() {
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('detectResourcesBaseUri'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('detectResourcesBaseUri'));
 		$publishingTarget->expects($this->once())->method('detectResourcesBaseUri');
 		$publishingTarget->getResourcesBaseUri();
 	}
@@ -55,7 +55,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishStaticResourcesReturnsFalseIfTheGivenSourceDirectoryDoesntExist() {
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 		$this->assertFalse($publishingTarget->publishStaticResources('vfs://Foo/Bar', 'x'));
 	}
 
@@ -78,7 +78,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Web/_Resources');
 
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile', 'realpath'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile', 'realpath'));
 		$publishingTarget->expects($this->at(0))->method('realpath')->will($this->returnCallback(function($path) {
 			return $path;
 		}));
@@ -98,26 +98,26 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishStaticResourcesLinksTheSpecifiedDirectoryIfMirrorModeIsLink() {
-		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FLOW3FileSystemPublishingTargetTestSource'));
-		$targetRootPath =  \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FLOW3FileSystemPublishingTargetTestTarget'));
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($targetRootPath, '_Resources'));
+		$sourcePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestSource'));
+		$targetRootPath =  \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestTarget'));
+		$targetPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($targetRootPath, '_Resources'));
 
 		mkdir($sourcePath);
-		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($targetPath);
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile'));
 		$publishingTarget->_set('settings', $settings);
 		$publishingTarget->_set('resourcesPublishingPath', $targetPath);
 
 		$publishingTarget->expects($this->never())->method('mirrorFile');
 
 		$this->assertTrue($publishingTarget->publishStaticResources($sourcePath, 'Bar'));
-		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
+		$this->assertTrue(\TYPO3\Flow\Utility\Files::is_link(\TYPO3\Flow\Utility\Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
 
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($targetRootPath);
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($sourcePath);
+		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($targetRootPath);
+		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($sourcePath);
 	}
 
 	/**
@@ -130,7 +130,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		file_put_contents('vfs://Foo/Sources/file2.txt', 1);
 		file_put_contents('vfs://Foo/Sources/file3.txt', 1);
 
-		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively('vfs://Foo/Web/_Resources/Static/Bar');
+		\TYPO3\Flow\Utility\Files::createDirectoryRecursively('vfs://Foo/Web/_Resources/Static/Bar');
 
 		file_put_contents('vfs://Foo/Web/_Resources/Static/Bar/file2.txt', 1);
 		vfsStreamWrapper::getRoot()->getChild('Web/_Resources/Static/Bar/file2.txt')->lastModified(time() - 5);
@@ -143,7 +143,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}
 		};
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile', 'realpath'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile', 'realpath'));
 		$publishingTarget->expects($this->any())->method('realpath')->will($this->returnCallback(function($path) {
 			return $path;
 		}));
@@ -161,15 +161,15 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishPersistentResourceMirrorsTheGivenResource() {
-		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
 
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
 		$mockResource->expects($this->atLeastOnce())->method('getFilename')->will($this->returnValue('source.jpg'));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
 		$publishingTarget->expects($this->once())->method('getPersistentResourceSourcePathAndFilename')->with($mockResource)->will($this->returnValue('source.jpg'));
 		$publishingTarget->expects($this->once())->method('mirrorFile')->with('source.jpg', 'vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg');
 
@@ -183,16 +183,16 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishPersistentResourceLeavesOutEmptyFilename() {
-		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
 
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue(''));
 		$mockResource->expects($this->at(0))->method('getFilename')->will($this->returnValue(''));
 		$mockResource->expects($this->at(1))->method('getFilename')->will($this->returnValue(NULL));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
 		$publishingTarget->expects($this->any())->method('getPersistentResourceSourcePathAndFilename')->will($this->returnValue('source.jpg'));
 
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
@@ -206,13 +206,13 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishPersistentResourceMirrorsTheGivenSourceFileDoesntExist() {
-		$mockResourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer('ac9b6187f4c55b461d69e22a57925ff61ee89cb2');
+		$mockResourcePointer = new \TYPO3\Flow\Resource\ResourcePointer('ac9b6187f4c55b461d69e22a57925ff61ee89cb2');
 
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('detectResourcesBaseUri', 'rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('detectResourcesBaseUri', 'rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename'));
 		$publishingTarget->expects($this->once())->method('getPersistentResourceSourcePathAndFilename')->with($mockResource)->will($this->returnValue(FALSE));
 
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
@@ -228,14 +228,14 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Web/Persistent');
 		file_put_contents('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', 'some data');
 
-		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
 
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename'));
 
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
 		$publishingTarget->_set('resourcesBaseUri', 'http://host/dir/');
@@ -249,17 +249,17 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function unpublishPersistentResourceMirrorsTheGivenResource() {
 		$this->marktestSkipped('It seems glob() does not work on vfsStream...');
 
-		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
 
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
 		mkdir('vfs://Foo/Web');
 		mkdir('vfs://Foo/Web/Persistent');
 		file_put_contents('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', 'some data');
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
 
 		$this->assertTrue(file_exists('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
@@ -271,7 +271,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getStaticResourcesWebBaseUriReturnsJustThat() {
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 		$publishingTarget->_set('resourcesBaseUri', 'http://host/dir/');
 
 		$this->assertSame('http://host/dir/Static/', $publishingTarget->getStaticResourcesWebBaseUri());
@@ -281,9 +281,9 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPersistentResourceWebUriJustCallsPublishPersistentResource() {
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('publishPersistentResource'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('publishPersistentResource'));
 		$publishingTarget->expects($this->once())->method('publishPersistentResource')->with($mockResource)->will($this->returnValue('http://result'));
 
 		$this->assertSame('http://result', $publishingTarget->getPersistentResourceWebUri($mockResource));
@@ -295,15 +295,15 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function mirrorFileCopiesTheGivenFileIfTheSettingSaysSo() {
-		$sourcePathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestSource', '');
-		$targetPathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestTarget', '');
+		$sourcePathAndFilename = tempnam('FlowFileSystemPublishingTargetTestSource', '');
+		$targetPathAndFilename = tempnam('FlowFileSystemPublishingTargetTestTarget', '');
 
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 		$publishingTarget->injectSettings($settings);
 
 		$publishingTarget->_call('mirrorFile', $sourcePathAndFilename, $targetPathAndFilename, TRUE);
@@ -322,20 +322,20 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function mirrorFileSymLinksTheGivenFileIfTheSettingSaysSo() {
-		$sourcePathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestSource', '');
-		$targetPathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestTarget', '');
+		$sourcePathAndFilename = tempnam('FlowFileSystemPublishingTargetTestSource', '');
+		$targetPathAndFilename = tempnam('FlowFileSystemPublishingTargetTestTarget', '');
 
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
 		$publishingTarget->_set('settings', $settings);
 
 		$publishingTarget->_call('mirrorFile', $sourcePathAndFilename, $targetPathAndFilename, TRUE);
 		$this->assertFileEquals($sourcePathAndFilename, $targetPathAndFilename);
-		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
+		$this->assertTrue(\TYPO3\Flow\Utility\Files::is_link($targetPathAndFilename));
 
 		unlink($sourcePathAndFilename);
 		unlink($targetPathAndFilename);
@@ -347,17 +347,17 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function detectResourcesBaseUriDetectsUriWithSubDirectoryCorrectly() {
 		$expectedBaseUri = 'http://www.sarkosh.dk/_Resources/';
 
-		$uri = new \TYPO3\FLOW3\Http\Uri('http://www.sarkosh.dk/cdcollection/albums');
-		$httpRequest = \TYPO3\FLOW3\Http\Request::create($uri);
+		$uri = new \TYPO3\Flow\Http\Uri('http://www.sarkosh.dk/cdcollection/albums');
+		$httpRequest = \TYPO3\Flow\Http\Request::create($uri);
 
-		$requestHandler = $this->getMock('TYPO3\FLOW3\Http\HttpRequestHandlerInterface');
+		$requestHandler = $this->getMock('TYPO3\Flow\Http\HttpRequestHandlerInterface');
 		$requestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
 
-		$bootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
+		$bootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
 		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($requestHandler));
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
-		$publishingTarget->_set('resourcesPublishingPath', FLOW3_PATH_WEB . '_Resources/');
+		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget->_set('resourcesPublishingPath', FLOW_PATH_WEB . '_Resources/');
 		$publishingTarget->injectBootstrap($bootstrap);
 
 		$publishingTarget->_call('detectResourcesBaseUri');
