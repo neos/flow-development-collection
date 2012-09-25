@@ -24,7 +24,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	 * Allow creation of a certain sub property
 	 *
 	 * @param string $propertyPath
-	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
+	 * @return \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowCreationForSubProperty($propertyPath) {
@@ -36,7 +36,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	 * Allow modification for a given property path
 	 *
 	 * @param string $propertyPath
-	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
+	 * @return \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowModificationForSubProperty($propertyPath) {
@@ -47,7 +47,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	/**
 	 * Allow override of the target type through a special "__type" parameter
 	 *
-	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
+	 * @return \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function allowOverrideTargetType() {
@@ -62,7 +62,7 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	 *
 	 * @param string $propertyPath
 	 * @param string $targetType
-	 * @return \TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration this
+	 * @return \TYPO3\FLOW3\Mvc\Controller\MvcPropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setTargetTypeForSubProperty($propertyPath, $targetType) {
