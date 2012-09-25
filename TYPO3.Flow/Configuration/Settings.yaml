@@ -146,7 +146,7 @@ TYPO3:
        'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
        'mikey179.vfsStream' : ['.*']
        # workaround, should rather be deactivated
-       'christianjul.installers': ['.*']
+       'flow3.composerinstallers': ['.*']
 
     package:
 
