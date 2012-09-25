@@ -20,7 +20,7 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "composer/installers": "1.0.*",
+        "flow3/composer-installers": "*",
         "typo3/fluid": "*",
         "typo3/party": "*",
 
