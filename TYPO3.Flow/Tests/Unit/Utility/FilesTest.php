@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
  *                                                                        */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
@@ -35,7 +36,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	public function tearDown() {
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
+		Files::removeDirectoryRecursively($this->temporaryDirectory);
 	}
 
 	/**
@@ -43,7 +44,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithoutSlashes() {
 		$path = 'foobar';
-		$this->assertEquals('foobar', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foobar', Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -51,7 +52,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithForwardSlashes() {
 		$path = 'foo/bar/test/';
-		$this->assertEquals('foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -59,7 +60,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithBackwardSlashes() {
 		$path = 'foo\\bar\\test\\';
-		$this->assertEquals('foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -67,63 +68,63 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithForwardAndBackwardSlashes() {
 		$path = 'foo/bar\\test/';
-		$this->assertEquals('foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForEmptyPath() {
-		$this->assertEquals('', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array()));
+		$this->assertEquals('', Files::concatenatePaths(array()));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForOnePath() {
-		$this->assertEquals('foo', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo')));
+		$this->assertEquals('foo', Files::concatenatePaths(array('foo')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForTwoPath() {
-		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar')));
+		$this->assertEquals('foo/bar', Files::concatenatePaths(array('foo', 'bar')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingSlash() {
-		$this->assertEquals('/foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('/foo', 'bar')));
+		$this->assertEquals('/foo/bar', Files::concatenatePaths(array('/foo', 'bar')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForPathsWithTrailingSlash() {
-		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar/')));
+		$this->assertEquals('foo/bar', Files::concatenatePaths(array('foo', 'bar/')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingAndTrailingSlash() {
-		$this->assertEquals('/foo/bar/bar/foo', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
+		$this->assertEquals('/foo/bar/bar/foo', Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForBrokenPaths() {
-		$this->assertEquals('/foo/bar/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
+		$this->assertEquals('/foo/bar/bar', Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function concatenatePathsWorksForEmptyPathArrayElements() {
-		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', '', 'bar')));
+		$this->assertEquals('foo/bar', Files::concatenatePaths(array('foo', '', 'bar')));
 	}
 
 	/**
@@ -131,7 +132,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithDriveLetterAndBackwardSlashes() {
 		$path = 'c:\\foo\\bar\\test\\';
-		$this->assertEquals('c:/foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('c:/foo/bar/test/', Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -149,14 +150,14 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider pathsWithProtocol
 	 */
 	public function getUnixStylePathWorksForPathWithProtocol($path, $expected) {
-		$this->assertEquals($expected, \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals($expected, Files::getUnixStylePath($path));
 	}
 
 	/**
 	 * @test
 	 */
 	public function is_linkReturnsFalseForNonExistingFiles() {
-		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link('NonExistingPath'));
+		$this->assertFalse(Files::is_link('NonExistingPath'));
 	}
 
 	/**
@@ -165,7 +166,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
 		$targetPathAndFilename = tempnam($this->temporaryDirectory, 'FLOW3FilesTestFile');
 		file_put_contents($targetPathAndFilename, 'some data');
-		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
+		$this->assertFalse(Files::is_link($targetPathAndFilename));
 	}
 
 	/**
@@ -179,34 +180,34 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			@unlink($linkPathAndFilename);
 		}
 		symlink($targetPathAndFilename, $linkPathAndFilename);
-		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPathAndFilename));
+		$this->assertTrue(Files::is_link($linkPathAndFilename));
 	}
 
 	/**
 	 * @test
 	 */
 	public function is_linkReturnsFalseForExistingDirectoryThatIsNoSymlink() {
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory')) . '/';
+		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory')) . '/';
 		if (!is_dir($targetPath)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+			Files::createDirectoryRecursively($targetPath);
 		}
-		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPath));
+		$this->assertFalse(Files::is_link($targetPath));
 	}
 
 	/**
 	 * @test
 	 */
 	public function is_linkReturnsTrueForExistingSymlinkDirectory() {
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
+		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
 		if (!is_dir($targetPath)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+			Files::createDirectoryRecursively($targetPath);
 		}
-		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
+		$linkPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
 		if (is_dir($linkPath)) {
-			\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($linkPath);
+			Files::removeDirectoryRecursively($linkPath);
 		}
 		symlink($targetPath, $linkPath);
-		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPath));
+		$this->assertTrue(Files::is_link($linkPath));
 	}
 
 	/**
@@ -215,9 +216,9 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function is_linkReturnsFalseForStreamWrapperPaths() {
 		$targetPath = 'vfs://Foo/Bar';
 		if (!is_dir($targetPath)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+			Files::createDirectoryRecursively($targetPath);
 		}
-		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPath));
+		$this->assertFalse(Files::is_link($targetPath));
 	}
 
 	/**
@@ -225,7 +226,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Utility\Exception
 	 */
 	public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
-		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively('NonExistingPath');
+		Files::emptyDirectoryRecursively('NonExistingPath');
 	}
 
 	/**
@@ -233,7 +234,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Utility\Exception
 	 */
 	public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively('NonExistingPath');
+		Files::removeDirectoryRecursively('NonExistingPath');
 	}
 
 	/**
@@ -247,7 +248,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			@unlink($linkPathAndFilename);
 		}
 		symlink($targetPathAndFilename, $linkPathAndFilename);
-		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::unlink($linkPathAndFilename));
+		$this->assertTrue(Files::unlink($linkPathAndFilename));
 		$this->assertTrue(file_exists($targetPathAndFilename));
 		$this->assertFalse(file_exists($linkPathAndFilename));
 	}
@@ -256,16 +257,16 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function unlinkProperlyRemovesSymlinksPointingToDirectories() {
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
+		$targetPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectory'));
 		if (!is_dir($targetPath)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+			Files::createDirectoryRecursively($targetPath);
 		}
-		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
+		$linkPath = Files::concatenatePaths(array(dirname(tempnam($this->temporaryDirectory, '')), 'FLOW3FilesTestDirectoryLink'));
 		if (is_dir($linkPath)) {
-			\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($linkPath);
+			Files::removeDirectoryRecursively($linkPath);
 		}
 		symlink($targetPath, $linkPath);
-		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::unlink($linkPath));
+		$this->assertTrue(Files::unlink($linkPath));
 		$this->assertTrue(file_exists($targetPath));
 		$this->assertFalse(file_exists($linkPath));
 	}
@@ -273,10 +274,52 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @outputBuffering enabled
-	 *     ... because the chmod call in ResourceManager emits a warningmaking this fail in strict mode
+	 *     ... because the chmod call in ResourceManager emits a warning making this fail in strict mode
 	 */
 	public function unlinkReturnsFalseIfSpecifiedPathDoesNotExist() {
-		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::unlink('NonExistingPath'));
+		$this->assertFalse(Files::unlink('NonExistingPath'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function copyDirectoryRecursivelyCreatesTargetAsExpected() {
+		Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
+		file_put_contents('vfs://Foo/source/bar/baz/file.txt', 'source content');
+
+		Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target');
+
+		$this->assertTrue(is_dir('vfs://Foo/target/bar/baz'));
+		$this->assertTrue(is_file('vfs://Foo/target/bar/baz/file.txt'));
+		$this->assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function copyDirectoryRecursivelyOverwritesTargetFiles() {
+		Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
+		file_put_contents('vfs://Foo/source/bar/baz/file.txt', 'source content');
+
+		Files::createDirectoryRecursively('vfs://Foo/target/bar/baz');
+		file_put_contents('vfs://Foo/target/bar/baz/file.txt', 'target content');
+
+		Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target');
+		$this->assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function copyDirectoryRecursivelyKeepsExistingTargetFilesIfRequested() {
+		Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
+		file_put_contents('vfs://Foo/source/bar/baz/file.txt', 'source content');
+
+		Files::createDirectoryRecursively('vfs://Foo/target/bar/baz');
+		file_put_contents('vfs://Foo/target/bar/baz/file.txt', 'target content');
+
+		Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', TRUE);
+		$this->assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
 	}
 }
 ?>

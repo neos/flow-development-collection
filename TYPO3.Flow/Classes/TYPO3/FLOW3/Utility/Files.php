@@ -181,22 +181,33 @@ class Files {
 	 * Copies the contents of the source directory to the target directory.
 	 * $targetDirectory will be created if it does not exist.
 	 *
+	 * if $keepExistingFiles is TRUE, this will keep files already present
+	 * in the target location. It defaults to FALSE.
+	 *
 	 * @param string $sourceDirectory
 	 * @param string $targetDirectory
+	 * @param boolean $keepExistingFiles
 	 * @return void
 	 * @throws Exception
 	 */
-	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
-		if (!is_dir($sourceDirectory)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
+	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = FALSE) {
+		if (!is_dir($sourceDirectory)) {
+			throw new \TYPO3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
+		}
 
 		self::createDirectoryRecursively($targetDirectory);
-		if (!is_dir($targetDirectory)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428779);
+		if (!is_dir($targetDirectory)) {
+			throw new \TYPO3\FLOW3\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
+		}
 
 		$resourceFilenames = self::readDirectoryRecursively($sourceDirectory);
 		foreach ($resourceFilenames as $filename) {
 			$relativeFilename = str_replace($sourceDirectory, '', $filename);
 			self::createDirectoryRecursively($targetDirectory . dirname($relativeFilename));
-			copy($filename, self::concatenatePaths(array($targetDirectory, $relativeFilename)));
+			$targetPathAndFilename = self::concatenatePaths(array($targetDirectory, $relativeFilename));
+			if ($keepExistingFiles === FALSE || !file_exists($targetPathAndFilename)) {
+				copy($filename, $targetPathAndFilename);
+			}
 		}
 	}
 
