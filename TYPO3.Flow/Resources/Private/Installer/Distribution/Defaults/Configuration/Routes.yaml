@@ -1,0 +1,34 @@
+#                                                                        #
+# Routes configuration                                                   #
+#                                                                        #
+# This file contains the configuration for the MVC router.               #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the FLOW3 manual for possible configuration options.   #
+#                                                                        #
+
+##
+# Subroutes from the Welcome package.
+#
+# If the package "Welcome" is installed, its fallback route will point to an
+# informative welcome screen.
+
+-
+  name: 'Welcome'
+  uriPattern: '<WelcomeSubroutes>'
+  subRoutes:
+    WelcomeSubroutes:
+      package: TYPO3.Welcome
+
+##
+# FLOW3 subroutes
+#
+
+-
+  name: 'FLOW3'
+  uriPattern: '<FLOW3Subroutes>'
+  defaults:
+    '@format': 'html'
+  subRoutes:
+    FLOW3Subroutes:
+      package: TYPO3.FLOW3
