@@ -297,6 +297,20 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function copyDirectoryRecursivelyCopiesDotFilesIfRequested() {
+		Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
+		file_put_contents('vfs://Foo/source/bar/baz/.file.txt', 'source content');
+
+		Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', FALSE, TRUE);
+
+		$this->assertTrue(is_dir('vfs://Foo/target/bar/baz'));
+		$this->assertTrue(is_file('vfs://Foo/target/bar/baz/.file.txt'));
+		$this->assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/.file.txt'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function copyDirectoryRecursivelyOverwritesTargetFiles() {
 		Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
 		file_put_contents('vfs://Foo/source/bar/baz/file.txt', 'source content');

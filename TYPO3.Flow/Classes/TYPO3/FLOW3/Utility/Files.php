@@ -75,11 +75,12 @@ class Files {
 	 * @param string $path Path to the directory which shall be read
 	 * @param string $suffix If specified, only filenames with this extension are returned (eg. ".php" or "foo.bar")
 	 * @param boolean $returnRealPath If turned on, all paths are resolved by calling realpath()
+	 * @param boolean $returnDotFiles If turned on, also files beginning with a dot will be returned
 	 * @param array $filenames Internally used for the recursion - don't specify!
 	 * @return array Filenames including full path
 	 * @throws Exception
 	 */
-	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, &$filenames = array()) {
+	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, $returnDotFiles = FALSE, &$filenames = array()) {
 		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
 
 		$directoryIterator = new \DirectoryIterator($path);
@@ -87,11 +88,14 @@ class Files {
 
 		foreach ($directoryIterator as $fileInfo) {
 			$filename = $fileInfo->getFilename();
-			if ($fileInfo->isFile() && $filename[0] !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
+			if ($filename === '.' || $filename === '..' || ($returnDotFiles === FALSE && $filename[0] === '.')) {
+				continue;
+			}
+			if ($fileInfo->isFile() && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
 				$filenames[] = self::getUnixStylePath(($returnRealPath === TRUE ? realpath($fileInfo->getPathname()) : $fileInfo->getPathname()));
 			}
-			if ($fileInfo->isDir() && $filename[0] !== '.') {
-				self::readDirectoryRecursively($fileInfo->getPathname(), $suffix, $returnRealPath, $filenames);
+			if ($fileInfo->isDir()) {
+				self::readDirectoryRecursively($fileInfo->getPathname(), $suffix, $returnRealPath, $returnDotFiles, $filenames);
 			}
 		}
 		return $filenames;
@@ -181,16 +185,20 @@ class Files {
 	 * Copies the contents of the source directory to the target directory.
 	 * $targetDirectory will be created if it does not exist.
 	 *
-	 * if $keepExistingFiles is TRUE, this will keep files already present
+	 * If $keepExistingFiles is TRUE, this will keep files already present
 	 * in the target location. It defaults to FALSE.
+	 *
+	 * If $copyDotFiles is TRUE, this will copy files whose name begin with
+	 * a dot. It defaults to FALSE.
 	 *
 	 * @param string $sourceDirectory
 	 * @param string $targetDirectory
 	 * @param boolean $keepExistingFiles
+	 * @param boolean $copyDotFiles
 	 * @return void
 	 * @throws Exception
 	 */
-	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = FALSE) {
+	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = FALSE, $copyDotFiles = FALSE) {
 		if (!is_dir($sourceDirectory)) {
 			throw new \TYPO3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
 		}
@@ -200,8 +208,8 @@ class Files {
 			throw new \TYPO3\FLOW3\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
 		}
 
-		$resourceFilenames = self::readDirectoryRecursively($sourceDirectory);
-		foreach ($resourceFilenames as $filename) {
+		$sourceFilenames = self::readDirectoryRecursively($sourceDirectory, NULL, FALSE, $copyDotFiles);
+		foreach ($sourceFilenames as $filename) {
 			$relativeFilename = str_replace($sourceDirectory, '', $filename);
 			self::createDirectoryRecursively($targetDirectory . dirname($relativeFilename));
 			$targetPathAndFilename = self::concatenatePaths(array($targetDirectory, $relativeFilename));
