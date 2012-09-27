@@ -569,6 +569,10 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			try {
 				$composerManifest = self::getComposerManifest($composerManifestPath);
 				$packageKey = PackageFactory::getPackageKeyFromManifest($composerManifest, $packagePath, $this->packagesBasePath);
+				if ($packageKey === NULL) {
+						// manifest found but no valid package, skip it
+					continue;
+				}
 				$this->packageStatesConfiguration['packages'][$packageKey]['manifestPath'] = substr($composerManifestPath, strlen($packagePath)) ?: '';
 			} catch (\TYPO3\FLOW3\Package\Exception\MissingPackageManifestException $exception) {
 				$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
