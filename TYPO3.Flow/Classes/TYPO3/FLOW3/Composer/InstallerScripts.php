@@ -30,8 +30,8 @@ class InstallerScripts {
 		Files::createDirectoryRecursively('Configuration');
 		Files::createDirectoryRecursively('Data');
 
-		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.FLOW3/Resources/Private/Installer/Distribution/Essentials', '.');
-		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.FLOW3/Resources/Private/Installer/Distribution/Defaults', '.', TRUE);
+		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.FLOW3/Resources/Private/Installer/Distribution/Essentials', '.', FALSE, TRUE);
+		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.FLOW3/Resources/Private/Installer/Distribution/Defaults', '.', TRUE, TRUE);
 
 		chmod('flow3', 0755);
 	}
