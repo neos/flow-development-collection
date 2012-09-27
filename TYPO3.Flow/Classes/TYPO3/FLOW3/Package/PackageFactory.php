@@ -28,8 +28,8 @@ class PackageFactory {
 	 * @return \TYPO3\FLOW3\Package\PackageInterface
 	 * @throws Exception\CorruptPackageException
 	 */
-	public static function create($packagesBasePath, $manifestPath, $packageKey, $classesPath) {
-		$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $manifestPath, 'Classes/' . str_replace('.', '/', $packageKey) . '/Package.php'));
+	public static function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath) {
+		$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes/' . str_replace('.', '/', $packageKey) . '/Package.php'));
 		if (file_exists($packageClassPathAndFilename)) {
 			require_once($packageClassPathAndFilename);
 			/**
@@ -43,9 +43,9 @@ class PackageFactory {
 		} else {
 			$packageClassName = 'TYPO3\FLOW3\Package\Package';
 		}
-		$packagePath = Files::concatenatePaths(array($packagesBasePath, $manifestPath)) . '/';
+		$packagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
 
-		$package = new $packageClassName($packageKey, $packagePath, $classesPath);
+		$package = new $packageClassName($packageKey, $packagePath, $classesPath, $manifestPath);
 		return $package;
 	}
 
@@ -59,21 +59,16 @@ class PackageFactory {
 	 *
 	 * Else the composer name will be used with the slash replaced by a dot
 	 *
-	 * @param string $manifestPath
+	 * @param object $manifest
 	 * @param string $packagesBasePath
 	 * @return string
 	 */
-	public static function getPackageKeyFromManifestPath($manifestPath, $packagesBasePath) {
-		if (!file_exists($manifestPath . '/composer.json')) {
-			throw new  \TYPO3\FLOW3\Package\Exception\MissingPackageManifestException('No "composer.json" found in ' . $manifestPath, 1348146557);
-		}
-		$composerJson = Files::getFileContents($manifestPath . '/composer.json');
-		$manifest = json_decode($composerJson);
+	public static function getPackageKeyFromManifest($manifest, $packagePath, $packagesBasePath) {
 		if (!is_object($manifest)) {
-			throw new  \TYPO3\FLOW3\Package\Exception\InvalidPackageManifestException('Invalid composer manifest in ' . $manifestPath, 1348146450);
+			throw new  \TYPO3\FLOW3\Package\Exception\InvalidPackageManifestException('Invalid composer manifest.', 1348146450);
 		}
 		if (isset($manifest->type) && substr($manifest->type, 0, 6) === 'flow3-') {
-			$relativePackagePath = substr($manifestPath, strlen($packagesBasePath));
+			$relativePackagePath = substr($packagePath, strlen($packagesBasePath));
 			$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
 			/**
 			 * @todo check that manifest name and directory follows convention

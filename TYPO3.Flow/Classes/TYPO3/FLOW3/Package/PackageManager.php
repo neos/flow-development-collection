@@ -279,7 +279,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$manifestPath = str_replace($this->packagesBasePath, '', $packagePath);
 
-		$package = PackageFactory::create($this->packagesBasePath, $manifestPath, $packageKey, PackageInterface::DIRECTORY_CLASSES);
+		$package = PackageFactory::create($this->packagesBasePath, $manifestPath, $packageKey, PackageInterface::DIRECTORY_CLASSES, $manifestPath);
 
 		$this->packages[$packageKey] = $package;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
@@ -524,7 +524,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	protected function loadPackageStates() {
 		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
-		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 2) {
+		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 3) {
 			$this->packageStatesConfiguration = array();
 		}
 		if ($this->packageStatesConfiguration === array() || !$this->bootstrap->getContext()->isProduction()) {
@@ -565,9 +565,11 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		/**
  		 * @todo similar functionality in registerPackage - should be refactored
 		 */
-		foreach ($packagePaths as $packagePath) {
+		foreach ($packagePaths as $packagePath => $composerManifestPath) {
 			try {
-				$packageKey = PackageFactory::getPackageKeyFromManifestPath($packagePath, $this->packagesBasePath);
+				$composerManifest = self::getComposerManifest($composerManifestPath);
+				$packageKey = PackageFactory::getPackageKeyFromManifest($composerManifest, $packagePath, $this->packagesBasePath);
+				$this->packageStatesConfiguration['packages'][$packageKey]['manifestPath'] = substr($composerManifestPath, strlen($packagePath)) ?: '';
 			} catch (\TYPO3\FLOW3\Package\Exception\MissingPackageManifestException $exception) {
 				$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
 				$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
@@ -596,7 +598,29 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
-	 * Scans the all sub directories of the specified directory and collects the package keys of packages it finds.
+	 * Looks for composer.json in the given path and returns a path or NULL.
+	 *
+	 * @param string $packagePath
+	 * @return array
+	 */
+	protected function findComposerManifestPaths($packagePath) {
+		$manifestPaths = array();
+		if (file_exists($packagePath . 'composer.json')) {
+			$manifestPaths[] = $packagePath . '/';
+		} else {
+			$jsonPathsAndFilenames = Files::readDirectoryRecursively($packagePath, '.json');
+			foreach ($jsonPathsAndFilenames as $jsonPathAndFilename) {
+				if (basename($jsonPathAndFilename) === 'composer.json') {
+					$manifestPaths[] = dirname($jsonPathAndFilename) . '/';
+				}
+			}
+		}
+
+		return $manifestPaths;
+	}
+
+	/**
+	 * Scans all sub directories of the specified directory and collects the package keys of packages it finds.
 	 *
 	 * The return of the array is to make this method usable in array_merge.
 	 *
@@ -606,18 +630,51 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	protected function scanPackagesInPath($startPath, array &$collectedPackagePaths = array()) {
 		foreach (new \DirectoryIterator($startPath) as $fileInfo) {
+			if (!$fileInfo->isDir()) {
+				continue;
+			}
 			$filename = $fileInfo->getFilename();
 			if ($filename[0] !== '.') {
-				$packagePath = Files::getUnixStylePath($fileInfo->getPathName()) . '/';
-				$packageMetaPathAndFilename = $packagePath . 'composer.json';
-				if (file_exists($packageMetaPathAndFilename)) {
-					$collectedPackagePaths[] = $packagePath;
-				} elseif ($fileInfo->isDir() && $filename[0] !== '.') {
-					$this->scanPackagesInPath($packagePath, $collectedPackagePaths);
+				$currentPath = Files::getUnixStylePath($fileInfo->getPathName());
+				$composerManifestPaths = $this->findComposerManifestPaths($currentPath);
+				foreach ($composerManifestPaths as $composerManifestPath) {
+					$targetDirectory = rtrim(self::getComposerManifest($composerManifestPath, 'target-dir'), '/');
+					$packagePath = $targetDirectory ? substr(rtrim($composerManifestPath, '/'), 0, -strlen((string)$targetDirectory)) : $composerManifestPath;
+					$collectedPackagePaths[$packagePath] = $composerManifestPath;
 				}
 			}
 		}
 		return $collectedPackagePaths;
+	}
+
+	/**
+	 * Returns contents of Composer manifest - or part there of.
+	 *
+	 * @param string $manifestPath
+	 * @param string $key Optional. Only return the part of the manifest indexed by 'key'
+	 * @param object $composerManifest Optional. Manifest to use instead of reading it from file
+	 * @return mixed
+	 * @see json_decode for return values
+	 */
+	static public function getComposerManifest($manifestPath, $key = NULL, $composerManifest = NULL) {
+		if ($composerManifest === NULL) {
+			if (!file_exists($manifestPath . 'composer.json')) {
+				return NULL;
+			}
+			$json = file_get_contents($manifestPath . 'composer.json');
+			$composerManifest = json_decode($json);
+		}
+
+		if ($key !== NULL) {
+			if (isset($composerManifest->{$key})) {
+				$value = $composerManifest->{$key};
+			} else {
+				$value = NULL;
+			}
+		} else {
+			$value = $composerManifest;
+		}
+		return $value;
 	}
 
 	/**
@@ -631,8 +688,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 			$packagePath = isset($stateConfiguration['packagePath']) ? $stateConfiguration['packagePath'] : NULL;
 			$classesPath = isset($stateConfiguration['classesPath']) ? $stateConfiguration['classesPath'] : NULL;
+			$manifestPath = isset($stateConfiguration['manifestPath']) ? $stateConfiguration['manifestPath'] : NULL;
 
-			$package = PackageFactory::create($this->packagesBasePath, $packagePath, $packageKey, $classesPath);
+			$package = PackageFactory::create($this->packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath);
 
 			$this->registerPackage($package, FALSE);
 
@@ -657,7 +715,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected function sortAndSavePackageStates() {
 		$this->sortAvailablePackagesByDependencies();
 
-		$this->packageStatesConfiguration['version'] = 2;
+		$this->packageStatesConfiguration['version'] = 3;
 
 		$fileDescription = "# PackageStates.php\n\n";
 		$fileDescription .= "# This file is maintained by FLOW3's package management. Although you can edit it\n";

@@ -177,7 +177,8 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			$expectedPackageStatesConfiguration[$packageKey] = array(
 				'state' => 'active',
 				'packagePath' => 'Application/' . $packageKey . '/',
-				'classesPath' => 'Classes/'
+				'classesPath' => 'Classes/',
+				'manifestPath' => ''
 			);
 		}
 

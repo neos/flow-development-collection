@@ -27,6 +27,11 @@ class Package implements PackageInterface {
 	protected $packageKey;
 
 	/**
+	 * @var string
+	 */
+	protected $manifestPath;
+
+	/**
 	 * Full path to this package's main directory
 	 * @var string
 	 */
@@ -63,7 +68,7 @@ class Package implements PackageInterface {
 	protected $classFiles;
 
 	/**
-	 * The namespace of the classes contaoned in this package
+	 * The namespace of the classes contained in this package
 	 * @var string
 	 */
 	protected $namespace;
@@ -80,19 +85,20 @@ class Package implements PackageInterface {
 	 * Constructor
 	 *
 	 * @param string $packageKey Key of this package
-	 * @param string $manifestPath Absolute path to the location of the package's composer manifest
+	 * @param string $packagePath Absolute path to the location of the package's composer manifest
 	 * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, read from Composer manifest if not set.
+	 * @param string $manifestPath Path the composer manifest of the package, relative to $packagePath. Optional, defaults to ''.
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
 	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 */
-	public function __construct($packageKey, $manifestPath, $classesPath = NULL) {
+	public function __construct($packageKey, $packagePath, $classesPath = NULL, $manifestPath = '') {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) {
 			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
-		if (!(is_dir($manifestPath) || (\TYPO3\FLOW3\Utility\Files::is_link($manifestPath) && is_dir(realpath(rtrim($manifestPath, '/')))))) {
+		if (!(is_dir($packagePath) || (\TYPO3\FLOW3\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) {
 			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
 		}
-		if (substr($manifestPath, -1, 1) !== '/') {
+		if (substr($packagePath, -1, 1) !== '/') {
 			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
 		}
 		if (substr($classesPath, 1, 1) === '/') {
@@ -101,7 +107,7 @@ class Package implements PackageInterface {
 
 		$this->manifestPath = $manifestPath;
 		$this->packageKey = $packageKey;
-		$this->packagePath = $this->resolvePackagePathFromManifest();
+		$this->packagePath = Files::getNormalizedPath($packagePath);
 		if (isset($this->getComposerManifest()->autoload->{'psr-0'})) {
 			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getNamespace()});
 		} else {
@@ -236,24 +242,7 @@ class Package implements PackageInterface {
 	 * @return string
 	 */
 	public function getManifestPath() {
-		return $this->manifestPath;
-	}
-
-	/**
-	 * Resolves the path to the package by the position and content of the Composer manifest
-	 * These will most likely, but not always, be identical.
-	 *
-	 * @return string full package path
-	 */
-	protected function resolvePackagePathFromManifest() {
-		$targetDir = $this->getComposerManifest('target-dir');
-		if ($targetDir !== NULL) {
-			$packagePath = str_replace($targetDir . '/', '', $this->manifestPath);
-		} else {
-			$packagePath = $this->manifestPath;
-		}
-
-		return Files::getNormalizedPath($packagePath);
+		return $this->packagePath . $this->manifestPath;
 	}
 
 	/**
@@ -362,22 +351,10 @@ class Package implements PackageInterface {
 	 */
 	protected function getComposerManifest($key = NULL) {
 		if (!isset($this->composerManifest)) {
-			if (!file_exists($this->getManifestPath() . 'composer.json')) {
-				return NULL;
-			}
-			$json = file_get_contents($this->getManifestPath() . 'composer.json');
-			$this->composerManifest = json_decode($json);
+			$this->composerManifest = PackageManager::getComposerManifest($this->getManifestPath());
 		}
-		if ($key !== NULL) {
-			if (isset($this->composerManifest->{$key})) {
-				$value = $this->composerManifest->{$key};
-			} else {
-				$value = NULL;
-			}
-		} else {
-			$value = $this->composerManifest;
-		}
-		return $value;
+
+		return PackageManager::getComposerManifest('', $key, $this->composerManifest);
 	}
 
 	/**
