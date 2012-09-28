@@ -162,7 +162,7 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 			mkdir($packagePath, 0770, TRUE);
 			mkdir($packagePath . 'Classes');
-			file_put_contents($packagePath . 'composer.json', '{"type": "flow3-test"}');
+			file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow3-test"}');
 		}
 
 		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('updateShortcuts'), array(), '', FALSE);
