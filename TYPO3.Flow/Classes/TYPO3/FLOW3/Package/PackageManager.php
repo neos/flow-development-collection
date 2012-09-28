@@ -525,9 +525,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected function loadPackageStates() {
 		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
 		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 2) {
-			if (is_dir(FLOW3_PATH_PACKAGES . '.Shortcuts')) {
-				Files::removeDirectoryRecursively(FLOW3_PATH_PACKAGES . '.Shortcuts');
-			}
 			$this->packageStatesConfiguration = array();
 		}
 		if ($this->packageStatesConfiguration === array() || !$this->bootstrap->getContext()->isProduction()) {
