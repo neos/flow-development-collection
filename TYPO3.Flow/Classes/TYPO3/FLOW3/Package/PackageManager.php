@@ -309,6 +309,8 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		if ($packageMetaData !== NULL) {
 			$manifest['description'] = $packageMetaData->getDescription();
 			$manifest['version'] = $packageMetaData->getVersion();
+		} else {
+			$manifest['description'] = '';
 		}
 		$manifest['require'] = array('typo3/flow3' => '*');
 		$manifest['autoload'] = array('psr-0' => array(str_replace('.', '\\', $packageKey) => 'Classes'));
