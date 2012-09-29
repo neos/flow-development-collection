@@ -1,12 +1,12 @@
 {
     "name": "typo3/kickstart",
-    "type": "flow3-framework",
+    "type": "flow-framework",
     "description": "A simple generator for controller and views.",
     "license": "LGPL-3.0+",
     "version": "1.2.0-dev",
     "require": {
-        "flow3/composer-installers": "*",
-        "typo3/flow3": "*"
+        "typo3/flow-composer-installers": "*",
+        "typo3/flow": "*"
     },
     "autoload": {
         "psr-0": {

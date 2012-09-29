@@ -2,7 +2,7 @@
 namespace TYPO3\Kickstart\Tests\Unit\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Kickstart".                  *
+ * This script belongs to the TYPO3 Flow package "Kickstart".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
  * Testcase for the Inflector
  *
  */
-class InflectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class InflectorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */

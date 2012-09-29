@@ -2,7 +2,7 @@
 namespace TYPO3\Kickstart\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Kickstart".                  *
+ * This script belongs to the TYPO3 Flow package "Kickstart".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\Kickstart\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Service for the Kickstart generator
@@ -20,32 +20,32 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class GeneratorService {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var \TYPO3\Fluid\Core\Parser\TemplateParser
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 */
 	protected $templateParser;
 
 	/**
 	 * @var \TYPO3\Kickstart\Utility\Inflector
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 */
 	protected $inflector;
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
+	 * @Flow\Inject
 	 */
 	protected $reflectionService;
 
@@ -186,8 +186,8 @@ class GeneratorService {
 		$modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
 		if ($modelClassSchema !== NULL) {
 			$contextVariables['properties'] = $modelClassSchema->getProperties();
-			if (isset($contextVariables['properties']['FLOW3_Persistence_Identifier'])) {
-				unset($contextVariables['properties']['FLOW3_Persistence_Identifier']);
+			if (isset($contextVariables['properties']['Persistence_Object_Identifier'])) {
+				unset($contextVariables['properties']['Persistence_Object_Identifier']);
 			}
 		}
 
@@ -292,7 +292,7 @@ class GeneratorService {
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
 		$testFilename = $testName . '.php';
-		$testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . \TYPO3\FLOW3\Package\PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
+		$testPath = $this->packageManager->getPackage($packageKey)->getPackagePath() . \TYPO3\Flow\Package\PackageInterface::DIRECTORY_TESTS_UNIT . 'Domain/Model/';
 		$targetPathAndFilename = $testPath . $testFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
@@ -367,7 +367,7 @@ class GeneratorService {
 	 */
 	protected function generateFile($targetPathAndFilename, $fileContent, $force = FALSE) {
 		if (!is_dir(dirname($targetPathAndFilename))) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
 
 		if (substr($targetPathAndFilename, 0, 11) === 'resource://') {
@@ -396,7 +396,7 @@ class GeneratorService {
 	 * @throws \TYPO3\Fluid\Core\Exception
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
-		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
+		$templateSource = \TYPO3\Flow\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
 		if ($templateSource === FALSE) {
 			throw new \TYPO3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}

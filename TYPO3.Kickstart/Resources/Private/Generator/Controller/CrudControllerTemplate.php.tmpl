@@ -2,24 +2,24 @@
 namespace {packageNamespace}<f:if condition="{isInSubpackage}">\{subpackage}</f:if>\Controller;
 
 /*                                                                        *
-<f:format.padding padLength="74"> * This script belongs to the FLOW3 package "{packageKey}".</f:format.padding>*
+<f:format.padding padLength="74"> * This script belongs to the TYPO3 Flow package "{packageKey}".</f:format.padding>*
  *                                                                        *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
-use TYPO3\FLOW3\Mvc\Controller\ActionController;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 use {modelFullClassName};
 
 /**
  * {controllerName} controller for the {packageKey} package <f:if condition="{isInSubpackage}"> and subpackage {subpackage}</f:if>
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class {controllerClassName} extends ActionController {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var {repositoryClassName}
 	 */
 	protected ${modelName}Repository;

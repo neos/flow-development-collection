@@ -2,7 +2,7 @@
 namespace TYPO3\Kickstart\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "Kickstart".                  *
+ * This script belongs to the TYPO3 Flow package "Kickstart".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,23 +11,23 @@ namespace TYPO3\Kickstart\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Command controller for the Kickstart generator
  *
  */
-class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var \TYPO3\Kickstart\Service\GeneratorService
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 */
 	protected $generatorService;
 
@@ -41,7 +41,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 *
 	 * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
 	 * @return string
-	 * @see typo3.flow3:package:create
+	 * @see typo3.flow:package:create
 	 */
 	public function packageCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -109,7 +109,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$generatedFiles = array();
 		$generatedModels = FALSE;
 
-		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
+		$controllerNames = \TYPO3\Flow\Utility\Arrays::trimExplode(',', $controllerName);
 		if ($generateActions === TRUE) {
 			foreach ($controllerNames as $currentControllerName) {
 				$modelClassName = str_replace('.', '\\', $packageKey) . '\Domain\Model\\' . $currentControllerName;
@@ -185,7 +185,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->quit(2);
 		}
 		$generatedFiles = array();
-		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
+		$controllerNames = \TYPO3\Flow\Utility\Arrays::trimExplode(',', $controllerName);
 		foreach ($controllerNames as $currentControllerName) {
 			$generatedFiles += $this->generatorService->generateCommandController($packageKey, $currentControllerName, $force);
 		}
