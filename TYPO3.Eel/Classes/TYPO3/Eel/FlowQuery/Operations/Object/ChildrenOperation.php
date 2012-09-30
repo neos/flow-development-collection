@@ -2,7 +2,7 @@
 namespace TYPO3\Eel\FlowQuery\Operations\Object;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * "children" operation working on generic objects, using fizzle inside
@@ -82,7 +82,7 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 		$resultObjectHashes = array();
 
 		foreach ($query->getContext() as $element) {
-			$subProperty = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($element, $propertyNameFilter);
+			$subProperty = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyNameFilter);
 			if (is_object($subProperty) && !isset($resultObjectHashes[spl_object_hash($subProperty)])) {
 				$resultObjectHashes[spl_object_hash($subProperty)] = TRUE;
 				$resultObjects[] = $subProperty;

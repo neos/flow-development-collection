@@ -2,7 +2,7 @@
 namespace TYPO3\Eel\Tests\Unit\FlowQuery;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\Eel\Tests\Unit\FlowQuery;
 /**
  * FlowQuery test
  */
-class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -326,7 +326,7 @@ class FlowQueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected function createFlowQuery(array $elements) {
 		$flowQuery = $this->getAccessibleMock('\TYPO3\Eel\FlowQuery\FlowQuery', array('dummy'), array($elements));
 
-		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$objectManager->expects($this->any())->method('get')->will($this->returnCallback(function($object) {
 			return new $object;
 		}));

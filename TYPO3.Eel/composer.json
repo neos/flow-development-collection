@@ -1,10 +1,10 @@
 {
     "name": "typo3/eel",
-    "type": "flow3-package",
+    "type": "typo3-flow-package",
     "description": "",
     "version": "",
     "require": {
-        "typo3/flow3": "*"
+        "typo3/flow": "*"
     },
     "autoload": {
         "psr-0": {

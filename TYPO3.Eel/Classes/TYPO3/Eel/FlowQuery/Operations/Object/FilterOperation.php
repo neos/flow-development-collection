@@ -2,7 +2,7 @@
 namespace TYPO3\Eel\FlowQuery\Operations\Object;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Filter operation, limiting the set of objects
@@ -136,7 +136,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 * @return mixed
 	 */
 	protected function getPropertyPath($element, $propertyPath) {
-		return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($element, $propertyPath);
+		return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyPath);
 	}
 
 	/**
@@ -173,7 +173,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 * @return boolean TRUE if operand is a simple type (object, array, string, ...); i.e. everything which is NOT a class name
 	 */
 	protected function operandIsSimpleType($type) {
-		return $type === 'object' || $type === 'array' || \TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type);
+		return $type === 'object' || $type === 'array' || \TYPO3\Flow\Utility\TypeHandling::isLiteral($type);
 	}
 
 	/**
@@ -182,7 +182,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 * @return boolean TRUE if $valus if of type $operand; FALSE otherwise
 	 */
 	protected function handleSimpleTypeOperand($operand, $value) {
-		$operand = \TYPO3\FLOW3\Utility\TypeHandling::normalizeType($operand);
+		$operand = \TYPO3\Flow\Utility\TypeHandling::normalizeType($operand);
 		if ($operand === 'object') {
 			return is_object($value);
 		} elseif ($operand === 'string') {

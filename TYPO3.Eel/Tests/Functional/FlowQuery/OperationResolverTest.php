@@ -4,7 +4,7 @@ namespace TYPO3\Eel\Tests\Functional\FlowQuery;
 /**
  * Test cases for operation resolver
  */
-class OperationResolverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var \TYPO3\Eel\FlowQuery\OperationResolver

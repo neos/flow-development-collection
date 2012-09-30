@@ -2,7 +2,7 @@
 namespace TYPO3\Eel\FlowQuery;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,13 +11,13 @@ namespace TYPO3\Eel\FlowQuery;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * FlowQuery is jQuery for PHP, a selector and traversal engine for object sets.
  *
  * It is specifically implemented for being used inside Eel, the Embedded Expression
- * Language for FLOW3.
+ * Language for Flow.
  *
  * Essentially, a FlowQuery object is a container for an *ordered set* of objects
  * of a certain type. On this container, *operations* can be applied (like
@@ -88,7 +88,7 @@ class FlowQuery implements \IteratorAggregate {
 	protected $operations = array();
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Eel\FlowQuery\OperationResolver
 	 */
 	protected $operationResolver;

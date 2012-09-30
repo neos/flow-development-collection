@@ -2,7 +2,7 @@
 namespace TYPO3\Eel;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Eel".                  *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Eel".             *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -51,7 +51,7 @@ class Context {
 				return array_key_exists($path, $this->value) ? $this->value[$path] : NULL;
 			} elseif (is_object($this->value)) {
 				$propertyExists = FALSE;
-				return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyInternal($this->value, $path, FALSE, $propertyExists);
+				return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyInternal($this->value, $path, FALSE, $propertyExists);
 			}
 		} else {
 			throw new EvaluationException('Path is not of type string or integer, got ' . gettype($path), 1344418464);
