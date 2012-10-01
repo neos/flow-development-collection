@@ -141,6 +141,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'version' => 2
 		));
 		$packageManager->_call('scanAvailablePackages');
+		$packageManager->_call('sortAndsavePackageStates');
 
 		$packageStates = require('vfs://Test/Configuration/PackageStates.php');
 		$this->assertEquals('inactive', $packageStates['packages'][$packageKey]['state']);

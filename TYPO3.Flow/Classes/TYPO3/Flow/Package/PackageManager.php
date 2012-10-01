@@ -709,7 +709,6 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 				$this->activePackages[$packageKey] = $this->packages[$packageKey];
 			}
 		}
-		$this->sortAndSavePackageStates();
 	}
 
 	/**
