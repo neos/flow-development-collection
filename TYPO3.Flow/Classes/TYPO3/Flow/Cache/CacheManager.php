@@ -189,8 +189,12 @@ class CacheManager {
 					$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
 					$matches = array();
 					if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches) === 1) {
-						$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
-						$classNameWithUnderscores = str_replace('.', '_', $classNameWithUnderscores);
+						if ($matches[2] === 'Classes') {
+							$classNameWithUnderscores = str_replace('/', '_', $matches[3]);
+						} else {
+							$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
+							$classNameWithUnderscores = str_replace('.', '_', $classNameWithUnderscores);
+						}
 						$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
 
 							// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
