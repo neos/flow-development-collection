@@ -20,7 +20,6 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "typo3/flow-composer-installers": "*",
         "typo3/fluid": "*",
         "typo3/party": "*",
 
@@ -28,7 +27,9 @@
         "doctrine/migrations": "*",
 
         "symfony/yaml": ">2.1.0",
-        "symfony/dom-crawler": ">2.0.16"
+        "symfony/dom-crawler": ">2.0.16",
+
+        "typo3/flow-composer-installers": "*"
     },
     "autoload": {
         "psr-0": {
