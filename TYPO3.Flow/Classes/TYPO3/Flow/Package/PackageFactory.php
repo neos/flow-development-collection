@@ -71,7 +71,7 @@ class PackageFactory {
 				// manifest found but no valid package, skip it
 			return NULL;
 		}
-		if (isset($manifest->type) && substr($manifest->type, 0, 6) === 'flow-') {
+		if (isset($manifest->type) && substr($manifest->type, 0, 11) === 'typo3-flow-') {
 			$relativePackagePath = substr($packagePath, strlen($packagesBasePath));
 			$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
 			/**
