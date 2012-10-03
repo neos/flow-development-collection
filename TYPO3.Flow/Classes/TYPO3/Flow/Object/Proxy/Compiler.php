@@ -56,7 +56,7 @@ class Compiler {
 	protected $proxyClasses = array();
 
 	/**
-	 * Hardcoded list of Flow sub packages (first 15 characters) which must be immune proxying for security, technical or conceptual reasons.
+	 * Hardcoded list of Flow sub packages (first 14 characters) which must be immune proxying for security, technical or conceptual reasons.
 	 * @var array
 	 */
 	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop', 'TYPO3\Flow\Con', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti');
@@ -128,7 +128,7 @@ class Compiler {
 			return FALSE;
 		}
 
-		if (in_array(substr($fullClassName, 0, 15), $this->blacklistedSubPackages)) {
+		if (in_array(substr($fullClassName, 0, 14), $this->blacklistedSubPackages)) {
 			return FALSE;
 		}
 
