@@ -305,7 +305,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$nameParts = explode('.', $packageKey);
 		$vendor = array_shift($nameParts);
 		$manifest['name'] = strtolower($vendor . '/' . implode('-', $nameParts));
-		$manifest['type'] = 'flow-package';
+		$manifest['type'] = 'typo3-flow-package';
 		if ($packageMetaData !== NULL) {
 			$manifest['description'] = $packageMetaData->getDescription();
 			$manifest['version'] = $packageMetaData->getVersion();
