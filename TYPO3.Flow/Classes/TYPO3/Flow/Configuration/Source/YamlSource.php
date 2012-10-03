@@ -58,7 +58,7 @@ class YamlSource implements \TYPO3\Flow\Configuration\Source\SourceInterface {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99);
+		$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99, 2);
 		file_put_contents($pathAndFilename . '.yaml', $header . chr(10) . $yaml);
 	}
 
