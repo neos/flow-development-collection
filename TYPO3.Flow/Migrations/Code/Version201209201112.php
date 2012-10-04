@@ -57,15 +57,15 @@ class Version201209201112 extends AbstractMigration {
 
 		switch ($this->targetPackageData['category']) {
 			case 'Application':
-				$manifest['type'] = 'flow3-package';
+				$manifest['type'] = 'typo3-flow-package';
 			break;
 			default:
-				$manifest['type'] = strtolower('flow3-' . $this->targetPackageData['category']);
+				$manifest['type'] = strtolower('typo3-flow-' . $this->targetPackageData['category']);
 		}
 
 		$manifest['description'] = $this->targetPackageData['meta']['description'];
 		$manifest['version'] = $this->targetPackageData['meta']['version'];
-		$manifest['require'] = array('typo3/flow3' => '*');
+		$manifest['require'] = array('typo3/flow' => '*');
 		$manifest['autoload'] = array('psr-0' => array(str_replace('.', '\\', $this->targetPackageData['packageKey']) => 'Classes'));
 
 		if (defined('JSON_PRETTY_PRINT')) {
