@@ -60,7 +60,7 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 		$configurationSource->save($pathAndFilename, $mockConfiguration);
 
-		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '    bar: Baz' . chr(10);
+		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
 		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file.');
 	}
 
