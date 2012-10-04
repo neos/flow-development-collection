@@ -120,23 +120,23 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushSystemCachesByChangedFilesWithChangedClassFileRemovesCacheEntryFromObjectClassesCache() {
-		$objectClassCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface');
-		$objectClassCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('FLOW3_Object_Classes'));
-		$objectConfigurationCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface');
-		$objectConfigurationCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('FLOW3_Object_Configuration'));
-		$reflectionStatusCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface');
-		$reflectionStatusCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('FLOW3_Reflection_Status'));
+		$objectClassCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$objectClassCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Classes'));
+		$objectConfigurationCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$objectConfigurationCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Configuration'));
+		$reflectionStatusCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$reflectionStatusCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Reflection_Status'));
 
-		$manager = new \TYPO3\FLOW3\Cache\CacheManager();
+		$manager = new \TYPO3\Flow\Cache\CacheManager();
 		$manager->registerCache($objectClassCache);
 		$manager->registerCache($objectConfigurationCache);
 		$manager->registerCache($reflectionStatusCache);
 
-		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_FLOW3_Cache_CacheManager');
+		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Cache_CacheManager');
 		$objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
-		$manager->flushSystemCachesByChangedFiles('FLOW3_ClassFiles', array(
-			FLOW3_PATH_PACKAGES . '/Framework/TYPO3.FLOW3/Classes/TYPO3/FLOW3/Cache/CacheManager.php' => \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED
+		$manager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
+			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Cache/CacheManager.php' => \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED
 		));
 	}
 
@@ -144,23 +144,23 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushSystemCachesByChangedFilesWithChangedTestFileRemovesCacheEntryFromObjectClassesCache() {
-		$objectClassCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface');
-		$objectClassCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('FLOW3_Object_Classes'));
-		$objectConfigurationCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface');
-		$objectConfigurationCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('FLOW3_Object_Configuration'));
-		$reflectionStatusCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface');
-		$reflectionStatusCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('FLOW3_Reflection_Status'));
+		$objectClassCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$objectClassCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Classes'));
+		$objectConfigurationCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$objectConfigurationCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Configuration'));
+		$reflectionStatusCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$reflectionStatusCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Reflection_Status'));
 
-		$manager = new \TYPO3\FLOW3\Cache\CacheManager();
+		$manager = new \TYPO3\Flow\Cache\CacheManager();
 		$manager->registerCache($objectClassCache);
 		$manager->registerCache($objectConfigurationCache);
 		$manager->registerCache($reflectionStatusCache);
 
-		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_FLOW3_Tests_Functional_Cache_CacheManagerTest');
+		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Tests_Functional_Cache_CacheManagerTest');
 		$objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
-		$manager->flushSystemCachesByChangedFiles('FLOW3_ClassFiles', array(
-			FLOW3_PATH_PACKAGES . '/Framework/TYPO3.FLOW3/Tests/Functional/Cache/CacheManagerTest.php' => \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED
+		$manager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
+			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Functional/Cache/CacheManagerTest.php' => \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED
 		));
 	}
 
