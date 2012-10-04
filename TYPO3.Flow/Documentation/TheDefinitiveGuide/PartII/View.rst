@@ -496,7 +496,7 @@ name ``"title"`` due to the ``property`` attribute you defined. The ``id``
 attribute only serves as a target for the ``label`` tag and is not required
 by Fluid.
 
-What's missing now is a small adjustment to the PHP code displaying the edit form::
+What's missing now is a small adjustment to the PHP code displaying the edit form:
 
 *Classes/Controller/PostController.php*:
 
@@ -519,7 +519,7 @@ link of your list of posts should result in a screen similar to this:
 
 .. image:: /Images/GettingStarted/EditPost.png
 
-When you submit the form you call the ``updateAction``::
+When you submit the form you call the ``updateAction``:
 
 *Classes/Controller/PostController.php*:
 

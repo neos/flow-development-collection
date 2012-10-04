@@ -122,7 +122,18 @@ validation errors. Just add the ``<f:form.errors>`` view helper to your
 		<f:form.validationResults for="newPost">
 			<f:if condition="{validationResults.flattenedErrors}">
 				<div class="error">
-					<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></f:for>
+					<dl>
+						<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
+							<dt>{propertyPath}</dt>
+							<dd>
+								<ul>
+									<f:for each="{errors}" as="error">
+										<li>{error}</li>
+									</f:for>
+								</ul>
+							</dd>
+						</f:for>
+					</dl>
 				</div>
 			</f:if>
 		</f:form.validationResults>
@@ -156,7 +167,7 @@ Now that you know how validation errors can be displayed, you should add a
 	<f:layout name="Default" />
 
 	<f:section name="mainbox">
-		<h2 class="flow-firstHeader">Edit post</h2>
+		<h2 class="flow-firstHeader">Edit post &quot;{post.title}&quot;</h2>
 		<f:flashMessages class="flashmessages"/>
 		<f:form.validationResults for="post">
 			<f:if condition="{validationResults.flattenedErrors}">
