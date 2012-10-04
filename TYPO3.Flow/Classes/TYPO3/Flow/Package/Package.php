@@ -178,8 +178,8 @@ class Package implements PackageInterface {
 	public function getNamespace() {
 		if(!$this->namespace) {
 			$manifest = $this->getComposerManifest();
-			if (isset($manifest->autoload->{"psr-0"})) {
-				$namespaces = $manifest->autoload->{"psr-0"};
+			if (isset($manifest->autoload->{'psr-0'})) {
+				$namespaces = $manifest->autoload->{'psr-0'};
 				if (count($namespaces) === 1) {
 					$namespace = key($namespaces);
 				} else {
