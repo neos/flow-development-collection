@@ -39,7 +39,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 		}
 
 		$renderingOptions = $this->resolveCustomRenderingOptions($exception);
-		if ($renderingOptions !== NULL && isset($renderingOptions['fluidTemplate'])) {
+		if ($renderingOptions !== NULL && isset($renderingOptions['templatePathAndFilename'])) {
 			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
 			echo $this->buildCustomFluidView($renderingOptions, $statusCode, $referenceCode)->render();
 		} else {

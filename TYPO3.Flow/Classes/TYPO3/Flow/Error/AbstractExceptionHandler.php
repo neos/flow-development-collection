@@ -105,7 +105,16 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 
 		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
-		$fluidView->setTemplatePathAndFilename($renderingOptions['fluidTemplate']);
+		$fluidView->setTemplatePathAndFilename($renderingOptions['templatePathAndFilename']);
+		if (isset($renderingOptions['layoutRootPath'])) {
+			$fluidView->setLayoutRootPath($renderingOptions['layoutRootPath']);
+		}
+		if (isset($renderingOptions['partialRootPath'])) {
+			$fluidView->setPartialRootPath($renderingOptions['partialRootPath']);
+		}
+		if (isset($renderingOptions['format'])) {
+			$fluidView->setFormat($renderingOptions['format']);
+		}
 		if (isset($renderingOptions['variables'])) {
 			$fluidView->assignMultiple($renderingOptions['variables']);
 		}

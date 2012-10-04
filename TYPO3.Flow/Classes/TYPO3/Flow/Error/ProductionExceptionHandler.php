@@ -38,7 +38,7 @@ class ProductionExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHand
 		}
 
 		$renderingOptions = $this->resolveCustomRenderingOptions($exception);
-		if ($renderingOptions !== NULL && isset($renderingOptions['fluidTemplate'])) {
+		if ($renderingOptions !== NULL && isset($renderingOptions['templatePathAndFilename'])) {
 			echo $this->buildCustomFluidView($renderingOptions, $statusCode, $referenceCode)->render();
 		} else {
 			echo $this->renderStatically($statusCode, $referenceCode);
