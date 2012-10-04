@@ -357,11 +357,11 @@ the ``Resources/Public/Templates/Post/`` folder:
 		<f:form method="post" action="create" object="{newPost}" name="newPost" enctype="multipart/form-data">
 			<f:form.hidden name="blog" value="{blog}" />
 			<label for="author">Author</label><br />
-			<f:form.textbox property="author" id="author" /><br />
+			<f:form.textfield property="author" id="author" /><br />
 			<label for="title">Title</label><br />
-			<f:form.textbox property="title" id="title" /><br />
+			<f:form.textfield property="title" id="title" /><br />
 			<label for="linkTitle">Link Title (optional)</label><br />
-			<f:form.textbox property="linkTitle" id="linkTitle" /><br />
+			<f:form.textfield property="linkTitle" id="linkTitle" /><br />
 			<label for="content">Content</label><br />
 			<f:form.textarea property="content" rows="5" cols="40" id="content" /><br />
 			<f:form.submit value="Submit post"/>
@@ -470,11 +470,11 @@ HTML code:
 		<h2 class="flow-firstHeader">Edit post "{post.title}"</h2>
 		<f:form method="post" action="update" object="{post}" name="post" enctype="multipart/form-data">
 			<label for="author">Author</label><br />
-			<f:form.textbox property="author" id="author" /><br />
+			<f:form.textfield property="author" id="author" /><br />
 			<label for="title">Title</label><br />
-			<f:form.textbox property="title" id="title" /><br />
+			<f:form.textfield property="title" id="title" /><br />
 			<label for="linkTitle">Link Title (optional)</label><br />
-			<f:form.textbox property="linkTitle" id="linkTitle" /><br />
+			<f:form.textfield property="linkTitle" id="linkTitle" /><br />
 			<label for="content">Content</label><br />
 			<f:form.textarea property="content" rows="5" cols="40" id="content" /><br />
 			<f:form.submit value="Update"/>
