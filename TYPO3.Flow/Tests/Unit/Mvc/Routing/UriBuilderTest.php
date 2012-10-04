@@ -202,13 +202,28 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function uriForPrefixesControllerArgumentsWithSubRequestArgumentNamespaceOfParentRequestAndCurrentRequestIfNotEmpty() {
+	public function uriForPrefixesControllerArgumentsForMultipleNamespacedSubRequest() {
 		$expectedArguments = array(
 			'SubNamespace' => array(
-				'SubSubNamespace' => array('arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage')
+				'arg1' => 'val1',
+				'@action' => 'someaction',
+				'@controller' => 'somecontroller',
+				'@package' => 'somepackage',
+				'SubSubNamespace' => array(
+					'arg1' => 'val1',
+					'@action' => 'someaction',
+					'@controller' => 'somecontroller',
+					'@package' => 'somepackage'
+				)
 			)
 		);
 		$this->mockMainRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array(
+			'arg1' => 'val1',
+			'@action' => 'someaction',
+			'@controller' => 'somecontroller',
+			'@package' => 'somepackage'
+		)));
 		$this->mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubSubNamespace'));
 
 		$this->uriBuilder->setRequest($this->mockSubSubRequest);
@@ -325,14 +340,22 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildMergesArgumentsWithRootRequestArgumentsIfRequestIsOfTypeSubRequest() {
-		$rootRequestArguments = array('SomeNamespace' => array('Foo' => 'From Request'), 'Foo' => 'Bar', 'Some' => 'Other Argument From Request');
+		$rootRequestArguments = array(
+			'SomeNamespace' => array('Foo' => 'From Request'),
+			'Foo' => 'Bar',
+			'Some' => 'Other Argument From Request'
+		);
 		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue($rootRequestArguments));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->setArguments(array('Foo' => 'Overruled'));
 		$this->uriBuilder->build();
 
-		$expectedArguments = array('SomeNamespace' => array('Foo' => 'From Request'), 'Foo' => 'Overruled', 'Some' => 'Other Argument From Request');
+		$expectedArguments = array(
+			'SomeNamespace' => array('Foo' => 'From Request'),
+			'Foo' => 'Overruled',
+			'Some' => 'Other Argument From Request'
+		);
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 

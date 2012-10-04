@@ -338,7 +338,7 @@ class UriBuilder {
 			$controllerArguments['@format'] = $this->format;
 		}
 
-		$controllerArguments = $this->addNamespaceToArguments($controllerArguments);
+		$controllerArguments = $this->addNamespaceToArguments($controllerArguments, $this->request);
 		return $this->build($controllerArguments);
 	}
 
@@ -353,11 +353,11 @@ class UriBuilder {
 	 * )
 	 *
 	 * @param array $arguments arguments
+	 * @param \TYPO3\Flow\Mvc\RequestInterface $currentRequest
 	 * @return array arguments with namespace
 	 */
-	protected function addNamespaceToArguments(array $arguments) {
-		$currentRequest = $this->request;
-		while(!$currentRequest->isMainRequest()) {
+	protected function addNamespaceToArguments(array $arguments, \TYPO3\Flow\Mvc\RequestInterface $currentRequest) {
+		while (!$currentRequest->isMainRequest()) {
 			$argumentNamespace = $currentRequest->getArgumentNamespace();
 			if ($argumentNamespace !== '') {
 				$arguments = array($argumentNamespace => $arguments);
@@ -411,54 +411,63 @@ class UriBuilder {
 	protected function mergeArgumentsWithRequestArguments(array $arguments) {
 		$requestArguments = array();
 
-		$mainRequest = $this->request->getMainRequest();
-		$isSubRequest = ($this->request !== $mainRequest);
+		$request = $this->request;
+		if ($this->request !== $this->request->getMainRequest()) {
+			while ($request instanceof \TYPO3\Flow\Mvc\ActionRequest) {
+				$requestArguments = (array) $request->getArguments();
 
-		if ($isSubRequest) {
-			$requestArguments = $mainRequest->getArguments();
-
-				// remove all arguments of the current sub request
-			if ($this->request->getArgumentNamespace() !== '') {
-				$requestNamespace = $this->getRequestNamespacePath($this->request);
-				if ($this->addQueryString === FALSE) {
-					$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
-				} else {
-					foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
-						$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
+					// remove all arguments of the current sub request
+				if ($this->request->getArgumentNamespace() !== '') {
+					$requestNamespace = $this->getRequestNamespacePath($this->request);
+					if ($this->addQueryString === FALSE) {
+						$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
+					} else {
+						foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+							$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
+						}
 					}
 				}
-			}
 
-				// merge special arguments (package, subpackage, controller & action) from main request
-			$mainRequestPackageKey = $mainRequest->getControllerPackageKey();
-			if (!empty($mainRequestPackageKey)) {
-				$requestArguments['@package'] = $mainRequestPackageKey;
-			}
-			$mainRequestSubpackageKey = $mainRequest->getControllerSubpackageKey();
-			if (!empty($mainRequestSubpackageKey)) {
-				$requestArguments['@subpackage'] = $mainRequestSubpackageKey;
-			}
-			$mainRequestControllerName = $mainRequest->getControllerName();
-			if (!empty($mainRequestControllerName)) {
-				$requestArguments['@controller'] = $mainRequestControllerName;
-			}
-			$mainRequestActionName = $mainRequest->getControllerActionName();
-			if (!empty($mainRequestActionName)) {
-				$requestArguments['@action'] = $mainRequestActionName;
-			}
+					// merge special arguments (package, subpackage, controller & action) from main request
+				$requestPackageKey = $request->getControllerPackageKey();
+				if (!empty($requestPackageKey)) {
+					$requestArguments['@package'] = $requestPackageKey;
+				}
+				$requestSubpackageKey = $request->getControllerSubpackageKey();
+				if (!empty($requestSubpackageKey)) {
+					$requestArguments['@subpackage'] = $requestSubpackageKey;
+				}
+				$requestControllerName = $request->getControllerName();
+				if (!empty($requestControllerName)) {
+					$requestArguments['@controller'] = $requestControllerName;
+				}
+				$requestActionName = $request->getControllerActionName();
+				if (!empty($requestActionName)) {
+					$requestArguments['@action'] = $requestActionName;
+				}
 
-		} elseif ($this->addQueryString === TRUE) {
+				if (count($requestArguments) > 0) {
+					$requestArguments = $this->addNamespaceToArguments($requestArguments, $request);
+					$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+				}
+
+				$request = $request->getParentRequest();
+			}
+		}
+		if ($this->addQueryString === TRUE) {
 			$requestArguments = $this->request->getArguments();
 			foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
 				unset($requestArguments[$argumentToBeExcluded]);
 			}
+
+			if (count($requestArguments) === 0) {
+				return $arguments;
+			}
+
+			$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 		}
 
-		if (count($requestArguments) === 0) {
-			return $arguments;
-		}
-
-		return Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+		return $arguments;
 	}
 
 	/**
