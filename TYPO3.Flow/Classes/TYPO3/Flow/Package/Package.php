@@ -349,7 +349,7 @@ class Package implements PackageInterface {
 	 * @return mixed|NULL
 	 * @see json_decode for return values
 	 */
-	protected function getComposerManifest($key = NULL) {
+	public function getComposerManifest($key = NULL) {
 		if (!isset($this->composerManifest)) {
 			$this->composerManifest = PackageManager::getComposerManifest($this->getManifestPath());
 		}
