@@ -377,7 +377,7 @@ To finish up, open the repository for our posts (which was generated along with 
 controller we kickstarted earlier) and add the following find methods to the generated
 code:
 
-*Classes/Domain/Repository/BlogRepository.php*:
+*Classes/Domain/Repository/PostRepository.php*:
 
 .. code-block:: php
 
