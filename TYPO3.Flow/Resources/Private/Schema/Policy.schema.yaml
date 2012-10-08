@@ -1,10 +1,12 @@
 type: dictionary
+additionalProperties: FALSE
 properties:
   'acls':
     type: dictionary
     required: TRUE
     additionalProperties:
       type: dictionary
+      additionalProperties: FALSE
       properties:
         'methods':
           type: dictionary
@@ -16,6 +18,7 @@ properties:
   'resources':
     type: dictionary
     required: TRUE
+    additionalProperties: FALSE
     properties:
       'entities':
         type: dictionary
