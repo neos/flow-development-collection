@@ -35,6 +35,12 @@ class ActionRequest implements RequestInterface {
 	protected $hashService;
 
 	/**
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 */
+	protected $packageManager;
+
+	/**
 	 * Package key of the controller which is supposed to handle this request.
 	 * @var string
 	 */
@@ -305,8 +311,8 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function setControllerPackageKey($packageKey) {
-		$upperCamelCasedPackageClassName = $this->objectManager->getCaseSensitiveObjectName(str_replace('.', '\\', $packageKey) . '\Package');
-		$this->controllerPackageKey = ($upperCamelCasedPackageClassName !== FALSE) ? substr(str_replace('\\', '.', $upperCamelCasedPackageClassName), 0, strlen($packageKey)) : $packageKey;
+		$correctlyCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
+		$this->controllerPackageKey = ($correctlyCasedPackageKey !== FALSE) ? $correctlyCasedPackageKey : $packageKey;
 	}
 
 	/**

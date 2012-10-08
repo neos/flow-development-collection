@@ -118,8 +118,12 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
+		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManager');
+		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->will($this->returnValue('MyPackage'));
+
 		$originalRequest = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
 		$this->inject($originalRequest, 'objectManager', $mockObjectManager);
+		$this->inject($originalRequest, 'packageManager', $mockPackageManager);
 		$response = new HttpResponse();
 
 		$this->inject($originalRequest, 'objectManager', $mockObjectManager);
@@ -159,8 +163,12 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
+		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManager');
+		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->will($this->returnValue('MyPackage'));
+
 		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
 		$this->inject($request, 'objectManager', $mockObjectManager);
+		$this->inject($request, 'packageManager', $mockPackageManager);
 		$response = new HttpResponse();
 
 		$this->inject($request, 'objectManager', $mockObjectManager);
@@ -208,8 +216,12 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
+		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManager');
+		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->will($this->returnValue('MyPackage'));
+
 		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
 		$this->inject($request, 'objectManager', $mockObjectManager);
+		$this->inject($request, 'packageManager', $mockPackageManager);
 		$response = new HttpResponse();
 
 		$this->inject($request, 'objectManager', $mockObjectManager);
