@@ -359,7 +359,15 @@ class ConfigurationBuilder {
 			$className = $objectConfiguration->getClassName();
 			$properties = $objectConfiguration->getProperties();
 
-			foreach (get_class_methods($className) as $methodName) {
+			$classMethodNames = get_class_methods($className);
+			if (!is_array($classMethodNames)) {
+				if (!class_exists($className)) {
+					throw new \TYPO3\Flow\Object\Exception\UnknownClassException(sprintf('The class "%s" defined in  the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371371);
+				} else {
+					throw new \TYPO3\Flow\Object\Exception\UnknownClassException(sprintf('Could not autowire properties of class "%s" because names of methods contained in that class could not be retrieved using get_class_methods().', $className), 1352386418);
+				}
+			}
+			foreach ($classMethodNames as $methodName) {
 				if (strlen($methodName) > 6 && substr($methodName, 0, 6) === 'inject' && $methodName[6] === strtoupper($methodName[6])) {
 					$propertyName = lcfirst(substr($methodName, 6));
 

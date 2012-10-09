@@ -157,5 +157,20 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configurationBuilder->injectReflectionService($reflectionServiceMock);
 		$configurationBuilder->_call('autowireProperties', array($dummyObjectConfiguration));
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Object\Exception\UnknownClassException
+	 */
+	public function errorOnGetClassMethodsThrowsException() {
+		$configurationArray = array();
+		$configurationArray['properties']['someProperty']['object']['name'] = 'Foo';
+		$configurationArray['properties']['someProperty']['object']['className'] = 'foobar';
+
+		$configurationBuilder = $this->getAccessibleMock('TYPO3\Flow\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$dummyObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__);
+
+		$configurationBuilder->_call('autowireProperties', array($dummyObjectConfiguration));
+	}
 }
 ?>
