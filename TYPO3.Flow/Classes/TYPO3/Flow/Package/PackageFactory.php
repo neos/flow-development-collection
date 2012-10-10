@@ -22,13 +22,14 @@ class PackageFactory {
 	 * Returns a package instance.
 	 *
 	 * @param string $packagesBasePath the base install path of packages,
-	 * @param string $manifestPath path to the package's Composer manifest, relative to base path
+	 * @param string $packagePath path to package, relative to base path
 	 * @param string $packageKey key / name of the package
 	 * @param string $classesPath path to the classes directory, relative to the package path
+	 * @param string $manifestPath path to the package's Composer manifest, relative to package path, defaults to same path
 	 * @return \TYPO3\Flow\Package\PackageInterface
 	 * @throws Exception\CorruptPackageException
 	 */
-	public static function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath) {
+	public static function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath = '') {
 		$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes/' . str_replace('.', '/', $packageKey) . '/Package.php'));
 		if (file_exists($packageClassPathAndFilename)) {
 			require_once($packageClassPathAndFilename);

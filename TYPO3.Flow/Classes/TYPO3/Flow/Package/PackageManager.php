@@ -308,9 +308,9 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 
 		$this->writeComposerManifest($packagePath, $packageKey, $packageMetaData);
 
-		$manifestPath = str_replace($this->packagesBasePath, '', $packagePath);
+		$packagePath = str_replace($this->packagesBasePath, '', $packagePath);
 
-		$package = PackageFactory::create($this->packagesBasePath, $manifestPath, $packageKey, PackageInterface::DIRECTORY_CLASSES, $manifestPath);
+		$package = PackageFactory::create($this->packagesBasePath, $packagePath, $packageKey, PackageInterface::DIRECTORY_CLASSES);
 
 		$this->packages[$packageKey] = $package;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
