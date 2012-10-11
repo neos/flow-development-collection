@@ -700,7 +700,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	static public function getComposerManifest($manifestPath, $key = NULL, $composerManifest = NULL) {
 		if ($composerManifest === NULL) {
 			if (!file_exists($manifestPath . 'composer.json')) {
-				return NULL;
+				throw new \TYPO3\Flow\Package\Exception\MissingPackageManifestException('No composer manifest file found at "' . $manifestPath . '/composer.json".', 1349868540);
 			}
 			$json = file_get_contents($manifestPath . 'composer.json');
 			$composerManifest = json_decode($json);

@@ -163,6 +163,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 			mkdir($packagePath, 0770, TRUE);
 			mkdir($packagePath . 'Classes');
+			file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
 		}
 
 		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('dummy'));
@@ -193,6 +194,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 			mkdir($packagePath, 0770, TRUE);
 			mkdir($packagePath . 'Classes');
+			file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
 		}
 
 		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('dummy'));

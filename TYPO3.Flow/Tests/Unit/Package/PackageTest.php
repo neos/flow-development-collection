@@ -53,6 +53,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function constructAcceptsValidPackageKeys($packageKey) {
 		$packagePath = 'vfs://Packages/' . str_replace('\\', '/', $packageKey) . '/';
 		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
 
 		$package = new Package($packageKey, $packagePath);
 		$this->assertEquals($packageKey, $package->getPackageKey());
@@ -85,6 +86,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getNamespaceReturnsThePhpNamespaceCorrespondingToThePackageKey() {
 		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
 		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test"}');
 		$package = new Package('Acme.MyPackage', $packagePath);
 		$this->assertEquals('Acme\\MyPackage', $package->getNamespace());
 	}
@@ -124,6 +126,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getClassesPathReturnsNormalizedPathToClasses() {
 		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
 		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test"}');
 
 		$package = new Package('Acme.MyPackage', $packagePath, 'no/trailing/slash');
 
@@ -140,6 +143,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		vfsStream::setup('testDirectory');
 
 		$packagePath = vfsStream::url('testDirectory') . '/';
+		file_put_contents($packagePath . 'composer.json', '{"name": "typo3/flow", "type": "flow-test"}');
 
 		$package = new Package('TYPO3.Flow', $packagePath);
 		$documentations = $package->getPackageDocumentations();
@@ -153,6 +157,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function aPackageCanBeFlaggedAsProtected() {
 		$packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
 		mkdir($packagePath, 0700, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "vendor/dummy", "type": "flow-test"}');
 		$package = new Package('Vendor.Dummy', $packagePath);
 
 		$this->assertFalse($package->isProtected());
@@ -166,6 +171,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function isObjectManagementEnabledTellsIfObjectManagementShouldBeEnabledForThePackage() {
 		$packagePath = 'vfs://Packages/Application/Vendor/Dummy/';
 		mkdir($packagePath, 0700, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "vendor/dummy", "type": "flow-test"}');
 		$package = new Package('Vendor.Dummy', $packagePath);
 
 		$this->assertTrue($package->isObjectManagementEnabled());
@@ -177,6 +183,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getClassFilesReturnsAListOfClassFilesOfThePackage() {
 		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
 		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test"}');
 
 		mkdir($packagePath . 'Classes/Acme/MyPackage/Controller', 0770, TRUE);
 		mkdir($packagePath . 'Classes/Acme/MyPackage/Domain/Model', 0770, TRUE);
