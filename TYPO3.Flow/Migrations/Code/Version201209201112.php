@@ -35,7 +35,11 @@ class Version201209201112 extends AbstractMigration {
 	 */
 	public function up() {
 		$packageKeyAsDirectory = str_replace('.', '/', $this->targetPackageData['packageKey']);
-		$this->moveFile('Classes/*', 'Classes/' . $packageKeyAsDirectory . '/');
+		if (!is_dir(Files::concatenatePaths(array($this->targetPackageData['path'], 'Classes', $packageKeyAsDirectory)))) {
+			$this->moveFile('Classes/*', 'Classes/' . $packageKeyAsDirectory . '/');
+		} else {
+			$this->showNote('Skipping moving of classes to PSR-0 layout since the directory "Classes/' . $packageKeyAsDirectory . '" already exists. Make sure to update any other class to the new layout.');
+		}
 
 		$this->writeComposerManifest();
 
@@ -49,6 +53,11 @@ class Version201209201112 extends AbstractMigration {
 	 * @return void
 	 */
 	protected function writeComposerManifest() {
+		$composerJsonFilename = Files::concatenatePaths(array($this->targetPackageData['path'], 'composer.json'));
+		if (file_exists($composerJsonFilename)) {
+			return;
+		}
+
 		$manifest = array();
 
 		$nameParts = explode('.', $this->targetPackageData['packageKey']);
@@ -69,9 +78,9 @@ class Version201209201112 extends AbstractMigration {
 		$manifest['autoload'] = array('psr-0' => array(str_replace('.', '\\', $this->targetPackageData['packageKey']) => 'Classes'));
 
 		if (defined('JSON_PRETTY_PRINT')) {
-			file_put_contents(Files::concatenatePaths(array($this->targetPackageData['path'], 'composer.json')), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+			file_put_contents($composerJsonFilename, json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 		} else {
-			file_put_contents(Files::concatenatePaths(array($this->targetPackageData['path'], 'composer.json')), json_encode($manifest));
+			file_put_contents($composerJsonFilename, json_encode($manifest));
 		}
 	}
 }

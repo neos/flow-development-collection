@@ -312,7 +312,10 @@ abstract class AbstractMigration {
 		}
 
 		foreach ($this->operations['deleteFile'] as $operation) {
-			Git::remove(Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0])));
+			$filename = Files::concatenatePaths(array($this->targetPackageData['path'] . '/' . $operation[0]));
+			if (file_exists($filename)) {
+				Git::remove($filename);
+			}
 		}
 	}
 
