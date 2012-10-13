@@ -204,15 +204,15 @@ class Scripts {
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Configuration\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
-			// In Production context, the compile sub command will only be run if the
-			// code cache is completely empty:
-		if (!$bootstrap->getContext()->isProduction() || $objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
+			// The compile sub command will only be run if the code cache is completely empty:
+		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			self::executeCommand('typo3.flow:core:compile', $settings);
 			if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === TRUE) {
 				self::compileDoctrineProxies($bootstrap);
 			}
 		}
 
+			// Check if code was updated, if not something went wrong
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			$phpBinaryPathAndFilename = escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
 			$command = '"' . $phpBinaryPathAndFilename . '" -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
@@ -223,7 +223,18 @@ class Scripts {
 			echo PHP_EOL . 'Flow: The compile run failed. Please check the error output or system log for more information.' . PHP_EOL;
 			exit(1);
 		}
+	}
 
+	/**
+	 * Recompile classes after file monitoring was executed and class files
+	 * have been changed.
+	 *
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @return void
+	 * @throws \TYPO3\Flow\Exception
+	 */
+	static public function recompileClasses(Bootstrap $bootstrap) {
+		self::initializeProxyClasses($bootstrap);
 	}
 
 	/**

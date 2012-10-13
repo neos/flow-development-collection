@@ -309,6 +309,7 @@ class Bootstrap {
 
 		if (!$this->context->isProduction()) {
 			$sequence->addStep(new Step('typo3.flow:systemfilemonitor', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSystemFileMonitor')), 'typo3.flow:objectmanagement:runtime');
+			$sequence->addStep(new Step('typo3.flow:objectmanagement:recompile', array('TYPO3\Flow\Core\Booting\Scripts', 'recompileClasses')), 'typo3.flow:systemfilemonitor');
 		}
 
 		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
