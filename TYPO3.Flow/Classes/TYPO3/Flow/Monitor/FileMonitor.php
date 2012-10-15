@@ -261,7 +261,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
-		$this->signalDispatcher->dispatch(__CLASS__, 'filesHaveChanged', array($monitorIdentifier, $changedFiles));
+		$this->signalDispatcher->dispatch('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', array($monitorIdentifier, $changedFiles));
 	}
 
 	/**
@@ -274,7 +274,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {
-		$this->signalDispatcher->dispatch(__CLASS__, 'directoriesHaveChanged', array($monitorIdentifier, $changedDirectories));
+		$this->signalDispatcher->dispatch('TYPO3\Flow\Monitor\FileMonitor', 'directoriesHaveChanged', array($monitorIdentifier, $changedDirectories));
 	}
 
 	/**
