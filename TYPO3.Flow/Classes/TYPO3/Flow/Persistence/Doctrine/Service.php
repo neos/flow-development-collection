@@ -238,12 +238,30 @@ class Service {
 		if ($migrations = $configuration->getMigrations()) {
 			$output .= "\n == Migration Versions\n";
 			foreach ($migrations as $version) {
+				$packageKey = $this->getPackageKeyFromMigrationVersion($version);
+				$croppedPackageKey = strlen($packageKey) < 24 ? $packageKey : substr($packageKey, 0, 23) . '~';
+				$packageKeyColumn = ' ' . str_pad($croppedPackageKey, 24, ' ');
 				$status = $version->isMigrated() ? 'migrated' : 'not migrated';
-				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . str_repeat(' ', 16) . $status . PHP_EOL;
+				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . $packageKeyColumn . str_repeat(' ', 4) . $status . PHP_EOL;
 			}
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Tries to find out a package key which the Version belongs to. If no
+	 * package could be found, an empty string is returned.
+	 *
+	 * @param \Doctrine\DBAL\Migrations\Version $version
+	 * @return string
+	 */
+	protected function getPackageKeyFromMigrationVersion(\Doctrine\DBAL\Migrations\Version $version) {
+		$possiblePackage = $this->packageManager->getPackageOfObject($version->getMigration());
+		if ($possiblePackage !== NULL) {
+			return $possiblePackage->getPackageKey();
+		}
+		return '';
 	}
 
 	/**

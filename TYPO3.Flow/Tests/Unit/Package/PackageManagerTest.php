@@ -33,6 +33,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		vfsStream::setup('Test');
 		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE);
 		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\Flow\SignalSlot\Dispatcher')));
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
+		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->will($this->returnValue(new \TYPO3\Flow\Reflection\ReflectionService));
 		$this->packageManager = new \TYPO3\Flow\Package\PackageManager();
 
 		mkdir('vfs://Test/Packages/Application', 0700, TRUE);
@@ -66,6 +69,73 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPackageThrowsExceptionOnUnknownPackage() {
 		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageOfObjectGetsPackageByGivenObject() {
+		$package = $this->packageManager->createPackage('Acme.Foobar');
+		$dummyObject = $this->createDummyObjectForPackage($package);
+		$actual = $this->packageManager->getPackageOfObject($dummyObject);
+		$this->assertSame($package, $actual);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageOfObjectAssumesParentClassIfDoctrineProxyClassGiven() {
+		$package = $this->packageManager->createPackage('Acme.Foobar');
+		$dummyObject = $this->createDummyObjectForPackage($package);
+
+		eval('namespace Doctrine\ORM\Proxy; interface Proxy {}');
+		mkdir('vfs://Test/Somewhere/For/DoctrineProxies', 0700, TRUE);
+		$dummyProxyClassName = 'Proxy_' . get_class($dummyObject);
+		$dummyProxyClassPath = 'vfs://Test/Somewhere/For/DoctrineProxies/' . $dummyProxyClassName . '.php';
+		file_put_contents($dummyProxyClassPath, '<?php class ' . $dummyProxyClassName . ' extends ' . get_class($dummyObject) . ' implements \Doctrine\ORM\Proxy\Proxy {} ?>');
+		require $dummyProxyClassPath;
+		$dummyProxy = new $dummyProxyClassName();
+
+		$actual = $this->packageManager->getPackageOfObject($dummyProxy);
+		$this->assertSame($package, $actual);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageOfObjectDoesNotGivePackageWithShorterPathPrematurely() {
+		$package1 = $this->packageManager->createPackage('Acme.Foo');
+		$package2 = $this->packageManager->createPackage('Acme.Foobaz');
+		$dummy1Object = $this->createDummyObjectForPackage($package1);
+		$dummy2Object = $this->createDummyObjectForPackage($package2);
+		$this->assertSame($package1, $this->packageManager->getPackageOfObject($dummy1Object));
+		$this->assertSame($package2, $this->packageManager->getPackageOfObject($dummy2Object));
+	}
+
+	/**
+	 * Creates a dummy class file inside $package's path
+	 * and requires it for propagation
+	 *
+	 * @param PackageInterface $package
+	 * @return object The dummy object of the class which was created
+	 */
+	protected function createDummyObjectForPackage(PackageInterface $package) {
+		$dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), TRUE));
+		$dummyClassFilePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
+			$package->getPackagePath(),
+			PackageInterface::DIRECTORY_CLASSES,
+			$dummyClassName . '.php'
+		));
+		file_put_contents($dummyClassFilePath, '<?php class ' . $dummyClassName . ' {} ?>');
+		require $dummyClassFilePath;
+		return new $dummyClassName();
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageOfObjectReturnsNullIfPackageCouldNotBeResolved() {
+		$this->assertNull($this->packageManager->getPackageOfObject(new \ArrayObject()));
 	}
 
 	/**

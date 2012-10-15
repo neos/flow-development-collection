@@ -169,6 +169,37 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * Finds a package by a given object of that package; if no such package
+	 * could be found, NULL is returned. This basically works with comparing the package class' location
+	 * against the given class' location. In order to not being satisfied with a shorter package's root path,
+	 * the packages to check are sorted by the length of their root path descending.
+	 *
+	 * Please note that the class itself must be existing anyways, else PHP's generic "class not found"
+	 * exception will be thrown.
+	 *
+	 * @param object $object The object to find the possessing package of
+	 * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
+	 */
+	public function getPackageOfObject($object) {
+		$sortedAvailablePackages = $this->getAvailablePackages();
+		usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
+			return strlen($packageTwo->getPackagePath()) - strlen($packageOne->getPackagePath());
+		});
+
+		$className = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->getClassNameByObject($object);
+		$reflectedClass = new \ReflectionClass($className);
+		$fileName = Files::getUnixStylePath($reflectedClass->getFileName());
+
+		foreach ($sortedAvailablePackages as $package) {
+			$packagePath = Files::getUnixStylePath($package->getPackagePath());
+			if (strpos($fileName, $packagePath) === 0) {
+				return $package;
+			}
+		}
+		return NULL;
+	}
+
+	/**
 	 * Returns an array of \TYPO3\Flow\Package objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *

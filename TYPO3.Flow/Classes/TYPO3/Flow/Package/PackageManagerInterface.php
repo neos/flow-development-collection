@@ -56,6 +56,15 @@ interface PackageManagerInterface {
 	public function getPackage($packageKey);
 
 	/**
+	 * Finds a package by a given object of that package; if no such package
+	 * could be found, NULL is returned.
+	 *
+	 * @param object $object The object to find the possessing package of
+	 * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
+	 */
+	public function getPackageOfObject($object);
+
+	/**
 	 * Returns an array of \TYPO3\Flow\Package\PackageInterface objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
@@ -100,7 +109,7 @@ interface PackageManagerInterface {
 	 * @return \TYPO3\Flow\Package\Package The newly created package
 	 * @api
 	 */
-	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = null);
+	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL);
 
 	/**
 	 * Deactivates a package if it is in the list of active packages
