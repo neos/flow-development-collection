@@ -52,7 +52,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function constructAcceptsValidPackageKeys($packageKey) {
 		$packagePath = 'vfs://Packages/' . str_replace('\\', '/', $packageKey) . '/';
-		mkdir ($packagePath, 0777, TRUE);
+		mkdir($packagePath, 0777, TRUE);
 
 		$package = new Package($packageKey, $packagePath);
 		$this->assertEquals($packageKey, $package->getPackageKey());
@@ -75,7 +75,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function constructRejectsInvalidPackageKeys($packageKey) {
 		$packagePath = 'vfs://Packages/' . str_replace('\\', '/', $packageKey) . '/';
-		mkdir ($packagePath, 0777, TRUE);
+		mkdir($packagePath, 0777, TRUE);
 		new Package($packageKey, $packagePath);
 	}
 
@@ -83,8 +83,8 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getNamespaceReturnsThePhpNamespaceCorrespondingToThePackageKey() {
-		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
-		mkdir ($packagePath, 0777, TRUE);
+		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+		mkdir($packagePath, 0777, TRUE);
 		$package = new Package('Acme.MyPackage', $packagePath);
 		$this->assertEquals('Acme\\MyPackage', $package->getNamespace());
 	}
@@ -123,7 +123,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getClassesPathReturnsNormalizedPathToClasses() {
 		$packagePath = 'vfs://Packages/Application/Acme/MyPackage/';
-		mkdir ($packagePath, 0777, TRUE);
+		mkdir($packagePath, 0777, TRUE);
 
 		$package = new Package('Acme.MyPackage', $packagePath, 'no/trailing/slash');
 
@@ -132,7 +132,6 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertEquals($expected, $packageClassesPath);
 	}
-
 
 	/**
 	 * @test
@@ -177,7 +176,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getClassFilesReturnsAListOfClassFilesOfThePackage() {
 		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
-		mkdir ($packagePath, 0777, TRUE);
+		mkdir($packagePath, 0777, TRUE);
 
 		mkdir($packagePath . 'Classes/Acme/MyPackage/Controller', 0770, TRUE);
 		mkdir($packagePath . 'Classes/Acme/MyPackage/Domain/Model', 0770, TRUE);
