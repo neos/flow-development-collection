@@ -95,7 +95,7 @@ class Package implements PackageInterface {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
-		if (!(is_dir($packagePath) || (\TYPO3\Flow\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) {
+		if (!(is_dir($packagePath) || (Files::is_link($packagePath) && is_dir(Files::getNormalizedPath($packagePath))))) {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
 		}
 		if (substr($packagePath, -1, 1) !== '/') {
@@ -354,7 +354,7 @@ class Package implements PackageInterface {
 			$this->composerManifest = PackageManager::getComposerManifest($this->getManifestPath());
 		}
 
-		return PackageManager::getComposerManifest('', $key, $this->composerManifest);
+		return PackageManager::getComposerManifest($this->composerManifest, $key, $this->composerManifest);
 	}
 
 	/**
