@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Http;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Represents a HTTP Cookie as of RFC 6265
@@ -26,6 +27,11 @@ class Cookie {
 	 * A token as per RFC 2616, Section 2.2
 	 */
 	const PATTERN_TOKEN = '/^([\x21\x23-\x27\x2A-\x2E0-9A-Z\x5E-\x60a-z\x7C\x7E]+)$/';
+
+	/**
+	 * The max age pattern as per RFC 6265, Section 5.2.2
+	 */
+	const PATTERN_MAX_AGE = '/^\-?\d+$/';
 
 	/**
 	 * A simplified pattern for a basically valid domain (<subdomain>) as per RFC 6265, 4.1.1 / RFC 1034, 3.5 + RFC 1123, 2.1
@@ -122,6 +128,97 @@ class Cookie {
 		$this->path = $path;
 		$this->secure = ($secure == TRUE);
 		$this->httpOnly = ($httpOnly == TRUE);
+	}
+
+	/**
+	 * Creates a cookie (an instance of this class) by a provided
+	 * raw header string like "foo=507d9f20317a5; path=/; domain=.example.org"
+	 * This is is an implementatin of the algorithm explained in RFC 6265, Section 5.2
+	 * A basic statement of this algorithm is to "ignore the set-cookie-string entirely"
+	 * in case a required condition is not met. In these cases this function will return NULL
+	 * rather than the created cookie.
+	 *
+	 * @param string $header The Set-Cookie string without the actual "Set-Cookie:" part
+	 * @return \TYPO3\Flow\Http\Cookie
+	 * @see http://tools.ietf.org/html/rfc6265
+	 */
+	public static function createFromRawSetCookieHeader($header) {
+		$nameValueAndUnparsedAttributes = explode(';', $header, 2);
+		$expectedNameValuePair = $nameValueAndUnparsedAttributes[0];
+		$unparsedAttributes = isset($nameValueAndUnparsedAttributes[1]) ? $nameValueAndUnparsedAttributes[1] : '';
+
+		if (strpos($expectedNameValuePair, '=') === FALSE) {
+			return NULL;
+		}
+		$cookieNameAndValue = explode('=', $expectedNameValuePair, 2);
+		$cookieName = trim($cookieNameAndValue[0]);
+		$cookieValue = isset($cookieNameAndValue[1]) ? trim($cookieNameAndValue[1]) : '';
+		if ($cookieName === '') {
+			return NULL;
+		}
+
+		$expiresAttribute = 0;
+		$maxAgeAttribute = NULL;
+		$domainAttribute = NULL;
+		$pathAttribute = NULL;
+		$secureAttribute = FALSE;
+		$httpOnlyAttribute = TRUE;
+
+		if ($unparsedAttributes !== '') {
+			foreach (explode(';', $unparsedAttributes) as $cookieAttributeValueString) {
+				$attributeNameAndValue = explode('=', $cookieAttributeValueString, 2);
+				$attributeName = trim($attributeNameAndValue[0]);
+				$attributeValue = isset($attributeNameAndValue[1]) ? trim($attributeNameAndValue[1]) : '';
+				switch (strtoupper($attributeName)) {
+					case 'EXPIRES':
+						try {
+							$expiresAttribute = new \DateTime($attributeValue);
+						} catch (\Exception $exception) {
+								// as of RFC 6265 Section 5.2.1, a non parsable Expires date should result into
+								// ignoring, but since the Cookie constructor relies on it, we'll
+								// assume a Session cookie with an expiry date of 0.
+							$expiresAttribute = 0;
+						}
+					break;
+					case 'MAX-AGE':
+						if (preg_match(self::PATTERN_MAX_AGE, $attributeValue) === 1) {
+							$maxAgeAttribute = intval($attributeValue);
+						}
+					break;
+					case 'DOMAIN':
+						if ($attributeValue !== '') {
+							$domainAttribute = strtolower(ltrim($attributeValue, '.'));
+						}
+					break;
+					case 'PATH':
+						if ($attributeValue === '' || substr($attributeValue, 0, 1) !== '/') {
+							$pathAttribute = '/';
+						} else {
+							$pathAttribute = $attributeValue;
+						}
+					break;
+					case 'SECURE':
+						$secureAttribute = TRUE;
+					break;
+					case 'HTTPONLY':
+						$httpOnlyAttribute = TRUE;
+					break;
+				}
+			}
+		}
+
+		$cookie = new static(
+			$cookieName,
+			$cookieValue,
+			$expiresAttribute,
+			$maxAgeAttribute,
+			$domainAttribute,
+			$pathAttribute,
+			$secureAttribute,
+			$httpOnlyAttribute
+		);
+
+		return $cookie;
 	}
 
 	/**

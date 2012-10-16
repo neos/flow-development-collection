@@ -295,5 +295,110 @@ class CookieTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedString, (string)$cookie);
 	}
 
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawReturnsNullIfBasicNameOrValueAreNotSatisfied() {
+		$this->assertNull(Cookie::createFromRawSetCookieHeader('Foobar'), 'The cookie without a = char at all is not discarded.');
+		$this->assertNull(Cookie::createFromRawSetCookieHeader('=Foobar'), 'The cookie with only a leading = char, hence without a name, is not discarded.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawDoesntCareAboutUnkownAttributeValues() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; someproperty=itsvalue');
+		$this->assertEquals('ckName', $cookie->getName());
+		$this->assertEquals('someValue', $cookie->getValue());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawParsesExpiryDateCorrectly() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Expires=Sun, 16-Oct-2022 17:53:36 GMT');
+		$this->assertSame(1665942816, $cookie->getExpires());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawAssumesExpiryDateZeroIfItCannotBeParsed() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Expires=trythis');
+		$this->assertSame(0, $cookie->getExpires());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawParsesMaxAgeCorrectly() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Max-Age=-20');
+		$this->assertSame(-20, $cookie->getMaximumAge());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawIgnoresMaxAgeIfInvalid() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Max-Age=--foo');
+		$this->assertNull($cookie->getMaximumAge());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawIgnoresDomainAttributeIfValueIsEmpty() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Domain=; more=nothing');
+		$this->assertNull($cookie->getDomain());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawRemovesLeadingDotForDomainIfPresent() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Domain=.example.org');
+		$this->assertEquals('example.org', $cookie->getDomain());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawLowerCasesDomainName() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Domain=EXample.org');
+		$this->assertEquals('example.org', $cookie->getDomain());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawAssumesDefaultPathIfNoLeadingSlashIsPresent() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Path=foo');
+		$this->assertEquals('/', $cookie->getPath());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawUsesPathCorrectly() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Path=/foo');
+		$this->assertEquals('/foo', $cookie->getPath());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawSetsSecureIfPresent() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Secure; more=nothing');
+		$this->assertTrue($cookie->isSecure());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCookieFromRawSetsHttpOnlyIfPresent() {
+		$cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; HttpOnly; more=nothing');
+		$this->assertTrue($cookie->isHttpOnly());
+	}
+
 }
 ?>

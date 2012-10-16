@@ -153,7 +153,14 @@ class Response extends Message implements ResponseInterface {
 				}
 				$fieldName = trim(substr($line, 0, strpos($line, ':')));
 				$fieldValue = trim(substr($line, strlen($fieldName) + 1));
-				$headers->set($fieldName, $fieldValue, FALSE);
+				if (strtoupper(substr($fieldName, 0, 10)) === 'SET-COOKIE') {
+					$cookie = Cookie::createFromRawSetCookieHeader($fieldValue);
+					if ($cookie !== NULL) {
+						$headers->setCookie($cookie);
+					}
+				} else {
+					$headers->set($fieldName, $fieldValue, FALSE);
+				}
 			} else {
 				$contentLines[] = $line;
 			}

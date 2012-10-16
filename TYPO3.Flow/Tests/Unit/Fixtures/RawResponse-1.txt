@@ -11,6 +11,10 @@ Date: Wed, 29 Aug 2012 09:03:49 GMT
 Age: 550
 Via: 1.1 varnish
 Connection: keep-alive
+Set-Cookie: tg=426148; expires=Sun, 16-Oct-2022 17:53:36 GMT; path=/
+Set-Cookie: dmvk=507d9f20317a5; path=/; domain=.example.org
+Set-Cookie: ql_n=0; expires=Wed, 16-Oct-2013 17:53:36 GMT; path=/
+Set-Cookie: masscast=null; path=/
 
 <!DOCTYPE html>
 <html>

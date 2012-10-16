@@ -94,6 +94,32 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function createFromRawSetsCookiesCorrectly() {
+		$response = Response::createFromRaw(file_get_contents(__DIR__ . '/../Fixtures/RawResponse-1.txt'));
+		$this->assertCount(4, $response->getCookies());
+
+		$this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('tg'));
+		$this->assertEquals('426148', $response->getCookie('tg')->getValue());
+		$this->assertEquals(1665942816, $response->getCookie('tg')->getExpires());
+
+		$this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('dmvk'));
+		$this->assertEquals('507d9f20317a5', $response->getCookie('dmvk')->getValue());
+		$this->assertEquals('example.org', $response->getCookie('dmvk')->getDomain());
+
+		$this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('ql_n'));
+		$this->assertEquals('0', $response->getCookie('ql_n')->getValue());
+
+		$this->assertInstanceOf('TYPO3\Flow\Http\Cookie', $response->getCookie('masscast'));
+		$this->assertEquals('null', $response->getCookie('masscast')->getValue());
+
+		foreach ($response->getCookies() as $cookie) {
+			$this->assertEquals('/', $cookie->getPath());
+		}
+	}
+
+	/**
+	 * @test
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function createFromRawThrowsExceptionOnFirstLine() {
