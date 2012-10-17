@@ -61,7 +61,7 @@ TYPO3:
           databaseConnectionExceptions:
             matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
             options:
-              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Error/Default_Template.html'
+              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the database connection couldn''t be established.'
 
