@@ -66,17 +66,41 @@ class CsrfProtectionAspect {
 		$packageKey = (isset($mergedArguments['@package']) ? $mergedArguments['@package'] : '');
 		$subpackageKey = (isset($mergedArguments['@subpackage']) ? $mergedArguments['@subpackage'] : '');
 		$controllerName = (isset($mergedArguments['@controller']) ? $mergedArguments['@controller'] : 'Standard');
-		$actionName = ((isset($mergedArguments['@action']) && $mergedArguments['@action'] !== '') ? $mergedArguments['@action'] : 'index') . 'Action';
 
 		$possibleObjectName = $this->router->getControllerObjectName($packageKey, $subpackageKey, $controllerName);
-		$className = $this->objectManager->getClassNameByObjectName($possibleObjectName);
+		$controllerClassName = $this->objectManager->getClassNameByObjectName($possibleObjectName);
 
-		if ($className !== FALSE && $this->reflectionService->hasMethod($className, $actionName)) {
-			if (!$this->reflectionService->isMethodAnnotatedWith($className, $actionName, 'TYPO3\Flow\Annotations\SkipCsrfProtection')) {
-				$mergedArguments['__csrfToken'] = $this->securityContext->getCsrfProtectionToken();
-			}
+		$lowercaseActionMethodName = ((isset($mergedArguments['@action']) && $mergedArguments['@action'] !== '') ? strtolower($mergedArguments['@action']) : 'index') . 'action';
+		if ($this->shouldCsrfTokenBeAppended($controllerClassName, $lowercaseActionMethodName)) {
+			$mergedArguments['__csrfToken'] = $this->securityContext->getCsrfProtectionToken();
 		}
+
 		return $mergedArguments;
+	}
+
+	/**
+	 * Checks if the given controller/action pair exists and returns TRUE if that's the case and the
+	 * action is not annotated with @Flow\SkipCsrfProtection.
+	 * In all other cases this returns FALSE
+	 *
+	 * @param string $controllerClassName the fully qualified class name of the controller
+	 * @param string $lowercaseActionMethodName the lower cased method name of the target action
+	 * @return boolean TRUE if the CSRF token is required for the target action (it exists and is not annotated with SkipCsrfProtection)
+	 */
+	protected function shouldCsrfTokenBeAppended($controllerClassName, $lowercaseActionMethodName) {
+		if ($controllerClassName === FALSE) {
+			return FALSE;
+		}
+		foreach (get_class_methods($controllerClassName) as $existingMethodName) {
+			if (strtolower($existingMethodName) !== $lowercaseActionMethodName) {
+				continue;
+			}
+			if (!$this->reflectionService->hasMethod($controllerClassName, $existingMethodName)) {
+				return FALSE;
+			}
+			return !$this->reflectionService->isMethodAnnotatedWith($controllerClassName, $existingMethodName, 'TYPO3\Flow\Annotations\SkipCsrfProtection');
+		}
+		return FALSE;
 	}
 }
 
