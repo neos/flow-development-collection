@@ -354,7 +354,7 @@ class Package implements PackageInterface {
 			$this->composerManifest = PackageManager::getComposerManifest($this->getManifestPath());
 		}
 
-		return PackageManager::getComposerManifest($this->composerManifest, $key, $this->composerManifest);
+		return PackageManager::getComposerManifest($this->getManifestPath(), $key, $this->composerManifest);
 	}
 
 	/**
