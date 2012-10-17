@@ -26,6 +26,11 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockRouter;
 
 	/**
+	 * @var \TYPO3\Flow\Http\Request
+	 */
+	protected $httpRequest;
+
+	/**
 	 * @var \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	protected $mockMainRequest;
@@ -50,26 +55,26 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$httpRequest = HttpRequest::create(new Uri('http://localhost'));
+		$this->httpRequest = HttpRequest::create(new Uri('http://localhost'));
 
 		$this->mockRouter = $this->getMock('TYPO3\Flow\Mvc\Routing\RouterInterface');
 
-		$this->mockMainRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($httpRequest));
-		$this->mockMainRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
-		$this->mockMainRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($httpRequest));
+		$this->mockMainRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->httpRequest));
+		$this->mockMainRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
+		$this->mockMainRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->httpRequest));
 		$this->mockMainRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockMainRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(TRUE));
 		$this->mockMainRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
 
 		$this->mockSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockMainRequest));
-		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
 		$this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
 		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubNamespace'));
 
 		$this->mockSubSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockSubRequest));
-		$this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+		$this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
 		$this->mockSubSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
 		$this->mockSubSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockSubRequest));
@@ -171,6 +176,26 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage');
 
 		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', 'SomePackage');
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function uriForInSubRequestWithExplicitEmptySubpackageKeyDoesNotUseRequestSubpackageKey() {
+		$this->mockSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockMainRequest));
+		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
+		$this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
+		$this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
+		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
+		$this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
+		$this->mockSubRequest->expects($this->any())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKeyFromRequest'));
+
+		$this->uriBuilder->setRequest($this->mockSubRequest);
+
+		$expectedArguments = array('@action' => 'show', '@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => '');
+
+		$this->uriBuilder->uriFor('show', NULL, 'SomeController', 'SomePackage', '');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
