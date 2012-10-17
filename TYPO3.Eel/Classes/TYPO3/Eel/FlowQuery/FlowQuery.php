@@ -68,7 +68,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * If an operation is final, it should return the resulting value directly.
  */
-class FlowQuery implements \IteratorAggregate {
+class FlowQuery implements \IteratorAggregate, \Countable {
 
 	/**
 	 * the objects this FlowQuery object wraps
@@ -149,6 +149,15 @@ class FlowQuery implements \IteratorAggregate {
 			$flowQuery->setOperationResolver($this->operationResolver); // Only needed for unit tests; hacky!
 			return $flowQuery;
 		}
+	}
+
+	/**
+	 * Implementation of the countable() interface, which is mapped to the "count" operation.
+	 *
+	 * @return integer
+	 */
+	public function count() {
+		return $this->__call('count', array());
 	}
 
 	/**

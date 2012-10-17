@@ -184,6 +184,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$query = $this->createFlowQuery($sourceObjects);
 		$this->assertSame(count($expectedResultArray), $query->filter($filterString)->count());
 		$this->assertSame(count($sourceObjects), $query->count());
+		$this->assertSame(count($sourceObjects), count($query));
 	}
 
 	/**
