@@ -110,7 +110,7 @@ class Cookie {
 		if ($domain !== NULL && preg_match(self::PATTERN_DOMAIN, $domain) !== 1) {
 			throw new \InvalidArgumentException('The parameter "domain" passed to the Cookie constructor must be a valid domain as per RFC 6265, Section 4.1.2.3.', 1345116246);
 		}
-		if ($domain !== NULL && preg_match(self::PATTERN_PATH, $path) !== 1) {
+		if ($path !== NULL && preg_match(self::PATTERN_PATH, $path) !== 1) {
 			throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
 		}
 

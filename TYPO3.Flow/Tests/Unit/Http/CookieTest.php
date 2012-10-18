@@ -203,7 +203,7 @@ class CookieTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructorThrowsExceptionOnInvalidPath($path) {
-		new Cookie('foo', 'bar', 0, NULL, 'typo3.org', $path);
+		new Cookie('foo', 'bar', 0, NULL, NULL, $path);
 	}
 
 	/**
