@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once(__DIR__ . '/Fixtures/MockActionController.php');
+
 /**
  * Testcase for the csrf protection aspect
  *
@@ -22,25 +24,17 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @var array
 	 */
 	protected $arguments = array(
-		'@package' => 'Acme.MyPackage',
-		'@subpackage' => 'Subpackage',
-		'@controller' => 'Some',
-		'@action' => 'index',
+		'@package' => 'TYPO3.Flow',
+		'@subpackage' => 'Security\Aspect\Fixtures',
+		'@controller' => 'mockaction',
+		'@action' => 'actionwithcsrfprotection',
 	);
 
 	/**
 	 * Expected Controller object name
 	 * @var string
 	 */
-	protected $controllerObjectName = 'acme\\mypackage\\subpackage\\controller\\somecontroller';
-
-	/**
-	 * Arguments which have been set using UriBuilder::setArguments
-	 * @var array
-	 */
-	protected $internalUriBuilderArguments = array(
-		'some' => 'arg'
-	);
+	protected $controllerObjectName = 'TYPO3\\Flow\\Security\\Aspect\\Fixtures\\MockActionController';
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\Routing\Router
@@ -48,12 +42,12 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockRouter;
 
 	/**
-	 * Mock URI Builder
+	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
 	 */
 	protected $mockUriBuilder;
 
 	/**
-	 * Mock Joinpoint
+	 * @var \TYPO3\Flow\Aop\JoinPoint
 	 */
 	protected $mockJoinPoint;
 
@@ -78,10 +72,9 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockRouter->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($this->controllerObjectName));
 
 		$this->mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
-		$this->mockUriBuilder->expects($this->any())->method('getArguments')->will($this->returnValue($this->internalUriBuilderArguments));
 
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(array()));
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($this->arguments));
 
 		$this->mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPoint', array(), array(), '', FALSE);
 		$this->mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($this->mockUriBuilder));
@@ -131,7 +124,7 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 
-		$this->assertSame($arguments, array());
+		$this->assertSame($arguments, $this->arguments);
 	}
 
 
@@ -146,7 +139,7 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->expectThat_PolicyServiceHasPolicyEntry(FALSE);
 		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 
-		$this->assertSame($arguments, array());
+		$this->assertSame($arguments, $this->arguments);
 	}
 
 	/**
@@ -162,7 +155,24 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 
-		$this->assertSame($arguments, array('__csrfToken' => 'csrf-token'));
+		$expectedResult = array_merge($this->arguments, array('__csrfToken' => 'csrf-token'));
+		$this->assertSame($arguments, $expectedResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function addCsrfTokenToUriResolvesCorrectCaseOfTheTargetAction() {
+		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$this->csrfProtectionAspect->_set('authenticationManager', $mockAuthenticationManager);
+
+		$this->expectThat_PolicyServiceHasPolicyEntry(TRUE);
+		$this->expectThat_ActionIsTaggedWithSkipCsrfProtection(FALSE);
+
+		$this->mockReflectionService->expects($this->once())->method('hasMethod')->with('TYPO3\Flow\Security\Aspect\Fixtures\MockActionController', 'actionWithCsrfProtectionAction')->will($this->returnValue(TRUE));
+
+		$arguments = $this->csrfProtectionAspect->addCsrfTokenToUri($this->mockJoinPoint);
 	}
 
 	/**
@@ -176,7 +186,7 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockPolicyService
 			->expects($this->any())
 			->method('hasPolicyEntryForMethod')
-			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action')
+			->with($this->controllerObjectName, 'actionWithCsrfProtectionAction')
 			->will($this->returnValue($expected));
 	}
 
@@ -190,7 +200,7 @@ class CsrfProtectionAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockReflectionService
 			->expects($this->any())
 			->method('isMethodAnnotatedWith')
-			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action', 'TYPO3\Flow\Annotations\SkipCsrfProtection')
+			->with($this->controllerObjectName, 'actionWithCsrfProtectionAction', 'TYPO3\Flow\Annotations\SkipCsrfProtection')
 			->will($this->returnValue($expected));
 	}
 }
