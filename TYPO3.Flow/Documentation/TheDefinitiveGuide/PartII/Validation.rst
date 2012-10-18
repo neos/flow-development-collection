@@ -49,7 +49,8 @@ of annotations:
 
 	/**
 	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=100 })
+	 * @Flow\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=5, "maximum"=100 })
 	 */
 	protected $title;
 
@@ -57,13 +58,28 @@ of annotations:
 
 	/**
 	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=50 })
+	 * @Flow\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=2, "maximum"=50 })
 	 */
 	protected $author;
 
 The ``Validate`` annotations define one or more validation rules which should apply to a
 property. Multiple rules can be defined in dedicated lines by further ``Validate``
 annotations.
+
+.. note::
+	Per convention, every validator allows (passes) empty values, i.e. empty strings or
+	NULL values. This is for achieving fields which are not mandatory, but if filled in,
+	must satisfy a given validation. Consider an email address field for example which
+	is not mandatory, but has to match an email pattern as soon as filled in.
+
+	If you want to make a field mandatory at all, use the ``NotEmpty`` validator in addition,
+	like in the example above.
+
+	The technical background is the ``acceptsEmptyValues`` property of the AbstractValidator,
+	being ``TRUE`` per default. When writing customized validators, it's basically possible
+	to set this field to ``FALSE``, however this is not generally recommended due to the convention
+	that every validator could principally be empty.
 
 .. tip::
 	TYPO3 Flow provides a range of built-in validators which can be found in the
