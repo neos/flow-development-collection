@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Http\Client;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Client\InfiniteRedirectionException;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -33,6 +34,29 @@ class Browser {
 	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $lastResponse;
+
+	/**
+	 * If redirects should be followed
+	 *
+	 * @var boolean
+	 */
+	protected $followRedirects = TRUE;
+
+	/**
+	 * The very maximum amount of redirections to follow if there is
+	 * a "Location" redirect (see also $redirectionStack property)
+	 *
+	 * @var integer
+	 */
+	protected $maximumRedirections = 10;
+
+	/**
+	 * A simple string array that keeps track of occurred "Location" header
+	 * redirections to avoid infinite loops if the same redirection happens
+	 *
+	 * @var array
+	 */
+	protected $redirectionStack = array();
 
 	/**
 	 * @var array
@@ -56,6 +80,8 @@ class Browser {
 
 	/**
 	 * Requests the given URI with the method and other parameters as specified.
+	 * If a Location header was given and the status code is of response type 3xx
+	 * (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html, 14.30 Location)
 	 *
 	 * @param string|\TYPO3\Flow\Http\Uri $uri
 	 * @param string $method
@@ -65,6 +91,7 @@ class Browser {
 	 * @param string $content
 	 * @return \TYPO3\Flow\Http\Response The HTTP response
 	 * @throws \InvalidArgumentException
+	 * @throws \TYPO3\Flow\Http\Client\InfiniteRedirectionException
 	 * @api
 	 */
 	public function request($uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array(), $content = NULL) {
@@ -79,7 +106,28 @@ class Browser {
 		if ($content !== NULL) {
 			$request->setContent($content);
 		}
-		return $this->sendRequest($request);
+		$response = $this->sendRequest($request);
+
+		$location = $response->getHeader('Location');
+		if ($this->followRedirects && $location !== NULL && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
+			if (in_array($location, $this->redirectionStack) || count($this->redirectionStack) >= $this->maximumRedirections) {
+				throw new InfiniteRedirectionException('The Location "' . $location . '" to follow for a redirect will probably result into an infinite loop.', 1350391699);
+			}
+			$this->redirectionStack[] = $location;
+			return $this->request($location);
+		}
+		$this->redirectionStack = array();
+		return $response;
+	}
+
+	/**
+	 * Sets a flag if redirects should be followed or not.
+	 *
+	 * @param boolean $flag
+	 * @return void
+	 */
+	public function setFollowRedirects($flag) {
+		$this->followRedirects = (boolean)$flag;
 	}
 
 	/**
