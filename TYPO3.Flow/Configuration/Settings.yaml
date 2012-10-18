@@ -47,8 +47,12 @@ TYPO3:
         # The specified class must implement \TYPO3\Flow\Error\ExceptionHandlerInterface
         className: TYPO3\Flow\Error\ProductionExceptionHandler
 
+        # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
+        defaultRenderingOptions:
+          renderTechnicalDetails: FALSE
+
         # Rendering groups can define special renderings depending on status code or class of the
-        # thrown exception. This is only used by the Production Exception Handler
+        # thrown exception.
         renderingGroups:
 
           notFoundExceptions:

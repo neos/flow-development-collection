@@ -62,6 +62,15 @@
 				<div class="Window_TitleBar">{statusCode} - {statusMessage}</div>
 				<div class="Window_Body">
 					<p><strong>{errorDescription}</strong></p>
+					<f:if condition="{renderingOptions.renderTechnicalDetails}">
+						<h2>Technical details:</h2>
+						<p>
+							{exception.message}
+							<f:if condition="{exception.referenceCode}">
+								(reference code: {exception.referenceCode})
+							</f:if>
+						</p>
+					</f:if>
 				</div>
 			</div>
 		</div>
