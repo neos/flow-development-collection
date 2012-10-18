@@ -87,7 +87,12 @@ class Git {
 		exec('git add .');
 		$output = array();
 		$returnCode = NULL;
-		exec('git commit -m ' . escapeshellarg($message), $output, $returnCode);
+
+		$temporaryPathAndFilename = tempnam(sys_get_temp_dir(), 'flow-commitmsg');
+		file_put_contents($temporaryPathAndFilename, $message);
+		exec('git commit -F ' . escapeshellarg($temporaryPathAndFilename), $output, $returnCode);
+		unlink($temporaryPathAndFilename);
+
 		return array($returnCode, $output);
 	}
 
