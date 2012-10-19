@@ -395,9 +395,6 @@ if statements
    doSomethingElse();
  }
 
-   // one liners - exception for throw statements!
- if (allGoesWrong() === TRUE) throw new \Exception('Hey, all went wrong!', 123);
-
  if (weHaveALotOfCriteria() === TRUE
    && notEverythingFitsIntoOneLine() === TRUE
    || youJustTendToLikeIt() === TRUE) {
