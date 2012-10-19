@@ -331,7 +331,7 @@ class UriBuilder {
 			$packageKey = $this->request->getControllerPackageKey();
 		}
 		$controllerArguments['@package'] = strtolower($packageKey);
-		if (strlen($subPackageKey) > 0) {
+		if ($subPackageKey !== NULL) {
 			$controllerArguments['@subpackage'] = strtolower($subPackageKey);
 		}
 		if ($this->format !== NULL && $this->format !== '') {
