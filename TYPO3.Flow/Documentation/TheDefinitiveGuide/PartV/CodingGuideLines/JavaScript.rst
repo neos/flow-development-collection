@@ -24,7 +24,7 @@ Naming Conventions
 - Right now, the base directory for JavaScript in TYPO3 Flow packages
   ``Resources/Public/JavaScript``, but this might still change.
 - We suggest that the base directory for JavaScript files is *JavaScript*.
-- Files have to be encoded in UTF-8.
+- Files have to be encoded in UTF-8 without byte order mark (BOM).
 - Classes and namespaces are written in ``UpperCamelCase``, while properties and methods
   are written in ``lowerCamelCase``.
 - The xtype of a class is always the fully qualified class name. Every class which can be

@@ -77,7 +77,7 @@ General considerations
   similar (wake up, graphical displays have been available for decades now...). But feel
   free to break lines for better readability if you think it makes sense!
 * Lines end with a newline a.k.a ``chr(10)`` - UNIX style
-* Files must be encoded in UTF-8
+* Files must be encoded in UTF-8 without byte order mark (BOM)
 
 Make sure you use the correct license and mention the correct package in the header, we
 have some `some boilerplate text`_.
