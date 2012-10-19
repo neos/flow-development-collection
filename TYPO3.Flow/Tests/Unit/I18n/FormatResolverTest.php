@@ -84,6 +84,16 @@ class FormatResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$formatResolver->resolvePlaceholders('{0,foo}', array(123), $this->sampleLocale);
 	}
+
+	/**
+	 * @test
+	 */
+	public function namedPlaceholdersAreResolvedCorrectly() {
+		$formatResolver = $this->getMock('TYPO3\Flow\I18n\FormatResolver', array('dummy'));
+
+		$result = $formatResolver->resolvePlaceholders('Key {keyName} is {valueName}', array('keyName' => 'foo', 'valueName' => 'bar'), $this->sampleLocale);
+		$this->assertEquals('Key foo is bar', $result);
+	}
 }
 
 ?>
