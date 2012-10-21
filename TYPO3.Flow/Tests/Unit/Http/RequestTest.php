@@ -491,6 +491,14 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function httpHostIsNotAppendedByColonIfNoExplicitPortIsGiven() {
+		$request = Request::create(new Uri('http://dev.blog.rob/noPort/isGivenHere'));
+		$this->assertEquals('dev.blog.rob', $request->getHeader('Host'));
+	}
+
+	/**
 	 * RFC 2616 / 14.23 (Host)
 	 * @test
 	 */

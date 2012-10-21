@@ -116,7 +116,7 @@ class Request extends Message {
 
 		$defaultServerEnvironment = array(
 			'HTTP_USER_AGENT' => 'Flow/' . FLOW_VERSION_BRANCH . '.x',
-			'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== TRUE ? ':' . $uri->getPort() : ''),
+			'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== TRUE && $uri->getPort() !== NULL ? ':' . $uri->getPort() : ''),
 			'SERVER_NAME' => $uri->getHost(),
 			'SERVER_ADDR' => '127.0.0.1',
 			'SERVER_PORT' => $uri->getPort() ?: 80,
