@@ -38,7 +38,7 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validPackageKeys() {
 		return array(
-			array('Doctrine'),
+			array('Doctrine.DBAL'),
 			array('TYPO3.Flow'),
 			array('RobertLemke.Flow.Twitter'),
 			array('Sumphonos.Stem'),
