@@ -15,7 +15,7 @@
  */
 
 if (PHP_SAPI !== 'cli') {
-	echo(sprintf("The Flow command line script or sub process was executed with a '%s' PHP binary. Make sure that you specified a CLI capable PHP binary in your PATH or Flow's Settings.yaml.", PHP_SAPI) . PHP_EOL);
+	echo(sprintf("The TYPO3 Flow command line script or sub process was executed with a '%s' PHP binary. Make sure that you specified a CLI capable PHP binary in your PATH or Flow's Settings.yaml.", PHP_SAPI) . PHP_EOL);
 	exit(1);
 }
 
