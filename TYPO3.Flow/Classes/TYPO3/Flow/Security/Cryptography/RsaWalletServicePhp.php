@@ -78,7 +78,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 * Generates a new keypair and returns a UUID to refer to it
 	 *
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-	 * @return string An UUID that identifies the generated keypair
+	 * @return string The RSA public key fingerprint as UUID for reference
 	 * @throws \TYPO3\Flow\Security\Exception
 	 */
 	public function generateNewKeypair($usedForPasswords = FALSE) {
@@ -103,7 +103,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 *
 	 * @param string $privateKeyString The private key in its string representation
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-	 * @return string The UUID used for storing
+	 * @return string The RSA public key fingerprint as UUID for reference
 	 */
 	public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = FALSE) {
 		$keyResource = openssl_pkey_get_private($privateKeyString);
@@ -123,7 +123,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 * verify incoming data.
 	 *
 	 * @param string $publicKeyString The public key in its string representation
-	 * @return string The UUID used for storing
+	 * @return string The RSA public key fingerprint as UUID for reference
 	 */
 	public function registerPublicKeyFromString($publicKeyString) {
 		$keyResource = openssl_pkey_get_public($publicKeyString);
@@ -137,7 +137,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	/**
 	 * Returns the public key for the given UUID
 	 *
-	 * @param string $uuid The UUID
+	 * @param string $uuid The UUID of the stored key
 	 * @return \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey The public key
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
@@ -169,7 +169,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 * to check passwords!
 	 *
 	 * @param string $cipher cipher text to decrypt
-	 * @param string $uuid The uuid to identify to correct private key
+	 * @param string $uuid The UUID to identify the private key (RSA public key fingerprint)
 	 * @return string The decrypted text
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 * @throws \TYPO3\Flow\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
@@ -192,7 +192,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 * Signs the given plaintext with the private key identified by the given UUID
 	 *
 	 * @param string $plaintext The plaintext to sign
-	 * @param string $uuid The uuid to identify to correct private key
+	 * @param string $uuid The UUID to identify the private key (RSA public key fingerprint)
 	 * @return string The signature of the given plaintext
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
@@ -213,7 +213,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 *
 	 * @param string $plaintext The plaintext to sign
 	 * @param string $signature The signature that should be verified
-	 * @param string $uuid The uuid to identify to correct public key
+	 * @param string $uuid The UUID to identify the public key (RSA public key fingerprint)
 	 * @return boolean TRUE if the signature is correct for the given plaintext and public key
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException
 	 */
@@ -234,7 +234,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	 * @param string $encryptedPassword The received, RSA encrypted password to check
 	 * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
 	 * @param string $salt The salt used in the md5 password hash
-	 * @param string $uuid The uuid to identify to correct private key
+	 * @param string $uuid The UUID to identify the private key (RSA public key fingerprint)
 	 * @return boolean TRUE if the password is correct
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
@@ -267,7 +267,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	/**
 	 * Exports the private key string from the KeyResource
 	 *
-	 * @param resource $keyResource The key Resource
+	 * @param resource $keyResource The key resource
 	 * @return string The private key string
 	 */
 	private function getPrivateKeyString($keyResource) {
@@ -278,7 +278,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	/**
 	 * Exports the public key string from the KeyResource
 	 *
-	 * @param resource $keyResource The key Resource
+	 * @param resource $keyResource The key resource
 	 * @return string The public key string
 	 */
 	private function getPublicKeyString($keyResource) {
@@ -290,7 +290,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	/**
 	 * Exports the public modulus HEX string from the KeyResource
 	 *
-	 * @param resource $keyResource The key Resource
+	 * @param resource $keyResource The key resource
 	 * @return string The HEX public modulus string
 	 */
 	private function getModulus($keyResource) {
@@ -314,25 +314,28 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	}
 
 	/**
-	 * Stores the given keypair under the returned UUID.
+	 * Stores the given keypair and returns its fingerprint.
+	 *
+	 * The SSH fingerprint of the RSA public key will be used as an identifier for
+	 * consistent key access.
 	 *
 	 * @param \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey $publicKey The public key
 	 * @param \TYPO3\Flow\Security\Cryptography\OpenSslRsaKey $privateKey The private key
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-	 * @return string The UUID used for storing
+	 * @return string The fingerprint which is used as an identifier for storing the key pair
 	 */
 	private function storeKeyPair($publicKey, $privateKey, $usedForPasswords) {
-		$keyPairUUID = str_replace('-', '_', \TYPO3\Flow\Utility\Algorithms::generateUUID());
+		$publicKeyFingerprint = $this->getFingerprintByPublicKey($publicKey->getKeyString());
 
 		$keyPair = array();
 		$keyPair['publicKey'] = $publicKey;
 		$keyPair['privateKey'] = $privateKey;
 		$keyPair['usedForPasswords'] = $usedForPasswords;
 
-		$this->keys[$keyPairUUID] = $keyPair;
+		$this->keys[$publicKeyFingerprint] = $keyPair;
 		$this->saveKeysOnShutdown = TRUE;
 
-		return $keyPairUUID;
+		return $publicKeyFingerprint;
 	}
 
 	/**
@@ -360,5 +363,47 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 			throw new \TYPO3\Flow\Security\Exception('The keystore file "' . $this->keystorePathAndFilename . '" could not be written.', 1305812938);
 		}
 	}
+
+	/**
+	 * Generate an OpenSSH fingerprint for a RSA public key
+	 *
+	 * See <http://tools.ietf.org/html/rfc4253#page-15> for reference of OpenSSH
+	 * "ssh-rsa" key format. The fingerprint is obtained by applying an MD5
+	 * hash on the raw public key bytes.
+	 *
+	 * @param string $publicKeyString RSA public key, PKCS1 encoded
+	 * @return string The public key fingerprint
+	 */
+	public function getFingerprintByPublicKey($publicKeyString) {
+		$keyResource = openssl_pkey_get_public($publicKeyString);
+		$keyDetails = openssl_pkey_get_details($keyResource);
+		$modulus = $this->sshConvertMpint($keyDetails['rsa']['n']);
+		$publicExponent = $this->sshConvertMpint($keyDetails['rsa']['e']);
+
+		$rsaPublicKey = pack('Na*Na*Na*', strlen('ssh-rsa'), 'ssh-rsa', strlen($publicExponent), $publicExponent, strlen($modulus), $modulus);
+
+		return md5($rsaPublicKey);
+	}
+
+	/**
+	 * Convert a binary representation of a multiple precision integer
+	 * to mpint format defined for SSH RSA key exchange (used in "ssh-rsa" format).
+	 *
+	 * See <http://tools.ietf.org/html/rfc4251#page-8> for mpint encoding
+	 *
+	 * @param string $bytes Binary representation of integer
+	 * @return string The mpint encoded integer
+	 */
+	private function sshConvertMpint($bytes) {
+		if (empty($bytes)) {
+			$bytes = chr(0);
+		}
+
+		if (ord($bytes[0]) & 0x80) {
+			$bytes = chr(0) . $bytes;
+		}
+		return $bytes;
+	}
+
 }
 ?>

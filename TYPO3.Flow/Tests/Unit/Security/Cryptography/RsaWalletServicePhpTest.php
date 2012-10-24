@@ -138,5 +138,33 @@ class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse(file_exists('vfs://Foo/EncryptionKey'));
 	}
 
+	/**
+	 * @test
+	 */
+	public function getFingerprintByPublicKeyCalculatesCorrectFingerprint() {
+		$keyString = '-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDP7ZWzP/6x3SXyt0Al9UvyCe8D
+TG6y1t7ovmWGw+D2x4BtZfbEHtNhlWHFkLLXzGKdgmzm4WjSB1fWQ1lfu5L8wY+g
+HofCDIScx7AMgIB7hRB9ZMDEyWN/1vgSm8+4K4jUcD6OGLJYTSAlaQ7e2ZGaAY5h
+p2P76gIh+wUlPjsr/QIDAQAB
+-----END PUBLIC KEY-----';
+
+		$this->assertEquals('cfa6879e3dfcf709db4cfd8e61fdd782', $this->rsaWalletService->getFingerprintByPublicKey($keyString));
+	}
+
+	/**
+	 * @test
+	 */
+	public function registerPublicKeyFromStringUsesFingerprintAsUuid() {
+		$keyString = '-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDP7ZWzP/6x3SXyt0Al9UvyCe8D
+TG6y1t7ovmWGw+D2x4BtZfbEHtNhlWHFkLLXzGKdgmzm4WjSB1fWQ1lfu5L8wY+g
+HofCDIScx7AMgIB7hRB9ZMDEyWN/1vgSm8+4K4jUcD6OGLJYTSAlaQ7e2ZGaAY5h
+p2P76gIh+wUlPjsr/QIDAQAB
+-----END PUBLIC KEY-----';
+
+		$this->assertEquals('cfa6879e3dfcf709db4cfd8e61fdd782', $this->rsaWalletService->registerPublicKeyFromString($keyString));
+	}
+
 }
 ?>
