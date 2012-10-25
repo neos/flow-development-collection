@@ -6,7 +6,7 @@
 #
 # Make sure to set the webserver group name to the one used by your system.
 
-echo TYPo3 Flow File Permission Script
+echo TYPO3 Flow File Permission Script
 echo
 
 if [ ! -d "Web" -o ! -d "Packages" -o ! -d "Configuration" ]; then
