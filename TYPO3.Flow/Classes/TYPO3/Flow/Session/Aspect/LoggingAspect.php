@@ -37,7 +37,7 @@ class LoggingAspect {
 	public function logStart(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('Started session with id %s', $session->getId()), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('%s: Started session with id %s', $this->getClassName($joinPoint), $session->getId()), LOG_INFO);
 		}
 	}
 
@@ -51,7 +51,7 @@ class LoggingAspect {
 	public function logResume(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('Resumed session with id %s which was inactive for %s seconds.', $joinPoint->getProxy()->getId(), $joinPoint->getResult()), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('%s: Resumed session with id %s which was inactive for %s seconds.', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $joinPoint->getResult()), LOG_DEBUG);
 		}
 	}
 
@@ -66,7 +66,7 @@ class LoggingAspect {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
 			$reason = $joinPoint->isMethodArgument('reason') ? $joinPoint->getMethodArgument('reason') : 'no reason given';
-			$this->systemLogger->log(sprintf('Destroyed session with id %s: %s', $joinPoint->getProxy()->getId(), $reason), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('%s: Destroyed session with id %s: %s', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $reason), LOG_INFO);
 		}
 	}
 
@@ -79,13 +79,44 @@ class LoggingAspect {
 	 */
 	public function logRenewId(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
+		$oldId = $session->getId();
 		$newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
 		if ($session->isStarted()) {
-			$oldId = $session->getId();
-			$this->systemLogger->log(sprintf('Changed session id from %s to %s', $oldId, $newId), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId), LOG_INFO);
 		}
 		return $newId;
 	}
+
+	/**
+	 * Logs calls of collectGarbage()
+	 *
+	 * @Flow\AfterReturning("within(TYPO3\Flow\Session\SessionInterface) && method(.*->collectGarbage())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @return void
+	 */
+	public function logCollectGarbage(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+		$sessionRemovalCount = $joinPoint->getResult();
+		if ($sessionRemovalCount > 0) {
+			$this->systemLogger->log(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), LOG_INFO);
+		} else {
+			$this->systemLogger->log(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), LOG_INFO);
+		}
+	}
+
+	/**
+	 * Determines the short or full class name of the session implementation
+	 *
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	protected function getClassName(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+		$className = $joinPoint->getClassName();
+		if (substr($className, 0, 18) === 'TYPO3\Flow\Session') {
+			$className = substr($className, 19);
+		}
+		return $className;
+	}
+
 }
 
 ?>

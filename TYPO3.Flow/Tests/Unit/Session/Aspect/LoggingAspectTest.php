@@ -34,7 +34,7 @@ class LoggingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockSystemLogger
 			->expects($this->once())
 			->method('log')
-			->with($this->equalTo('Destroyed session with id ' . $testSessionId . ': session timed out'), $this->equalTo(LOG_DEBUG));
+			->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'), $this->equalTo(LOG_INFO));
 
 		$loggingAspect = new LoggingAspect();
 		$this->inject($loggingAspect, 'systemLogger', $mockSystemLogger);
@@ -56,7 +56,7 @@ class LoggingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockSystemLogger
 			->expects($this->once())
 			->method('log')
-			->with($this->equalTo('Destroyed session with id ' . $testSessionId . ': no reason given'));
+			->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
 
 		$loggingAspect = new LoggingAspect();
 		$this->inject($loggingAspect, 'systemLogger', $mockSystemLogger);

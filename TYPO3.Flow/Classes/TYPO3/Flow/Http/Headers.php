@@ -253,6 +253,11 @@ class Headers {
 	/**
 	 * Removes the specified cookie if it exists
 	 *
+	 * Note: This will remove the cookie object from this Headers container. If you
+	 *       intend to remove a cookie in the user agent (browser), you should call
+	 *       the cookie's expire() method and _not_ remove the cookie from the Headers
+	 *       container.
+	 *
 	 * @param string $name Name of the cookie to remove
 	 * @return void
 	 * @api

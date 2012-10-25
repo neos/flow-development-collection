@@ -268,12 +268,16 @@ TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy:
 
 TYPO3\Flow\Session\SessionInterface:
   className: TYPO3\Flow\Session\PhpSession
-  scope: singleton
+
+TYPO3\Flow\Session\FlowSession:
   properties:
-    settings:
-      setting: TYPO3.Flow
-    environment:
-      object: TYPO3\Flow\Utility\Environment
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_Storage
 
 #                                                                          #
 # Utility                                                                  #

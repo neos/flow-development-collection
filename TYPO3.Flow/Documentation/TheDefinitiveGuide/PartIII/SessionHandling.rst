@@ -98,3 +98,32 @@ with the PHP session on a low level, by using ``start()``, ``getData()`` and ``p
 
 That should rarely be needed, though. Instead of manually serializing objects object into
 the session, the *session scope* should be used whenever possible.
+
+Flow Session
+============
+
+The session implementation written in plain PHP (FlowSession) uses the caching
+framework as its storage. This allows for storing session data in a variety of
+backends, including PDO databases, APC, Memcache and Redis.
+
+In order to use FlowSession instead of PhpSession you need to select the
+implementation through a custom Objects.yaml placed in one of your packages or the
+global configuration:
+
+.. code-block:: yaml
+
+	TYPO3\Flow\Session\SessionInterface:
+	  className: TYPO3\Flow\Session\FlowSession
+
+Likewise, the preferred storage backend for FlowSession is defined through a custom
+Caches.yaml file, placed in a package or the global configuration:
+
+.. code-block:: yaml
+
+	Flow_Session_Storage:
+	  backend: TYPO3\Flow\Cache\Backend\ApcBackend
+
+The FlowSession implementation provides a few more configuration options, related to
+the session cookie and the automatic garbage collection. Please refer to the
+Settings.yaml file of the TYPO3 Flow package for a list of all possible options and
+their respective documentation.
