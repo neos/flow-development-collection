@@ -314,9 +314,9 @@ class Bootstrap {
 
 		$sequence->addStep(new Step('typo3.flow:reflectionservice', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeReflectionService')), 'typo3.flow:objectmanagement:runtime');
 		$sequence->addStep(new Step('typo3.flow:persistence', array('TYPO3\Flow\Core\Booting\Scripts', 'initializePersistence')), 'typo3.flow:reflectionservice');
-		$sequence->addStep(new Step('typo3.flow:session', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSession')), 'typo3.flow:persistence');
-		$sequence->addStep(new Step('typo3.flow:resources', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeResources')), 'typo3.flow:session');
-		$sequence->addStep(new Step('typo3.flow:i18n', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeI18n')), 'typo3.flow:resources');
+		$sequence->addStep(new Step('typo3.flow:resources', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeResources')), 'typo3.flow:persistence');
+		$sequence->addStep(new Step('typo3.flow:session', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeSession')), 'typo3.flow:resources');
+		$sequence->addStep(new Step('typo3.flow:i18n', array('TYPO3\Flow\Core\Booting\Scripts', 'initializeI18n')), 'typo3.flow:session');
 		return $sequence;
 	}
 
