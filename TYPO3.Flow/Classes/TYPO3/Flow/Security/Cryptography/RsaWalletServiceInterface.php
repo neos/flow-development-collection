@@ -21,7 +21,7 @@ interface RsaWalletServiceInterface {
 	 * Generates a new keypair and returns a UUID to refer to it
 	 *
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
-	 * @return integer An UUID that identifies the generated keypair
+	 * @return string An UUID that identifies the generated keypair
 	 */
 	public function generateNewKeypair($usedForPasswords = FALSE);
 

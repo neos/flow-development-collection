@@ -24,6 +24,11 @@ class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $rsaWalletService;
 
 	/**
+	 * @var string
+	 */
+	protected $keyPairUuid;
+
+	/**
 	 * Set up this testcase.
 	 * In this case this only marks the test to be skipped if openssl extension is not installed
 	 *
@@ -52,6 +57,17 @@ class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertNotEquals($ciphertext, $plaintext);
 		$this->assertEquals($plaintext, $this->rsaWalletService->decrypt($ciphertext, $this->keyPairUuid));
+	}
+
+	/**
+	 * @test
+	 */
+	public function signAndVerifySignatureBasicallyWorks() {
+		$plaintext = 'trustworthy data!';
+		$signature = $this->rsaWalletService->sign($plaintext, $this->keyPairUuid);
+
+		$this->assertTrue($this->rsaWalletService->verifySignature($plaintext, $signature, $this->keyPairUuid));
+		$this->assertFalse($this->rsaWalletService->verifySignature('modified data!', $signature, $this->keyPairUuid));
 	}
 
 	/**

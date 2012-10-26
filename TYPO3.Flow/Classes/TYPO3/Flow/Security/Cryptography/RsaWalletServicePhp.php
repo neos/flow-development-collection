@@ -202,7 +202,7 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 		}
 
 		$signature = '';
-		openssl_sign($plaintext, $signature, $this->keys[$uuid]['privateKey']);
+		openssl_sign($plaintext, $signature, $this->keys[$uuid]['privateKey']->getKeyString());
 
 		return $signature;
 	}
