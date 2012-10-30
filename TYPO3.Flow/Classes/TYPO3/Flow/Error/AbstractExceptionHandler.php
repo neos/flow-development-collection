@@ -96,12 +96,17 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	/**
 	 * Prepares a Fluid view for rendering the custom error page.
 	 *
+	 * @param \Exception $exception
 	 * @param array $renderingOptions Rendering options as defined in the settings
-	 * @param integer $statusCode The HTTP status code
-	 * @param string $referenceCode The generated reference code, if any
 	 * @return \TYPO3\Fluid\View\StandaloneView
 	 */
-	protected function buildCustomFluidView(array $renderingOptions, $statusCode, $referenceCode) {
+	protected function buildCustomFluidView(\Exception $exception, array $renderingOptions) {
+		$statusCode = 500;
+		$referenceCode = NULL;
+		if ($exception instanceof \TYPO3\Flow\Exception) {
+			$statusCode = $exception->getStatusCode();
+			$referenceCode = $exception->getReferenceCode();
+		}
 		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 
 		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
@@ -119,6 +124,8 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 			$fluidView->assignMultiple($renderingOptions['variables']);
 		}
 		$fluidView->assignMultiple(array(
+			'exception' => $exception,
+			'renderingOptions' => $renderingOptions,
 			'statusCode' => $statusCode,
 			'statusMessage' => $statusMessage,
 			'referenceCode' => $referenceCode
@@ -133,14 +140,19 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 * @return array the custom rendering options, or NULL if no custom rendering is defined for this exception
 	 */
 	protected function resolveCustomRenderingOptions(\Exception $exception) {
+		$renderingOptions = array();
+		if (isset($this->options['defaultRenderingOptions'])) {
+			$renderingOptions = $this->options['defaultRenderingOptions'];
+		}
 		if (!isset($this->options['renderingGroups'])) {
-			return;
+			return $renderingOptions;
 		}
 		foreach ($this->options['renderingGroups'] as $renderingGroupSettings) {
 			if (isset($renderingGroupSettings['matchingExceptionClassNames'])) {
 				foreach ($renderingGroupSettings['matchingExceptionClassNames'] as $exceptionClassName) {
 					if ($exception instanceof $exceptionClassName) {
-						return $renderingGroupSettings['options'];
+						$renderingOptions = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($renderingOptions, $renderingGroupSettings['options']);
+						return $renderingOptions;
 					}
 				}
 			}
@@ -149,11 +161,13 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 			if ($exception instanceof \TYPO3\Flow\Exception && isset($renderingGroupSettings['matchingStatusCodes'])) {
 				foreach ($renderingGroupSettings['matchingStatusCodes'] as $statusCode) {
 					if ($statusCode === $exception->getStatusCode()) {
-						return $renderingGroupSettings['options'];
+						$renderingOptions = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($renderingOptions, $renderingGroupSettings['options']);
+						return $renderingOptions;
 					}
 				}
 			}
 		}
+		return $renderingOptions;
 	}
 
 }
