@@ -143,7 +143,7 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function thisIsSupportedInMethodRuntimeCondition() {
 		$targetClass = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01');
-		$name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Phoenix');
+		$name = new \TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name('Neos');
 		$targetClass->setCurrentName($name);
 		$this->assertSame('Hello, you', $targetClass->greetObject($name), 'Aspect should greet with "you" if the current name equals the name argument');
 
