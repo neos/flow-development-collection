@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Mvc\View\JsonView;
+
 /**
  * Testcase for the JSON view
  *
@@ -190,6 +192,60 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$actual = $jsonView->_call('transformValue', $object, $configuration);
 
 		$this->assertEquals($expected, $actual, $description);
+	}
+
+	/**
+	 * A data provider
+	 */
+	public function exposeClassNameSettingsAndResults() {
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
+		$namespace = 'TYPO3\Flow\Tests\Unit\Mvc\View\\' . $className;
+		return array(
+			array(
+				JsonView::EXPOSE_CLASSNAME_FULLY_QUALIFIED,
+				$className,
+				$namespace,
+				array('value1' => array('__class' => $namespace . '\\' . $className))
+			),
+			array(
+				JsonView::EXPOSE_CLASSNAME_UNQUALIFIED,
+				$className,
+				$namespace,
+				array('value1' => array('__class' => $className))
+			),
+			array(
+				NULL,
+				$className,
+				$namespace,
+				array('value1' => array())
+			)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider exposeClassNameSettingsAndResults
+	 */
+	public function viewExposesClassNameFullyIfConfiguredSo($exposeClassNameSetting, $className, $namespace, $expected) {
+		$fullyQualifiedClassName = $namespace . '\\' . $className;
+		if (class_exists($fullyQualifiedClassName) === FALSE) {
+			eval('namespace ' . $namespace . '; class ' . $className . ' {}');
+		}
+
+		$object = new \stdClass();
+		$object->value1 = new $fullyQualifiedClassName();
+		$configuration = array(
+			'_descend' => array(
+				 'value1' => array(
+					  '_exposeClassName' => $exposeClassNameSetting
+				 )
+			)
+		);
+		$reflectionService = new \TYPO3\Flow\Reflection\ReflectionService;
+		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
+		$this->inject($jsonView, 'reflectionService', $reflectionService);
+		$actual = $jsonView->_call('transformValue', $object, $configuration);
+		$this->assertEquals($expected, $actual);
 	}
 
 	/**
