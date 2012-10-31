@@ -17,6 +17,8 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  */
 class ArrayAccessClass implements \ArrayAccess {
 
+	protected $internalProperty = 'access through forceDirectAccess';
+
 	protected $array = array();
 
 	public function __construct(array $array) {

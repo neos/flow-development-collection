@@ -20,6 +20,9 @@ require_once('Fixture/ArrayAccessClass.php');
  */
 class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
+	/**
+	 * @var \TYPO3\Flow\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters
+	 */
 	protected $dummyObject;
 
 	/**
@@ -185,6 +188,15 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+	 */
+	public function getPropertyDoesNotTryArrayAccessOnSplObjectStorageSubject() {
+		$splObjectStorage = new \SplObjectStorage();
+		\TYPO3\Flow\Reflection\ObjectAccess::getProperty($splObjectStorage, 'something');
+	}
+
+	/**
+	 * @test
 	 */
 	public function getPropertyCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
 		$arrayAccessInstance = new \TYPO3\Flow\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
@@ -195,10 +207,28 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getPropertyRespectsForceDirectAccessForArrayAccess() {
+		$arrayAccessInstance = new \TYPO3\Flow\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
+		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayAccessInstance, 'internalProperty', TRUE);
+		$this->assertEquals($expected, 'access through forceDirectAccess', 'getPropertyPath does not respect ForceDirectAccess for ArrayAccess implementations.');
+	}
+
+	/**
+	 * @test
+	 */
 	public function getPropertyCanAccessPropertiesOfAnArray() {
 		$array = array('key' => 'value');
 		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($array, 'key');
 		$this->assertEquals($expected, 'value', 'getProperty does not work with Array property.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyCanAccessNullPropertyOfAnArray() {
+		$array = array('key' => NULL);
+		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($array, 'key');
+		$this->assertEquals($expected, NULL, 'getProperty should allow access to NULL properties.');
 	}
 
 	/**

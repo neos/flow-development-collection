@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Reflection;
  *                                                                        */
 
 /**
- */
-/**
  * Provides methods to call appropriate getter/setter on an object given the
  * property name. It does this following these rules:
  * - if the target object is an instance of ArrayAccess, it gets/sets the property
@@ -26,6 +24,18 @@ namespace TYPO3\Flow\Reflection;
  *
  */
 class ObjectAccess {
+
+	/**
+	 * Internal RuntimeCache for getGettablePropertyNames()
+	 * @var array
+	 */
+	protected static $gettablePropertyNamesCache = array();
+
+	/**
+	 * Internal RuntimeCache for getPropertyInternal()
+	 * @var array
+	 */
+	protected static $propertyGetterCache = array();
 
 	const ACCESS_GET = 0;
 	const ACCESS_SET = 1;
@@ -84,14 +94,8 @@ class ObjectAccess {
 			return NULL;
 		}
 		$propertyExists = TRUE;
-		if (is_array($subject)) {
-			if (array_key_exists($propertyName, $subject)) {
-				return $subject[$propertyName];
-			}
-			$propertyExists = FALSE;
-			return NULL;
-		}
-		if ($forceDirectAccess === TRUE) {
+
+		if ($forceDirectAccess === TRUE && !is_array($subject)) {
 			if (property_exists(get_class($subject), $propertyName)) {
 				$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection(get_class($subject), $propertyName);
 				return $propertyReflection->getValue($subject);
@@ -101,18 +105,40 @@ class ObjectAccess {
 				throw new \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
 			}
 		}
-		if ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
-			return $subject[$propertyName];
+
+		if (is_array($subject) || ($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage)) {
+			if (isset($subject[$propertyName]) || array_key_exists($propertyName, $subject)) {
+				return $subject[$propertyName];
+			}
+			$propertyExists = FALSE;
+			return NULL;
+		} elseif (is_object($subject) === FALSE) {
+			return NULL;
 		}
-		$getterMethodName = 'get' . ucfirst($propertyName);
-		if (is_callable(array($subject, $getterMethodName))) {
-			return $subject->$getterMethodName();
+
+		$class = get_class($subject);
+		$identifier = $class . '|' . $propertyName;
+		if (!isset(self::$propertyGetterCache[$identifier])) {
+			self::$propertyGetterCache[$identifier] = array();
+			$getterMethodName = 'get' . ucfirst($propertyName);
+			if (is_callable(array($subject, $getterMethodName))) {
+				self::$propertyGetterCache[$identifier]['accessorMethod'] = $getterMethodName;
+			} else {
+				$getterMethodName = 'is' . ucfirst($propertyName);
+				if (is_callable(array($subject, $getterMethodName))) {
+					self::$propertyGetterCache[$identifier]['accessorMethod'] = $getterMethodName;
+				} else {
+					if (is_object($subject) && array_key_exists($propertyName, get_object_vars($subject))) {
+						self::$propertyGetterCache[$identifier]['publicProperty'] = $propertyName;
+					}
+				}
+			}
 		}
-		$getterMethodName = 'is' . ucfirst($propertyName);
-		if (is_callable(array($subject, $getterMethodName))) {
-			return $subject->$getterMethodName();
-		}
-		if (is_object($subject) && array_key_exists($propertyName, get_object_vars($subject))) {
+
+		if (isset(self::$propertyGetterCache[$identifier]['accessorMethod'])) {
+			$method = self::$propertyGetterCache[$identifier]['accessorMethod'];
+			return $subject->$method();
+		} elseif (isset(self::$propertyGetterCache[$identifier]['publicProperty'])) {
 			return $subject->$propertyName;
 		}
 		$propertyExists = FALSE;
@@ -206,24 +232,30 @@ class ObjectAccess {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
 		if ($object instanceof \stdClass) {
 			$declaredPropertyNames = array_keys(get_object_vars($object));
+			$class = 'stdClass';
+			unset(self::$gettablePropertyNamesCache[$class]);
 		} else {
-			$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+			$class = get_class($object);
+			$declaredPropertyNames = array_keys(get_class_vars($class));
 		}
 
-		foreach (get_class_methods($object) as $methodName) {
-			if (is_callable(array($object, $methodName))) {
-				if (substr($methodName, 0, 2) === 'is') {
-					$declaredPropertyNames[] = lcfirst(substr($methodName, 2));
-				}
-				if (substr($methodName, 0, 3) === 'get') {
-					$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+		if (!isset(self::$gettablePropertyNamesCache[$class])) {
+			foreach (get_class_methods($object) as $methodName) {
+				if (is_callable(array($object, $methodName))) {
+					if (substr($methodName, 0, 2) === 'is') {
+						$declaredPropertyNames[] = lcfirst(substr($methodName, 2));
+					}
+					if (substr($methodName, 0, 3) === 'get') {
+						$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+					}
 				}
 			}
-		}
 
-		$propertyNames = array_unique($declaredPropertyNames);
-		sort($propertyNames);
-		return $propertyNames;
+			$propertyNames = array_unique($declaredPropertyNames);
+			sort($propertyNames);
+			self::$gettablePropertyNamesCache[$class] = $propertyNames;
+		}
+		return self::$gettablePropertyNamesCache[$class];
 	}
 
 	/**
@@ -289,8 +321,12 @@ class ObjectAccess {
 		} elseif ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
 			return TRUE;
 		}
-		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) return TRUE;
-		if (is_callable(array($object, 'is' . ucfirst($propertyName)))) return TRUE;
+		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) {
+			return TRUE;
+		}
+		if (is_callable(array($object, 'is' . ucfirst($propertyName)))) {
+			return TRUE;
+		}
 		return (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE);
 	}
 
