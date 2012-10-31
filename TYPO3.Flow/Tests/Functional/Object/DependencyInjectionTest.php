@@ -33,8 +33,21 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments() {
 		$objectC = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC');
 
-			// Note: The "requiredArgument" is defined in the Objects.yaml of the Flow package (testing context)
+			// Note: The "requiredArgument" and "thirdOptionalArgument" are defined in the Objects.yaml of the Flow package (testing context)
 		$this->assertSame('this is required', $objectC->requiredArgument);
+		$this->assertEquals(array('thisIs' => array('anArray' => 'asProperty')), $objectC->thirdOptionalArgument);
+	}
+
+	/**
+	 * @test
+	 */
+	public function propertiesOfVariousPrimitiveTypeAreSetInSingletonPropertiesIfConfigured() {
+		$objectC = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC');
+
+			// Note: The arguments are defined in the Objects.yaml of the Flow package (testing context)
+		$this->assertSame('a defined string', $objectC->getProtectedStringPropertySetViaObjectsYaml());
+		$this->assertSame(42.101010, $objectC->getProtectedFloatPropertySetViaObjectsYaml());
+		$this->assertSame(array('iAm' => array('aConfigured' => 'arrayValue')), $objectC->getProtectedArrayPropertySetViaObjectsYaml());
 	}
 
 	/**

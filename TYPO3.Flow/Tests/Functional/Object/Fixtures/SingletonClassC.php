@@ -36,6 +36,21 @@ class SingletonClassC {
 	public $settingsArgument;
 
 	/**
+	 * @var string
+	 */
+	protected $protectedStringPropertySetViaObjectsYaml = '';
+
+	/**
+	 * @var float
+	 */
+	protected $protectedFloatPropertySetViaObjectsYaml = 0.5;
+
+	/**
+	 * @var array
+	 */
+	protected $protectedArrayPropertySetViaObjectsYaml = array();
+
+	/**
 	 * @param string $requiredArgument
 	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
 	 * @param string $settingsArgument
@@ -49,6 +64,28 @@ class SingletonClassC {
 		$this->interfaceAImplementation = $interfaceAImplementation;
 		$this->settingsArgument = $settingsArgument;
 		$this->optionalArgument = $optionalArgument;
+		$this->thirdOptionalArgument = $thirdOptionalArgument;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getProtectedStringPropertySetViaObjectsYaml() {
+		return $this->protectedStringPropertySetViaObjectsYaml;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getProtectedArrayPropertySetViaObjectsYaml() {
+		return $this->protectedArrayPropertySetViaObjectsYaml;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getProtectedFloatPropertySetViaObjectsYaml() {
+		return $this->protectedFloatPropertySetViaObjectsYaml;
 	}
 
 }

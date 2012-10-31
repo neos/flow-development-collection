@@ -441,6 +441,8 @@ class ProxyClassBuilder {
 				case \TYPO3\Flow\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
 					if (is_string($propertyValue)) {
 						$preparedSetterArgument = '\'' . str_replace('\'', '\\\'', $propertyValue) . '\'';
+					} elseif (is_array($propertyValue)) {
+						$preparedSetterArgument = var_export($propertyValue, TRUE);
 					} else {
 						$preparedSetterArgument = $propertyValue;
 					}

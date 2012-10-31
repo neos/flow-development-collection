@@ -35,11 +35,21 @@ TYPO3\Flow\Resource\Publishing\ResourcePublishingTargetInterface:
 # Configuration of fixture classes:
 #
 TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
+  properties:
+    protectedStringPropertySetViaObjectsYaml:
+      value: 'a defined string'
+    protectedFloatPropertySetViaObjectsYaml:
+      value: 42.101010
+    protectedArrayPropertySetViaObjectsYaml:
+      value: { 'iAm': { 'aConfigured': 'arrayValue' } }
+
   arguments:
     1:
       value: 'this is required'
     3:
       setting: TYPO3.Flow.tests.functional.dependencyInjection.singletonConstructorArgument
+    6:
+      value: { 'thisIs': { 'anArray': 'asProperty' } }
 
 TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
   scope: singleton
