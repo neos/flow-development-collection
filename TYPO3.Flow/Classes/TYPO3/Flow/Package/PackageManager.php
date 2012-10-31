@@ -602,10 +602,6 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			try {
 				$composerManifest = self::getComposerManifest($composerManifestPath);
 				$packageKey = PackageFactory::getPackageKeyFromManifest($composerManifest, $packagePath, $this->packagesBasePath);
-				if ($packageKey === NULL) {
-						// manifest found but no valid package, skip it
-					continue;
-				}
 				$this->packageStatesConfiguration['packages'][$packageKey]['manifestPath'] = substr($composerManifestPath, strlen($packagePath)) ?: '';
 			} catch (\TYPO3\Flow\Package\Exception\MissingPackageManifestException $exception) {
 				$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
@@ -646,9 +642,17 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			$manifestPaths[] = $packagePath . '/';
 		} else {
 			$jsonPathsAndFilenames = Files::readDirectoryRecursively($packagePath, '.json');
-			foreach ($jsonPathsAndFilenames as $jsonPathAndFilename) {
+			while (list($unusedKey, $jsonPathAndFilename) = each($jsonPathsAndFilenames)) {
 				if (basename($jsonPathAndFilename) === 'composer.json') {
-					$manifestPaths[] = dirname($jsonPathAndFilename) . '/';
+					$manifestPath = dirname($jsonPathAndFilename) . '/';
+					$manifestPaths[] = $manifestPath;
+					$isNotSubPathOfManifestPath = function ($otherPath) use ($manifestPath) {
+						return strpos($otherPath, $manifestPath) !== 0;
+					};
+					$jsonPathsAndFilenames = array_filter($jsonPathsAndFilenames, $isNotSubPathOfManifestPath);
+					if (!is_array($jsonPathAndFilename)) {
+						continue;
+					}
 				}
 			}
 		}
