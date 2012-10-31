@@ -103,9 +103,9 @@ class FormatResolver {
 			$contentBetweenBrackets = substr($textWithPlaceholders, $startOfPlaceholder + 1, $endOfPlaceholder - $startOfPlaceholder - 1);
 			$placeholderElements = explode(',', str_replace(' ', '', $contentBetweenBrackets));
 
-			$valueIndex = (int)$placeholderElements[0];
-			if ($valueIndex < 0 || $valueIndex >= count($arguments)) {
-				throw new \TYPO3\Flow\I18n\Exception\IndexOutOfBoundsException('Placeholder has incorrect index or not enough values provided. Please make sure you try to access existing values.', 1278057791);
+			$valueIndex = $placeholderElements[0];
+			if (!array_key_exists($valueIndex, $arguments)) {
+				throw new \TYPO3\Flow\I18n\Exception\IndexOutOfBoundsException('Placeholder "' . $valueIndex . '" was not provided, make sure you provide values for every placeholder.', 1278057791);
 			}
 
 			if (isset($placeholderElements[1])) {
