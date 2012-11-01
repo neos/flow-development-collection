@@ -194,7 +194,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * Testcase for http://forge.typo3.org/issues/36988 - needed for Phoenix
+	 * Testcase for http://forge.typo3.org/issues/36988 - needed for Neos
 	 * editing
 	 *
 	 * @test

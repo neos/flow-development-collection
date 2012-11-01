@@ -12,8 +12,8 @@ technically okay code or a well considered, mature solution.
 
 These guidelines try to cover both, the technical standards as well as giving incentives
 for a common development style. These guidelines must be followed by everyone who creates
-code for the TYPO3 Flow core. Because Phoenix is based on TYPO3 Flow, it follows the same principles -
-therefore, whenever we mention TYPO3 Flow in the following sections, we equally refer to Phoenix.
+code for the TYPO3 Flow core. Because Neos is based on TYPO3 Flow, it follows the same principles -
+therefore, whenever we mention TYPO3 Flow in the following sections, we equally refer to Neos.
 We hope that you feel encouraged to follow these guidelines as well when creating your own
 packages and TYPO3 Flow based applications.
 
