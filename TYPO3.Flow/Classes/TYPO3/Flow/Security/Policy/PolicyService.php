@@ -407,6 +407,15 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	}
 
 	/**
+	 * Checks if the given there is any policy entry for entities
+	 *
+	 * @return boolean TRUE if the a resource entry for entities exist
+	 */
+	public function hasPolicyEntriesForEntities() {
+		return (count($this->entityResourcesConstraints) > 0);
+	}
+
+	/**
 	 * Returns an array of not GRANTED or explicitly DENIED resource constraints, which are
 	 * configured for the given entity type and for at least one of the given roles.
 	 * Note: If two roles have conflicting privileges for the same resource the GRANT priviliege
