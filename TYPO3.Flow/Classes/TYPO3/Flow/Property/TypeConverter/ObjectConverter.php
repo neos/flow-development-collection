@@ -161,7 +161,13 @@ class ObjectConverter extends AbstractTypeConverter {
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			$result = \TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" having a value of type "' . (is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)) . '" could not be set in target object of type "' . $targetType . '".', 1304538165);
+				$exceptionMessage = sprintf(
+					'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
+					$propertyName,
+					(is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
+					$targetType
+				);
+				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException($exceptionMessage, 1304538165);
 			}
 		}
 
