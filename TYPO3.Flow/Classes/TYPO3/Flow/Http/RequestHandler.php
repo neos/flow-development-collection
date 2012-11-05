@@ -13,9 +13,7 @@ namespace TYPO3\Flow\Http;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Core\RequestHandlerInterface;
 use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Security\Exception\AccessDeniedException;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -56,6 +54,11 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	protected $request;
 
 	/**
+	 * @var \TYPO3\Flow\Http\Response
+	 */
+	protected $response;
+
+	/**
 	 * The "http" settings
 	 *
 	 * @var array
@@ -65,7 +68,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	/**
 	 * Make exit() a closure so it can be manipulated during tests
 	 *
-	 * @var Closure
+	 * @var \Closure
 	 */
 	public $exit;
 
