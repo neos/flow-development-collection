@@ -93,7 +93,12 @@ class Uri {
 	public function __construct($uriString) {
 		if (!is_string($uriString)) throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
 
-		$uriParts = parse_url($uriString);
+		$parseUrlException = NULL;
+		try {
+			$uriParts = parse_url($uriString);
+		} catch(\TYPO3\Flow\Error\Exception $exception) {
+			$parseUrlException = $exception;
+		}
 		if (is_array($uriParts)) {
 			$this->scheme = isset($uriParts['scheme']) ? $uriParts['scheme'] : NULL;
 			$this->username = isset($uriParts['user']) ? $uriParts['user'] : NULL;
@@ -105,6 +110,8 @@ class Uri {
 				$this->setQuery ($uriParts['query']);
 			}
 			$this->fragment = isset($uriParts['fragment']) ? $uriParts['fragment'] : NULL;
+		} else {
+			throw new \InvalidArgumentException('The given URI "' . $uriString . '" is not a valid one.', 1351594202, $parseUrlException);
 		}
 	}
 

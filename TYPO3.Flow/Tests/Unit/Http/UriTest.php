@@ -132,5 +132,21 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$uri = new Uri($uriString);
 		$this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
 	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function constructingWithNotAStringThrowsException() {
+		new Uri(42);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function unparsableUriStringThrowsException() {
+		new Uri('http:////localhost');
+	}
 }
 ?>
