@@ -83,7 +83,7 @@ class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	 * Finds and returns all cache entries which are tagged by the specified tag.
 	 *
 	 * @param string $tag The tag to search for
-	 * @return array An array with the content of all matching entries. An empty array if no entries matched
+	 * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -95,7 +95,7 @@ class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 		foreach ($identifiers as $identifier) {
 			$rawResult = $this->backend->get($identifier);
 			if ($rawResult !== FALSE) {
-				$entries[] = ($this->useIgBinary === TRUE) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
+				$entries[$identifier] = ($this->useIgBinary === TRUE) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
 			}
 		}
 		return $entries;

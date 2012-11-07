@@ -113,10 +113,10 @@ class StringFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getByTagCallsBackend() {
+	public function getByTagCallsBackendAndReturnsIdentifiersAndValuesOfEntries() {
 		$tag = 'sometag';
 		$identifiers = array('one', 'two');
-		$entries = array('one value', 'two value');
+		$entries = array('one' => 'one value', 'two' => 'two value');
 		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
