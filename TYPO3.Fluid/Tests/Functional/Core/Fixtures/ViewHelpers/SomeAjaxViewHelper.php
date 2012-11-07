@@ -26,7 +26,7 @@ class SomeAjaxViewHelper extends AbstractWidgetViewHelper {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var TYPO3\Fluid\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\SomeAjaxController
+	 * @var \TYPO3\Fluid\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\SomeAjaxController
 	 */
 	protected $controller;
 
