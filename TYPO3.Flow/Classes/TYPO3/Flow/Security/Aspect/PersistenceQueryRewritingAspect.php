@@ -94,7 +94,11 @@ class PersistenceQueryRewritingAspect {
 	 */
 	public function rewriteQomQuery(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
-			return $joinPoint->getAdviceChain()->proceed($joinPoint);
+			if ($this->policyService->hasPolicyEntriesForEntities()) {
+				$this->securityContext->initialize();
+			} else {
+				return $joinPoint->getAdviceChain()->proceed($joinPoint);
+			}
 		}
 
 		$query = $joinPoint->getProxy();
