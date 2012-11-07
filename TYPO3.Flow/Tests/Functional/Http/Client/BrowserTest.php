@@ -35,7 +35,7 @@ class BrowserTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		parent::setUp();
 		$this->registerRoute(
 			'Functional Test - Http::Client::BrowserTest',
-			'test/http/redirecting',
+			'test/http/redirecting(/{@action})',
 			array(
 				'@package' => 'TYPO3.Flow',
 				'@subpackage' => 'Tests\Functional\Http\Fixtures',
@@ -66,7 +66,7 @@ class BrowserTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$response = $this->browser->request('http://localhost/test/http/redirecting');
 		$this->assertNotContains('arrived.', $response->getContent());
 		$this->assertEquals(303, $response->getStatusCode());
-		$this->assertEquals($response->getHeader('Location'), 'http://localhost/index.php/typo3.flow/redirecting/tohere?%40subpackage=tests%5Cfunctional%5Chttp%5Cfixtures');
+		$this->assertEquals('http://localhost/index.php/test/http/redirecting/tohere', $response->getHeader('Location'));
 	}
 
 }
