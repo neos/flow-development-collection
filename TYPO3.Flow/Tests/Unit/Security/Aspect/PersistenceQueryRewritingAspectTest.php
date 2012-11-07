@@ -147,6 +147,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
 		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
+		$rewritingAspect->_set('policyService', $this->getMock('TYPO3\Flow\Security\Policy\PolicyService'));
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
