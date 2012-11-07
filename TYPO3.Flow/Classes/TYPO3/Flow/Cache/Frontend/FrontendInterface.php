@@ -79,7 +79,7 @@ interface FrontendInterface {
 	 * Finds and returns all cache entries which are tagged by the specified tag.
 	 *
 	 * @param string $tag The tag to search for
-	 * @return array An array with the content of all matching entries. An empty array if no entries matched
+	 * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
 	 * @api
 	 */
 	public function getByTag($tag);
