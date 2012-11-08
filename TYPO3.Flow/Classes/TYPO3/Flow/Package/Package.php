@@ -96,7 +96,7 @@ class Package implements PackageInterface {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
 		if (!(is_dir($packagePath) || (Files::is_link($packagePath) && is_dir(Files::getNormalizedPath($packagePath))))) {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('Tried to instantiate a package object for package "%s" with a non-existing package path "%s". Either the package does not exist anymore, or the code creating this object contains an error.', $packageKey), 1166631889);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('Tried to instantiate a package object for package "%s" with a non-existing package path "%s". Either the package does not exist anymore, or the code creating this object contains an error.', $packageKey, $packagePath), 1166631889);
 		}
 		if (substr($packagePath, -1, 1) !== '/') {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('The package path "%s" provided for package "%s" has no trailing forward slash.', $packagePath, $packageKey), 1166633720);
@@ -105,7 +105,7 @@ class Package implements PackageInterface {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
 		}
 		if (!file_exists($packagePath . $manifestPath . 'composer.json')) {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%s/composer.json".', $packageKey, $manifestPath), 1349776393);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $manifestPath), 1349776393);
 		}
 
 
