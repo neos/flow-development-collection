@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the ApplicationContext class

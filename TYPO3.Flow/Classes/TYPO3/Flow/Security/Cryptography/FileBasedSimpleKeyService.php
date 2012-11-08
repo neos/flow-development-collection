@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Security\Cryptography;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use \TYPO3\Flow\Utility\Files;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * File based simple encrypted key service

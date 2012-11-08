@@ -11,7 +11,7 @@ namespace TYPO3\Flow\I18n\Xliff;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A model representing data from one XLIFF file.
