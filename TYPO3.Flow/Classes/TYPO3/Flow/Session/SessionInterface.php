@@ -121,6 +121,13 @@ interface SessionInterface {
 	 */
 	static public function destroyAll(\TYPO3\Flow\Core\Bootstrap $bootstrap);
 
+	/**
+	 * Remove data of all sessions which are considered to be expired.
+	 *
+	 * @return integer The number of outdated entries removed or NULL if no such information could be determined
+	 */
+	public function collectGarbage();
+
 }
 
 ?>

@@ -173,6 +173,14 @@ class TransientSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	static public function destroyAll(\TYPO3\Flow\Core\Bootstrap $bootstrap) {}
 
+	/**
+	 * No operation for transient session.
+	 *
+	 * @return void
+	 */
+	public function collectGarbage() {
+	}
+
 }
 
 ?>

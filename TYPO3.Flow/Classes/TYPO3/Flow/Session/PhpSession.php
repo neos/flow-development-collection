@@ -327,6 +327,14 @@ class PhpSession implements \TYPO3\Flow\Session\SessionInterface {
 	}
 
 	/**
+	 * Not implemented for PHP native sessions
+	 *
+	 * @return void
+	 */
+	public function collectGarbage() {
+	}
+
+	/**
 	 * Automatically expires the session if the user has been inactive for too long.
 	 *
 	 * @return boolean TRUE if the session expired, FALSE if not

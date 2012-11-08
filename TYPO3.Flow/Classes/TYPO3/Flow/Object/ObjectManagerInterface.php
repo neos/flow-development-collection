@@ -137,6 +137,13 @@ interface ObjectManagerInterface {
 	public function forgetInstance($objectName);
 
 	/**
+	 * Returns all instances of objects with scope session
+	 *
+	 * @return array
+	 */
+	public function getSessionInstances();
+
+	/**
 	 * Shuts the object manager down and calls the shutdown methods of all objects
 	 * which are configured for it.
 	 *
