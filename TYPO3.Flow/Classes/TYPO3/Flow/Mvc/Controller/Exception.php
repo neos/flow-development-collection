@@ -16,7 +16,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  *
  * @api
  */
-class Exception extends \TYPO3\Flow\Exception {
+class Exception extends \TYPO3\Flow\Mvc\Exception {
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\RequestInterface
