@@ -19,6 +19,20 @@ use TYPO3\Flow\Utility\Files;
 class PackageFactory {
 
 	/**
+	 * @var PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
+	 */
+	public function __construct(PackageManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
 	 * Returns a package instance.
 	 *
 	 * @param string $packagesBasePath the base install path of packages,
@@ -29,7 +43,7 @@ class PackageFactory {
 	 * @return \TYPO3\Flow\Package\PackageInterface
 	 * @throws Exception\CorruptPackageException
 	 */
-	public static function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath = '') {
+	public function create($packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath = '') {
 		$packageClassPathAndFilename = Files::concatenatePaths(array($packagesBasePath, $packagePath, 'Classes/' . str_replace('.', '/', $packageKey) . '/Package.php'));
 		if (file_exists($packageClassPathAndFilename)) {
 			require_once($packageClassPathAndFilename);
@@ -46,7 +60,8 @@ class PackageFactory {
 		}
 		$packagePath = Files::concatenatePaths(array($packagesBasePath, $packagePath)) . '/';
 
-		$package = new $packageClassName($packageKey, $packagePath, $classesPath, $manifestPath);
+		$package = new $packageClassName($this->packageManager, $packageKey, $packagePath, $classesPath, $manifestPath);
+
 		return $package;
 	}
 

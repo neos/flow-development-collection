@@ -36,6 +36,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	protected $bootstrap;
 
 	/**
+	 * @var PackageFactory
+	 */
+	protected $packageFactory;
+
+	/**
 	 * Array of available packages, indexed by package key
 	 * @var array
 	 */
@@ -46,6 +51,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @var array
 	 */
 	protected $packageKeys = array();
+
+	/**
+	 * A map between ComposerName and PackageKey, only available when scanAvailablePackages is run
+	 * @var array
+	 */
+	protected $composerNameToPackageKeyMap = array();
 
 	/**
 	 * List of active packages as package key => package object
@@ -103,6 +114,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$this->bootstrap = $bootstrap;
 		$this->packagesBasePath = $packagesBasePath;
 		$this->packageStatesPathAndFilename = ($packageStatesPathAndFilename === '') ? FLOW_PATH_CONFIGURATION . 'PackageStates.php' : $packageStatesPathAndFilename;
+		$this->packageFactory = new PackageFactory($this);
 
 		$this->loadPackageStates();
 
@@ -256,6 +268,26 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * Resolves a Flow package key from a composer package name.
+	 *
+	 * @param string $composerName
+	 * @return string
+	 * @throws Exception\InvalidPackageStateException
+	 */
+	public function getPackageKeyFromComposerName($composerName) {
+		if (count($this->composerNameToPackageKeyMap) === 0) {
+			foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $packageStateConfiguration) {
+				$this->composerNameToPackageKeyMap[strtolower($packageStateConfiguration['composerName'])] = $packageKey;
+			}
+		}
+		$lowercasedComposerName = strtolower($composerName);
+		if (!isset($this->composerNameToPackageKeyMap[$lowercasedComposerName])) {
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('Could not find package with composer name "' . $composerName . '" in PackageStates configuration.', 1352320649);
+		}
+		return $this->composerNameToPackageKeyMap[$lowercasedComposerName];
+	}
+
+	/**
 	 * Check the conformance of the given package key
 	 *
 	 * @param string $packageKey The package key to validate
@@ -309,8 +341,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$this->writeComposerManifest($packagePath, $packageKey, $packageMetaData);
 
 		$packagePath = str_replace($this->packagesBasePath, '', $packagePath);
-
-		$package = PackageFactory::create($this->packagesBasePath, $packagePath, $packageKey, PackageInterface::DIRECTORY_CLASSES);
+		$package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, PackageInterface::DIRECTORY_CLASSES);
 
 		$this->packages[$packageKey] = $package;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
@@ -557,7 +588,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 */
 	protected function loadPackageStates() {
 		$this->packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
-		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 3) {
+		if (!isset($this->packageStatesConfiguration['version']) || $this->packageStatesConfiguration['version'] < 4) {
 			$this->packageStatesConfiguration = array();
 		}
 		if ($this->packageStatesConfiguration === array() || !$this->bootstrap->getContext()->isProduction()) {
@@ -602,7 +633,9 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			try {
 				$composerManifest = self::getComposerManifest($composerManifestPath);
 				$packageKey = PackageFactory::getPackageKeyFromManifest($composerManifest, $packagePath, $this->packagesBasePath);
+				$this->composerNameToPackageKeyMap[strtolower($composerManifest->name)] = $packageKey;
 				$this->packageStatesConfiguration['packages'][$packageKey]['manifestPath'] = substr($composerManifestPath, strlen($packagePath)) ?: '';
+				$this->packageStatesConfiguration['packages'][$packageKey]['composerName'] = $composerManifest->name;
 			} catch (\TYPO3\Flow\Package\Exception\MissingPackageManifestException $exception) {
 				$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
 				$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
@@ -729,7 +762,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			$classesPath = isset($stateConfiguration['classesPath']) ? $stateConfiguration['classesPath'] : NULL;
 			$manifestPath = isset($stateConfiguration['manifestPath']) ? $stateConfiguration['manifestPath'] : NULL;
 
-			$package = PackageFactory::create($this->packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath);
+			$package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath);
 
 			$this->registerPackage($package, FALSE);
 
@@ -753,7 +786,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	protected function sortAndSavePackageStates() {
 		$this->sortAvailablePackagesByDependencies();
 
-		$this->packageStatesConfiguration['version'] = 3;
+		$this->packageStatesConfiguration['version'] = 4;
 
 		$fileDescription = "# PackageStates.php\n\n";
 		$fileDescription .= "# This file is maintained by Flow's package management. Although you can edit it\n";

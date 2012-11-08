@@ -82,16 +82,23 @@ class Package implements PackageInterface {
 	protected $objectManagementEnabled = TRUE;
 
 	/**
+	 * @var \TYPO3\Flow\Package\PackageManager
+	 */
+	protected $packageManager;
+
+	/**
 	 * Constructor
 	 *
+	 * @param \TYPO3\Flow\Package\PackageManager $packageManager the package manager which knows this package
 	 * @param string $packageKey Key of this package
 	 * @param string $packagePath Absolute path to the location of the package's composer manifest
 	 * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, read from Composer manifest if not set.
 	 * @param string $manifestPath Path the composer manifest of the package, relative to $packagePath. Optional, defaults to ''.
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackagePathException if an invalid package path was passed
+	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException if no composer manifest file could be found
 	 */
-	public function __construct($packageKey, $packagePath, $classesPath = NULL, $manifestPath = '') {
+	public function __construct(\TYPO3\Flow\Package\PackageManager $packageManager, $packageKey, $packagePath, $classesPath = NULL, $manifestPath = '') {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
@@ -108,7 +115,7 @@ class Package implements PackageInterface {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $manifestPath), 1349776393);
 		}
 
-
+		$this->packageManager = $packageManager;
 		$this->manifestPath = $manifestPath;
 		$this->packageKey = $packageKey;
 		$this->packagePath = Files::getNormalizedPath($packagePath);
@@ -138,8 +145,31 @@ class Package implements PackageInterface {
 			$this->packageMetaData = new MetaData($this->getPackageKey());
 			$this->packageMetaData->setDescription($this->getComposerManifest('description'));
 			$this->packageMetaData->setVersion($this->getComposerManifest('version'));
+			$requirements = $this->getComposerManifest('require');
+			if ($requirements !== NULL) {
+				foreach ($requirements as $requirement => $version) {
+					if ($this->packageRequirementIsComposerPackage($requirement) === FALSE) {
+							// Skip non-package requirements
+						continue;
+					}
+					$packageKey = $this->packageManager->getPackageKeyFromComposerName($requirement);
+					$constraint = new MetaData\PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, $packageKey);
+					$this->packageMetaData->addConstraint($constraint);
+				}
+			}
+
 		}
 		return $this->packageMetaData;
+	}
+
+	/**
+	 * Check whether the given package requirement (like "typo3/flow" or "php") is a composer package or not
+	 *
+	 * @param string $requirement the composer requirement string
+	 * @return boolean TRUE if $requirement is a composer package (contains a slash), FALSE otherwise
+	 */
+	protected function packageRequirementIsComposerPackage($requirement) {
+		return (strpos($requirement, '/') !== FALSE);
 	}
 
 	/**
