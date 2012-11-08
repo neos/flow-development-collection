@@ -388,7 +388,7 @@ EOD;
 				$this->postProcessConfiguration($configurations[$key]);
 			} elseif (is_string($configuration)) {
 				$matches = array();
-				preg_match_all('/(?:%)([A-Z_0-9]+)(?:%)/', $configuration, $matches);
+				preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $configuration, $matches);
 				if (count($matches[1]) > 0) {
 					foreach ($matches[1] as $match) {
 						if (defined($match)) $configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);

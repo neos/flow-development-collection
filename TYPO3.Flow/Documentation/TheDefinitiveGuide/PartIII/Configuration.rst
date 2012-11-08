@@ -119,7 +119,7 @@ Constants
 Sometimes it is necessary to use values in your configuration files which are defined as
 PHP constants. These values can be included by special markers which are replaced by the
 actual value during parse time. The format is ``%<CONSTANT_NAME>%`` where
-``<CONSTANT_NAME>`` is the name of a PHP constant. Note that the constant name must be all
+``<CONSTANT_NAME>`` is the name of a constant. Note that the constant name must be all
 uppercase.
 
 Some examples:
@@ -132,6 +132,12 @@ Some examples:
 
 ``%PHP_VERSION%``
   Will be replaced by the current PHP version.
+
+``%TYPO3\Flow\Core\Bootstrap::MINIMUM_PHP_VERSION%``
+  Will be replaced by this class constant's value. Note that
+  a leading namespace backslash is generally allowed as of PHP,
+  but is not recommended due to CGL (stringed class names should not
+  have a leading backslash).
 
 Accessing Settings
 ==================
