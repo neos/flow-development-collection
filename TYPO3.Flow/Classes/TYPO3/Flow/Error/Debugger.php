@@ -322,7 +322,11 @@ class Debugger {
 							if ($plaintext) {
 								$arguments .= 'array|' . count($argument) . '|';
 							} else {
-								$arguments .= '<span style="color:#FF8700;" title="%s"><em>array|' . count($argument) . '|</em></span>';
+								$arguments .= sprintf(
+									'<span style="color:#FF8700;" title="%s"><em>array|%d|</em></span>',
+									htmlspecialchars(self::renderArrayDump($argument, 0, TRUE)),
+									count($argument)
+								);
 							}
 						} else {
 							if ($plaintext) {
