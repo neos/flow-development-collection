@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for string
+ * Validator for strings.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -22,8 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class StringValidator extends AbstractValidator {
 
 	/**
-	 * Checks if the given $value is a valid string.
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * Checks if the given value is a string.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

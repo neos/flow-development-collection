@@ -22,6 +22,20 @@ class RegularExpressionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\V
 	protected $validatorClassName = 'TYPO3\Flow\Validation\Validator\RegularExpressionValidator';
 
 	/**
+	 * Looks empty - and that's the purpose: do not run the parent's setUp().
+	 */
+	public function setUp() {}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+	 */
+	public function validateThrowsExceptionIfExpressionIsEmpty() {
+		$this->validatorOptions(array());
+		$this->validator->validate('foo');
+	}
+
+	/**
 	 * @test
 	 */
 	public function validateReturnsNoErrorIfTheGivenValueIsNull() {

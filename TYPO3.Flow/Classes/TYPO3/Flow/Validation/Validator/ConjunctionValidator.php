@@ -13,8 +13,7 @@ namespace TYPO3\Flow\Validation\Validator;
 
 
 /**
- * Validator to chain many validators in a conjunction (logical and). So every
- * validator has to be valid, to make the whole conjunction valid.
+ * Validator to chain many validators in a conjunction (logical and).
  *
  * @api
  */
@@ -22,6 +21,7 @@ class ConjunctionValidator extends AbstractCompositeValidator {
 
 	/**
 	 * Checks if the given value is valid according to the validators of the conjunction.
+	 * Every validator has to be valid, to make the whole conjunction valid.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return \TYPO3\Flow\Error\Result

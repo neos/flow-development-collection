@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for alphanumeric strings
+ * Validator for alphanumeric strings.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -22,8 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class AlphanumericValidator extends AbstractValidator {
 
 	/**
-	 * The given $value is valid if it is an alphanumeric string, which is defined as [[:alnum:]]
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * The given $value is valid if it is an alphanumeric string, which is defined as [[:alnum:]].
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

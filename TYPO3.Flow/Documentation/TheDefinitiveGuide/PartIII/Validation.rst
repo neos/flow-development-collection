@@ -281,20 +281,32 @@ When implementing your own validators (see below), you need to pass the containe
 against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the ``GenericObjectValidator``
 for examples of how to do this.
 
-Writing Own Validators
+Writing Validators
 ======================
 
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
-rather subclass ``AbstractValidator``. You only need to implement the ``isValid()`` method then::
+rather subclass ``AbstractValidator``. You only need to specify any options your validator might use and
+implement the ``isValid()`` method then::
 
+	/**
+	 * A validator for checking items against foos.
+	 */
 	class MySpecialValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
 		/**
-		* Check if $value is valid.
-		*
-		* @param mixed $value
-		* @return void
-		*/
+		 * @var array
+		 */
+		protected $supportedOptions = array(
+			'foo' => array(NULL, 'The foo value to accept as valid', 'mixed', TRUE)
+		);
+
+		/**
+		 * Check if the given value is a valid foo item. What constitutes a valid foo
+		 is determined through the 'foo' option.
+		 *
+		 * @param mixed $value
+		 * @return void
+		 */
 		protected function isValid($value) {
 			if (!isset($this->options['foo'])) {
 				throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException(
@@ -306,7 +318,6 @@ rather subclass ``AbstractValidator``. You only need to implement the ``isValid(
 				$this->addError('The value must be equal to "%s"', 435346321, array($this->options['foo']));
 			}
 		}
-
 	}
 
 In the above example, the ``isValid()`` method has been implemented, and the parameter ``$value`` is the
@@ -316,10 +327,24 @@ In case the data is invalid, ``$this->addError()`` should be used to add an erro
 (which should be the unix timestamp of the current time) and optional arguments which are inserted into
 the error message.
 
-The options of the validator can be accessed in the associative array ``$this->options``. In case any
-of the options is invalid, an ``InvalidValidationOptionsException`` should be thrown.
+The options of the validator can be accessed in the associative array ``$this->options``. The options
+must be declared as shown above. The $supportedOptions array is indexed by option name and each value
+is an array with the following numerically indexed elements:
 
-.. tip::
+# default value of the option
+# description of the option (used for documentation rendering)
+# type of the option (used for documentation rendering)
+# required option flag (optional, defaults to FALSE)
 
-	Because you extended AbstractValidator in the above example, ``NULL`` and empty string
-	are automatically regarded as valid values; as it is the case for all other validators.
+The default values are set in the constructor of the abstract validators provided with FLOW3. If the
+required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
+when the validator is instantiated.
+
+In case you do further checks on the options and any of them is invalid, an
+``InvalidValidationOptionsException`` should be thrown as well.
+
+.. tip:: Because you extended AbstractValidator in the above example, ``NULL`` and empty string
+         are automatically regarded as valid values; as it is the case for all other validators.
+         If you do not want to accept empty values, you need to set the class property
+         $acceptsEmptyValues to FALSE.
+

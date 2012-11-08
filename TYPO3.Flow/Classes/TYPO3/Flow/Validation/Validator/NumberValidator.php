@@ -13,11 +13,21 @@ namespace TYPO3\Flow\Validation\Validator;
 
 
 /**
- * Validator for general numbers
+ * Validator for general numbers.
  *
  * @api
  */
 class NumberValidator extends AbstractValidator {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'locale' => array(NULL, 'The locale to use for number parsing', 'string|Locale'),
+		'strictMode' => array(TRUE, 'Use strict mode for number parsing', 'boolean'),
+		'formatLength' => array(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'The format length, see NumbersReader::FORMAT_LENGTH_*', 'string'),
+		'formatType' => array(\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL, 'The format type, see NumbersReader::FORMAT_TYPE_*', 'string')
+	);
 
 	/**
 	 * @var \TYPO3\Flow\I18n\Service
@@ -47,7 +57,6 @@ class NumberValidator extends AbstractValidator {
 
 	/**
 	 * Checks if the given value is a valid number.
-	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -66,25 +75,13 @@ class NumberValidator extends AbstractValidator {
 			return;
 		}
 
-		if (!isset($this->options['strictMode']) || $this->options['strictMode'] === TRUE) {
-			$strictMode = TRUE;
-		} else {
-			$strictMode = FALSE;
-		}
+		$strictMode = $this->options['strictMode'];
 
-		if (isset($this->options['formatLength'])) {
-			$formatLength = $this->options['formatLength'];
-			\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
-		} else {
-			$formatLength = \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT;
-		}
+		$formatLength = $this->options['formatLength'];
+		\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
 
-		if (isset($this->options['formatType'])) {
-			$formatType = $this->options['formatType'];
-			\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatType($formatType);
-		} else {
-			$formatType = \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL;
-		}
+		$formatType = $this->options['formatType'];
+		\TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::validateFormatType($formatType);
 
 		if ($formatType === \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT) {
 			if ($this->numberParser->parsePercentNumber($value, $locale, $formatLength, $strictMode) === FALSE) {

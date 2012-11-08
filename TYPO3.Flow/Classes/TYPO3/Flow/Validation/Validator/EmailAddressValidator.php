@@ -24,8 +24,6 @@ class EmailAddressValidator extends AbstractValidator {
 	/**
 	 * Checks if the given value is a valid email address.
 	 *
-	 * Note: a value of NULL or empty string ('') is considered valid
-	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
 	 * @api

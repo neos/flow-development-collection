@@ -13,17 +13,21 @@ namespace TYPO3\Flow\Validation\Validator;
 
 
 /**
- * Validator based on regular expressions
- *
- * The regular expression is specified in the options by using the array key "regularExpression"
+ * Validator based on regular expressions.
  *
  * @api
  */
 class RegularExpressionValidator extends AbstractValidator {
 
 	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'regularExpression' => array('', 'The regular expression to use for validation, used as given', 'string', TRUE)
+	);
+
+	/**
 	 * Checks if the given value matches the specified regular expression.
-	 * Note: a value of NULL or empty string ('') is considered valid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -31,9 +35,6 @@ class RegularExpressionValidator extends AbstractValidator {
 	 * @api
 	 */
 	protected function isValid($value) {
-		if (!isset($this->options['regularExpression'])) {
-			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('"regularExpression" in RegularExpressionValidator was empty.', 1298273029);
-		}
 		$result = preg_match($this->options['regularExpression'], $value);
 		if ($result === 0) {
 			$this->addError('The given subject did not match the pattern. Got: %1$s', 1221565130, array($value));

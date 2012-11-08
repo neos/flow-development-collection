@@ -14,11 +14,20 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A generic collection validator
+ * A generic collection validator.
  *
  * @api
  */
 class CollectionValidator extends GenericObjectValidator {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'elementValidator' => array(NULL, 'The validator type to use for the collection elements', 'string'),
+		'elementType' => array(NULL, 'The type of the elements in the collection', 'string'),
+		'validationGroups' => array(NULL, 'The validation groups to link to', 'string'),
+	);
 
 	/**
 	 * @var \TYPO3\Flow\Validation\ValidatorResolver
@@ -53,8 +62,12 @@ class CollectionValidator extends GenericObjectValidator {
 	}
 
 	/**
-	 * Check if $value is valid. If it is not valid, needs to add an error
-	 * to Result.
+	 * Checks for a collection and if needed validates the items in the collection.
+	 * This is done with the specified element validator or a validator based on
+	 * the given element type and validation group.
+	 *
+	 * Either elementValidator or elementType must be given, otherwise validation
+	 * will be skipped.
 	 *
 	 * @param mixed $value A collection to be validated
 	 * @return void

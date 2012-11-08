@@ -20,8 +20,15 @@ namespace TYPO3\Flow\Validation\Validator;
 class NumberRangeValidator extends AbstractValidator {
 
 	/**
-	 * The given $value is valid if it is a number in the specified range.
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'minimum' => array(0, 'The minimum value to accept', 'integer'),
+		'maximum' => array(PHP_INT_MAX, 'The maximum value to accept', 'integer')
+	);
+
+	/**
+	 * The given value is valid if it is a number in the specified range.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -33,8 +40,8 @@ class NumberRangeValidator extends AbstractValidator {
 			return;
 		}
 
-		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
-		$maximum = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
+		$minimum = $this->options['minimum'];
+		$maximum = $this->options['maximum'];
 		if ($minimum > $maximum) {
 			$x = $minimum;
 			$minimum = $maximum;

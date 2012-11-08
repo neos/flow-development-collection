@@ -13,11 +13,18 @@ namespace TYPO3\Flow\Validation\Validator;
 
 
 /**
- * An abstract composite validator with consisting of other validators
+ * An abstract composite validator consisting of other validators
  *
  * @api
  */
 abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \Countable {
+
+	/**
+	 * This contains the supported options, their default values and descriptions.
+	 *
+	 * @var array
+	 */
+	protected $supportedOptions = array();
 
 	/**
 	 * @var array
@@ -41,7 +48,32 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
 	 * @api
 	 */
 	public function __construct(array $options = array()) {
-		$this->options = $options;
+			// check for options given but not supported
+		if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== array()) {
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('Unsupported validation option(s) found: ' . implode(', ', array_keys($unsupportedOptions)), 1339079804);
+		}
+
+			// check for required options being set
+		array_walk(
+			$this->supportedOptions,
+			function($supportedOptionData, $supportedOptionName, $options) {
+				if (isset($supportedOptionData[3]) && !array_key_exists($supportedOptionName, $options)) {
+					throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('Required validation option not set: ' . $supportedOptionName, 1339163922);
+				}
+			},
+			$options
+		);
+
+			// merge with default values
+		$this->options = array_merge(
+			array_map(
+				function ($value) {
+					return $value[0];
+				},
+				$this->supportedOptions
+			),
+			$options
+		);
 		$this->validators = new \SplObjectStorage();
 	}
 

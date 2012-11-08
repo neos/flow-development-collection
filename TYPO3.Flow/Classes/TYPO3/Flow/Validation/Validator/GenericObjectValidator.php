@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Validation\Validator;
  *                                                                        */
 
 /**
- * A generic object validator which allows for specifying property validators
+ * A generic object validator which allows for specifying property validators.
  *
  * @api
  */
@@ -61,8 +61,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 	}
 
 	/**
-	 * Checks if the given value is valid according to the property validators
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * Checks if the given value is valid according to the property validators.
 	 *
 	 * @param mixed $object The value that should be validated
 	 * @return void

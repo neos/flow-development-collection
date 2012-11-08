@@ -21,6 +21,7 @@ abstract class AbstractValidator implements ValidatorInterface {
 
 	/**
 	 * Specifies whether this validator accepts empty values.
+	 *
 	 * If this is TRUE, the validators isValid() method is not called in case of an empty value
 	 * Note: A value is considered empty if it is NULL or an empty string!
 	 * By default all validators except for NotEmpty and the Composite Validators accept empty values
@@ -28,6 +29,13 @@ abstract class AbstractValidator implements ValidatorInterface {
 	 * @var boolean
 	 */
 	protected $acceptsEmptyValues = TRUE;
+
+	/**
+	 * This contains the supported options, their default values, types and descriptions.
+	 *
+	 * @var array
+	 */
+	protected $supportedOptions = array();
 
 	/**
 	 * @var array
@@ -43,10 +51,36 @@ abstract class AbstractValidator implements ValidatorInterface {
 	 * Constructs the validator and sets validation options
 	 *
 	 * @param array $options Options for the validator
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException if unsupported options are found
 	 * @api
 	 */
 	public function __construct(array $options = array()) {
-		$this->options = $options;
+			// check for options given but not supported
+		if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== array()) {
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('Unsupported validation option(s) found: ' . implode(', ', array_keys($unsupportedOptions)), 1339079393);
+		}
+
+			// check for required options being set
+		array_walk(
+			$this->supportedOptions,
+			function($supportedOptionData, $supportedOptionName, $options) {
+				if (isset($supportedOptionData[3]) && !array_key_exists($supportedOptionName, $options)) {
+					throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('Required validation option not set: ' . $supportedOptionName, 1339163902);
+				}
+			},
+			$options
+		);
+
+			// merge with default values
+		$this->options = array_merge(
+			array_map(
+				function ($value) {
+					return $value[0];
+				},
+				$this->supportedOptions
+			),
+			$options
+		);
 	}
 
 	/**

@@ -20,8 +20,15 @@ namespace TYPO3\Flow\Validation\Validator;
 class CountValidator extends AbstractValidator {
 
 	/**
-	 * The given $value is valid if it is an array or \Countable that contains the specified amount of elements.
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'minimum' => array(0, 'The minimum count to accept', 'integer'),
+		'maximum' => array(PHP_INT_MAX, 'The maximum count to accept', 'integer')
+	);
+
+	/**
+	 * The given value is valid if it is an array or \Countable that contains the specified amount of elements.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -33,8 +40,8 @@ class CountValidator extends AbstractValidator {
 			return;
 		}
 
-		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
-		$maximum = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
+		$minimum = intval($this->options['minimum']);
+		$maximum = intval($this->options['maximum']);
 		if (count($value) < $minimum || count($value) > $maximum) {
 			$this->addError('The count must be between %1$d and %2$d.', 1253718831, array($minimum, $maximum));
 		}

@@ -20,26 +20,36 @@ namespace TYPO3\Flow\Validation\Validator;
 class DateTimeRangeValidator extends AbstractValidator {
 
 	/**
-	 * Adds errors if the given DateTime doesn't match the set boundaries.
-	 * Options are:
-	 * [latestDate], [earliestDate]: May be each <time>, <start>/<duration> or <duration>/<end>, where <duration> is an
-	 *  ISO 8601 duration and <start> or <end> or <time> may be 'now' or a PHP supported format. (1)
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'latestDate' => array(NULL, 'The latest date to accept', 'string'),
+		'earliestDate' => array(NULL, 'The earliest date to accept', 'string')
+	);
+
+	/**
+	 * Adds errors if the given DateTime does not match the set boundaries.
+	 *
+	 * latestDate and earliestDate may be each <time>, <start>/<duration> or <duration>/<end>, where <duration> is an
+	 * ISO 8601 duration and <start> or <end> or <time> may be 'now' or a PHP supported format. (1)
 	 *
 	 * In general, you are able to provide a timestamp or a timestamp with additional calculation. Calculations are done
 	 * as described in ISO 8601 (2), with an introducing "P". P7MT2H30M for example mean a period of 7 months, 2 hours
 	 * and 30 minutes (P introduces a period at all, while a following T introduces the time-section of a period. This
 	 * is not at least in order not to confuse months and minutes, both represented as M).
 	 * A period is separated from the timestamp with a forward slash "/". If the period follows the timestamp, that
-	 * period is added to the timestamp; if the period precedes the timestamp, it's substracted.
+	 * period is added to the timestamp; if the period precedes the timestamp, it's subtracted.
 	 * The timestamp can be one of PHP's supported date formats (1), so also "now" is supported.
 	 *
 	 * Use cases:
+	 *
 	 * If you offer something that has to be manufactured and you ask for a delivery date, you might assure that this
 	 * date is at least two weeks in advance; this could be done with the expression "now/P2W".
 	 * If you have a library of ancient goods and want to track a production date that is at least 5 years ago, you can
 	 * express it with "P5Y/now".
 	 *
 	 * Examples:
+	 *
 	 * If you want to test if a given date is at least five minutes ahead, use
 	 *   earliestDate: now/PT5M
 	 * If you want to test if a given date was at least 10 days ago, use
@@ -48,16 +58,15 @@ class DateTimeRangeValidator extends AbstractValidator {
 	 *   earliestDate: 2007-03-01T13:00:00Z
 	 *   latestDate: 2007-03-30T13:00:00Z
 	 *
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * Footnotes:
 	 *
+	 * http://de.php.net/manual/en/datetime.formats.compound.php (1)
+	 * http://en.wikipedia.org/wiki/ISO_8601#Durations (2)
+	 * http://en.wikipedia.org/wiki/ISO_8601#Time_intervals (3)
 	 *
 	 * @param mixed $dateTime The DateTime value that should be validated
 	 * @return void
 	 * @api
-	 *
-	 * @see http://de.php.net/manual/en/datetime.formats.compound.php (1)
-	 * @see http://en.wikipedia.org/wiki/ISO_8601#Durations (2)
-	 * @see http://en.wikipedia.org/wiki/ISO_8601#Time_intervals (3)
 	 */
 	protected function isValid($dateTime) {
 		if (!$dateTime instanceof \DateTime) {

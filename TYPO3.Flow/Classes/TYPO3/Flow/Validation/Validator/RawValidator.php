@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A validator which accepts any input
+ * A validator which accepts any input.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -22,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class RawValidator extends AbstractValidator {
 
 	/**
-	 * This validator is always valid
+	 * This validator is always valid.
 	 *
 	 * @param mixed $value The value that should be validated (not used here)
 	 * @return void

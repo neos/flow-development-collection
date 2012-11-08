@@ -13,16 +13,24 @@ namespace TYPO3\Flow\Validation\Validator;
 
 
 /**
- * Validator for string length
+ * Validator for string length.
  *
  * @api
  */
 class StringLengthValidator extends AbstractValidator {
 
 	/**
-	 * Checks if the given $value is a valid string and its length is between 'minimum' (defaults to 0 if not specified)
-	 * and 'maximum' (defaults to infinite if not specified) to be specified in the validation options.
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'minimum' => array(0, 'Minimum length for a valid string', 'integer'),
+		'maximum' => array(PHP_INT_MAX, 'Maximum length for a valid string', 'integer')
+	);
+
+	/**
+	 * Checks if the given value is a valid string (or can be cast to a string
+	 * if an object is given) and its length is between minimum and maximum
+	 * specified in the validation options.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -30,8 +38,7 @@ class StringLengthValidator extends AbstractValidator {
 	 * @api
 	 */
 	protected function isValid($value) {
-		if (isset($this->options['minimum']) && isset($this->options['maximum'])
-			&& $this->options['maximum'] < $this->options['minimum']) {
+		if ($this->options['maximum'] < $this->options['minimum']) {
 			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is less than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
@@ -47,17 +54,17 @@ class StringLengthValidator extends AbstractValidator {
 
 		$stringLength = strlen($value);
 		$isValid = TRUE;
-		if (isset($this->options['minimum']) && $stringLength < $this->options['minimum']) {
+		if ($stringLength < $this->options['minimum']) {
 			$isValid = FALSE;
 		}
-		if (isset($this->options['maximum']) && $stringLength > $this->options['maximum']) {
+		if ($stringLength > $this->options['maximum']) {
 			$isValid = FALSE;
 		}
 
 		if ($isValid === FALSE) {
-			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {
+			if ($this->options['minimum'] > 0 && $this->options['maximum'] < PHP_INT_MAX) {
 				$this->addError('The length of this text must be between %1$d and %2$d characters.', 1238108067, array($this->options['minimum'], $this->options['maximum']));
-			} elseif (isset($this->options['minimum'])) {
+			} elseif ($this->options['minimum'] > 0) {
 				$this->addError('This field must contain at least %1$d characters.', 1238108068, array($this->options['minimum']));
 			} else {
 				$this->addError('This text may not exceed %1$d characters.', 1238108069, array($this->options['maximum']));

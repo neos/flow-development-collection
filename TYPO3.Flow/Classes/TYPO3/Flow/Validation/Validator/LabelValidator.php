@@ -28,8 +28,7 @@ class LabelValidator extends AbstractValidator {
 	const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 
 	/**
-	 * The given $value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS
-	 * Note: a value of NULL or empty string ('') is considered valid
+	 * The given value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
