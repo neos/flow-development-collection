@@ -72,7 +72,7 @@ class DateTimeConverter extends AbstractTypeConverter {
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('string', 'array');
+	protected $sourceTypes = array('string', 'integer', 'array');
 
 	/**
 	 * @var string
@@ -85,7 +85,7 @@ class DateTimeConverter extends AbstractTypeConverter {
 	protected $priority = 1;
 
 	/**
-	 * Empty strings can't be converted
+	 * If conversion is possible.
 	 *
 	 * @param string $source
 	 * @param string $targetType
@@ -98,13 +98,16 @@ class DateTimeConverter extends AbstractTypeConverter {
 		if (is_array($source)) {
 			return TRUE;
 		}
+		if (is_integer($source)) {
+			return TRUE;
+		}
 		return is_string($source);
 	}
 
 	/**
 	 * Converts $source to a \DateTime using the configured dateFormat
 	 *
-	 * @param string|array $source the string to be converted to a \DateTime object
+	 * @param string|integer|array $source the string to be converted to a \DateTime object
 	 * @param string $targetType must be "DateTime"
 	 * @param array $convertedChildProperties not used currently
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
@@ -115,10 +118,14 @@ class DateTimeConverter extends AbstractTypeConverter {
 		$dateFormat = $this->getDefaultDateFormat($configuration);
 		if (is_string($source)) {
 			$dateAsString = $source;
+		} elseif (is_integer($source)) {
+			$dateAsString = strval($source);
 		} else {
 			if (isset($source['date']) && is_string($source['date'])) {
 				$dateAsString = $source['date'];
-			} elseif($this->isDatePartKeysProvided($source)) {
+			} elseif (isset($source['date']) && is_integer($source['date'])) {
+				$dateAsString = strval($source['date']);
+			} elseif ($this->isDatePartKeysProvided($source)) {
 				if ($source['day'] < 1 || $source['month'] < 1 || $source['year'] < 1) {
 					return new \TYPO3\Flow\Validation\Error('Could not convert the given date parts into a DateTime object because one or more parts were 0.', 1333032779);
 				}
@@ -132,6 +139,9 @@ class DateTimeConverter extends AbstractTypeConverter {
 		}
 		if ($dateAsString === '') {
 			return NULL;
+		}
+		if (ctype_digit($dateAsString) && $configuration === NULL && (!is_array($source) || !isset($source['dateFormat']))) {
+			$dateFormat = 'U';
 		}
 		if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
 			try {
@@ -158,9 +168,9 @@ class DateTimeConverter extends AbstractTypeConverter {
 	 * @return bool
 	 */
 	protected function isDatePartKeysProvided(array $source) {
-		return isset($source['day']) && is_numeric($source['day'])
-			&& isset($source['month']) && is_numeric($source['month'])
-			&& isset($source['year']) && is_numeric($source['year']);
+		return isset($source['day']) && ctype_digit($source['day'])
+			&& isset($source['month']) && ctype_digit($source['month'])
+			&& isset($source['year']) && ctype_digit($source['year']);
 	}
 
 	/**

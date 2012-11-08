@@ -31,7 +31,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals(array('string', 'integer', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
 		$this->assertEquals('DateTime', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
@@ -151,7 +151,43 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($source, $date->format($dateFormat));
 	}
 
+	/**
+	 * @return array
+	 * @see convertFromIntegerOrDigitStringWithoutConfigurationTests()
+	 * @see convertFromIntegerOrDigitStringInArrayWithoutConfigurationTests()
+	 */
+	public function convertFromIntegerOrDigitStringsWithoutConfigurationDataProvider() {
+		return array(
+			array('1308174051'),
+			array(1308174051),
+		);
+	}
+
+	/**
+	 * @test
+	 * @param $source
+	 * @dataProvider convertFromIntegerOrDigitStringsWithoutConfigurationDataProvider
+	 */
+	public function convertFromIntegerOrDigitStringWithoutConfigurationTests($source) {
+		$date = $this->converter->convertFrom($source, 'DateTime', array(), NULL);
+		$this->assertInstanceOf('DateTime', $date);
+		$this->assertSame(strval($source), $date->format('U'));
+
+	}
+
 	/** Array to DateTime testcases  **/
+
+	/**
+	 * @test
+	 * @param $source
+	 * @dataProvider convertFromIntegerOrDigitStringsWithoutConfigurationDataProvider
+	 */
+	public function convertFromIntegerOrDigitStringInArrayWithoutConfigurationTests($source) {
+		$date = $this->converter->convertFrom(array('date' => $source), 'DateTime', array(), NULL);
+		$this->assertInstanceOf('DateTime', $date);
+		$this->assertSame(strval($source), $date->format('U'));
+
+	}
 
 	/**
 	 * @test
@@ -184,6 +220,30 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$date = $this->converter->convertFrom(array('date' => $expectedResult), 'DateTime');
 		$actualResult = $date->format('Y-m-d\TH:i:sP');
 		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @return array
+	 * @see convertFromThrowsExceptionIfDatePartKeysHaveInvalidValuesSpecified
+	 */
+	public function invalidDatePartKeyValuesDataProvider() {
+		return array(
+			array(array('day' => '13.0', 'month' => '10', 'year' => '2010')),
+			array(array('day' => '13', 'month' => '10.0', 'year' => '2010')),
+			array(array('day' => '13', 'month' => '10', 'year' => '2010.0')),
+			array(array('day' => '-13', 'month' => '10', 'year' => '2010')),
+			array(array('day' => '13', 'month' => '-10', 'year' => '2010')),
+			array(array('day' => '13', 'month' => '10', 'year' => '-2010')),
+		);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
+	 * @dataProvider invalidDatePartKeyValuesDataProvider
+	 */
+	public function convertFromThrowsExceptionIfDatePartKeysHaveInvalidValuesSpecified($source) {
+		$this->converter->convertFrom($source, 'DateTime');
 	}
 
 	/**
@@ -253,7 +313,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Property\Exception\TypeConverterException
+	 * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
 	public function convertFromArrayThrowsExceptionForEmptyArray() {
 		$this->converter->convertFrom(array(), 'DateTime', array(), NULL);
@@ -272,7 +332,6 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function convertFromArrayDataProvider() {
 		return array(
-			array(array('date' => '1308174051'), FALSE),
 			array(array('date' => '2005-08-15T15:52:01+01:00'), TRUE),
 			array(array('date' => '1308174051', 'dateFormat' => ''), FALSE),
 			array(array('date' => '13-12-1980', 'dateFormat' => 'd.m.Y'), FALSE),
@@ -282,6 +341,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array(array('date' => '2005-08-15T15:52:01+00:00', 'dateFormat' => ''), TRUE),
 			array(array('date' => '2005-08-15T15:52:01+0000', 'dateFormat' => \DateTime::ISO8601), TRUE),
 			array(array('date' => '1308174051', 'dateFormat' => 'U'), TRUE),
+			array(array('date' => 1308174051, 'dateFormat' => 'U'), TRUE),
 		);
 	}
 
@@ -314,7 +374,7 @@ class DateTimeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		if ($dateFormat === NULL) {
 			$dateFormat = \TYPO3\Flow\Property\TypeConverter\DateTimeConverter::DEFAULT_DATE_FORMAT;
 		}
-		$dateAsString = isset($source['date']) ? $source['date'] : '';
+		$dateAsString = isset($source['date']) ? strval($source['date']) : '';
 		$this->assertSame($dateAsString, $date->format($dateFormat));
 	}
 
