@@ -96,14 +96,18 @@ class Package implements PackageInterface {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
 		if (!(is_dir($packagePath) || (Files::is_link($packagePath) && is_dir(Files::getNormalizedPath($packagePath))))) {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('Tried to instantiate a package object for package "%s" with a non-existing package path "%s". Either the package does not exist anymore, or the code creating this object contains an error.', $packageKey), 1166631889);
 		}
 		if (substr($packagePath, -1, 1) !== '/') {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('The package path "%s" provided for package "%s" has no trailing forward slash.', $packagePath, $packageKey), 1166633720);
 		}
 		if (substr($classesPath, 1, 1) === '/') {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException('Package classes path has a leading forward slash.', 1334841320);
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
 		}
+		if (!file_exists($packagePath . $manifestPath . 'composer.json')) {
+			throw new \TYPO3\Flow\Package\Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%s/composer.json".', $packageKey, $manifestPath), 1349776393);
+		}
+
 
 		$this->manifestPath = $manifestPath;
 		$this->packageKey = $packageKey;
@@ -183,10 +187,7 @@ class Package implements PackageInterface {
 				if (count($namespaces) === 1) {
 					$namespace = key($namespaces);
 				} else {
-					/**
-					 * @todo throw meaningful exception with proper description
-					 */
-					throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('Multiple PHP namespaces in one package are not supported.', 1348053245);
+					throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
 				}
 			} else {
 				$namespace = str_replace('.', '\\', $this->getPackageKey());
