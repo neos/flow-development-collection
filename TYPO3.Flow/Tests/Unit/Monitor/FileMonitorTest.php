@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Tests\Unit\Monitor;
  * Public License for more details.                                       *
  *                                                                        */
 
-use \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use org\bovigo\vfs\vfsStream;
 
 /**

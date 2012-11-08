@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Provider;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Flow\Security\Authentication\Provider\FileBasedSimpleKeyProvider;
+use TYPO3\Flow\Security\Authentication\Provider\FileBasedSimpleKeyProvider;
 
 /**
  * Testcase for file based simple key authentication provider.
