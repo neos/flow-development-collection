@@ -17,6 +17,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Cookie;
 
@@ -91,19 +92,14 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	protected $sessionCookie;
 
 	/**
-	 * @var string
+	 * @var integer
 	 */
-	protected $sessionLastActivityCookieName;
-
-	/**
-	 * @var \TYPO3\Flow\Http\Cookie
-	 */
-	protected $sessionLastActivityCookie;
+	protected $inactivityTimeout;
 
 	/**
 	 * @var integer
 	 */
-	protected $inactivityTimeout;
+	protected $lastActivityTimestamp;
 
 	/**
 	 * @var float
@@ -148,7 +144,6 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		$this->sessionCookieSecure =  (boolean)$settings['session']['FlowSession']['cookie']['secure'];
 		$this->sessionCookieHttpOnly =  (boolean)$settings['session']['FlowSession']['cookie']['httponly'];
 		$this->garbageCollectionProbability = $settings['session']['FlowSession']['garbageCollectionProbability'];
-		$this->sessionLastActivityCookieName = $this->sessionCookieName . '_LastActivity';
 		$this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
 	}
 
@@ -159,14 +154,13 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function initializeObject() {
 		$requestHandler = $this->bootstrap->getActiveRequestHandler();
-		$this->request = $requestHandler->getHttpRequest();
-		$this->response = $requestHandler->getHttpResponse();
+		if ($requestHandler instanceof HttpRequestHandlerInterface) {
+			$this->request = $requestHandler->getHttpRequest();
+			$this->response = $requestHandler->getHttpResponse();
 
-		if ($this->request->hasCookie($this->sessionCookieName)) {
-			$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);
-		}
-		if ($this->request->hasCookie($this->sessionLastActivityCookieName)) {
-			$this->sessionLastActivityCookie = $this->request->getCookie($this->sessionLastActivityCookieName);
+			if ($this->request->hasCookie($this->sessionCookieName)) {
+				$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);
+			}
 		}
 	}
 
@@ -187,13 +181,11 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @api
 	 */
 	public function start() {
-		if ($this->started === FALSE) {
+		if ($this->started === FALSE && $this->request !== NULL) {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
 			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
-			$this->sessionLastActivityCookie = new Cookie($this->sessionLastActivityCookieName, time(), $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 
 			$this->response->setCookie($this->sessionCookie);
-			$this->response->setCookie($this->sessionLastActivityCookie);
 			$this->started = TRUE;
 		}
 	}
@@ -208,7 +200,11 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @api
 	 */
 	public function canBeResumed() {
-		if ($this->sessionCookie === NULL || $this->sessionLastActivityCookie === NULL) {
+		if ($this->sessionCookie === NULL || $this->request === NULL) {
+			return FALSE;
+		}
+		$this->lastActivityTimestamp = $this->cache->get($this->sessionCookie->getValue());
+		if ($this->lastActivityTimestamp === FALSE) {
 			return FALSE;
 		}
 		return !$this->autoExpire();
@@ -223,37 +219,28 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	public function resume() {
 		if ($this->started === FALSE && $this->canBeResumed()) {
 			$this->sessionIdentifier = $this->sessionCookie->getValue();
-
 			$this->response->setCookie($this->sessionCookie);
-			$this->response->setCookie($this->sessionLastActivityCookie);
-
 			$this->started = TRUE;
 
-			$previousActivity = $this->sessionLastActivityCookie->getValue();
-			$this->sessionLastActivityCookie->setValue(time());
-			$lastActivitySecondsAgo = time() - $previousActivity;
-
-			if ($this->hasKey('TYPO3_Flow_Object_ObjectManager') === TRUE) {
-				$sessionObjects = $this->getData('TYPO3_Flow_Object_ObjectManager');
-				if (is_array($sessionObjects)) {
-					foreach ($sessionObjects as $object) {
-						if ($object instanceof \TYPO3\Flow\Object\Proxy\ProxyInterface) {
-							$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
-							if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
-								$this->objectManager->setInstance($objectName, $object);
-								$this->lazyLoadingAspect->registerSessionInstance($objectName, $object);
-								$object->__wakeup();
-							}
+			$sessionObjects = $this->cache->get($this->sessionIdentifier . md5('TYPO3_Flow_Object_ObjectManager'));
+			if (is_array($sessionObjects)) {
+				foreach ($sessionObjects as $object) {
+					if ($object instanceof \TYPO3\Flow\Object\Proxy\ProxyInterface) {
+						$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
+						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
+							$this->objectManager->setInstance($objectName, $object);
+							$this->lazyLoadingAspect->registerSessionInstance($objectName, $object);
+							$object->__wakeup();
 						}
 					}
-				} else {
-						// Fallback for some malformed session data, if it is no array but something else.
-						// In this case, we reset all session objects (graceful degradation).
-					$this->putData('TYPO3_Flow_Object_ObjectManager', array());
 				}
+			} else {
+					// Fallback for some malformed session data, if it is no array but something else.
+					// In this case, we reset all session objects (graceful degradation).
+				$this->cache->set($this->sessionIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->sessionIdentifier), 0);
 			}
 
-			return $lastActivitySecondsAgo;
+			return (time() - $this->lastActivityTimestamp);
 		}
 	}
 
@@ -315,6 +302,9 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @return boolean
 	 */
 	public function hasKey($key) {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1352488661);
+		}
 		return $this->cache->has($this->sessionIdentifier . md5($key));
 	}
 
@@ -365,11 +355,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		if (!$this->response->hasCookie($this->sessionCookieName)) {
 			$this->response->setCookie($this->sessionCookie);
 		}
-		if (!$this->response->hasCookie($this->sessionLastActivityCookieName)) {
-			$this->response->setCookie($this->sessionLastActivityCookie);
-		}
 		$this->sessionCookie->expire();
-		$this->sessionLastActivityCookie->expire();
 
 		$this->cache->flushByTag($this->sessionIdentifier);
 		$this->started = FALSE;
@@ -385,6 +371,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @return integer The number of sessions which have been removed
 	 */
 	static public function destroyAll(Bootstrap $bootstrap) {
+		return 0;
 	}
 
 	/**
@@ -395,17 +382,23 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @api
 	 */
 	public function collectGarbage() {
-		$sessionRemovalCount = 0;
-		if ($this->inactivityTimeout !== 0) {
-			foreach ($this->cache->getByTag('session') as $sessionIdentifier => $lastActivityTimestamp) {
-				$lastActivitySecondsAgo = time() - $lastActivityTimestamp;
-				if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-					$this->cache->flushByTag($sessionIdentifier);
-					$sessionRemovalCount ++;
+		$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) -1;
+		$factor = ($decimals > -1) ? $decimals * 10 : 1;
+		if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+			$sessionRemovalCount = 0;
+			if ($this->inactivityTimeout !== 0) {
+				foreach ($this->cache->getByTag('session') as $sessionIdentifier => $lastActivityTimestamp) {
+					$lastActivitySecondsAgo = time() - $lastActivityTimestamp;
+					if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
+						$this->cache->flushByTag($sessionIdentifier);
+						$sessionRemovalCount ++;
+					}
 				}
 			}
+			return $sessionRemovalCount;
+		} else {
+			return FALSE;
 		}
-		return $sessionRemovalCount;
 	}
 
 	/**
@@ -419,14 +412,8 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	public function shutdownObject() {
 		if ($this->started === TRUE) {
 			$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
-			$this->cache->set($this->sessionIdentifier, $this->sessionLastActivityCookie->getValue(), array($this->sessionIdentifier, 'session'), 0);
+			$this->cache->set($this->sessionIdentifier, time(), array($this->sessionIdentifier, 'session'), 0);
 			$this->started = FALSE;
-
-			$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) -1;
-			$factor = ($decimals > -1) ? $decimals * 10 : 1;
-			if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
-				$this->collectGarbage();
-			}
 		}
 	}
 
@@ -436,7 +423,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @return boolean TRUE if the session expired, FALSE if not
 	 */
 	protected function autoExpire() {
-		$lastActivitySecondsAgo = time() - $this->sessionLastActivityCookie->getValue();
+		$lastActivitySecondsAgo = time() - $this->lastActivityTimestamp;
 		$expired = FALSE;
 		if ($this->inactivityTimeout !== 0 && $lastActivitySecondsAgo > $this->inactivityTimeout) {
 			$this->started = TRUE;
@@ -445,6 +432,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 			$expired = TRUE;
 		}
 
+		$this->collectGarbage();
 		return $expired;
 	}
 }

@@ -98,7 +98,7 @@ class LoggingAspect {
 		$sessionRemovalCount = $joinPoint->getResult();
 		if ($sessionRemovalCount > 0) {
 			$this->systemLogger->log(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), LOG_INFO);
-		} else {
+		} elseif ($sessionRemovalCount !== FALSE) {
 			$this->systemLogger->log(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), LOG_INFO);
 		}
 	}

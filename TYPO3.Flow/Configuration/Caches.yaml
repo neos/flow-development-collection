@@ -95,3 +95,5 @@ Flow_Security_Policy: []
 Flow_Security_Cryptography_RSAWallet:
   backendOptions:
     defaultLifetime: 30
+Flow_Session_Storage:
+  backend: TYPO3\Flow\Cache\Backend\FileBackend

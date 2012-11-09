@@ -95,29 +95,23 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function canBeResumedReturnsFalseIfNoLastActivityCookieExists() {
-		$session = new FlowSession();
-		$this->inject($session, 'sessionCookie', new Cookie('TYPO3_Flow_Session', '12345abcdef'));
-		$this->assertFalse($session->canBeResumed());
-	}
-
-	/**
-	 * @test
-	 */
 	public function canBeResumedReturnsFalseIfSessionIsExpiredAndExpiresASessionIfLastActivityIsOverTheLimit() {
+		$cache = $this->createCache();
+
 		$session = new FlowSession();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
-		$this->inject($session, 'cache', $this->createCache());
+		$this->inject($session, 'cache', $cache);
 		$session->initializeObject();
 
 		$session->start();
+		$sessionIdentifier = $session->getId();
 		$session->close();
 
 		$this->assertTrue($session->canBeResumed());
 
-		$this->inject($session, 'sessionLastActivityCookie', new Cookie('TYPO3_Flow_Session_LastActivity', (time() - 4000)));
+		$cache->set($sessionIdentifier, time() - 4000, array($sessionIdentifier, 'session'), 0);
 		$this->assertFalse($session->canBeResumed());
 	}
 
@@ -144,7 +138,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function resumeUpdatesTheLastActivityTimestampAndSetsCookiesInTheResponse() {
+	public function resumeSetsSessionCookieInTheResponse() {
 		$session = new FlowSession();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
@@ -154,20 +148,17 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			// initializeObject sets the cookie in the HTTP Request
 		$session->initializeObject();
 		$session->start();
+		$sessionIdentifier = $session->getId();
 
 			// close does not remove the cookie again, so, if we don't call initializeObject
-			// again, the session cookie and last activity cookie is still stored in the
-			// session object and is available for resume()
+			// again, the session cookie is still stored in the session object and is
+			// available for resume()
 		$session->close();
 
-		$lastActivityCookie = ($this->httpResponse->getCookie('TYPO3_Flow_Session_LastActivity'));
-		$toBeReplacedActivityTimestamp = ($lastActivityCookie->getValue() - 100);
-		$lastActivityCookie->setValue($toBeReplacedActivityTimestamp);
+		$session->resume();
 
-		$lastActivitySecondsAgo = $session->resume();
-
-		$this->assertGreaterThan($toBeReplacedActivityTimestamp, $lastActivityCookie->getValue());
-		$this->assertEquals(($lastActivityCookie->getValue() - $toBeReplacedActivityTimestamp) , $lastActivitySecondsAgo);
+		$this->assertTrue($this->httpResponse->hasCookie('TYPO3_Flow_Session'));
+		$this->assertEquals($sessionIdentifier, $this->httpResponse->getCookie('TYPO3_Flow_Session')->getValue());
 	}
 
 	/**
@@ -377,6 +368,8 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session1->destroy(__METHOD__);
 
+		$this->inject($session1, 'started', TRUE);
+		$this->inject($session2, 'started', TRUE);
 		$this->assertFalse($session1->hasKey('session 1 key 1'));
 		$this->assertFalse($session1->hasKey('session 1 key 2'));
 		$this->assertTrue($session2->hasKey('session 2 key'), 'Entry in session was also removed.');
@@ -405,7 +398,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->close();
 
-		$this->inject($session, 'sessionLastActivityCookie', new Cookie('TYPO3_Flow_Session_LastActivity', (time() - 4000)));
+		$cache->set($sessionIdentifier, (time() - 4000));
 
 			// canBeResumed implicitly calls autoExpire():
 		$this->assertFalse($session->canBeResumed());
@@ -417,7 +410,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function shutdownObjectTriggersGarbageCollectionForExpiredSessions() {
+	public function autoExpireTriggersGarbageCollectionForExpiredSessions() {
 		$settings = $this->settings;
 		$settings['session']['inactivityTimeout'] = 5000;
 		$settings['session']['FlowSession']['garbageCollectionProbability'] = 100;
@@ -441,10 +434,12 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->resume();
 		$this->assertTrue($session->isStarted());
-		$this->inject($session, 'sessionLastActivityCookie', new Cookie('TYPO3_Flow_Session_LastActivity', (time() - 4000)));
 		$session->close();
 
-			// Now the previously valid session expires:
+		$cache->set($sessionIdentifier1, (time() - 4000));
+
+			// Because we change the timeout post factum, the previously valid session
+			// now expires:
 		$settings['session']['inactivityTimeout'] = 3000;
 
 			// Create a second session which should remove the first expired session
@@ -460,7 +455,10 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sessionIdentifier2 = $session->getId();
 		$session->putData('session 2 key 1', 'session 1 value 1');
 		$session->putData('session 2 key 2', 'session 1 value 2');
-		$session->shutdownObject();
+		$session->close();
+
+			// Calls autoExpire():
+		$session->resume();
 
 			// Check how the cache looks like - data of session 1 should be gone:
 		$this->assertFalse($cache->has($sessionIdentifier1 . md5('session 1 key 1')), 'session 1 key 1 still there');
