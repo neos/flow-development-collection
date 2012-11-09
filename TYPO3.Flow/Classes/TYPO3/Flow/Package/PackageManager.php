@@ -638,10 +638,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 */
 	protected function findComposerManifestPaths($packagePath) {
 		$manifestPaths = array();
-		if (file_exists($packagePath . 'composer.json')) {
+		if (file_exists($packagePath . '/composer.json')) {
 			$manifestPaths[] = $packagePath . '/';
 		} else {
 			$jsonPathsAndFilenames = Files::readDirectoryRecursively($packagePath, '.json');
+			asort($jsonPathsAndFilenames);
 			while (list($unusedKey, $jsonPathAndFilename) = each($jsonPathsAndFilenames)) {
 				if (basename($jsonPathAndFilename) === 'composer.json') {
 					$manifestPath = dirname($jsonPathAndFilename) . '/';
@@ -650,9 +651,6 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 						return strpos($otherPath, $manifestPath) !== 0;
 					};
 					$jsonPathsAndFilenames = array_filter($jsonPathsAndFilenames, $isNotSubPathOfManifestPath);
-					if (!is_array($jsonPathAndFilename)) {
-						continue;
-					}
 				}
 			}
 		}
