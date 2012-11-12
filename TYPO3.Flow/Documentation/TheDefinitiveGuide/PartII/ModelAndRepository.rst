@@ -37,7 +37,7 @@ All your domain models need a place to live. The directory structure and filenam
 the conventions of our `Coding Guidelines
 <http://flow.typo3.org/documentation/codingguidelines>`_ which basically means that the
 directories reflect the classes' namespace while the filename is identical to the class
-name. The base directory for the domain models is ``Classes/Domain/Model/``.
+name. The base directory for the domain models is ``Classes/<VendorName>/<PackageName>/Domain/Model/``.
 
 Blog Model
 ==========
@@ -53,12 +53,12 @@ That command will output the created file and a hint:
 
 .. code-block:: none
 
-	Created .../TYPO3.Blog/Classes/Domain/Model/Blog.php
+	Created .../TYPO3.Blog/Classes/TYPO3/Blog/Domain/Model/Blog.php
 	As a new model was generated, don't forget to update the database schema with the respective doctrine:* commands.
 
 Open the generated file and complete it to look like the following:
 
-*Classes/Domain/Model/Blog.php*:
+*Classes/TYPO3/Blog/Domain/Model/Blog.php*:
 
 .. code-block:: php
 
@@ -150,7 +150,7 @@ Open the generated file and complete it to look like the following:
 As you can see there's nothing really fancy in it, the class mostly consists of
 getters and setters. Let's take a closer look at the model line-by-line:
 
-*Classes/Domain/Model/Blog.php*:
+*Classes/TYPO3/Blog/Domain/Model/Blog.php*:
 
 .. code-block:: php
 
@@ -158,7 +158,7 @@ getters and setters. Let's take a closer look at the model line-by-line:
 
 This namespace declaration must be the very first code in your file.
 
-*Classes/Domain/Model/Blog.php*:
+*Classes/TYPO3/Blog/Domain/Model/Blog.php*:
 
 .. code-block:: php
 
@@ -184,7 +184,7 @@ of information for the persistence framework because it declares that
 
 The model's properties are implemented as regular class properties:
 
-*Classes/Domain/Model/Blog.php*:
+*Classes/TYPO3/Blog/Domain/Model/Blog.php*:
 
 .. code-block:: php
 
@@ -261,7 +261,7 @@ the Post controller earlier because we used the ``--generate-related`` flag.
 
 Adjust the generated code as follows:
 
-*Classes/Domain/Model/Post.php*:
+*Classes/TYPO3/Blog/Domain/Model/Post.php*:
 
 .. code-block:: php
 
@@ -331,7 +331,7 @@ A repository acts as the bridge between the holy lands of business logic
 This is the only place where queries to the persistence framework take place -
 you never want to have those in your domain models.
 
-Similar to models the directory for your repositories is ``Classes/Domain/Repository/``.
+Similar to models the directory for your repositories is ``Classes/TYPO3/Blog/Domain/Repository/``.
 You can kickstart the repository with:
 
 .. code-block:: none
@@ -340,7 +340,7 @@ You can kickstart the repository with:
 
 This will generate a vanilla repository for blogs containing this code:
 
-*Classes/Domain/Repository/BlogRepository.php*:
+*Classes/TYPO3/Blog/Domain/Repository/BlogRepository.php*:
 
 .. code-block:: php
 
@@ -377,7 +377,7 @@ To finish up, open the repository for our posts (which was generated along with 
 controller we kickstarted earlier) and add the following find methods to the generated
 code:
 
-*Classes/Domain/Repository/PostRepository.php*:
+*Classes/TYPO3/Blog/Domain/Repository/PostRepository.php*:
 
 .. code-block:: php
 

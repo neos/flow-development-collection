@@ -24,13 +24,37 @@ following Unix command would download the TYPO3 Flow distribution:
 
 .. code-block:: none
 
-	git clone --recursive git://git.typo3.org/Flow/Distributions/Base.git \
+	git clone git://git.typo3.org/FLOW3/Distributions/Base.git \
 	/var/apache2/htdocs/tutorial/
 
 .. note::
 	Throughout this tutorial we assume that you installed the TYPO3 Flow distribution in
 	*/var/apache2/htdocs/tutorial* and that */var/apache2/htdocs* is the document root
 	of your web server. On a Windows machine you might use *c:\\xampp\\htdocs* instead.
+
+Composer
+========
+
+Flow uses `Composer`_ for dependency management, which is a separate command line tool.
+It can be downloaded very easily using the following command:
+
+.. code-block:: none
+
+	curl -s getcomposer.org/installer | php 
+
+.. note::
+	Feel free to install the composer command to a global location, by moving
+	the phar archive to e.g. */usr/local/bin* and making it executable - the
+	composer documentation has  instructions
+
+To install all dependencies including those marked is "needed for development",
+now run this from the top-level folder of the distribution:
+
+.. code-block:: none
+
+	php composer.phar install --dev
+
+Updating is as easy, just use ``update`` instead of ``install``.
 
 Directory Structure
 ===================
@@ -45,27 +69,19 @@ Data/					Persistent and temporary data, including caches, logs, resources and t
 Packages/				Contains sub directories which in turn contain package directories
 Packages/Framework/		Packages which are part of the official TYPO3 Flow distribution
 Packages/Application/	Application specific packages
+Packages/Libraries/		3rd party libraries
 Web/					Public web root
 ======================	===================================================================================
 
 A TYPO3 Flow application usually consists of the above directories. As you see, most
 of them contain data which is specific to your application, therefore upgrading
-the TYPO3 Flow distribution is a matter of replacing *Packages/Framework/* by
-a new release.
+the TYPO3 Flow distribution is a matter of updating *Packages/Framework/*  and
+ *Packages/Libraries/* when a new release is available.
 
 TYPO3 Flow is a package based system which means that all code, documentation and
 other resources are bundled in packages. Each package has its own directory
 with a defined sub structure. Your own PHP code and resources will usually end
-up in a package residing below *Packages/Application/*. You're free to create
-additional directories or symbolic links in *Packages/*, a common one would
-be called *Shared/* which points to packages shared by multiple applications.
-
-.. tip::
-	On Unix-like machines it is a good idea to use symbolic links
-	pointing to your own packages which are used in multiple projects. With
-	this strategy you assure that only one master copy of the package exists
-	and avoid the hassle of diverging copies which contain a few changes here
-	and some fixes there.
+up in a package residing below *Packages/Application/*.
 
 File Permissions
 ================
@@ -234,3 +250,5 @@ welcome screen:
 	<http://forge.typo3.org/projects/flow/wiki/Installation_hints>`_ on forge. On
 	Windows you will most likely have to check the section *Running on Windows OS's*
 	of that page.
+
+.. _Composer:             http://getcomposer.org

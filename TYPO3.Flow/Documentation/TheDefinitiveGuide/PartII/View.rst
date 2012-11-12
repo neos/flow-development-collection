@@ -254,7 +254,7 @@ An ``<f:if>`` condition makes sure that the list of posts is only rendered if
 about posts - you need to adapt the ``indexAction`` of the ``PostController``
 to assign blogs to the view::
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -322,7 +322,7 @@ Time to create a form which allows you to enter details for a new post.
 The first component you need is the ``newAction`` whose sole purpose is
 displaying the form:
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -393,7 +393,7 @@ post object. The form's elements are named after the class properties of the
 	be checked by default, unless you instantiate ``$newPost`` in your index
 	action and assign it to the view.
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -498,7 +498,7 @@ by Fluid.
 
 What's missing now is a small adjustment to the PHP code displaying the edit form:
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -521,7 +521,7 @@ link of your list of posts should result in a screen similar to this:
 
 When you submit the form you call the ``updateAction``:
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 

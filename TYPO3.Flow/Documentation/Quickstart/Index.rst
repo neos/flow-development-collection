@@ -178,7 +178,7 @@ Let's create a *Demo* package for our fictive company *Acme*:
 .. code-block:: none
 
 	$ ./flow kickstart:package Acme.Demo
-	Created .../Acme.Demo/Classes/Controller/StandardController.php
+	Created .../Acme.Demo/Classes/Acme/Demo/Controller/StandardController.php
 	Created .../Acme.Demo/Resources/Private/Templates/Standard/Index.html
 
 The Kickstarter will create a new package directory in *Packages/Application/* resulting
@@ -189,7 +189,7 @@ in the following structure:
 	Packages/
 	  Application/
 	    Acme.Demo/
-	      Classes/
+	      Classes/Acme/Demo/
 	      Configuration/
 	      Documentation/
 	      Meta/
@@ -219,7 +219,7 @@ Hello World
 -----------
 
 Let's use the *StandardController* for some more experiments. After opening the respective
-class file in *Packages/Application/Acme.Demo/Classes/Controller/* you should find the
+class file in *Packages/Application/Acme.Demo/Classes/Acme/Demo/Controller/* you should find the
 method *indexAction()* which is responsible for the output you've just seen in your web
 browser::
 
@@ -335,9 +335,9 @@ just generate some example with the kickstarter:
 .. code-block:: bash
 
 	$ ./flow kickstart:actioncontroller --generate-actions --generate-related Acme.Demo CoffeeBean
-	Created .../Acme.Demo/Classes/Domain/Model/CoffeeBean.php
-	Created .../Acme.Demo/Classes/Domain/Repository/CoffeeBeanRepository.php
-	Created .../Acme.Demo/Classes/Controller/CoffeeBeanController.php
+	Created .../Acme.Demo/Classes/Acme/Demo/Domain/Model/CoffeeBean.php
+	Created .../Acme.Demo/Classes/Acme/Demo/Domain/Repository/CoffeeBeanRepository.php
+	Created .../Acme.Demo/Classes/Acme/Demo/Controller/CoffeeBeanController.php
 	Created .../Acme.Demo/Resources/Private/Layouts/Default.html
 	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/Index.html
 	Created .../Acme.Demo/Resources/Private/Templates/CoffeeBean/New.html

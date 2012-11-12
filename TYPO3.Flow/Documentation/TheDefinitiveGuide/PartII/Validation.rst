@@ -43,7 +43,7 @@ three types:
 Rules for the base properties are defined directly in the model in form
 of annotations:
 
-*Classes/Domain/Model/Post.php*:
+*Classes/TYPO3/Blog/Domain/Model/Post.php*:
 
 .. code-block:: php
 
@@ -185,7 +185,7 @@ Try updating a post with an empty title and you should see the following:
 
 Can you imagine what happened? Let's look at the ``editAction`` again:
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -229,7 +229,7 @@ only displays the form.
 There's a very simple remedy to this problem: don't validate the post. With one
 additional annotation the whole mechanism works as expected:
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 

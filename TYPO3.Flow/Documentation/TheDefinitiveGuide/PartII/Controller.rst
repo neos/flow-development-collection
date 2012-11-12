@@ -15,7 +15,7 @@ and description and storing it in the ``BlogRepository``. The kickstarter create
 basic setup controller containing only one action, the ``indexAction``. Let's create and
 store a new blog once the index action is called:
 
-*Classes/Controller/SetupController.php*:
+*Classes/TYPO3/Blog/Controller/SetupController.php*:
 
 .. code-block:: php
 
@@ -85,7 +85,7 @@ the database.
 Using the blog and post repository sounds plausible, but where do you get the
 repositories from?
 
-*Classes/Controller/SetupController.php*:
+*Classes/TYPO3/Blog/Controller/SetupController.php*:
 
 .. code-block:: php
 
@@ -119,7 +119,7 @@ http://dev.tutorial.local/typo3.blog/setup/index. If all went right you should s
 *Successfully created a blog* message on your screen. In order to find this blog again, we
 add a method ``findActive`` to the ``BlogRepository``:
 
-*Classes/Domain/Repository/BlogRepository.php*:
+*Classes/TYPO3/Blog/Domain/Repository/BlogRepository.php*:
 
 .. code-block:: php
 
@@ -144,7 +144,7 @@ This is all we need for moving on to something more visible: the blog posts.
 Basic Post Controller
 =====================
 
-Now let us add some more code to *.../Classes/Controller/PostController.php*:
+Now let us add some more code to *.../Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 
@@ -197,7 +197,7 @@ created and filled with some hardcoded values. At least the posts should,
 however, be filled with values provided by the blog author, so we need to pass
 the new post as an argument to a ``createAction`` in the ``PostController``:
 
-*Classes/Controller/PostController.php*:
+*Classes/TYPO3/Blog/Controller/PostController.php*:
 
 .. code-block:: php
 

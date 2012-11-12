@@ -22,4 +22,4 @@ The following font conventions are used in TYPO3 Flow's documentation:
 		.. code-block:: bash
 
 			$ ./flow kickstart:package Acme.MyPackage
-			Created .../Acme.Test/Classes/Controller/StandardController.php
+			Created .../Acme.Test/Classes/Acme/Test/Controller/StandardController.php
