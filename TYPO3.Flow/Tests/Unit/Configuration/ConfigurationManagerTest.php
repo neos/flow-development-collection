@@ -124,6 +124,44 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException
+	 */
+	public function gettingUnregisteredConfigurationTypeFails() {
+		$expectedConfigurations = array(
+			'Custom' => array('custom'),
+		);
+
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurations', $expectedConfigurations);
+		$configurationManager->expects($this->never())->method('loadConfiguration');
+
+		foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
+			$actualConfiguration = $configurationManager->getConfiguration($configurationType);
+			$this->assertSame($expectedConfiguration, $actualConfiguration);
+		}
+	}
+
+	/**
+	 * @test
+	 */
+	public function getConfigurationForCustomConfigurationUsingSettingsProcessingReturnsRespectiveConfigurationArray() {
+		$expectedConfigurations = array(
+			'Custom' => array('custom'),
+		);
+
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurations', $expectedConfigurations);
+		$configurationManager->expects($this->never())->method('loadConfiguration');
+
+		foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
+			$configurationManager->registerConfigurationType($configurationType, \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
+			$actualConfiguration = $configurationManager->getConfiguration($configurationType);
+			$this->assertSame($expectedConfiguration, $actualConfiguration);
+		}
+	}
+
+	/**
+	 * @test
 	 */
 	public function loadConfigurationOverridesSettingsByContext() {
 		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));

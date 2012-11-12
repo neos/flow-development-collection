@@ -116,6 +116,8 @@ class Scripts {
 		$configurationManager->injectEnvironment($environment);
 		$packageManager->injectSettings($settings);
 
+		$bootstrap->getSignalSlotDispatcher()->dispatch('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', array($configurationManager));
+
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Configuration\ConfigurationManager', $configurationManager);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Utility\Environment', $environment);
 	}
