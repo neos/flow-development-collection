@@ -146,7 +146,7 @@ TYPO3:
        'Doctrine.ORM' : ['.*']
        'Doctrine.DBAL' : ['.*']
        'doctrine.migrations' : ['.*']
-       'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*', 'Symfony\\Component\\DomCrawler\\Form.*']
+       'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*']
        'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
        'symfony.console' : ['Symfony\\Component\\Console\\Tests\\.*']
        'mikey179.vfsStream' : ['.*']
