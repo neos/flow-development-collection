@@ -10,9 +10,17 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require (__DIR__ . '/../Classes/TYPO3/Flow/Exception.php');
-require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Exception.php');
-require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Files.php');
+	// if installed through composer, use it's autoloading
+if (file_exists(__DIR__ . '/../../../Libraries/autoload.php')) {
+	require (__DIR__ . '/../../../Libraries/autoload.php');
+} else {
+	require (__DIR__ . '/../Classes/TYPO3/Flow/Exception.php');
+	require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Exception.php');
+	require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Files.php');
+	require (__DIR__ . '/../Classes/TYPO3/Flow/Configuration/ConfigurationManager.php');
+	require (__DIR__ . '/../Classes/TYPO3/Flow/Configuration/Source/SourceInterface.php');
+	require (__DIR__ . '/../Classes/TYPO3/Flow/Configuration/Source/YamlSource.php');
+}
 
 require(__DIR__ . '/Migrations/AbstractMigration.php');
 require(__DIR__ . '/Migrations/Manager.php');
