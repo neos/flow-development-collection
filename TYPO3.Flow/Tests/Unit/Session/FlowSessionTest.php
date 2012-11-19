@@ -111,7 +111,9 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertTrue($session->canBeResumed());
 
-		$cache->set($sessionIdentifier, time() - 4000, array($sessionIdentifier, 'session'), 0);
+		$sessionInfo = $cache->get($sessionIdentifier);
+		$sessionInfo['lastActivityTimestamp'] = time() - 4000;
+		$cache->set($sessionIdentifier, $sessionInfo, array($sessionInfo['storageIdentifier'], 'session'), 0);
 		$this->assertFalse($session->canBeResumed());
 	}
 
@@ -211,29 +213,6 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session->renewId();
 		$newSessionId = $session->getId();
 		$this->assertNotEquals($oldSessionId, $newSessionId);
-	}
-
-	/**
-	 * @test
-	 */
-	public function renewIdTransfersSessionDataFromOldIdToNewIdAndFlushesOldData() {
-		$session = new FlowSession();
-		$cache = $this->createCache();
-
-		$this->inject($session, 'bootstrap', $this->mockBootstrap);
-		$this->inject($session, 'settings', $this->settings);
-		$this->inject($session, 'cache', $cache);
-		$session->initializeObject();
-		$session->start();
-		$oldSessionIdentifier = $session->getId();
-
-		$session->putData('some key', 'some value');
-		$this->assertTrue($cache->has($oldSessionIdentifier . md5('some key')));
-
-		$session->renewId();
-
-		$this->assertEquals('some value', $session->getData('some key'));
-		$this->assertFalse($cache->has($oldSessionIdentifier . md5('some key')), 'old session data not removed');
 	}
 
 	/**
@@ -379,7 +358,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function autoExpireRemovesAllSessionDataOfTheExpiredSession() {
-		$session = new FlowSession();
+		$session = $this->getAccessibleMock('TYPO3\Flow\Session\FlowSession', array('dummy'));
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
@@ -389,22 +368,25 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->start();
 		$sessionIdentifier = $session->getId();
+		$storageIdentifier = $session->_get('storageIdentifier');
 
 		$session->putData('session 1 key 1', 'some value');
 		$session->putData('session 1 key 2', 'some other value');
 
-		$this->assertTrue($cache->has($sessionIdentifier . md5('session 1 key 1')));
-		$this->assertTrue($cache->has($sessionIdentifier . md5('session 1 key 2')));
+		$this->assertTrue($cache->has($storageIdentifier . md5('session 1 key 1')));
+		$this->assertTrue($cache->has($storageIdentifier . md5('session 1 key 2')));
 
 		$session->close();
 
-		$cache->set($sessionIdentifier, (time() - 4000));
+		$sessionInfo = $cache->get($sessionIdentifier);
+		$sessionInfo['lastActivityTimestamp'] = time() - 4000;
+		$cache->set($sessionIdentifier, $sessionInfo, array($storageIdentifier, 'session'), 0);
 
 			// canBeResumed implicitly calls autoExpire():
-		$this->assertFalse($session->canBeResumed());
+		$this->assertFalse($session->canBeResumed(), 'canBeResumed');
 
-		$this->assertFalse($cache->has($sessionIdentifier . md5('session 1 key 1')));
-		$this->assertFalse($cache->has($sessionIdentifier . md5('session 1 key 2')));
+		$this->assertFalse($cache->has($storageIdentifier . md5('session 1 key 1')));
+		$this->assertFalse($cache->has($storageIdentifier . md5('session 1 key 2')));
 	}
 
 	/**
@@ -436,7 +418,9 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($session->isStarted());
 		$session->close();
 
-		$cache->set($sessionIdentifier1, (time() - 4000));
+		$sessionInfo1 = $cache->get($sessionIdentifier1);
+		$sessionInfo1['lastActivityTimestamp'] = time() - 4000;
+		$cache->set($sessionIdentifier1, $sessionInfo1, array($sessionInfo1['storageIdentifier'], 'session'), 0);
 
 			// Because we change the timeout post factum, the previously valid session
 			// now expires:
@@ -444,7 +428,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 			// Create a second session which should remove the first expired session
 			// implicitly by calling autoExpire()
-		$session = new FlowSession();
+		$session = $this->getAccessibleMock('TYPO3\Flow\Session\FlowSession', array('dummy'));
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'cache', $cache);
@@ -457,14 +441,16 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session->putData('session 2 key 2', 'session 1 value 2');
 		$session->close();
 
-			// Calls autoExpire():
+			// Calls autoExpire() internally:
 		$session->resume();
 
+		$sessionInfo2 = $cache->get($sessionIdentifier2);
+
 			// Check how the cache looks like - data of session 1 should be gone:
-		$this->assertFalse($cache->has($sessionIdentifier1 . md5('session 1 key 1')), 'session 1 key 1 still there');
-		$this->assertFalse($cache->has($sessionIdentifier1 . md5('session 1 key 2')), 'session 1 key 2 still there');
-		$this->assertTrue($cache->has($sessionIdentifier2 . md5('session 2 key 1')), 'session 2 key 1 not there');
-		$this->assertTrue($cache->has($sessionIdentifier2 . md5('session 2 key 2')), 'session 2 key 2 not there');
+		$this->assertFalse($cache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 1')), 'session 1 key 1 still there');
+		$this->assertFalse($cache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
+		$this->assertTrue($cache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
+		$this->assertTrue($cache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 2')), 'session 2 key 2 not there');
 	}
 
 	/**

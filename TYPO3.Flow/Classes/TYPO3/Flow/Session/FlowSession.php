@@ -114,6 +114,13 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	protected $sessionIdentifier;
 
 	/**
+	 * Internal identifier used for storing session data in the cache
+	 *
+	 * @var string
+	 */
+	protected $storageIdentifier;
+
+	/**
 	 * If this session has been started
 	 *
 	 * @var boolean
@@ -183,6 +190,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	public function start() {
 		if ($this->started === FALSE && $this->request !== NULL) {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
+			$this->storageIdentifier = Algorithms::generateUUID();
 			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 
 			$this->response->setCookie($this->sessionCookie);
@@ -203,10 +211,12 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		if ($this->sessionCookie === NULL || $this->request === NULL) {
 			return FALSE;
 		}
-		$this->lastActivityTimestamp = $this->cache->get($this->sessionCookie->getValue());
-		if ($this->lastActivityTimestamp === FALSE) {
+		$sessionInfo = $this->cache->get($this->sessionCookie->getValue());
+		if ($sessionInfo === FALSE) {
 			return FALSE;
 		}
+		$this->lastActivityTimestamp = $sessionInfo['lastActivityTimestamp'];
+		$this->storageIdentifier = $sessionInfo['storageIdentifier'];
 		return !$this->autoExpire();
 	}
 
@@ -222,7 +232,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 			$this->response->setCookie($this->sessionCookie);
 			$this->started = TRUE;
 
-			$sessionObjects = $this->cache->get($this->sessionIdentifier . md5('TYPO3_Flow_Object_ObjectManager'));
+			$sessionObjects = $this->cache->get($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'));
 			if (is_array($sessionObjects)) {
 				foreach ($sessionObjects as $object) {
 					if ($object instanceof \TYPO3\Flow\Object\Proxy\ProxyInterface) {
@@ -237,7 +247,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 			} else {
 					// Fallback for some malformed session data, if it is no array but something else.
 					// In this case, we reset all session objects (graceful degradation).
-				$this->cache->set($this->sessionIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->sessionIdentifier), 0);
+				$this->cache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->storageIdentifier), 0);
 			}
 
 			return (time() - $this->lastActivityTimestamp);
@@ -253,7 +263,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function getId() {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1351171517);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.', 1351171517);
 		}
 		return $this->sessionIdentifier;
 	}
@@ -267,17 +277,11 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function renewId() {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1351182429);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
 		}
 
-		$oldSessionIdentifier = $this->sessionIdentifier;
 		$this->sessionIdentifier = Algorithms::generateRandomString(32);
 		$this->sessionCookie->setValue($this->sessionIdentifier);
-
-		foreach ($this->cache->getByTag($oldSessionIdentifier) as $key => $value) {
-			$this->cache->set($this->sessionIdentifier . substr($key, 32), $value, array($this->sessionIdentifier), 0);
-		}
-		$this->cache->flushByTag($oldSessionIdentifier);
 		return $this->sessionIdentifier;
 	}
 
@@ -290,9 +294,9 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function getData($key) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1351162255);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
 		}
-		return $this->cache->get($this->sessionIdentifier . md5($key));
+		return $this->cache->get($this->storageIdentifier . md5($key));
 	}
 
 	/**
@@ -303,9 +307,9 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function hasKey($key) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1352488661);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
 		}
-		return $this->cache->has($this->sessionIdentifier . md5($key));
+		return $this->cache->has($this->storageIdentifier . md5($key));
 	}
 
 	/**
@@ -320,12 +324,12 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function putData($key, $data) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1351162259);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to create a session data entry, but the session has not been started yet.', 1351162259);
 		}
 		if (is_resource($data)) {
 			throw new \TYPO3\Flow\Session\Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
 		}
-		$this->cache->set($this->sessionIdentifier . md5($key), $data, array($this->sessionIdentifier), 0);
+		$this->cache->set($this->storageIdentifier . md5($key), $data, array($this->storageIdentifier), 0);
 	}
 
 	/**
@@ -349,7 +353,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function destroy($reason = NULL) {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1351162668);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to destroy a session which has not been started yet.', 1351162668);
 		}
 
 		if (!$this->response->hasCookie($this->sessionCookieName)) {
@@ -357,9 +361,10 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		}
 		$this->sessionCookie->expire();
 
-		$this->cache->flushByTag($this->sessionIdentifier);
+		$this->cache->flushByTag($this->storageIdentifier);
 		$this->started = FALSE;
 		$this->sessionIdentifier = NULL;
+		$this->storageIdentifier = NULL;
 	}
 
 	/**
@@ -387,10 +392,10 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
 			$sessionRemovalCount = 0;
 			if ($this->inactivityTimeout !== 0) {
-				foreach ($this->cache->getByTag('session') as $sessionIdentifier => $lastActivityTimestamp) {
-					$lastActivitySecondsAgo = time() - $lastActivityTimestamp;
+				foreach ($this->cache->getByTag('session') as $sessionInfo) {
+					$lastActivitySecondsAgo = time() - $sessionInfo['lastActivityTimestamp'];
 					if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-						$this->cache->flushByTag($sessionIdentifier);
+						$this->cache->flushByTag($sessionInfo['storageIdentifier']);
 						$sessionRemovalCount ++;
 					}
 				}
@@ -412,7 +417,11 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	public function shutdownObject() {
 		if ($this->started === TRUE) {
 			$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
-			$this->cache->set($this->sessionIdentifier, time(), array($this->sessionIdentifier, 'session'), 0);
+			$sessionInfo = array(
+				'lastActivityTimestamp' => time(),
+				'storageIdentifier' => $this->storageIdentifier
+			);
+			$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
 			$this->started = FALSE;
 		}
 	}
@@ -428,7 +437,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		if ($this->inactivityTimeout !== 0 && $lastActivitySecondsAgo > $this->inactivityTimeout) {
 			$this->started = TRUE;
 			$this->sessionIdentifier = $this->sessionCookie->getValue();
-			$this->destroy(sprintf('Session was inactive for %s seconds, more than the configured timeout of %s seconds.', $lastActivitySecondsAgo, $this->inactivityTimeout));
+			$this->destroy(sprintf('Session %s was inactive for %s seconds, more than the configured timeout of %s seconds.', $this->sessionIdentifier, $lastActivitySecondsAgo, $this->inactivityTimeout));
 			$expired = TRUE;
 		}
 

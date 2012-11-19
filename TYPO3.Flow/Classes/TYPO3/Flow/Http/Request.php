@@ -59,13 +59,6 @@ class Request extends Message {
 	protected $server;
 
 	/**
-	 * The "http" settings
-	 *
-	 * @var array
-	 */
-	protected $settings;
-
-	/**
 	 * URI for the "input" stream wrapper which can be modified for testing purposes
 	 *
 	 * @var string
@@ -167,7 +160,9 @@ class Request extends Message {
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
-		$this->settings = $settings;
+		if (isset($settings['http']['baseUri']) && $settings['http']['baseUri'] !== NULL) {
+			$this->baseUri = new Uri($settings['http']['baseUri']);
+		}
 	}
 
 	/**
@@ -431,9 +426,7 @@ class Request extends Message {
 	 * @return void
 	 */
 	protected function detectBaseUri() {
-		if (isset($this->settings['http']['baseUri']) && $this->settings['http']['baseUri'] !== NULL) {
-			$this->baseUri = new Uri($this->settings['http']['baseUri']);
-		} else {
+		if ($this->baseUri === NULL) {
 			$this->baseUri = clone $this->uri;
 			$this->baseUri->setQuery(NULL);
 			$this->baseUri->setFragment(NULL);
