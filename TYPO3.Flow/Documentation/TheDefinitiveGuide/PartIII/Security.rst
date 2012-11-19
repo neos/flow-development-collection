@@ -257,7 +257,7 @@ to create a simple username/password account for the DefaultProvider:
 
 	$identifier = 'andi';
 	$password = 'secret';
-	$roles = array('Administrator');
+	$roles = array('Acme.MyPackage:Administrator');
 	$authenticationProviderName = 'DefaultProvider';
 
 	$account = $this->accountFactory->createAccountWithPassword($identifier, $password, $roles, $authenticationProviderName);
@@ -841,12 +841,21 @@ policy definitions are configured in the ``Policy.yaml`` files.
 In the section about authentication so called roles were introduced. A role can be
 attached to a user's security context, to determine which privileges should be granted to
 her. I.e. the access rights of a user are decoupled from the user object itself, making it
-a lot more flexible, if you want to change them. In TYPO3 Flow a role is mainly just a string,
-which must be unique in the whole TYPO3 Flow instance. Following there is an example
-configuration, that will proclaim the roles ``Administrator``, ``Customer``, and
-``PrivilegedCustomer`` to the system.
+a lot more flexible, if you want to change them. In TYPO3 Flow roles are defined in the
+``Policy.yaml`` files, and are unique within your package namespace. The full identifier
+for a role would be ``<PackageKey>:<RoleName>``.
 
-*Example: roles definition in the Policy.yaml file*
+The built-in system roles ``Anonymous`` and ``Everybody`` are not prepended with a package key.
+
+There are two ways to configure roles. A simple configuration and an extended configuration.
+For the following examples the context is the ``Policy.yaml`` file of the ``Acme.MyPackage``
+package.
+
+Following is an example of the simple configuration. that will proclaim the roles
+``Acme.MyPackage:Administrator``, ``Acme.MyPackage:Customer``, and
+``Acme.MyPackage:PrivilegedCustomer`` to the system.
+
+*Example: simple roles definition in the Policy.yaml file*
 
 .. code-block:: yaml
 
@@ -855,8 +864,24 @@ configuration, that will proclaim the roles ``Administrator``, ``Customer``, and
 	  Customer: []
 	  PrivilegedCustomer: [Customer]
 
-The role ``PrivilegedCustomer`` is configured as a sub role of ``Customer``, for
-example it will inherit the privileges from the ``Customer`` role.
+As you see no package key is set in this example. This package key is automatically prepended
+by the ``ConfigurationManager`` of TYPO3 Flow.
+
+The role ``Acme.MyPackage:PrivilegedCustomer`` is configured as a sub role of
+``Acme.MyPackage:Customer``, for example it will inherit the privileges from the
+``Acme.MyPackage:Customer`` role.
+
+*Example: extended role definition in the Policy.yaml file*
+
+.. code-block:: yaml
+
+	roles:
+	  Administrator: []
+	  Customer: ['Acme.SomeOtherPackage:Customer']
+	  PrivilegedCustomer: ['Customer']
+
+This results in the exact same roles as above with the addition of the ``Acme.MyPackage:Customer``
+role inheriting rights from the ``Acme.SomeOtherPackage:Customer`` role.
 
 TYPO3 Flow will always add the magic ``Everybody`` role, which you don't have to
 configure yourself. This role will also be present, if no account is authenticated.
@@ -1070,6 +1095,24 @@ For example you could check, if the current user has the ``Administrator`` role 
 		<f:else>
 			This is being displayed in case you do not have the role.
 		</f:else>
+	</f:security.ifHasRole>
+
+The ``ifHasRole`` view helper will automatically add the package key from the current controller
+context. This means that the examples above will only render the 'then part' if the user has the
+``Administrator`` role of the package your template belongs to.
+If you want to check for a role from a different package you can use the full role identifier or
+specify the package key with the ``packageKey`` attribute:
+
+*Example: check for a role from a different package*
+
+.. code-block:: xml
+
+	<f:security.ifHasRole role="Acme.SomeOtherPackage:Administrator">
+		This is being shown in case you have the Administrator role (aka role).
+	</f:security.ifHasRole>
+
+	<f:security.ifHasRole role="Administrator" packageKey="Acme.SomeOtherPackage">
+		This is being shown in case you have the Administrator role (aka role).
 	</f:security.ifHasRole>
 
 .. _Channel security:

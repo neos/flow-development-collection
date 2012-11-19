@@ -92,43 +92,6 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getRolesReturnsTheRolesOfTheAuthenticatedAccount() {
-		$this->token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-
-		$roles = array('role1', 'role2');
-
-		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account', array(), array(), '', FALSE);
-		$mockAccount->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
-
-		$this->token->setAccount($mockAccount);
-
-		$this->assertEquals($roles, $this->token->getRoles(), 'The wrong roles were returned');
-	}
-
-	/**
-	 * @test
-	 */
-	public function getRolesReturnsAnEmptyArrayIfTheTokenIsNotAuthenticated() {
-		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account', array(), array(), '', FALSE);
-		$mockAccount->expects($this->never())->method('getRoles');
-
-		$this->token->setAccount($mockAccount);
-
-		$this->assertEquals(array(), $this->token->getRoles(), 'Roles have been returned, although the token was not authenticated.');
-	}
-
-	/**
-	 * @test
-	 */
-	public function getRolesReturnsAnEmptyArrayIfNoAccountHasBeenSet() {
-		$this->token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-
-		$this->assertEquals(array(), $this->token->getRoles(), 'Roles have been returned, although no account has been set.');
-	}
-
-	/**
-	 * @test
-	 */
 	public function requestPatternsCanBeSetRetrievedAndChecked() {
 		$this->assertFalse($this->token->hasRequestPatterns());
 

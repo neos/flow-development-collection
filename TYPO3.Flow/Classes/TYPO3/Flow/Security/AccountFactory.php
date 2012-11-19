@@ -27,6 +27,12 @@ class AccountFactory {
 	protected $hashService;
 
 	/**
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 * @Flow\Inject
+	 */
+	protected $policyService;
+
+	/**
 	 * Creates a new account and sets the given password and roles
 	 *
 	 * @param string $identifier Identifier of the account, must be unique
@@ -37,15 +43,15 @@ class AccountFactory {
 	 * @return \TYPO3\Flow\Security\Account A new account, not yet added to the account repository
 	 */
 	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider', $passwordHashingStrategy = 'default') {
-		$roles = array();
-		foreach ($roleIdentifiers as $roleIdentifier) {
-			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleIdentifier);
-		}
-
 		$account = new \TYPO3\Flow\Security\Account();
 		$account->setAccountIdentifier($identifier);
 		$account->setCredentialsSource($this->hashService->hashPassword($password, $passwordHashingStrategy));
 		$account->setAuthenticationProviderName($authenticationProviderName);
+
+		$roles = array();
+		foreach ($roleIdentifiers as $roleIdentifier) {
+			$roles[] = $this->policyService->getRole($roleIdentifier);
+		}
 		$account->setRoles($roles);
 
 		return $account;

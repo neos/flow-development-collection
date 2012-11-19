@@ -42,11 +42,11 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$accountRepository = $this->objectManager->get('\TYPO3\Flow\Security\AccountRepository');
 		$accountFactory = $this->objectManager->get('\TYPO3\Flow\Security\AccountFactory');
 
-		$account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'TestingProvider');
+		$account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('TYPO3.Flow:Administrator'), 'TestingProvider');
 		$accountRepository->add($account);
-		$account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'HttpBasicTestingProvider');
+		$account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('TYPO3.Flow:Administrator'), 'HttpBasicTestingProvider');
 		$accountRepository->add($account2);
-		$account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'UsernamePasswordTestingProvider');
+		$account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('TYPO3.Flow:Administrator'), 'UsernamePasswordTestingProvider');
 		$accountRepository->add($account3);
 		$this->persistenceManager->persistAll();
 

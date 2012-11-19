@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Security\Provider;
+namespace TYPO3\Flow\Configuration\Exception;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -12,25 +12,12 @@ namespace TYPO3\Flow\Tests\Functional\Security\Provider;
  *                                                                        */
 
 /**
- * Testcase for the TestingProvider
+ * An Invalid Configuration Exception
+ *
+ * @api
  */
-class TestingProviderTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class InvalidConfigurationException extends \TYPO3\Flow\Configuration\Exception {
 
-	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
-
-	/**
-	 * @test
-	 */
-	public function authenticateStartsASession() {
-		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
-		$this->assertFalse($session->isStarted(), 'Session has been started already before authentication!');
-
-		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
-
-		$this->assertTrue($session->isStarted(), 'No session was started with authentication');
-	}
 }
+
 ?>

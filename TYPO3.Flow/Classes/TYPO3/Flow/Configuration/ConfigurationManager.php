@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Configuration;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
+use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -22,6 +24,8 @@ use TYPO3\Flow\Utility\Arrays;
  */
 class ConfigurationManager {
 
+	const MAXIMUM_RECURSIONS = 99;
+
 	const CONFIGURATION_TYPE_CACHES = 'Caches';
 	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
@@ -30,6 +34,7 @@ class ConfigurationManager {
 
 	const CONFIGURATION_PROCESSING_TYPE_DEFAULT = 'DefaultProcessing';
 	const CONFIGURATION_PROCESSING_TYPE_OBJECTS = 'ObjectsProcessing';
+	const CONFIGURATION_PROCESSING_TYPE_POLICY = 'PolicyProcessing';
 	const CONFIGURATION_PROCESSING_TYPE_ROUTES = 'RoutesProcessing';
 	const CONFIGURATION_PROCESSING_TYPE_SETTINGS = 'SettingsProcessing';
 
@@ -41,7 +46,7 @@ class ConfigurationManager {
 		self::CONFIGURATION_TYPE_CACHES => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => FALSE),
 		self::CONFIGURATION_TYPE_OBJECTS => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => FALSE),
 		self::CONFIGURATION_TYPE_ROUTES => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => FALSE),
-		self::CONFIGURATION_TYPE_POLICY => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => FALSE),
+		self::CONFIGURATION_TYPE_POLICY => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_POLICY, 'allowSplitSource' => FALSE),
 		self::CONFIGURATION_TYPE_SETTINGS => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => FALSE)
 	);
 
@@ -192,9 +197,20 @@ class ConfigurationManager {
 	 * @param string $configurationType The type to register, may be anything
 	 * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
 	 * @param boolean $allowSplitSource If TRUE, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
+	 * @throws \InvalidArgumentException on invalid configuration processing type
 	 * @return void
 	 */
 	public function registerConfigurationType($configurationType, $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, $allowSplitSource = FALSE) {
+		$configurationProcessingTypes = array(
+			self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+			self::CONFIGURATION_PROCESSING_TYPE_OBJECTS,
+			self::CONFIGURATION_PROCESSING_TYPE_POLICY,
+			self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
+			self::CONFIGURATION_PROCESSING_TYPE_SETTINGS
+		);
+		if (!in_array($configurationProcessingType, $configurationProcessingTypes)) {
+			throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s"', $configurationProcessingType, $configurationType), 1365496111);
+		}
 		$this->configurationTypes[$configurationType] = array('processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource);
 	}
 
@@ -225,6 +241,7 @@ class ConfigurationManager {
 		switch ($configurationProcessingType) {
 			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
+			case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
 				if (!isset($this->configurations[$configurationType])) {
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
@@ -247,9 +264,6 @@ class ConfigurationManager {
 				$this->loadConfiguration($configurationType, $this->packages);
 				$configuration = &$this->configurations[$configurationType];
 			break;
-
-			default :
-				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 
 		if ($configurationPath !== NULL && $configuration !== NULL) {
@@ -338,6 +352,7 @@ class ConfigurationManager {
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
+				$emptyValuesOverride = ($configurationType !== self::CONFIGURATION_TYPE_POLICY);
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $package) {
 					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -349,6 +364,24 @@ class ConfigurationManager {
 						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
 					}
 					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
+				}
+			break;
+			case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
+				$this->configurations[$configurationType] = array();
+				foreach ($packages as $package) {
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->loadPolicyConfigurationFile($package->getConfigurationPath() . $configurationType, $package));
+				}
+				if ($this->configurationSource->has(FLOW_PATH_CONFIGURATION . $configurationType)) {
+					throw new InvalidConfigurationException('Global policy configuration is not allowed (but the file "' . FLOW_PATH_CONFIGURATION . $configurationType . '" exists).', 1352985128);
+				};
+
+				foreach ($this->orderedListOfContextNames as $contextName) {
+					foreach ($packages as $package) {
+						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->loadPolicyConfigurationFile($package->getConfigurationPath() . $contextName . '/' . $configurationType, $package));
+					}
+					if ($this->configurationSource->has(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType)) {
+						throw new InvalidConfigurationException('Global policy configuration is not allowed (but the file "' . FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType . '" exists).', 1352985129);
+					};
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
@@ -378,6 +411,76 @@ class ConfigurationManager {
 		}
 
 		$this->postProcessConfiguration($this->configurations[$configurationType]);
+	}
+
+	/**
+	 * Loads a Policy.yaml file and transforms the roles configuration
+	 *
+	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
+	 * @param \TYPO3\Flow\Package\PackageInterface $package
+	 * @throws InvalidConfigurationException
+	 * @return array
+	 */
+	protected function loadPolicyConfigurationFile($pathAndFilename, PackageInterface $package = NULL) {
+		$packageKeyOfCurrentPackage = ($package !== NULL ? $package->getPackageKey() : NULL);
+
+		$configuration = $this->configurationSource->load($pathAndFilename);
+
+			// Read roles
+		if (isset($configuration['roles']) && is_array($configuration['roles'])) {
+			$localRoles = array_keys($configuration['roles']);
+			foreach ($configuration['roles'] as $roleIdentifier => $parentRoles) {
+				$packageKey = $packageKeyOfCurrentPackage;
+				if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous') {
+					throw new InvalidConfigurationException('You must not redefine the built-in "' . $roleIdentifier . '" role. Please check the configuration of package "' . $packageKeyOfCurrentPackage . '" ('. $pathAndFilename . ').', 1352986475);
+				}
+				if (strpos($roleIdentifier, '.') !== FALSE || strpos($roleIdentifier, ':') !== FALSE) {
+					throw new InvalidConfigurationException('Roles defined in a package policy must not be qualified (that is, using the dot notation), but the role "' . $roleIdentifier . '" is (in package "' . $packageKeyOfCurrentPackage . '"). Please use the short notation with only the role name (for example "Administrator").', 1365447412);
+				}
+
+					// Add packageKey to parentRoles
+				if ($parentRoles !== array()) {
+					$parentRoles = array_map(function($roleIdentifier) use ($packageKey, $localRoles) {
+						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous') {
+							return $roleIdentifier;
+						}
+						if (strpos($roleIdentifier, '.') === FALSE && strpos($roleIdentifier, ':') === FALSE && in_array($roleIdentifier, $localRoles)) {
+							return $packageKey . ':' . $roleIdentifier;
+						}
+						return $roleIdentifier;
+					}, $parentRoles, array($packageKey));
+				}
+
+				$configuration['roles'][$packageKey . ':' . $roleIdentifier] = $parentRoles;
+				unset($configuration['roles'][$roleIdentifier]);
+			}
+		}
+
+			// Read acls
+		if (isset($configuration['acls']) && is_array($configuration['acls'])) {
+			foreach ($configuration['acls'] as $aclIndex => $aclConfiguration) {
+				if (preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1) {
+					$roleIdentifier = $aclIndex;
+				} elseif (preg_match('/^[\w]+$/', $aclIndex) === 1) {
+					$roleIdentifier = $packageKeyOfCurrentPackage . ':' . $aclIndex;
+				} else {
+					throw new InvalidConfigurationException('Detected invalid role syntax in the acls section of the policy file ' . $pathAndFilename . ': "' . $aclIndex . '" is not a valid role identifier.', 1365516177);
+				}
+
+				if (!isset($configuration['acls'][$roleIdentifier])) {
+					$configuration['acls'][$roleIdentifier] = array();
+				}
+
+				$configuration['acls'][$roleIdentifier] = Arrays::arrayMergeRecursiveOverrule($configuration['acls'][$roleIdentifier], $aclConfiguration);
+
+				if ($roleIdentifier !== $aclIndex) {
+					unset($configuration['acls'][$aclIndex]);
+				}
+
+			}
+		}
+
+		return $configuration;
 	}
 
 	/**

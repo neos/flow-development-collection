@@ -107,6 +107,11 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	protected $accessDecisionManager;
 
 	/**
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 */
+	protected $policyService;
+
+	/**
 	 * @var \TYPO3\Flow\Security\Authentication\Provider\TestingProvider
 	 */
 	protected $testingProvider;
@@ -131,8 +136,12 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	public function setUp() {
 		$this->objectManager = self::$bootstrap->getObjectManager();
 
-		if (static::$testablePersistenceEnabled === TRUE) {
-			self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->initialize();
+		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+		if ($session->isStarted()) {
+			$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
+		}
+
+		if ($this->testableSecurityEnabled === TRUE || static::$testablePersistenceEnabled === TRUE) {
 			if (is_callable(array(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface'), 'compile'))) {
 				$result = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->compile();
 				if ($result === FALSE) {
@@ -164,6 +173,8 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	protected function setupSecurity() {
 		$this->accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
 		$this->accessDecisionManager->setOverrideDecision(NULL);
+
+		$this->policyService = $this->objectManager->get('TYPO3\Flow\Security\Policy\PolicyService');
 
 		$this->authenticationManager = $this->objectManager->get('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager');
 
@@ -221,6 +232,12 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		if ($this->accessDecisionManager !== NULL) {
 			$this->accessDecisionManager->reset();
 		}
+		if ($this->policyService !== NULL) {
+			$this->policyService->reset();
+				// the following should be removed as soon as RoleRepository is cleaned up #43192
+			$roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
+			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($roleRepository, 'newRoles', array(), TRUE);
+		}
 		if ($this->testingProvider !== NULL) {
 			$this->testingProvider->reset();
 		}
@@ -276,7 +293,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		$account = new \TYPO3\Flow\Security\Account();
 		$roles = array();
 		foreach ($roleNames as $roleName) {
-			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleName);
+			$roles[] = $this->policyService->getRole($roleName);
 		}
 		$account->setRoles($roles);
 		$this->authenticateAccount($account);

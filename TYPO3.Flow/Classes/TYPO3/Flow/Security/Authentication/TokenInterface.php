@@ -135,13 +135,6 @@ interface TokenInterface {
 	public function setAccount(\TYPO3\Flow\Security\Account $account = NULL);
 
 	/**
-	 * Returns the currently valid roles.
-	 *
-	 * @return array Array of \TYPO3\Flow\Security\Authentication\Role objects
-	 */
-	public function getRoles();
-
-	/**
 	 * Returns a string representation of the token for logging purposes.
 	 *
 	 * @return string A string representation of the token
