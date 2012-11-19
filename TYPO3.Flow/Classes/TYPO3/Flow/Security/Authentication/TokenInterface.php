@@ -146,7 +146,7 @@ interface TokenInterface {
 	 *
 	 * @return string A string representation of the token
 	 */
-	public function  __toString();
+	public function __toString();
 
 }
 ?>

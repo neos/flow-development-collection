@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 

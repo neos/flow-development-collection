@@ -38,7 +38,7 @@ class Policy implements \TYPO3\Flow\Security\Authorization\AccessDecisionVoterIn
 	/**
 	 * This is the default Policy voter, it votes for the access privilege for the given join point
 	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 */
@@ -74,7 +74,7 @@ class Policy implements \TYPO3\Flow\Security\Authorization\AccessDecisionVoterIn
 	/**
 	 * This is the default Policy voter, it votes for the access privilege for the given resource
 	 *
-	 * @param \TYPO3\Flow\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\Flow\Security\Context $securityContext The current security context
 	 * @param string $resource The resource to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 */

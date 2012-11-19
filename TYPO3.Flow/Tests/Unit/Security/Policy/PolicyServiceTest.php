@@ -330,8 +330,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockPolicyExpressionParser = $this->getMock('TYPO3\Flow\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 		$mockPolicyExpressionParser->expects($this->once())->method('parseMethodResources')->with('theResource', $policy['resources']['methods'])->will($this->returnValue($mockFilter));
 
-		$accessibleProxyClassName = $this->buildAccessibleProxy('TYPO3\Flow\Security\Policy\PolicyService');
-		$policyService = new $accessibleProxyClassName();
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\Flow\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 		$policyService->injectSettings($settings);
 		$policyService->_set('policy', $policy);
@@ -349,8 +348,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		);
 
-		$aclsReflection = new \ReflectionProperty($policyService, 'acls');
-		$this->assertSame($expectedPolicies, $aclsReflection->getValue($policyService));
+		$this->assertSame($expectedPolicies, $policyService->_get('acls'));
 	}
 
 	/**

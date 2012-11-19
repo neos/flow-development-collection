@@ -87,7 +87,9 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
 		foreach ($this->filters as $filter) {
 			if ($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
-		if ($this->rejectAll && !$filterMatched) throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
+		if ($this->rejectAll && !$filterMatched) {
+			throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
+		}
 	}
 
 	/**

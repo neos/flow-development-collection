@@ -68,7 +68,6 @@ class YamlSource implements \TYPO3\Flow\Configuration\Source\SourceInterface {
 	 *
 	 * @param string $pathAndFilename
 	 * @return string The header of the given YAML file
-	 * @api
 	 */
 	protected function getHeaderFromFile($pathAndFilename) {
 		$header = '';
