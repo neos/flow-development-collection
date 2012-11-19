@@ -105,17 +105,30 @@ class LoggingAspect {
 	 * Logs calls and results of decideOnJoinPoint()
 	 *
 	 * @Flow\AfterThrowing("method(TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager->decideOnJoinPoint())")
-	 *
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @throws \Exception
 	 * @return void
 	 */
 	public function logJoinPointAccessDecisions(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$exception = $joinPoint->getException();
-
 		$subjectJoinPoint = $joinPoint->getMethodArgument('joinPoint');
 		$message = $exception->getMessage() . ' to method ' . $subjectJoinPoint->getClassName() . '::' . $subjectJoinPoint->getMethodName() . '().';
+		$this->securityLogger->log($message, \LOG_INFO);
 
+		throw $exception;
+	}
+
+	/**
+	 * Logs calls and results of decideOnResource()
+	 *
+	 * @Flow\AfterThrowing("method(TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager->decideOnResource())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+	 * @throws \Exception
+	 * @return void
+	 */
+	public function logResourceAccessDecisions(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+		$exception = $joinPoint->getException();
+		$message = $exception->getMessage() . ' on resource "' . $joinPoint->getMethodArgument('resource') . '".';
 		$this->securityLogger->log($message, \LOG_INFO);
 
 		throw $exception;
