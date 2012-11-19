@@ -23,19 +23,19 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @var Role
 	 */
-	protected $role1;
+	protected $administratorRole;
 
 	/**
 	 * @var Role
 	 */
-	protected $role2;
+	protected $customerRole;
 
 	/**
 	 * Setup function for the testcase
 	 */
 	public function setUp() {
-		$this->role1 = new Role('role1');
-		$this->role2 = new Role('role2');
+		$this->administratorRole = new Role('TYPO3.Flow:Administrator');
+		$this->customerRole = new Role('TYPO3.Flow:Customer');
 	}
 
 	/**
@@ -43,10 +43,10 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function addRoleAddsRoleToAccountIfNotAssigned() {
 		$account = new Account();
-		$account->setRoles(array($this->role1));
-		$account->addRole($this->role2);
+		$account->setRoles(array($this->administratorRole));
+		$account->addRole($this->customerRole);
 
-		$this->assertAttributeContains('role2', 'roles', $account);
+		$this->assertCount(2, $account->getRoles());
 	}
 
 	/**
@@ -54,10 +54,10 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function addRoleSkipsRoleIfAssigned() {
 		$account = new Account();
-		$account->setRoles(array($this->role1));
-		$account->addRole($this->role1);
+		$account->setRoles(array($this->administratorRole));
+		$account->addRole($this->administratorRole);
 
-		$this->assertAttributeEquals(array($this->role1), 'roles', $account);
+		$this->assertCount(1, $account->getRoles());
 	}
 
 	/**
@@ -65,10 +65,10 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function removeRoleRemovesRoleFromAccountIfAssigned() {
 		$account = new Account();
-		$account->setRoles(array($this->role1, $this->role2));
-		$account->removeRole($this->role2);
+		$account->setRoles(array($this->administratorRole, $this->customerRole));
+		$account->removeRole($this->customerRole);
 
-		$this->assertAttributeEquals(array('role1'), 'roles', $account);
+		$this->assertCount(1, $account->getRoles());
 	}
 
 	/**
@@ -76,10 +76,10 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function removeRoleSkipsRemovalIfRoleNotAssigned() {
 		$account = new Account();
-		$account->setRoles(array($this->role1));
-		$account->removeRole($this->role2);
+		$account->setRoles(array($this->administratorRole));
+		$account->removeRole($this->customerRole);
 
-		$this->assertAttributeEquals(array('role1'), 'roles', $account);
+		$this->assertCount(1, $account->getRoles());
 	}
 
 	/**
@@ -87,39 +87,22 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function hasRoleWorks() {
 		$account = new Account();
-		$account->setRoles(array($this->role1));
+		$account->setRoles(array($this->administratorRole));
 
-		$this->assertTrue($account->hasRole($this->role1));
-		$this->assertFalse($account->hasRole($this->role2));
-	}
-
-	/**
-	 * @test
-	 */
-	public function hasRoleWorksOnRoleInstancesWithTheSameIdentifier() {
-		$account = new Account();
-		$account->addRole(new Role('role1'));
-		$this->assertEquals(array($this->role1), $account->getRoles());
+		$this->assertTrue($account->hasRole($this->administratorRole));
+		$this->assertFalse($account->hasRole($this->customerRole));
 	}
 
 	/**
 	 * @test
 	 */
 	public function setRolesWorks() {
+		$roles = array($this->administratorRole, $this->customerRole);
+		$expectedRoles = array($this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole);
 		$account = new Account();
-		$account->setRoles(array($this->role1, $this->role2));
+		$account->setRoles($roles);
 
-		$this->assertEquals(array($this->role1, $this->role2), $account->getRoles());
-	}
-
-	/**
-	 * @test
-	 */
-	public function setRolesHandlesStringValuesAsRole() {
-		$account = new Account();
-		$account->setRoles(array($this->role1, 'role2'));
-
-		$this->assertEquals(array($this->role1, $this->role2), $account->getRoles());
+		$this->assertSame($expectedRoles, $account->getRoles());
 	}
 
 	/**

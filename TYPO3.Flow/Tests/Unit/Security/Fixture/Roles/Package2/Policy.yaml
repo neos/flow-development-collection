@@ -1,0 +1,17 @@
+roles:
+  User: []
+  PowerUser: ['User']
+
+acls:
+  'Foo.Package1:Administrator':
+    methods:
+      method2: 'Some policy from Package2 for Foo.Package1:Administrator'
+  PowerUser:
+    methods:
+      method1: 'Some policy from Package2 for Package2:PowerUser'
+  'Package2:User':
+    methods:
+      method2: 'Some policy from Package2 for Package2:User wit PackageKey'
+  User:
+    methods:
+      method3: 'Some policy from Package2 for Package2:User without PackageKey'

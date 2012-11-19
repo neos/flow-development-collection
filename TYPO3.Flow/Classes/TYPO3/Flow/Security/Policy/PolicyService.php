@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Security\Policy;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Exception\NoSuchRoleException;
+use TYPO3\Flow\Security\Exception\RoleExistsException;
 
 /**
  * The policy service reads the policy configuration. The security advice asks
@@ -29,6 +31,11 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		PRIVILEGE_GRANT = 1,
 		PRIVILEGE_DENY = 2,
 		MATCHER_ANY = 'ANY';
+
+	/**
+	 * @var boolean
+	 */
+	protected $initializedRoles = FALSE;
 
 	/**
 	 * The Flow settings
@@ -75,6 +82,11 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	protected $acls = array();
 
 	/**
+	 * @var array
+	 */
+	protected $systemRoles = array();
+
+	/**
 	 * The constraints for entity resources
 	 * @var array
 	 */
@@ -84,6 +96,11 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
+
+	/**
+	 * @var \TYPO3\Flow\Security\Policy\RoleRepository
+	 */
+	protected $roleRepository;
 
 	/**
 	 * Injects the Flow settings
@@ -136,6 +153,14 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	}
 
 	/**
+	 *
+	 */
+	public function __construct() {
+		$this->systemRoles['Anonymous'] = new Role('Anonymous', Role::SOURCE_SYSTEM);
+		$this->systemRoles['Everybody'] = new Role('Everybody', Role::SOURCE_SYSTEM);
+	}
+
+	/**
 	 * Initializes this Policy Service
 	 *
 	 * @return void
@@ -182,15 +207,14 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 
 		$matches = FALSE;
 
-		foreach ($this->filters as $role => $filtersForRole) {
-			/** @var $filter \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface */
+		foreach ($this->filters as $roleIdentifier => $filtersForRole) {
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 					$matches = TRUE;
 					$methodIdentifier = strtolower($className . '->' . $methodName);
 
 					$policyForJoinPoint = array();
-					switch ($this->policy['acls'][$role]['methods'][$resource]) {
+					switch ($this->policy['acls'][$roleIdentifier]['methods'][$resource]) {
 						case 'GRANT':
 							$policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
 							break;
@@ -201,7 +225,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 							$policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+							throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$roleIdentifier]['methods'][$resource] . ' for role : ' . $roleIdentifier . ' and resource: ' . $resource, 1267308533);
 					}
 
 					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
@@ -210,7 +234,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 						$policyForJoinPoint['runtimeEvaluationsClosureCode'] = FALSE;
 					}
 
-					$this->acls[$methodIdentifier][$role][$resource] = $policyForJoinPoint;
+					$this->acls[$methodIdentifier][$roleIdentifier][$resource] = $policyForJoinPoint;
 				}
 			}
 		}
@@ -237,44 +261,96 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	}
 
 	/**
+	 * Create a role and return a role instance for it.
+	 *
+	 * @param string $roleIdentifier
+	 * @return \TYPO3\Flow\Security\Policy\Role
+	 * @throws \TYPO3\Flow\Security\Exception\RoleExistsException
+	 */
+	public function createRole($roleIdentifier) {
+		$this->initializeRolesFromPolicy();
+
+		if (isset($this->systemRoles[$roleIdentifier])) {
+			throw new RoleExistsException(sprintf('Could not create role %s because a system role with that identifier already exists', $roleIdentifier), 1354618823);
+		}
+
+		if (preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $roleIdentifier) !== 1) {
+			throw new \InvalidArgumentException(sprintf('Could not create role %s because it does not follow the pattern of a fully qualified identifier ("Vendor.Package:Role")', $roleIdentifier), 1354621063);
+		}
+
+		if ($this->roleRepository->findByIdentifier($roleIdentifier) !== NULL) {
+			throw new RoleExistsException(sprintf('Could not create role %s because a role with that identifier already exists.', $roleIdentifier), 1354619224);
+		}
+
+		$role = new Role($roleIdentifier);
+		$this->roleRepository->add($roleIdentifier);
+
+		return $role;
+	}
+
+	/**
+	 * Returns a Role object configured in the PolicyService
+	 *
+	 * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>.)<Role>
+	 * @return \TYPO3\Flow\Security\Policy\Role
+	 * @throws \TYPO3\Flow\Security\Exception\NoSuchRoleException
+	 */
+	public function getRole($roleIdentifier) {
+		if (isset($this->systemRoles[$roleIdentifier])) {
+			return $this->systemRoles[$roleIdentifier];
+		}
+
+		$this->initializeRolesFromPolicy();
+
+		$role = $this->roleRepository->findByIdentifier($roleIdentifier);
+		if ($role === NULL) {
+			throw new \TYPO3\Flow\Security\Exception\NoSuchRoleException(sprintf('The role with identifier "%s" is unknown', $roleIdentifier), 1353085860);
+		}
+
+		return $role;
+	}
+
+	/**
 	 * Returns an array of all configured roles
 	 *
-	 * @return array Array of all configured roles
+	 * @return array<\TYPO3\Flow\Security\Policy\Role> Array of all configured roles, indexed by role identifier
 	 */
 	public function getRoles() {
-		$roles = array(
-			new \TYPO3\Flow\Security\Policy\Role('Everybody'),
-			new \TYPO3\Flow\Security\Policy\Role('Anonymous')
-		);
-		foreach ($this->policy['roles'] as $roleIdentifier => $parentRoles) {
-			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleIdentifier);
+		$this->initializeRolesFromPolicy();
+
+		$roles = array();
+		foreach ($this->roleRepository->findAll()->toArray() as $role) {
+			$roles[$role->getIdentifier()] = $role;
 		}
 		return $roles;
 	}
 
 	/**
-	 * Returns all parent roles for the given role, that are configured in the policy.
+	 * Returns all parent roles for the given role.
 	 *
 	 * @param \TYPO3\Flow\Security\Policy\Role $role The role to get the parents for
-	 * @return array<TYPO3\Security\Policy\Role> Array of parent roles
+	 * @return array<TYPO3\Security\Policy\Role> Array of parent roles, indexed by role identifier
 	 */
 	public function getAllParentRoles(\TYPO3\Flow\Security\Policy\Role $role) {
-		$result = array();
+		$this->initializeRolesFromPolicy();
 
-		$parentRoles = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->policy, 'roles.' . $role);
-		if (is_array($parentRoles)) {
-			foreach ($this->policy['roles'][(string)$role] as $currentIdentifier) {
-				$currentParent = new \TYPO3\Flow\Security\Policy\Role($currentIdentifier);
-				if (!in_array($currentParent, $result)) {
-					$result[] = $currentParent;
-				}
-				foreach ($this->getAllParentRoles($currentParent) as $currentGrandParent) {
-					if (!in_array($currentGrandParent, $result)) {
-						$result[] = $currentGrandParent;
-					}
+		$result = array();
+		$parentRoles = $role->getParentRoles();
+
+		foreach ($parentRoles as $currentParentIdentifier => $currentParent) {
+			if (isset($result[$currentParentIdentifier])) {
+				continue;
+			}
+			$result[$currentParentIdentifier] = $currentParent;
+
+			$currentGrandParentRoles = $this->getAllParentRoles($currentParent);
+			foreach ($currentGrandParentRoles as $currentGrandParentRoleIdentifier => $currentGrandParentRole) {
+				if (!isset($result[$currentGrandParentRoleIdentifier])) {
+					$result[$currentGrandParentRoleIdentifier] = $currentGrandParentRole;
 				}
 			}
 		}
+
 		return $result;
 	}
 
@@ -293,7 +369,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
-			$roles[] = new \TYPO3\Flow\Security\Policy\Role($roleIdentifier);
+			$roles[] = $this->getRole($roleIdentifier);
 		}
 
 		return $roles;
@@ -310,7 +386,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 */
 	public function getPrivilegesForJoinPoint(\TYPO3\Flow\Security\Policy\Role $role, \TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
-		$roleIdentifier = (string)$role;
+		$roleIdentifier = $role->getIdentifier();
 
 		if (!isset($this->acls[$methodIdentifier])) {
 			throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
@@ -355,7 +431,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 			}
 		}
 
-		$roleIdentifier = (string)$role;
+		$roleIdentifier = $role->getIdentifier();
 		if (!array_key_exists($roleIdentifier, $this->acls[$resource])) {
 			return NULL;
 		}
@@ -374,15 +450,15 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 *
 	 * @param string $className The class name to check the policy for
 	 * @param string $methodName The method name to check the policy for
-	 * @param array $roles
+	 * @param array $roleIdentifiers Role identifiers to filter on
 	 * @return boolean TRUE if the given controller action has a policy entry
 	 */
-	public function hasPolicyEntryForMethod($className, $methodName, array $roles = array()) {
+	public function hasPolicyEntryForMethod($className, $methodName, array $roleIdentifiers = array()) {
 		$methodIdentifier = strtolower($className . '->' . $methodName);
 
 		if (isset($this->acls[$methodIdentifier])) {
-			if (count($roles) > 0) {
-				foreach ($roles as $roleIdentifier) {
+			if (count($roleIdentifiers) > 0) {
+				foreach ($roleIdentifiers as $roleIdentifier) {
 					if (isset($this->acls[$methodIdentifier][$roleIdentifier])) {
 						return TRUE;
 					}
@@ -406,7 +482,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		if (isset($this->entityResourcesConstraints[$entityType])) {
 			foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
 				foreach ($roles as $role) {
-					if (isset($this->acls[$resource][(string)$role])) {
+					if (isset($this->acls[$resource][$role->getIdentifier()])) {
 						return TRUE;
 					}
 				}
@@ -445,12 +521,13 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 				continue;
 			}
 
-			foreach ($roles as $roleIdentifier) {
-				if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])
-					|| $this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_ABSTAIN) {
+			foreach ($roles as $role) {
+				$roleIdentifier = $role->getIdentifier();
+				if (!isset($this->acls[$resource][$roleIdentifier]['privilege'])
+					|| $this->acls[$resource][$roleIdentifier]['privilege'] === self::PRIVILEGE_ABSTAIN) {
 
 					$abstainedResources[$resource] = $constraint;
-				} elseif ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
+				} elseif ($this->acls[$resource][$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
 					$deniedResources[$resource] = $constraint;
 				} else {
 					$grantedResources[] = $resource;
@@ -481,12 +558,12 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 
 		$parsedMethodResources = array();
 
-		foreach ($this->policy['acls'] as $role => $acl) {
+		foreach ($this->policy['acls'] as $roleIdentifier => $acl) {
 			if (!isset($acl['methods'])) {
 				continue;
 			}
 			if (!is_array($acl['methods'])) {
-				throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('The ACL configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+				throw new \TYPO3\Flow\Security\Exception\MissingConfigurationException('The ACL configuration for role "' . $roleIdentifier . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
 			}
 			foreach ($acl['methods'] as $resource => $privilege) {
 				if (!isset($parsedMethodResources[$resource])) {
@@ -494,7 +571,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 					$parsedMethodResources[$resource]['filters'] = $this->policyExpressionParser->parseMethodResources($resource, $this->policy['resources']['methods'], $resourceTrace);
 					$parsedMethodResources[$resource]['trace'] = $resourceTrace;
 				}
-				$this->filters[$role][$resource] = $parsedMethodResources[$resource]['filters'];
+				$this->filters[$roleIdentifier][$resource] = $parsedMethodResources[$resource]['filters'];
 
 				foreach ($parsedMethodResources[$resource]['trace'] as $currentResource) {
 					$policyForResource = array();
@@ -509,16 +586,16 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 							$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got "' . $privilege . '" for role "' . $role . '" and resource "' . $resource . '"', 1267311437);
+							throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got "' . $privilege . '" for role "' . $roleIdentifier . '" and resource "' . $resource . '"', 1267311437);
 					}
 
-					if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
-						$policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
+					if ($this->filters[$roleIdentifier][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
+						$policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$roleIdentifier][$resource]->getRuntimeEvaluationsClosureCode();
 					} else {
 						$policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
 					}
 
-					$this->acls[$currentResource][$role] = $policyForResource;
+					$this->acls[$currentResource][$roleIdentifier] = $policyForResource;
 				}
 			}
 		}
@@ -541,12 +618,13 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 			if ($constraint === self::MATCHER_ANY) {
 				$foundGeneralResourceDefinition = TRUE;
 				$foundGrantPrivilege = FALSE;
-				foreach ($roles as $roleIdentifier) {
-					if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])) {
+				foreach ($roles as $role) {
+					$roleIdentifier = $role->getIdentifier();
+					if (!isset($this->acls[$resource][$roleIdentifier]['privilege'])) {
 						continue;
-					} elseif ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
+					} elseif ($this->acls[$resource][$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
 						return FALSE;
-					} elseif ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_GRANT) {
+					} elseif ($this->acls[$resource][$roleIdentifier]['privilege'] === self::PRIVILEGE_GRANT) {
 						$foundGrantPrivilege = TRUE;
 					}
 				}
@@ -564,13 +642,65 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	}
 
 	/**
+	 * Adds all roles found in the Policy to the role repository that are not yet
+	 * in persistent storage.
+	 *
+	 * @return void
+	 * @throws \TYPO3\Flow\Security\Exception\NoSuchRoleException
+	 */
+	protected function initializeRolesFromPolicy() {
+		if ($this->initializedRoles !== TRUE && !$this->cache->has('rolesFromPolicyUpToDate')) {
+
+				// for compile time the repository needs to be inject manually:
+			if ($this->roleRepository === NULL) {
+				$this->roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
+			}
+
+			if ($this->roleRepository->findByIdentifier('Anonymous') === NULL) {
+				$this->roleRepository->add($this->systemRoles['Anonymous']);
+			}
+			if ($this->roleRepository->findByIdentifier('Everybody') === NULL) {
+				$this->roleRepository->add($this->systemRoles['Everybody']);
+			}
+
+			if (isset($this->policy['roles']) && is_array($this->policy['roles'])) {
+				foreach ($this->policy['roles'] as $roleIdentifier => $roleConfiguration) {
+					if ($this->roleRepository->findByIdentifier($roleIdentifier) === NULL) {
+						$this->roleRepository->add(new \TYPO3\Flow\Security\Policy\Role($roleIdentifier, Role::SOURCE_POLICY));
+					}
+				}
+
+					// Add parent roles
+				foreach ($this->policy['roles'] as $roleIdentifier => $parentRoleIdentifiers) {
+					$parentRoles = array();
+					foreach ($parentRoleIdentifiers as $parentRoleIdentifier) {
+						if (($parentRole = $this->roleRepository->findByIdentifier($parentRoleIdentifier)) !== NULL) {
+							$parentRoles[] = $parentRole;
+						} else {
+							$hint = (strpos($parentRoleIdentifier, '.') !== FALSE || strpos($parentRoleIdentifier, ':') !== FALSE) ? ' Make sure that the package which might provide that role, is currently installed and defines that role in its policy.' : ' If you are referring to a role defined in a different package, make sure to specify the fully qualified role name.';
+							$message = sprintf('The role "%s" which was declared as a parent role for "%s" does not exist.%s Please adjust your Policy.yaml files to fix the problem.', $parentRoleIdentifier, $roleIdentifier, $hint);
+							throw new \TYPO3\Flow\Security\Exception\NoSuchRoleException($message, 1352971524);
+						}
+					}
+					if ($parentRoles !== array()) {
+						$this->roleRepository->findByIdentifier($roleIdentifier)->setParentRoles($parentRoles);
+					}
+				}
+			}
+			$this->roleRepository->persistEntities();
+			$this->cache->set('rolesFromPolicyUpToDate', 'Yes, Sir!');
+		}
+		$this->initializedRoles = TRUE;
+	}
+
+	/**
 	 * Parses the policy and stores the configured entity acls in the internal acls array
 	 *
 	 * @return void
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidPrivilegeException
 	 */
 	protected function parseEntityAcls() {
-		foreach ($this->policy['acls'] as $role => $aclEntries) {
+		foreach ($this->policy['acls'] as $roleIdentifier => $aclEntries) {
 			if (!array_key_exists('entities', $aclEntries)) {
 				continue;
 			}
@@ -579,19 +709,19 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 				if (!isset($this->acls[$resource])) {
 					$this->acls[$resource] = array();
 				}
-				$this->acls[$resource][$role] = array();
+				$this->acls[$resource][$roleIdentifier] = array();
 				switch ($privilege) {
 					case 'GRANT':
-						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_GRANT;
-						break;
+						$this->acls[$resource][$roleIdentifier]['privilege'] = self::PRIVILEGE_GRANT;
+					break;
 					case 'DENY':
-						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_DENY;
-						break;
+						$this->acls[$resource][$roleIdentifier]['privilege'] = self::PRIVILEGE_DENY;
+					break;
 					case 'ABSTAIN':
-						$this->acls[$resource][$role]['privilege'] = self::PRIVILEGE_ABSTAIN;
-						break;
+						$this->acls[$resource][$roleIdentifier]['privilege'] = self::PRIVILEGE_ABSTAIN;
+					break;
 					default:
-						throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+						throw new \TYPO3\Flow\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $roleIdentifier . ' and resource: ' . $resource, 1267311437);
 				}
 			}
 		}
@@ -663,6 +793,17 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Resets the PolicyService to behave transparently during
+	 * functional testing.
+	 *
+	 * @return void
+	 */
+	public function reset() {
+		$this->initializedRoles = FALSE;
+		$this->cache->remove('rolesFromPolicyUpToDate');
 	}
 }
 

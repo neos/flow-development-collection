@@ -164,16 +164,6 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
 	}
 
 	/**
-	 * Returns the currently valid roles.
-	 *
-	 * @return array Array of TYPO3\Flow\Security\Authentication\Role objects
-	 */
-	public function getRoles() {
-		$account = $this->getAccount();
-		return $account !== NULL ? $account->getRoles() : array();
-	}
-
-	/**
 	 * Sets the authentication status. Usually called by the responsible \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED

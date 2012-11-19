@@ -22,6 +22,10 @@ resources:
 roles:
   Customer: []
   Administrator: []
+  User: []
+  ContentEditor: [ User ]
+  ContentManager: [ ContentEditor ]
+  Manager: [ ContentEditor, Customer ]
 
 
 acls:

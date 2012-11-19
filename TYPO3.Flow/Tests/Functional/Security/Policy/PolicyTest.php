@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Security;
+namespace TYPO3\Flow\Tests\Functional\Security\Policy;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Tests\Functional\Security;
  *                                                                        */
 
 use TYPO3\Flow\Security\Policy\Role;
-use TYPO3\Flow\Security\Authentication\TokenInterface;
 
 /**
  * Testcase for the security policy behavior
