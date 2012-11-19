@@ -121,15 +121,15 @@ class Context {
 	protected $hashService;
 
 	/**
-	 * One of the CSRF_* constants to set the csrf strategy
+	 * One of the CSRF_* constants to set the csrf protection strategy
 	 * @var integer
 	 */
-	protected $csrfStrategy = self::CSRF_ONE_PER_SESSION;
+	protected $csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
 
 	/**
 	 * @var array
 	 */
-	protected $csrfTokens = array();
+	protected $csrfProtectionTokens = array();
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\RequestInterface
@@ -193,13 +193,13 @@ class Context {
 			$csrfStrategyName = $settings['security']['csrf']['csrfStrategy'];
 			switch ($csrfStrategyName) {
 				case 'onePerRequest':
-					$this->csrfStrategy = self::CSRF_ONE_PER_REQUEST;
+					$this->csrfProtectionStrategy = self::CSRF_ONE_PER_REQUEST;
 					break;
 				case 'onePerSession':
-					$this->csrfStrategy = self::CSRF_ONE_PER_SESSION;
+					$this->csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
 					break;
 				case 'onePerUri':
-					$this->csrfStrategy = self::CSRF_ONE_PER_URI;
+					$this->csrfProtectionStrategy = self::CSRF_ONE_PER_URI;
 					break;
 				default:
 					throw new \TYPO3\Flow\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
@@ -213,8 +213,8 @@ class Context {
 	 * @return void
 	 */
 	public function initialize() {
-		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) {
-			$this->csrfTokens = array();
+		if ($this->csrfProtectionStrategy !== self::CSRF_ONE_PER_SESSION) {
+			$this->csrfProtectionTokens = array();
 		}
 
 		$this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
@@ -433,12 +433,12 @@ class Context {
 			$this->initialize();
 		}
 
-		if (count($this->csrfTokens) === 1 && $this->csrfStrategy !== self::CSRF_ONE_PER_URI) {
-			reset($this->csrfTokens);
-			return key($this->csrfTokens);
+		if (count($this->csrfProtectionTokens) === 1 && $this->csrfProtectionStrategy !== self::CSRF_ONE_PER_URI) {
+			reset($this->csrfProtectionTokens);
+			return key($this->csrfProtectionTokens);
 		}
 		$newToken = \TYPO3\Flow\Utility\Algorithms::generateRandomToken(16);
-		$this->csrfTokens[$newToken] = TRUE;
+		$this->csrfProtectionTokens[$newToken] = TRUE;
 
 		return $newToken;
 	}
@@ -449,7 +449,7 @@ class Context {
 	 * @return boolean TRUE, if the token is valid. FALSE otherwise.
 	 */
 	public function hasCsrfProtectionTokens() {
-		return count($this->csrfTokens) > 0;
+		return count($this->csrfProtectionTokens) > 0;
 	}
 
 	/**
@@ -464,9 +464,9 @@ class Context {
 			$this->initialize();
 		}
 
-		if (isset($this->csrfTokens[$csrfToken])) {
-			if ($this->csrfStrategy === self::CSRF_ONE_PER_URI) {
-				unset($this->csrfTokens[$csrfToken]);
+		if (isset($this->csrfProtectionTokens[$csrfToken])) {
+			if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_URI) {
+				unset($this->csrfProtectionTokens[$csrfToken]);
 			}
 			return TRUE;
 		}
@@ -505,7 +505,7 @@ class Context {
 		$this->activeTokens = array();
 		$this->inactiveTokens = array();
 		$this->request = NULL;
-		$this->csrfTokens = array();
+		$this->csrfProtectionTokens = array();
 		$this->interceptedRequest = NULL;
 		$this->initialized = FALSE;
 	}
