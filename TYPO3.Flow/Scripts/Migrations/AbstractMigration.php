@@ -254,6 +254,38 @@ abstract class AbstractMigration {
 	}
 
 	/**
+	 * Apply the given processor to the raw results of loading the given configuration
+	 * type for the package from YAML. If multiple files exist (context configuration)
+	 * all are processed independently.
+	 *
+	 * @param string $configurationType One of ConfigurationManager::CONFIGURATION_TYPE_*
+	 * @param \Closure $processor
+	 * @return void
+	 */
+	protected function processConfiguration($configurationType, \Closure $processor, $saveResult = FALSE) {
+		$yamlPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'] . '/Configuration', 'yaml', TRUE);
+		$expectedConfigurationFileName = $configurationType . '.yaml';
+		$configurationPathsAndFilenames = array_filter($yamlPathsAndFilenames,
+			function ($pathAndFileName) use ($expectedConfigurationFileName) {
+				if (basename($pathAndFileName) === $expectedConfigurationFileName) {
+					return TRUE;
+				} else {
+					return FALSE;
+				}
+			}
+		);
+
+		$yamlSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		foreach ($configurationPathsAndFilenames as $pathAndFilename) {
+			$configuration = $yamlSource->load(substr($pathAndFilename, 0, -5));
+			$processor($configuration);
+			if ($saveResult === TRUE) {
+				$yamlSource->save(substr($pathAndFilename, 0, -5), $configuration);
+			}
+		}
+	}
+
+	/**
 	 * Applies all registered searchAndReplace and searchAndReplaceRegex operations.
 	 *
 	 * @return void
