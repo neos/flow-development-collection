@@ -131,40 +131,42 @@ class Service {
 	 * If no localized version of file is found, $filepath is returned without
 	 * any change.
 	 *
-	 * @param string $filename Path to the file
+	 * @param string $pathAndFilename Path to the file
 	 * @param \TYPO3\Flow\I18n\Locale $locale Desired locale of localized file
 	 * @param boolean $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
 	 * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
 	 * @see Configuration::setFallbackRule()
 	 * @api
 	 */
-	public function getLocalizedFilename($filename, Locale $locale = NULL, $strict = FALSE) {
+	public function getLocalizedFilename($pathAndFilename, Locale $locale = NULL, $strict = FALSE) {
 		if ($locale === NULL) {
 			$locale = $this->configuration->getCurrentLocale();
 		}
 
-		if (($dotPosition = strrpos($filename, '.')) !== FALSE) {
-			$filenameWithoutExtension = substr($filename, 0, $dotPosition);
-			$extension = substr($filename, $dotPosition);
+		$filename = basename($pathAndFilename);
+		if ((strpos($filename, '.')) !== FALSE) {
+			$dotPosition = strrpos($pathAndFilename, '.');
+			$pathAndFilenameWithoutExtension = substr($pathAndFilename, 0, $dotPosition);
+			$extension = substr($pathAndFilename, $dotPosition);
 		} else {
-			$filenameWithoutExtension = $filename;
+			$pathAndFilenameWithoutExtension = $pathAndFilename;
 			$extension = '';
 		}
 
 		if ($strict === TRUE) {
-			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
+			$possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . (string)$locale . $extension;
 			if (file_exists($possibleLocalizedFilename)) {
 				return array($possibleLocalizedFilename, $locale);
 			}
 		} else {
 			foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
-				$possibleLocalizedFilename = $filenameWithoutExtension . '.' . $localeIdentifier . $extension;
+				$possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . $localeIdentifier . $extension;
 				if (file_exists($possibleLocalizedFilename)) {
 					return array($possibleLocalizedFilename, $locale);
 				}
 			}
 		}
-		return array($filename, $locale);
+		return array($pathAndFilename, $locale);
 	}
 
 	/**

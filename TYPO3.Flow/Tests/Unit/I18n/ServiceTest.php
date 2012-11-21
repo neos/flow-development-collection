@@ -59,6 +59,27 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getLocalizedFilenameIgnoresDotsInFilePath() {
+		vfsStream::setup('Foo.Bar');
+
+		$desiredLocale = new \TYPO3\Flow\I18n\Locale('en_GB');
+		$parentLocale = new \TYPO3\Flow\I18n\Locale('en');
+		$localeChain = array('en_GB' => $desiredLocale, 'en' => $parentLocale);
+		$filename = 'vfs://Foo.Bar/Public/images';
+		$expectedFilename = 'vfs://Foo.Bar/Public/images';
+
+		mkdir($filename, 0777, TRUE);
+
+		$service = $this->getMock('TYPO3\Flow\I18n\Service', array('getLocaleChain'));
+		$service->expects($this->atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will($this->returnValue($localeChain));
+
+		list($result,) = $service->getLocalizedFilename($filename, $desiredLocale);
+		$this->assertEquals($expectedFilename, $result);
+	}
+
+	/**
+	 * @test
+	 */
 	public function getLocalizedFilenameReturnsCorrectFilenameIfExtensionIsMissing() {
 		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
 		file_put_contents('vfs://Foo/Bar/Public/images/foobar.en_GB', 'FooBar');
