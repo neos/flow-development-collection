@@ -224,7 +224,11 @@ class KickstartCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			if (strpos($fieldType, 'array') !== FALSE) {
 				$fieldDefinitions[$fieldName]['typeHint'] = 'array';
 			} elseif (strpos($fieldType, '\\') !== FALSE) {
-				$fieldDefinitions[$fieldName]['typeHint'] = $fieldType;
+				if (strpos($fieldType, '<') !== FALSE) {
+					$fieldDefinitions[$fieldName]['typeHint'] = substr($fieldType, 0, strpos($fieldType, '<'));
+				} else {
+					$fieldDefinitions[$fieldName]['typeHint'] = $fieldType;
+				}
 			}
 		};
 
