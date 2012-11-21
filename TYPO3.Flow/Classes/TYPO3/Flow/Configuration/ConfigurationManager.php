@@ -443,7 +443,11 @@ EOD;
 				if (!isset($subRouteConfiguration['uriPattern'])) {
 					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $subRouteConfiguration['name'] . '".', 1274197615);
 				}
-				$subRouteConfiguration['uriPattern'] = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
+				if ($subRouteConfiguration['uriPattern'] !== '') {
+					$subRouteConfiguration['uriPattern'] = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
+				} else {
+					$subRouteConfiguration['uriPattern'] = rtrim(str_replace('<' . $subRouteKey . '>', '', $routeConfiguration['uriPattern']), '/');
+				}
 				$subRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $subRouteConfiguration);
 				unset($subRouteConfiguration['subRoutes']);
 				$mergedSubRoutesConfigurations[] = $subRouteConfiguration;
