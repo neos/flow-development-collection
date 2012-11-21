@@ -64,7 +64,8 @@ class GeneratorService {
 	 * @return array An array of generated filenames
 	 */
 	public function generateActionController($packageKey, $subpackage, $controllerName, $overwrite = FALSE) {
-		$controllerClassName = ucfirst($controllerName) . 'Controller';
+		$controllerName = ucfirst($controllerName);
+		$controllerClassName = $controllerName . 'Controller';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/ActionControllerTemplate.php.tmpl';
 
@@ -98,7 +99,8 @@ class GeneratorService {
 	 * @return array An array of generated filenames
 	 */
 	public function generateCrudController($packageKey, $subpackage, $controllerName, $overwrite = FALSE) {
-		$controllerClassName = ucfirst($controllerName) . 'Controller';
+		$controllerName = ucfirst($controllerName);
+		$controllerClassName = $controllerName . 'Controller';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/CrudControllerTemplate.php.tmpl';
 
@@ -135,7 +137,8 @@ class GeneratorService {
 	 * @return array An array of generated filenames
 	 */
 	public function generateCommandController($packageKey, $controllerName, $overwrite = FALSE) {
-		$controllerClassName = ucfirst($controllerName) . 'CommandController';
+		$controllerName = ucfirst($controllerName);
+		$controllerClassName = $controllerName . 'Controller';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/CommandControllerTemplate.php.tmpl';
 
