@@ -25,6 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Booting\Step;
 use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Booting\Scripts;
+
 /**
  * General purpose central core hyper Flow bootstrap class
  *
@@ -89,7 +90,7 @@ class Bootstrap {
 
 		$this->context = new ApplicationContext($context);
 		if ($this->context->isTesting()) {
-			require_once('PHPUnit/Autoload.php');
+			$this->requireAutoloaderForPhpUnit();
 			require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
 			require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
 		}
@@ -568,6 +569,22 @@ class Bootstrap {
 				echo('Flow could not create the directory "' . FLOW_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)');
 				exit(1);
 			}
+		}
+	}
+
+	/**
+	 * Include the PHPUnit autoloader.
+	 *
+	 * @return void
+	 */
+	protected function requireAutoloaderForPhpUnit() {
+		$composerAutoloader = __DIR__ . '/../../../../../../Libraries/autoload.php';
+		if(file_exists($composerAutoloader)) {
+			require_once($composerAutoloader);
+		} elseif (stream_resolve_include_path('PHPUnit/Autoload.php') !== FALSE) {
+			require_once('PHPUnit/Autoload.php');
+		} else {
+			exit(PHP_EOL . 'TYPO3 Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" and "' . $composerAutoloader . '" without success.');
 		}
 	}
 }
