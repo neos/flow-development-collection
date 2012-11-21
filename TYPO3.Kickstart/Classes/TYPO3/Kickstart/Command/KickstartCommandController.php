@@ -44,10 +44,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:package:create
 	 */
 	public function packageCommand($packageKey) {
-		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
-			$this->quit(1);
-		}
+		$this->validatePackageKey($packageKey);
 
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" already exists.', array($packageKey));
@@ -94,10 +91,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		if (strpos('/', $packageKey) !== FALSE) {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
 		}
-		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
-			$this->quit(1);
-		}
+		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			if ($generateRelated === FALSE) {
 				$this->outputLine('Package "%s" is not available.', array($packageKey));
@@ -176,10 +170,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.kickstart:kickstart:actioncontroller
 	 */
 	public function commandControllerCommand($packageKey, $controllerName, $force = FALSE) {
-		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
-			$this->quit(1);
-		}
+		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" is not available.', array($packageKey));
 			$this->quit(2);
@@ -206,10 +197,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.kickstart:kickstart:repository
 	 */
 	public function modelCommand($packageKey, $modelName, $force = FALSE) {
-		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and ".", please!', array($packageKey));
-			$this->quit(1);
-		}
+		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" is not available.', array($packageKey));
 			$this->quit(2);
@@ -245,10 +233,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.kickstart:kickstart:model
 	 */
 	public function repositoryCommand($packageKey, $modelName, $force = FALSE) {
-		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters, please!', array($packageKey));
-			$this->quit(1);
-		}
+		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" is not available.', array($packageKey));
 			$this->quit(2);
@@ -256,6 +241,19 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$generatedFiles = $this->generatorService->generateRepository($packageKey, $modelName, $force);
 		$this->outputLine(implode(PHP_EOL, $generatedFiles));
+	}
+
+	/**
+	 * Checks the syntax of the given $packageKey and quits with an error message if it's not valid
+	 *
+	 * @param string $packageKey
+	 * @return void
+	 */
+	protected function validatePackageKey($packageKey) {
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters in the format <VendorName>.<PackageKey>, please!', array($packageKey));
+			$this->quit(1);
+		}
 	}
 
 }
