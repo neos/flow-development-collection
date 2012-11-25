@@ -409,49 +409,46 @@ class UriBuilder {
 	 * @return array
 	 */
 	protected function mergeArgumentsWithRequestArguments(array $arguments) {
-		$requestArguments = array();
-
-		$request = $this->request;
 		if ($this->request !== $this->request->getMainRequest()) {
-			while ($request instanceof \TYPO3\Flow\Mvc\ActionRequest) {
-				$requestArguments = (array) $request->getArguments();
+			$subRequest = $this->request;
+			while ($subRequest instanceof \TYPO3\Flow\Mvc\ActionRequest) {
+				$requestArguments = (array)$subRequest->getArguments();
 
-					// remove all arguments of the current sub request
-				if ($this->request->getArgumentNamespace() !== '') {
-					$requestNamespace = $this->getRequestNamespacePath($this->request);
+				// Reset arguments for the request that is bound to this UriBuilder instance
+				if ($subRequest === $this->request) {
 					if ($this->addQueryString === FALSE) {
-						$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
+						$requestArguments = array();
 					} else {
 						foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
-							$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
+							unset($requestArguments[$argumentToBeExcluded]);
 						}
 					}
 				}
 
 					// merge special arguments (package, subpackage, controller & action) from main request
-				$requestPackageKey = $request->getControllerPackageKey();
+				$requestPackageKey = $subRequest->getControllerPackageKey();
 				if (!empty($requestPackageKey)) {
 					$requestArguments['@package'] = $requestPackageKey;
 				}
-				$requestSubpackageKey = $request->getControllerSubpackageKey();
+				$requestSubpackageKey = $subRequest->getControllerSubpackageKey();
 				if (!empty($requestSubpackageKey)) {
 					$requestArguments['@subpackage'] = $requestSubpackageKey;
 				}
-				$requestControllerName = $request->getControllerName();
+				$requestControllerName = $subRequest->getControllerName();
 				if (!empty($requestControllerName)) {
 					$requestArguments['@controller'] = $requestControllerName;
 				}
-				$requestActionName = $request->getControllerActionName();
+				$requestActionName = $subRequest->getControllerActionName();
 				if (!empty($requestActionName)) {
 					$requestArguments['@action'] = $requestActionName;
 				}
 
 				if (count($requestArguments) > 0) {
-					$requestArguments = $this->addNamespaceToArguments($requestArguments, $request);
+					$requestArguments = $this->addNamespaceToArguments($requestArguments, $subRequest);
 					$arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 				}
 
-				$request = $request->getParentRequest();
+				$subRequest = $subRequest->getParentRequest();
 			}
 		}
 		if ($this->addQueryString === TRUE) {
