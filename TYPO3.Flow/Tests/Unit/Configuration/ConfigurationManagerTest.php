@@ -894,6 +894,69 @@ EOD;
 	}
 
 	/**
+	 * @test
+	 */
+	public function buildSubrouteConfigurationsRemovesTrailingSlashFromEmptySubrouteUriPatterns() {
+		$routesConfiguration = array(
+			array(
+				'name' => 'Welcome',
+				'uriPattern' => 'welcome/<WelcomeSubroutes>',
+				'defaults' => array(
+					'@package' => 'Welcome'
+				),
+				'subRoutes' => array(
+					'WelcomeSubroutes' => array(
+						'package' => 'Welcome'
+					)
+				),
+			)
+		);
+		$subRoutesConfiguration = array(
+			array(
+				'name' => 'Standard Route',
+				'uriPattern' => 'foo',
+				'defaults' => array(
+					'@package' => 'OverriddenPackage',
+					'@controller' => 'Standard',
+					'@action' => 'index'
+				)
+			),
+			array(
+				'name' => 'Fallback',
+				'uriPattern' => '',
+				'defaults' => array(
+					'@controller' => 'Standard',
+					'@action' => 'redirect'
+				),
+			)
+		);
+		$expectedResult = array(
+			array(
+				'name' => 'Welcome :: Standard Route',
+				'uriPattern' => 'welcome/foo',
+				'defaults' => array(
+					'@package' => 'OverriddenPackage',
+					'@controller' => 'Standard',
+					'@action' => 'index'
+				),
+			),
+			array(
+				'name' => 'Welcome :: Fallback',
+				'uriPattern' => 'welcome',
+				'defaults' => array(
+					'@package' => 'Welcome',
+					'@controller' => 'Standard',
+					'@action' => 'redirect'
+				),
+			)
+		);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
+		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes');
+
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
 	 * @param string $configurationSourceCallbackName
 	 * @param string $contextName
 	 * @return \TYPO3\Flow\Configuration\ConfigurationManager
