@@ -82,7 +82,7 @@ class MvcPropertyMappingConfigurationService {
 			}
 		}
 		if ($fieldNamePrefix !== '') {
-			$formFieldArray = (isset($formFieldArray[$fieldNamePrefix]) ? $formFieldArray[$fieldNamePrefix] : array() );
+			$formFieldArray = (isset($formFieldArray[$fieldNamePrefix]) ? $formFieldArray[$fieldNamePrefix] : array());
 		}
 		return $this->serializeAndHashFormFieldArray($formFieldArray);
 	}
@@ -115,7 +115,6 @@ class MvcPropertyMappingConfigurationService {
 		$serializedTrustedProperties = $this->hashService->validateAndStripHmac($trustedPropertiesToken);
 
 		$trustedProperties = unserialize($serializedTrustedProperties);
-
 		foreach ($trustedProperties as $propertyName => $propertyConfiguration) {
 			if (!$controllerArguments->hasArgument($propertyName)) {
 				continue;

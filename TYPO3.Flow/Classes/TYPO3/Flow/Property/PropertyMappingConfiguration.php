@@ -77,7 +77,7 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 	/**
 	 * The behavior is as follows:
 	 *
-	 * - if a property has been explicitely forbidden using allowAllPropertiesExcept(...), it is directly rejected
+	 * - if a property has been explicitly forbidden using allowAllPropertiesExcept(...), it is directly rejected
 	 * - if a property has been allowed using allowProperties(...), it is directly allowed.
 	 * - if allowAllProperties* has been called, we allow unknown properties
 	 * - else, return FALSE.
@@ -91,6 +91,10 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 		}
 
 		if (isset($this->propertiesToBeMapped[$propertyName])) {
+			return TRUE;
+		}
+
+		if (isset($this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER])) {
 			return TRUE;
 		}
 

@@ -199,5 +199,15 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('v1', $configuration->getConfigurationValue('someConverter', 'k1'));
 	}
 
+	/**
+	 * @test
+	 */
+	public function forPropertyWithAsteriskAllowsArbitraryPropertyNamesWithShouldMap() {
+		$this->propertyMappingConfiguration->forProperty('items.*')->setTypeConverterOptions('someConverter', array('k1' => 'v1'));
+
+		$configuration = $this->propertyMappingConfiguration->forProperty('items');
+		$this->assertTrue($configuration->shouldMap(6));
+	}
+
 }
 ?>
