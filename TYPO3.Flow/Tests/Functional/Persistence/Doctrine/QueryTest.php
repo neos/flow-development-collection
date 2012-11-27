@@ -108,6 +108,84 @@ class QueryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function countIncludesAllResultsByDefault() {
+		$testEntityRepository = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$testEntityRepository->removeAll();
+
+		$testEntity1 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity1->setName('Flow');
+		$testEntityRepository->add($testEntity1);
+
+		$testEntity2 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity2->setName('some');
+		$testEntityRepository->add($testEntity2);
+
+		$testEntity3 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity3->setName('more');
+		$testEntityRepository->add($testEntity3);
+
+		$this->persistenceManager->persistAll();
+
+		$query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+
+		$this->assertEquals(3, $query->execute()->count());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countRespectsLimitConstraint() {
+		$testEntityRepository = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$testEntityRepository->removeAll();
+
+		$testEntity1 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity1->setName('Flow');
+		$testEntityRepository->add($testEntity1);
+
+		$testEntity2 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity2->setName('some');
+		$testEntityRepository->add($testEntity2);
+
+		$testEntity3 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity3->setName('more');
+		$testEntityRepository->add($testEntity3);
+
+		$this->persistenceManager->persistAll();
+
+		$query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+
+		$this->assertEquals(2, $query->setLimit(2)->execute()->count());
+	}
+
+	/**
+	 * @test
+	 */
+	public function countRespectsOffsetConstraint() {
+		$testEntityRepository = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$testEntityRepository->removeAll();
+
+		$testEntity1 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity1->setName('Flow');
+		$testEntityRepository->add($testEntity1);
+
+		$testEntity2 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity2->setName('some');
+		$testEntityRepository->add($testEntity2);
+
+		$testEntity3 = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity3->setName('more');
+		$testEntityRepository->add($testEntity3);
+
+		$this->persistenceManager->persistAll();
+
+		$query = new Query('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity');
+
+		$this->assertEquals(1, $query->setOffset(2)->execute()->count());
+	}
+
+	/**
+	 * @test
+	 */
 	public function comlexQueryWithJoinsCanBeExecutedAfterDeserialization() {
 		$postEntityRepository = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
 		$postEntityRepository->removeAll();
