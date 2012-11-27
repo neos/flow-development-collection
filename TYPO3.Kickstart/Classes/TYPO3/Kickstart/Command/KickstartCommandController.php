@@ -88,7 +88,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 */
 	public function actionControllerCommand($packageKey, $controllerName, $generateActions = FALSE, $generateTemplates = TRUE, $generateRelated = FALSE, $force = FALSE) {
 		$subpackageName = '';
-		if (strpos('/', $packageKey) !== FALSE) {
+		if (strpos($packageKey, '/') !== FALSE) {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
 		}
 		$this->validatePackageKey($packageKey);
