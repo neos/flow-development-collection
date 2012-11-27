@@ -148,7 +148,19 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 			$dqlQuery = clone $originalQuery;
 			$dqlQuery->setParameters($originalQuery->getParameters());
 			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('TYPO3\FLOW3\Persistence\Doctrine\CountWalker'));
-			return (int)$dqlQuery->getSingleScalarResult();
+			$offset = $dqlQuery->getFirstResult();
+			$limit = $dqlQuery->getMaxResults();
+			if ($offset !== NULL) {
+				$dqlQuery->setFirstResult(NULL);
+			}
+			$numberOfResults = (int)$dqlQuery->getSingleScalarResult();
+			if ($offset !== NULL) {
+				$numberOfResults = max(0, $numberOfResults - $offset);
+			}
+			if ($limit !== NULL) {
+				$numberOfResults = min($numberOfResults, $limit);
+			}
+			return $numberOfResults;
 		} catch (\Doctrine\ORM\ORMException $ormException) {
 			$this->systemLogger->logException($ormException);
 			return 0;
