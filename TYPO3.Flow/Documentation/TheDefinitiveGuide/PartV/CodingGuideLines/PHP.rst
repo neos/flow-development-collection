@@ -316,21 +316,17 @@ These are the rules for naming files:
 
 *File naming in TYPO3 Flow*
 
-``TYPO3.TemplateEngine/Classes/TemplateEngineInterface.php``
+``TYPO3.TemplateEngine/Classes/TYPO3/TemplateEngine/TemplateEngineInterface.php``
   Contains the interface ``\TYPO3\TemplateEngine\TemplateEngineInterface`` which is part
   of the package *TYPO3.TemplateEngine*
 
-``TYPO3.Flow/Classes/Error/RuntimeException.php``
+``TYPO3.Flow/Classes/TYPO3/Flow/Error/RuntimeException.php``
   Contains the ``\TYPO3\Flow\Error\RuntimeException`` being a part of the package
   *TYPO3.Flow*
 
-``DataAccess/Classes/Manager.php``
-  Contains class ``\DataAccess\Manager`` which is part of the package
-  *DataAccess*
-
-``TYPO3.Flow/Classes/Package/PackageManager.php``
-  Contains the class ``\TYPO3\Flow\Package\PackageManager`` which is part of the package
-  *TYPO3.Flow*
+``Acme.DataAccess/Classes/Acme/DataAccess/Manager.php``
+  Contains class ``\Acme\DataAccess\Manager`` which is part of the package
+  *Acme.DataAccess*
 
 ``TYPO3.Flow/Tests/Unit/Package/PackageManagerTest.php``
 	Contains the class ``\TYPO3\Flow\\Tests\Unit\Package\PackageManagerTest`` which

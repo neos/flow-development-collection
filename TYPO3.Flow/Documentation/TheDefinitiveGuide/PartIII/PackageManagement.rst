@@ -8,13 +8,7 @@ Package Management
 TYPO3 Flow is a package-based system. In fact, TYPO3 Flow itself is just a package as well - but
 obviously an important one. Packages act as a container for different matters: Most of
 them contain PHP code which adds certain functionality, others only contain documentation
-and yet other packages consist of templates, images or other resources. The
-`TYPO3 project`_ will host a package repository which acts as a convenient hub for
-interchanging TYPO3 Flow based packages with other community members.
-
-.. note::
-
-	At the time of writing the package repository for TYPO3 Flow is still in the planning phase.
+and yet other packages consist of templates, images or other resources.
 
 Package Locations
 =================
@@ -42,23 +36,18 @@ Packages/
   Application/
     The Application directory contains your own / application specific packages.
 
-The reason for separating packages into separate directories is that the core packages
-in *Framework/* can reside in a different, shared location and be symlinked
-from the application using it. In this case, just delete the *Framework* directory and replace it with
-a symlink pointing to the *Packages/Framework/* directory of the TYPO3 Flow distribution.
+  Libraries/
+    The Libraries directory contains 3rd party packages.
 
-We recommend that you keep a version of the TYPO3 Flow distribution in
-*/var/lib/flow/flow-x.y.z/* and flag all its content read-only for the web server's
-user. By doing that you can assure that no TYPO3 Flow package (or other PHP script) can tamper
-with the  TYPO3 Flow package and its built-in security framework.
 
 Additional Package Locations
 ----------------------------
 
-Apart from the *Application* and *Framework* package directories you may define your very own
-additional package locations by just creating another directory or symlink in the
-application's *Packages* directory. One example for this is the TYPO3 distribution, which
-expects packages with website resources in a folder named *Sites*.
+Apart from the *Application* and *Framework* package directories you
+may define your very own additional package locations by just creating
+another directory in the application's *Packages* directory. One
+example for this is the TYPO3 distribution, which expects packages with
+website resources in a folder named *Sites*.
 
 Loading Order
 -------------
@@ -76,7 +65,7 @@ into the right directories, everything will just work.
 
 The suggested directory layout inside a TYPO3 Flow package is as follows:
 
-Classes
+Classes/*VendorName*/*PackageName*
   This directory contains the actual source code for the package. Package authors
   are free to add (only!) class or interface files directly to this directory or add
   subdirectories to organize the content as necessary. All classes or interfaces
@@ -85,7 +74,7 @@ Classes
   "registered objects").
 
   One special file in here is the *Package.php* which contains the class with the
-  package's bootstrap code.
+  package's bootstrap code if needed.
 
 Configuration
   All kinds of configuration which are delivered with the package reside in this
@@ -97,13 +86,6 @@ Configuration
 Documentation
   Holds the package documentation. Please refer to the Documenter's Guide for
   more details about the directories and files within this directory.
-
-Meta
-  A folder which provides some meta information about the package. It must contain
-  *Package.xml*.
-  This mandatory file contains some basic information about the package, such as
-  title, description, author, constraints, version number and more. You should take
-  great care to keep this information updated.
 
 Resources
   Contains static resources the package needs, such as library code, template files,
@@ -150,7 +132,7 @@ detected and registered. However, this only works if you follow the naming rules
 for the class name as well as the filename. An example for a valid class name is
 ``\MyCompany\MyPackage\Controller\StandardController`` while the file containing this
 class would be named *StandardController.php* and is expected to be in a directory
-*MyPackage/Classes/Controller*.
+*MyCompany.MyPackage/Classes/MyCompany/MyPackage/Controller*.
 
 All details about naming files, classes, methods and variables correctly can be found in
 the TYPO3 Flow Coding Guidelines. You're highly encouraged to read (and follow) them.
@@ -169,11 +151,9 @@ we suggest that you use your company name as vendor namespace.
 Importing and Installing Packages
 =================================
 
-At this time the features for import and installation of packages have not been
-implemented fully. The current behavior is that all directories which are found below the
-*Packages* folder are assumed to be packages. Just make sure that you created a
-*Package.xml* file in the *Meta* directory of your package and a *Package.php* file
-in the *Classes* directory.
+All directories which are found below the *Packages* folder can hold
+packages. Just make sure that you created a *composer.json* file in the
+root directory of your package.
 
 If no *PackageStates.php* exists in your *Configuration* folder, it will be created
 and all found packages will be activated. If *PackageStates.php* exists, you can use the
@@ -199,14 +179,13 @@ To deactivate a package, use ``package:deactivate``. For a listing of all packag
 Package Manager
 ===============
 
-The Package Manager is in charge of downloading, installing, configuring and activating
+The Package Manager is in charge configuring, activating and deactivating
 packages and registers their objects and resources.
 
 .. note::
 
-	In its current form, the package manager only provides the basic functionality which
-	is necessary to use packages and their objects. More advanced features like installing
-	or configuring packages are of course planned.
+	Dependency management, package installation and constraints checking is
+	done by `Composer`_.
 
 Creating a New Package
 ======================
@@ -217,7 +196,7 @@ Use the ``package:create`` command to create a new package:
 
 	$ ./flow package:create Acme.Demo
 
-This will create the package in *Packages/Application*. After that, adjust *Meta/Package.xml*
+This will create the package in *Packages/Application*. After that, adjust *composer.json*
 to your needs. Apart from that no further steps are necessary.
 
 Package Meta Information
@@ -226,11 +205,17 @@ Package Meta Information
 All packages need to provide some meta information to TYPO3 Flow. The data is split in two
 files, depending on primary use.
 
-Classes/Package.php
--------------------
+composer.json
+-------------
 
-This file contains bootstrap code for the package. It must exist, but may contain only an
-empty class, if no bootstrap code is needed.
+The `Composer`_ manifest. It declares metadata like the name of a package as well
+as dependencies, like needed PHP extensions, version constraints and other packages.
+
+Classes/*VendorName*/*PackageName*/Package.php
+----------------------------------------------
+
+This file contains bootstrap code for the package. If no bootstrap code is needed,
+it does not need to exist.
 
 *Example: Minimal Package.php* ::
 
@@ -243,80 +228,17 @@ empty class, if no bootstrap code is needed.
 	 *
 	 */
 	class Package extends BasePackage {
+
+		/**
+		* Invokes custom PHP code directly after the package manager has been initialized.
+		*
+		* @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+		* @return void
+		*/
+		public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+  			…
+		}
 	}
-
-Meta/Package.xml
-----------------
-
-This file contains some meta information for the package manager. The format of this file
-follows a RelaxNG schema which is available at
-`http://typo3.org/ns/2008/flow/package/Package.rng`_.
-
-Here is an example of a valid *Package.xml* file:
-
-*Example: Package.xml*
-
-.. code-block:: xml
-
-	<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-	<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	         xmlns="http://typo3.org/ns/2008/flow/package" version="1.0">
-	   <key>TestPackage</key>
-	   <title>Test Package</title>
-	   <description>Test to demonstrate the features of Package.xml</description>
-	   <version>0.0.1</version>
-	   <categories>
-	      <category>System</category>
-	      <category>Testing</category>
-	   </categories>
-	   <parties>
-	      <person role="Maintainer">
-	         <name>John Smith</name>
-	         <email>john@smith.com</email>
-	         <organisation>Smith Ltd.</organisation>
-	         <repositoryUserName>jsmith</repositoryUserName>
-	      </person>
-	      <organisation role="Sponsor">
-	         <name>John Doe Co.</name>
-	         <email>info@johndoe.com</email>
-	         <website>www.johndoe.com</website>
-	      </organisation>
-	   </parties>
-	   <constraints>
-	      <depends>
-	         <package minVersion="1.0.0" maxVersion="1.9.9">TYPO3 Flow</package>
-	         <system type="PHP" minVersion="5.1.0" />
-	         <system type="PHPExtension">xml</system>
-	         <system type="PEAR" minVersion="1.5.1">XML_RPC</system>
-	      </depends>
-	      <conflicts>
-	         <system type="OperatingSystem">Windows_NT</system>
-	      </conflicts>
-	      <suggests>
-	         <system type="Memory">16M</system>
-	      </suggests>
-	   </constraints>
-
-	   <!-- The following elements are only used and generated by the repository -->
-	   <repository>
-	      <downloads>
-	         <total>3929</total>
-	         <thisVersion>444</thisVersion>
-	      </downloads>
-	      <uploads>
-	         <upload>
-	            <comment>Just a comment...</comment>
-	            <repositoryUserName>jsmith</repositoryUserName>
-	            <timestamp>2008-04-22T17:23:09Z</timestamp>
-	         </upload>
-	         <upload>
-	            <comment/>
-	            <repositoryUserName>jsmith</repositoryUserName>
-	            <timestamp>2008-04-19T03:54:13Z</timestamp>
-	         </upload>
-	      </uploads>
-	   </repository>
-	</package>
 
 .. _TYPO3 project:         http://typo3.org
 .. _http://typo3.org/ns/2008/flow/package/Package.rng: http://typo3.org/ns/2008/flow/package/Package.rng

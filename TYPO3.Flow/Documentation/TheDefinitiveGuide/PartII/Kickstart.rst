@@ -38,7 +38,7 @@ To get an overview of all available commands, enter ``./flow help``:
 
 	The following commands are currently available:
 
-	PACKAGE "TYPO3.Flow":
+	PACKAGE "TYPO3.FLOW":
 	-------------------------------------------------------------------------------
 	* flow:cache:flush                         Flush all caches
 	  cache:warmup                             Warm up caches
@@ -105,7 +105,7 @@ The kickstarter will create two files:
 
 .. code-block:: none
 
-	Created .../TYPO3.Blog/Classes/Controller/StandardController.php
+	Created .../TYPO3.Blog/Classes/TYPO3/Blog/Controller/StandardController.php
 	Created .../TYPO3.Blog/Resources/Private/Templates/Standard/Index.html
 
 and the directory *Packages/Application/TYPO3.Blog/* should now contain the
@@ -117,13 +117,10 @@ skeleton of the future ``Blog`` package:
 	myhost:Application johndoe$ find TYPO3.Blog
 	TYPO3.Blog
 	TYPO3.Blog/Classes
-	TYPO3.Blog/Classes/Controller
-	TYPO3.Blog/Classes/Controller/StandardController.php
-	TYPO3.Blog/Classes/Package.php
+	TYPO3.Blog/Classes/TYPO3/Blog/Controller
+	TYPO3.Blog/Classes/TYPO3/Blog/Controller/StandardController.php
 	TYPO3.Blog/Configuration
 	TYPO3.Blog/Documentation
-	TYPO3.Blog/Meta
-	TYPO3.Blog/Meta/Package.xml
 	TYPO3.Blog/Resources
 	TYPO3.Blog/Resources/Private
 	TYPO3.Blog/Resources/Private/Templates
@@ -161,7 +158,7 @@ resulting in:
 
 .. code-block:: none
 
-	Created .../TYPO3.Blog/Classes/Controller/SetupController.php
+	Created .../TYPO3.Blog/Classes/TYPO3/Blog/Controller/SetupController.php
 	Created .../TYPO3.Blog/Resources/Private/Templates/Setup/Index.html
 
 For the ``PostController`` we know that we'll need some standard actions, so let's
@@ -175,9 +172,9 @@ resulting in:
 
 .. code-block:: none
 
-	Created .../TYPO3.Blog/Classes/Domain/Model/Post.php
-	Created .../TYPO3.Blog/Classes/Domain/Repository/PostRepository.php
-	Created .../TYPO3.Blog/Classes/Controller/PostController.php
+	Created .../TYPO3.Blog/Classes/TYPO3/Blog/Domain/Model/Post.php
+	Created .../TYPO3.Blog/Classes/TYPO3/Blog/Domain/Repository/PostRepository.php
+	Created .../TYPO3.Blog/Classes/TYPO3/Blog/Controller/PostController.php
 	Created .../TYPO3.Blog/Resources/Private/Layouts/Default.html
 	Created .../TYPO3.Blog/Resources/Private/Templates/Post/Index.html
 	Created .../TYPO3.Blog/Resources/Private/Templates/Post/New.html
