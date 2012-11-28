@@ -138,11 +138,11 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \InvalidArgumentException
 	 */
-	public function setStatusThrowsExceptionOnInvalidCode() {
+	public function setStatusReturnsUnknownStatusMessageOnInvalidCode() {
 		$response = new Response();
 		$response->setStatus(924);
+		$this->assertEquals('924 Unknown Status', $response->getStatus());
 	}
 
 	/**
