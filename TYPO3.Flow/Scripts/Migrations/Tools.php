@@ -44,18 +44,9 @@ class Tools {
 					continue;
 				}
 
-				if (file_exists(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Meta/Package.xml')))) {
-					$meta = self::readPackageMetaData(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Meta/Package.xml')));
-				} else {
-					$meta = NULL;
-				}
+				$meta = self::readPackageMetaData(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'Meta/Package.xml')));
+				$composerManifest = self::readPackageManifest(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')));
 
-				if (file_exists(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')))) {
-					$json = file_get_contents(Files::concatenatePaths(array($packageFileInfo->getPathname(), 'composer.json')));
-					$composerManifest = json_decode($json);
-				} else {
-					$composerManifest = NULL;
-				}
 				$packagesData[$packageKey] = array(
 					'packageKey' => $packageKey,
 					'category' => $category,
@@ -69,24 +60,42 @@ class Tools {
 	}
 
 	/**
+	 * Read the package manifest from the composer.json file at $pathAndFileName
+	 *
+	 * @param string $pathAndFileName
+	 * @return mixed|NULL
+	 */
+	static protected function readPackageManifest($pathAndFileName) {
+		if (file_exists($pathAndFileName)) {
+			$json = file_get_contents($pathAndFileName);
+			return json_decode($json);
+		} else {
+			return NULL;
+		}
+	}
+
+	/**
 	 * Read the package metadata from the Package.xml file at $pathAndFileName
 	 *
 	 * @param string $pathAndFileName
-	 * @return array
+	 * @return array|NULL
 	 */
 	static protected function readPackageMetaData($pathAndFileName) {
+		if (file_exists($pathAndFileName)) {
+			$xml = simplexml_load_file($pathAndFileName);
+			$meta = array();
+			if ($xml === FALSE) {
+				$meta['description'] = '[Package.xml could not be read.]';
+			} else {
+				$meta['version'] = (string)$xml->version;
+				$meta['title'] = (string)$xml->title;
+				$meta['description'] = (string)$xml->description;
+			}
 
-		$xml = simplexml_load_file($pathAndFileName);
-		$meta = array();
-		if ($xml === FALSE) {
-			$meta['description'] = '[Package.xml could not be read.]';
+			return $meta;
 		} else {
-			$meta['version'] = (string)$xml->version;
-			$meta['title'] = (string)$xml->title;
-			$meta['description'] = (string)$xml->description;
+			return NULL;
 		}
-
-		return $meta;
 	}
 
 	/**
@@ -99,7 +108,10 @@ class Tools {
 	 */
 	static public function searchAndReplace($search, $replace, $pathAndFilename) {
 		$pathInfo = pathinfo($pathAndFilename);
-		if (!isset($pathInfo['filename']) || $pathAndFilename === __FILE__) return FALSE;
+		if (!isset($pathInfo['filename']) || $pathAndFilename === __FILE__) {
+			return FALSE;
+		}
+
 		$file = file_get_contents($pathAndFilename);
 		$fileBackup = $file;
 		$file = str_replace($search, $replace, $file);
@@ -120,7 +132,10 @@ class Tools {
 	 */
 	static public function searchAndReplaceRegex($search, $replace, $pathAndFilename) {
 		$pathInfo = pathinfo($pathAndFilename);
-		if (!isset($pathInfo['filename']) || $pathAndFilename === __FILE__) return FALSE;
+		if (!isset($pathInfo['filename']) || $pathAndFilename === __FILE__) {
+			return FALSE;
+		}
+
 		$file = file_get_contents($pathAndFilename);
 		$fileBackup = $file;
 		$file = preg_replace($search, $replace, $file);
