@@ -14,8 +14,11 @@ namespace TYPO3\Flow\Security\Policy;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The policy service reads the policy configuration. The security adivce asks this service which methods have to be intercepted by a security interceptor.
- * The access decision voters get the roles and privileges configured (in the security policy) for a specific method invocation from this service.
+ * The policy service reads the policy configuration. The security advice asks
+ * this service which methods have to be intercepted by a security interceptor.
+ *
+ * The access decision voters get the roles and privileges configured (in the
+ * security policy) for a specific method invocation from this service.
  *
  * @Flow\Scope("singleton")
  */
@@ -63,13 +66,13 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 * Array of pointcut filters used to match against the configured policy.
 	 * @var array
 	 */
-	public $filters = array();
+	protected $filters = array();
 
 	/**
 	 * A multidimensional array used containing the roles and privileges for each intercepted method
 	 * @var array
 	 */
-	public $acls = array();
+	protected $acls = array();
 
 	/**
 	 * The constraints for entity resources
@@ -279,7 +282,9 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 */
 	public function getRolesForJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
-		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
+		if (!isset($this->acls[$methodIdentifier])) {
+			throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
+		}
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
@@ -302,7 +307,9 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		$roleIdentifier = (string)$role;
 
-		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		if (!isset($this->acls[$methodIdentifier])) {
+			throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		}
 		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) {
 			return array();
 		}

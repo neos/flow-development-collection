@@ -104,7 +104,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockController = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerInterface', array('processRequest'));
 		$mockController->expects($this->at(0))->method('processRequest')->will($this->returnCallback(
-			function(ActionRequest $request) use($nextRequest) {
+			function(ActionRequest $request) use ($nextRequest) {
 				$request->setDispatched(TRUE);
 				$forwardException = new ForwardException();
 				$forwardException->setNextRequest($nextRequest);
@@ -112,7 +112,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			}
 		));
 		$mockController->expects($this->at(1))->method('processRequest')->will($this->returnCallback(
-			function(ActionRequest $request) use($nextRequest) {
+			function(ActionRequest $request) use ($nextRequest) {
 					// NOTE: PhpUnit creates a clone of $nextRequest, thus $request is not the same instance as expected.
 				if ($request == $nextRequest) {
 					$nextRequest->setDispatched(TRUE);
@@ -128,7 +128,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Mvc\Exception\InfiniteLoopException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InfiniteLoopException
 	 */
 	public function dispatchThrowsAnInfiniteLoopExceptionIfTheRequestCouldNotBeDispachedAfter99Iterations() {
 		$requestCallCounter = 0;

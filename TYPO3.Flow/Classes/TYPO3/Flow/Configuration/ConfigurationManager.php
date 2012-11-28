@@ -329,6 +329,7 @@ class ConfigurationManager {
 	 * If a cache file with previously saved configuration exists, it is removed.
 	 *
 	 * @return void
+	 * @throws \TYPO3\Flow\Configuration\Exception
 	 */
 	public function flushConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';

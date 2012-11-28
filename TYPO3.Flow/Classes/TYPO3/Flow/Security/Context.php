@@ -274,11 +274,9 @@ class Context {
 
 		$activeTokens = array();
 		foreach ($this->activeTokens as $token) {
-			if (($token instanceof $className) === FALSE) {
-				continue;
+			if ($token instanceof $className) {
+				$activeTokens[] = $token;
 			}
-
-			$activeTokens[] = $token;
 		}
 
 		return $activeTokens;

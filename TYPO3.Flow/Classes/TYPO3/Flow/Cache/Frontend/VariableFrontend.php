@@ -69,7 +69,9 @@ class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
+		}
 
 		$rawResult = $this->backend->get($entryIdentifier);
 		if ($rawResult === FALSE) {
