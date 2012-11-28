@@ -346,7 +346,18 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildRemovesSpecifiedQueryParametersInCurrentNamespaceIfArgumentsToBeExcludedFromQueryStringIsSetAndRequestIsOfTypeSubRequest() {
-		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('SubNamespace' => array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Bar'), 'Some' => 'Retained Arguments From Request')));
+		$this->mockMainRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Retained Arguments From Request')));
+
+		$this->mockSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubNamespace'));
+
+		$this->mockSubRequest->expects($this->any())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => array('Arguments' => 'From Request'))));
+
 		$this->mockRouter->expects($this->once())->method('resolve')->with(array('SubNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Retained Arguments From Request'))->will($this->returnValue('resolvedUri'));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
@@ -389,7 +400,18 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function buildDoesNotMergeRootRequestArgumentsWithTheCurrentArgumentNamespaceIfRequestIsOfTypeSubRequest() {
 		$expectedArguments = array('SubNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Other Argument From Request');
-		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('SubNamespace' => array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed'), 'Some' => 'Other Argument From Request')));
+
+		$this->mockMainRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Other Argument From Request')));
+
+		$this->mockSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubNamespace'));
+
+		$this->mockSubRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed')));
 
 		$this->uriBuilder->setRequest($this->mockSubRequest);
 		$this->uriBuilder->setArguments(array('SubNamespace' => array('Foo' => 'Overruled')));
@@ -403,8 +425,22 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function buildDoesNotMergeRootRequestArgumentsWithTheCurrentArgumentNamespaceIfRequestIsOfTypeSubRequestAndHasAParentSubRequest() {
 		$expectedArguments = array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Overruled')), 'Some' => 'Other Argument From Request');
-		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed')), 'Some' => 'Other Argument From Request')));
-		$this->mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubSubNamespace'));
+
+		$this->mockMainRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Other Argument From Request')));
+
+		$this->mockSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubNamespace'));
+
+		$this->mockSubSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubSubNamespace'));
+
+		$this->mockSubSubRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed')));
 
 		$this->uriBuilder->setRequest($this->mockSubSubRequest);
 		$this->uriBuilder->setArguments(array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Overruled'))));
@@ -418,8 +454,25 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function buildMergesArgumentsOfTheParentRequestIfRequestIsOfTypeSubRequestAndHasAParentSubRequest() {
 		$expectedArguments = array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Overruled'), 'Some' => 'Retained Argument From Parent Request'), 'Some' => 'Other Argument From Request');
-		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed'), 'Some' => 'Retained Argument From Parent Request'), 'Some' => 'Other Argument From Request')));
-		$this->mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubSubNamespace'));
+		$this->mockMainRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Other Argument From Request')));
+
+		$this->mockSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubNamespace'));
+
+		$this->mockSubRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Some' => 'Retained Argument From Parent Request')));
+
+		$this->mockSubSubRequest->expects($this->any())
+			->method('getArgumentNamespace')
+			->will($this->returnValue('SubSubNamespace'));
+
+		$this->mockSubSubRequest->expects($this->once())
+			->method('getArguments')
+			->will($this->returnValue(array('Foo' => 'Should be overridden', 'Bar' => 'Should be removed')));
 
 		$this->uriBuilder->setRequest($this->mockSubSubRequest);
 		$this->uriBuilder->setArguments(array('SubNamespace' => array('SubSubNamespace' => array('Foo' => 'Overruled'))));
