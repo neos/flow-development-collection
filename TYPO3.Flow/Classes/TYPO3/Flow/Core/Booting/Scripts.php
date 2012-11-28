@@ -88,9 +88,9 @@ class Scripts {
 	 */
 	static public function initializePackageManagement(Bootstrap $bootstrap) {
 		$packageManager = new \TYPO3\Flow\Package\PackageManager();
+		$bootstrap->setEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface', $packageManager);
 		$packageManager->injectClassLoader($bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader'));
 		$packageManager->initialize($bootstrap);
-		$bootstrap->setEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface', $packageManager);
 	}
 
 	/**

@@ -43,7 +43,12 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockClassLoader = $this->getMock('TYPO3\Flow\Core\ClassLoader');
 
+		$composerNameToPackageKeyMap = array(
+			'typo3/flow' => 'TYPO3.Flow'
+		);
+
 		$this->packageManager->injectClassLoader($mockClassLoader);
+		$this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
 		$this->packageManager->initialize($mockBootstrap, 'vfs://Test/Packages/', 'vfs://Test/Configuration/PackageStates.php');
 	}
 
@@ -170,6 +175,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
+		$packageFactory = new \TYPO3\Flow\Package\PackageFactory($packageManager);
+		$this->inject($packageManager, 'packageFactory', $packageFactory);
+
 		$packageManager->_set('packages', array());
 		$packageManager->_call('scanAvailablePackages');
 
@@ -200,6 +208,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$packageManager = $this->getAccessibleMock('TYPO3\Flow\Package\PackageManager', array('dummy'));
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+
+		$packageFactory = new \TYPO3\Flow\Package\PackageFactory($packageManager);
+		$this->inject($packageManager, 'packageFactory', $packageFactory);
 
 		$packageManager->_set('packageStatesConfiguration', array(
 			'packages' => array(
@@ -242,6 +253,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
+		$packageFactory = new \TYPO3\Flow\Package\PackageFactory($packageManager);
+		$this->inject($packageManager, 'packageFactory', $packageFactory);
+
 		$packageManager->_set('packages', array());
 		$packageManager->_call('scanAvailablePackages');
 
@@ -251,7 +265,8 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'state' => 'active',
 				'packagePath' => 'Application/' . $packageKey . '/',
 				'classesPath' => 'Classes/',
-				'manifestPath' => ''
+				'manifestPath' => '',
+				'composerName' => $packageKey
 			);
 		}
 
@@ -548,5 +563,41 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedSortedPackageKeys, array_keys($packageManager->_get('packages')), 'The packages have not been ordered according to their dependencies!');
 		$this->assertEquals($expectedSortedPackageStatesConfiguration, $packageManager->_get('packageStatesConfiguration'), 'The package states configurations have not been ordered according to their dependencies!');
 	}
+
+	/**
+	 * @return array
+	 */
+	public function composerNamesAndPackageKeys() {
+		return array(
+			array('imagine/Imagine', 'imagine.Imagine'),
+			array('imagine/imagine', 'imagine.Imagine'),
+			array('typo3/flow', 'TYPO3.Flow'),
+			array('TYPO3/Flow', 'TYPO3.Flow')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider composerNamesAndPackageKeys
+	 */
+	public function getPackageKeyFromComposerNameIgnoresCaseDifferences($composerName, $packageKey) {
+
+		$packageStatesConfiguration = array('packages' =>
+			array(
+				'TYPO3.Flow' => array(
+					'composerName' => 'typo3/flow'
+				),
+				'imagine.Imagine' => array(
+					'composerName' => 'imagine/Imagine'
+				)
+			)
+		);
+
+		$packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('resolvePackageDependencies'));
+		$packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
+
+		$this->assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
+	}
+
 }
 ?>

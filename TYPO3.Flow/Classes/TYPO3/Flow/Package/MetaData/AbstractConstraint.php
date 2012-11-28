@@ -30,18 +30,6 @@ abstract class AbstractConstraint {
 	protected $value;
 
 	/**
-	 * The minimum version
-	 * @var string
-	 */
-	protected $minVersion;
-
-	/**
-	 * The maximum version
-	 * @var string
-	 */
-	protected $maxVersion;
-
-	/**
 	 * Meta data constraint constructor
 	 *
 	 * @param string $constraintType
@@ -61,20 +49,6 @@ abstract class AbstractConstraint {
 	 */
 	public function getValue() {
 		return $this->value;
-	}
-
-	/**
-	 * @return string The minimum version
-	 */
-	public function getMinVersion() {
-		return $this->minVersion;
-	}
-
-	/**
-	 * @return string The maximum version
-	 */
-	public function getMaxVersion() {
-		return $this->maxVersion;
 	}
 
 	/**

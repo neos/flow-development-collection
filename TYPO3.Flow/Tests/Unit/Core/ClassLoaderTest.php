@@ -38,11 +38,11 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/composer.json', '{"name": "acme/myapp", "type": "flow-test"}');
-		$package1 = new \TYPO3\Flow\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
+		$package1 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
 
 		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/composer.json', '{"name": "acme/myappaddon", "type": "flow-test"}');
-		$package2 = new \TYPO3\Flow\Package\Package('Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
+		$package2 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
 
 		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
 		$this->inject($this->classLoader, 'packagesPath', 'vfs://Test/Packages/');
@@ -105,6 +105,5 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->classLoader->loadClass('Acme\MyAppAddon\Class');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
-
 }
 ?>
