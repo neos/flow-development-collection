@@ -579,12 +579,14 @@ class Bootstrap {
 	 */
 	protected function requireAutoloaderForPhpUnit() {
 		$composerAutoloader = __DIR__ . '/../../../../../../Libraries/autoload.php';
-		if(file_exists($composerAutoloader)) {
+		$phpUnitInstallationFolder = __DIR__ . '/../../../../../../Libraries/phpunit/phpunit/';
+		if (file_exists($composerAutoloader) && is_dir($phpUnitInstallationFolder)) {
 			require_once($composerAutoloader);
 		} elseif (stream_resolve_include_path('PHPUnit/Autoload.php') !== FALSE) {
 			require_once('PHPUnit/Autoload.php');
 		} else {
-			exit(PHP_EOL . 'TYPO3 Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" and "' . $composerAutoloader . '" without success.');
+			echo PHP_EOL . 'TYPO3 Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" and "' . $composerAutoloader . '" without success.';
+			exit(1);
 		}
 	}
 }
