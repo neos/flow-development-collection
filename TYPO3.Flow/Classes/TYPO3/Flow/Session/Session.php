@@ -24,15 +24,17 @@ use TYPO3\Flow\Http\Cookie;
 /**
  * A modular session implementation based on the caching framework.
  *
- * @Flow\Scope("singleton")
+ * You may access the currently active session in userland code. In order to do this,
+ * inject TYPO3\Flow\Session\SessionInterface and NOT just TYPO3\Flow\Session\Session.
+ * The former will be a unique instance (singleton) representing the current session
+ * while the latter would be a completely new session instance!
+ *
+ * You can use the Session Manager for accessing sessions which are not currently
+ * active.
+ *
+ * @see \TYPO3\Flow\Session\SessionManager
  */
-class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Session\Aspect\LazyLoadingAspect
-	 */
-	protected $lazyLoadingAspect;
+class Session implements SessionInterface {
 
 	/**
 	 * @Flow\Inject
@@ -128,6 +130,13 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	protected $started = FALSE;
 
 	/**
+	 * If this session is remote or the "current" session
+	 *
+	 * @var boolean
+	 */
+	protected $remote = FALSE;
+
+	/**
 	 * @var \TYPO3\Flow\Http\Request
 	 */
 	protected $request;
@@ -138,37 +147,35 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	protected $response;
 
 	/**
+	 *
+	 */
+	public function __construct($sessionIdentifier = NULL, $storageIdentifier = NULL) {
+		if ($sessionIdentifier !== NULL) {
+			if ($storageIdentifier === NULL) {
+				throw new \InvalidArgumentException('Session requires a storage identifier for remote sessions.', 1354045988);
+			}
+			$this->sessionIdentifier = $sessionIdentifier;
+			$this->storageIdentifier = $storageIdentifier;
+			$this->started = TRUE;
+			$this->remote = TRUE;
+		}
+	}
+
+	/**
 	 * Injects the Flow settings
 	 *
 	 * @param array $settings Settings of the Flow package
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
-		$this->sessionCookieName = $settings['session']['FlowSession']['name'];
-		$this->sessionCookieLifetime =  (integer)$settings['session']['FlowSession']['cookie']['lifetime'];
-		$this->sessionCookieDomain =  $settings['session']['FlowSession']['cookie']['domain'];
-		$this->sessionCookiePath =  $settings['session']['FlowSession']['cookie']['path'];
-		$this->sessionCookieSecure =  (boolean)$settings['session']['FlowSession']['cookie']['secure'];
-		$this->sessionCookieHttpOnly =  (boolean)$settings['session']['FlowSession']['cookie']['httponly'];
-		$this->garbageCollectionProbability = $settings['session']['FlowSession']['garbageCollectionProbability'];
+		$this->sessionCookieName = $settings['session']['name'];
+		$this->sessionCookieLifetime =  (integer)$settings['session']['cookie']['lifetime'];
+		$this->sessionCookieDomain =  $settings['session']['cookie']['domain'];
+		$this->sessionCookiePath =  $settings['session']['cookie']['path'];
+		$this->sessionCookieSecure =  (boolean)$settings['session']['cookie']['secure'];
+		$this->sessionCookieHttpOnly =  (boolean)$settings['session']['cookie']['httponly'];
+		$this->garbageCollectionProbability = $settings['session']['garbageCollectionProbability'];
 		$this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
-	}
-
-	/**
-	 * Initialize request, response and session cookie
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$requestHandler = $this->bootstrap->getActiveRequestHandler();
-		if ($requestHandler instanceof HttpRequestHandlerInterface) {
-			$this->request = $requestHandler->getHttpRequest();
-			$this->response = $requestHandler->getHttpResponse();
-
-			if ($this->request->hasCookie($this->sessionCookieName)) {
-				$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);
-			}
-		}
 	}
 
 	/**
@@ -182,12 +189,26 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	}
 
 	/**
+	 * Tells if the session is local (the current session bound to the current HTTP
+	 * request) or remote (retrieved through the Session Manager).
+	 *
+	 * @return boolean TRUE if the session is remote, FALSE if this is the current session
+	 * @api
+	 */
+	public function isRemote() {
+		return $this->remote;
+	}
+
+	/**
 	 * Starts the session, if it has not been already started
 	 *
 	 * @return void
 	 * @api
 	 */
 	public function start() {
+		if ($this->request === NULL) {
+			$this->initializeHttpAndCookie();
+		}
 		if ($this->started === FALSE && $this->request !== NULL) {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
 			$this->storageIdentifier = Algorithms::generateUUID();
@@ -208,7 +229,10 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @api
 	 */
 	public function canBeResumed() {
-		if ($this->sessionCookie === NULL || $this->request === NULL) {
+		if ($this->request === NULL) {
+			$this->initializeHttpAndCookie();
+		}
+		if ($this->sessionCookie === NULL || $this->request === NULL || $this->started === TRUE) {
 			return FALSE;
 		}
 		$sessionInfo = $this->cache->get($this->sessionCookie->getValue());
@@ -239,7 +263,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 						$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
 						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
 							$this->objectManager->setInstance($objectName, $object);
-							$this->lazyLoadingAspect->registerSessionInstance($objectName, $object);
+							$this->objectManager->get('TYPO3\Flow\Session\Aspect\LazyLoadingAspect')->registerSessionInstance($objectName, $object);
 							$object->__wakeup();
 						}
 					}
@@ -263,7 +287,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 */
 	public function getId() {
 		if ($this->started !== TRUE) {
-			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.', 1351171517);
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.)', 1351171517);
 		}
 		return $this->sessionIdentifier;
 	}
@@ -278,6 +302,9 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	public function renewId() {
 		if ($this->started !== TRUE) {
 			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
+		}
+		if ($this->remote === TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionIdentifier), 1354034230);
 		}
 
 		$this->sessionIdentifier = Algorithms::generateRandomString(32);
@@ -355,11 +382,12 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		if ($this->started !== TRUE) {
 			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to destroy a session which has not been started yet.', 1351162668);
 		}
-
-		if (!$this->response->hasCookie($this->sessionCookieName)) {
-			$this->response->setCookie($this->sessionCookie);
+		if ($this->remote !== TRUE) {
+			if (!$this->response->hasCookie($this->sessionCookieName)) {
+				$this->response->setCookie($this->sessionCookie);
+			}
+			$this->sessionCookie->expire();
 		}
-		$this->sessionCookie->expire();
 
 		$this->cache->flushByTag($this->storageIdentifier);
 		$this->started = FALSE;
@@ -415,7 +443,7 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @return void
 	 */
 	public function shutdownObject() {
-		if ($this->started === TRUE) {
+		if ($this->started === TRUE && $this->remote === FALSE) {
 			$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
 			$sessionInfo = array(
 				'lastActivityTimestamp' => time(),
@@ -444,6 +472,24 @@ class FlowSession implements \TYPO3\Flow\Session\SessionInterface {
 		$this->collectGarbage();
 		return $expired;
 	}
+
+	/**
+	 * Initialize request, response and session cookie
+	 *
+	 * @return void
+	 */
+	protected function initializeHttpAndCookie() {
+		$requestHandler = $this->bootstrap->getActiveRequestHandler();
+		if ($requestHandler instanceof HttpRequestHandlerInterface) {
+			$this->request = $requestHandler->getHttpRequest();
+			$this->response = $requestHandler->getHttpResponse();
+
+			if ($this->request->hasCookie($this->sessionCookieName)) {
+				$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);
+			}
+		}
+	}
+
 }
 
 ?>

@@ -152,11 +152,6 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	public function setUp() {
 		$this->objectManager = self::$bootstrap->getObjectManager();
 
-		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
-		if ($session->isStarted()) {
-			$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
-		}
-
 		if (static::$testablePersistenceEnabled === TRUE) {
 			self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->initialize();
 			if (is_callable(array(self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface'), 'compile'))) {
@@ -168,11 +163,17 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 			$this->persistenceManager = $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		}
 
-			// HTTP must be initialized before security because security relies on an
-			// HTTP request being available via the request handler:
+			// HTTP must be initialized before Session and Security because they rely
+			// on an HTTP request being available via the request handler:
 		if ($this->testableHttpEnabled === TRUE || $this->testableSecurityEnabled === TRUE) {
 			$this->setupHttp();
+
+			$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+			if ($session->isStarted()) {
+				$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
+			}
 		}
+
 		if ($this->testableSecurityEnabled === TRUE) {
 			$this->setupSecurity();
 		}

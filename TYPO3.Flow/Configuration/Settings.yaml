@@ -345,84 +345,44 @@ TYPO3:
       # automatically.
       inactivityTimeout: 3600
 
-      PhpSession:
+      # A specific name for the session, used in the session cookie.
+      # The session name must be alphanumerical and must contain at least one
+      # character – not only numbers.
+      #
+      # If left empty, the session name will be determined from the base URL.
+      name: 'TYPO3_Flow_Session'
 
-        # A specific name for the session, used in the session cookie.
-        # The session name must be alphanumerical and must contain at least one
-        # character – not only numbers.
-        #
-        # If left empty, the session name will be determined from the base URL.
-        name: 'TYPO3_Flow_Session'
+      # The probability in percent of a session shutdown triggering a garbage
+      # collection which removes expired session data from other sessions.
+      #
+      # Examples:
+      #    1    (would be a 1% chance to clean up)
+      #   20    (would be a 20% chance to clean up)
+      #    0.42 (would be a 0.42 % chance to clean up)
+      garbageCollectionProbability: 1
 
-        # Where to store session data in the filesystem. If this is empty, a default
-        # location is used (Data/Temporary/<context>/Sessions/).
-        savePath:
+      # Configuration for the session cookie:
+      cookie:
 
-        # PHP default is used if one of the following parameters is empty.
-        cookie:
+        # Cookie lifetime in seconds
+        # Note that if you want to sessions expire automatically, you should rather
+        # set inactivityTimeout to the wanted value. Only in rare cases you'd want
+        # some other cookie lifetime than "0".
+        lifetime: 0
 
-          # Cookie lifetime in seconds
-          # Note that if you want to sessions expire automatically, you should rather
-          # set inactivityTimeout to the wanted value. Only in rare cases you'd want
-          # some other cookie lifetime than "0".
-          lifetime: 0
+        # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
+        path: /
 
-          # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
-          path: /
+        # Force SSL cookies.
+        secure: FALSE
 
-          # The cookie domain. Use dot notation if cookies should be valid for
-          # all subdomains.
-          #domain: .domain.com
+        # Allow http access only.
+        httponly: TRUE
 
-          # Force SSL cookies.
-          secure: FALSE
-
-          # Allow http access only.
-          httponly: TRUE
-
-          # Restrict cookie to a specific domain.
-          domain: NULL
-
-      FlowSession:
-
-        # A specific name for the session, used in the session cookie.
-        # The session name must be alphanumerical and must contain at least one
-        # character – not only numbers.
-        #
-        # If left empty, the session name will be determined from the base URL.
-        name: 'TYPO3_Flow_Session'
-
-        # The probability in percent of a session shutdown triggering a garbage
-        # collection which removes expired session data from other sessions.
-        #
-        # Examples:
-        #    1    (would be a 1% chance to clean up)
-        #   20    (would be a 20% chance to clean up)
-        #    0.42 (would be a 0.42 % chance to clean up)
-        garbageCollectionProbability: 1
-
-        # Configuration for the session cookie:
-        cookie:
-
-          # Cookie lifetime in seconds
-          # Note that if you want to sessions expire automatically, you should rather
-          # set inactivityTimeout to the wanted value. Only in rare cases you'd want
-          # some other cookie lifetime than "0".
-          lifetime: 0
-
-          # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
-          path: /
-
-          # Force SSL cookies.
-          secure: FALSE
-
-          # Allow http access only.
-          httponly: TRUE
-
-          # The cookie domain. Use dot notation if cookies should be valid for
-          # all subdomains.
-          #domain: .domain.com
-          domain: NULL
+        # The cookie domain. Use dot notation if cookies should be valid for
+        # all subdomains.
+        #domain: .domain.com
+        domain: NULL
 
     utility:
       environment:

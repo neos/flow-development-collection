@@ -12,8 +12,7 @@ namespace TYPO3\Flow\Session;
  *                                                                        */
 
 /**
- * Contract for a simple session.
- *
+ * Contract for a session.
  */
 interface SessionInterface {
 

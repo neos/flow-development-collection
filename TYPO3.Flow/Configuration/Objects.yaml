@@ -267,9 +267,21 @@ TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy:
 #                                                                          #
 
 TYPO3\Flow\Session\SessionInterface:
-  className: TYPO3\Flow\Session\PhpSession
+  scope: singleton
+  factoryObjectName: TYPO3\Flow\Session\SessionManager
+  factoryMethodName: getCurrentSession
 
-TYPO3\Flow\Session\FlowSession:
+TYPO3\Flow\Session\Session:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_Storage
+
+TYPO3\Flow\Session\SessionManager:
   properties:
     cache:
       object:

@@ -17,12 +17,6 @@ TYPO3\Flow\Http\Client\Browser:
       object: TYPO3\Flow\Http\Client\InternalRequestEngine
 
 #
-# Sessions should be transient in a test context:
-#
-TYPO3\Flow\Session\SessionInterface:
-  className: TYPO3\Flow\Session\TransientSession
-
-#
 # Security and Resource handling need specialized testing classes:
 #
 TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface:

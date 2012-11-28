@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Session\FlowSession;
+use TYPO3\Flow\Session\Session;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
 use TYPO3\Flow\Core\ApplicationContext;
@@ -23,7 +23,7 @@ use TYPO3\Flow\Http\Cookie;
 /**
  * Unit tests for the Flow Session implementation
  */
-class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Flow\Http\Request
@@ -51,16 +51,14 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $settings = array(
 		'session' => array(
 			'inactivityTimeout' => 3600,
-			'FlowSession' => array(
-				'name' => 'TYPO3_Flow_Session',
-				'garbageCollectionProbability' => 1,
-				'cookie' => array(
-					'lifetime' => 0,
-					'path' => '/',
-					'secure' => FALSE,
-					'httponly' => TRUE,
-					'domain' => NULL
-				)
+			'name' => 'TYPO3_Flow_Session',
+			'garbageCollectionProbability' => 1,
+			'cookie' => array(
+				'lifetime' => 0,
+				'path' => '/',
+				'secure' => FALSE,
+				'httponly' => TRUE,
+				'domain' => NULL
 			)
 		)
 	);
@@ -87,8 +85,62 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function constructCreatesARemoteSessionIfSessionIfIdentifierIsSpecified() {
+		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$this->assertTrue($session->isRemote());
+
+		$session = new Session();
+		$this->assertFalse($session->isRemote());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function constructRequiresAStorageIdentifierIfASessionIdentifierWasGiven() {
+		new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
+	}
+
+	/**
+	 * @test
+	 */
+	public function remoteSessionUsesStorageIdentifierPassedToConstructor() {
+		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+
+		$cache = $this->createCache();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $cache);
+
+		$this->assertFalse($session->hasKey('some key'));
+		$session->putData('some key', 'some value');
+
+		$this->assertEquals('some value', $session->getData('some key'));
+		$this->assertTrue($session->hasKey('some key'));
+
+		$this->assertTrue($cache->has($storageIdentifier . md5('some key')));
+	}
+
+	/**
+	 * @test
+	 */
 	public function canBeResumedReturnsFalseIfNoSessionCookieExists() {
-		$session = new FlowSession();
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->assertFalse($session->canBeResumed());
+	}
+
+	/**
+	 * @test
+	 */
+	public function canBeResumedReturnsFalseIfTheSessionHasAlreadyBeenStarted() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+		$session->start();
+
 		$this->assertFalse($session->canBeResumed());
 	}
 
@@ -98,12 +150,11 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function canBeResumedReturnsFalseIfSessionIsExpiredAndExpiresASessionIfLastActivityIsOverTheLimit() {
 		$cache = $this->createCache();
 
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $cache);
-		$session->initializeObject();
 
 		$session->start();
 		$sessionIdentifier = $session->getId();
@@ -121,7 +172,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isStartedReturnsFalseByDefault() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->assertFalse($session->isStarted());
 	}
 
@@ -129,10 +180,9 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isStartedReturnsTrueAfterSessionHasBeenStarted() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
-		$session->initializeObject();
 		$session->start();
 		$this->assertTrue($session->isStarted());
 	}
@@ -141,20 +191,15 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function resumeSetsSessionCookieInTheResponse() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
 
-			// initializeObject sets the cookie in the HTTP Request
-		$session->initializeObject();
 		$session->start();
 		$sessionIdentifier = $session->getId();
 
-			// close does not remove the cookie again, so, if we don't call initializeObject
-			// again, the session cookie is still stored in the session object and is
-			// available for resume()
 		$session->close();
 
 		$session->resume();
@@ -167,10 +212,9 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function startPutsACookieIntoTheHttpResponse() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
-		$session->initializeObject();
 
 		$session->start();
 
@@ -183,11 +227,10 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdReturnsTheCurrentSessionIdentifier() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
-		$session->initializeObject();
 
 		try {
 			$session->getId();
@@ -202,11 +245,10 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function renewIdSetsANewSessionIdentifier() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
-		$session->initializeObject();
 		$session->start();
 
 		$oldSessionId = $session->getId();
@@ -217,10 +259,35 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
+	public function renewIdThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
+		$session->renewId();
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\OperationNotSupportedException
+	 */
+	public function renewIdThrowsExceptionIfCalledOnRemoteSession() {
+		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
+		$session->renewId();
+	}
+
+	/**
+	 * @test
 	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getDataThrowsExceptionIfSessionIsNotStarted() {
-		$session = new FlowSession();
+		$session = new Session();
 		$session->getData('some key');
 	}
 
@@ -229,7 +296,7 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function putDataThrowsExceptionIfSessionIsNotStarted() {
-		$session = new FlowSession();
+		$session = new Session();
 		$session->putData('some key', 'some value');
 	}
 
@@ -238,10 +305,9 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Session\Exception\DataNotSerializableException
 	 */
 	public function putDataThrowsExceptionIfTryingToPersistAResource() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
-		$session->initializeObject();
 		$session->start();
 		$resource = fopen(__FILE__, 'r');
 		$session->putData('some key', $resource);
@@ -251,11 +317,10 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getDataReturnsDataPreviouslySetWithPutData() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
-		$session->initializeObject();
 
 		$session->start();
 
@@ -271,18 +336,16 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function twoSessionsDontConflictIfUsingSameEntryIdentifiers() {
 		$cache = $this->createCache();
 
-		$session1 = new FlowSession();
+		$session1 = new Session();
 		$this->inject($session1, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session1, 'settings', $this->settings);
 		$this->inject($session1, 'cache', $cache);
-		$session1->initializeObject();
 		$session1->start();
 
-		$session2 = new FlowSession();
+		$session2 = new Session();
 		$this->inject($session2, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session2, 'settings', $this->settings);
 		$this->inject($session2, 'cache', $cache);
-		$session2->initializeObject();
 		$session2->start();
 
 		$session1->putData('foo', 'bar');
@@ -296,12 +359,11 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function closeFlagsTheSessionAsClosed() {
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
-		$session->initializeObject();
 
 		$session->start();
 		$this->assertTrue($session->isStarted());
@@ -312,10 +374,28 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function closeAndShutdownObjectDoNotCloseARemoteSession() {
+		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
+
+		$session->start();
+		$this->assertTrue($session->isStarted());
+
+		$session->close();
+		$this->assertTrue($session->isStarted());
+	}
+
+	/**
+	 * @test
 	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function destroyThrowsExceptionIfSessionIsNotStarted() {
-		$session = new FlowSession();
+		$session = new Session();
 		$session->destroy();
 	}
 
@@ -323,8 +403,8 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function destroyRemovesAllSessionDataFromTheCurrentSessionButNotFromOtherSessions() {
-		$session1 = new FlowSession();
-		$session2 = new FlowSession();
+		$session1 = new Session();
+		$session2 = new Session();
 
 		$this->inject($session1, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session2, 'bootstrap', $this->mockBootstrap);
@@ -334,9 +414,6 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$cache = $this->createCache();
 		$this->inject($session1, 'cache', $cache);
 		$this->inject($session2, 'cache', $cache);
-
-		$session1->initializeObject();
-		$session2->initializeObject();
 
 		$session1->start();
 		$session2->start();
@@ -357,14 +434,38 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function destroyRemovesAllSessionDataFromARemoteSession() {
+		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+
+		$cache = $this->createCache();
+		$this->inject($session, 'cache', $cache);
+
+		$session->start();
+
+		$session->putData('session 1 key 1', 'some value');
+		$session->putData('session 1 key 2', 'some other value');
+
+		$session->destroy(__METHOD__);
+
+		$this->inject($session, 'started', TRUE);
+		$this->assertFalse($session->hasKey('session 1 key 1'));
+		$this->assertFalse($session->hasKey('session 1 key 2'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function autoExpireRemovesAllSessionDataOfTheExpiredSession() {
-		$session = $this->getAccessibleMock('TYPO3\Flow\Session\FlowSession', array('dummy'));
+		$session = $this->getAccessibleMock('TYPO3\Flow\Session\Session', array('dummy'));
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
 		$cache = $this->createCache();
 		$this->inject($session, 'cache', $cache);
-		$session->initializeObject();
 
 		$session->start();
 		$sessionIdentifier = $session->getId();
@@ -395,19 +496,18 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function autoExpireTriggersGarbageCollectionForExpiredSessions() {
 		$settings = $this->settings;
 		$settings['session']['inactivityTimeout'] = 5000;
-		$settings['session']['FlowSession']['garbageCollectionProbability'] = 100;
+		$settings['session']['garbageCollectionProbability'] = 100;
 
 		$cache = $this->createCache();
 
 			// Create a session which first runs fine and then expires by later modifying
 			// the inactivity timeout:
-		$session = new FlowSession();
+		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'cache', $cache);
 		$session->injectSettings($settings);
 
-		$session->initializeObject();
 		$session->start();
 		$sessionIdentifier1 = $session->getId();
 		$session->putData('session 1 key 1', 'session 1 value 1');
@@ -428,13 +528,12 @@ class FlowSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 			// Create a second session which should remove the first expired session
 			// implicitly by calling autoExpire()
-		$session = $this->getAccessibleMock('TYPO3\Flow\Session\FlowSession', array('dummy'));
+		$session = $this->getAccessibleMock('TYPO3\Flow\Session\Session', array('dummy'));
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'cache', $cache);
 		$session->injectSettings($settings);
 
-		$session->initializeObject();
 		$session->start();
 		$sessionIdentifier2 = $session->getId();
 		$session->putData('session 2 key 1', 'session 1 value 1');

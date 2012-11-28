@@ -34,11 +34,6 @@ class ObjectManager implements ObjectManagerInterface {
 	protected $context;
 
 	/**
-	 * @var \TYPO3\Flow\Session\SessionInterface
-	 */
-	protected $session;
-
-	/**
 	 * @var \TYPO3\Flow\Object\ObjectSerializer
 	 */
 	protected $objectSerializer;

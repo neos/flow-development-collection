@@ -37,7 +37,7 @@ class LoggingAspect {
 	public function logStart(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('%s: Started session with id %s', $this->getClassName($joinPoint), $session->getId()), LOG_INFO);
+			$this->systemLogger->log(sprintf('%s: Started session with id %s (#%s)', $this->getClassName($joinPoint), $session->getId(), spl_object_hash($session)), LOG_INFO);
 		}
 	}
 
@@ -51,7 +51,19 @@ class LoggingAspect {
 	public function logResume(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('%s: Resumed session with id %s which was inactive for %s seconds.', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $joinPoint->getResult()), LOG_DEBUG);
+			$inactivityInSeconds = $joinPoint->getResult();
+			if ($inactivityInSeconds === 1) {
+				$inactivityMessage = '1 second';
+			} elseif ($inactivityInSeconds < 120) {
+				$inactivityMessage = sprintf('%s seconds', $inactivityInSeconds);
+			} elseif ($inactivityInSeconds < 3600) {
+				$inactivityMessage = sprintf('%s minutes', intval($inactivityInSeconds / 60));
+			} elseif ($inactivityInSeconds < 7200) {
+				$inactivityMessage = 'more than an hour';
+			} else {
+				$inactivityMessage = sprintf('more than %s hours', intval($inactivityInSeconds / 3600));
+			}
+			$this->systemLogger->log(sprintf('%s: Resumed session with id %s which was inactive for %s. (%ss)', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $inactivityMessage, $inactivityInSeconds), LOG_DEBUG);
 		}
 	}
 
