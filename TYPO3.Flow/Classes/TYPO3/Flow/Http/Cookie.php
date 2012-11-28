@@ -62,7 +62,7 @@ class Cookie {
 
 	/**
 	 * Number of seconds until the cookie expires (RFC 6265, 4.1.2.2)
-	 * @var
+	 * @var integer
 	 */
 	protected $maximumAge;
 

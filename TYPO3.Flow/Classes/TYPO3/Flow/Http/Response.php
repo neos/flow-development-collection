@@ -47,66 +47,60 @@ class Response extends Message implements ResponseInterface {
 	protected $now;
 
 	/**
-	 * The standardized and other important HTTP Status messages
-	 *
-	 * @var array
-	 */
-	static protected $statusMessages = array(
-		100 => 'Continue',
-		101 => 'Switching Protocols',
-		102 => 'Processing', # RFC 2518
-		200 => 'OK',
-		201 => 'Created',
-		202 => 'Accepted',
-		203 => 'Non-Authoritative Information',
-		204 => 'No Content',
-		205 => 'Reset Content',
-		206 => 'Partial Content',
-		207 => 'Multi-Status',
-		300 => 'Multiple Choices',
-		301 => 'Moved Permanently',
-		302 => 'Found',
-		303 => 'See Other',
-		304 => 'Not Modified',
-		305 => 'Use Proxy',
-		307 => 'Temporary Redirect',
-		400 => 'Bad Request',
-		401 => 'Unauthorized',
-		402 => 'Payment Required',
-		403 => 'Forbidden',
-		404 => 'Not Found',
-		405 => 'Method Not Allowed',
-		406 => 'Not Acceptable',
-		407 => 'Proxy Authentication Required',
-		408 => 'Request Timeout',
-		409 => 'Conflict',
-		410 => 'Gone',
-		411 => 'Length Required',
-		412 => 'Precondition Failed',
-		413 => 'Request Entity Too Large',
-		414 => 'Request-URI Too Long',
-		415 => 'Unsupported Media Type',
-		416 => 'Requested Range Not Satisfiable',
-		417 => 'Expectation Failed',
-		418 => 'Sono Vibiemme',
-		500 => 'Internal Server Error',
-		501 => 'Not Implemented',
-		502 => 'Bad Gateway',
-		503 => 'Service Unavailable',
-		504 => 'Gateway Timeout',
-		505 => 'HTTP Version Not Supported',
-		507 => 'Insufficient Storage',
-		509 => 'Bandwidth Limit Exceeded',
-	);
-
-	/**
 	 * Returns the human-readable message for the given status code.
 	 *
 	 * @param integer $statusCode
 	 * @return string
 	 */
 	static public function getStatusMessageByCode($statusCode) {
-		return isset(self::$statusMessages[$statusCode]) ? self::$statusMessages[$statusCode] : 'Unknown Status';
+		$statusMessages = array(
+				100 => 'Continue',
+				101 => 'Switching Protocols',
+				102 => 'Processing', # RFC 2518
+				200 => 'OK',
+				201 => 'Created',
+				202 => 'Accepted',
+				203 => 'Non-Authoritative Information',
+				204 => 'No Content',
+				205 => 'Reset Content',
+				206 => 'Partial Content',
+				207 => 'Multi-Status',
+				300 => 'Multiple Choices',
+				301 => 'Moved Permanently',
+				302 => 'Found',
+				303 => 'See Other',
+				304 => 'Not Modified',
+				305 => 'Use Proxy',
+				307 => 'Temporary Redirect',
+				400 => 'Bad Request',
+				401 => 'Unauthorized',
+				402 => 'Payment Required',
+				403 => 'Forbidden',
+				404 => 'Not Found',
+				405 => 'Method Not Allowed',
+				406 => 'Not Acceptable',
+				407 => 'Proxy Authentication Required',
+				408 => 'Request Timeout',
+				409 => 'Conflict',
+				410 => 'Gone',
+				411 => 'Length Required',
+				412 => 'Precondition Failed',
+				413 => 'Request Entity Too Large',
+				414 => 'Request-URI Too Long',
+				415 => 'Unsupported Media Type',
+				416 => 'Requested Range Not Satisfiable',
+				417 => 'Expectation Failed',
+				418 => 'Sono Vibiemme',
+				500 => 'Internal Server Error',
+				501 => 'Not Implemented',
+				502 => 'Bad Gateway',
+				503 => 'Service Unavailable',
+				504 => 'Gateway Timeout',
+				505 => 'HTTP Version Not Supported',
+				507 => 'Insufficient Storage',
+				509 => 'Bandwidth Limit Exceeded',
+		);
+		return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
 	}
 
 	/**
@@ -216,8 +210,8 @@ class Response extends Message implements ResponseInterface {
 		if (!is_int($code)) {
 			throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
 		}
-		if ($message === NULL && !isset(self::$statusMessages[$code])) {
-			throw new \InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
+		if ($message === NULL) {
+			$message = self::getStatusMessageByCode($code);
 		}
 		$this->statusCode = $code;
 		$this->statusMessage = ($message === NULL) ? self::$statusMessages[$code] : $message;
