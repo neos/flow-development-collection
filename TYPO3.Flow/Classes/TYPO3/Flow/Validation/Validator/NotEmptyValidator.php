@@ -30,7 +30,8 @@ class NotEmptyValidator extends AbstractValidator {
 	protected $acceptsEmptyValues = FALSE;
 
 	/**
-	 * Checks if the given value is not empty (NULL or empty string).
+	 * Checks if the given value is not empty (NULL, empty string, empty array
+	 * or empty object that implements the Countable interface).
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
@@ -39,8 +40,15 @@ class NotEmptyValidator extends AbstractValidator {
 	protected function isValid($value) {
 		if ($value === NULL) {
 			$this->addError('This property is required.', 1221560910);
-		} elseif ($value === '') {
+		}
+		if ($value === '') {
 			$this->addError('This property is required.', 1221560718);
+		}
+		if (is_array($value) && empty($value)) {
+			$this->addError('This property is required', 1354192543);
+		}
+		if (is_object($value) && $value instanceof \Countable && $value->count() === 0) {
+			$this->addError('This property is required.', 1354192552);
 		}
 	}
 }

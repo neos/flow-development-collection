@@ -45,6 +45,20 @@ class NotEmptyValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\
 	/**
 	 * @test
 	 */
+	public function notEmptyValidatorReturnsErrorForAnEmptyArray() {
+		$this->assertTrue($this->validator->validate(array())->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function notEmptyValidatorReturnsErrorForAnEmptyCountableObject() {
+		$this->assertTrue($this->validator->validate(new \SplObjectStorage())->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForAnEmptySubject() {
 		$this->assertEquals(1, count($this->validator->validate('')->getErrors()));
 	}
