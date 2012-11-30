@@ -104,6 +104,11 @@ class Session implements SessionInterface {
 	protected $lastActivityTimestamp;
 
 	/**
+	 * @var integer
+	 */
+	protected $now;
+
+	/**
 	 * @var float
 	 */
 	protected $garbageCollectionProbability;
@@ -147,18 +152,31 @@ class Session implements SessionInterface {
 	protected $response;
 
 	/**
+	 * Constructs this session
 	 *
+	 * If $sessionIdentifier is specified, this constructor will create a session
+	 * instance representing a remote session. In that case $storageIdentifier and
+	 * $lastActivityTimestamp are also required arguments.
+	 *
+	 * Session instances must not be created manually! They should be retrieved via
+	 * the Session Manager or through dependency injection (use SessionInterface!).
+	 *
+	 * @param string $sessionIdentifier The public session identifier which is also used in the session cookie
+	 * @param string $storageIdentifier The private storage identifier which is used for cache entries
+	 * @param integer $lastActivityTimestamp Unix timestamp of the last known activity for this session
 	 */
-	public function __construct($sessionIdentifier = NULL, $storageIdentifier = NULL) {
+	public function __construct($sessionIdentifier = NULL, $storageIdentifier = NULL, $lastActivityTimestamp = NULL) {
 		if ($sessionIdentifier !== NULL) {
-			if ($storageIdentifier === NULL) {
-				throw new \InvalidArgumentException('Session requires a storage identifier for remote sessions.', 1354045988);
+			if ($storageIdentifier === NULL || $lastActivityTimestamp === NULL) {
+				throw new \InvalidArgumentException('Session requires a storage identifier and last activity timestamp for remote sessions.', 1354045988);
 			}
 			$this->sessionIdentifier = $sessionIdentifier;
 			$this->storageIdentifier = $storageIdentifier;
+			$this->lastActivityTimestamp = $lastActivityTimestamp;
 			$this->started = TRUE;
 			$this->remote = TRUE;
 		}
+		$this->now = time();
 	}
 
 	/**
@@ -215,6 +233,7 @@ class Session implements SessionInterface {
 			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 
 			$this->response->setCookie($this->sessionCookie);
+			$this->lastActivityTimestamp = $this->now;
 			$this->started = TRUE;
 		}
 	}
@@ -274,7 +293,9 @@ class Session implements SessionInterface {
 				$this->cache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->storageIdentifier), 0);
 			}
 
-			return (time() - $this->lastActivityTimestamp);
+			$lastActivitySecondsAgo = ($this->now - $this->lastActivityTimestamp);
+			$this->lastActivityTimestamp = $this->now;
+			return $lastActivitySecondsAgo;
 		}
 	}
 
@@ -360,6 +381,44 @@ class Session implements SessionInterface {
 	}
 
 	/**
+	 * Returns the unix time stamp marking the last point in time this session has
+	 * been in use.
+	 *
+	 * For the current (local) session, this method will always return the current
+	 * time. For a remote session, the unix timestamp will be returned.
+	 *
+	 * @return integer unix timestamp
+	 * @api
+	 */
+	public function getLastActivityTimestamp() {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve the last activity timestamp of a session which has not been started yet.', 1354290378);
+		}
+		return $this->lastActivityTimestamp;
+	}
+
+	/**
+	 * Updates the last activity time to "now".
+	 *
+	 * @return void
+	 */
+	public function touch() {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to touch a session, but the session has not been started yet.', 1354284318);
+		}
+
+			// Only makes sense for remote sessions because the currently active session
+			// will be updated on shutdown anyway:
+		if ($this->remote === TRUE) {
+			$sessionInfo = array(
+				'lastActivityTimestamp' => $this->now,
+				'storageIdentifier' => $this->storageIdentifier
+			);
+			$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
+		}
+	}
+
+	/**
 	 * Explicitly writes and closes the session
 	 *
 	 * @return void
@@ -389,22 +448,11 @@ class Session implements SessionInterface {
 			$this->sessionCookie->expire();
 		}
 
+		$this->cache->remove($this->sessionIdentifier);
 		$this->cache->flushByTag($this->storageIdentifier);
 		$this->started = FALSE;
 		$this->sessionIdentifier = NULL;
 		$this->storageIdentifier = NULL;
-	}
-
-	/**
-	 * Destroys data from all active and inactive sessions.
-	 *
-	 * TODO Implement
-	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
-	 * @return integer The number of sessions which have been removed
-	 */
-	static public function destroyAll(Bootstrap $bootstrap) {
-		return 0;
 	}
 
 	/**
@@ -415,23 +463,17 @@ class Session implements SessionInterface {
 	 * @api
 	 */
 	public function collectGarbage() {
-		$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) -1;
-		$factor = ($decimals > -1) ? $decimals * 10 : 1;
-		if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
-			$sessionRemovalCount = 0;
-			if ($this->inactivityTimeout !== 0) {
-				foreach ($this->cache->getByTag('session') as $sessionInfo) {
-					$lastActivitySecondsAgo = time() - $sessionInfo['lastActivityTimestamp'];
-					if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-						$this->cache->flushByTag($sessionInfo['storageIdentifier']);
-						$sessionRemovalCount ++;
-					}
+		$sessionRemovalCount = 0;
+		if ($this->inactivityTimeout !== 0) {
+			foreach ($this->cache->getByTag('session') as $sessionInfo) {
+				$lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
+				if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
+					$this->cache->flushByTag($sessionInfo['storageIdentifier']);
+					$sessionRemovalCount ++;
 				}
 			}
-			return $sessionRemovalCount;
-		} else {
-			return FALSE;
 		}
+		return $sessionRemovalCount;
 	}
 
 	/**
@@ -444,13 +486,27 @@ class Session implements SessionInterface {
 	 */
 	public function shutdownObject() {
 		if ($this->started === TRUE && $this->remote === FALSE) {
+
+				// Security context can't be injected and must be retrieved manually
+				// because it relies on this very session object:
+			$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+			if ($securityContext->isInitialized()) {
+				$this->tagSessionWithAuthenticatedAccounts($securityContext->getAuthenticationTokens());
+			}
+
 			$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
 			$sessionInfo = array(
-				'lastActivityTimestamp' => time(),
+				'lastActivityTimestamp' => $this->lastActivityTimestamp,
 				'storageIdentifier' => $this->storageIdentifier
 			);
 			$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
 			$this->started = FALSE;
+
+			$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) -1;
+			$factor = ($decimals > -1) ? $decimals * 10 : 1;
+			if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+				$this->collectGarbage();
+			}
 		}
 	}
 
@@ -460,7 +516,7 @@ class Session implements SessionInterface {
 	 * @return boolean TRUE if the session expired, FALSE if not
 	 */
 	protected function autoExpire() {
-		$lastActivitySecondsAgo = time() - $this->lastActivityTimestamp;
+		$lastActivitySecondsAgo = $this->now - $this->lastActivityTimestamp;
 		$expired = FALSE;
 		if ($this->inactivityTimeout !== 0 && $lastActivitySecondsAgo > $this->inactivityTimeout) {
 			$this->started = TRUE;
@@ -468,8 +524,6 @@ class Session implements SessionInterface {
 			$this->destroy(sprintf('Session %s was inactive for %s seconds, more than the configured timeout of %s seconds.', $this->sessionIdentifier, $lastActivitySecondsAgo, $this->inactivityTimeout));
 			$expired = TRUE;
 		}
-
-		$this->collectGarbage();
 		return $expired;
 	}
 
@@ -487,6 +541,36 @@ class Session implements SessionInterface {
 			if ($this->request->hasCookie($this->sessionCookieName)) {
 				$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);
 			}
+		}
+	}
+
+	/**
+	 * Tags an existing session with accounts of successfully authenticated tokens.
+	 *
+	 * This method will check if a session has already been started, which is
+	 * the case after tokens relying on a session have been authenticated: the
+	 * UsernamePasswordToken does, for example, start a session in its authenticate()
+	 * method.
+	 *
+	 * Because more than one account can be authenticated at a time, this method
+	 * accepts an array of tokens instead of a single account.
+	 *
+	 * Note that if a session is started after tokens have been authenticated, the
+	 * session will NOT be tagged with authenticated accounts.
+	 *
+	 * @param array<\TYPO3\Flow\Security\Authentication\TokenInterface>
+	 * @return void
+	 */
+	protected function tagSessionWithAuthenticatedAccounts(array $tokens) {
+		$accountProviderAndIdentifierPairs = array();
+		foreach ($tokens as $token) {
+			$account = $token->getAccount();
+			if ($token->isAuthenticated() && $account !== NULL) {
+				$accountProviderAndIdentifierPairs[$account->getAuthenticationProviderName() . ':' . $account->getAccountIdentifier()] = TRUE;
+			}
+		}
+		if ($accountProviderAndIdentifierPairs !== array()) {
+			$this->putData('TYPO3_Flow_Security_Accounts', array_keys($accountProviderAndIdentifierPairs));
 		}
 	}
 

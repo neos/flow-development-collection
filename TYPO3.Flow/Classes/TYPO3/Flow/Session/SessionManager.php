@@ -69,7 +69,7 @@ class SessionManager implements SessionManagerInterface {
 		}
 		if ($this->cache->has($sessionIdentifier)) {
 			$sessionInfo = $this->cache->get($sessionIdentifier);
-			$this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier']);
+			$this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
 			return $this->remoteSessions[$sessionIdentifier];
 		}
 	}
@@ -82,8 +82,8 @@ class SessionManager implements SessionManagerInterface {
 	 */
 	public function getActiveSessions() {
 		$activeSessions = array();
-		foreach ($this->cache->getByTag('session') as $sessionIdentifier => $info) {
-			$session = new Session($sessionIdentifier, $info['storageIdentifier']);
+		foreach ($this->cache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
+			$session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
 			$activeSessions[] = $session;
 		}
 		return $activeSessions;

@@ -90,6 +90,26 @@ interface SessionInterface {
 	public function putData($key, $data);
 
 	/**
+	 * Updates the last activity time to "now".
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function touch();
+
+	/**
+	 * Returns the unix time stamp marking the last point in time this session has
+	 * been in use.
+	 *
+	 * For the current (local) session, this method will always return the current
+	 * time. For a remote session, the unix timestamp will be returned.
+	 *
+	 * @return integer unix timestamp
+	 * @api
+	 */
+	public function getLastActivityTimestamp();
+
+	/**
 	 * Explicitly writes (persists) and closes the session
 	 *
 	 * @return void
@@ -106,19 +126,6 @@ interface SessionInterface {
 	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function destroy($reason = NULL);
-
-	/**
-	 * Explicitly destroy all session data of all sessions with one specific implementation.
-	 *
-	 * Note: The implementation of this method must work from the command line and
-	 *       during compile time as it will be invoked by the typo3.flow:cache:flush
-	 *       command. It is also not designed to be called from a regular runtime
-	 *       context as it is unclear what happens to any possible active action.
-	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
-	 * @return integer|NULL Optional: The number of sessions which have been destroyed
-	 */
-	static public function destroyAll(\TYPO3\Flow\Core\Bootstrap $bootstrap);
 
 	/**
 	 * Remove data of all sessions which are considered to be expired.

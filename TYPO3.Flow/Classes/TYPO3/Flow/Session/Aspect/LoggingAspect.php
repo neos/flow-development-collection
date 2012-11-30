@@ -37,7 +37,7 @@ class LoggingAspect {
 	public function logStart(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$session = $joinPoint->getProxy();
 		if ($session->isStarted()) {
-			$this->systemLogger->log(sprintf('%s: Started session with id %s (#%s)', $this->getClassName($joinPoint), $session->getId(), spl_object_hash($session)), LOG_INFO);
+			$this->systemLogger->log(sprintf('%s: Started session with id %s.', $this->getClassName($joinPoint), $session->getId()), LOG_INFO);
 		}
 	}
 

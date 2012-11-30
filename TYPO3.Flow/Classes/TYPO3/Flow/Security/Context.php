@@ -381,7 +381,7 @@ class Context {
 
 	/**
 	 * Returns the account of the first authenticated authentication token.
-	 * Note: There might be a more currently authenticated accounts in the
+	 * Note: There might be a more currently authenticated account in the
 	 * remaining tokens. If you need them you'll have to fetch them directly
 	 * from the tokens.
 	 * (@see getAuthenticationTokens())

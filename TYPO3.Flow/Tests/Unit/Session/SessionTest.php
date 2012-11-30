@@ -19,6 +19,9 @@ use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Account;
 
 /**
  * Unit tests for the Flow Session implementation
@@ -34,6 +37,11 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @var \TYPO3\Flow\Http\Response
 	 */
 	protected $httpResponse;
+
+	/**
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $mockSecurityContext;
 
 	/**
 	 * @var \TYPO3\Flow\Core\Bootstrap
@@ -79,7 +87,10 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE, FALSE);
 		$this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
 
+		$this->mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE, FALSE);
+
 		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', FALSE, FALSE);
+		$this->mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Security\Context')->will($this->returnValue($this->mockSecurityContext));
 	}
 
 	/**
@@ -87,7 +98,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function constructCreatesARemoteSessionIfSessionIfIdentifierIsSpecified() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
 		$this->assertTrue($session->isRemote());
 
 		$session = new Session();
@@ -107,7 +118,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function remoteSessionUsesStorageIdentifierPassedToConstructor() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
 
 		$cache = $this->createCache();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
@@ -211,6 +222,19 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function resumeOnAStartedSessionDoesNotDoAnyHarm() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+
+		$session->start();
+
+		$session->resume();
+	}
+
+	/**
+	 * @test
+	 */
 	public function startPutsACookieIntoTheHttpResponse() {
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
@@ -275,7 +299,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function renewIdThrowsExceptionIfCalledOnRemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
@@ -332,6 +356,15 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
+	public function hasKeyThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$session->hasKey('foo');
+	}
+
+	/**
+	 * @test
 	 */
 	public function twoSessionsDontConflictIfUsingSameEntryIdentifiers() {
 		$cache = $this->createCache();
@@ -357,6 +390,68 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
+	public function getLastActivityTimestampThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$session->getLastActivityTimestamp();
+	}
+
+	/**
+	 * @test
+	 */
+	public function lastActivityTimestampOfNewSessionIsSetAndStoredCorrectlyAndCanBeRetrieved() {
+		$session = $this->getAccessibleMock('TYPO3\Flow\Session\Session', array('dummy'));
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$cache = $this->createCache();
+		$this->inject($session, 'cache', $cache);
+
+		$now = $session->_get('now');
+
+		$session->start();
+		$sessionIdentifier = $session->getId();
+		$this->assertEquals($now, $session->getLastActivityTimestamp());
+
+		$session->close();
+
+		$sessionInfo = $cache->get($sessionIdentifier);
+		$this->assertEquals($now, $sessionInfo['lastActivityTimestamp']);
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
+	public function touchThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$session->touch();
+	}
+
+	/**
+	 * @test
+	 */
+	public function touchUpdatesLastActivityTimestampOfRemoteSession() {
+		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+		$cache = $this->createCache();
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1110000000);
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $cache);
+
+		$this->inject($session, 'now', 2220000000);
+
+		$session->touch();
+
+		$sessionInfo = $cache->get('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
+		$this->assertEquals(2220000000, $sessionInfo['lastActivityTimestamp']);
+		$this->assertEquals($storageIdentifier, $sessionInfo['storageIdentifier']);
+	}
+
+	/**
+	 * @test
 	 */
 	public function closeFlagsTheSessionAsClosed() {
 		$session = new Session();
@@ -377,7 +472,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function closeAndShutdownObjectDoNotCloseARemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
@@ -388,6 +483,37 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->close();
 		$this->assertTrue($session->isStarted());
+	}
+
+	/**
+	 * @test
+	 */
+	public function shutdownCreatesSpecialDataEntryForSessionWithAuthenticatedAccounts() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
+
+		$session->start();
+
+		$account = new Account();
+		$account->setAccountIdentifier('admin');
+		$account->setAuthenticationProviderName('MyProvider');
+
+		$token = new UsernamePassword();
+		$token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$token->setAccount($account);
+
+		$this->mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
+		$this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
+
+		$session->close();
+
+		$this->httpRequest->setCookie($this->httpResponse->getCookie('TYPO3_Flow_Session'));
+
+		$session->resume();
+		$this->assertEquals(array('MyProvider:admin'), $session->getData('TYPO3_Flow_Security_Accounts'));
 	}
 
 	/**
@@ -436,7 +562,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function destroyRemovesAllSessionDataFromARemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
 
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);

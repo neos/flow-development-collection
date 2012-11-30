@@ -39,7 +39,9 @@ class Debugger {
 	static protected $blacklistedClassNames = '/
 		(TYPO3\\\\Flow\\\\Aop.*)
 		(TYPO3\\\\Flow\\\\Cac.*) |
+		(TYPO3\\\\Flow\\\\Core\\\\.*) |
 		(TYPO3\\\\Flow\\\\Con.*) |
+		(TYPO3\\\\Flow\\\\Http\\\\RequestHandler) |
 		(TYPO3\\\\Flow\\\\Uti.*) |
 		(TYPO3\\\\Flow\\\\Mvc\\\\Routing.*) |
 		(TYPO3\\\\Flow\\\\Log.*) |
@@ -49,6 +51,7 @@ class Debugger {
 		(TYPO3\\\\Flow\\\\Pro.*) |
 		(TYPO3\\\\Flow\\\\Ref.*) |
 		(TYPO3\\\\Flow\\\\Sec.*) |
+		(TYPO3\\\\Flow\\\\Sig.*) |
 		(TYPO3\\\\Fluid\\\\.*) |
 		(PHPUnit_Framework_MockObject_InvocationMocker)
 		/xs';

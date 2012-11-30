@@ -42,7 +42,8 @@ class PersistedUsernamePasswordProvider extends \TYPO3\Flow\Security\Authenticat
 	}
 
 	/**
-	 * Sets isAuthenticated to TRUE for all tokens.
+	 * Checks the given token for validity and sets the token authentication status
+	 * accordingly (success, wrong credentials or no credentials given).
 	 *
 	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void

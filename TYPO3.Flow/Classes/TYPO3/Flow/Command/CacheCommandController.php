@@ -114,18 +114,8 @@ class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 			// bootstrap in order to reliably flush the temporary data before any
 			// other code can cause fatal errors.
 
-		$currentSessionImplementation = $this->objectManager->getClassNameByObjectName('TYPO3\Flow\Session\SessionInterface');
-		$result = $currentSessionImplementation::destroyAll($this->bootstrap);
-		if ($result === NULL) {
-			$sessionDestroyMessage = ' and removed all potentially existing session data.';
-		} elseif ($result > 0) {
-			$sessionDestroyMessage = sprintf(' and removed data of %s.', ($result === 1 ? 'the one existing session' : 'the ' . $result . ' existing sessions'));
-		} else {
-			$sessionDestroyMessage = '.';
-		}
-
 		$this->cacheManager->flushCaches();
-		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context' . $sessionDestroyMessage);
+		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context.');
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();
 		}

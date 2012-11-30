@@ -21,7 +21,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class TransientSession implements \TYPO3\Flow\Session\SessionInterface {
+class TransientSession implements SessionInterface {
 
 	/**
 	 * The session Id
@@ -43,6 +43,11 @@ class TransientSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @var array
 	 */
 	protected $data = array();
+
+	/**
+	 * @var integer
+	 */
+	protected $lastActivityTimestamp;
 
 	/**
 	 * Tells if the session has been started already.
@@ -179,6 +184,28 @@ class TransientSession implements \TYPO3\Flow\Session\SessionInterface {
 	 * @return void
 	 */
 	public function collectGarbage() {
+	}
+
+	/**
+	 * Returns the unix time stamp marking the last point in time this session has
+	 * been in use.
+	 *
+	 * @return integer unix timestamp
+	 */
+	public function getLastActivityTimestamp() {
+		if ($this->lastActivityTimestamp === NULL) {
+			$this->touch();
+		}
+		return $this->lastActivityTimestamp;
+	}
+
+	/**
+	 * Updates the last activity time to "now".
+	 *
+	 * @return void
+	 */
+	public function touch() {
+		$this->lastActivityTimestamp = time();
 	}
 
 }
