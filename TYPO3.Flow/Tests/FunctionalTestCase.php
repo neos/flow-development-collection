@@ -61,17 +61,6 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	protected $testableSecurityEnabled = FALSE;
 
 	/**
-	 * If enabled, this test case will automatically provide a virtual browser
-	 * for sending HTTP requests to Flow's request handler and MVC framework.
-	 *
-	 * Note: testable security will implicitly enable this as well.
-	 *
-	 * @var boolean
-	 * @api
-	 */
-	protected $testableHttpEnabled = FALSE;
-
-	/**
 	 * If enabled, this test case will automatically run the compile() method on
 	 * the Persistence Manager before running a test.
 	 *
@@ -82,7 +71,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	static protected $testablePersistenceEnabled = FALSE;
 
 	/**
-	 * If testableHttpEnabled is set, contains a virtual, preinitialized browser
+	 * Contains a virtual, preinitialized browser
 	 *
 	 * @var \TYPO3\Flow\Http\Client\Browser
 	 * @api
@@ -90,7 +79,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	protected $browser;
 
 	/**
-	 * If testableHttpEnabled is set, contains the router instance used in the browser's request engine
+	 * Contains the router instance used in the browser's request engine
 	 *
 	 * @var \TYPO3\Flow\Mvc\Routing\Router
 	 * @api
@@ -132,16 +121,6 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Enables security tests for this testcase
-	 *
-	 * @return void
-	 * @deprecated since 1.1 – please set the class property directly
-	 */
-	protected function enableTestableSecurity() {
-		$this->testableSecurityEnabled = TRUE;
-	}
-
-	/**
 	 * Sets up test requirements depending on the enabled tests.
 	 *
 	 * If you override this method, don't forget to call parent::setUp() in your
@@ -165,13 +144,11 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 
 			// HTTP must be initialized before Session and Security because they rely
 			// on an HTTP request being available via the request handler:
-		if ($this->testableHttpEnabled === TRUE || $this->testableSecurityEnabled === TRUE) {
-			$this->setupHttp();
+		$this->setupHttp();
 
-			$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
-			if ($session->isStarted()) {
-				$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
-			}
+		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+		if ($session->isStarted()) {
+			$session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
 		}
 
 		if ($this->testableSecurityEnabled === TRUE) {
@@ -408,6 +385,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$requestHandler->setHttpRequest(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://localhost')));
+		$requestHandler->setHttpResponse(new \TYPO3\Flow\Http\Response());
 	}
 
 	/**

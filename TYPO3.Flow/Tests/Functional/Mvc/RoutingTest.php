@@ -27,11 +27,6 @@ use TYPO3\Flow\Annotations as Flow;
 class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var boolean
-	 */
-	protected $testableHttpEnabled = TRUE;
-
-	/**
 	 * Validate that test routes are loaded
 	 */
 	public function setUp() {

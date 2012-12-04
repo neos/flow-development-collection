@@ -19,6 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Cookie;
 
 /**
@@ -227,7 +228,7 @@ class Session implements SessionInterface {
 		if ($this->request === NULL) {
 			$this->initializeHttpAndCookie();
 		}
-		if ($this->started === FALSE && $this->request !== NULL) {
+		if ($this->started === FALSE) {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
 			$this->storageIdentifier = Algorithms::generateUUID();
 			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
@@ -537,6 +538,13 @@ class Session implements SessionInterface {
 		if ($requestHandler instanceof HttpRequestHandlerInterface) {
 			$this->request = $requestHandler->getHttpRequest();
 			$this->response = $requestHandler->getHttpResponse();
+
+			if (!$this->request instanceof Request || !$this->response instanceof Response) {
+				$className = get_class($requestHandler);
+				$requestMessage = 'the request was ' . (is_object($this->request) ? 'of type ' . get_class($this->request) : gettype($this->request));
+				$responseMessage = 'and the response was ' . (is_object($this->response) ? 'of type ' . get_class($this->response) : gettype($this->response));
+				throw new \TYPO3\Flow\Session\Exception\InvalidRequestResponseException(sprintf('The active request handler "%s" did not provide a valid HTTP request / HTTP response pair: %s %s.', $className, $requestMessage, $responseMessage), 1354633950);
+			}
 
 			if ($this->request->hasCookie($this->sessionCookieName)) {
 				$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);

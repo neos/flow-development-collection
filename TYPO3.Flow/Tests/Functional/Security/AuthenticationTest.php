@@ -26,11 +26,6 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @var boolean
 	 */
-	protected $testableHttpEnabled = TRUE;
-
-	/**
-	 * @var boolean
-	 */
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**

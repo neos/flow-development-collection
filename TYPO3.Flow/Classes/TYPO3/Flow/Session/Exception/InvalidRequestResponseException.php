@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Http;
+namespace TYPO3\Flow\Session\Exception;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -12,15 +12,11 @@ namespace TYPO3\Flow\Tests\Functional\Http;
  *                                                                        */
 
 /**
- * Functional tests for the HTTP cache header support
+ * An "Invalid Request or Response" Exception
+ *
+ * @api
  */
-class CacheHeadersTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
-
-	/**
-	 * @test
-	 */
-	public function x() {
-
-	}
-
+class InvalidRequestResponseException extends \TYPO3\Flow\Session\Exception {
 }
+
+?>

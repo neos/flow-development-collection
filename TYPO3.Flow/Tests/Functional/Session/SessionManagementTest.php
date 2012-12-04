@@ -17,11 +17,6 @@ namespace TYPO3\Flow\Tests\Functional\Session;
 class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var boolean
-	 */
-	protected $testableHttpEnabled = TRUE;
-
-	/**
 	 * @test
 	 */
 	public function objectManagerAlwaysReturnsTheSameSessionIfInterfaceIsSpecified() {
@@ -53,6 +48,22 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$retrievedSession = $sessionManager->getCurrentSession();
 		$this->assertSame($injectedSession, $retrievedSession);
 		$this->assertSame($otherInjectedSession, $retrievedSession);
+	}
+
+	/**
+	 * Makes sure that the functional base testcase initializes an HTTP request and
+	 * an HTTP response which can be retrieved from the special request handler by
+	 * the session initialization in order to retrieve or set the session cookie.
+	 *
+	 * See bug #43590
+	 *
+	 * @test
+	 */
+	public function aSessionCanBeStartedInAFunctionalTest() {
+		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
+		$session->start();
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 }
 ?>

@@ -24,11 +24,6 @@ class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var boolean
-	 */
-	protected $testableHttpEnabled = TRUE;
-
-	/**
 	 * @return void
 	 */
 	public function setUp() {
