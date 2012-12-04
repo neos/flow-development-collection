@@ -314,11 +314,13 @@ class UriBuilder {
 	 * @return string the rendered URI
 	 * @api
 	 * @see build()
+	 * @throws \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException if $actionName parameter is empty
 	 */
-	public function uriFor($actionName = NULL, $controllerArguments = array(), $controllerName = NULL, $packageKey = NULL, $subPackageKey = NULL) {
-		if ($actionName !== NULL) {
-			$controllerArguments['@action'] = strtolower($actionName);
+	public function uriFor($actionName, $controllerArguments = array(), $controllerName = NULL, $packageKey = NULL, $subPackageKey = NULL) {
+		if ($actionName === NULL || $actionName === '') {
+			throw new \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
 		}
+		$controllerArguments['@action'] = strtolower($actionName);
 		if ($controllerName !== NULL) {
 			$controllerArguments['@controller'] = strtolower($controllerName);
 		} else {
