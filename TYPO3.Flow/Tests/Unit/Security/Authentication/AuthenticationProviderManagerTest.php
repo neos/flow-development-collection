@@ -424,6 +424,80 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function logoutDestroysSessionIfStarted() {
+		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager->_set('session', $this->mockSession);
+
+		$this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(TRUE));
+		$this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(TRUE));
+
+		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
+
+		$this->mockSession->expects($this->once())->method('destroy');
+
+		$this->authenticationProviderManager->setSecurityContext($mockContext);
+		$this->authenticationProviderManager->logout();
+	}
+
+	/**
+	 * @test
+	 */
+	public function logoutDoesNotDestroySessionIfNotStarted() {
+		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager->_set('session', $this->mockSession);
+
+		$this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(TRUE));
+		$this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(FALSE));
+
+		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
+
+		$this->mockSession->expects($this->never())->method('destroy');
+
+		$this->authenticationProviderManager->setSecurityContext($mockContext);
+		$this->authenticationProviderManager->logout();
+	}
+
+	/**
+	 * @test
+	 */
+	public function logoutEmitsLoggedOutSignalBeforeDestroyingSession() {
+		$this->authenticationProviderManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', array('emitLoggedOut'), array(), '', FALSE);
+		$this->authenticationProviderManager->_set('session', $this->mockSession);
+
+		$this->mockSession->expects($this->any())->method('canBeResumed')->will($this->returnValue(TRUE));
+		$this->mockSession->expects($this->any())->method('isStarted')->will($this->returnValue(TRUE));
+
+		$token = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token)));
+
+		$loggedOutEmitted = FALSE;
+		$this->authenticationProviderManager->expects($this->once())->method('emitLoggedOut')->will($this->returnCallback(function() use(&$loggedOutEmitted) {
+			$loggedOutEmitted = TRUE;
+		}));
+		$this->mockSession->expects($this->once())->method('destroy')->will($this->returnCallback(function() use(&$loggedOutEmitted) {
+			if (!$loggedOutEmitted) {
+				\PHPUnit_Framework_Assert::fail('emitLoggedOut was not called before destroy');
+			}
+		}));
+
+		$this->authenticationProviderManager->setSecurityContext($mockContext);
+		$this->authenticationProviderManager->logout();
+	}
+
+	/**
+	 * @test
+	 */
 	public function noTokensAndProvidersAreBuiltIfTheConfigurationArrayIsEmpty() {
 		$this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', array());
 
