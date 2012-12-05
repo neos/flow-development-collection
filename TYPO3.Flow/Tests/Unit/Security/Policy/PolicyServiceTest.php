@@ -668,7 +668,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesBasicallyWorks() {
 		$entityResourcesConstraints = array(
-			'TYPO3_MyEntity' => array(
+			'TYPO3\MyEntity' => array(
 				'resource1' => 'constraint1',
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -707,7 +707,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesReturnsConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
 		$entityResourcesConstraints = array(
-			'TYPO3_MyEntity' => array(
+			'TYPO3\MyEntity' => array(
 				'resource1' => 'constraint1',
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -749,7 +749,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function hasPolicyEntryForEntityTypeWorks() {
 		$entityResourcesConstraints = array(
-			'TYPO3_MyEntity' => array(
+			'TYPO3\MyEntity' => array(
 				'resource1' => 'constraint1',
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -794,7 +794,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function isGeneralAccessForEntityTypeGrantedWorks() {
 		$entityResourcesConstraints = array(
-			'TYPO3_MyEntity' => array(
+			'TYPO3\MyEntity' => array(
 				'resource1' => \TYPO3\Flow\Security\Policy\PolicyService::MATCHER_ANY,
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -829,12 +829,12 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
-		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('Administrator')));
-		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('SomeOtherRole', 'Administrator', 'AnotherRole')));
-		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('Customer')));
-		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('AnotherRole')));
-		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('SomeOtherRole')));
-		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3_MyEntity', array('SomeOtherRole', 'Customer', 'Adminstrator')));
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3\MyEntity', array('Administrator')));
+		$this->assertTrue($policyService->isGeneralAccessForEntityTypeGranted('TYPO3\MyEntity', array('SomeOtherRole', 'Administrator', 'AnotherRole')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3\MyEntity', array('Customer')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3\MyEntity', array('AnotherRole')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3\MyEntity', array('SomeOtherRole')));
+		$this->assertFalse($policyService->isGeneralAccessForEntityTypeGranted('TYPO3\MyEntity', array('SomeOtherRole', 'Customer', 'Administrator')));
 	}
 
 	/**

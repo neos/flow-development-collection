@@ -123,6 +123,21 @@ class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidPolicyException
+	 */
+	public function parseEntityResourcesThrowsExceptionForInvalidClassNames() {
+		$resourcesTree = array(
+			'TYPO3_Party_Domain_Model_Account' => array(
+				'resource' => 'someConstraint'
+			)
+		);
+
+		$parser = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyExpressionParser', array('parseSingleEntityResource'), array(), '', FALSE);
+		$parser->parseEntityResources($resourcesTree);
+	}
+
+	/**
+	 * @test
 	 */
 	public function parseSingleEntityResourceCallsGetRuntimeEvaluationConditionsFromEvaluateStringAndReturnsAnAppropriateConstraintsArray() {
 		$resourcesTree = array(

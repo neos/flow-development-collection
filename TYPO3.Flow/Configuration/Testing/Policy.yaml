@@ -13,7 +13,7 @@ resources:
     TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_customerAction: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->customerAction())'
     TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictedController_adminAction: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
   entities:
-    TYPO3_Flow_Tests_Functional_Security_Fixtures_RestrictableEntity:
+    'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity':
       TYPO3_Flow_allEntities: 'ANY'
       TYPO3_Flow_hiddenEntities: 'this.hidden == TRUE'
       TYPO3_Flow_othersEntities: 'current.securityContext.account != this.ownerAccount && this.ownerAccount != NULL'

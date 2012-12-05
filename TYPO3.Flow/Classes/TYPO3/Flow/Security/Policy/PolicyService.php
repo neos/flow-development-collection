@@ -398,8 +398,6 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 * @return boolean TRUE if the given entity type has a policy entry
 	 */
 	public function hasPolicyEntryForEntityType($entityType, array $roles) {
-		$entityType = str_replace('\\', '_', $entityType);
-
 		if (isset($this->entityResourcesConstraints[$entityType])) {
 			foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
 				foreach ($roles as $role) {
@@ -436,8 +434,6 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		$deniedResources = array();
 		$grantedResources = array();
 		$abstainedResources = array();
-
-		$entityType = str_replace('\\', '_', $entityType);
 
 		foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
 			if ($constraint === self::MATCHER_ANY) {
@@ -535,8 +531,6 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 * @return array TRUE if general access is granted, FALSE otherwise
 	 */
 	public function isGeneralAccessForEntityTypeGranted($entityType, array $roles) {
-		$entityType = str_replace('\\', '_', $entityType);
-
 		$foundGeneralResourceDefinition = FALSE;
 		foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
 			if ($constraint === self::MATCHER_ANY) {

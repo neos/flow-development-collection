@@ -18,7 +18,7 @@
 #     TYPO3_FooPackage_CombinedResource: 'theOneAndOnlyResource || theOtherLonelyResource'
 #
 #   entities:
-#     TYPO3_FooPackage_Model_MyModelClass:
+#     'TYPO3\FooPackage\Model\MyModelClass':
 #       TYPO3_FooPackage_MyModelClassResource: this.property == TRUE
 #
 resources:
