@@ -9,6 +9,7 @@ Part V: Appendixes
 	AnnotationReference
 	FluidViewHelperReference
 	CommandReference
+	PredefinedConstantsReference
 	ContributingToFLOW3
 	CodingGuideLines/Index
 	ChangeLogs/Index
