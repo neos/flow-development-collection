@@ -50,8 +50,11 @@ class Context {
 			if (is_array($this->value)) {
 				return array_key_exists($path, $this->value) ? $this->value[$path] : NULL;
 			} elseif (is_object($this->value)) {
-				$propertyExists = FALSE;
-				return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyInternal($this->value, $path, FALSE, $propertyExists);
+				try {
+					return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->value, $path);
+				} catch (\TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException $exception) {
+					return NULL;
+				}
 			}
 		} else {
 			throw new EvaluationException('Path is not of type string or integer, got ' . gettype($path), 1344418464);
