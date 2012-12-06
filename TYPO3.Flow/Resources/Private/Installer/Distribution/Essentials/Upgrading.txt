@@ -1,12 +1,482 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your TYPO3 Flow 1.1 based
+This file contains instructions for upgrading your FLOW3 1.1 based
 applications to TYPO3 Flow 2.0.
 
-Session configuration changes
+If you have been using FLOW3 so far, chances are high you will want to
+follow up on TYPO3 Flow for all the new goodies it provides. But how
+hard is an upgrade of existing code? And what about your git
+repositories?
+
+Upgrading the code in your packages is described first, see `Upgrading
+your Packages`_.
+
+The integration of Composer for dependency management changes how
+packages are "assembled" into a distribution and a manifest file
+replaces the use of git submodules in our distributions. For most
+people, some cleanup in their git repositories will thus be needed.
+This is described in the section `Upgrading your Git repositories`_
+
+For starters, here are some other changes you need to be aware of.
+
+What has changed
+----------------
+
+Namespaces and class locations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The most obvious change is the renaming of FLOW3 to TYPO3 Flow. Since
+the product name is reflected in the PHP namespace of classes, all code
+using FLOW3 needs to be adjusted and ``FLOW3`` must be replaced by
+``TYPO3\Flow``.
+
+The integration of composer for dependency management requires all code
+to follow the `PSR-0 rules
+<https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md>`_
+for class autoloading - something FLOW3 did not do fully. So the vendor
+and package name parts of the PHP namespaces need to be reflected in
+the Classes folder structure of a package.
+
+MVC changes
+^^^^^^^^^^^
+
+**Custom Error Renderers** are now available, the exception handlers
+can render arbitrary templates based on the status code and/or class
+name of the thrown exception. This is considered a breaking change
+because it deprecates the provided NotFoundController & NotFoundView.
+
+----
+
+``Http\\Uri`` constructor **now expects a valid URI** and throws an
+exception if the given Uri is considered seriously malformed. This is
+considered breaking because prior to this change, the Uri just silently
+was created with all empty values.
+
+-----
+
+The way to **define the supported formats of a controller** has
+changed: Previously a class property ``$supportedFormats`` contained a
+list of filename extensions which would be supported. This property is
+not supported anymore. Instead, controllers may now specify a list of
+IANA Internet Media Types in a property ``$supportedMediaTypes``.
+
+The default setting for these supported media types in ActionController
+is "text/html". You'll need to adjust your controllers accordingly if
+you relied on the $supportedFormats feature.
+
+Also note that the format in ActionRequest is now NULL by default. The
+ActionController makes sure to set the correct format, but if you
+created your own ActionRequest for a special purpose, you need to take
+care of setting it yourself.
+
+----
+
+The term MIME type is outdated, at least if used in a web context. The
+correct term is "Internet Media Type". Furthermore, our list of MIME
+types (or media types) was not up to date.
+
+This patch introduces a new utility class ``MediaTypes`` which replaces
+``FileTypes``. This is a breaking change as **the FileTypes class is
+deprecated** with it. The old methods are still available but should not
+be used anymore. A code migration to use the new ones instead is
+shipped with the change.
+
+Validation changes
+^^^^^^^^^^^^^^^^^^
+
+Now **validators must declare any options they accept** using the class
+property ``$supportedOptions``. It is indexed by option name and holds
+an array for each option giving the default value, a description, type
+and an optional required flag.
+
+This is used to check accepted options and to generate option
+documentation for the validator reference documentation.
+
+----
+
+Empty strings are now correctly converted as NULL values in the Float
+and Integer converters. This is a breaking change if you relied upon
+the old behavior that empty values are converted to the number 0.
+
+Session changes
+^^^^^^^^^^^^^^^
+
+The PhpSession implementation was removed and the new Flow-native
+implementation is the default session handler now.
+
+If you provided specific configuration for session cookies through
+TYPO3:FLOW3:Session:PHPSession:* (or TYPO3:FLOW3:Session:PhpSession:*),
+you will need to adjust your settings to use options in
+TYPO3:Flow:Session:* instead.
+
+Persistence changes
+^^^^^^^^^^^^^^^^^^^
+
+We added little a change to your database schema -
+``flow3_persistence_identifier`` has become
+``persistence_object_identifier`` during the renaming of FLOW3 to Flow.
+See `Upgrading the database schema`_ for more information.
+
+----
+
+Until now ``QueryResult::count()`` ignored limit constraints that
+were active for the affected query, so
+``$query->setLimit(3)->execute()->count()`` could return a value > 3.
+If the query had an offset Flow even threw an exception.
+
+This has been fixed, so that **limit and offset constraints are taken
+into account by QueryResult::count()** now.
+
+This is a breaking change if you relied on Query::count() to always
+return *all* results regardless of a specified limit. In this case
+better generate multiple QueryResults (they're only created in-memory
+until you actually access them).
+
+----
+
+**Join columns** are now created and used in the same way, whether you have
+a ``JoinTable`` annotation in your model or not. This is (almost) a
+cosmetic fix as it works without, but can lead to confusion if looking
+at the database. If you annotated with ``JoinTable``, this could be a
+breaking change, as the join columns might change.
+
+----
+
+Flow does no longer have it's own default for **orphanRemoval** on
+many-to-many associations. That means if you want ``orphanRemoval`` on
+many-to-many associations, you now must explicitly enable it with the
+annotation option (in Doctrine 2 ORM orphan removal is disabled by
+default, as well).
+
+----
+
+The **RepositoryInterface** now includes ``__call()`` to satisfy
+developer expectations for methods like ``findOneBy…`` methods. This is
+only breaking if your repositories do not extend the provided base
+repositories.
+
+----
+
+When using Doctrine for persistence, the magic ``__call()`` method now
+returns a ``QueryResultInterface`` instance (as it should). This is a
+breaking change if you relied on the specific return values before, in
+this you need to adjust your code.
+
+Other Flow changes
+^^^^^^^^^^^^^^^^^^
+
+The method ``getPackageNamespace()`` was renamed to ``getNamespace()``.
+
+----
+
+The ``DataNotSerializeableException`` was renamed to
+``DataNotSerializableException``.
+
+----
+
+TYPO3 Flow **no longer magically sets a default timezone** if there's
+none set, because every default time zone will be the wrong one for
+most people. This change is marked breaking because in cases where no
+timezone is set in PHP configuration, Flow will no longer work.
+
+Fluid changes
+^^^^^^^^^^^^^
+
+The **uri.resource viewhelper** no longer has the ``uri`` attribute.
+The ``path`` attribute must be used instead, and now accepts
+``resource://…`` URIs as well.
+
+----
+
+Fluid now **only parses arrays inside ViewHelper arguments**, such that
+an array inside normal text is not converted anymore.
+
+This change is only breaking in very rare cases where one relied on
+the inner contents of the ViewHelper being an array, f.e. if one used
+the debug ViewHelper as follows::
+
+	<f:debug>{key1: 'value1', key2: 'value2'}</f:debug>
+
+… or if anybody wrote custom ViewHelpers which use this convention.
+
+Relying on that would be very fragile anyways, as the insertion of a
+single space character before the opening curly bracket or after the
+closing one would cast the array back to a string.
+
+ViewHelpers which were written like this should be re-written to take
+the array as ViewHelper argument::
+
+	<f:debug value="{key1: 'value1', key2: 'value2'}" />
+
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Here comes the easier part. As with earlier changes to TYPO3 Flow that
+required code changes on the user side we provide a code migration tool.
+Given you have a TYPO3 Flow system with your (outdated) package in place
+you should run the following before attempting to fix anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages
+it finds - for the first run you might want to limit things a little to
+keep the overview, though.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commit messages is the Migration: … footer. It is used to
+detect if a migration has been applied already, so if you drop it,
+things might get out of hands in the future.
+
+Upgrading the database schema
 -----------------------------
 
-The configuration for the PhpSession is now *only* read from a setting named
-``PhpSession`` instead of the former ``PHPSession``. You must adjust your
-settings accordingly.
+Upgrading the schema is the harder part this time. You will probably
+start by running::
+
+ ./flow doctrine:migrate
+
+to update your database with any changes to the framework-supplied
+schema. Then run::
+
+ ./flow doctrine:migrationgenerate
+
+`as usual <http://flow.typo3.org/documentation/guide/partiii/persistence.html#creating-migrations>`_
+to create a migration based on the current state of database and code.
+This time things are a bit special, since the primary key of a lot of
+tables will change due to the renaming of the
+``FLOW3_Persistence_Identifier`` property.
+
+The hard part are the foreign key constraints that need to be updated
+with this. The migration generated by Doctrine will contain commands to
+rename that column for your package's models (tables) but will not
+handle any foreign keys from other packages that might point to them.
+We have a solution though.
+
+When adjusting your generated migration (as usual you need to check it
+anyway), just follow the following recipe:
+
+* Order SQL statements to (the file `might look similar to this
+  <https://review.typo3.org/gitweb?p=FLOW3/Packages/TYPO3.FLOW3.git;a=blob;f=Migrations/Mysql/Version20120930203452.php;h=38c56314bd3e197fa41982976a7e7a335d59cc5d;hb=a43c62ad7825fd235b6580c460418d53f9d2af63>`_
+  afterwards)
+
+  * dropping foreign key constraints
+  * renaming fields
+  * adding foreign key constraints
+
+* Remove any SQL statements dealing with foreign key constraints
+* Before the remaining statements adjusting your package's primary key columns add::
+
+		// collect foreign keys pointing to "our" tables
+	$tableNames = array(
+		'acme_demo_foo', // change this!
+		'acme_demo_bar', // change this!
+	);
+	$foreignKeyHandlingSql = \TYPO3\Flow\Persistence\Doctrine\Service::getForeignKeyHandlingSql(
+		$schema, $this->platform, $tableNames,   'flow3_persistence_identifier', 'persistence_object_identifier'
+	);
+
+		// drop FK constraints
+	foreach ($foreignKeyHandlingSql['drop'] as $sql) {
+		$this->addSql($sql);
+	}
+
+* After the remaining statements add::
+
+		// add back FK constraints
+	foreach ($foreignKeyHandlingSql['add'] as $sql) {
+		$this->addSql($sql);
+	}
+
+In the code to add, you have to adjust the list of affected tables - it
+needs to list all tables in your package that have a
+``flow3_persistence_identifier`` column. The file should now look
+roughly `similar to this one
+<https://review.typo3.org/gitweb?p=FLOW3/Packages/TYPO3.FLOW3.git;a=blob;f=Migrations/Mysql/Version20120930203452.php;h=3cc85935180c21437cda2532f5b671707df8dc13;hb=57526b7fa57d82b08b64144214df9ffb1e475ffe>`_.
+
+Afterwards make sure to try your migration in up and down direction as
+usual before using it in production!
+
+Famous last words
+-----------------
+
+In a nutshell, running::
+
+ ./flow core:migrate
+ ./flow doctrine:migrationgenerate
+
+padded with some manual checking and adjustments needs to be done. That
+should result in a working package.
+
+If it does not and you have no idea what to do next, please come over
+to `#typo3-flow <irc://freenode.net/#typo3-flow>`_ on freenode IRC or
+ask in the mailing list (news group) as you prefer. The `support page
+<http://flow.typo3.org/support.html>`_ provides more information.
+
+Upgrading your Git repositories
+-------------------------------
+
+One (very simple) way to use TYPO3 Flow with your own packages would be
+to clone a fresh distribution and copy our packages over from your old
+working copy. Then follow the instructions on `Upgrading your Packages`_
+
+If you are keeping your own distribution under version control, things
+are a bit more involved. If you know git, a look at `this commit might
+contain all information you need
+<http://git.typo3.org/FLOW3/Distributions/Base.git/commit/3922aeaeadae68cb04e30722d5e6cf01b00b6382>`_.
+If not, read on.
+
+Remove submodules for ``Framework``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since dependencies are now managed by composer, the git submodule
+pointers are no longer used. To remove them, we used these commands::
+
+  git rm --cached Packages/Framework/TYPO3.FLOW3
+  git rm --cached Packages/Framework/TYPO3.Fluid
+  git rm --cached Packages/Framework/TYPO3.Party
+  git rm --cached Packages/Framework/TYPO3.Kickstart
+  git rm --cached Packages/Framework/TYPO3.Welcome
+
+  git rm --cached Packages/Framework/Doctrine.Common
+  git rm --cached Packages/Framework/Doctrine.DBAL
+  git rm --cached Packages/Framework/Doctrine.ORM
+
+  git rm --cached Packages/Framework/Symfony.Component.DomCrawler
+  git rm --cached Packages/Framework/Symfony.Component.Yaml
+
+If you are tracking our repositories, you can of course pull in those
+(and the following) changes. Git will probably complain about not being
+able to remove the files and they will show up as untracked afterwards.
+Don't worry, just remove the actual files now::
+
+  rm -rf Packages/Framework/TYPO3.FLOW3
+  rm -rf Packages/Framework/TYPO3.Fluid
+  rm -rf Packages/Framework/TYPO3.Party
+
+  rm -rf Packages/Framework/Doctrine.Common
+  rm -rf Packages/Framework/Doctrine.DBAL
+  rm -rf Packages/Framework/Doctrine.ORM
+
+  rm -rf Packages/Framework/Symfony.Component.DomCrawler
+  rm -rf Packages/Framework/Symfony.Component.Yaml
+
+Last edit your `.gitmodules` file and remove the unneeded defintions.
+
+Remove further submodules
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Any other submodules that are pulled in via composer now, may be
+removed as well::
+
+  git rm --cached Build/Common
+  rm -rf Build/Common
+
+If you added anything else, you have the choice now: you can keep it
+managed via git submodules, or use composer.
+
+Even more things to remove
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Some files that we had under version control in the FLOW3 distribution
+but which should have been in the FLOW3 package instead can be removed
+as well! Because now they are indeed part of the Flow package itself
+and will be copied to the correct location during installation::
+
+ git rm .gitignore
+ git rm .gitmodules
+ git rm Configuration/Development/Settings.yaml.example
+ git rm Configuration/Production/Settings.yaml.example
+ git rm Configuration/README
+ git rm Configuration/Routes.yaml
+ git rm Configuration/Settings.yaml.example
+ git rm Configuration/Testing/Settings.yaml
+ git rm Readme.txt
+ git rm Upgrading.txt
+ git rm Web/.htaccess
+ git rm Web/index.php
+ git rm flow3
+ git rm flow3.bat
+
+Add a composer manifest file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Now you need a composer manifest, a simple json file. Again, you can
+pull the `base version in from our git repositories
+<http://git.typo3.org/FLOW3/Distributions/Base.git/blob_plain/HEAD:/composer.json>`_.
+
+It looks like this::
+
+ {
+     "name": "typo3/flow-base-distribution",
+     "description" : "TYPO3 Flow Base Distribution",
+     "license": "LGPL-3.0+",
+     "repositories": [
+         {
+             "type": "composer",
+             "url": "http://ci.typo3.robertlemke.net/job/composer-packages/ws/repository/"
+         }
+     ],
+     "config": {
+         "vendor-dir": "Packages/Libraries",
+         "bin-dir": "bin"
+     },
+     "require": {
+         "typo3/flow": "dev-master",
+         "typo3/welcome": "dev-master"
+     },
+     "require-dev": {
+         "typo3/kickstart": "dev-master",
+         "typo3/buildessentials": "dev-master",
+         "mikey179/vfsstream": "1.1.*"
+     },
+     "minimum-stability": "dev",
+     "scripts": {
+         "post-update-cmd": "TYPO3\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
+         "post-install-cmd": "TYPO3\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall"
+     }
+ }
+
+This tells Composer to install FLOW3 and it's dependencies (Doctrine
+and Symfony parts, TYPO3.Fluid, TYPO3.Party).
+
+Anything else you need can be added freely, have a look at the
+`composer documentation <http://getcomposer.org/doc/01-basic-usage.md>`_.
+
+Install dependencies
+^^^^^^^^^^^^^^^^^^^^
+
+What is left is actually installing all the dependencies::
+
+ composer install --dev
+
+This will fetch and install all the packages and libraries defined in
+the manifest (and in turn their dependencies, and in turn…).
+
+If you want to update the packages installed through this later, run::
+
+ composer update --dev
