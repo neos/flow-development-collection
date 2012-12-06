@@ -202,6 +202,9 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			$token->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 		$this->emitLoggedOut();
+		if ($this->session->isStarted()) {
+			$this->session->destroy('Logout through AuthenticationProviderManager');
+		}
 	}
 
 	/**
@@ -216,6 +219,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 
 	/**
 	 * Signals that all active authentication tokens have been invalidated.
+	 * Note: the session will be destroyed after this signal has been emitted.
 	 *
 	 * @return void
 	 * @Flow\Signal

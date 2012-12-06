@@ -53,7 +53,6 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Flow\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\Flow\Security\Policy\PolicyService', 'savePolicyCache');
 
 		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', 'TYPO3\Flow\Session\SessionInterface', 'renewId');
-		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'loggedOut', 'TYPO3\Flow\Session\SessionInterface', 'destroy');
 
 		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\Flow\Cache\CacheManager', 'flushSystemCachesByChangedFiles');
 
