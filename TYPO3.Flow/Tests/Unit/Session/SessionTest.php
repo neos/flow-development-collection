@@ -150,6 +150,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
 		$session->start();
 
 		$this->assertFalse($session->canBeResumed());
@@ -194,6 +195,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
 		$session->start();
 		$this->assertTrue($session->isStarted());
 	}
@@ -226,6 +228,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
 
 		$session->start();
 
@@ -239,6 +242,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
 
 		$session->start();
 
@@ -308,6 +312,74 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function sessionDataCanBeRetrievedEvenAfterSessionIdHasBeenRenewed() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$cache = $this->createCache();
+		$this->inject($session, 'cache', $cache);
+
+		$session->start();
+		$session->putData('foo', 'bar');
+		$session->renewId();
+		$session->close();
+
+		$sessionCookie = $this->httpResponse->getCookie($this->settings['session']['name']);
+		$this->httpRequest->setCookie($sessionCookie);
+
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $cache);
+
+		$session->resume();
+
+		$this->assertEquals('bar', $session->getData('foo'));
+	}
+
+	/**
+	 * This test asserts that the session cookie sent in the response doesn't just
+	 * copy the data from the received session cookie (that is, domain, httponly etc)
+	 * but creates a fresh Cookie object using the parameters derived from the
+	 * settings.
+	 *
+	 * @test
+	 */
+	public function sessionOnlyReusesTheSessionIdFromIncomingCookies() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$cache = $this->createCache();
+		$this->inject($session, 'cache', $cache);
+
+		$session->start();
+		$session->putData('foo', 'bar');
+		$sessionIdentifier = $session->getId();
+		$session->close();
+
+		$requestCookie = new Cookie($this->settings['session']['name'], $sessionIdentifier, 0, 100, 'other', '/');
+		$this->httpRequest->setCookie($requestCookie);
+
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $cache);
+
+		$session->resume();
+
+		$responseCookie = $this->httpResponse->getCookie($this->settings['session']['name']);
+
+		$this->assertNotEquals($requestCookie, $responseCookie);
+		$this->assertEquals($requestCookie->getValue(), $responseCookie->getValue());
+	}
+
+	/**
+	 * @test
 	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getDataThrowsExceptionIfSessionIsNotStarted() {
@@ -332,6 +404,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
+
 		$session->start();
 		$resource = fopen(__FILE__, 'r');
 		$session->putData('some key', $resource);
@@ -514,6 +588,46 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->resume();
 		$this->assertEquals(array('MyProvider:admin'), $session->getData('TYPO3_Flow_Security_Accounts'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function shutdownChecksIfSessionStillExistsInStorageCacheBeforeWritingData() {
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$cache = $this->createCache();
+		$this->inject($session, 'cache', $cache);
+
+			// Start a "local" session and store some data:
+		$session->start();
+		$sessionIdentifier = $session->getId();
+
+		$session->putData('foo', 'bar');
+		$session->close();
+		$sessionInfo = $cache->get($sessionIdentifier);
+
+			// Simulate a remote server referring to the same session:
+		$remoteSession = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
+		$this->inject($remoteSession, 'bootstrap', $this->mockBootstrap);
+		$this->inject($remoteSession, 'objectManager', $this->mockObjectManager);
+		$this->inject($remoteSession, 'settings', $this->settings);
+		$this->inject($remoteSession, 'cache', $cache);
+
+			// Resume the local session and add more data:
+		$this->assertTrue($cache->has($sessionIdentifier));
+		$session->resume();
+		$session->putData('baz', 'quux');
+
+			// The remote server destroys the local session in the meantime:
+		$remoteSession->destroy();
+
+			// Close the local session – this must not write any data because the session doesn't exist anymore:
+		$session->close();
+
+		$this->assertFalse($cache->has($sessionIdentifier));
 	}
 
 	/**

@@ -232,10 +232,11 @@ class Session implements SessionInterface {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
 			$this->storageIdentifier = Algorithms::generateUUID();
 			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
-
 			$this->response->setCookie($this->sessionCookie);
 			$this->lastActivityTimestamp = $this->now;
 			$this->started = TRUE;
+
+			$this->writeSessionInfoCacheEntry();
 		}
 	}
 
@@ -329,7 +330,10 @@ class Session implements SessionInterface {
 			throw new \TYPO3\Flow\Session\Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionIdentifier), 1354034230);
 		}
 
+		$this->removeSessionInfoCacheEntry($this->sessionIdentifier);
 		$this->sessionIdentifier = Algorithms::generateRandomString(32);
+		$this->writeSessionInfoCacheEntry();
+
 		$this->sessionCookie->setValue($this->sessionIdentifier);
 		return $this->sessionIdentifier;
 	}
@@ -411,11 +415,8 @@ class Session implements SessionInterface {
 			// Only makes sense for remote sessions because the currently active session
 			// will be updated on shutdown anyway:
 		if ($this->remote === TRUE) {
-			$sessionInfo = array(
-				'lastActivityTimestamp' => $this->now,
-				'storageIdentifier' => $this->storageIdentifier
-			);
-			$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
+			$this->lastActivityTimestamp = $this->now;
+			$this->writeSessionInfoCacheEntry();
 		}
 	}
 
@@ -449,7 +450,7 @@ class Session implements SessionInterface {
 			$this->sessionCookie->expire();
 		}
 
-		$this->cache->remove($this->sessionIdentifier);
+		$this->removeSessionInfoCacheEntry($this->sessionIdentifier);
 		$this->cache->flushByTag($this->storageIdentifier);
 		$this->started = FALSE;
 		$this->sessionIdentifier = NULL;
@@ -488,19 +489,16 @@ class Session implements SessionInterface {
 	public function shutdownObject() {
 		if ($this->started === TRUE && $this->remote === FALSE) {
 
-				// Security context can't be injected and must be retrieved manually
-				// because it relies on this very session object:
-			$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
-			if ($securityContext->isInitialized()) {
-				$this->tagSessionWithAuthenticatedAccounts($securityContext->getAuthenticationTokens());
-			}
+			if ($this->cache->has($this->sessionIdentifier)) {
+					// Security context can't be injected and must be retrieved manually
+					// because it relies on this very session object:
+				$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
+				if ($securityContext->isInitialized()) {
+					$this->tagSessionWithAuthenticatedAccounts($securityContext->getAuthenticationTokens());
+				}
 
-			$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
-			$sessionInfo = array(
-				'lastActivityTimestamp' => $this->lastActivityTimestamp,
-				'storageIdentifier' => $this->storageIdentifier
-			);
-			$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
+				$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
+			}
 			$this->started = FALSE;
 
 			$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) -1;
@@ -547,7 +545,8 @@ class Session implements SessionInterface {
 			}
 
 			if ($this->request->hasCookie($this->sessionCookieName)) {
-				$this->sessionCookie = $this->request->getCookie($this->sessionCookieName);
+				$sessionIdentifier = $this->request->getCookie($this->sessionCookieName)->getValue();
+				$this->sessionCookie = new Cookie($this->sessionCookieName, $sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 			}
 		}
 	}
@@ -582,6 +581,35 @@ class Session implements SessionInterface {
 		}
 	}
 
+	/**
+	 * Writes the cache entry containing information about the session, such as the
+	 * last activity time and the storage identifier.
+	 *
+	 * This function does not write the whole session _data_ into the storage cache,
+	 * but only the "head" cache entry containing meta information.
+	 *
+	 * @return void
+	 */
+	protected function writeSessionInfoCacheEntry() {
+		$sessionInfo = array(
+			'lastActivityTimestamp' => $this->lastActivityTimestamp,
+			'storageIdentifier' => $this->storageIdentifier
+		);
+		$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
+	}
+
+	/**
+	 * Removes the session info cache entry for the specified session.
+	 *
+	 * Note that this function does only remove the "head" cache entry, not the
+	 * related data referred to by the storage identifier.
+	 *
+	 * @param string $sessionIdentifier
+	 * @return void
+	 */
+	protected function removeSessionInfoCacheEntry($sessionIdentifier) {
+		$this->cache->remove($sessionIdentifier);
+	}
 }
 
 ?>
