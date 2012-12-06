@@ -7,52 +7,36 @@ Installation
 TYPO3 Flow Download
 ===================
 
-The most recent TYPO3 Flow release can be obtained from http://flow.typo3.org/download as a
-.tgz, .zip or .bz2 archive. Once you downloaded the distribution just unpack the archive
-in a directory of your choice, e.g. like this for the gzipped tar archive:
+Flow uses `Composer`_ for dependency management, which is a separate command line tool.
+Install it by following the `installation instructions <http://getcomposer.org/download/>`_
+which boil down to this in the simplest case::
 
 .. code-block:: none
 
-	mkdir -p /var/apache2/htdocs/tutorial
-	tar xfz Flow-1.0.0-beta1.tgz /var/apache2/htdocs/tutorial/
+	curl -s https://getcomposer.org/installer | php
 
-On Windows you create a directory (e.g. *c:\\xampp\\htdocs\\tutorial*), move
-the .zip file into the new directory and unzip it with the Windows Explorer.
+.. note::
+	Feel free to install the composer command to a global location, by moving
+	the phar archive to e.g. */usr/local/bin/composer* and making it executable.
+	The following documentation assumes ``composer`` is installed globally.
 
-The TYPO3 Flow distributions can also be cloned from our Git repository. The
-following Unix command would download the TYPO3 Flow distribution:
+Then use `Composer`_ in a directory which will be accessible by your web server to download
+and install all packages of the TYPO3 Flow Base Distribution. The following command will
+clone the 2.0.0 version, include development dependencies and keep git metadata for future use::
 
-.. code-block:: none
-
-	git clone git://git.typo3.org/FLOW3/Distributions/Base.git \
-	/var/apache2/htdocs/tutorial/
+ composer create-project --dev --keep-vcs typo3/flow-base-distribution tutorial 2.0.0
 
 .. note::
 	Throughout this tutorial we assume that you installed the TYPO3 Flow distribution in
 	*/var/apache2/htdocs/tutorial* and that */var/apache2/htdocs* is the document root
 	of your web server. On a Windows machine you might use *c:\\xampp\\htdocs* instead.
 
-Composer
-========
-
-Flow uses `Composer`_ for dependency management, which is a separate command line tool.
-It can be downloaded very easily using the following command:
-
-.. code-block:: none
-
-	curl -s getcomposer.org/installer | php 
-
-.. note::
-	Feel free to install the composer command to a global location, by moving
-	the phar archive to e.g. */usr/local/bin* and making it executable - the
-	composer documentation has  instructions
-
 To install all dependencies including those marked is "needed for development",
 now run this from the top-level folder of the distribution:
 
 .. code-block:: none
 
-	php composer.phar install --dev
+	composer install --dev
 
 Updating is as easy, just use ``update`` instead of ``install``.
 
