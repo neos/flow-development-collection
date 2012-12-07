@@ -47,11 +47,6 @@ class Request extends Message {
 	protected $arguments;
 
 	/**
-	 * @var array<\TYPO3\Flow\Http\Cookie>
-	 */
-	protected $cookies;
-
-	/**
 	 * Data similar to that which is typically provided by $_SERVER
 	 *
 	 * @var array
