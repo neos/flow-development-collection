@@ -21,6 +21,7 @@ use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 
 /**
  * A modular session implementation based on the caching framework.
@@ -36,6 +37,8 @@ use TYPO3\Flow\Http\Cookie;
  * @see \TYPO3\Flow\Session\SessionManager
  */
 class Session implements SessionInterface {
+
+	const TAG_PREFIX = 'customtag-';
 
 	/**
 	 * @Flow\Inject
@@ -105,6 +108,11 @@ class Session implements SessionInterface {
 	protected $lastActivityTimestamp;
 
 	/**
+	 * @var array
+	 */
+	protected $tags = array();
+
+	/**
 	 * @var integer
 	 */
 	protected $now;
@@ -159,14 +167,15 @@ class Session implements SessionInterface {
 	 * instance representing a remote session. In that case $storageIdentifier and
 	 * $lastActivityTimestamp are also required arguments.
 	 *
-	 * Session instances must not be created manually! They should be retrieved via
+	 * Session instances MUST NOT be created manually! They should be retrieved via
 	 * the Session Manager or through dependency injection (use SessionInterface!).
 	 *
 	 * @param string $sessionIdentifier The public session identifier which is also used in the session cookie
 	 * @param string $storageIdentifier The private storage identifier which is used for cache entries
 	 * @param integer $lastActivityTimestamp Unix timestamp of the last known activity for this session
+	 * @param array $tags A list of tags set for this session
 	 */
-	public function __construct($sessionIdentifier = NULL, $storageIdentifier = NULL, $lastActivityTimestamp = NULL) {
+	public function __construct($sessionIdentifier = NULL, $storageIdentifier = NULL, $lastActivityTimestamp = NULL, array $tags = array()) {
 		if ($sessionIdentifier !== NULL) {
 			if ($storageIdentifier === NULL || $lastActivityTimestamp === NULL) {
 				throw new \InvalidArgumentException('Session requires a storage identifier and last activity timestamp for remote sessions.', 1354045988);
@@ -176,6 +185,7 @@ class Session implements SessionInterface {
 			$this->lastActivityTimestamp = $lastActivityTimestamp;
 			$this->started = TRUE;
 			$this->remote = TRUE;
+			$this->tags = $tags;
 		}
 		$this->now = time();
 	}
@@ -246,6 +256,10 @@ class Session implements SessionInterface {
 	 * If a to-be-resumed session was inactive for too long, this function will
 	 * trigger the expiration of that session. An expired session cannot be resumed.
 	 *
+	 * NOTE that this method does a bit more than the name implies: Because the
+	 * session info data needs to be loaded, this method stores this data already
+	 * so it doesn't have to be loaded again once the session is being used.
+	 *
 	 * @return boolean
 	 * @api
 	 */
@@ -262,6 +276,7 @@ class Session implements SessionInterface {
 		}
 		$this->lastActivityTimestamp = $sessionInfo['lastActivityTimestamp'];
 		$this->storageIdentifier = $sessionInfo['storageIdentifier'];
+		$this->tags = $sessionInfo['tags'];
 		return !$this->autoExpire();
 	}
 
@@ -403,6 +418,59 @@ class Session implements SessionInterface {
 	}
 
 	/**
+	 * Tags this session with the given tag.
+	 *
+	 * Note that third-party libraries might also tag your session. Therefore it is
+	 * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
+	 *
+	 * @param string $tag The tag – must match be a valid cache frontend tag
+	 * @return void
+	 * @api
+	 */
+	public function addTag($tag) {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
+		}
+		if (!$this->cache->isValidTag($tag)) {
+			throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, FrontendInterface::PATTERN_TAG));
+		}
+		if (!in_array($tag, $this->tags)) {
+			$this->tags[] = $tag;
+		}
+	}
+
+	/**
+	 * Removes the specified tag from this session.
+	 *
+	 * @param string $tag The tag – must match be a valid cache frontend tag
+	 * @return void
+	 * @api
+	 */
+	public function removeTag($tag) {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355150140);
+		}
+		$index = array_search($tag, $this->tags);
+		if ($index !== FALSE) {
+			unset($this->tags[$index]);
+		}
+	}
+
+
+	/**
+	 * Returns the tags this session has been tagged with.
+	 *
+	 * @return array The tags or an empty array if there aren't any
+	 * @api
+	 */
+	public function getTags() {
+		if ($this->started !== TRUE) {
+			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to retrieve tags from a session which has not been started yet.', 1355141501);
+		}
+		return $this->tags;
+	}
+
+	/**
 	 * Updates the last activity time to "now".
 	 *
 	 * @return void
@@ -455,6 +523,7 @@ class Session implements SessionInterface {
 		$this->started = FALSE;
 		$this->sessionIdentifier = NULL;
 		$this->storageIdentifier = NULL;
+		$this->tags = array();
 	}
 
 	/**
@@ -494,10 +563,11 @@ class Session implements SessionInterface {
 					// because it relies on this very session object:
 				$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
 				if ($securityContext->isInitialized()) {
-					$this->tagSessionWithAuthenticatedAccounts($securityContext->getAuthenticationTokens());
+					$this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
 				}
 
 				$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
+				$this->writeSessionInfoCacheEntry();
 			}
 			$this->started = FALSE;
 
@@ -552,7 +622,7 @@ class Session implements SessionInterface {
 	}
 
 	/**
-	 * Tags an existing session with accounts of successfully authenticated tokens.
+	 * Stores some information about the authenticated accounts in the session data.
 	 *
 	 * This method will check if a session has already been started, which is
 	 * the case after tokens relying on a session have been authenticated: the
@@ -568,7 +638,7 @@ class Session implements SessionInterface {
 	 * @param array<\TYPO3\Flow\Security\Authentication\TokenInterface>
 	 * @return void
 	 */
-	protected function tagSessionWithAuthenticatedAccounts(array $tokens) {
+	protected function storeAuthenticatedAccountsInfo(array $tokens) {
 		$accountProviderAndIdentifierPairs = array();
 		foreach ($tokens as $token) {
 			$account = $token->getAccount();
@@ -588,14 +658,25 @@ class Session implements SessionInterface {
 	 * This function does not write the whole session _data_ into the storage cache,
 	 * but only the "head" cache entry containing meta information.
 	 *
+	 * The session cache entry is also tagged with "session", the session identifier
+	 * and any custom tags of this session, prefixed with TAG_PREFIX.
+	 *
 	 * @return void
 	 */
 	protected function writeSessionInfoCacheEntry() {
 		$sessionInfo = array(
 			'lastActivityTimestamp' => $this->lastActivityTimestamp,
-			'storageIdentifier' => $this->storageIdentifier
+			'storageIdentifier' => $this->storageIdentifier,
+			'tags' => $this->tags
 		);
-		$this->cache->set($this->sessionIdentifier, $sessionInfo, array($this->storageIdentifier, 'session'), 0);
+
+		$tagsForCacheEntry = array_map(function($tag) {
+			return Session::TAG_PREFIX . $tag;
+		}, $this->tags);
+		$tagsForCacheEntry[] = 'session';
+		$tagsForCacheEntry[] = $this->sessionIdentifier;
+
+		$this->cache->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
 	}
 
 	/**

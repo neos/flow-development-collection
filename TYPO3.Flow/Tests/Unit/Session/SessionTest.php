@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Unit\Session;
  *                                                                        */
 
 use TYPO3\Flow\Session\Session;
+use TYPO3\Flow\Session\SessionManager;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
 use TYPO3\Flow\Core\ApplicationContext;
@@ -118,7 +119,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function remoteSessionUsesStorageIdentifierPassedToConstructor() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
 
 		$cache = $this->createCache();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
@@ -303,7 +304,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function renewIdThrowsExceptionIfCalledOnRemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);
 		$this->inject($session, 'cache', $this->createCache());
@@ -498,6 +499,142 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
+	public function addTagThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$session->addTag('MyTag');
+	}
+
+	/**
+	 * @test
+	 * @expectedException InvalidArgumentException
+	 */
+	public function addTagThrowsExceptionIfTagIsNotValid() {
+		$taggedSession = new Session();
+		$this->inject($taggedSession, 'bootstrap', $this->mockBootstrap);
+		$this->inject($taggedSession, 'settings', $this->settings);
+		$this->inject($taggedSession, 'cache', $this->createCache());
+		$this->inject($taggedSession, 'objectManager', $this->mockObjectManager);
+		$taggedSession->start();
+
+		$taggedSession->addTag('Invalid Tag Contains Spaces');
+	}
+
+	/**
+	 * @test
+	 */
+	public function aSessionCanBeTaggedAndBeRetrievedAgainByTheseTags() {
+		$cache = $this->createCache();
+
+		$otherSession = new Session();
+		$this->inject($otherSession, 'bootstrap', $this->mockBootstrap);
+		$this->inject($otherSession, 'settings', $this->settings);
+		$this->inject($otherSession, 'cache', $cache);
+		$this->inject($otherSession, 'objectManager', $this->mockObjectManager);
+		$otherSession->start();
+
+		$taggedSession = new Session();
+		$this->inject($taggedSession, 'bootstrap', $this->mockBootstrap);
+		$this->inject($taggedSession, 'settings', $this->settings);
+		$this->inject($taggedSession, 'cache', $cache);
+		$this->inject($taggedSession, 'objectManager', $this->mockObjectManager);
+		$taggedSession->start();
+		$taggedSessionId = $taggedSession->getId();
+
+		$otherSession->putData('foo', 'bar');
+		$taggedSession->putData('foo', 'baz');
+
+		$taggedSession->addTag('SampleTag');
+		$taggedSession->addTag('AnotherTag');
+
+		$otherSession->close();
+		$taggedSession->close();
+
+		$sessionManager = new SessionManager();
+		$this->inject($sessionManager, 'cache', $cache);
+
+		$retrievedSessions = $sessionManager->getSessionsByTag('SampleTag');
+		$this->assertSame($taggedSessionId, $retrievedSessions[0]->getId());
+		$this->assertEquals(array('SampleTag', 'AnotherTag'), $retrievedSessions[0]->getTags());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getTagsOnAResumedSessionReturnsTheTagsSetWithAddTag() {
+		$cache = $this->createCache();
+
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $cache);
+
+		$session->start();
+		$session->addTag('SampleTag');
+		$session->addTag('AnotherTag');
+
+		$session->close();
+
+			// Create a new, clean session object to make sure that the tags were really
+			// loaded from the cache:
+		$sessionCookie = $this->httpResponse->getCookie($this->settings['session']['name']);
+		$this->httpRequest->setCookie($sessionCookie);
+
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $this->mockBootstrap);
+		$this->inject($session, 'objectManager', $this->mockObjectManager);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $cache);
+
+		$session->resume();
+
+		$this->assertEquals(array('SampleTag', 'AnotherTag'), $session->getTags());
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
+	public function getTagsThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$session->getTags();
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
+	public function removeTagThrowsExceptionIfCalledOnNonStartedSession() {
+		$session = new Session();
+		$session->removeTag('MyTag');
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeTagRemovesAPreviouslySetTag() {
+		$taggedSession = new Session();
+		$this->inject($taggedSession, 'bootstrap', $this->mockBootstrap);
+		$this->inject($taggedSession, 'settings', $this->settings);
+		$this->inject($taggedSession, 'cache', $this->createCache());
+		$this->inject($taggedSession, 'objectManager', $this->mockObjectManager);
+		$taggedSession->start();
+
+		$taggedSession->addTag('SampleTag');
+		$taggedSession->addTag('AnotherTag');
+
+		$taggedSession->removeTag('SampleTag');
+		$taggedSession->addTag('YetAnotherTag');
+
+		$taggedSession->removeTag('DoesntExistButDoesNotAnyHarm');
+
+		$this->assertEquals(array('AnotherTag', 'YetAnotherTag'), array_values($taggedSession->getTags()));
+	}
+
+	/**
+	 * @test
+	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 */
 	public function touchThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
 		$session->touch();
@@ -546,7 +683,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function closeAndShutdownObjectDoNotCloseARemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
 		$this->inject($session, 'settings', $this->settings);
@@ -676,7 +813,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function destroyRemovesAllSessionDataFromARemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259);
+		$session = new Session('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, array());
 
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'settings', $this->settings);

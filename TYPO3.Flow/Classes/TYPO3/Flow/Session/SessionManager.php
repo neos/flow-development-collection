@@ -69,7 +69,7 @@ class SessionManager implements SessionManagerInterface {
 		}
 		if ($this->cache->has($sessionIdentifier)) {
 			$sessionInfo = $this->cache->get($sessionIdentifier);
-			$this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
+			$this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
 			return $this->remoteSessions[$sessionIdentifier];
 		}
 	}
@@ -83,10 +83,26 @@ class SessionManager implements SessionManagerInterface {
 	public function getActiveSessions() {
 		$activeSessions = array();
 		foreach ($this->cache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
-			$session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
+			$session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
 			$activeSessions[] = $session;
 		}
 		return $activeSessions;
+	}
+
+	/**
+	 * Returns all sessions which are tagged by the specified tag.
+	 *
+	 * @param string $tag A valid Cache Frontend tag
+	 * @return array A collection of Session objects or an empty array if tag did not match
+	 * @api
+	 */
+	public function getSessionsByTag($tag) {
+		$taggedSessions = array();
+		foreach ($this->cache->getByTag(Session::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionInfo) {
+			$session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
+			$taggedSessions[] = $session;
+		}
+		return $taggedSessions;
 	}
 }
 
