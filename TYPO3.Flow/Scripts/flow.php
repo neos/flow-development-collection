@@ -36,7 +36,7 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow:core:setfilepermissions' || $ar
 	require(__DIR__ . '/../Classes/TYPO3/Flow/Core/Bootstrap.php');
 
 	$context = trim(getenv('FLOW_CONTEXT'), '"\' ') ?: 'Development';
-	$_SERVER['FLOW_ROOTPATH'] = trim(getenv('FLOW_ROOTPATH'), '"\' ') ?: '';
+	$_SERVER['FLOW_ROOTPATH'] = trim(getenv('FLOW_ROOTPATH'), '"\' ') ?: dirname($_SERVER['PHP_SELF']);
 
 	$bootstrap = new \TYPO3\Flow\Core\Bootstrap($context);
 	$bootstrap->run();
