@@ -13,7 +13,7 @@ namespace TYPO3\Flow\Mvc\Controller;
 
 /**
  * Interface for "not found" controllers
- * @deprecated since Flow 1.2. Use the "renderingGroups" options of the exception handler configuration instead
+ * @deprecated since Flow 2.0. Use the "renderingGroups" options of the exception handler configuration instead
  */
 interface NotFoundControllerInterface extends ControllerInterface {
 

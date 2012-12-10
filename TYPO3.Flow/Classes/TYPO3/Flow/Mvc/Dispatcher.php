@@ -126,7 +126,7 @@ class Dispatcher {
 		$controllerObjectName = $request->getControllerObjectName();
 		if ($controllerObjectName === '') {
 			if (isset($this->settings['mvc']['notFoundController'])) {
-				throw new \TYPO3\Flow\Configuration\Exception\NoSuchOptionException('The configuration option TYPO3.Flow:mvc:notFoundController is deprecated since Flow 1.2. Use the "renderingGroups" option of the production exception handler instead in order to render custom error messages.', 1346949795);
+				throw new \TYPO3\Flow\Configuration\Exception\NoSuchOptionException('The configuration option TYPO3.Flow:mvc:notFoundController is deprecated since Flow 2.0. Use the "renderingGroups" option of the production exception handler instead in order to render custom error messages.', 1346949795);
 			}
 			$exceptionMessage = 'No controller could be resolved which would match your request';
 			if ($request instanceof ActionRequest) {
