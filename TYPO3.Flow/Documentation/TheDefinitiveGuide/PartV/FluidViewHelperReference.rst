@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-07-18
+This reference was automatically generated from code on 2012-12-10
 
 
 f:alias
@@ -56,7 +56,7 @@ f:base
 
 View helper which creates a <base href="..."></base> tag. The Base URI
 is taken from the current request.
-In FLOW3, you should always include this ViewHelper to make the links work.
+In Flow, you should always include this ViewHelper to make the links work.
 
 
 
@@ -221,7 +221,7 @@ Viewhelper that outputs its childnodes with \TYPO3\var_dump()
 Arguments
 *********
 
-* ``title`` (string, *optional*):
+* ``title`` (string, *optional*): 
 
 * ``typeOnly`` (boolean, *optional*): Whether only the type should be returned instead of the whole chain.
 
@@ -1031,9 +1031,9 @@ Arguments
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
-* ``rows`` (int): The number of rows of a text area
+* ``rows`` (int, *optional*): The number of rows of a text area
 
-* ``cols`` (int): The number of columns of a text area
+* ``cols`` (int, *optional*): The number of columns of a text area
 
 * ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
 
@@ -1348,6 +1348,8 @@ Arguments
 
 * ``thousandsSeparator`` (string, *optional*): (optional) The thousands separator.
 
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used; overriding $decimal- and $thousandsSeparator. May be boolean, string or \TYPO3\Flow\I18n\Locale
+
 
 
 
@@ -1385,6 +1387,28 @@ Expected result::
 	(depending on the value of {someNumber})
 
 
+**Inline notation with current locale used**::
+
+	{someNumber -> f:format.currency(currencySign: '€', forceLocale: true)}
+
+
+Expected result::
+
+	54.321,00 €
+	(depending on the value of {someNumber} and the current locale)
+
+
+**Inline notation with specific locale used**::
+
+	{someNumber -> f:format.currency(currencySign: 'EUR', forceLocale: 'de_DE')}
+
+
+Expected result::
+
+	54.321,00 EUR
+	(depending on the value of {someNumber})
+
+
 
 
 f:format.date
@@ -1400,6 +1424,12 @@ Arguments
 * ``date`` (mixed, *optional*): either a \DateTime object or a string that is accepted by \DateTime constructor
 
 * ``format`` (string, *optional*): Format String which is taken to format the Date/Time
+
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale
+
+* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+
+* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
 
 
 
@@ -1473,6 +1503,28 @@ Expected result::
 	(depending on the value of {dateObject})
 
 
+**Inline notation, outputting date only, using current locale**::
+
+	{dateObject -> f:format.date(localeFormatType: 'date', forceLocale: true)}
+
+
+Expected result::
+
+	13.12.1980
+	(depending on the value of {dateObject} and the current locale)
+
+
+**Inline notation with specific locale used**::
+
+	{dateObject -> f:format.date(forceLocale: 'de_DE')}
+
+
+Expected result::
+
+	13.12.1980 11:15:42
+	(depending on the value of {dateObject})
+
+
 
 
 f:format.htmlentitiesDecode
@@ -1489,7 +1541,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*):
+* ``encoding`` (string, *optional*): 
 
 
 
@@ -1508,7 +1560,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*):
+* ``encoding`` (string, *optional*): 
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -1529,7 +1581,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*):
+* ``encoding`` (string, *optional*): 
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -1547,6 +1599,59 @@ Arguments
 *********
 
 * ``value`` (object, *optional*): the object to render the identifier for, or NULL if VH children should be used
+
+
+
+
+f:format.json
+-------------
+
+Wrapper for PHPs json_encode function.
+
+
+
+Arguments
+*********
+
+* ``value`` (mixed, *optional*): The incoming data to convert, or NULL if VH children should be used
+
+* ``forceObject`` (boolean, *optional*): Outputs an JSON object rather than an array
+
+
+
+
+Examples
+********
+
+**encoding a view variable**::
+
+	{someArray -> f:format.json()}
+
+
+Expected result::
+
+	["array","values"]
+	// depending on the value of {someArray}
+
+
+**associative array**::
+
+	{f:format.json(value: {foo: 'bar', bar: 'baz'})}
+
+
+Expected result::
+
+	{"foo":"bar","bar":"baz"}
+
+
+**non-associative array with forced object**::
+
+	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: 1)}
+
+
+Expected result::
+
+	{"0":"bar","1":"baz"}
 
 
 
@@ -2121,7 +2226,7 @@ Expected result::
 
 **Email link with custom linktext**::
 
-	<f:link.email email="foo@bar.tld">some custom content</f:emaillink>
+	<f:link.email email="foo@bar.tld">some custom content</f:link.email>
 
 
 Expected result::
@@ -2308,7 +2413,7 @@ f:renderChildren
 Arguments
 *********
 
-* ``arguments`` (array, *optional*):
+* ``arguments`` (array, *optional*): 
 
 
 
@@ -2755,13 +2860,13 @@ A view helper for creating URIs to resources.
 Arguments
 *********
 
-* ``path`` (string, *optional*): The path and filename of the resource (relative to Public resource directory of the package)
+* ``path`` (string, *optional*): The location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
 
 * ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
 * ``resource`` (TYPO3\Flow\Resource\Resource, *optional*): If specified, this resource object is used instead of the path and package information
 
-* ``uri`` (string, *optional*): A resource URI, a relative / absolute path or URL
+* ``localize`` (boolean, *optional*): Whether resource localization should be attempted or not
 
 
 
@@ -2783,6 +2888,17 @@ Expected result::
 **Other package resource**::
 
 	{f:uri.resource(path: 'gfx/SomeImage.png', package: 'DifferentPackage')}
+
+
+Expected result::
+
+	http://yourdomain.tld/_Resources/Static/DifferentPackage/gfx/SomeImage.png
+	(depending on domain)
+
+
+**Resource URI**::
+
+	{f:uri.resource(path: 'resource://DifferentPackage/Public/gfx/SomeImage.png')}
 
 
 Expected result::
@@ -2865,13 +2981,13 @@ f:widget.autocomplete
 Arguments
 *********
 
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface):
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface): 
 
-* ``for`` (string):
+* ``for`` (string): 
 
-* ``searchProperty`` (string):
+* ``searchProperty`` (string): 
 
-* ``configuration`` (array, *optional*):
+* ``configuration`` (array, *optional*): 
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
@@ -2888,66 +3004,13 @@ This ViewHelper renders a Pagination of objects.
 Arguments
 *********
 
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface):
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface): 
 
-* ``as`` (string):
+* ``as`` (string): 
 
-* ``configuration`` (array, *optional*):
+* ``configuration`` (array, *optional*): 
 
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
-
-
-
-
-f:format.json
--------------
-
-Wrapper for PHPs json_encode function.
-
-
-
-Arguments
-*********
-
-* ``value`` (mixed, *optional*): The incoming data to convert, or NULL if VH children should be used
-
-* ``forceObject`` (boolean, *optional*): Outputs an JSON object rather than an array
-
-
-
-
-Examples
-********
-
-**encoding a view variable**::
-
-	{someArray -> f:format.json()}
-
-
-Expected result::
-
-	["array","values"]
-	// depending on the value of {someArray}
-
-
-**associative array**::
-
-	{f:format.json(value: {foo: 'bar', bar: 'baz'})}
-
-
-Expected result::
-
-	{"foo":"bar","bar":"baz"}
-
-
-**non-associative array with forced object**::
-
-	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: 1)}
-
-
-Expected result::
-
-	{"0":"bar","1":"baz"}
 
 
 

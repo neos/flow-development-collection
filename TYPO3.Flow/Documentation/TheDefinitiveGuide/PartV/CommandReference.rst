@@ -17,40 +17,20 @@ commands that may be available, use::
 
   ./flow3 help
 
-The following reference was automatically generated from code on 2012-07-18
+The following reference was automatically generated from code on 2012-12-10
 
 
-Package *TYPO3.Flow*
----------------------
+Package *TYPO3.FLOW*
+--------------------
 
 
-``typo3.flow3:help:help``
-*************************
-
-**Display help for a command**
-
-The help command displays help for a given command:
-./flow3 help <commandIdentifier>
-
-
-
-Options
-^^^^^^^
-
-``--command-identifier``
-  Identifier of a command for more details
-
-
-
-
-
-``typo3.flow3:cache:flush``
-***************************
+``typo3.flow:cache:flush``
+**************************
 
 **Flush all caches**
 
 The flush command flushes all caches (including code caches) which have been
-registered with FLOW3's Cache Manager. It also removes any session data.
+registered with Flow's Cache Manager. It also removes any session data.
 
 If fatal errors caused by a package prevent the compile time bootstrap
 from running, the removal of any temporary data can be forced by specifying
@@ -72,17 +52,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:cache:warmup``
+``typo3.flow:cache:warmup``
   Warm up caches
-``typo3.flow3:package:freeze``
+``typo3.flow:package:freeze``
   Freeze a package
-``typo3.flow3:package:refreeze``
+``typo3.flow:package:refreeze``
   Refreeze a package
 
 
 
-``typo3.flow3:cache:warmup``
-****************************
+``typo3.flow:cache:warmup``
+***************************
 
 **Warm up caches**
 
@@ -99,20 +79,20 @@ rush.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:cache:flush``
+``typo3.flow:cache:flush``
   Flush all caches
 
 
 
-``typo3.flow3:configuration:show``
-**********************************
+``typo3.flow:configuration:show``
+*********************************
 
 **Show the active configuration settings**
 
-The command shows the configuration of the current context as it is used by FLOW3 itself.
+The command shows the configuration of the current context as it is used by Flow itself.
 You can specify the configuration type and path if you want to show parts of the configuration.
 
-./flow3 configuration:show --type Settings --path TYPO3.Flow.persistence
+./flow configuration:show --type Settings --path TYPO3.Flow.persistence
 
 
 
@@ -128,18 +108,18 @@ Options
 
 
 
-``typo3.flow3:configuration:validate``
-**************************************
+``typo3.flow:configuration:validate``
+*************************************
 
 **Validate the given configuration**
 
-./flow3 configuration:validate --type Settings --path TYPO3.Flow.persistence
+./flow configuration:validate --type Settings --path TYPO3.Flow.persistence
 
 The schemas are searched in the path "Resources/Private/Schema" of all
 active Packages. The schema-filenames must match the pattern
 __type__.__path__.schema.yaml. The type and/or the path can also be
 expressed as subdirectories of Resources/Private/Schema. So
-Settings/TYPO3/FLOW3.persistence.schema.yaml will match the same pathes
+Settings/TYPO3/Flow.persistence.schema.yaml will match the same pathes
 like Settings.TYPO3.Flow.persistence.schema.yaml or
 Settings/TYPO3.Flow/persistence.schema.yaml
 
@@ -157,12 +137,12 @@ Options
 
 
 
-``typo3.flow3:configuration:generateschema``
-********************************************
+``typo3.flow:configuration:generateschema``
+*******************************************
 
 **Generate a schema for the given configuration or YAML file.**
 
-./flow3 configuration:generateschema --type Settings --path TYPO3.Flow.persistence
+./flow configuration:generateschema --type Settings --path TYPO3.Flow.persistence
 
 The schema will be output to standard output.
 
@@ -182,12 +162,12 @@ Options
 
 
 
-``typo3.flow3:core:setfilepermissions``
-***************************************
+``typo3.flow:core:setfilepermissions``
+**************************************
 
 **Adjust file permissions for CLI and web server access**
 
-This command adjusts the file permissions of the whole FLOW3 application to
+This command adjusts the file permissions of the whole Flow application to
 the given command line user and webserver user / group.
 
 Arguments
@@ -206,8 +186,8 @@ Arguments
 
 
 
-``typo3.flow3:core:migrate``
-****************************
+``typo3.flow:core:migrate``
+***************************
 
 **Migrate source files as needed**
 
@@ -235,17 +215,17 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
 
 
 
-``typo3.flow3:core:shell``
-**************************
+``typo3.flow:core:shell``
+*************************
 
 **Run the interactive Shell**
 
-The shell command runs FLOW3's interactive shell. This shell allows for
+The shell command runs Flow's interactive shell. This shell allows for
 entering commands like through the regular command line interface but
 additionally supports autocompletion and a user-based command history.
 
@@ -255,8 +235,8 @@ additionally supports autocompletion and a user-based command history.
 
 
 
-``typo3.flow3:doctrine:validate``
-*********************************
+``typo3.flow:doctrine:validate``
+********************************
 
 **Validate the class/table mappings**
 
@@ -274,13 +254,13 @@ any way.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:entitystatus``
+``typo3.flow:doctrine:entitystatus``
   Show the current status of entities and mappings
 
 
 
-``typo3.flow3:doctrine:create``
-*******************************
+``typo3.flow:doctrine:create``
+******************************
 
 **Create the database schema**
 
@@ -302,15 +282,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:update``
+``typo3.flow:doctrine:update``
   Update the database schema
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
 
 
 
-``typo3.flow3:doctrine:update``
-*******************************
+``typo3.flow:doctrine:update``
+******************************
 
 **Update the database schema**
 
@@ -333,15 +313,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:create``
+``typo3.flow:doctrine:create``
   Create the database schema
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
 
 
 
-``typo3.flow3:doctrine:entitystatus``
-*************************************
+``typo3.flow:doctrine:entitystatus``
+************************************
 
 **Show the current status of entities and mappings**
 
@@ -363,13 +343,13 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:validate``
+``typo3.flow:doctrine:validate``
   Validate the class/table mappings
 
 
 
-``typo3.flow3:doctrine:dql``
-****************************
+``typo3.flow:doctrine:dql``
+***************************
 
 **Run arbitrary DQL and display results**
 
@@ -395,8 +375,8 @@ Options
 
 
 
-``typo3.flow3:doctrine:migrationstatus``
-****************************************
+``typo3.flow:doctrine:migrationstatus``
+***************************************
 
 **Show the current migration status**
 
@@ -410,19 +390,19 @@ available, executed and pending migrations.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow3:doctrine:migrationexecute``
+``typo3.flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow3:doctrine:migrationgenerate``
+``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
-``typo3.flow3:doctrine:migrationversion``
+``typo3.flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-``typo3.flow3:doctrine:migrate``
-********************************
+``typo3.flow:doctrine:migrate``
+*******************************
 
 **Migrate the database schema**
 
@@ -448,19 +428,19 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:migrationstatus``
+``typo3.flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow3:doctrine:migrationexecute``
+``typo3.flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow3:doctrine:migrationgenerate``
+``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
-``typo3.flow3:doctrine:migrationversion``
+``typo3.flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-``typo3.flow3:doctrine:migrationexecute``
-*****************************************
+``typo3.flow:doctrine:migrationexecute``
+****************************************
 
 **Execute a single migration**
 
@@ -489,19 +469,19 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow3:doctrine:migrationstatus``
+``typo3.flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow3:doctrine:migrationgenerate``
+``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
-``typo3.flow3:doctrine:migrationversion``
+``typo3.flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-``typo3.flow3:doctrine:migrationversion``
-*****************************************
+``typo3.flow:doctrine:migrationversion``
+****************************************
 
 **Mark/unmark a migration as migrated**
 
@@ -529,19 +509,19 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow3:doctrine:migrationstatus``
+``typo3.flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow3:doctrine:migrationexecute``
+``typo3.flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow3:doctrine:migrationgenerate``
+``typo3.flow:doctrine:migrationgenerate``
   Generate a new migration
 
 
 
-``typo3.flow3:doctrine:migrationgenerate``
-******************************************
+``typo3.flow:doctrine:migrationgenerate``
+*****************************************
 
 **Generate a new migration**
 
@@ -563,19 +543,39 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:doctrine:migrate``
+``typo3.flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow3:doctrine:migrationstatus``
+``typo3.flow:doctrine:migrationstatus``
   Show the current migration status
-``typo3.flow3:doctrine:migrationexecute``
+``typo3.flow:doctrine:migrationexecute``
   Execute a single migration
-``typo3.flow3:doctrine:migrationversion``
+``typo3.flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
 
 
 
-``typo3.flow3:package:create``
-******************************
+``typo3.flow:help:help``
+************************
+
+**Display help for a command**
+
+The help command displays help for a given command:
+./flow help <commandIdentifier>
+
+
+
+Options
+^^^^^^^
+
+``--command-identifier``
+  Identifier of a command for more details
+
+
+
+
+
+``typo3.flow:package:create``
+*****************************
 
 **Create a new package**
 
@@ -600,8 +600,8 @@ Related commands
 
 
 
-``typo3.flow3:package:delete``
-******************************
+``typo3.flow:package:delete``
+*****************************
 
 **Delete an existing package**
 
@@ -619,8 +619,8 @@ Arguments
 
 
 
-``typo3.flow3:package:activate``
-********************************
+``typo3.flow:package:activate``
+*******************************
 
 **Activate an available package**
 
@@ -639,13 +639,13 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:deactivate``
+``typo3.flow:package:deactivate``
   Deactivate a package
 
 
 
-``typo3.flow3:package:deactivate``
-**********************************
+``typo3.flow:package:deactivate``
+*********************************
 
 **Deactivate a package**
 
@@ -664,13 +664,13 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:activate``
+``typo3.flow:package:activate``
   Activate an available package
 
 
 
-``typo3.flow3:package:list``
-****************************
+``typo3.flow:package:list``
+***************************
 
 **List available packages**
 
@@ -684,46 +684,15 @@ package title and its state – active or inactive.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:activate``
+``typo3.flow:package:activate``
   Activate an available package
-``typo3.flow3:package:deactivate``
+``typo3.flow:package:deactivate``
   Deactivate a package
 
 
 
-``typo3.flow3:package:import``
-******************************
-
-**Import a package from a remote location**
-
-Imports the specified package from a remote git repository.
-The imported package will not be activated automatically.
-
-Currently only packages located at forge.typo3.org are supported.
-Note that the git binary must be available
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to import
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow3:package:activate``
-  Activate an available package
-``typo3.flow3:package:create``
-  Create a new package
-
-
-
-``typo3.flow3:package:freeze``
-******************************
+``typo3.flow:package:freeze``
+*****************************
 
 **Freeze a package**
 
@@ -753,15 +722,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:unfreeze``
+``typo3.flow:package:unfreeze``
   Unfreeze a package
-``typo3.flow3:package:refreeze``
+``typo3.flow:package:refreeze``
   Refreeze a package
 
 
 
-``typo3.flow3:package:unfreeze``
-********************************
+``typo3.flow:package:unfreeze``
+*******************************
 
 **Unfreeze a package**
 
@@ -785,15 +754,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:freeze``
+``typo3.flow:package:freeze``
   Freeze a package
-``typo3.flow3:cache:flush``
+``typo3.flow:cache:flush``
   Flush all caches
 
 
 
-``typo3.flow3:package:refreeze``
-********************************
+``typo3.flow:package:refreeze``
+*******************************
 
 **Refreeze a package**
 
@@ -818,15 +787,15 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:freeze``
+``typo3.flow:package:freeze``
   Freeze a package
-``typo3.flow3:cache:flush``
+``typo3.flow:cache:flush``
   Flush all caches
 
 
 
-``typo3.flow3:routing:list``
-****************************
+``typo3.flow:routing:list``
+***************************
 
 **List the known routes**
 
@@ -838,8 +807,8 @@ This command displays a list of all currently registered routes.
 
 
 
-``typo3.flow3:routing:show``
-****************************
+``typo3.flow:routing:show``
+***************************
 
 **Show informations for a route**
 
@@ -857,15 +826,15 @@ Arguments
 
 
 
-``typo3.flow3:routing:getpath``
-*******************************
+``typo3.flow:routing:getpath``
+******************************
 
 **Generate a route path**
 
 This command takes package, controller and action and displays the
 generated route path and the selected route:
 
-./flow3 routing:getPath --format json Acme.Demo\\Sub\\Package
+./flow routing:getPath --format json Acme.Demo\\Sub\\Package
 
 Arguments
 ^^^^^^^^^
@@ -889,8 +858,8 @@ Options
 
 
 
-``typo3.flow3:routing:routepath``
-*********************************
+``typo3.flow:routing:routepath``
+********************************
 
 **Route the given route path**
 
@@ -909,8 +878,8 @@ Arguments
 
 
 
-``typo3.flow3:security:importpublickey``
-****************************************
+``typo3.flow:security:importpublickey``
+***************************************
 
 **Import a public key**
 
@@ -924,13 +893,13 @@ RSAWalletService.
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:security:importprivatekey``
+``typo3.flow:security:importprivatekey``
   Import a private key
 
 
 
-``typo3.flow3:security:importprivatekey``
-*****************************************
+``typo3.flow:security:importprivatekey``
+****************************************
 
 **Import a private key**
 
@@ -951,7 +920,7 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:security:importpublickey``
+``typo3.flow:security:importpublickey``
   Import a public key
 
 
@@ -1018,7 +987,7 @@ Arguments
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow3:package:create``
+``typo3.flow:package:create``
   Create a new package
 
 
