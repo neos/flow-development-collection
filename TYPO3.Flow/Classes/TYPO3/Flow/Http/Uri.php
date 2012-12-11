@@ -91,7 +91,9 @@ class Uri {
 	 * @api
 	 */
 	public function __construct($uriString) {
-		if (!is_string($uriString)) throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
+		if (!is_string($uriString)) {
+			throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
+		}
 
 		$parseUrlException = NULL;
 		try {
