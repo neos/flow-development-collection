@@ -79,7 +79,7 @@ class ObjectAccess {
 	 * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
 	 * @see getProperty()
 	 */
-	static public function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
+	static protected function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
 		if ($subject === NULL) {
 			return NULL;
 		}
