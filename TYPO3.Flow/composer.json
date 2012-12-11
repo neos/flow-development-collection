@@ -3,14 +3,7 @@
     "type": "typo3-flow-framework",
     "description": "TYPO3 Flow Application Framework",
     "homepage": "http://flow.typo3.org",
-    "keywords": ["framework"],
     "license": ["LGPL-3.0+"],
-    "authors": [
-        {
-            "name": "TYPO3 Flow Development Team",
-            "homepage": "http://typo3.org/teams/core-development-team/"
-        }
-    ],
 
     "require": {
         "php" : ">=5.3.2",
@@ -23,12 +16,12 @@
         "typo3/fluid": "*",
         "typo3/party": "*",
 
-        "doctrine/orm": "2.3.*",
+        "doctrine/orm": "~2.3",
         "doctrine/migrations": "*",
         "doctrine/data-fixtures": "*",
 
-        "symfony/yaml": ">2.1.0",
-        "symfony/dom-crawler": ">2.0.16",
+        "symfony/yaml": "~2.1",
+        "symfony/dom-crawler": "~2.0.16",
 
         "typo3/flow-composer-installers": "*"
     },
