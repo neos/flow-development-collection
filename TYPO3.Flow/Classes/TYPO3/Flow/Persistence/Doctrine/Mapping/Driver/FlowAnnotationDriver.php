@@ -272,26 +272,29 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			// Evaluate InheritanceType annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\InheritanceType'])) {
 			$inheritanceTypeAnnotation = $classAnnotations['Doctrine\ORM\Mapping\InheritanceType'];
-			$metadata->setInheritanceType(constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . strtoupper($inheritanceTypeAnnotation->value)));
+			$inheritanceType = constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . strtoupper($inheritanceTypeAnnotation->value));
 
-			if ($metadata->inheritanceType !== \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE) {
+			if ($inheritanceType !== \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE) {
+
 					// Evaluate DiscriminatorColumn annotation
 				if (isset($classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'])) {
 					$discriminatorColumnAnnotation = $classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'];
-					$metadata->setDiscriminatorColumn(array(
+					$discriminatorColumn = array(
 						'name' => $discriminatorColumnAnnotation->name,
 						'type' => $discriminatorColumnAnnotation->type,
 						'length' => $discriminatorColumnAnnotation->length,
 						'columnDefinition' => $discriminatorColumnAnnotation->columnDefinition
-					));
+					);
 				} else {
-					$metadata->setDiscriminatorColumn(array('name' => 'dtype', 'type' => 'string', 'length' => 255));
+					$discriminatorColumn = array(
+						'name' => 'dtype', 'type' => 'string', 'length' => 255
+					);
 				}
 
 					// Evaluate DiscriminatorMap annotation
 				if (isset($classAnnotations['Doctrine\ORM\Mapping\DiscriminatorMap'])) {
 					$discriminatorMapAnnotation = $classAnnotations['Doctrine\ORM\Mapping\DiscriminatorMap'];
-					$metadata->setDiscriminatorMap($discriminatorMapAnnotation->value);
+					$discriminatorMap = $discriminatorMapAnnotation->value;
 				} else {
 					$discriminatorMap = array();
 					$subclassNames = $this->reflectionService->getAllSubClassNamesForClass($className);
@@ -303,9 +306,17 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 						$mappedSubclassName = strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $subclassName)));
 						$discriminatorMap[$mappedSubclassName] = $subclassName;
 					}
+				}
+
+				if ($discriminatorMap !== array()) {
+					$metadata->setDiscriminatorColumn($discriminatorColumn);
 					$metadata->setDiscriminatorMap($discriminatorMap);
+				} else {
+					$inheritanceType = \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE;
 				}
 			}
+
+			$metadata->setInheritanceType($inheritanceType);
 		}
 
 			// Evaluate DoctrineChangeTrackingPolicy annotation
