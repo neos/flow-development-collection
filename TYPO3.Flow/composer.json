@@ -21,7 +21,7 @@
         "doctrine/data-fixtures": "*",
 
         "symfony/yaml": "~2.1",
-        "symfony/dom-crawler": "~2.0.16",
+        "symfony/dom-crawler": "~2.2",
 
         "typo3/flow-composer-installers": "*"
     },
