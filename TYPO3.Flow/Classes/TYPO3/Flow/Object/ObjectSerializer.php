@@ -144,6 +144,13 @@ class ObjectSerializer {
 					$propertyArray[$propertyName][self::VALUE][] = spl_object_hash($storedObject);
 					$this->serializeObjectAsPropertyArray($storedObject, FALSE);
 				}
+			} elseif (is_object($propertyValue) && $propertyValue instanceof \Doctrine\Common\Collections\Collection) {
+				$propertyArray[$propertyName][self::TYPE] = 'Collection';
+				$propertyArray[$propertyName][self::CLASSNAME] = get_class($propertyValue);
+				foreach ($propertyValue as $storedObject) {
+					$propertyArray[$propertyName][self::VALUE][] = spl_object_hash($storedObject);
+					$this->serializeObjectAsPropertyArray($storedObject, FALSE);
+				}
 			} elseif (is_object($propertyValue) && $propertyValue instanceof \ArrayObject) {
 				$propertyArray[$propertyName][self::TYPE] = 'ArrayObject';
 				$propertyArray[$propertyName][self::VALUE] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
@@ -264,6 +271,9 @@ class ObjectSerializer {
 				case 'array':
 					$propertyValue = $this->reconstituteArray($propertyData[self::VALUE]);
 					break;
+				case 'Collection':
+					$propertyValue = $this->reconstituteCollection($propertyData[self::CLASSNAME], $propertyData[self::VALUE]);
+					break;
 				case 'ArrayObject':
 					$propertyValue = new \ArrayObject($this->reconstituteArray($propertyData[self::VALUE]));
 					break;
@@ -310,7 +320,10 @@ class ObjectSerializer {
 					$value = $this->reconstituteObject($entryData[self::VALUE], $this->objectsAsArray[$entryData[self::VALUE]]);
 					break;
 				case 'SplObjectStorage':
-					$value = $this->reconstituteSplObjectStorage($this->objectsAsArray[$entryData[self::VALUE]][self::CLASSNAME], $this->objectsAsArray[$entryData[self::VALUE]]);
+					$value = $this->reconstituteSplObjectStorage($this->objectsAsArray[$entryData[self::VALUE]]);
+					break;
+				case 'Collection':
+					$value = $this->reconstituteCollection($entryData[self::CLASSNAME], $entryData[self::VALUE]);
 					break;
 				case 'persistenceObject':
 					$value = $this->reconstitutePersistenceObject($entryData[self::VALUE][self::CLASSNAME], $entryData[self::VALUE]['UUID']);
@@ -324,12 +337,29 @@ class ObjectSerializer {
 	}
 
 	/**
+	 * Reconstitutes a Doctrine Collection from a data array.
+	 *
+	 * @param string $type The collection type (class name) to create
+	 * @param array $dataArray The data array to reconstitute from
+	 * @return \Doctrine\Common\Collections\Collection The reconstituted Collection
+	 */
+	protected function reconstituteCollection($type, array $dataArray) {
+		$result = new $type();
+
+		foreach ($dataArray as $objectHash) {
+			$result->add($this->reconstituteObject($objectHash, $this->objectsAsArray[$objectHash]));
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Reconstitutes an SplObjectStorage from a data array.
 	 *
 	 * @param array $dataArray The data array to reconstitute from
-	 * @return SplObjectStorage The reconstituted SplObjectStorage
+	 * @return \SplObjectStorage The reconstituted SplObjectStorage
 	 */
-	protected function reconstituteSplObjectStorage($dataArray) {
+	protected function reconstituteSplObjectStorage(array $dataArray) {
 		$result = new \SplObjectStorage();
 
 		foreach ($dataArray as $objectHash) {
