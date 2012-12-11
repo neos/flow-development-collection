@@ -33,8 +33,8 @@ a lot of universal development techniques you can learn.
 	This tutorial goes best with a Caffè Latte or, if it's afternoon or late night
 	already, with a few shots of Espresso ...
 
-Downloading TYPO3 Flow
-----------------------
+Installing TYPO3 Flow
+---------------------
 
 Setting up TYPO3 Flow is pretty straight-forward. As a minimum requirement you will need:
 
@@ -43,13 +43,33 @@ Setting up TYPO3 Flow is pretty straight-forward. As a minimum requirement you w
 * A database supported by Doctrine DBAL, such as MySQL
 * Command line access
 
-Download the `TYPO3 Flow Base Distribution`_ and unpack it in a directory which will be
-accessible by your web server. You will end up with a directory structure like this:
+Install `Composer`_ by following the `installation instructions <http://getcomposer.org/download/>`_
+which boils down to this in the simplest case::
+
+ curl -s https://getcomposer.org/installer | php
+
+.. note::
+	Feel free to install the composer command to a global location, by moving
+	the phar archive to e.g. */usr/local/bin/composer* and making it executable.
+	The following documentation assumes ``composer`` is installed globally.
+
+.. tip::
+	Running ``composer selfupdate`` from time to time keeps it up to date
+	and can prevent errors caused by composer not understanding e.g. new
+	syntax in manifest files.
+
+Then use `Composer`_ in a directory which will be accessible by your web server to download
+and install all packages of the TYPO3 Flow Base Distribution. The following command will
+clone the 2.0.0 version, include development dependencies and keep git metadata for future use::
+
+ composer create-project --dev --keep-vcs typo3/flow-base-distribution Quickstart 2.0.0
+
+You will end up with a directory structure like this::
 
 .. code-block:: text
 
 	htdocs/               <-- depending on your web server
-	  Quickstart/         <-- depending on which directory you chose
+	  Quickstart/
 	    Build/
 	    Configuration/
 	      Settings.yaml.example
