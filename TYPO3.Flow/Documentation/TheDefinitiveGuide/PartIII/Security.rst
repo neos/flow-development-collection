@@ -962,7 +962,7 @@ Security for persisted objects
 
 	resources:
 	  entities:
-	    Acme_MyPackage_Domain_Model_Customer:
+	    'Acme\MyPackage\Domain\Model\Customer':
 	      Acme_MyPackage_Customers_All: 'ANY'
 	      Acme_MyPackage_Customers_Vip: 'this.vip == TRUE'
 	      Acme_MyPackage_Customers_Me: 'current.securityContext.account == this.account && this.account != NULL'
@@ -973,15 +973,14 @@ The ``Acme_MyPackage_Customer_Vip`` resource matches all customer's which have t
 The ``Acme_MyPackage_Customer_Me`` resource matches any customer object whose account
 property matches the currently logged in account.
 
-* if an entity resource is defined, access is denied automatically to all who don't
+* If an entity resource is defined, access is denied automatically to all who don't
   have access granted to that new resource explicitly defined in the ACLs.
-* if there is no ``ANY`` resource defined, only objects explicitly matched by one of
+* If there is no ``ANY`` resource defined, only objects explicitly matched by one of
   the other resources are denied by default.
-* if there is a ``ANY`` resource define, all objects of this type will be denied for
+* If there is a ``ANY`` resource define, all objects of this type will be denied for
   all users not have a grant privilege for this ``ANY`` resource.
-* The key ``Acme_MyPackage_Domain_Model_Customer`` has to reflect the full qualified
-  class name of your entity, while '\' is replaced by '_' due to YAML syntax
-  constraints.
+* The key ``Acme\MyPackage\Domain\Model\Customer`` has to reflect the full qualified
+  class name of your entity.
 * The ``DENY`` privilege works the same as for methods. If it is set for one of the
   resources you will never see entities matched by this resource, no matter how many
   ``GRANT`` privileges there might be set for other roles you also have.

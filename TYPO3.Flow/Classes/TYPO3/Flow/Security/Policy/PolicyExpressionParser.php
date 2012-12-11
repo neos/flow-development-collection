@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Policy;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Exception\InvalidPolicyException;
 
 /**
  * A specialized pointcut expression parser tailored to policy expressions
@@ -73,6 +74,9 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 		$entityResourcesConstraints = array();
 
 		foreach ($entityResourcesTree as $entityType => $entityResources) {
+			if (strpos($entityType, '_') !== FALSE) {
+				throw new InvalidPolicyException('Entity types in resource definitions must be fully qualified class names, "' . $entityType . '" violates this. Please adjust your Policy.yaml file(s).', 1354708376);
+			}
 			foreach ($entityResources as $resourceName => $constraintDefinition) {
 				if ($constraintDefinition === PolicyService::MATCHER_ANY) {
 					$entityResourcesConstraints[$entityType][$resourceName] = PolicyService::MATCHER_ANY;
