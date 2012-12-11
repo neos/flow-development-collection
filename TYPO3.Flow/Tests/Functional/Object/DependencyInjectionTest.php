@@ -110,5 +110,23 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$prototypeDsub = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassDsub');
 		$this->assertSame(1, $prototypeDsub->injectionRuns);
 	}
+
+	/**
+	 * @test
+	 */
+	public function constructorsOfSingletonObjectsAcceptNullArguments() {
+		$objectF = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassF');
+
+		$this->assertNull($objectF->getNullValue());
+	}
+
+	/**
+	 * @test
+	 */
+	public function constructorsOfPrototypeObjectsAcceptNullArguments() {
+		$objectE = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassE', NULL);
+
+		$this->assertNull($objectE->getNullValue());
+	}
 }
 ?>

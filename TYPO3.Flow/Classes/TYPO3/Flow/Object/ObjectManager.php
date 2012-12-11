@@ -64,7 +64,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 * A SplObjectStorage containing those objects which need to be shutdown when the container
 	 * shuts down. Each value of each entry is the respective shutdown method name.
 	 *
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
 	protected $shutdownObjects;
 

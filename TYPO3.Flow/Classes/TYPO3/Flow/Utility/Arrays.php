@@ -138,7 +138,7 @@ class Arrays {
 	 *
 	 * @param array &$array The array to traverse as a reference
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
-	 * @return mixed The value found, NULL if the path didn't exist
+	 * @return mixed The value found, NULL if the path didn't exist (note there is no way to distinguish between a found NULL value and "path not found")
 	 * @throws \InvalidArgumentException
 	 */
 	static public function getValueByPath(array &$array, $path) {
