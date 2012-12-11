@@ -263,16 +263,62 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function authenticationStrategyIsSetCorrectlyFromConfiguration($settings, $expectedAuthenticationStrategy) {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
-		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
-
-		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'), array(), '', FALSE);
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
 		$securityContext->injectSettings($settings);
-		$securityContext->setRequest($request);
-		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 
 		$this->assertEquals($expectedAuthenticationStrategy, $securityContext->getAuthenticationStrategy());
+	}
+
+	/**
+	 * @expectedException \TYPO3\Flow\Exception
+	 * @test
+	 */
+	public function invalidAuthenticationStrategyFromConfigurationThrowsException() {
+		$settings = array();
+		$settings['security']['authentication']['authenticationStrategy'] = 'fizzleGoesHere';
+
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
+		$securityContext->injectSettings($settings);
+	}
+
+	/**
+	 * Data provider for CSRF protection strategy settings
+	 *
+	 * @return array
+	 */
+	public function csrfProtectionStrategies() {
+		$data = array();
+		$settings = array();
+		$settings['security']['csrf']['csrfStrategy'] = 'onePerRequest';
+		$data[] = array($settings, \TYPO3\Flow\Security\Context::CSRF_ONE_PER_REQUEST);
+		$settings['security']['csrf']['csrfStrategy'] = 'onePerSession';
+		$data[] = array($settings, \TYPO3\Flow\Security\Context::CSRF_ONE_PER_SESSION);
+		$settings['security']['csrf']['csrfStrategy'] = 'onePerUri';
+		$data[] = array($settings, \TYPO3\Flow\Security\Context::CSRF_ONE_PER_URI);
+		return $data;
+	}
+
+	/**
+	 * @dataProvider csrfProtectionStrategies()
+	 * @test
+	 */
+	public function csrfProtectionStrategyIsSetCorrectlyFromConfiguration($settings, $expectedCsrfProtectionStrategy) {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
+		$securityContext->injectSettings($settings);
+
+		$this->assertEquals($expectedCsrfProtectionStrategy, $securityContext->_get('csrfProtectionStrategy'));
+	}
+
+	/**
+	 * @expectedException \TYPO3\Flow\Exception
+	 * @test
+	 */
+	public function invalidCsrfProtectionStrategyFromConfigurationThrowsException() {
+		$settings = array();
+		$settings['security']['csrf']['csrfStrategy'] = 'fizzleGoesHere';
+
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
+		$securityContext->injectSettings($settings);
 	}
 
 	/**
@@ -815,7 +861,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'), array(), '', FALSE);
 		$securityContext->setRequest($request);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
-		$securityContext->_set('csrfTokens', $existingTokens);
+		$securityContext->_set('csrfProtectionTokens', $existingTokens);
 
 		$this->assertTrue($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
 		$this->assertFalse($securityContext->isCsrfProtectionTokenValid('csrfToken'));
@@ -834,8 +880,8 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'), array(), '', FALSE);
 		$securityContext->setRequest($request);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
-		$securityContext->_set('csrfTokens', $existingTokens);
-		$securityContext->_set('csrfStrategy', \TYPO3\Flow\Security\Context::CSRF_ONE_PER_URI);
+		$securityContext->_set('csrfProtectionTokens', $existingTokens);
+		$securityContext->_set('csrfProtectionStrategy', \TYPO3\Flow\Security\Context::CSRF_ONE_PER_URI);
 
 		$this->assertTrue($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
 		$this->assertFalse($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
