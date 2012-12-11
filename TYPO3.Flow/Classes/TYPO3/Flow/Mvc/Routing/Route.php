@@ -367,6 +367,7 @@ class Route {
 
 		$matchingUri = '';
 		$mergedRouteValues = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $routeValues);
+		$remainingDefaults = $this->defaults;
 		$requireOptionalRouteParts = FALSE;
 		$matchingOptionalUriPortion = '';
 		foreach ($this->routeParts as $routePart) {
@@ -374,6 +375,9 @@ class Route {
 				if (!$routePart->hasDefaultValue()) {
 					return FALSE;
 				}
+			}
+			if ($routePart->getName() !== NULL) {
+				$remainingDefaults = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($remainingDefaults, $routePart->getName());
 			}
 			$routePartValue = NULL;
 			if ($routePart->hasValue()) {
@@ -391,7 +395,7 @@ class Route {
 				$requireOptionalRouteParts = FALSE;
 				continue;
 			}
-			if ($routePart->hasValue() && $routePartValue !== $routePartDefaultValue) {
+			if ($routePart->hasValue() && strtolower($routePartValue) !== strtolower($routePartDefaultValue)) {
 				$matchingOptionalUriPortion .= $routePartValue;
 				$requireOptionalRouteParts = TRUE;
 			} else {
@@ -403,7 +407,7 @@ class Route {
 			}
 		}
 
-		if ($this->compareAndRemoveMatchingDefaultValues($this->defaults, $routeValues) !== TRUE) {
+		if ($this->compareAndRemoveMatchingDefaultValues($remainingDefaults, $routeValues) !== TRUE) {
 			return FALSE;
 		}
 		if (isset($routeValues['@format']) && $routeValues['@format'] === '') {
@@ -445,20 +449,27 @@ class Route {
 	 */
 	protected function compareAndRemoveMatchingDefaultValues(array $defaults, array &$routeValues) {
 		foreach ($defaults as $key => $defaultValue) {
-			if (isset($routeValues[$key])) {
-				if (is_array($defaultValue)) {
-					if (!is_array($routeValues[$key])) {
-						return FALSE;
-					}
-					return $this->compareAndRemoveMatchingDefaultValues($defaultValue, $routeValues[$key]);
-				} elseif (is_array($routeValues[$key])) {
-					return FALSE;
+			if (!isset($routeValues[$key])) {
+				if ($defaultValue === '' || ($key === '@format' && strtolower($defaultValue) === 'html')) {
+					continue;
 				}
-				if (strtolower($routeValues[$key]) !== strtolower($defaultValue)) {
-					return FALSE;
-				}
-				unset($routeValues[$key]);
+				return FALSE;
 			}
+			if (is_array($defaultValue)) {
+				if (!is_array($routeValues[$key])) {
+					return FALSE;
+				}
+				if ($this->compareAndRemoveMatchingDefaultValues($defaultValue, $routeValues[$key]) === FALSE) {
+					return FALSE;
+				}
+				continue;
+			} elseif (is_array($routeValues[$key])) {
+				return FALSE;
+			}
+			if (strtolower($routeValues[$key]) !== strtolower($defaultValue)) {
+				return FALSE;
+			}
+			unset($routeValues[$key]);
 		}
 		return TRUE;
 	}

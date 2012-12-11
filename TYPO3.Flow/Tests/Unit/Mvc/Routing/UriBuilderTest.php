@@ -115,21 +115,19 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function uriForRecursivelyMergesAndOverrulesControllerArgumentsWithArguments() {
 		$arguments = array('foo' => 'bar', 'additionalParam' => 'additionalValue');
 		$controllerArguments = array('foo' => 'overruled', 'baz' => array('TYPO3.Flow' => 'fluid'));
-		$expectedArguments = array('foo' => 'overruled', 'additionalParam' => 'additionalValue', 'baz' => array('TYPO3.Flow' => 'fluid'), '@controller' => 'somecontroller', '@package' => 'somepackage');
+		$expectedArguments = array('foo' => 'overruled', 'additionalParam' => 'additionalValue', 'baz' => array('TYPO3.Flow' => 'fluid'), '@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage');
 
 		$this->uriBuilder->setArguments($arguments);
-		$this->uriBuilder->uriFor(NULL, $controllerArguments, 'SomeController', 'SomePackage');
+		$this->uriBuilder->uriFor('index', $controllerArguments, 'SomeController', 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException
 	 */
-	public function uriForOnlySetsActionArgumentIfSpecified() {
-		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage');
-
+	public function uriForThrowsExceptionIfActionNameIsNotSpecified() {
 		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', 'SomePackage');
-		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
 	/**
@@ -138,9 +136,9 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function uriForSetsControllerFromRequestIfControllerIsNotSet() {
 		$this->mockMainRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('SomeControllerFromRequest'));
 
-		$expectedArguments = array('@controller' => 'somecontrollerfromrequest', '@package' => 'somepackage');
+		$expectedArguments = array('@action' => 'index', '@controller' => 'somecontrollerfromrequest', '@package' => 'somepackage');
 
-		$this->uriBuilder->uriFor(NULL, array(), NULL, 'SomePackage');
+		$this->uriBuilder->uriFor('index', array(), NULL, 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
@@ -150,9 +148,9 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function uriForSetsPackageKeyFromRequestIfPackageKeyIsNotSet() {
 		$this->mockMainRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackageKeyFromRequest'));
 
-		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackagekeyfromrequest');
+		$expectedArguments = array('@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackagekeyfromrequest');
 
-		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', NULL);
+		$this->uriBuilder->uriFor('index', array(), 'SomeController', NULL);
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
@@ -163,9 +161,9 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockMainRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
 		$this->mockMainRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKeyFromRequest'));
 
-		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => 'somesubpackagekeyfromrequest');
+		$expectedArguments = array('@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => 'somesubpackagekeyfromrequest');
 
-		$this->uriBuilder->uriFor(NULL, array(), 'SomeController');
+		$this->uriBuilder->uriFor('index', array(), 'SomeController');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
@@ -173,9 +171,9 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function uriForDoesNotUseSubpackageKeyFromRequestIfOnlyThePackageIsSet() {
-		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage');
+		$expectedArguments = array('@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage');
 
-		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', 'SomePackage');
+		$this->uriBuilder->uriFor('index', array(), 'SomeController', 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 
@@ -203,10 +201,10 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function uriForSetsFormatArgumentIfSpecified() {
-		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage', '@format' => 'someformat');
+		$expectedArguments = array('@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage', '@format' => 'someformat');
 
 		$this->uriBuilder->setFormat('SomeFormat');
-		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', 'SomePackage');
+		$this->uriBuilder->uriFor('index', array(), 'SomeController', 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
 

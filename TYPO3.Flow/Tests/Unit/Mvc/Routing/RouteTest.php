@@ -740,11 +740,23 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function routeCanBeResolvedIfASpecifiedValueIsEqualToItsDefaultValue() {
-		$this->route->setUriPattern('');
+		$this->route->setUriPattern('{key2}');
 		$this->route->setDefaults(array('key1' => 'value1', 'key2' => 'value2'));
 		$this->routeValues = array('key1' => 'value1');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeCanBeResolvedIfAComplexValueIsEqualToItsDefaultValue() {
+		$this->route->setUriPattern('{key2.key2b}');
+		$this->route->setDefaults(array('key1' => array('key1a' => 'key1aValue', 'key1b' => 'key1bValue'), 'key2' => array('key2a' => 'key2aValue', 'key2b' => 'key2bValue')));
+		$this->routeValues = array('key1' => array('key1a' => 'key1aValue', 'key1b' => 'key1bValue'), 'key2' => array('key2a' => 'key2aValue'));
+
+		$this->assertTrue($this->route->resolves($this->routeValues));
+		$this->assertEquals('key2bValue', $this->route->getMatchingUri());
 	}
 
 	/**
@@ -788,7 +800,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function routeCantBeResolvedIfASpecifiedValueIsNotEqualToItsDefaultValue() {
-		$this->route->setUriPattern('');
+		$this->route->setUriPattern('{key1}');
 		$this->route->setDefaults(array('key1' => 'value1', 'key2' => 'value2'));
 		$this->routeValues = array('key2' => 'differentValue');
 
@@ -895,7 +907,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function resolvesReturnsAnExceptionIfTargetControllerDoesNotExist() {
 		$this->route->setUriPattern('');
 		$this->route->setDefaults(array('@package' => 'Snow'));
-		$this->routeValues = array('@controller' => 'flake');
+		$this->routeValues = array('@package' => 'Snow', '@controller' => 'flake');
 
 		$mockRouter = $this->getMock('TYPO3\Flow\Mvc\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')->with('Snow', '', 'flake')->will($this->returnValue(NULL));
@@ -978,6 +990,76 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Data provider
+	 */
+	public function compareAndRemoveMatchingDefaultValuesDataProvider() {
+		return array(
+			array(
+				'defaults' => array(),
+				'routeValues' => array(),
+				'expectedModifiedRouteValues' => array(),
+				'expectedResult' => TRUE
+			),
+			array(
+				'defaults' => array(),
+				'routeValues' => array('foo' => 'bar'),
+				'expectedModifiedRouteValues' => array('foo' => 'bar'),
+				'expectedResult' => TRUE
+			),
+			array(
+				'defaults' => array('foo' => 'bar'),
+				'routeValues' => array(),
+				'expectedModifiedRouteValues' => array(),
+				'expectedResult' => FALSE
+			),
+			array(
+				'defaults' => array('foo' => 'bar'),
+				'routeValues' => array('foo' => 'bar'),
+				'expectedModifiedRouteValues' => array(),
+				'expectedResult' => TRUE
+			),
+			array(
+				'defaults' => array('someKey' => 'somevalue'),
+				'routeValues' => array('someKey' => 'SomeValue', 'SomeKey' => 'SomeOtherValue'),
+				'expectedModifiedRouteValues' => array('SomeKey' => 'SomeOtherValue'),
+				'expectedResult' => TRUE
+			),
+			array(
+				'defaults' => array('foo' => 'bar'),
+				'routeValues' => array('foo' => 'bar', 'bar' => 'baz'),
+				'expectedModifiedRouteValues' => array('bar' => 'baz'),
+				'expectedResult' => TRUE
+			),
+			array(
+				'defaults' => array('foo' => 'bar', 'bar' => 'baz'),
+				'routeValues' => array('foo' => 'bar'),
+				'expectedModifiedRouteValues' => array(),
+				'expectedResult' => FALSE
+			),
+			array(
+				'defaults' => array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue'))),
+				'routeValues' => array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue', 'someOtherKey' => 'someOtherValue'))),
+				'expectedModifiedRouteValues' => array('firstLevel' => array('secondLevel' => array('someOtherKey' => 'someOtherValue'))),
+				'expectedResult' => TRUE),
+			array(
+				'defaults' => array('foo' => 'bar'),
+				'routeValues' => array('foo' => 'baz'),
+				'expectedModifiedRouteValues' => NULL,
+				'expectedResult' => FALSE),
+			array(
+				'defaults' => array('foo' => 'bar'),
+				'routeValues' => array('foo' => array('bar' => 'bar')),
+				'expectedModifiedRouteValues' => NULL,
+				'expectedResult' => FALSE),
+			array(
+				'defaults' => array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue'))),
+				'routeValues' => array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeOtherValue'))),
+				'expectedModifiedRouteValues' => NULL,
+				'expectedResult' => FALSE)
+		);
+	}
+
+	/**
 	 * @test
 	 * @dataProvider compareAndRemoveMatchingDefaultValuesDataProvider()
 	 * @param array $defaults
@@ -991,25 +1073,6 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		if ($expectedResult === TRUE) {
 			$this->assertEquals($expectedModifiedRouteValues, $routeValues);
 		}
-	}
-
-	/**
-	 * Data provider
-	 */
-	public function compareAndRemoveMatchingDefaultValuesDataProvider() {
-		return array(
-			array(array(), array(), array(), TRUE),
-			array(array(), array('foo' => 'bar'), array('foo' => 'bar'), TRUE),
-			array(array('foo' => 'bar'), array(), array(), TRUE),
-			array(array('foo' => 'bar'), array('foo' => 'bar'), array(), TRUE),
-			array(array('somekey' => 'somevalue'), array('SomeKey' => 'SomeValue'), array('SomeKey' => 'SomeValue'), TRUE),
-			array(array('foo' => 'bar'), array('foo' => 'bar', 'bar' => 'baz'), array('bar' => 'baz'), TRUE),
-			array(array('foo' => 'bar', 'bar' => 'baz'), array('foo' => 'bar'), array(), TRUE),
-			array(array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue'))), array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue', 'someOtherKey' => 'someOtherValue'))), array('firstLevel' => array('secondLevel' => array('someOtherKey' => 'someOtherValue'))), TRUE),
-			array(array('foo' => 'bar'), array('foo' => 'baz'), NULL, FALSE),
-			array(array('foo' => 'bar'), array('foo' => array('bar' => 'bar')), NULL, FALSE),
-			array(array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue'))), array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeOtherValue'))), NULL, FALSE)
-		);
 	}
 
 	/**
