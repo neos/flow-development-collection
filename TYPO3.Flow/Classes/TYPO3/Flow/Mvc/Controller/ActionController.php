@@ -299,24 +299,20 @@ class ActionController extends AbstractController {
 	 *
 	 * @return \TYPO3\Flow\Mvc\View\ViewInterface the resolved view
 	 * @api
+	 * @throws \TYPO3\Flow\Mvc\Exception\ViewNotFoundException if no view can be resolved
 	 */
 	protected function resolveView() {
 		$viewObjectName = $this->resolveViewObjectName();
 		if ($viewObjectName !== FALSE) {
 			$view = $this->objectManager->get($viewObjectName);
-			if ($view->canRender($this->controllerContext) === FALSE) {
-				unset($view);
-			}
-		}
-		if (!isset($view) && $this->defaultViewObjectName != '') {
+		} elseif ($this->defaultViewObjectName != '') {
 			$view = $this->objectManager->get($this->defaultViewObjectName);
-			if ($view->canRender($this->controllerContext) === FALSE) {
-				unset($view);
-			}
 		}
 		if (!isset($view)) {
-			$view = $this->objectManager->get('TYPO3\Flow\Mvc\View\NotFoundView');
-			$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
+			throw new \TYPO3\Flow\Mvc\Exception\ViewNotFoundException(sprintf('Could not resolve view for action "%s" in controller "%s"', $this->request->getControllerActionName(), get_class($this)), 1355153185);
+		}
+		if (!$view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
+			throw new \TYPO3\Flow\Mvc\Exception\ViewNotFoundException(sprintf('View has to be of type ViewInterface, got "%s" in action "%s" of controller "%s"', get_class($view), $this->request->getControllerActionName(), get_class($this)), 1355153188);
 		}
 		$view->setControllerContext($this->controllerContext);
 		return $view;
