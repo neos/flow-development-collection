@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Annotations;
 /**
  * Marks a class as an aspect.
  *
- * The class will be then by the AOP framework of Flow and inspected for
+ * The class will be read by the AOP framework of Flow and inspected for
  * pointcut expressions and advice.
  *
  * @Annotation

@@ -24,8 +24,7 @@ use TYPO3\Flow\Annotations as Flow;
 class LocaleIdentifierValidator extends AbstractValidator {
 
 	/**
-	 * Is valid if the given value is a valid "locale identifier"
-	 * based on the expressions of the FLOW3 I18n implementation.
+	 * Is valid if the given value is a valid "locale identifier".
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void

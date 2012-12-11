@@ -1,7 +1,7 @@
-FLOW3 Validator Reference
-=========================
+TYPO3 Flow Validator Reference
+==============================
 
-This reference was automatically generated from code on 2012-06-08
+This reference was automatically generated from code on 2012-12-10
 
 
 AlphanumericValidator
@@ -9,7 +9,7 @@ AlphanumericValidator
 
 Validator for alphanumeric strings.
 
-The given value is valid if it is an alphanumeric string, which is defined as [a-zA-Z0-9].
+The given $value is valid if it is an alphanumeric string, which is defined as [[:alnum:]].
 
 .. note:: A value of NULL or an empty string ('') is considered valid
 
@@ -160,15 +160,9 @@ Arguments
 EmailAddressValidator
 ---------------------
 
-Validator for email addresses.
+Validator for email addresses
 
 Checks if the given value is a valid email address.
-
-The regexp is a modified version of the last one shown on
-http://www.regular-expressions.info/email.html
-
-Still it will probably miss a lot of technically valid addresses, see RFC822
-for the whole mumbo-jumbo. Or have a look at http://ex-parrot.com/~pdw/Mail-RFC822-Address.html
 
 .. note:: A value of NULL or an empty string ('') is considered valid
 
@@ -220,8 +214,10 @@ LocaleIdentifierValidator
 
 A validator for locale identifiers.
 
-Is valid if the given value is a valid "locale identifier"
-based on the expressions of the FLOW3 I18n implementation.
+This validator validates a string based on the expressions of the
+Flow I18n implementation.
+
+Is valid if the given value is a valid "locale identifier".
 
 .. note:: A value of NULL or an empty string ('') is considered valid
 

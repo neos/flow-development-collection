@@ -1,7 +1,7 @@
-FLOW3 Annotation Reference
-==========================
+TYPO3 Flow Annotation Reference
+===============================
 
-This reference was automatically generated from code on 2012-07-05
+This reference was automatically generated from code on 2012-12-10
 
 
 After
@@ -85,7 +85,7 @@ Aspect
 
 Marks a class as an aspect.
 
-The class will be then by the AOP framework of FLOW3 and inspected for
+The class will be read by the AOP framework of Flow and inspected for
 pointcut expressions and advice.
 
 :Applicable to: Class
@@ -208,7 +208,7 @@ Inject
 
 Used to enable property injection.
 
-FLOW3 will build Dependency Injection code for the property and try
+Flow will build Dependency Injection code for the property and try
 to inject a value as specified by the var annotation.
 
 :Applicable to: Property
@@ -258,7 +258,7 @@ Lazy
 Marks a property or class as lazy-loaded.
 
 This is only relevant for anything based on the generic persistence
-layer of FLOW3. For Doctrine based persistence this is ignored.
+layer of Flow. For Doctrine based persistence this is ignored.
 
 :Applicable to: Class, Property
 
@@ -347,7 +347,7 @@ Signal
 ------
 
 Marks a method as a signal for the signal/slot implementation
-of FLOW3. The method will be augmented as needed (using AOP)
+of Flow. The method will be augmented as needed (using AOP)
 to be a usable signal.
 
 :Applicable to: Method
@@ -390,7 +390,7 @@ during runtime.
 Validate
 --------
 
-Controls how a property or method argument will be validated by FLOW3.
+Controls how a property or method argument will be validated by Flow.
 
 :Applicable to: Method, Property
 
@@ -400,7 +400,7 @@ Controls how a property or method argument will be validated by FLOW3.
 Arguments
 *********
 
-* ``type`` (string): The validator type, either a FQCN or a FLOW3 validator class name.
+* ``type`` (string): The validator type, either a FQCN or a Flow validator class name.
 
 * ``options`` (array): Options for the validator, validator-specific.
 
@@ -411,12 +411,27 @@ Arguments
 
 
 
+ValidationGroups
+----------------
+
+
+
+
+
+Arguments
+*********
+
+* ``validationGroups`` (array): The validation groups for which validation on this method should be executed. (Can be given as anonymous argument.)
+
+
+
+
 ValueObject
 -----------
 
 Marks the annotate class as a value object.
 
-Regarding Doctrine the object is treated like an entity, but FLOW3
+Regarding Doctrine the object is treated like an entity, but Flow
 applies some optimizations internally, e.g. to store only one instance
 of a value object.
 

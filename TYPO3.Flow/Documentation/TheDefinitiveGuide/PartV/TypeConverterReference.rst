@@ -1,7 +1,7 @@
-FLOW3 TypeConverter Reference
-=============================
+TYPO3 Flow TypeConverter Reference
+==================================
 
-This reference was automatically generated from code on 2012-07-18
+This reference was automatically generated from code on 2012-12-10
 
 
 ArrayConverter
@@ -11,7 +11,7 @@ Converter which transforms arrays to arrays.
 
 :Priority: 1
 :Target type: array
-:Source type: Array
+:Source type: array
 
 
 
@@ -89,6 +89,7 @@ As an alternative to providing the date as string, you might supply day, month a
 :Target type: DateTime
 :Source types:
  * string
+ * integer
  * array
 
 
@@ -100,7 +101,7 @@ FloatConverter
 Converter which transforms a simple type to a float.
 
 This is basically done by simply casting it, except you provide some configuration options
-which will make this converter use FLOW3's locale parsing capabilities in order to respect
+which will make this converter use Flow's locale parsing capabilities in order to respect
 deviating decimal separators.
 
 **Advanced usage in action controller context**
@@ -194,7 +195,7 @@ This converter transforms arrays to simple objects (POPO) by setting properties.
 
 :Priority: 0
 :Target type: object
-:Source type: Array
+:Source type: array
 
 
 
@@ -219,6 +220,19 @@ This converter transforms arrays or strings to persistent objects. It does the f
 :Source types:
  * string
  * array
+
+
+
+
+SessionConverter
+----------------
+
+This converter transforms a session identifier into a real session object.
+
+:Priority: 1
+:Target type: TYPO3\Flow\Session\Session
+:Source type: string
+
 
 
 
