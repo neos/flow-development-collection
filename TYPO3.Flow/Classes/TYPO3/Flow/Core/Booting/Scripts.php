@@ -132,6 +132,8 @@ class Scripts {
 
 		$systemLogger = \TYPO3\Flow\Log\LoggerFactory::create('SystemLogger', 'TYPO3\Flow\Log\Logger', $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface', $systemLogger);
+		$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+		$packageManager->injectSystemLogger($systemLogger);
 	}
 
 

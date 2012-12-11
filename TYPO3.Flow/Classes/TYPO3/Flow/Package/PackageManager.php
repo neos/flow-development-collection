@@ -87,6 +87,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	protected $settings;
 
 	/**
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @param \TYPO3\Flow\Core\ClassLoader $classLoader
 	 * @return void
 	 */
@@ -103,6 +108,18 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 */
+	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
+		if ($this->systemLogger instanceof \TYPO3\Flow\Log\EarlyLogger) {
+			$this->systemLogger->replayLogsOn($systemLogger);
+			unset($this->systemLogger);
+		}
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
 	 * Initializes the package manager
 	 *
 	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
@@ -111,6 +128,8 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @return void
 	 */
 	public function initialize(\TYPO3\Flow\Core\Bootstrap $bootstrap, $packagesBasePath = FLOW_PATH_PACKAGES, $packageStatesPathAndFilename = '') {
+		$this->systemLogger = new \TYPO3\Flow\Log\EarlyLogger();
+
 		$this->bootstrap = $bootstrap;
 		$this->packagesBasePath = $packagesBasePath;
 		$this->packageStatesPathAndFilename = ($packageStatesPathAndFilename === '') ? FLOW_PATH_CONFIGURATION . 'PackageStates.php' : $packageStatesPathAndFilename;
@@ -539,7 +558,16 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		if (!$this->isPackageAvailable($packageKey)) {
 			throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not registered.', 1338996142);
 		}
+		$this->unregisterPackageByPackageKey($packageKey);
+	}
 
+	/**
+	 * Unregisters a package from the list of available packages
+	 *
+	 * @param string $packageKey Package Key of the package to be unregistered
+	 * @return void
+	 */
+	protected function unregisterPackageByPackageKey($packageKey) {
 		unset($this->packages[$packageKey]);
 		unset($this->packageKeys[strtolower($packageKey)]);
 		unset($this->packageStatesConfiguration['packages'][$packageKey]);
@@ -762,7 +790,13 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			$classesPath = isset($stateConfiguration['classesPath']) ? $stateConfiguration['classesPath'] : NULL;
 			$manifestPath = isset($stateConfiguration['manifestPath']) ? $stateConfiguration['manifestPath'] : NULL;
 
-			$package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath);
+			try {
+				$package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageKey, $classesPath, $manifestPath);
+			} catch (\TYPO3\Flow\Package\Exception\InvalidPackagePathException $exception) {
+				$this->unregisterPackageByPackageKey($packageKey);
+				$this->systemLogger->log('Package ' . $packageKey . ' could not be loaded, it has been unregistered. Error description: "' . $exception->getMessage() . '" (' . $exception->getCode() . ')', LOG_WARNING);
+				continue;
+			}
 
 			$this->registerPackage($package, FALSE);
 
