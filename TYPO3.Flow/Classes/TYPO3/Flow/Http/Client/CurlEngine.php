@@ -18,10 +18,30 @@ use TYPO3\Flow\Http\Response;
 /**
  * A Request Engine which uses cURL in order to send requests to external
  * HTTP servers.
- *
- * @Flow\Scope("singleton")
  */
 class CurlEngine implements RequestEngineInterface {
+
+	/**
+	 * @var array
+	 */
+	protected $options = array(
+		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_HEADER => TRUE,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_FRESH_CONNECT => TRUE,
+		CURLOPT_FORBID_REUSE => TRUE,
+		CURLOPT_TIMEOUT => 5,
+	);
+
+	/**
+	 * Sets an option to be used by cURL.
+	 *
+	 * @param integer $option One of the CURLOPT_* constants
+	 * @param mixed $value The value to set
+	 */
+	public function setOption($option, $value) {
+		$this->options[$option] = $value;
+	}
 
 	/**
 	 * Sends the given HTTP request
@@ -38,15 +58,7 @@ class CurlEngine implements RequestEngineInterface {
 		$requestUri = $request->getUri();
 		$curlHandle = curl_init((string)$requestUri);
 
-		$options = array(
-			CURLOPT_RETURNTRANSFER => TRUE,
-			CURLOPT_HEADER => TRUE,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_FRESH_CONNECT => TRUE,
-			CURLOPT_FORBID_REUSE => TRUE,
-			CURLOPT_TIMEOUT => 5,
-		);
-		curl_setopt_array($curlHandle, $options);
+		curl_setopt_array($curlHandle, $this->options);
 
 			// Send an empty Expect header in order to avoid chunked data transfer (which we can't handle yet).
 			// If we don't set this, cURL will set "Expect: 100-continue" for requests larger than 1024 bytes.
