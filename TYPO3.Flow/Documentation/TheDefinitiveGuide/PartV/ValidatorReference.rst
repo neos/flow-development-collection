@@ -1,7 +1,7 @@
 TYPO3 Flow Validator Reference
 ==============================
 
-This reference was automatically generated from code on 2012-12-10
+This reference was automatically generated from code on 2012-12-12
 
 
 AlphanumericValidator
@@ -229,7 +229,8 @@ NotEmptyValidator
 
 Validator for not empty values.
 
-Checks if the given value is not empty (NULL or empty string).
+Checks if the given value is not empty (NULL, empty string, empty array
+or empty object that implements the Countable interface).
 
 
 

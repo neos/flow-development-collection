@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-12-10
+This reference was automatically generated from code on 2012-12-12
 
 
 f:alias
@@ -2074,7 +2074,7 @@ With this tag, you can select a layout to be used for the current template.
 Arguments
 *********
 
-* ``name`` (string): Name of layout to use. If none given, "Default" is used.
+* ``name`` (string, *optional*): Name of layout to use. If none given, "Default" is used.
 
 
 
@@ -2091,7 +2091,7 @@ Arguments
 
 * ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
 
-* ``action`` (string, *optional*): Target action
+* ``action`` (string): Target action
 
 * ``arguments`` (array, *optional*): Arguments
 
@@ -2734,7 +2734,7 @@ A view helper for creating URIs to actions.
 Arguments
 *********
 
-* ``action`` (string, *optional*): Target action
+* ``action`` (string): Target action
 
 * ``arguments`` (array, *optional*): Arguments
 
