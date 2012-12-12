@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Mvc\View;
 /**
  * An empty view - a special case.
  *
+ * @deprecated since Flow 2.0. Return an empty string if you want an action to render blank
  */
 final class EmptyView implements \TYPO3\Flow\Mvc\View\ViewInterface {
 
@@ -55,7 +56,6 @@ final class EmptyView implements \TYPO3\Flow\Mvc\View\ViewInterface {
 	 *
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE
-	 * @api
 	 */
 	public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		return TRUE;

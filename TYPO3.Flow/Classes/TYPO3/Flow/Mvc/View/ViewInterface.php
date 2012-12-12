@@ -52,7 +52,6 @@ interface ViewInterface {
 	 *
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE if the view has something useful to display, otherwise FALSE
-	 * @api
 	 */
 	public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext);
 
