@@ -1,7 +1,7 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2012-12-10
+This reference was automatically generated from code on 2012-12-12
 
 
 ArrayConverter
@@ -247,6 +247,19 @@ Converter which transforms simple types to a string.
 :Source types:
  * string
  * integer
+
+
+
+
+UriTypeConverter
+----------------
+
+A type converter for converting URI strings to Http Uri objects
+
+:Priority: 1
+:Target type: TYPO3\Flow\Http\Uri
+:Source type: string
+
 
 
 
