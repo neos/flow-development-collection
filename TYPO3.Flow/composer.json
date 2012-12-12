@@ -13,8 +13,8 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "typo3/fluid": "*",
-        "typo3/party": "*",
+        "typo3/fluid": "2.0.*",
+        "typo3/party": "2.0.*",
 
         "doctrine/orm": "~2.3",
         "doctrine/migrations": "*",
