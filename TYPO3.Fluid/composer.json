@@ -5,7 +5,7 @@
     "license": ["LGPL-3.0+"],
     "require": {
         "typo3/flow-composer-installers": "*",
-        "typo3/flow": "*"
+        "typo3/flow": "2.0.*"
     },
     "autoload": {
         "psr-0": {
