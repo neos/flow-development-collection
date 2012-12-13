@@ -15,7 +15,6 @@ use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the APC cache backend
- *
  */
 class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 

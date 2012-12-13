@@ -28,6 +28,20 @@ interface BackendInterface {
 	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache);
 
 	/**
+	 * Returns the internally used, prefixed entry identifier for the given public
+	 * entry identifier.
+	 *
+	 * While Flow applications will mostly refer to the simple entry identifier, it
+	 * may be necessary to know the actual identifier used by the cache backend
+	 * in order to share cache entries with other applications. This method allows
+	 * for retrieving it.
+	 *
+	 * @param string $entryIdentifier
+	 * @return string
+	 */
+	public function getPrefixedIdentifier($entryIdentifier);
+
+	/**
 	 * Saves data in the cache.
 	 *
 	 * @param string $entryIdentifier An identifier for this specific cache entry

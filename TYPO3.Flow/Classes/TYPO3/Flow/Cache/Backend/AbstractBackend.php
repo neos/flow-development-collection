@@ -94,6 +94,26 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
 	}
 
 	/**
+	 * Returns the internally used, prefixed entry identifier for the given public
+	 * entry identifier.
+	 *
+	 * While Flow applications will mostly refer to the simple entry identifier, it
+	 * may be necessary to know the actual identifier used by the cache backend
+	 * in order to share cache entries with other applications. This method allows
+	 * for retrieving it.
+	 *
+	 * Note that, in case of the AbstractBackend, this method is returns just the
+	 * given entry identifier.
+	 *
+	 * @param string $entryIdentifier The short entry identifier, for example "NumberOfPostedArticles"
+	 * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
+	 * @api
+	 */
+	public function getPrefixedIdentifier($entryIdentifier) {
+		return $entryIdentifier;
+	}
+
+	/**
 	 * Sets the default lifetime for this cache backend
 	 *
 	 * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.

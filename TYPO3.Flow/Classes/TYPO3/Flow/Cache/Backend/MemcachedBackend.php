@@ -158,6 +158,23 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	}
 
 	/**
+	 * Returns the internally used, prefixed entry identifier for the given public
+	 * entry identifier.
+	 *
+	 * While Flow applications will mostly refer to the simple entry identifier, it
+	 * may be necessary to know the actual identifier used by the cache backend
+	 * in order to share cache entries with other applications. This method allows
+	 * for retrieving it.
+	 *
+	 * @param string $entryIdentifier The short entry identifier, for example "NumberOfPostedArticles"
+	 * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
+	 * @api
+	 */
+	public function getPrefixedIdentifier($entryIdentifier) {
+		return $this->identifierPrefix . $entryIdentifier;
+	}
+
+	/**
 	 * Saves data in the cache.
 	 *
 	 * @param string $entryIdentifier An identifier for this specific cache entry

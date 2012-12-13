@@ -66,9 +66,27 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 */
 	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
+
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
 		$pathHash = substr(md5(FLOW_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context), 0, 12);
-		$this->identifierPrefix = 'Flow_' . $pathHash;
+		$this->identifierPrefix = 'Flow_' . $pathHash . '_';
+	}
+
+	/**
+	 * Returns the internally used, prefixed entry identifier for the given public
+	 * entry identifier.
+	 *
+	 * While Flow applications will mostly refer to the simple entry identifier, it
+	 * may be necessary to know the actual identifier used by the cache backend
+	 * in order to share cache entries with other applications. This method allows
+	 * for retrieving it.
+	 *
+	 * @param string $entryIdentifier The short entry identifier, for example "NumberOfPostedArticles"
+	 * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
+	 * @api
+	 */
+	public function getPrefixedIdentifier($entryIdentifier) {
+		return $this->identifierPrefix . $entryIdentifier;
 	}
 
 	/**

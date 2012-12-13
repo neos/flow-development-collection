@@ -56,11 +56,11 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function flushByTagRejectsInvalidTags() {
 		$identifier = 'someCacheIdentifier';
-		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\BackendInterface');
 		$backend->expects($this->never())->method('flushByTag');
 
 		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
@@ -73,7 +73,7 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function flushByTagCallsBackendIfItIsATaggableBackend() {
 		$tag = 'sometag';
 		$identifier = 'someCacheIdentifier';
-		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\TaggableBackendInterface', array('setCache', 'get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\TaggableBackendInterface');
 		$backend->expects($this->once())->method('flushByTag')->with($tag);
 
 		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
