@@ -540,7 +540,14 @@ class Scripts {
 		$output = array();
 		exec($command, $output, $result);
 		if ($result !== 0) {
-			throw new Exception\SubProcessException(sprintf('Execution of subprocess failed with exitcode "%s" and output: %s', $result, PHP_EOL . PHP_EOL . implode(PHP_EOL, $output)));
+			$exceptionMessage = sprintf('Execution of subprocess failed with exit code %d', $result);
+			if (count($output) > 0) {
+				$exceptionMessage .= ' and output:' .  PHP_EOL . PHP_EOL . implode(PHP_EOL, $output);
+			} else {
+				$exceptionMessage .= ' and no output.';
+			}
+			$exceptionMessage .= PHP_EOL . PHP_EOL . 'The erroneous command was:' . PHP_EOL . $command;
+			throw new Exception\SubProcessException($exceptionMessage, 1355480641);
 		}
 		if ($outputResults) {
 			echo implode(PHP_EOL, $output);
