@@ -37,7 +37,7 @@
 	# Perform rewriting of persistent private resources
 	RewriteRule ^(_Resources/Persistent/[a-z0-9]+/(.+/)?[a-f0-9]{40})/.+(\..+) $1$3 [L]
 
-	# Perform rewriting of persitent resource files
+	# Perform rewriting of persistent resource files
 	RewriteRule ^(_Resources/Persistent/.{40})/.+(\..+) $1$2 [L]
 
 	# Make sure that not existing resources don't execute TYPO3 Flow
