@@ -200,7 +200,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			}
 
 			foreach ($dqlStatements as $dql) {
-				$resultSet = $this->doctrineService->runDql($dql, $hydrationModeConstant, $offset, $limit);
+				$resultSet = $this->doctrineService->runDql($dql, constant($hydrationModeConstant), $offset, $limit);
 				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
 			}
 		} else {
