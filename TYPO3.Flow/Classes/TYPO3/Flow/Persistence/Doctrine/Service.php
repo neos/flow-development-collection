@@ -146,7 +146,7 @@ class Service {
 			$query->setMaxResults($maxResult);
 		}
 
-		return $query->execute(array(), constant($hydrationMode));
+		return $query->execute(array(), $hydrationMode);
 	}
 
 	/**
