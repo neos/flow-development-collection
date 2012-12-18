@@ -2,7 +2,7 @@
 Routing
 =======
 
-.. sectionauthor:: Robert Lemke <robert@typo3.org>
+.. sectionauthor:: Robert Lemke <robert@typo3.org>, Bastian Waidelich <bastian@typo3.org>
 
 Although the basic functions like creating or updating a post work well
 already, the URIs still have a little blemish. The index of posts can only be
@@ -29,7 +29,7 @@ TYPO3CR route) and make sure that you use spaces exactly like in the example
 
 	-
 	  name: 'Post index'
-	  uriPattern:    '(posts)'
+	  uriPattern:    'posts'
 	  defaults:
 	    '@package':    'TYPO3.Blog'
 	    '@controller': 'Post'
@@ -38,17 +38,16 @@ TYPO3CR route) and make sure that you use spaces exactly like in the example
 
 This configuration adds a new route to the list of routes (``-`` creates a new
 list item). The route becomes active if a requests matches the pattern defined
-by the ``uriPattern``. In this example empty URIs
-(i.e. http://dev.tutorial.local/) and the URI http://dev.tutorial.local/posts
-would match because the round brackets make the ``posts`` string optional.
+by the ``uriPattern``. In this example the URI http://dev.tutorial.local/posts
+would match.
 
 If the URI matches, the route's default values for package, controller action
 and format are set and the request dispatcher will choose the right
 controller accordingly.
 
-Try calling http://dev.tutorial.local/ and http://dev.tutorial.local/posts now –
-you should in both cases see the list of posts produced by the
-``PostController``'s ``indexAction``.
+Try calling http://dev.tutorial.local/posts now –
+you should see the list of posts produced by the ``PostController``'s
+``indexAction``.
 
 Composite Routes
 ================
@@ -74,7 +73,7 @@ in the less-than and greater-than signs will be passed to the sub routes:
 	  defaults:
 	    '@format': 'html'
 	  subRoutes:
-	    FlowSubroutes:
+	    'FlowSubroutes':
 	      package: 'TYPO3.Flow'
 
 Let's define a similar configuration for the *Blog* package. Please replace
@@ -93,8 +92,12 @@ route configuration:
 	    '@package': 'TYPO3.Blog'
 	    '@format':  'html'
 	  subRoutes:
-	    BlogSubroutes:
+	    'BlogSubroutes':
 	      package: 'TYPO3.Blog'
+
+.. note::
+	We use "``BlogSubroutes``" here as name for the sub routes. You can name this as you like but it has to be
+	the same in ``uriPattern`` and ``subRoutes``.
 
 For this to work you need to create a new *Routes.yaml* file in the
 *Configuration* folder of your *Blog* package
@@ -111,7 +114,7 @@ route you already created:
 
 	-
 	  name: 'Post index'
-	  uriPattern:    '(posts)'
+	  uriPattern:    'posts'
 	  defaults:
 	    '@package':    'TYPO3.Blog'
 	    '@controller': 'Post'
@@ -134,7 +137,7 @@ so let's beautify the action URIs as well by inserting a new route before the
 .. code-block:: yaml
 
 	-
-	  name: 'Post actions 1'
+	  name: 'Post actions'
 	  uriPattern:    'posts/{@action}'
 	  defaults:
 	    '@controller': 'Post'
@@ -163,14 +166,14 @@ Our goal is to produce an URI like:
 	http://dev.tutorial.local/post/2010/01/18/post-title/edit
 
 and use this as our edit link. That's done by adding following route at the
-*top of the file*:
+**top of the file**:
 
 *Configuration/Routes.yaml*:
 
 .. code-block:: yaml
 
 	-
-	  name: 'Post actions 2'
+	  name: 'Single post actions'
 	  uriPattern:     'posts/{post}/{@action}'
 	  defaults:
 	    '@controller':  'Post'
@@ -179,7 +182,7 @@ and use this as our edit link. That's done by adding following route at the
 	      objectType: 'TYPO3\Blog\Domain\Model\Post'
 	      uriPattern: '{date:Y}/{date:m}/{date:d}/{title}'
 
-The "``Post actions 2``" route now handles all actions where a post needs to
+The "``Single post actions``" route now handles all actions where a post needs to
 be specified (i.e. show, edit, update and delete).
 
 Finally, now that you copied and pasted so much code, you should try out the
