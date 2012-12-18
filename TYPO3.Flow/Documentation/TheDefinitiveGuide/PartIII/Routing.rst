@@ -52,6 +52,8 @@ But let's start with an easy example:
 	  uriPattern: ''
 	  defaults:
 	    '@package': 'My.Demo'
+	    '@controller': 'Standard'
+	    '@action': 'index'
 
 .. note::
 
@@ -61,11 +63,6 @@ But let's start with an easy example:
 If you insert these lines at the beginning of the file ``Configurations/Routes.yaml``,
 the ``indexAction`` of the ``StandardController`` in your *My.Demo* package will be called
 when you open up the homepage of your TYPO3 Flow installation (``http://localhost/``).
-
-.. note::
-
-	You don't have to specify action and controller in this example as the ``indexAction``
-	of the ``StandardController`` is always called by default.
 
 URI patterns
 ============
