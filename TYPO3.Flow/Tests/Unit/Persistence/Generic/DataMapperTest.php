@@ -31,7 +31,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function mapToObjectsMapsArrayToObjectByCallingmapToObject() {
+	public function mapToObjectsMapsArrayToObjectByCallingMapToObject() {
 		$objectData = array(array('identifier' => '1234'));
 		$object = new \stdClass();
 
@@ -63,7 +63,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 *
 	 * @test
 	 */
-	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
+	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentityMapToObjects() {
 		$mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
 		$mockEntity = $this->getMock('TYPO3\Flow\Aop\ProxyInterface', array('Flow_Aop_Proxy_invokeJoinPoint', '__wakeup'), array(), $mockEntityClassName);
 

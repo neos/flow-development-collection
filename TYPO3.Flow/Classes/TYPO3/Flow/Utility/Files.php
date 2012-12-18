@@ -173,11 +173,16 @@ class Files {
 		if (substr($path, -2) === '/.') {
 			$path = substr($path, 0, -1);
 		}
+		if (is_file($path)) {
+			throw new \TYPO3\Flow\Utility\Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
+		}
 		if (!is_dir($path) && strlen($path) > 0) {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
 			umask($oldMask);
-			if (!is_dir($path)) throw new \TYPO3\Flow\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
+			if (!is_dir($path)) {
+				throw new \TYPO3\Flow\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
+			}
 		}
 	}
 

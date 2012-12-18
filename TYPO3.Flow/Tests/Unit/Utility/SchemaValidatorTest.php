@@ -42,7 +42,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * Handle the assertation that the given result object has no errors
+	 * Handle the assertion that the given result object has no errors
 	 *
 	 * @param \TYPO3\Flow\Error\Result $result
 	 * @param boolean $expectSuccess
