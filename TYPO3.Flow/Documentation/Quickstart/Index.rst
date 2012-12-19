@@ -43,7 +43,7 @@ Setting up TYPO3 Flow is pretty straight-forward. As a minimum requirement you w
 * A database supported by Doctrine DBAL, such as MySQL
 * Command line access
 
-Install `Composer`_ by following the `installation instructions <http://getcomposer.org/download/>`_
+Install Composer by following the `installation instructions <http://getcomposer.org/download/>`_
 which boils down to this in the simplest case::
 
  curl -s https://getcomposer.org/installer | php
@@ -58,7 +58,7 @@ which boils down to this in the simplest case::
 	and can prevent errors caused by composer not understanding e.g. new
 	syntax in manifest files.
 
-Then use `Composer`_ in a directory which will be accessible by your web server to download
+Then use Composer in a directory which will be accessible by your web server to download
 and install all packages of the TYPO3 Flow Base Distribution. The following command will
 clone the 2.0.0 version, include development dependencies and keep git metadata for future use::
 
@@ -66,23 +66,23 @@ clone the 2.0.0 version, include development dependencies and keep git metadata 
 
 You will end up with a directory structure like this::
 
-.. code-block:: text
+.. code-block:: none
 
-	htdocs/               <-- depending on your web server
-	  Quickstart/
-	    Build/
-	    Configuration/
-	      Settings.yaml.example
-	      ...
-	    Packages/
-	      Framework/
-	        TYPO3.Flow/
-	        ...
-	    Web/              <-- your virtual host root will point to this
-	      .htaccess
-	      index.php
-	    flow
-	    flow.bat
+ htdocs/               <-- depending on your web server
+   Quickstart/
+     Build/
+     Configuration/
+       Settings.yaml.example
+       ...
+     Packages/
+       Framework/
+         TYPO3.Flow/
+         ...
+     Web/              <-- your virtual host root will point to this
+       .htaccess
+       index.php
+     flow
+     flow.bat
 
 Setting File Permissions
 ------------------------
@@ -92,7 +92,7 @@ write access to certain directories for both, you will need to set the file perm
 accordingly. But don't worry, this is simply done by changing to the TYPO3 Flow base directory
 (``Quickstart`` in the above example) and calling the following command:
 
-.. code-block:: none
+*command line*::
 
 	./flow core:setfilepermissions john www-data www-data
 
