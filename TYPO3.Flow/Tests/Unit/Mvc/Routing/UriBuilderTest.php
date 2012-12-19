@@ -369,7 +369,6 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedResult, $actualResult);
 	}
 
-
 	/**
 	 * @test
 	 */
@@ -389,6 +388,104 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'SomeNamespace' => array('Foo' => 'From Request'),
 			'Foo' => 'Overruled',
 			'Some' => 'Other Argument From Request'
+		);
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildRemovesArgumentsBelongingToNamespacedSubRequests() {
+		$rootRequestArguments = array(
+			'SubNamespace' => array('Sub' => 'Argument'),
+			'Foo' => 'Bar'
+		);
+		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue($rootRequestArguments));
+
+		$this->uriBuilder->setRequest($this->mockSubRequest);
+		$this->uriBuilder->build();
+
+		$expectedArguments = array(
+			'Foo' => 'Bar'
+		);
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildKeepsArgumentsBelongingToNamespacedSubRequestsIfAddQueryStringIsSet() {
+		$rootRequestArguments = array(
+			'SubNamespace' => array('Sub' => 'Argument'),
+			'Foo' => 'Bar'
+		);
+		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue($rootRequestArguments));
+
+		$this->uriBuilder->setRequest($this->mockSubRequest);
+		$this->uriBuilder->setAddQueryString(TRUE)->build();
+
+		$expectedArguments = array(
+			'SubNamespace' => array('Sub' => 'Argument'),
+			'Foo' => 'Bar'
+		);
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildRemovesArgumentsBelongingToNamespacedSubSubRequests() {
+		$rootRequestArguments = array(
+			'SubNamespace' => array(
+				'Sub' => 'Argument',
+				'SubSubNamespace' => array(
+					'SubSub' => 'Argument'
+				)
+			),
+			'Foo' => 'Bar'
+		);
+		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue($rootRequestArguments));
+		$this->mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubSubNamespace'));
+
+		$this->uriBuilder->setRequest($this->mockSubSubRequest);
+		$this->uriBuilder->build();
+
+		$expectedArguments = array(
+			'SubNamespace' => array(
+				'Sub' => 'Argument'
+			),
+			'Foo' => 'Bar'
+		);
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildKeepsArgumentsBelongingToNamespacedSubSubRequestsIfAddQueryStringIsSet() {
+		$rootRequestArguments = array(
+			'SubNamespace' => array(
+				'Sub' => 'Argument',
+				'SubSubNamespace' => array(
+					'SubSub' => 'Argument'
+				)
+			),
+			'Foo' => 'Bar'
+		);
+		$this->mockMainRequest->expects($this->once())->method('getArguments')->will($this->returnValue($rootRequestArguments));
+		$this->mockSubSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubSubNamespace'));
+
+		$this->uriBuilder->setRequest($this->mockSubSubRequest);
+		$this->uriBuilder->setAddQueryString(TRUE)->build();
+
+		$expectedArguments = array(
+			'SubNamespace' => array(
+				'Sub' => 'Argument',
+				'SubSubNamespace' => array(
+					'SubSub' => 'Argument'
+				)
+			),
+			'Foo' => 'Bar'
 		);
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
 	}
