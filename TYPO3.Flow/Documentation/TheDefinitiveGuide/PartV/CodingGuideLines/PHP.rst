@@ -26,7 +26,7 @@ CGL on One Page
 	:alt: CGL on one page
 
 The most important parts of our `Coding Guidelines in a one page document
-<http://flow.typo3.org/_Resources/Static/Packages/TYPO3.Flow3Org/Assets/Content/FLOW3-CGL-on-one-page.pdf>`_
+<http://flow.typo3.org/_Resources/Static/Packages/TYPO3.Flow3Org/Assets/Content/TYPO3_Flow-CGL-on-one-page.pdf>`_
 you can print out and hang on your wall for easy reference.
 Does it get any easier than that?
 
