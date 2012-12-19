@@ -1,5 +1,5 @@
-TYPO3 Flow – The Definitive Guide
----------------------------------
+The Definitive Guide
+--------------------
 
 .. toctree::
 	:maxdepth: 2
