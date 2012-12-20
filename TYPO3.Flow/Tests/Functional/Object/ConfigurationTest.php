@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
+namespace TYPO3\Flow\Tests\Functional\Object;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,28 +11,22 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\ObjectAccess;
+
 /**
- * A class of scope prototype (but without explicit scope annotation)
+ * Functional tests for the Object configuration via Objects.yaml
  */
-class PrototypeClassC {
+class ConfigurationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var string
+	 * See the configuration in Testing/Objects.yaml
+	 * @test
 	 */
-	public $settingsArgument;
+	public function configuredObjectDWillGetAssignedObjectFWithCorrectlyConfiguredConstructorValue() {
+		$instance = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassD');
+		/** @var $instanceE Fixtures\PrototypeClassE */
+		$instanceE = ObjectAccess::getProperty($instance, 'objectE', TRUE);
+		$this->assertEquals('The constructor set value', $instanceE->getNullValue());
 
-	/**
-	 * @param string $settingsArgument
-	 */
-	public function __construct($settingsArgument) {
-		$this->settingsArgument = $settingsArgument;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getSettingsArgument() {
-		return $this->settingsArgument;
-	}
-
 }

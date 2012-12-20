@@ -24,6 +24,13 @@ class PrototypeClassD {
 	protected $objectB;
 
 	/**
+	 * Note: please leave this class name imported/simplified to cover the proper reflection of this tag.
+	 *
+	 * @var PrototypeClassE
+	 */
+	protected $objectE;
+
+	/**
 	 * @var integer
 	 */
 	public $injectionRuns = 0;
