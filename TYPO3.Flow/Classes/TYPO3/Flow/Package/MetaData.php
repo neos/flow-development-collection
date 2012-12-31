@@ -28,6 +28,13 @@ class MetaData implements \TYPO3\Flow\Package\MetaDataInterface {
 	protected $packageKey;
 
 	/**
+	 * Package type
+	 *
+	 * @var string
+	 */
+	protected $packageType;
+
+	/**
 	 * The version number
 	 * @var string
 	 */
@@ -86,6 +93,24 @@ class MetaData implements \TYPO3\Flow\Package\MetaDataInterface {
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
+	}
+
+	/**
+	 * Get package type
+	 *
+	 * @return string
+	 */
+	public function getPackageType() {
+		return $this->packageType;
+	}
+
+	/**
+	 * Set package type
+	 *
+	 * @param string $packageType
+	 */
+	public function setPackageType($packageType) {
+		$this->packageType = $packageType;
 	}
 
 	/**

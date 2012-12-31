@@ -323,13 +323,14 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @param string $packageKey The package key of the new package
 	 * @param \TYPO3\Flow\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
 	 * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
+	 * @param string $packageType If specified, the package type will be set, otherwise it will default to "typo3-flow-package"
 	 * @return \TYPO3\Flow\Package\PackageInterface The newly created package
 	 * @throws \TYPO3\Flow\Package\Exception
 	 * @throws \TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException
 	 * @api
 	 */
-	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
+	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL, $packagesPath = '', $packageType = 'typo3-flow-package') {
 		if (!$this->isPackageKeyValid($packageKey)) {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
 		}
@@ -339,6 +340,13 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 
 		if ($packagesPath === '') {
 			$packagesPath = Files::getUnixStylePath(Files::concatenatePaths(array($this->packagesBasePath, 'Application')));
+		}
+
+		if ($packageMetaData === NULL) {
+			$packageMetaData = new MetaData($packageKey);
+		}
+		if ($packageMetaData->getPackageType() === NULL) {
+			$packageMetaData->setPackageType($packageType);
 		}
 
 		$packagePath = Files::concatenatePaths(array($packagesPath, $packageKey)) . '/';
@@ -386,11 +394,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$nameParts = explode('.', $packageKey);
 		$vendor = array_shift($nameParts);
 		$manifest['name'] = strtolower($vendor . '/' . implode('-', $nameParts));
-		$manifest['type'] = 'typo3-flow-package';
 		if ($packageMetaData !== NULL) {
+			$manifest['type'] = $packageMetaData->getPackageType();
 			$manifest['description'] = $packageMetaData->getDescription();
 			$manifest['version'] = $packageMetaData->getVersion();
 		} else {
+			$manifest['type'] = 'typo3-flow-package';
 			$manifest['description'] = '';
 		}
 		$manifest['require'] = array('typo3/flow' => '*');
