@@ -317,6 +317,22 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function createPackageCanChangePackageTypeInComposerManifest() {
+		$metaData = new \TYPO3\Flow\Package\MetaData('Acme.YetAnotherTestPackage2');
+		$metaData->setDescription('Yet Another Test Package');
+		$metaData->setPackageType('flow-custom-package');
+
+		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', $metaData);
+
+		$json = file_get_contents($package->getPackagePath() . '/composer.json');
+		$composerManifest = json_decode($json);
+
+		$this->assertEquals('flow-custom-package', $composerManifest->type);
+	}
+
+	/**
 	 * Checks if createPackage() creates the folders for classes, configuration, documentation, resources and tests.
 	 *
 	 * @test
