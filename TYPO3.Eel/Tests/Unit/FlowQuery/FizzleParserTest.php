@@ -95,5 +95,18 @@ class FizzleParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->assertMatches('AttributeFilter', '[instanceof asdf]');
 	}
 
+	/**
+	 * @test
+	 */
+	public function booleanOperandsAreConvertedToBoolean() {
+		$parser = new \PhpPeg\ParserTestWrapper($this, 'TYPO3\Eel\FlowQuery\FizzleParser');
+
+		$actual = $parser->match('Filter', 'foo[foo=true]');
+		$this->assertSame(TRUE, $actual['AttributeFilters'][0]['Operand']);
+
+		$actual = $parser->match('Filter', 'foo[foo= FALSE]');
+		$this->assertSame(FALSE, $actual['AttributeFilters'][0]['Operand']);
+	}
+
 }
 ?>

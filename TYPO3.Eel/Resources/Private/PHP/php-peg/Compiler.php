@@ -226,7 +226,7 @@ abstract class Token extends PHPWriter {
 		if ($this->tag && !($this instanceof TokenRecurse)) {
 			$code = PHPBuilder::build()
 				->l(
-					'$stack[] = $result; $result = $this->construct( $matchrule, "' . $this->tag . '" ); ',
+					'$stack[] = $result; $result = $this->construct( $matchrule, "' . $this->tag . '" );',
 					$code->replace(array(
 						'MATCH' => PHPBuilder::build()
 							->l(

@@ -52,7 +52,7 @@ AttributeFilter:
           | ( :Identifier S
               (
                   Operator:( PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch )
-                  S ( Operand:StringLiteral | Operand:UnquotedOperand ) S
+                  S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
               )?
           )
        )
@@ -90,6 +90,18 @@ ExactMatch: '='
 			throw new FizzleException(sprintf('The Selector "%s" could not be parsed. Error at character %d.', $filter, $parser->pos+1), 1327649317);
 		}
 		return $parsedFilter;
+	}
+
+	function BooleanLiteral__finalise(&$self) {
+		$self['val'] = strtolower($self['text']) === 'true';
+	}
+
+	public function NumberLiteral__finalise(&$self) {
+		if (isset($self['dec'])) {
+			$self['val'] = (float)($self['text']);
+		} else {
+			$self['val'] = (integer)$self['text'];
+		}
 	}
 }
 ?>

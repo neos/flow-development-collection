@@ -58,6 +58,12 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$myObject4 = new \stdClass();
 		$myObject4->name = 'Robert';
 
+		$myObject5 = new \stdClass();
+		$myObject5->isHidden = TRUE;
+
+		$myObject6 = new \stdClass();
+		$myObject6->aNumber = 42;
+
 		return array(
 			'Property existance test works' => array(
 				'sourceObjects' => array($myObject, $myObject2),
@@ -78,6 +84,16 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
 				'filter' => '[myProperty=asdf]',
 				'expectedResult' => array($myObject)
+			),
+			'Boolean matches' => array(
+				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+				'filter' => '[isHidden=true]',
+				'expectedResult' => array($myObject5)
+			),
+			'Integer matches' => array(
+				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+				'filter' => '[aNumber = 42]',
+				'expectedResult' => array($myObject6)
 			),
 
 			'Instanceof test works (1)' => array(
