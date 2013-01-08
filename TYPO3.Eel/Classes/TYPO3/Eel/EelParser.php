@@ -19,8 +19,8 @@ WARNING: This file has been machine generated. Do not edit it, or your changes w
 /**
  * Eel parser
  *
- * This parser can evaluate the expression language for Flow and uses the
- * basic types from AbstractParser.
+ * This parser can evaluate the expression language for TYPO3 Flow and uses
+ * the basic types from AbstractParser.
  */
 class EelParser extends \TYPO3\Eel\AbstractParser {
 
