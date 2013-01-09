@@ -296,18 +296,26 @@ abstract class AbstractMigration {
 	 */
 	protected function applySearchAndReplaceOperations() {
 		$allPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'], NULL, TRUE);
-		foreach ($this->operations['searchAndReplace'] as $operation) {
-			foreach ($allPathsAndFilenames as $pathAndFilename) {
-				$pathInfo = pathinfo($pathAndFilename);
-				if (!isset($pathInfo['filename'])) continue;
-				if (strpos($pathAndFilename, 'Migrations/Code') !== FALSE) continue;
+		foreach ($allPathsAndFilenames as $pathAndFilename) {
+			$pathInfo = pathinfo($pathAndFilename);
+			if (!isset($pathInfo['filename'])) continue;
+			if (strpos($pathAndFilename, 'Migrations/Code') !== FALSE) continue;
 
+			foreach ($this->operations['searchAndReplace'] as $operation) {
 				if ($operation[2] !== array()) {
 					if (!isset($pathInfo['extension']) || !in_array($pathInfo['extension'], $operation[2], TRUE)) {
 						continue;
 					}
 				}
 				Tools::searchAndReplace($operation[0], $operation[1], $pathAndFilename);
+			}
+			foreach ($this->operations['searchAndReplaceRegex'] as $operation) {
+				if ($operation[2] !== array()) {
+					if (!isset($pathInfo['extension']) || !in_array($pathInfo['extension'], $operation[2], TRUE)) {
+						continue;
+					}
+				}
+				Tools::searchAndReplace($operation[0], $operation[1], $pathAndFilename, TRUE);
 			}
 		}
 	}
