@@ -33,7 +33,7 @@ class Tools {
 		$packagesDirectoryIterator = new \DirectoryIterator($packagesPath);
 		foreach ($packagesDirectoryIterator as $categoryFileInfo) {
 			$category = $categoryFileInfo->getFilename();
-			if (!$categoryFileInfo->isDir() || $category[0] === '.') {
+			if (!$categoryFileInfo->isDir() || $category[0] === '.' || $category === 'Libraries') {
 				continue;
 			}
 
