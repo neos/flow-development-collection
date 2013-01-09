@@ -61,7 +61,7 @@ class Manager {
 		foreach ($this->packagesData as $packageKey => $packageData) {
 			$packageStatus = array();
 			foreach ($this->migrations as $versionNumber => $versionInstance) {
-				$migrationIdentifier = $versionInstance->getPackageKey() . '-' . $versionNumber;
+				$migrationIdentifier = $versionInstance->getIdentifier();
 
 				if (Git::hasMigrationApplied($packageData['path'], $migrationIdentifier)) {
 					$state = self::STATE_MIGRATED;
