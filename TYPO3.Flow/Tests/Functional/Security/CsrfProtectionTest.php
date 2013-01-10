@@ -59,20 +59,20 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$uriBuilder->setRequest($actionRequest);
 
 		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('index.php/test/security/restricted', (string)$uri);
+		$this->assertEquals('test/security/restricted', (string)$uri);
 
 		$this->authenticateRoles(array('Administrator'));
 		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('index.php/test/security/restricted?__csrfToken', substr($uri, 0, 46));
+		$this->assertEquals('test/security/restricted?__csrfToken', substr($uri, 0, 36));
 
 		$uriBuilder->setLinkProtectionEnabled(FALSE);
 		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('index.php/test/security/restricted', (string)$uri);
+		$this->assertEquals('test/security/restricted', (string)$uri);
 
 		$uriBuilder->reset();
 		$this->assertTrue($uriBuilder->isLinkProtectionEnabled());
 		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('index.php/test/security/restricted?__csrfToken', substr($uri, 0, 46));
+		$this->assertEquals('test/security/restricted?__csrfToken', substr($uri, 0, 36));
 	}
 
 }
