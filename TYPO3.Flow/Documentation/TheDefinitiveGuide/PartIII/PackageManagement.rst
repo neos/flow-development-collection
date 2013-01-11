@@ -123,9 +123,13 @@ Resources
     following directories:
 
     * Images
-    * StyleSheets
-    * JavaScript
-    * Icons
+    * Styles
+    * Scripts
+
+    The general rule for this is: The folder uses the plural form of the resource type
+    it contains.
+    Third party bundles that contain multiple resources such as ``jQuery UI`` or ``Twitter Bootstrap`
+    should reside in a sub directory ``Libraries`.
 
 Tests
   Unit
