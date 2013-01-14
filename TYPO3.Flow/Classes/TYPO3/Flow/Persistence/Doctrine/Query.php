@@ -332,20 +332,28 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 * $propertyName. If $operand is NULL a strict check for NULL is done. For
 	 * strings the comparison can be done with or without case-sensitivity.
 	 *
+	 * Note: case-sensitivity is only possible if the database supports it. E.g.
+	 * if you are using MySQL with a case-insensitive collation you will not be able
+	 * to test for case-sensitive equality (the other way around works, because we
+	 * compare lowercased values).
+	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
 	 * @return object
-	 * @todo remove null handling as soon as supported natively by Doctrine
-	 * @todo implement case-sensitivity switch
 	 * @api
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
+		$aliasedPropertyName = $this->getPropertyNameWithAlias($propertyName);
 		if ($operand === NULL) {
-			return $this->getPropertyNameWithAlias($propertyName) . ' IS NULL';
-		} else {
-			return $this->queryBuilder->expr()->eq($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
+			return $this->queryBuilder->expr()->isNull($aliasedPropertyName);
 		}
+
+		if ($caseSensitive === TRUE) {
+			return $this->queryBuilder->expr()->eq($aliasedPropertyName, $this->getParamNeedle($operand));
+		}
+
+		return $this->queryBuilder->expr()->eq($this->queryBuilder->expr()->lower($aliasedPropertyName), $this->getParamNeedle(strtolower($operand)));
 	}
 
 	/**
