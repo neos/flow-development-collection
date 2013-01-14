@@ -145,6 +145,8 @@ TYPO3:
        'Doctrine.Common' : ['.*']
        'Doctrine.ORM' : ['.*']
        'Doctrine.DBAL' : ['.*']
+       'doctrine.annotations' : ['.*']
+       'doctrine.collections' : ['.*']
        'doctrine.migrations' : ['.*']
        'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*']
        'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
