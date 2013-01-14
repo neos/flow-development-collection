@@ -68,7 +68,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 		parent::setCache($cache);
 
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$pathHash = substr(md5(FLOW_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context), 0, 12);
+		$pathHash = substr(md5(FLOW_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context .  $cache->getIdentifier()), 0, 12);
 		$this->identifierPrefix = 'Flow_' . $pathHash . '_';
 	}
 
