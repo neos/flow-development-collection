@@ -106,7 +106,7 @@ class Git {
 	static public function hasMigrationApplied($packagePath, $migrationIdentifier) {
 		$output = array();
 		chdir($packagePath);
-		exec('git log -F --oneline --grep ' . escapeshellarg('Migration: ' . $migrationIdentifier), $output);
+		exec('git log -F --oneline --grep=' . escapeshellarg('Migration: ' . $migrationIdentifier), $output);
 		return $output !== array();
 	}
 
