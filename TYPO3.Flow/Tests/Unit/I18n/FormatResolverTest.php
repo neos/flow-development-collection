@@ -77,12 +77,118 @@ class FormatResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function throwsExceptionWhenFormatterDoesNotExist() {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\Flow\I18n\Formatter\FooFormatter')->will($this->throwException(new \TYPO3\Flow\I18n\Exception\UnknownFormatterException()));
+		$mockObjectManager
+			->expects($this->at(0))
+			->method('isRegistered')
+			->with('foo')
+			->will($this->returnValue(FALSE));
+		$mockObjectManager
+			->expects($this->at(1))
+			->method('isRegistered')
+			->with('TYPO3\Flow\I18n\Formatter\FooFormatter')
+			->will($this->returnValue(FALSE));
 
 		$formatResolver = new \TYPO3\Flow\I18n\FormatResolver();
 		$formatResolver->injectObjectManager($mockObjectManager);
 
 		$formatResolver->resolvePlaceholders('{0,foo}', array(123), $this->sampleLocale);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\I18n\Exception\InvalidFormatterException
+	 */
+	public function throwsExceptionWhenFormatterDoesNotImplementFormatterInterface() {
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager
+			->expects($this->once())
+			->method('isRegistered')
+			->with('Acme\Foobar\Formatter\SampleFormatter')
+			->will($this->returnValue(TRUE));
+
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService
+			->expects($this->once())
+			->method('isClassImplementationOf')
+			->with('Acme\Foobar\Formatter\SampleFormatter', 'TYPO3\Flow\I18n\Formatter\FormatterInterface')
+			->will($this->returnValue(FALSE));
+
+		$formatResolver = new \TYPO3\Flow\I18n\FormatResolver();
+		$formatResolver->injectObjectManager($mockObjectManager);
+		$this->inject($formatResolver, 'reflectionService', $mockReflectionService);
+		$formatResolver->resolvePlaceholders('{0,Acme\Foobar\Formatter\SampleFormatter}', array(123), $this->sampleLocale);
+	}
+
+	/**
+	 * @test
+	 */
+	public function fullyQualifiedFormatterIsCorrectlyBeingUsed() {
+		$mockFormatter = $this->getMock('TYPO3\Flow\I18n\Formatter\FormatterInterface');
+		$mockFormatter->expects($this->once())
+			->method('format')
+			->with(123, $this->sampleLocale, array())
+			->will($this->returnValue('FormatterOutput42'));
+
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager
+			->expects($this->once())
+			->method('isRegistered')
+			->with('Acme\Foobar\Formatter\SampleFormatter')
+			->will($this->returnValue(TRUE));
+		$mockObjectManager
+			->expects($this->once())
+			->method('get')
+			->with('Acme\Foobar\Formatter\SampleFormatter')
+			->will($this->returnValue($mockFormatter));
+
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService
+			->expects($this->once())
+			->method('isClassImplementationOf')
+			->with('Acme\Foobar\Formatter\SampleFormatter', 'TYPO3\Flow\I18n\Formatter\FormatterInterface')
+			->will($this->returnValue(TRUE));
+
+		$formatResolver = new \TYPO3\Flow\I18n\FormatResolver();
+		$formatResolver->injectObjectManager($mockObjectManager);
+		$this->inject($formatResolver, 'reflectionService', $mockReflectionService);
+		$actual = $formatResolver->resolvePlaceholders('{0,Acme\Foobar\Formatter\SampleFormatter}', array(123), $this->sampleLocale);
+		$this->assertEquals('FormatterOutput42', $actual);
+	}
+
+	/**
+	 * @test
+	 */
+	public function fullyQualifiedFormatterWithLowercaseVendorNameIsCorrectlyBeingUsed() {
+		$mockFormatter = $this->getMock('TYPO3\Flow\I18n\Formatter\FormatterInterface');
+		$mockFormatter->expects($this->once())
+			->method('format')
+			->with(123, $this->sampleLocale, array())
+			->will($this->returnValue('FormatterOutput42'));
+
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager
+			->expects($this->once())
+			->method('isRegistered')
+			->with('acme\Foo\SampleFormatter')
+			->will($this->returnValue(TRUE));
+		$mockObjectManager
+			->expects($this->once())
+			->method('get')
+			->with('acme\Foo\SampleFormatter')
+			->will($this->returnValue($mockFormatter));
+
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService
+			->expects($this->once())
+			->method('isClassImplementationOf')
+			->with('acme\Foo\SampleFormatter', 'TYPO3\Flow\I18n\Formatter\FormatterInterface')
+			->will($this->returnValue(TRUE));
+
+		$formatResolver = new \TYPO3\Flow\I18n\FormatResolver();
+		$formatResolver->injectObjectManager($mockObjectManager);
+		$this->inject($formatResolver, 'reflectionService', $mockReflectionService);
+		$actual = $formatResolver->resolvePlaceholders('{0,acme\Foo\SampleFormatter}', array(123), $this->sampleLocale);
+		$this->assertEquals('FormatterOutput42', $actual);
 	}
 
 	/**

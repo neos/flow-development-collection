@@ -52,5 +52,15 @@ class FormatResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * @test
+	 */
+	public function formatResolverWorksCorrectlyForFullyQualifiedFormatterClassNames() {
+		$actualFormatter = new \TYPO3\Flow\Tests\Functional\I18n\Fixtures\SampleFormatter;
+		$locale = new \TYPO3\Flow\I18n\Locale('de');
+		$testResult = $this->formatResolver->resolvePlaceholders('{0,TYPO3\Flow\Tests\Functional\I18n\Fixtures\SampleFormatter}', array('foo'), $locale);
+		$this->assertEquals($actualFormatter->format('foo', $locale), $testResult);
+	}
+
 }
 ?>

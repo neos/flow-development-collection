@@ -46,6 +46,12 @@ class FormatResolver {
 	protected $localizationService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
 	 * Array of concrete formatters used by this class.
 	 *
 	 * @var array<\TYPO3\Flow\I18n\Formatter\FormatterInterface>
@@ -126,31 +132,47 @@ class FormatResolver {
 	/**
 	 * Returns instance of concrete formatter.
 	 *
-	 * The name provided has to be a name of existing class placed in
-	 * \TYPO3\Flow\I18n\Formatter package and implementing FormatterInterface
-	 * (also in this package). For example,  when $formatterName is 'number',
-	 * the \TYPO3\Flow\I18n\Formatter\NumberFormatter class has to exist.
+	 * The type provided has to be either a name of existing class placed in
+	 * \TYPO3\Flow\I18n\Formatter namespace or a fully qualified class name;
+	 * in both cases implementing this' package's FormatterInterface.
+	 * For example, when $formatterName is 'number',
+	 * the \TYPO3\Flow\I18n\Formatter\NumberFormatter class has to exist; when
+	 * $formatterName is 'Acme\Foobar\I18nFormatter\SampleFormatter', this class
+	 * must exist and implement TYPO3\Flow\I18n\Formatter\FormatterInterface.
 	 *
-	 * Throws exception if there is no formatter for name given.
+	 * Throws exception if there is no formatter for name given or one could be
+	 * retrieved but does not satisfy the FormatterInterface.
 	 *
-	 * @param string $formatterName Name of the formatter class (without Formatter suffix)
+	 * @param string $formatterType Either one of the built-in formatters or fully qualified formatter class name
 	 * @return \TYPO3\Flow\I18n\Formatter\FormatterInterface The concrete formatter class
 	 * @throws \TYPO3\Flow\I18n\Exception\UnknownFormatterException When formatter for a name given does not exist
+	 * @throws \TYPO3\Flow\I18n\Exception\InvalidFormatterException When formatter for a name given does not exist
 	 */
-	protected function getFormatter($formatterName) {
-		$formatterName = ucfirst($formatterName);
+	protected function getFormatter($formatterType) {
+		$foundFormatter = FALSE;
+		$formatterType = ltrim($formatterType, '\\');
 
-		if (isset($this->formatters[$formatterName])) {
-			return $this->formatters[$formatterName];
+		if (isset($this->formatters[$formatterType])) {
+			$foundFormatter = $this->formatters[$formatterType];
 		}
 
-		try {
-			$formatter = $this->objectManager->get('TYPO3\\Flow\\I18n\\Formatter\\' . $formatterName . 'Formatter');
-		} catch (\TYPO3\Flow\Object\Exception\UnknownObjectException $exception) {
-			throw new \TYPO3\Flow\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterName . '".', 1278057791);
+		if ($foundFormatter === FALSE) {
+			if ($this->objectManager->isRegistered($formatterType)) {
+				$possibleClassName = $formatterType;
+			} else {
+				$possibleClassName = sprintf('TYPO3\Flow\I18n\Formatter\%sFormatter', ucfirst($formatterType));
+				if (!$this->objectManager->isRegistered($possibleClassName)) {
+					throw new \TYPO3\Flow\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterType . '".', 1278057791);
+				}
+			}
+			if (!$this->reflectionService->isClassImplementationOf($possibleClassName, 'TYPO3\Flow\I18n\Formatter\FormatterInterface')) {
+				throw new \TYPO3\Flow\I18n\Exception\InvalidFormatterException('The resolved internationalization formatter class name "' . $possibleClassName . '" does not implement "TYPO3\Flow\I18n\Formatter\FormatterInterface" as required.', 1358162557);
+			}
+			$foundFormatter = $this->objectManager->get($possibleClassName);
 		}
 
-		return $this->formatters[$formatterName] = $formatter;
+		$this->formatters[$formatterType] = $foundFormatter;
+		return $foundFormatter;
 	}
 }
 
