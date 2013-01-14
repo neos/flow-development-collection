@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
+use TYPO3\Flow\Mvc\Exception\InvalidUriPatternException;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * Identity Route Part
@@ -21,13 +24,13 @@ use TYPO3\Flow\Annotations as Flow;
  *   name: 'Some route for xyz entities'
  *   uriPattern: '{xyz}'
  *   routeParts:
- *     xyz:
- *       objectType: Some\Package\Domain\Model\Xyz
+ *     'xyz':
+ *       objectType: 'Some\Package\Domain\Model\Xyz'
  *
  * @see \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
  * @api
  */
-class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
+class IdentityRoutePart extends DynamicRoutePart {
 
 	/**
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
@@ -110,16 +113,15 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 	 * Otherwise the ObjectPathMappingRepository is asked for a matching ObjectPathMapping.
 	 * If that is found the identifier is stored in $this->value, otherwise this route part does not match.
 	 *
-	 * @param string $value value to match
-	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+	 * @param string $value value to match, usually the current query path segment(s)
+	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE
 	 * @api
-	 * @todo make findOneByObjectTypeUriPatternAndPathSegment case sensitive if lowerCase = FALSE (this is not yet supported by the persistence)
 	 */
 	protected function matchValue($value) {
 		if ($value === NULL || $value === '') {
 			return FALSE;
 		}
-		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $value);
+		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $value, !$this->lowerCase);
 		if ($objectPathMapping === NULL) {
 			return FALSE;
 		}
@@ -140,11 +142,10 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 		if (!isset($routePath) || $routePath === '' || $routePath[0] === '/') {
 			return '';
 		}
-		$uriPattern = $this->getUriPattern();
-		if ($uriPattern === '') {
+		if ($this->getUriPattern() === '') {
 			return '';
 		}
-		$regexPattern = preg_quote($uriPattern, '/');
+		$regexPattern = preg_quote($this->getUriPattern(), '/');
 		$regexPattern = preg_replace('/\\\\{[^}]+\\\\}/', '[^\/]+', $regexPattern);
 		if ($this->splitString !== '') {
 			$regexPattern .= '(?=' . preg_quote($this->splitString, '/') . ')';
@@ -159,7 +160,7 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 	 *
 	 * @param mixed $value
 	 * @return boolean TRUE if the object could be resolved and stored in $this->value, otherwise FALSE.
-	 * @throws \TYPO3\Flow\Mvc\Exception\InfiniteLoopException if no unique path segment could be found after 100 iterations
+	 * @throws InfiniteLoopException if no unique path segment could be found after 100 iterations
 	 */
 	protected function resolveValue($value) {
 		if (is_array($value) && isset($value['__identity'])) {
@@ -173,16 +174,19 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndIdentifier($this->objectType, $this->getUriPattern(), $identifier);
 		if ($objectPathMapping !== NULL) {
 			$this->value = $objectPathMapping->getPathSegment();
+			if ($this->lowerCase) {
+				$this->value = strtolower($this->value);
+			}
 			return TRUE;
 		}
 		$pathSegment = $uniquePathSegment = $this->createPathSegmentForObject($value);
 		$pathSegmentLoopCount = 0;
 		do {
 			if ($pathSegmentLoopCount++ > 99) {
-				throw new \TYPO3\Flow\Mvc\Exception\InfiniteLoopException('No unique path segment could be found after ' . ($pathSegmentLoopCount - 1) . ' iterations.', 1316441798);
+				throw new InfiniteLoopException('No unique path segment could be found after ' . ($pathSegmentLoopCount - 1) . ' iterations.', 1316441798);
 			}
 			if ($uniquePathSegment !== '') {
-				$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $uniquePathSegment);
+				$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $uniquePathSegment, !$this->lowerCase);
 				if ($objectPathMapping === NULL) {
 					$this->storeObjectPathMapping($uniquePathSegment, $identifier);
 					break;
@@ -192,6 +196,9 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 		} while (TRUE);
 
 		$this->value = $uniquePathSegment;
+		if ($this->lowerCase) {
+			$this->value = strtolower($this->value);
+		}
 		return TRUE;
 	}
 
@@ -200,15 +207,14 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 	 *
 	 * @param mixed $object object of type $this->objectType
 	 * @return string URI representation (path segment) of the given object
-	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidUriPatternException
+	 * @throws InvalidUriPatternException
 	 */
 	protected function createPathSegmentForObject($object) {
-		$uriPattern = $this->getUriPattern();
-		if ($uriPattern === '') {
+		if ($this->getUriPattern() === '') {
 			return $this->rewriteForUri($this->persistenceManager->getIdentifierByObject($object));
 		}
 		$matches = array();
-		preg_match_all('/(?P<dynamic>{?)(?P<content>[^}{]+)}?/', $uriPattern, $matches, PREG_SET_ORDER);
+		preg_match_all('/(?P<dynamic>{?)(?P<content>[^}{]+)}?/', $this->getUriPattern(), $matches, PREG_SET_ORDER);
 		$pathSegment = '';
 		foreach ($matches as $match) {
 			if (empty($match['dynamic'])) {
@@ -216,13 +222,13 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 			} else {
 				$dynamicPathSegmentParts = explode(':', $match['content']);
 				$propertyPath = $dynamicPathSegmentParts[0];
-				$dynamicPathSegment = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($object, $propertyPath);
+				$dynamicPathSegment = ObjectAccess::getPropertyPath($object, $propertyPath);
 				if (is_object($dynamicPathSegment)) {
 					if ($dynamicPathSegment instanceof \DateTime) {
 						$dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
 						$pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
 					} else {
-						throw new \TYPO3\Flow\Mvc\Exception\InvalidUriPatternException('Invalid uriPattern "' . $uriPattern . '" for route part "' . $this->getName() . '". Property "' . $propertyPath . '" must be of type string or \DateTime. "' . (is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)) . '" given.', 1316442409);
+						throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)), 1316442409);
 					}
 				} else {
 					$pathSegment .= $this->rewriteForUri($dynamicPathSegment);
@@ -240,7 +246,7 @@ class IdentityRoutePart extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 	 * @return void
 	 */
 	protected function storeObjectPathMapping($pathSegment, $identifier) {
-		$objectPathMapping = new \TYPO3\Flow\Mvc\Routing\ObjectPathMapping();
+		$objectPathMapping = new ObjectPathMapping();
 		$objectPathMapping->setObjectType($this->objectType);
 		$objectPathMapping->setUriPattern($this->getUriPattern());
 		$objectPathMapping->setPathSegment($pathSegment);
