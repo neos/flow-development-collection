@@ -65,10 +65,23 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function resolveValidatorObjectNameReturnsFalseIfAnObjectOfTheArgumentNameIsRegisteredButDoesNotImplementValidatorInterface() {
-		$this->mockObjectManager->expects($this->any())->method('isRegistered')->with('Foo')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Foo')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('TYPO3\Flow\Validation\Validator\FooValidator')->will($this->returnValue(FALSE));
 		$this->mockReflectionService->expects($this->atLeastOnce())->method('isClassImplementationOf')->with('Foo', 'TYPO3\Flow\Validation\Validator\ValidatorInterface')->will($this->returnValue(FALSE));
 
 		$this->assertFalse($this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValidatorObjectNameReturnsValidatorObjectNameIfAnObjectOfTheArgumentNameIsRegisteredAndDoesNotImplementValidatorInterfaceAndAValidatorForTheObjectExists() {
+		$this->mockObjectManager->expects($this->at(0))->method('isRegistered')->with('DateTime')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('TYPO3\Flow\Validation\Validator\DateTimeValidator')->will($this->returnValue(TRUE));
+		$this->mockReflectionService->expects($this->at(0))->method('isClassImplementationOf')->with('DateTime', 'TYPO3\Flow\Validation\Validator\ValidatorInterface')->will($this->returnValue(FALSE));
+		$this->mockReflectionService->expects($this->at(1))->method('isClassImplementationOf')->with('TYPO3\Flow\Validation\Validator\DateTimeValidator', 'TYPO3\Flow\Validation\Validator\ValidatorInterface')->will($this->returnValue(TRUE));
+
+		$this->assertSame('TYPO3\Flow\Validation\Validator\DateTimeValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'DateTime'));
 	}
 
 	/**
@@ -113,6 +126,18 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockObjectManager->expects($this->at(1))->method('isRegistered')->with('TYPO3\Flow\Validation\Validator\FooValidator')->will($this->returnValue(TRUE));
 		$this->mockReflectionService->expects($this->atLeastOnce())->method('isClassImplementationOf')->with('TYPO3\Flow\Validation\Validator\FooValidator', 'TYPO3\Flow\Validation\Validator\ValidatorInterface')->will($this->returnValue(TRUE));
 		$this->assertSame('TYPO3\Flow\Validation\Validator\FooValidator', $this->validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValidatorObjectNameCallsGetValidatorType() {
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('getValidatorType'));
+		$validatorResolver->_set('objectManager', $mockObjectManager);
+
+		$validatorResolver->expects($this->once())->method('getValidatorType')->with('someDataType');
+		$validatorResolver->_call('resolveValidatorObjectName', 'someDataType');
 	}
 
 	/**
@@ -271,7 +296,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
+	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsThrowsExceptionIfValidationAnnotationForNonExistingArgumentExists() {
 		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
@@ -433,18 +458,6 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$validatorResolver->_call('buildBaseValidatorConjunction', $className . 'Default',  $className, array('Default'));
 		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
 		$this->assertInstanceOf('TYPO3\Flow\Validation\Validator\ConjunctionValidator', $builtValidators[$className . 'Default']);
-	}
-
-	/**
-	 * @test
-	 */
-	public function resolveValidatorObjectNameCallsGetValidatorType() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('getValidatorType'));
-		$validatorResolver->_set('objectManager', $mockObjectManager);
-
-		$validatorResolver->expects($this->once())->method('getValidatorType')->with('someDataType');
-		$validatorResolver->_call('resolveValidatorObjectName', 'someDataType');
 	}
 
 	/**
