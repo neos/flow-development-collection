@@ -28,6 +28,23 @@ class ConfigurationManager {
 	const CONFIGURATION_TYPE_POLICY = 'Policy';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 
+	const CONFIGURATION_PROCESSING_TYPE_DEFAULT = 'DefaultProcessing';
+	const CONFIGURATION_PROCESSING_TYPE_OBJECTS = 'ObjectsProcessing';
+	const CONFIGURATION_PROCESSING_TYPE_ROUTES = 'RoutesProcessing';
+	const CONFIGURATION_PROCESSING_TYPE_SETTINGS = 'SettingsProcessing';
+
+	/**
+	 * Defines which Configuration Type is processed by which logic
+	 * @var array
+	 */
+	protected $configurationTypes = array(
+		self::CONFIGURATION_TYPE_CACHES => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+		self::CONFIGURATION_TYPE_OBJECTS => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS,
+		self::CONFIGURATION_TYPE_ROUTES => self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
+		self::CONFIGURATION_TYPE_POLICY => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+		self::CONFIGURATION_TYPE_SETTINGS => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS
+	);
+
 	/**
 	 * The application context of the configuration to manage
 	 *
@@ -132,14 +149,48 @@ class ConfigurationManager {
 	 * @return array<string> array of configuration-type identifier strings
 	 */
 	public function getAvailableConfigurationTypes() {
-		return array(
-			self::CONFIGURATION_TYPE_CACHES,
-			self::CONFIGURATION_TYPE_OBJECTS,
-			self::CONFIGURATION_TYPE_ROUTES,
-			self::CONFIGURATION_TYPE_POLICY,
-			self::CONFIGURATION_TYPE_SETTINGS
-		);
+		return array_keys($this->configurationTypes);
 	}
+
+	/**
+	 * Resolve the processing type for the configuration type.
+	 *
+	 * This returns the CONFIGURATION_PROCESSING_TYPE_* to use for the given
+	 * $configurationType.
+	 *
+	 * @param string $configurationType
+	 * @return string
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException on non-existing configurationType
+	 */
+	public function resolveConfigurationProcessingType($configurationType) {
+		if (!isset($this->configurationTypes[$configurationType])) {
+			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType, $configurationProcessingType).', 1339166495);
+		}
+		return $this->configurationTypes[$configurationType];
+	}
+
+	/**
+	 * Registers a new configuration type with the given configuration processing type.
+	 *
+	 * The processing type must be supported by the ConfigurationManager, see
+	 * CONFIGURATION_PROCESSING_TYPE_* for what is available.
+	 *
+	 * @param string $configurationType The type to register, may be anything
+	 * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
+	 * @return void
+	 */
+	public function registerConfigurationType($configurationType, $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
+		$this->configurationTypes[$configurationType] = $configurationProcessingType;
+	}
+
+	/**
+	 * Emits a signal after The ConfigurationManager has been loaded
+	 *
+	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitConfigurationManagerReady($configurationManager) { }
 
 	/**
 	 * Returns the specified raw configuration.
@@ -153,11 +204,11 @@ class ConfigurationManager {
 	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 */
 	public function getConfiguration($configurationType, $packageKey = NULL) {
+		$configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
 		$configuration = array();
-		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_ROUTES :
-			case self::CONFIGURATION_TYPE_CACHES :
-			case self::CONFIGURATION_TYPE_POLICY :
+		switch ($configurationProcessingType) {
+			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
+			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
 				if (!isset($this->configurations[$configurationType])) {
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
@@ -166,17 +217,17 @@ class ConfigurationManager {
 				}
 			break;
 
-			case self::CONFIGURATION_TYPE_SETTINGS :
+			case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
 				if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === array()) {
 					$this->configurations[$configurationType] = array();
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
 				if (isset($this->configurations[$configurationType])) {
-					$configuration = &$this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
+					$configuration = &$this->configurations[$configurationType];
 				}
 			break;
 
-			case self::CONFIGURATION_TYPE_OBJECTS :
+			case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
 				$this->loadConfiguration($configurationType, $this->packages);
 				$configuration = &$this->configurations[$configurationType];
 			break;
@@ -218,8 +269,9 @@ class ConfigurationManager {
 	protected function loadConfiguration($configurationType, array $packages) {
 		$this->cacheNeedsUpdate = TRUE;
 
-		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_SETTINGS :
+		$configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
+		switch ($configurationProcessingType) {
+			case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
 
 					// Make sure that the Flow package is the first item of the packages array:
 				if (isset($packages['TYPO3.Flow'])) {
@@ -234,26 +286,26 @@ class ConfigurationManager {
 					if (Arrays::getValueByPath($settings, $packageKey) === NULL) {
 						$settings = Arrays::setValueByPath($settings, $packageKey, array());
 					}
-					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
+					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
 				}
-				$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
+				$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
 				foreach ($this->orderedListOfContextNames as $contextName) {
 					foreach ($packages as $package) {
-						$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+						$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType));
 					}
-					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
 				}
 
-				if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS] !== array()) {
-					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
+				if ($this->configurations[$configurationType] !== array()) {
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $settings);
 				} else {
-					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = $settings;
+					$this->configurations[$configurationType] = $settings;
 				}
 
-				$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['Flow']['core']['context'] = (string)$this->context;
+				$this->configurations[$configurationType]['TYPO3']['Flow']['core']['context'] = (string)$this->context;
 			break;
-			case self::CONFIGURATION_TYPE_OBJECTS :
+			case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $packageKey => $package) {
 
@@ -268,8 +320,7 @@ class ConfigurationManager {
 					$this->configurations[$configurationType][$packageKey] = $configuration;
 				}
 			break;
-			case self::CONFIGURATION_TYPE_CACHES :
-			case self::CONFIGURATION_TYPE_POLICY :
+			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $package) {
 					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
@@ -283,7 +334,7 @@ class ConfigurationManager {
 					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
 				}
 			break;
-			case self::CONFIGURATION_TYPE_ROUTES :
+			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
 
 					// load subroutes
 				$subRoutesConfiguration = array();
@@ -296,11 +347,11 @@ class ConfigurationManager {
 				}
 
 					// load main routes
-				$this->configurations[self::CONFIGURATION_TYPE_ROUTES] = array();
+				$this->configurations[$configurationType] = array();
 				foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
-					$this->configurations[self::CONFIGURATION_TYPE_ROUTES] = array_merge($this->configurations[self::CONFIGURATION_TYPE_ROUTES], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
+					$this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
 				}
-				$this->configurations[self::CONFIGURATION_TYPE_ROUTES] = array_merge($this->configurations[self::CONFIGURATION_TYPE_ROUTES], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
+				$this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
 					// Merge routes with subroutes
 				$this->mergeRoutesWithSubRoutes($this->configurations[$configurationType], $subRoutesConfiguration);
@@ -392,7 +443,9 @@ EOD;
 				preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $configuration, $matches);
 				if (count($matches[1]) > 0) {
 					foreach ($matches[1] as $match) {
-						if (defined($match)) $configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
+						if (defined($match)) {
+							$configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
+						}
 					}
 				}
 			}
