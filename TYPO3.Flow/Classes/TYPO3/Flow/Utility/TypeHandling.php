@@ -30,7 +30,7 @@ class TypeHandling {
 	/**
 	 * @var array
 	 */
-	static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\ArrayCollection', 'Doctrine\ORM\PersistentCollection');
+	static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection');
 
 	/**
 	 * Returns an array with type information, including element type for
@@ -46,7 +46,7 @@ class TypeHandling {
 			$type = self::normalizeType($matches['type']);
 			$elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : NULL;
 
-			if ($elementType !== NULL && !in_array($type, self::$collectionTypes)) {
+			if ($elementType !== NULL && !self::isCollectionType($type)) {
 				throw new \TYPO3\Flow\Utility\Exception\InvalidTypeException('Found an invalid element type declaration in %s. Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
 			}
 
@@ -110,7 +110,16 @@ class TypeHandling {
 	 * @return boolean
 	 */
 	static public function isCollectionType($type) {
-		return in_array($type, self::$collectionTypes, TRUE);
+		if (in_array($type, self::$collectionTypes, TRUE)) {
+			return TRUE;
+		}
+
+		foreach (self::$collectionTypes as $collectionType) {
+			if (is_subclass_of($type, $collectionType) === TRUE) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**
