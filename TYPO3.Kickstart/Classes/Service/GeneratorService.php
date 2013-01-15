@@ -129,7 +129,7 @@ class GeneratorService {
 	}
 
 	/**
-	 * Generate a commnand controller with the given name for the given package
+	 * Generate a command controller with the given name for the given package
 	 *
 	 * @param string $packageKey The package key of the controller's package
 	 * @param string $controllerName The name of the new controller
@@ -137,7 +137,7 @@ class GeneratorService {
 	 * @return array An array of generated filenames
 	 */
 	public function generateCommandController($packageKey, $controllerName, $overwrite = FALSE) {
-		$controllerName = ucfirst($controllerName);
+		$controllerName = ucfirst($controllerName) . 'Command';
 		$controllerClassName = $controllerName . 'Controller';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/CommandControllerTemplate.php.tmpl';
