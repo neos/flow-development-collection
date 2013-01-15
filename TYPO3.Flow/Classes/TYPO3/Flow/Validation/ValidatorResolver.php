@@ -293,21 +293,19 @@ class ValidatorResolver {
 	protected function resolveValidatorObjectName($validatorType) {
 		$validatorType = ltrim($validatorType, '\\');
 
-		if ($this->objectManager->isRegistered($validatorType)) {
-			$possibleClassName = $validatorType;
-		} else {
-			if (strpos($validatorType, ':') !== FALSE) {
-				list($packageName, $packageValidatorType) = explode(':', $validatorType);
-				$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', str_replace('.', '\\', $packageName), $this->getValidatorType($packageValidatorType));
-			} else {
-				$possibleClassName = sprintf('TYPO3\Flow\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
-			}
-			if (!$this->objectManager->isRegistered($possibleClassName)) {
-				return FALSE;
-			}
+		if ($this->objectManager->isRegistered($validatorType)
+			&& $this->reflectionService->isClassImplementationOf($validatorType, 'TYPO3\Flow\Validation\Validator\ValidatorInterface')) {
+			return $validatorType;
 		}
 
-		if ($this->reflectionService->isClassImplementationOf($possibleClassName, 'TYPO3\Flow\Validation\Validator\ValidatorInterface')) {
+		if (strpos($validatorType, ':') !== FALSE) {
+			list($packageName, $packageValidatorType) = explode(':', $validatorType);
+			$possibleClassName = sprintf('%s\Validation\Validator\%sValidator', str_replace('.', '\\', $packageName), $this->getValidatorType($packageValidatorType));
+		} else {
+			$possibleClassName = sprintf('TYPO3\Flow\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
+		}
+		if ($this->objectManager->isRegistered($possibleClassName)
+			&& $this->reflectionService->isClassImplementationOf($possibleClassName, 'TYPO3\Flow\Validation\Validator\ValidatorInterface')) {
 			return $possibleClassName;
 		}
 
