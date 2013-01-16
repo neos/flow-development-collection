@@ -258,6 +258,21 @@ the path syntax supports an asterisk as a placeholder::
 			// use $comment object here
 		}
 
+	.. tip:: Maintain IDE's awareness of the ``Argument`` variable type
+
+		Most IDEs will lose information about the variable's type when it comes to array accessing
+		like in the above example ``$this->arguments['comment']->…``. In order to keep track of
+		the variables' types, you can synonymously use
+
+		.. code-block:: php
+
+			public function initializeUpdateAction() {
+				$commentConfiguration = $this->arguments->getArgument('comment')->getPropertyMappingConfiguration();
+				…
+
+		Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
+		and there is no break in the type hinting chain.
+
 
 Security Considerations
 -----------------------
