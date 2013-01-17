@@ -94,7 +94,7 @@ class PersistenceQueryRewritingAspect {
 	 */
 	public function rewriteQomQuery(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		if ($this->securityContext->isInitialized() === FALSE) {
-			if ($this->policyService->hasPolicyEntriesForEntities()) {
+			if ($this->policyService->hasPolicyEntriesForEntities() === TRUE && $this->securityContext->canBeInitialized() === TRUE) {
 				$this->securityContext->initialize();
 			} else {
 				return $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -140,7 +140,11 @@ class PersistenceQueryRewritingAspect {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		if ($this->securityContext->isInitialized() === FALSE) {
-			return $result;
+			if ($this->securityContext->canBeInitialized() === TRUE) {
+				$this->securityContext->initialize();
+			} else {
+				return $result;
+			}
 		}
 
 		$authenticatedRoles = $this->securityContext->getRoles();
