@@ -10,6 +10,7 @@ additionalProperties:
     properties:
       'scope': {type: string, enum: ['singleton', 'prototype', 'session']}
       'factoryObjectName': {type: string, format: class-name}
+      'factoryMethodName': {type: string}
       'autowiring': {type: string, enum: ['on', 'off']}
       'className': {type: string, format: class-name}
       'arguments':
