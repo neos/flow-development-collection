@@ -171,7 +171,7 @@ class Context {
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['authentication']['authenticationStrategy'])) {
 			$authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
-			switch($authenticationStrategyName) {
+			switch ($authenticationStrategyName) {
 				case 'allTokens':
 					$this->authenticationStrategy = self::AUTHENTICATE_ALL_TOKENS;
 					break;
@@ -211,8 +211,13 @@ class Context {
 	 * Initializes the security context for the given request.
 	 *
 	 * @return void
+	 * @throws \TYPO3\Flow\Security\Exception
 	 */
 	public function initialize() {
+		if ($this->canBeInitialized() === FALSE) {
+			throw new Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
+		}
+
 		if ($this->csrfProtectionStrategy !== self::CSRF_ONE_PER_SESSION) {
 			$this->csrfProtectionTokens = array();
 		}
@@ -612,6 +617,18 @@ class Context {
 	public function shutdownObject() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
 		$this->initialized = FALSE;
+	}
+
+	/**
+	 * Check if the securityContext is ready to be initialized. Only after that security will be active.
+	 *
+	 * @return boolean
+	 */
+	public function canBeInitialized() {
+		if ($this->request === NULL) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 }
 
