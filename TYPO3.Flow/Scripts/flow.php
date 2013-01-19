@@ -35,8 +35,21 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow:core:setfilepermissions' || $ar
 } else {
 	require(__DIR__ . '/../Classes/TYPO3/Flow/Core/Bootstrap.php');
 
+	if (DIRECTORY_SEPARATOR !== '/' && trim(getenv('FLOW_ROOTPATH'), '"\' ') === '') {
+		$absoluteRootpath = dirname(realpath(__DIR__ . '/../../../'));
+		if (realpath(getcwd()) === $absoluteRootpath) {
+			$_SERVER['FLOW_ROOTPATH'] = '.';
+		} elseif (strlen(getcwd()) > strlen($absoluteRootpath)) {
+			$amountOfPathsToSkipBack = substr_count(getcwd(), DIRECTORY_SEPARATOR) - substr_count($absoluteRootpath, DIRECTORY_SEPARATOR);
+			$_SERVER['FLOW_ROOTPATH'] = implode('/', array_fill(0, $amountOfPathsToSkipBack, '..'));
+		} else {
+			$_SERVER['FLOW_ROOTPATH'] = substr($absoluteRootpath, strlen(getcwd()) + 1);
+		}
+	} else {
+		$_SERVER['FLOW_ROOTPATH'] = trim(getenv('FLOW_ROOTPATH'), '"\' ') ?: dirname($_SERVER['PHP_SELF']);
+	}
+
 	$context = trim(getenv('FLOW_CONTEXT'), '"\' ') ?: 'Development';
-	$_SERVER['FLOW_ROOTPATH'] = trim(getenv('FLOW_ROOTPATH'), '"\' ') ?: dirname($_SERVER['PHP_SELF']);
 
 	$bootstrap = new \TYPO3\Flow\Core\Bootstrap($context);
 	$bootstrap->run();

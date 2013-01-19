@@ -5,4 +5,4 @@ REM This can include the php.ini to be used (for example "SET PHP=C:/php/php.exe
 
 SET PHP=php.exe
 
-%PHP% Packages/Framework/TYPO3.Flow/Scripts/flow.php %*
+%PHP% %~dp0Packages/Framework/TYPO3.Flow/Scripts/flow.php %*
