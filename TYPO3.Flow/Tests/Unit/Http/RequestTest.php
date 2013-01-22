@@ -561,6 +561,32 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setContentAlsoAcceptsAFileHandleAsInput() {
+		$fileHandler = fopen(__FILE__, 'r');
+
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'POST');
+		$request->setContent($fileHandler);
+
+		$this->assertSame($fileHandler, $request->getContent());
+	}
+
+	/**
+	 * @test
+	 */
+	public function setContentAlsoAcceptsAStreamAsInputAndSetsContentLengthAndTypeAccordingly() {
+		$streamHandler = fopen('file://' . __FILE__, 'r');
+
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'POST');
+		$request->setContent($streamHandler);
+
+		$this->assertSame($streamHandler, $request->getContent());
+		$this->assertEquals('application/octet-stream', $request->getHeader('Content-Type'));
+		$this->assertEquals(filesize(__FILE__), $request->getHeader('Content-Length'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function setContentRebuildsUnifiedArgumentsToIntegratePutArguments() {
 		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
 		$request->setContent('putArgument=first value');

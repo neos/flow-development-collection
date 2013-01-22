@@ -64,23 +64,38 @@ class CurlEngine implements RequestEngineInterface {
 			// If we don't set this, cURL will set "Expect: 100-continue" for requests larger than 1024 bytes.
 		curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array('Expect:'));
 
+			// If the content is a stream resource, use cURL's INFILE feature to stream it
+		$content = $request->getContent();
+		if (is_resource($content)) {
+			rewind($content);
+			curl_setopt_array($curlHandle,
+				array(
+					CURLOPT_INFILE => $content,
+					CURLOPT_INFILESIZE => $request->getHeader('Content-Length'),
+				)
+			);
+		}
+
 		switch ($request->getMethod()) {
 			case 'GET' :
 				if ($request->getContent()) {
 						// workaround because else the request would implicitly fall into POST:
 					curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'GET');
-					curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $request->getContent());
+					if (!is_resource($content)) {
+						curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $content);
+					}
 				}
 			break;
 			case 'POST' :
 				curl_setopt($curlHandle, CURLOPT_POST, TRUE);
-
-				$body = $request->getContent() !== '' ? $request->getContent() : http_build_query($request->getArguments());
-				curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
+				if (!is_resource($content)) {
+					$body = $content !== '' ? $content : http_build_query($request->getArguments());
+					curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
+				}
 			break;
 			case 'PUT' :
 				curl_setopt($curlHandle, CURLOPT_PUT, TRUE);
-				if ($request->getContent() !== '') {
+				if (!is_resource($content) && $content !== '') {
 					$inFileHandler = fopen('php://temp', 'r+');
 					fwrite($inFileHandler, $request->getContent());
 					rewind($inFileHandler);
