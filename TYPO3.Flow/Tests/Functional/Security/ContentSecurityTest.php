@@ -117,7 +117,9 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
 
+		$request = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->securityContext, 'request', TRUE);
 		$this->securityContext->clearContext();
+		$this->securityContext->setRequest($request);
 
 		$result = $this->restrictableEntityRepository->findAll();
 		$this->assertTrue(count($result) === 0);
