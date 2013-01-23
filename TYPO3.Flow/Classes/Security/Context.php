@@ -98,7 +98,7 @@ class Context {
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
-	 * @var \TYPO3\FLOW3\Http\Request
+	 * @var \TYPO3\FLOW3\Mvc\ActionRequest
 	 * @FLOW3\Transient
 	 */
 	protected $request;
