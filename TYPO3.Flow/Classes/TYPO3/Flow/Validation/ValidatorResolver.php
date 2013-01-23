@@ -83,6 +83,7 @@ class ValidatorResolver {
 	 * @param array $validatorOptions Options to be passed to the validator
 	 * @return \TYPO3\Flow\Validation\Validator\ValidatorInterface
 	 * @throws \TYPO3\Flow\Validation\Exception\NoSuchValidatorException
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
 	 * @api
 	 */
 	public function createValidator($validatorType, array $validatorOptions = array()) {
@@ -96,14 +97,17 @@ class ValidatorResolver {
 				$validator = new $validatorObjectName($validatorOptions);
 				break;
 			case Configuration::SCOPE_SINGLETON:
+				if (count($validatorOptions) > 0) {
+					throw new Exception\InvalidValidationConfigurationException('The validator "' . $validatorObjectName . '" is of scope singleton, but configured to be used with options. A validator with options must be of scope prototype.', 1358958575);
+				}
 				$validator = $this->objectManager->get($validatorObjectName);
 				break;
 			default:
-				throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" is not of scope singleton or prototype!', 1300694835);
+				throw new Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" is not of scope singleton or prototype!', 1300694835);
 		}
 
 		if (!($validator instanceof ValidatorInterface)) {
-			throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" does not implement TYPO3\Flow\Validation\Validator\ValidatorInterface!', 1300694875);
+			throw new Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" does not implement TYPO3\Flow\Validation\Validator\ValidatorInterface!', 1300694875);
 		}
 
 		return $validator;
@@ -136,9 +140,9 @@ class ValidatorResolver {
 	 * @param string $className
 	 * @param string $methodName
 	 * @return array An Array of ValidatorConjunctions for each method parameters.
-	 * @throws Exception\InvalidValidationConfigurationException
-	 * @throws Exception\NoSuchValidatorException
-	 * @throws Exception\InvalidTypeHintException
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
+	 * @throws \TYPO3\Flow\Validation\Exception\NoSuchValidatorException
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidTypeHintException
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
@@ -152,7 +156,7 @@ class ValidatorResolver {
 			$validatorConjunction = $this->createValidator('TYPO3\Flow\Validation\Validator\ConjunctionValidator');
 
 			if (!array_key_exists('type' , $methodParameter)) {
-				throw new \TYPO3\Flow\Validation\Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
+				throw new Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
 			}
 			if (strpos($methodParameter['type'], '\\') === FALSE) {
 				$typeValidator = $this->createValidator($methodParameter['type']);
@@ -173,7 +177,7 @@ class ValidatorResolver {
 		foreach ($validateAnnotations as $validateAnnotation) {
 			$newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
 			if ($newValidator === NULL) {
-				throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1239853109);
+				throw new Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1239853109);
 			}
 			if (isset($validatorConjunctions[$validateAnnotation->argumentName])) {
 				$validatorConjunctions[$validateAnnotation->argumentName]->addValidator($newValidator);
@@ -182,7 +186,7 @@ class ValidatorResolver {
 				$argumentName = array_shift($objectPath);
 				$validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
 			} else {
-				throw new \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $validateAnnotation->argumentName . '", but this argument does not exist.', 1253172726);
+				throw new Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $validateAnnotation->argumentName . '", but this argument does not exist.', 1253172726);
 			}
 		}
 		return $validatorConjunctions;
@@ -231,7 +235,7 @@ class ValidatorResolver {
 	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @param array $validationGroups The validation groups to build the validator for
 	 * @return void
-	 * @throws Exception\NoSuchValidatorException
+	 * @throws \TYPO3\Flow\Validation\Exception\NoSuchValidatorException
 	 * @throws \InvalidArgumentException
 	 */
 	protected function buildBaseValidatorConjunction($indexKey, $targetClassName, array $validationGroups) {
@@ -267,7 +271,7 @@ class ValidatorResolver {
 					}
 					$newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
 					if ($newValidator === NULL) {
-						throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1241098027);
+						throw new Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1241098027);
 					}
 					$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
 				}
