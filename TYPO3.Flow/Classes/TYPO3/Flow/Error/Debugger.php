@@ -53,6 +53,8 @@ class Debugger {
 		(TYPO3\\\\Flow\\\\Sec.*) |
 		(TYPO3\\\\Flow\\\\Sig.*) |
 		(TYPO3\\\\Fluid\\\\.*) |
+		(.+Service$) |
+		(.+Repository$) |
 		(PHPUnit_Framework_MockObject_InvocationMocker)
 		/xs';
 
