@@ -645,6 +645,9 @@ class Context {
 	/**
 	 * Check if the securityContext is ready to be initialized. Only after that security will be active.
 	 *
+	 * To be able to initialize, there needs to be an ActionRequest available, usually that is
+	 * provided by the MVC router.
+	 *
 	 * @return boolean
 	 */
 	public function canBeInitialized() {
