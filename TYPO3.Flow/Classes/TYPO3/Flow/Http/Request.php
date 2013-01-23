@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Http;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\MediaTypes;
 
 /**
  * Represents a HTTP request
@@ -280,17 +281,38 @@ class Request extends Message {
 	/**
 	 * Explicitly sets the content of the request body
 	 *
-	 * @param string $content The body content, for example arguments of a PUT request
+	 * In most cases, content is just a string representation of the request body.
+	 * In order to reduce memory consumption for uploads and other big data, it is
+	 * also possible to pass a stream resource. The easies way to convert a local file
+	 * into a stream resource is probably: $resource = fopen('file://path/to/file', 'rb');
+	 *
+	 * @param string|resource $content The body content, for example arguments of a PUT request, or a stream resource
 	 * @return void
 	 * @api
 	 */
 	public function setContent($content) {
+		if (is_resource($content) && get_resource_type($content) === 'stream' && stream_is_local($content)) {
+			$streamMetaData = stream_get_meta_data($content);
+			$this->headers->set('Content-Length', filesize($streamMetaData['uri']));
+			$this->headers->set('Content-Type', MediaTypes::getMediaTypeFromFilename($streamMetaData['uri']));
+		}
+
 		parent::setContent($content);
-		$this->arguments = $this->buildUnifiedArguments($this->arguments, array(), array());
+		if (!is_resource($content)) {
+			$this->arguments = $this->buildUnifiedArguments($this->arguments, array(), array());
+		}
 	}
 
 	/**
 	 * Returns the content of the request body
+	 *
+	 * If the request body has not been set with setContent() previously, this method
+	 * will try to retrieve it from the input stream. If $asResource was set to TRUE,
+	 * the stream resource will be returned instead of a string.
+	 *
+	 * If the content which has been set by setContent() originally was a stream
+	 * resource, that resource will be returned, no matter if $asResource is set.
+	 *
 	 *
 	 * @param boolean $asResource If set, the content is returned as a resource pointing to PHP's input stream
 	 * @return string|resource
