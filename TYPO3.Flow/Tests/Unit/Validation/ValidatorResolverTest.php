@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Validation;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Object\Configuration\Configuration;
+
 /**
  * Testcase for the validator resolver
  *
@@ -154,7 +156,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				public function getOptions() { return $this->options; }
 			}');
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('getScope')->with($className)->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
+		$mockObjectManager->expects($this->any())->method('getScope')->with($className)->will($this->returnValue(Configuration::SCOPE_PROTOTYPE));
 
 		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('resolveValidatorObjectName'));
 		$validatorResolver->_set('objectManager', $mockObjectManager);
@@ -172,6 +174,20 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('Foo')->will($this->returnValue(FALSE));
 		$validator = $validatorResolver->createValidator('Foo', array('foo' => 'bar'));
 		$this->assertNull($validator);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
+	 */
+	public function createValidatorThrowsExceptionForSingletonValidatorsWithOptions() {
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getScope')->with('FooType')->will($this->returnValue(Configuration::SCOPE_SINGLETON));
+
+		$validatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver', array('resolveValidatorObjectName'), array(), '', FALSE);
+		$this->inject($validatorResolver, 'objectManager', $mockObjectManager);
+		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('FooType')->will($this->returnValue('FooType'));
+		$validatorResolver->createValidator('FooType', array('foo' => 'bar'));
 	}
 
 	/**
@@ -368,7 +384,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(1))->method('getScope')->with($entityClassName)->will($this->returnValue(\TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
+		$mockObjectManager->expects($this->at(1))->method('getScope')->with($entityClassName)->will($this->returnValue(Configuration::SCOPE_PROTOTYPE));
 		$mockObjectManager->expects($this->at(3))->method('getScope')->with($otherClassName)->will($this->returnValue(NULL));
 
 		$mockReflectionService = $this->getMock('\TYPO3\Flow\Reflection\ReflectionService');
