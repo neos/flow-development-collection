@@ -66,7 +66,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function customerActionIsDeniedForEverybody() {
 		$this->restrictedController->customerAction();
@@ -94,7 +94,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function adminActionIsDeniedForEverybody() {
 		$this->restrictedController->adminAction();
