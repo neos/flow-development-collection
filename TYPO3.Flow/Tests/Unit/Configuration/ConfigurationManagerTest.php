@@ -638,6 +638,30 @@ EOD;
 	/**
 	 * @test
 	 */
+	public function postProcessConfigurationMaintainsConstantTypeIfOnlyValue() {
+		$settings = array(
+			'foo' => 'bar',
+			'anIntegerConstant' => '%PHP_VERSION_ID%',
+			'casted' => array(
+				'to' => array(
+					'string' => 'Version id is %PHP_VERSION_ID%'
+				)
+			)
+		);
+
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
+		$configurationManager->_callRef('postProcessConfiguration', $settings);
+
+		$this->assertInternalType('integer', $settings['anIntegerConstant']);
+		$this->assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
+
+		$this->assertInternalType('string', $settings['casted']['to']['string']);
+		$this->assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
+	}
+
+	/**
+	 * @test
+	 */
 	public function postProcessConfigurationReplacesClassConstantMarkersWithApproppriateConstants() {
 		$settings = array(
 			'foo' => 'bar',
