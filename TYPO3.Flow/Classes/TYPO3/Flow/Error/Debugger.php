@@ -156,7 +156,7 @@ class Debugger {
 		$additionalAttributes = '';
 
 		if ($object instanceof \Doctrine\Common\Collections\Collection) {
-			return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 12), $level, $plaintext, $ansiColors);
+			return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
 		}
 
 			// Objects returned from Doctrine's Debug::export function are stdClass with special properties:
