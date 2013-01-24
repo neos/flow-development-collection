@@ -392,7 +392,15 @@ EOD;
 				preg_match_all('/(?:%)((?:\\\?[\d\w_\\\]+\:\:)?[A-Z_0-9]+)(?:%)/', $configuration, $matches);
 				if (count($matches[1]) > 0) {
 					foreach ($matches[1] as $match) {
-						if (defined($match)) $configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
+						if (defined($match)) {
+							if ($configurations[$key] === '%' . $match . '%') {
+									// the constant expression spans the complete directive, assign directly to keep type
+								$configurations[$key] = constant($match);
+							} else {
+									// the constant is only a substring of the directive, replace that part accordingly
+								$configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
+							}
+						}
 					}
 				}
 			}
