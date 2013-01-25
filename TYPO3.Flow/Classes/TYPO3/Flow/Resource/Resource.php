@@ -16,7 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\MediaTypes;
 
 /**
- * Model describing a resource
+ * Model representing a resource
  *
  * @Flow\Entity
  */
@@ -59,6 +59,7 @@ class Resource {
 	 * Returns a resource://<sha1> URI for use with file operations, …
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getUri() {
 		return 'resource://' . $this->resourcePointer;
@@ -69,6 +70,7 @@ class Resource {
 	 *
 	 * @param string $filename
 	 * @return void
+	 * @api
 	 */
 	public function setFilename($filename) {
 		$pathInfo = pathinfo($filename);
@@ -87,6 +89,7 @@ class Resource {
 	 * Gets the filename
 	 *
 	 * @return string The filename
+	 * @api
 	 */
 	public function getFilename() {
 		return $this->filename;
@@ -96,6 +99,7 @@ class Resource {
 	 * Returns the file extension used for this resource
 	 *
 	 * @return string The file extension used for this file
+	 * @api
 	 */
 	public function getFileExtension() {
 		return $this->fileExtension;
@@ -116,6 +120,7 @@ class Resource {
 	 * Returns the Media Type for this resource
 	 *
 	 * @return string The IANA Media Type
+	 * @api
 	 */
 	public function getMediaType() {
 		return MediaTypes::getMediaTypeFromFilename('x.' . $this->getFileExtension());
@@ -126,6 +131,7 @@ class Resource {
 	 *
 	 * @param \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
 	 * @return void
+	 * @api
 	 */
 	public function setResourcePointer(\TYPO3\Flow\Resource\ResourcePointer $resourcePointer) {
 		$this->resourcePointer = $resourcePointer;
@@ -135,6 +141,7 @@ class Resource {
 	 * Returns the resource pointer
 	 *
 	 * @return \TYPO3\Flow\Resource\ResourcePointer $resourcePointer
+	 * @api
 	 */
 	public function getResourcePointer() {
 		return $this->resourcePointer;
