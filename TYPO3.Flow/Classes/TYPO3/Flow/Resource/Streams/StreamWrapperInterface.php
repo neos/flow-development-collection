@@ -16,6 +16,7 @@ namespace TYPO3\Flow\Resource\Streams;
  * prototype. Check http://php.net/streamwrapper for details on that.
  *
  * We divert from the PHP prototype in the following:
+ *
  *  * better method names
  *  * methods that should not be implemented in the PHP prototype when not being
  *    supported (like mkdir) must throw a \BadMethodCallException instead.
