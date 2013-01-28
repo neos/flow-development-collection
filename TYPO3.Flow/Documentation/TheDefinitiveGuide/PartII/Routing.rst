@@ -145,7 +145,7 @@ so let's beautify the action URIs as well by inserting a new route before the
 Reload the post index and check out the new URI of the ``createAction`` - it's
 a bit shorter now:
 
-.. image:: /Images/GettingStarted/PostActionRoute1URI.png
+.. figure:: Images/PostActionRoute1URI.png
 
 However, the edit link still looks it bit ugly:
 
@@ -196,6 +196,6 @@ sometimes you'll wonder which route TYPO3 Flow eventually chose. One way to get
 this information is looking at the log file which is by default
 located in *Data/Logs/System_Development.log*:
 
-.. image:: /Images/GettingStarted/RoutingLogTail.png
+.. figure:: Images/RoutingLogTail.png
 
 More information on routing can be found in the :doc:`The Definitive Guide <../PartIII/Routing>`.

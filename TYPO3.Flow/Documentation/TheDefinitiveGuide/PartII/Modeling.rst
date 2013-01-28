@@ -66,13 +66,13 @@ blog may comment blog posts.
 
 A first sketch shows which domain models (classes) we will need:
 
-.. figure:: /Images/GettingStarted/DomainModel-1.png
+.. figure:: Images/DomainModel-1.png
 
 	A simple model
 
 Let's add some properties to each of the models:
 
-.. figure:: /Images/GettingStarted/DomainModel-2.png
+.. figure:: Images/DomainModel-2.png
 
 	Domain Model with properties
 
@@ -113,7 +113,7 @@ repository. In TYPO3 Flow each repository is responsible for exactly one kind of
 object (i.e. one class). Let's look at the relation between the ``BlogRepository``
 and the ``Blog``:
 
-.. figure:: /Images/GettingStarted/DomainModel-3.png
+.. figure:: Images/DomainModel-3.png
 
 	Blog Repository and Blog
 
@@ -133,7 +133,7 @@ repository. Therefore, if you want to display a list of the 5 latest posts, you
 better create a dedicated ``PostRepository`` which provides a specialized
 ``findRecentByBlog`` method:
 
-.. figure:: /Images/GettingStarted/DomainModel-4.png
+.. figure:: Images/DomainModel-4.png
 
 	A dedicated Post Repository
 
@@ -154,7 +154,7 @@ All objects which can only be found through a foreign repository, form an
 Aggregate. The object having its own repository (in this case ``Post``) becomes
 the **Aggregate Root**:
 
-.. figure:: /Images/GettingStarted/DomainModel-5.png
+.. figure:: Images/DomainModel-5.png
 
 	The Post Aggregate
 

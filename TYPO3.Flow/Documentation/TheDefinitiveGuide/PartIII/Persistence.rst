@@ -22,7 +22,7 @@ Introductory Example
 Let's look at the following example as an introduction to how TYPO3 Flow handles persistence.
 We have a domain model of a Blog, consisting of Blog, Post, Comment and Tag objects:
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Persistence_BlogDomainModel.png
+.. figure:: Images/Persistence_BlogDomainModel.png
 	:align: center
 	:width: 400pt
 	:alt: The objects of the Blog domain model
@@ -975,7 +975,7 @@ the documentation of the respective package for more information. The following 
 shows (most of) the way an object takes from creation until it is persisted when using the
 suggested process:
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Persistence_PersistenceProcess.png
+.. figure:: Images/Persistence_PersistenceProcess.png
 	:align: center
 	:width: 400pt
 	:alt: Object persistence process
@@ -993,7 +993,7 @@ easy fetching of objects through the persistence framework. You ask for instance
 specific class that match certain filters and get back an array of those reconstituted
 objects. Here is a diagram of the internal process when using the suggested process:
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Persistence_QueryProcess.png
+.. figure:: Images/Persistence_QueryProcess.png
 	:align: center
 	:width: 400pt
 	:alt: Object querying and reconstitution process

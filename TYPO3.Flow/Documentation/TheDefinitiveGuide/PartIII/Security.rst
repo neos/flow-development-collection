@@ -118,7 +118,7 @@ The internal authentication process
 Now that you know, how you can authenticate, let's have a look at the internal process.
 The following sequence diagram shows the participating components and their interaction:
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Security_BasicAuthenticationProcess.png
+.. figure:: Images/Security_BasicAuthenticationProcess.png
 	:align: center
 	:width: 400pt
 	:alt: Internal authentication process
@@ -647,7 +647,7 @@ the corresponding chapter in this reference.
 First, let's have a look at the following sequence diagram to get an overview of what is
 happening when an authorization decision is formed and enforced:
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Security_BasicAuthorizationProcess.png
+.. figure:: Images/Security_BasicAuthorizationProcess.png
 	:align: center
 	:width: 400pt
 	:alt: How an authorization decision is formed and enforced in TYPO3 Flow
@@ -736,7 +736,7 @@ After that the request is analyzed and can be blocked/filtered out. This adds a 
 level of security right at the beginning of the whole framework run, which means
 that a minimal amount of potentially insecure code will be executed before that.
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Security_FilterFirewall.png
+.. figure:: Images/Security_FilterFirewall.png
 	:align: center
 	:width: 400pt
 	:alt: Blocking request with TYPO3 Flow's filter firewall

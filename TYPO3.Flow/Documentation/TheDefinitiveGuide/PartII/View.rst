@@ -66,7 +66,7 @@ them are just plain HTML files which contain special tags known by the Fluid
 template view. The following figure illustrates the use of layout, template and
 partials in our blog example:
 
-.. figure:: /Images/GettingStarted/LayoutTemplatePartial.png
+.. figure:: Images/LayoutTemplatePartial.png
 
 	Layout, Template and Partial
 
@@ -306,11 +306,11 @@ After creating the folder ``Resources/Private/Partials/`` add the following to a
 Now you should now see the list of recent posts by accessing
 http://dev.tutorial.local/typo3.blog/post:
 
-.. image:: /Images/GettingStarted/PostIndex.png
+.. figure:: Images/PostIndex.png
 
 Creating a new post won't work yet because, you even though there exists a ``newAction`` already, the template for it doesn't contain a ``mainbox`` section yet:
 
-.. image:: /Images/GettingStarted/NoNewActionMainbox.png
+.. figure:: Images/NoNewActionMainbox.png
 
 Forms
 =====
@@ -420,11 +420,11 @@ post (object) - as long as the property names of the object and the form match.
 Time to test your new ``newAction`` and its template – click on the little plus
 sign above the first post lets the ``newAction`` render this form:
 
-.. image:: /Images/GettingStarted/CreateNewPost.png
+.. figure:: Images/CreateNewPost.png
 
 Enter some data and click the submit button:
 
-.. image:: /Images/GettingStarted/CreatedNewPost.png
+.. figure:: Images/CreatedNewPost.png
 
 You should now find your new post in the list of posts.
 
@@ -455,7 +455,7 @@ First you need to add the "edit" link to the post index template:
 
 The modified template will now render a little pencil next to each post:
 
-.. image:: /Images/GettingStarted/PostEditLink.png
+.. figure:: Images/PostEditLink.png
 
 Adjust the template ``Templates/Post/Edit.html`` and insert the following
 HTML code:
@@ -517,7 +517,7 @@ What's missing now is a small adjustment to the PHP code displaying the edit for
 Enough theory, let's try out the edit form in practice. A click on the edit
 link of your list of posts should result in a screen similar to this:
 
-.. image:: /Images/GettingStarted/EditPost.png
+.. figure:: Images/EditPost.png
 
 When you submit the form you call the ``updateAction``:
 
@@ -541,7 +541,7 @@ its argument and passes it to the repository's ``update`` method (note that we
 used the ``PostRepository``!). Before we disclose the secret how this magic
 actually works behind the scenes try out if updating the post really works:
 
-.. image:: /Images/GettingStarted/UpdatedPost.png
+.. figure:: Images/UpdatedPost.png
 
 A Closer Look on Updates
 ------------------------

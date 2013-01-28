@@ -64,25 +64,25 @@ clone the 2.0.0 version, include development dependencies and keep git metadata 
 
  composer create-project --dev --keep-vcs typo3/flow-base-distribution Quickstart 2.0.0
 
-You will end up with a directory structure like this::
+You will end up with a directory structure like this:
 
 .. code-block:: none
 
- htdocs/               <-- depending on your web server
-   Quickstart/
-     Build/
-     Configuration/
-       Settings.yaml.example
-       ...
-     Packages/
-       Framework/
-         TYPO3.Flow/
-         ...
-     Web/              <-- your virtual host root will point to this
-       .htaccess
-       index.php
-     flow
-     flow.bat
+  htdocs/               <-- depending on your web server
+    Quickstart/
+      Build/
+      Configuration/
+        Settings.yaml.example
+        ...
+      Packages/
+        Framework/
+          TYPO3.Flow/
+          ...
+      Web/              <-- your virtual host root will point to this
+        .htaccess
+        index.php
+      flow
+      flow.bat
 
 Setting File Permissions
 ------------------------
@@ -141,10 +141,11 @@ that can be reached through ``http://quickstart/``.
 Testing the Installation
 ------------------------
 
-.. figure:: /Images/Welcome.png
+.. figure:: Images/Welcome.png
 	:align: right
 	:width: 200pt
 	:alt: The TYPO3 Flow Welcome Screen
+	:class: screenshot-detail
 
 	The TYPO3 Flow Welcome Screen
 
@@ -389,9 +390,13 @@ creating, editing and deleting coffee beans. Try it out by accessing this URL:
 Create a few coffee beans, edit and delete them and take a look at the database tables
 if you can't resist ...
 
-.. figure:: /Images/CoffeeBeanController.png
+.. figure:: Images/CoffeeBeanController.png
 	:align: center
 	:width: 600pt
+	:alt: List and create coffee beans
+	:class: screenshot-fullsize
+
+	List and create coffee beans
 
 A Closer Look at the Example
 ----------------------------
