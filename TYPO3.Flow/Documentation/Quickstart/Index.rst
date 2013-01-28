@@ -46,23 +46,23 @@ Setting up FLOW3 is pretty straight-forward. As a minimum requirement you will n
 Download the `FLOW3 Base Distribution`_ and unpack it in a directory which will be
 accessible by your web server. You will end up with a directory structure like this:
 
-.. code-block:: text
+.. code-block:: none
 
-	htdocs/               <-- depending on your web server
-	  Quickstart/         <-- depending on which directory you chose
-	    Build/
-	    Configuration/
-	      Settings.yaml.example
-	      ...
-	    Packages/
-	      Framework/
-	        TYPO3.FLOW3/
-	        ...
-	    Web/              <-- your virtual host root will point to this
-	      .htaccess
-	      index.php
-	    flow3
-	    flow3.bat
+ htdocs/               <-- depending on your web server
+   Quickstart/
+     Build/
+     Configuration/
+       Settings.yaml.example
+        ...
+     Packages/
+       Framework/
+         TYPO3.FLOW3/
+          ...
+     Web/              <-- your virtual host root will point to this
+       .htaccess
+       index.php
+     flow3
+     flow3.bat
 
 Setting File Permissions
 ------------------------
@@ -121,10 +121,11 @@ that can be reached through ``http://quickstart/``.
 Testing the Installation
 ------------------------
 
-.. figure:: /Images/Welcome.png
+.. figure:: Images/Welcome.png
 	:align: right
 	:width: 200pt
 	:alt: The FLOW3 Welcome Screen
+	:class: screenshot-detail
 
 	The FLOW3 Welcome Screen
 
@@ -369,9 +370,13 @@ creating, editing and deleting coffee beans. Try it out by accessing this URL:
 Create a few coffee beans, edit and delete them and take a look at the database tables
 if you can't resist ...
 
-.. figure:: /Images/CoffeeBeanController.png
+.. figure:: Images/CoffeeBeanController.png
 	:align: center
 	:width: 600pt
+	:alt: List and create coffee beans
+	:class: screenshot-fullsize
+
+	List and create coffee beans
 
 A Closer Look at the Example
 ----------------------------

@@ -136,7 +136,23 @@ Resources
     Should hold any Java code needed by the package. Repeat and rinse for
     Smalltalk, Modula, Pascal, ;)
 
-  More directories can be added as needed.
+  Public
+    Contains public resources for the package. All files in this directory
+    will be mirrored into FLOW3's *Web* directory by the Resource Manager
+    (and therefore become accessible from the web). They will be delivered to
+    the client directly without further processing.
+
+    Although it is up to the package author to name the directories, we suggest the
+    following directories:
+
+    * Images
+    * Styles
+    * Scripts
+
+    The general rule for this is: The folder uses the plural form of the resource type
+    it contains.
+    Third party bundles that contain multiple resources such as ``jQuery UI`` or ``Twitter Bootstrap`
+    should reside in a sub directory ``Libraries`.
 
 Tests
   Unit

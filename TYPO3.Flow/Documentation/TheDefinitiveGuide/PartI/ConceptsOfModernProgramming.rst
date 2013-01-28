@@ -324,7 +324,7 @@ very similar:
 
 .. _fig-lifecycle1:
 
-.. figure:: /Images/TheDefinitiveGuide/PartI/ddd-lifecycle1.png
+.. figure:: Images/ddd-lifecycle1.png
 	:width: 300px
 
 	Simplified life cycle of objects
@@ -337,7 +337,7 @@ objects when needed. Thus, we need to expand the ``active``
 state from :ref:`fig-lifecycle1` to contain some more
 substates. These are shown below:
 
-.. figure:: /Images/TheDefinitiveGuide/PartI/ddd-lifecycle2.png
+.. figure:: Images/ddd-lifecycle2.png
 	:width: 450px
 
 	The real life cycle of objects

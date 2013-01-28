@@ -803,7 +803,7 @@ methods are called by the proxy class one after another. In case of the around
 advice, the methods form a chain where each link is responsible to pass over
 control to the next.
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/AOPFramework_AdviceChain.png
+.. figure:: Images/AOPFramework_AdviceChain.png
 
 	Control flow of an advice chain
 
@@ -1014,7 +1014,7 @@ AOP proxy mechanism
 
 The following diagram illustrates the building process of a proxy class:
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/AOPFramework_ProxyBuildingProcess.png
+.. figure:: Images/AOPFramework_ProxyBuildingProcess.png
 
 	Proxy building process
 

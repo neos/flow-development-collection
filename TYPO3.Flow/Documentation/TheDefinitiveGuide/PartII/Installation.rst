@@ -227,7 +227,7 @@ Restart Apache and test your new configuration by accessing
 http://dev.tutorial.local in a web browser. You should be greeted by FLOW3's
 welcome screen:
 
-.. image:: /Images/GettingStarted/Welcome.png
+.. figure:: Images/Welcome.png
 
 .. tip::
 	If you get in trouble during the installation check out the `installation hints
