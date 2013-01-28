@@ -52,7 +52,7 @@ The basic walk through a TYPO3 Flow-based web application is as follows:
 In practice, there are a few more intermediate steps being carried out, but in
 essence, this is the path a request is taking.
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Http_ApplicationFlow.png
+.. figure:: Images/Http_ApplicationFlow.png
 	:align: center
 	:width: 400pt
 	:alt: Simplified application flow

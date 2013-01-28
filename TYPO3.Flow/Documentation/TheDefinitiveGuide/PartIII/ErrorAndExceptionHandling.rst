@@ -79,7 +79,7 @@ You will find report files for exceptions thrown in ``Data/Logs/Exceptions/``. I
 some rare cases though, when TYPO3 Flow is not even able to write the respective log
 file, no details about the exception can be provided.
 
-.. figure:: /Images/TheDefinitiveGuide/PartIII/Error_ReferenceCode.png
+.. figure:: Images/Error_ReferenceCode.png
 
 Error Handler
 -------------

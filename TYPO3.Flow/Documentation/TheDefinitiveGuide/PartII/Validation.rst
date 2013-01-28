@@ -96,7 +96,7 @@ plus sign above the list of posts and submit the empty form. If all went fine,
 you should end up again in the **new post** form, with the tiny difference
 that the text boxes for title and author are now framed in red:
 
-.. image:: /Images/GettingStarted/CreateNewPostValidationError1.png
+.. figure:: Images/CreateNewPostValidationError1.png
 
 Displaying Validation Errors
 ============================
@@ -152,7 +152,7 @@ each property which in turn can be multiple errors per property.
 After saving the modified template and submitting the empty form again you
 should see some more verbose error messages:
 
-.. image:: /Images/GettingStarted/CreateNewPostValidationError2.png
+.. figure:: Images/CreateNewPostValidationError2.png
 
 Validating Updated Arguments
 ============================
@@ -181,7 +181,7 @@ Now that you know how validation errors can be displayed, you should add a
 
 Try updating a post with an empty title and you should see the following:
 
-.. image:: /Images/GettingStarted/UpdateActionInfiniteLoop.png
+.. figure:: Images/UpdateActionInfiniteLoop.png
 
 Can you imagine what happened? Let's look at the ``editAction`` again:
 

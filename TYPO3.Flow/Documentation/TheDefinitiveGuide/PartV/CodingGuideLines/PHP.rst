@@ -20,7 +20,7 @@ packages and TYPO3 Flow based applications.
 CGL on One Page
 ===============
 
-.. figure:: /Images/TheDefinitiveGuide/PartV/TYPO3_Flow_Coding_Guidelines_on_one_page.png
+.. figure:: Images/TheDefinitiveGuide/PartV/TYPO3_Flow_Coding_Guidelines_on_one_page.png
 	:align: right
 	:class: intext right
 	:alt: CGL on one page
@@ -801,7 +801,7 @@ PHP in General
    if ($foo === $bar))        // GOOD
    if ($foo !== $bar))        // GOOD
 
-  .. figure:: /Images/TheDefinitiveGuide/PartV/PHP_TrueFalse.jpg
+  .. figure:: Images/TheDefinitiveGuide/PartV/PHP_TrueFalse.jpg
   	:alt: Truthy and falsy are fuzzy...
 
 * Order of methods in classes. To gain a better overview, it helps if methods in classes

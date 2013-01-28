@@ -133,7 +133,7 @@ skeleton of the future ``Blog`` package:
 Switch to your web browser and check at http://dev.tutorial.local/typo3.blog if the
 generated controller produces some output:
 
-.. image:: /Images/GettingStarted/FreshBlogPackage.png
+.. figure:: Images/FreshBlogPackage.png
 
 .. tip::
 	If you get an error at this point, like a "404 Not Found" this could be

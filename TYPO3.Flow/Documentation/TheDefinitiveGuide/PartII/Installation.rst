@@ -9,7 +9,7 @@ TYPO3 Flow Download
 
 Flow uses `Composer`_ for dependency management, which is a separate command line tool.
 Install it by following the `installation instructions <http://getcomposer.org/download/>`_
-which boil down to this in the simplest case::
+which boil down to this in the simplest case:
 
 .. code-block:: none
 
@@ -22,7 +22,9 @@ which boil down to this in the simplest case::
 
 Then use `Composer`_ in a directory which will be accessible by your web server to download
 and install all packages of the TYPO3 Flow Base Distribution. The following command will
-clone the 2.0.0 version, include development dependencies and keep git metadata for future use::
+clone the 2.0.0 version, include development dependencies and keep git metadata for future use:
+
+.. code-block:: none
 
  composer create-project --dev --keep-vcs typo3/flow-base-distribution tutorial 2.0.0
 
@@ -60,7 +62,7 @@ Web/					Public web root
 A TYPO3 Flow application usually consists of the above directories. As you see, most
 of them contain data which is specific to your application, therefore upgrading
 the TYPO3 Flow distribution is a matter of updating *Packages/Framework/*  and
- *Packages/Libraries/* when a new release is available.
+*Packages/Libraries/* when a new release is available.
 
 TYPO3 Flow is a package based system which means that all code, documentation and
 other resources are bundled in packages. Each package has its own directory
@@ -227,7 +229,7 @@ Restart Apache and test your new configuration by accessing
 http://dev.tutorial.local in a web browser. You should be greeted by TYPO3 Flow's
 welcome screen:
 
-.. image:: /Images/GettingStarted/Welcome.png
+.. figure:: Images/Welcome.png
 
 .. tip::
 	If you get in trouble during the installation check out the `installation hints
