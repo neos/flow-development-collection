@@ -23,9 +23,8 @@ Let's look at the following example as an introduction to how TYPO3 Flow handles
 We have a domain model of a Blog, consisting of Blog, Post, Comment and Tag objects:
 
 .. figure:: Images/Persistence_BlogDomainModel.png
-	:align: center
-	:width: 400pt
 	:alt: The objects of the Blog domain model
+	:class: screenshot-detail
 
 	The objects of the Blog domain model
 
@@ -976,9 +975,8 @@ shows (most of) the way an object takes from creation until it is persisted when
 suggested process:
 
 .. figure:: Images/Persistence_PersistenceProcess.png
-	:align: center
-	:width: 400pt
 	:alt: Object persistence process
+	:class: screenshot-fullsize
 
 	Object persistence process
 
@@ -994,9 +992,8 @@ specific class that match certain filters and get back an array of those reconst
 objects. Here is a diagram of the internal process when using the suggested process:
 
 .. figure:: Images/Persistence_QueryProcess.png
-	:align: center
-	:width: 400pt
 	:alt: Object querying and reconstitution process
+	:class: screenshot-fullsize
 
 	Object querying and reconstitution process
 

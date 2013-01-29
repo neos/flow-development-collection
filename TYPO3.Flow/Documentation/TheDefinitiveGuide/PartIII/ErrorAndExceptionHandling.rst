@@ -80,6 +80,10 @@ some rare cases though, when TYPO3 Flow is not even able to write the respective
 file, no details about the exception can be provided.
 
 .. figure:: Images/Error_ReferenceCode.png
+	:alt: Exception screen with reference code
+	:class: screenshot-fullsize
+
+	Exception screen with reference code
 
 Error Handler
 -------------
@@ -89,7 +93,7 @@ notice occurs. Instead of displaying or logging the error right away, it is
 transformed into an ``ErrorException``.
 
 A configuration option in Settings.yaml allows for deciding which error levels
-should be converted into exceptions. All other errors are silently ignored::
+should be converted into exceptions. All other errors are silently ignored:
 
 .. code-block:: yaml
 

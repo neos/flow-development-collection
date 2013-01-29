@@ -97,6 +97,10 @@ you should end up again in the **new post** form, with the tiny difference
 that the text boxes for title and author are now framed in red:
 
 .. figure:: Images/CreateNewPostValidationError1.png
+	:alt: Validation errors shown in form
+	:class: screenshot-detail
+
+	Validation errors shown in form
 
 Displaying Validation Errors
 ============================
@@ -153,6 +157,10 @@ After saving the modified template and submitting the empty form again you
 should see some more verbose error messages:
 
 .. figure:: Images/CreateNewPostValidationError2.png
+	:alt: More verbose validation errors shown in form
+	:class: screenshot-detail
+
+	More verbose validation errors shown in form
 
 Validating Updated Arguments
 ============================
@@ -182,6 +190,10 @@ Now that you know how validation errors can be displayed, you should add a
 Try updating a post with an empty title and you should see the following:
 
 .. figure:: Images/UpdateActionInfiniteLoop.png
+	:alt: Infinite loop in update action
+	:class: screenshot-detail
+
+	Infinite loop in update action
 
 Can you imagine what happened? Let's look at the ``editAction`` again:
 

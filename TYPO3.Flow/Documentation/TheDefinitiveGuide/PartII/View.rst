@@ -67,6 +67,8 @@ template view. The following figure illustrates the use of layout, template and
 partials in our blog example:
 
 .. figure:: Images/LayoutTemplatePartial.png
+	:alt: Layout, Template and Partial
+	:class: screenshot-fullsize
 
 	Layout, Template and Partial
 
@@ -303,14 +305,21 @@ After creating the folder ``Resources/Private/Partials/`` add the following to a
 		</f:if>
 	</p>
 
-Now you should now see the list of recent posts by accessing
-http://dev.tutorial.local/typo3.blog/post:
+Now you should now see the list of recent posts by accessing http://dev.tutorial.local/typo3.blog/post:
 
 .. figure:: Images/PostIndex.png
+	:alt: The list of blog posts
+	:class: screenshot-fullsize
+
+	The list of blog posts
 
 Creating a new post won't work yet because, you even though there exists a ``newAction`` already, the template for it doesn't contain a ``mainbox`` section yet:
 
 .. figure:: Images/NoNewActionMainbox.png
+	:alt: Error on missing "mainbox" section
+	:class: screenshot-fullsize
+
+	Error on missing "mainbox" section
 
 Forms
 =====
@@ -421,10 +430,18 @@ Time to test your new ``newAction`` and its template – click on the little plu
 sign above the first post lets the ``newAction`` render this form:
 
 .. figure:: Images/CreateNewPost.png
+	:alt: Form to create a new post
+	:class: screenshot-detail
+
+	Form to create a new post
 
 Enter some data and click the submit button:
 
 .. figure:: Images/CreatedNewPost.png
+	:alt: A new post has been created
+	:class: screenshot-fullsize
+
+	A new post has been created
 
 You should now find your new post in the list of posts.
 
@@ -456,6 +473,10 @@ First you need to add the "edit" link to the post index template:
 The modified template will now render a little pencil next to each post:
 
 .. figure:: Images/PostEditLink.png
+	:alt: Edit links next to posts
+	:class: screenshot-detail
+
+	Edit links next to posts
 
 Adjust the template ``Templates/Post/Edit.html`` and insert the following
 HTML code:
@@ -518,6 +539,10 @@ Enough theory, let's try out the edit form in practice. A click on the edit
 link of your list of posts should result in a screen similar to this:
 
 .. figure:: Images/EditPost.png
+	:alt: The edit form for a post
+	:class: screenshot-fullsize
+
+	The edit form for a post
 
 When you submit the form you call the ``updateAction``:
 
@@ -542,6 +567,10 @@ used the ``PostRepository``!). Before we disclose the secret how this magic
 actually works behind the scenes try out if updating the post really works:
 
 .. figure:: Images/UpdatedPost.png
+	:alt: The post has been edited
+	:class: screenshot-detail
+
+	The post has been edited
 
 A Closer Look on Updates
 ------------------------

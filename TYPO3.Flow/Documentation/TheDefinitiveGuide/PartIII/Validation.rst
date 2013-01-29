@@ -1,4 +1,4 @@
-﻿﻿==========
+﻿==========
 Validation
 ==========
 
@@ -159,7 +159,7 @@ It is very common that a full Domain Model should be validated instead of only a
 To make this use-case more easy, the ``ValidatorResolver`` has a method ``getBaseValidatorConjunction``
 which returns a fully-configured validator for an arbitrary Domain Object::
 
-	$commentValidator = $validatorResolver->getBaseValidatorConjunction('YourPackage\Domain\Model\Comment`);
+	$commentValidator = $validatorResolver->getBaseValidatorConjunction('YourPackage\Domain\Model\Comment');
 	$result = $commentValidator->validate($comment);
 
 The returned validator checks the following things:

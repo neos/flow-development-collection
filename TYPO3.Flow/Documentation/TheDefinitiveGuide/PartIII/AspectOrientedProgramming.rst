@@ -804,6 +804,8 @@ advice, the methods form a chain where each link is responsible to pass over
 control to the next.
 
 .. figure:: Images/AOPFramework_AdviceChain.png
+	:alt: Control flow of an advice chain
+	:class: screenshot-detail
 
 	Control flow of an advice chain
 
@@ -850,7 +852,7 @@ code will just do that:
 		 * @Flow\Before("method(public Example\MyPackage\.*->.*())")
 		 */
 		public function logMethodExecution(\TYPO3\Flow\AOP\JoinPointInterface $joinPoint) {
-			$logMessage = 'The method ' . $joinPoint->getMethodName() . ' in class ' . ⏎
+			$logMessage = 'The method ' . $joinPoint->getMethodName() . ' in class ' .
 				$joinPoint->getClassName() . ' has been called.';
 			$this->logger->log($logMessage);
 		}
@@ -1015,6 +1017,8 @@ AOP proxy mechanism
 The following diagram illustrates the building process of a proxy class:
 
 .. figure:: Images/AOPFramework_ProxyBuildingProcess.png
+	:alt: Proxy building process
+	:class: screenshot-fullsize
 
 	Proxy building process
 

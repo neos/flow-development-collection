@@ -230,6 +230,10 @@ http://dev.tutorial.local in a web browser. You should be greeted by TYPO3 Flow'
 welcome screen:
 
 .. figure:: Images/Welcome.png
+	:alt: The TYPO3 Flow Welcome screen
+	:class: screenshot-fullsize
+
+	The TYPO3 Flow Welcome screen
 
 .. tip::
 	If you get in trouble during the installation check out the `installation hints

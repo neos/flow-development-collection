@@ -134,6 +134,10 @@ Switch to your web browser and check at http://dev.tutorial.local/typo3.blog if 
 generated controller produces some output:
 
 .. figure:: Images/FreshBlogPackage.png
+	:alt: A freshly created Fluid template
+	:class: screenshot-fullsize
+
+	A freshly created Fluid template
 
 .. tip::
 	If you get an error at this point, like a "404 Not Found" this could be

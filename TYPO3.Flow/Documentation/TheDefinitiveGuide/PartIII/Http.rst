@@ -53,9 +53,10 @@ In practice, there are a few more intermediate steps being carried out, but in
 essence, this is the path a request is taking.
 
 .. figure:: Images/Http_ApplicationFlow.png
-	:align: center
-	:width: 400pt
 	:alt: Simplified application flow
+	:class: screenshot-fullsize
+
+	Simplified application flow
 
 The next sections shed some light on the most important actors of this application
 flow.
@@ -295,12 +296,12 @@ Consider the following examples:
 
 A URI specifying a resource:
 
-	* http://flow.typo3.org/images/logo
+* http://flow.typo3.org/images/logo
 
 A URL specifying two different representations of that resource:
 
-	* http://flow.typo3.org/images/logo.png
-	* http://flow.typo3.org/images/logo.gif
+* http://flow.typo3.org/images/logo.png
+* http://flow.typo3.org/images/logo.gif
 
 Throughout the framework we use the term ``URI`` instead of ``URL`` because it is
 more generic and more often than not, the correct term to use.
@@ -326,8 +327,8 @@ Request Engines
 The engine responsible for actually sending the request is pluggable. Currently
 there are two engines delivered with TYPO3 Flow:
 
-	* ``InternalRequestEngine`` simulates requests for use in functional tests
-	* ``CurlEngine`` uses the cURL extension to send real requests to other servers
+* ``InternalRequestEngine`` simulates requests for use in functional tests
+* ``CurlEngine`` uses the cURL extension to send real requests to other servers
 
 Sending a request and processing the response is a matter of a few lines::
 
