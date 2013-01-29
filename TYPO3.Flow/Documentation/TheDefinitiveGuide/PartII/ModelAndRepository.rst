@@ -323,6 +323,8 @@ Blog Repository
 According to our earlier reasonings, you need a repository for storing the blog:
 
 .. figure:: Images/DomainModel-3.png
+	:alt: Blog Repository and Blog
+	:class: screenshot-detail
 
 	Blog Repository and Blog
 

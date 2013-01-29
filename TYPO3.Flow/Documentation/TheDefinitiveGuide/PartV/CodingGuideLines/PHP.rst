@@ -21,9 +21,10 @@ CGL on One Page
 ===============
 
 .. figure:: Images/TheDefinitiveGuide/PartV/FLOW3_Coding_Guidelines_on_one_page.png
-	:align: right
-	:class: intext right
-	:alt: CGL on one page
+	:alt: The Coding Guidelines on One Page
+	:class: screenshot-detail
+
+	The Coding Guidelines on One Page
 
 The most important parts of our `Coding Guidelines in a one page document
 <http://flow3.typo3.org/_Resources/Static/Packages/TYPO3.Flow3Org/Assets/Content/FLOW3-CGL-on-one-page.pdf>`_
@@ -809,7 +810,9 @@ PHP in General
    if ($foo !== $bar))        // GOOD
 
   .. figure:: Images/TheDefinitiveGuide/PartV/PHP_TrueFalse.jpg
-  	:alt: Truthy and falsy are fuzzy...
+	:alt: Truthy and falsy are fuzzy...
+
+	Truthy and falsy are fuzzy...
 
 * Order of methods in classes. To gain a better overview, it helps if methods in classes
   are always ordered in a certain way. We prefer the following:

@@ -67,12 +67,16 @@ blog may comment blog posts.
 A first sketch shows which domain models (classes) we will need:
 
 .. figure:: Images/DomainModel-1.png
+	:alt: A simple model
+	:class: screenshot-detail
 
 	A simple model
 
 Let's add some properties to each of the models:
 
 .. figure:: Images/DomainModel-2.png
+	:alt: Domain Mode with properties
+	:class: screenshot-detail
 
 	Domain Model with properties
 
@@ -114,6 +118,8 @@ object (i.e. one class). Let's look at the relation between the ``BlogRepository
 and the ``Blog``:
 
 .. figure:: Images/DomainModel-3.png
+	:alt: Blog Repository and Blog
+	:class: screenshot-detail
 
 	Blog Repository and Blog
 
@@ -134,6 +140,8 @@ better create a dedicated ``PostRepository`` which provides a specialized
 ``findRecentByBlog`` method:
 
 .. figure:: Images/DomainModel-4.png
+	:alt: A dedicated Post Repository
+	:class: screenshot-detail
 
 	A dedicated Post Repository
 
@@ -155,6 +163,8 @@ Aggregate. The object having its own repository (in this case ``Post``) becomes
 the **Aggregate Root**:
 
 .. figure:: Images/DomainModel-5.png
+	:alt: The Post Aggregate
+	:class: screenshot-detail
 
 	The Post Aggregate
 

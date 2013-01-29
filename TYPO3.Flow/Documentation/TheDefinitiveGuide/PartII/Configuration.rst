@@ -16,7 +16,7 @@ acts in exactly one context. However, it is possible to use the same
 installation on the same server in distinct contexts by accessing it through a
 different host name, port or passing special arguments.
 
-.. sidebar:: **Why do I want contexts?**
+.. admonition:: Why do I want contexts?
 
 	Imagine your application is running on a live server and your customer
 	reports a bug. No matter how hard you try, you can't reproduce the issue on

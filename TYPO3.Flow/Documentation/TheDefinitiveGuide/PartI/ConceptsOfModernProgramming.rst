@@ -325,7 +325,8 @@ very similar:
 .. _fig-lifecycle1:
 
 .. figure:: Images/ddd-lifecycle1.png
-	:width: 300px
+	:class: screenshot-detail
+	:alt: Simplified life cycle of objects
 
 	Simplified life cycle of objects
 
@@ -338,7 +339,8 @@ state from :ref:`fig-lifecycle1` to contain some more
 substates. These are shown below:
 
 .. figure:: Images/ddd-lifecycle2.png
-	:width: 450px
+	:class: screenshot-detail
+	:alt: The real life cycle of objects
 
 	The real life cycle of objects
 
