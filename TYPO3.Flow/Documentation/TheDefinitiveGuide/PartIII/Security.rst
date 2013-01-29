@@ -119,9 +119,8 @@ Now that you know, how you can authenticate, let's have a look at the internal p
 The following sequence diagram shows the participating components and their interaction:
 
 .. figure:: Images/Security_BasicAuthenticationProcess.png
-	:align: center
-	:width: 400pt
 	:alt: Internal authentication process
+	:class: screenshot-fullsize
 
 	Internal authentication process
 
@@ -603,24 +602,24 @@ to the current security context. However, here is the recommended way of what sh
 be done in this method and if you don't have really good reasons, you shouldn't
 deviate from this procedure.
 
-  #. Get the credentials provided by the client from the authentication token
-     (``getCredentials()``)
+#. Get the credentials provided by the client from the authentication token
+   (``getCredentials()``)
 
-  #. Retrieve the corresponding account object from the account repository, which
-     you should inject into your provider by dependency injection. The repository
-     provides a convenient find method for this task:
-     ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
+#. Retrieve the corresponding account object from the account repository, which
+   you should inject into your provider by dependency injection. The repository
+   provides a convenient find method for this task:
+   ``findActiveByAccountIdentifierAndAuthenticationProviderName()``.
 
-  #. The ``credentialsSource`` property of the account will hold the credentials
-     you'll need to compare or at least the information, where these credentials lie.
+#. The ``credentialsSource`` property of the account will hold the credentials
+   you'll need to compare or at least the information, where these credentials lie.
 
-  #. Start the authentication process (e.g. compare credentials/call directory service/...).
+#. Start the authentication process (e.g. compare credentials/call directory service/...).
 
-  #. Depending on the authentication result, set the correct status in the
-     authentication token, by ``calling setAuthenticationStatus()``.
+#. Depending on the authentication result, set the correct status in the
+   authentication token, by ``calling setAuthenticationStatus()``.
 
-  #. Set the account in the authentication token, if authentication succeeded. This
-     will add the roles of this token to the security context.
+#. Set the account in the authentication token, if authentication succeeded. This
+   will add the roles of this token to the security context.
 
 Authorization
 =============
@@ -648,9 +647,8 @@ First, let's have a look at the following sequence diagram to get an overview of
 happening when an authorization decision is formed and enforced:
 
 .. figure:: Images/Security_BasicAuthorizationProcess.png
-	:align: center
-	:width: 400pt
 	:alt: How an authorization decision is formed and enforced in TYPO3 Flow
+	:class: screenshot-fullsize
 
 	How an authorization decision is formed and enforced in TYPO3 Flow
 
@@ -737,9 +735,8 @@ level of security right at the beginning of the whole framework run, which means
 that a minimal amount of potentially insecure code will be executed before that.
 
 .. figure:: Images/Security_FilterFirewall.png
-	:align: center
-	:width: 400pt
 	:alt: Blocking request with TYPO3 Flow's filter firewall
+	:class: screenshot-fullsize
 
 	Blocking request with TYPO3 Flow's filter firewall
 

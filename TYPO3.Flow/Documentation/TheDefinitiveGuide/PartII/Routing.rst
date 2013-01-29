@@ -146,6 +146,10 @@ Reload the post index and check out the new URI of the ``createAction`` - it's
 a bit shorter now:
 
 .. figure:: Images/PostActionRoute1URI.png
+	:alt: A nice "create" route
+	:class: screenshot-detail
+
+	A nice "create" route
 
 However, the edit link still looks it bit ugly:
 
@@ -197,5 +201,9 @@ this information is looking at the log file which is by default
 located in *Data/Logs/System_Development.log*:
 
 .. figure:: Images/RoutingLogTail.png
+	:alt: Routing entries in the system log
+	:class: screenshot-fullsize
+
+	Routing entries in the system log
 
 More information on routing can be found in the :doc:`The Definitive Guide <../PartIII/Routing>`.

@@ -186,6 +186,8 @@ at http://dev.tutorial.local/typo3.blog/post [#]_ confirms that the
 ``SetupController`` has indeed created the blog and post:
 
 .. figure:: Images/MyFirstBlog.png
+	:alt: Output of the indexAction
+	:class: screenshot-fullsize
 
 	Output of the indexAction
 
@@ -225,6 +227,10 @@ Try calling the ``createAction`` now by accessing
 http://dev.tutorial.local/typo3.blog/post/create:
 
 .. figure:: Images/CreateActionWithoutArgument.png
+	:alt: Create action called without argument
+	:class: screenshot-fullsize
+
+	Create action called without argument
 
 TYPO3 Flow analyzed the new method signature and automatically registered ``$post``
 as a required argument for ``createAction``. Because no such argument was

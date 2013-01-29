@@ -142,10 +142,8 @@ Testing the Installation
 ------------------------
 
 .. figure:: Images/Welcome.png
-	:align: right
-	:width: 200pt
 	:alt: The TYPO3 Flow Welcome Screen
-	:class: screenshot-detail
+	:class: screenshot-fullsize
 
 	The TYPO3 Flow Welcome Screen
 
@@ -391,8 +389,6 @@ Create a few coffee beans, edit and delete them and take a look at the database 
 if you can't resist ...
 
 .. figure:: Images/CoffeeBeanController.png
-	:align: center
-	:width: 600pt
 	:alt: List and create coffee beans
 	:class: screenshot-fullsize
 
