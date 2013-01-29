@@ -48,6 +48,8 @@ TYPO3:
         path: ':memory:'
         username: NULL
         password: NULL
+      doctrine:
+        cacheImplementation: NULL
 
       doctrine:
         eventSubscribers:

@@ -16,22 +16,86 @@ privilegeTargets:
     'TYPO3.Flow:Tests.RestrictedController.adminAction':
       matcher: 'method(TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
 
+
+  'TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
+
+    'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity")'
+
+    'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && TRUE == property("hidden")'
+
+    'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.OthersEntities':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
+
+    'TYPO3.Flow:adminTestEntities':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA") && property("relatedEntityB.stringValue") == "Admin"'
+
+    'TYPO3.Flow:othersTestEntities':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
+
+    'TYPO3.Flow:inOperatorTestResource':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
+
+    'TYPO3.Flow:inOperatorWithObjectsTestResource':
+      matcher: 'isType("TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("relatedEntityD").in("context.testContext.securityFixturesEntityDCollection")'
+
+
 roles:
 
   'TYPO3.Flow:Customer':
     privileges:
+
       -
         privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.customerAction'
         permission: GRANT
+
       -
         privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.adminAction'
         permission: DENY
+
+      -
+        privilegeTarget: 'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities'
+        permission: GRANT
 
   'TYPO3.Flow:Administrator':
     privileges:
       -
         privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.customerAction'
         permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.customerAction'
+        permission: GRANT
+
       -
         privilegeTarget: 'TYPO3.Flow:Tests.RestrictedController.adminAction'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.HiddenEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.OthersEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:adminTestEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:othersTestEntities'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:inOperatorTestResource'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Flow:inOperatorWithObjectsTestResource'
         permission: GRANT

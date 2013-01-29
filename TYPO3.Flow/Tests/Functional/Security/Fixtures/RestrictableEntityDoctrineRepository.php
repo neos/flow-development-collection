@@ -12,16 +12,25 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Doctrine\Repository;
 
 /**
- * A repository for restrictable entities
  * @Flow\Scope("singleton")
  */
-class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
+class RestrictableEntityDoctrineRepository extends Repository {
 
 	/**
 	 * @var string
 	 */
 	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
+
+	/**
+	 * Returns all RestrictableEntity objects from persistence
+	 * @return array
+	 */
+	public function findAllWithDql() {
+		$query = $this->createDqlQuery('SELECT n FROM TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity n WHERE n.name != \'Andi\'');
+		return $query->getResult();
+	}
 
 }

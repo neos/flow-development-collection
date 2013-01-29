@@ -11,17 +11,43 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for restrictable entities
- * @Flow\Scope("singleton")
+ * An entity for tests
+ *
+ * @Flow\Entity
  */
-class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
+class TestEntityA {
 
 	/**
-	 * @var string
+	 * @var \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
+	 * @ORM\OneToOne(mappedBy="relatedEntityA")
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
+	protected $relatedEntityB;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+	 */
+	public function __construct($relatedEntityB) {
+		$this->relatedEntityB = $relatedEntityB;
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB $relatedEntityB
+	 */
+	public function setRelatedEntityB($relatedEntityB) {
+		$this->relatedEntityB = $relatedEntityB;
+	}
+
+	/**
+	 * @return \TYPO3\Flow\Tests\Functional\Security\Fixtures\TestEntityB
+	 */
+	public function getRelatedEntityB() {
+		return $this->relatedEntityB;
+	}
 
 }

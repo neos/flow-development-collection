@@ -290,6 +290,16 @@ TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter
     objectManager:
       object: TYPO3\Flow\Object\ObjectManagerInterface
 
+TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator:
+  properties:
+    expressionCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Eel_Expression_Code
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #

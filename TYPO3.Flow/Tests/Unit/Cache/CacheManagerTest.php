@@ -188,11 +188,18 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function flushSystemCachesByChangedFilesFlushesPolicyCacheIfAPolicyFileHasBeenModified() {
+	public function flushSystemCachesByChangedFilesFlushesPolicyAndDoctrineCachesIfAPolicyFileHasBeenModified() {
 		$this->registerCache('Flow_Object_Classes');
 		$this->registerCache('Flow_Object_Configuration');
+
 		$policyCache = $this->registerCache('Flow_Security_Authorization_Privilege_Method');
 		$policyCache->expects($this->once())->method('flush');
+
+		$doctrineCache = $this->registerCache('Flow_Persistence_Doctrine');
+		$doctrineCache->expects($this->once())->method('flush');
+
+		$doctrineResultsCache = $this->registerCache('Flow_Persistence_Doctrine_Results');
+		$doctrineResultsCache->expects($this->once())->method('flush');
 
 		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
 			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED,

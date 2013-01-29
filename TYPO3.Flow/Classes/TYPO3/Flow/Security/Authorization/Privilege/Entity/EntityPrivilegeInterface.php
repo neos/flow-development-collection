@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
+namespace TYPO3\Flow\Security\Authorization\Privilege\Entity;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,17 +11,29 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
 /**
- * A repository for restrictable entities
- * @Flow\Scope("singleton")
+ * An entity privilege
+ *
+ * This privilege is capable of filtering entities retrieved from
+ * the persistence layer. Usually by rewriting SQL queries.
  */
-class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
+interface EntityPrivilegeInterface extends PrivilegeInterface {
 
 	/**
-	 * @var string
+	 * @param $entityType
+	 * @return bool
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
+	public function matchesEntityType($entityType);
+
+	/**
+	 * @param ClassMetadata $targetEntity
+	 * @param string $targetTableAlias
+	 * @return string
+	 */
+	public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias);
 
 }

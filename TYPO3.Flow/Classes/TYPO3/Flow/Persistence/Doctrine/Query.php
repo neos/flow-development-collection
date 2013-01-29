@@ -534,6 +534,28 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	}
 
 	/**
+	 * Add parameters to the query
+	 *
+	 * @param array $parameters
+	 * @return void
+	 */
+	public function addParameters($parameters) {
+		foreach ($parameters as $parameter) {
+			$index = $this->parameterIndex++;
+			$this->queryBuilder->setParameter($index, $parameter);
+		}
+	}
+
+	/**
+	 * Gets all defined query parameters for the query being constructed.
+	 *
+	 * @return array
+	 */
+	public function getParameters() {
+		return $this->queryBuilder->getParameters();
+	}
+
+	/**
 	 * Get a needle for parameter binding.
 	 *
 	 * @param mixed $operand
@@ -569,6 +591,15 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		}
 
 		return $previousJoinAlias . '.' . $propertyPathParts[$i];
+	}
+
+	/**
+	 * Return the SQL statements representing this Query.
+	 *
+	 * @return array
+	 */
+	public function getSql() {
+		return $this->queryBuilder->getQuery()->getSQL();
 	}
 
 	/**
@@ -614,5 +645,12 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 */
 	public function __clone() {
 		$this->queryBuilder = clone $this->queryBuilder;
+	}
+
+	/**
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
+	public function getQueryBuilder() {
+		return $this->queryBuilder;
 	}
 }

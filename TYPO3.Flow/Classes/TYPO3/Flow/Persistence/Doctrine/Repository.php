@@ -126,6 +126,17 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	}
 
 	/**
+	 * Creates a DQL query from the given query string
+	 *
+	 * @param string $dqlString The query string
+	 * @return \Doctrine\ORM\Query The DQL query object
+	 */
+	public function createDqlQuery($dqlString) {
+		$dqlQuery = $this->entityManager->createQuery($dqlString);
+		return $dqlQuery;
+	}
+
+	/**
 	 * Counts all objects of this repository
 	 *
 	 * @return integer

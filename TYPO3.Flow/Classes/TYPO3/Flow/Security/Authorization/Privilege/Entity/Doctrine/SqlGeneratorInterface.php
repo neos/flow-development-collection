@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
+namespace TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,17 +11,21 @@ namespace TYPO3\Flow\Tests\Functional\Security\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for restrictable entities
- * @Flow\Scope("singleton")
+ * Contract for a sql condition generator.
  */
-class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
+interface SqlGeneratorInterface {
 
 	/**
-	 * @var string
+	 * @param DoctrineSqlFilter $sqlFilter
+	 * @param ClassMetadata $targetEntity Metadata object for the target entity to create the constraint for
+	 * @param $targetTableAlias The target table alias used in the current query
+	 * @return string
 	 */
-	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
+	public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias);
 
 }
