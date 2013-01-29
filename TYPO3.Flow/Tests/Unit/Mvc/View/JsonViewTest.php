@@ -128,10 +128,15 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expected = array(array('value1' => 'foo'));
 		$output[] = array($value, $configuration, $expected, 'SplObjectStorage with objects should be serialized');
 
-		$dateTimeObject = new \DateTime('2011-02-03T03:15:23');
+		$dateTimeObject = new \DateTime('2011-02-03T03:15:23', new \DateTimeZone('UTC'));
 		$configuration = array();
-		$expected = '2011-02-03T03:15:23';
-		$output[] = array($dateTimeObject, $configuration, $expected, 'DateTime object could not be serialized.');
+		$expected = '2011-02-03T03:15:23+0000';
+		$output[] = array($dateTimeObject, $configuration, $expected, 'DateTime object in UTC time zone could not be serialized.');
+
+		$dateTimeObject = new \DateTime('2013-08-15T15:25:30', new \DateTimeZone('America/Los_Angeles'));
+		$configuration = array();
+		$expected = '2013-08-15T15:25:30-0700';
+		$output[] = array($dateTimeObject, $configuration, $expected, 'DateTime object in America/Los_Angeles time zone could not be serialized.');
 		return $output;
 	}
 
