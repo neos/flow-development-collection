@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Authorization\Interceptor;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * This is the main security interceptor, which enforces the current security policy and is usually called by the central security aspect:
@@ -68,9 +69,14 @@ class PolicyEnforcement implements \TYPO3\Flow\Security\Authorization\Intercepto
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException
+	 * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException if an entity could not be found (assuming it is bound to the current session), causing a redirect to the authentication entrypoint
 	 */
 	public function invoke() {
-		$this->authenticationManager->authenticate();
+		try {
+			$this->authenticationManager->authenticate();
+		} catch (\Doctrine\ORM\EntityNotFoundException $exception) {
+			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
+		}
 		$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
 	}
 }

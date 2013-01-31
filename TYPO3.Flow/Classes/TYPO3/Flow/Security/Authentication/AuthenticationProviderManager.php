@@ -136,7 +136,9 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 */
 	public function authenticate() {
 		$anyTokenAuthenticated = FALSE;
-		if ($this->securityContext === NULL) throw new \TYPO3\Flow\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
+		if ($this->securityContext === NULL) {
+			throw new \TYPO3\Flow\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
+		}
 
 		$tokens = $this->securityContext->getAuthenticationTokens();
 		if (count($tokens) === 0) {
