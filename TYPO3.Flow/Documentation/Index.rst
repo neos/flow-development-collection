@@ -1,12 +1,14 @@
 FLOW3 Documentation
 ===================
 
+*This version of the documentation has been rendered at:* |today|
+
 .. note::
 
 	This documentation is still incomplete and has rough edges – it's a beta version.
 	While we're working on it, we'd already love to get your feedback! Please share
 	your thoughts in the `FLOW3 mailing list <http://lists.typo3.org/cgi-bin/mailman/listinfo/typo3-project-5_0-general>`_
-	or the #FLOW3 channel on irc.freenode.net
+	or the #typo3-flow channel on irc.freenode.net
 
 	Help is always greatly appreciated, read :ref:`ch-contributing` to find out how
 	you can improve FLOW3.
