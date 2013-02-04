@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Configuration\Source;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Configuration source based on YAML files
@@ -27,21 +28,29 @@ class YamlSource {
 	 * array is returned
 	 *
 	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
+	 * @param boolean $allowSplitSource If TRUE, the type will be used as a prefix when looking for configuration files
 	 * @return array
 	 * @throws \TYPO3\Flow\Configuration\Exception\ParseErrorException
 	 */
-	public function load($pathAndFilename) {
-		if (file_exists($pathAndFilename . '.yaml')) {
-			try {
-				$configuration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename . '.yaml');
-				if (!is_array($configuration)) {
-					$configuration = array();
-				}
-			} catch (\TYPO3\Flow\Error\Exception $exception) {
-				throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
-			}
+	public function load($pathAndFilename, $allowSplitSource = FALSE) {
+		if ($allowSplitSource === TRUE) {
+			$pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
+			sort($pathsAndFileNames);
 		} else {
-			$configuration = array();
+			$pathsAndFileNames = array($pathAndFilename . '.yaml');
+		}
+		$configuration = array();
+		foreach ($pathsAndFileNames as $pathAndFilename) {
+			if (file_exists($pathAndFilename)) {
+				try {
+					$loadedConfiguration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename);
+					if (is_array($loadedConfiguration)) {
+						$configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $loadedConfiguration);
+					}
+				} catch (\TYPO3\Flow\Error\Exception $exception) {
+					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '". Error message: ' . $exception->getMessage(), 1232014321);
+				}
+			}
 		}
 		return $configuration;
 	}
