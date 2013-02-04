@@ -139,6 +139,85 @@ Some examples:
   but is not recommended due to CGL (stringed class names should not
   have a leading backslash).
 
+Custom Configuration Types
+--------------------------
+
+Custom configuration types allow to extract parts of the system configuration into
+separate files.
+
+The following will register a new type ``Views`` for configuration, using the default
+configuration processing handler. The code needs to be in your ``Package``s ``boot()``
+method.
+
+**Example: Register a custom configuration type**
+
+.. code-block:: php
+
+	$dispatcher = $bootstrap->getSignalSlotDispatcher();
+	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+		function ($configurationManager) {
+			$configurationManager->registerConfigurationType('Views');
+		}
+	);
+
+This will allow to use the new configuration type ``Views`` in the same way as the other types
+supported by Flow natively, as soon as you have a file named ``Views.yaml`` in your configuration
+folder(s). See `Working with other configuration`_ for details.
+
+If you want to use a specific configuration processing type, you can pass it when registering
+the configuration. The supported types are defined as ``CONFIGURATION_PROCESSING_TYPE_*``
+constants in ``ConfigurationManager``.
+
+**Example: Register a custom configuration type**
+
+.. code-block:: php
+
+	$dispatcher = $bootstrap->getSignalSlotDispatcher();
+	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+		function ($configurationManager) {
+			$configurationManager->registerConfigurationType(
+				'CustomObjects',
+				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_OBJECTS
+			);
+		}
+	);
+
+Split configuration sources
+---------------------------
+
+For custom types it is possible to allow for *split* configuration sources. For the YAML
+source used in Flow it allows to use the configuration type as a prefix for the
+configuration filenames.
+
+**Example: Register a custom configuration type, split-source**
+
+.. code-block:: php
+
+	$dispatcher = $bootstrap->getSignalSlotDispatcher();
+	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
+		function ($configurationManager) {
+			$configurationManager->registerConfigurationType(
+				'Models',
+				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
+				TRUE
+			);
+		}
+	);
+
+The above code will lead to the following files being read, sorted by name and merged if the
+configuration of type ``Models`` is requested:
+
+.. code-block:: text
+
+	Configuration/
+		Models.Foo.yaml
+		Models.Bar.yaml
+		Models.Quux.yaml
+
+.. note::
+	Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
+	``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
+
 Accessing Settings
 ==================
 

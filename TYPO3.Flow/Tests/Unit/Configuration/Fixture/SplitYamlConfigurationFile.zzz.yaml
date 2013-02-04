@@ -1,0 +1,5 @@
+configurationFileHasBeenLoaded: TRUE
+TYPO3:
+  Flow:
+    something: 'zzz'
+    aboolean: TRUE
