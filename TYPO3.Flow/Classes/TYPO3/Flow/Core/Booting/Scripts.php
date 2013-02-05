@@ -510,13 +510,39 @@ class Scripts {
 	 * Executes the given command as a sub-request to the Flow CLI system.
 	 *
 	 * @param string $commandIdentifier E.g. typo3.flow:cache:flush
-	 * @param array $settings The Flow settings
+	 * @param array $settings The TYPO3.Flow settings
 	 * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 * @api
 	 * @throws \TYPO3\Flow\Core\Booting\Exception\SubProcessException if execution of the sub process failed
 	 */
 	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE) {
+		$command = self::buildSubprocessCommand($commandIdentifier, $settings);
+		$output = array();
+		exec($command, $output, $result);
+		if ($result !== 0) {
+			$exceptionMessage = sprintf('Execution of subprocess failed with exit code %d', $result);
+			if (count($output) > 0) {
+				$exceptionMessage .= ' and output:' .  PHP_EOL . PHP_EOL . implode(PHP_EOL, $output);
+			} else {
+				$exceptionMessage .= ' and no output.';
+			}
+			$exceptionMessage .= PHP_EOL . PHP_EOL . 'The erroneous command was:' . PHP_EOL . $command;
+			throw new Exception\SubProcessException($exceptionMessage, 1355480641);
+		}
+		if ($outputResults) {
+			echo implode(PHP_EOL, $output);
+		}
+		return $result === 0;
+	}
+
+	/**
+	 * @param string $commandIdentifier E.g. typo3.flow:cache:flush
+	 * @param array $settings The TYPO3.Flow settings
+	 *
+	 * @return string A command line command ready for being exec()uted
+	 */
+	protected static function buildSubprocessCommand($commandIdentifier, $settings) {
 		$subRequestEnvironmentVariables = array(
 			'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
 			'FLOW_CONTEXT' => $settings['core']['context']
@@ -538,23 +564,17 @@ class Scripts {
 		} else {
 			$phpBinaryPathAndFilename = escapeshellarg(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename']));
 		}
-		$command .= sprintf('%s -c %s %s %s', $phpBinaryPathAndFilename, escapeshellarg(php_ini_loaded_file()), escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier));
-		$output = array();
-		exec($command, $output, $result);
-		if ($result !== 0) {
-			$exceptionMessage = sprintf('Execution of subprocess failed with exit code %d', $result);
-			if (count($output) > 0) {
-				$exceptionMessage .= ' and output:' .  PHP_EOL . PHP_EOL . implode(PHP_EOL, $output);
+		$command .= $phpBinaryPathAndFilename;
+		if (!isset($settings['core']['subRequestPhpIniPathAndFilename']) || $settings['core']['subRequestPhpIniPathAndFilename'] !== FALSE) {
+			if (!isset($settings['core']['subRequestPhpIniPathAndFilename'])) {
+				$useIniFile = php_ini_loaded_file();
 			} else {
-				$exceptionMessage .= ' and no output.';
+				$useIniFile = $settings['core']['subRequestPhpIniPathAndFilename'];
 			}
-			$exceptionMessage .= PHP_EOL . PHP_EOL . 'The erroneous command was:' . PHP_EOL . $command;
-			throw new Exception\SubProcessException($exceptionMessage, 1355480641);
+			$command .= ' -c ' . escapeshellarg($useIniFile);
 		}
-		if ($outputResults) {
-			echo implode(PHP_EOL, $output);
-		}
-		return $result === 0;
+		$command .= sprintf(' %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier));
+		return $command;
 	}
 }
 
