@@ -180,19 +180,22 @@ with these methods.
 	Sets/overwrites an entry in the cache.
 
 ``get()``
-	Return the cache entry for the given identifier.</para>
+	Return the cache entry for the given identifier.
+
+``getByTag()``
+	Finds and returns all cache entries which are tagged by the specified tag.
 
 ``has()``
-	Check for existance of a cache entry.</para>
+	Check for existence of a cache entry.
 
 ``remove()``
 	Remove the entry for the given identifier from the cache.
 
+``flush()``
+	Removes all cache entries of this cache.
+
 ``flushByTag()``
 	Flush all cache entries which are tagged with the given tag.
-
-``flushByTags()``
-	Remove all cache entries which are tagged with one of the given tags.
 
 ``collectGarbage()``
 	Call the garbage collection method of the backend. This is important for backends
