@@ -422,6 +422,9 @@ class ProxyClassBuilder {
 						}
 						if (!isset($this->objectConfigurations[$propertyValue])) {
 							$configurationSource = $objectConfiguration->getConfigurationSourceHint();
+							if (!isset($propertyValue[0])) {
+								throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Malformed DocComent block for a property in class "' . $$className . '".', 1360171313);
+							}
 							if ($propertyValue[0] === '\\') {
 								throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object name "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
 							} else {
