@@ -1,7 +1,7 @@
 TYPO3 Flow Documentation
 ========================
 
-*This version of the documentation has been rendered at |today|.*
+*This version of the documentation has been rendered at:* |today|
 
 .. note::
 
