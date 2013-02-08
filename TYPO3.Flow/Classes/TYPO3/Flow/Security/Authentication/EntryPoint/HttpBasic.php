@@ -25,7 +25,6 @@ class HttpBasic extends AbstractEntryPoint {
 	 * @param \TYPO3\Flow\Http\Request $request The current request
 	 * @param \TYPO3\Flow\Http\Response $response The current response
 	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception\RequestTypeNotSupportedException
 	 */
 	public function startAuthentication(Request $request, Response $response) {
 		$response->setStatus(401);

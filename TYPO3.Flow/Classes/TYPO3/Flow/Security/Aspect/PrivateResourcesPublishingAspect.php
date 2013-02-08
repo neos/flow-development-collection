@@ -71,6 +71,7 @@ class PrivateResourcesPublishingAspect {
 	public function rewritePersistentResourceWebUriForPrivateResources(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
 		$filename = $resource->getFilename();
+		/** @var $configuration \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration */
 		$configuration = $resource->getPublishingConfiguration();
 
 		if ($configuration === NULL || ($configuration instanceof \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration) === FALSE) {
@@ -101,6 +102,7 @@ class PrivateResourcesPublishingAspect {
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResources(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
+		/** @var $configuration \TYPO3\Flow\Security\Authorization\Resource\SecurityPublishingConfiguration */
 		$configuration = $resource->getPublishingConfiguration();
 		$returnFilename = $joinPoint->getMethodArgument('returnFilename');
 

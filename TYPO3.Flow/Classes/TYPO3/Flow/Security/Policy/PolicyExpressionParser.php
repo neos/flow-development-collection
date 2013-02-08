@@ -68,7 +68,7 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 	 *
 	 * @param array $entityResourcesTree The tree of all available entity resources
 	 * @return array The constraints definition array for all entity resources
-	 * @throws \TYPO3\Flow\Security\Exception\CircularResourceDefinitionDetectedException
+	 * @throws InvalidPolicyException
 	 */
 	public function parseEntityResources(array $entityResourcesTree) {
 		$entityResourcesConstraints = array();

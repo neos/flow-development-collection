@@ -98,7 +98,7 @@ class Context {
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
-	 * @var \TYPO3\Flow\Http\Request
+	 * @var \TYPO3\Flow\Mvc\ActionRequest
 	 * @Flow\Transient
 	 */
 	protected $request;
@@ -254,7 +254,7 @@ class Context {
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array Array of set \TYPO3\Flow\Authentication\Token objects
+	 * @return array Array of set \TYPO3\Flow\Security\Authentication\TokenInterface objects
 	 */
 	public function getAuthenticationTokens() {
 		if ($this->initialized === FALSE) {
@@ -303,6 +303,7 @@ class Context {
 		if ($this->authenticationManager->isAuthenticated() === FALSE) {
 			$roles[] = new Role('Anonymous');
 		} else {
+			/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 			foreach ($this->getAuthenticationTokens() as $token) {
 				if ($token->isAuthenticated()) {
 					$tokenRoles = $token->getRoles();
@@ -357,6 +358,7 @@ class Context {
 			$this->initialize();
 		}
 
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE) {
 				return $token->getAccount() !== NULL ? $token->getAccount()->getParty() : NULL;
@@ -376,6 +378,7 @@ class Context {
 			$this->initialize();
 		}
 
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE && $token->getAccount()->getParty() instanceof $className) {
 				return $token->getAccount()->getParty();
@@ -398,6 +401,7 @@ class Context {
 			$this->initialize();
 		}
 
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE) {
 				return $token->getAccount();
@@ -523,12 +527,14 @@ class Context {
 			return;
 		}
 
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->tokens as $token) {
 			if ($token->hasRequestPatterns()) {
 
 				$requestPatterns = $token->getRequestPatterns();
 				$tokenIsActive = TRUE;
 
+				/** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
 				foreach ($requestPatterns as $requestPattern) {
 					$tokenIsActive &= $requestPattern->matchRequest($this->request);
 				}
@@ -589,6 +595,7 @@ class Context {
 	 */
 	protected function updateTokens(array $tokens) {
 		if ($this->request !== NULL) {
+			/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 			foreach ($tokens as $token) {
 				$token->updateCredentials($this->request);
 			}

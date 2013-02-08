@@ -77,6 +77,7 @@ class RequestDispatchingAspect {
 			$response = $joinPoint->getMethodArgument('response');
 
 			$entryPointFound = FALSE;
+			/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 			foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 				$entryPoint = $token->getAuthenticationEntryPoint();
 
@@ -100,6 +101,7 @@ class RequestDispatchingAspect {
 			$this->securityLogger->log('Access denied', LOG_WARNING);
 			throw $exception;
 		}
+		return NULL;
 	}
 }
 ?>

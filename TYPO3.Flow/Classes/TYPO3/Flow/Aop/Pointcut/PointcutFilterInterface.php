@@ -50,7 +50,7 @@ interface PointcutFilterInterface {
 	 * This method is used to optimize the matching process.
 	 *
 	 * @param \TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex An index of class names
-	 * @return array The filtered pointcut array, with pointcuts possibly covered by this filter
+	 * @return \TYPO3\Flow\Aop\Builder\ClassNameIndex The filtered result, with pointcuts possibly covered by this filter
 	 */
 	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex);
 }

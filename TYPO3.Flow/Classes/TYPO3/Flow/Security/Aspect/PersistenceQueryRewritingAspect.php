@@ -101,6 +101,7 @@ class PersistenceQueryRewritingAspect {
 			}
 		}
 
+		/** @var $query \TYPO3\Flow\Persistence\QueryInterface */
 		$query = $joinPoint->getProxy();
 
 		if ($this->alreadyRewrittenQueries->contains($query)) {
