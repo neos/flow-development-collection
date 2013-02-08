@@ -183,6 +183,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		$matches = FALSE;
 
 		foreach ($this->filters as $role => $filtersForRole) {
+			/** @var $filter \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface */
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 					$matches = TRUE;
@@ -652,6 +653,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 
 		$result = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		foreach ($this->filters as $resources) {
+			/** @var $filterForResource \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface */
 			foreach ($resources as $filterForResource) {
 				$result->applyUnion($filterForResource->reduceTargetClassNames($classNameIndex));
 			}

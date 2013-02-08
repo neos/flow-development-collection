@@ -55,6 +55,7 @@ class PersistedUsernamePasswordProvider extends \TYPO3\Flow\Security\Authenticat
 			throw new \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
 		}
 
+		/** @var $account \TYPO3\Flow\Security\Account */
 		$account = NULL;
 		$credentials = $authenticationToken->getCredentials();
 

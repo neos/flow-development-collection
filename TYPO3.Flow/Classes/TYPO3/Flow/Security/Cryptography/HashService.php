@@ -127,6 +127,7 @@ class HashService {
 	 * @api
 	 */
 	public function hashPassword($password, $strategyIdentifier = 'default') {
+		/** @var $passwordHashingStrategy PasswordHashingStrategyInterface */
 		list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier, FALSE);
 		$hashedPasswordAndSalt = $passwordHashingStrategy->hashPassword($password, $this->getEncryptionKey());
 		return $strategyIdentifier . '=>' . $hashedPasswordAndSalt;
@@ -146,6 +147,7 @@ class HashService {
 			list($strategyIdentifier, $hashedPasswordAndSalt) = explode('=>', $hashedPasswordAndSalt, 2);
 		}
 
+		/** @var $passwordHashingStrategy PasswordHashingStrategyInterface */
 		list($passwordHashingStrategy, ) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier, TRUE);
 		return $passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->getEncryptionKey());
 	}

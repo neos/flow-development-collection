@@ -89,6 +89,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		$grantVotes = 0;
 		$abstainVotes = 0;
 
+		/** @var $voter \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface */
 		foreach ($this->accessDecisionVoters as $voter) {
 			$vote = $voter->voteForJoinPoint($this->securityContext, $joinPoint);
 			switch ($vote) {
@@ -129,6 +130,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		$grantVotes = 0;
 		$abstainVotes = 0;
 
+		/** @var $voter \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface */
 		foreach ($this->accessDecisionVoters as $voter) {
 			$vote = $voter->voteForResource($this->securityContext, $resource);
 			switch ($vote) {

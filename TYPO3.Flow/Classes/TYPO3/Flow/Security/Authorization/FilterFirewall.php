@@ -36,7 +36,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
 	protected $interceptorResolver = NULL;
 
 	/**
-	 * @var array
+	 * @var array of \TYPO3\Flow\Security\Authorization\RequestFilter instances
 	 */
 	protected $filters = array();
 
@@ -84,6 +84,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
 	 */
 	public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request) {
 		$filterMatched = FALSE;
+		/** @var $filter \TYPO3\Flow\Security\Authorization\RequestFilter */
 		foreach ($this->filters as $filter) {
 			if ($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
@@ -100,6 +101,7 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
 	 */
 	protected function buildFiltersFromSettings(array $filterSettings) {
 		foreach ($filterSettings as $singleFilterSettings) {
+			/** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
 			$requestPattern = $this->objectManager->get($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
 			$requestPattern->setPattern($singleFilterSettings['patternValue']);
 			$interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));

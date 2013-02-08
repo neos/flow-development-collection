@@ -145,7 +145,9 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
 		}
 
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($tokens as $token) {
+			/** @var $provider \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface */
 			foreach ($this->providers as $provider) {
 				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
 					$provider->authenticate($token);
@@ -182,6 +184,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			return FALSE;
 		}
 		$atLeastOneTokenIsAuthenticated = FALSE;
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated()) {
 				$atLeastOneTokenIsAuthenticated = TRUE;
@@ -200,6 +203,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 		if ($this->isAuthenticated() !== TRUE) {
 			return;
 		}
+		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			$token->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
@@ -259,6 +263,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 				$providerOptions = $providerConfiguration['providerOptions'];
 			}
 
+			/** @var $providerInstance \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface */
 			$providerInstance = new $providerObjectName($providerName, $providerOptions);
 			$this->providers[] = $providerInstance;
 
@@ -266,6 +271,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 				if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
 					continue;
 				}
+				/** @var $tokenInstance \TYPO3\Flow\Security\Authentication\TokenInterface */
 				$tokenInstance = new $tokenClassName();
 				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
@@ -276,6 +282,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 				$requestPatterns = array();
 				foreach ($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
 					$patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
+					/** @var $requestPattern \TYPO3\Flow\Security\RequestPatternInterface */
 					$requestPattern = new $patternClassName;
 					$requestPattern->setPattern($patternConfiguration);
 					$requestPatterns[] = $requestPattern;
@@ -297,6 +304,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 					throw new \TYPO3\Flow\Security\Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to TYPO3\Flow\Security\Authentication\EntryPoint!', 1236767282);
 				}
 
+				/** @var $entryPoint \TYPO3\Flow\Security\Authentication\EntryPointInterface */
 				$entryPoint = new $entryPointClassName();
 				if (isset($providerConfiguration['entryPointOptions'])) {
 					$entryPoint->setOptions($providerConfiguration['entryPointOptions']);
