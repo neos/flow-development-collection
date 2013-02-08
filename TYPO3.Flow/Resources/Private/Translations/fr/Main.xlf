@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file original="" product-name="TYPO3.Flow" source-language="en" target-language="de" datatype="plaintext">
+	<file original="" product-name="TYPO3.Flow" source-language="en" target-language="fr" datatype="plaintext">
 		<body>
 			<trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-				<target>Authentifizierung erforderlich</target>
+				<target>Authentication obligatoire</target>
 			</trans-unit>
 			<trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-				<target>Benutzername</target>
+				<target>Nom d'utilisateur</target>
 			</trans-unit>
 			<trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-				<target>Kennwort</target>
+				<target>Mot de passe</target>
 			</trans-unit>
 			<trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-				<target>Neues Kennwort</target>
+				<target>Nouveau mot de passe</target>
 			</trans-unit>
 			<trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-				<target>Anmelden</target>
+				<target>Identifiant</target>
 			</trans-unit>
 			<trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-				<target>Abmelden</target>
+				<target>Déconnexion</target>
 			</trans-unit>
 			<trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-				<target>Aktualisieren</target>
+				<target>Mise à jour</target>
 			</trans-unit>
 			<trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-				<target>Absenden</target>
+				<target>Soumettre</target>
 			</trans-unit>
 		</body>
 	</file>
