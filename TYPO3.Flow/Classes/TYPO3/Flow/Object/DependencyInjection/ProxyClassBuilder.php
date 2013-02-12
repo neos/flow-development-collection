@@ -444,6 +444,8 @@ class ProxyClassBuilder {
 						$preparedSetterArgument = '\'' . str_replace('\'', '\\\'', $propertyValue) . '\'';
 					} elseif (is_array($propertyValue)) {
 						$preparedSetterArgument = var_export($propertyValue, TRUE);
+					} elseif (is_bool($propertyValue)) {
+						$preparedSetterArgument = $propertyValue ? 'TRUE' : 'FALSE';
 					} else {
 						$preparedSetterArgument = $propertyValue;
 					}

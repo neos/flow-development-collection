@@ -51,6 +51,16 @@ class SingletonClassC {
 	protected $protectedArrayPropertySetViaObjectsYaml = array();
 
 	/**
+	 * @var boolean
+	 */
+	protected $protectedBooleanTruePropertySetViaObjectsYaml;
+
+	/**
+	 * @var boolean
+	 */
+	protected $protectedBooleanFalsePropertySetViaObjectsYaml;
+
+	/**
 	 * @param string $requiredArgument
 	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
 	 * @param string $settingsArgument
@@ -86,6 +96,20 @@ class SingletonClassC {
 	 */
 	public function getProtectedFloatPropertySetViaObjectsYaml() {
 		return $this->protectedFloatPropertySetViaObjectsYaml;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getProtectedBooleanTruePropertySetViaObjectsYaml() {
+		return $this->protectedBooleanTruePropertySetViaObjectsYaml;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getProtectedBooleanFalsePropertySetViaObjectsYaml() {
+		return $this->protectedBooleanFalsePropertySetViaObjectsYaml;
 	}
 
 }

@@ -48,6 +48,8 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame('a defined string', $objectC->getProtectedStringPropertySetViaObjectsYaml());
 		$this->assertSame(42.101010, $objectC->getProtectedFloatPropertySetViaObjectsYaml());
 		$this->assertSame(array('iAm' => array('aConfigured' => 'arrayValue')), $objectC->getProtectedArrayPropertySetViaObjectsYaml());
+		$this->assertTrue($objectC->getProtectedBooleanTruePropertySetViaObjectsYaml());
+		$this->assertFalse($objectC->getProtectedBooleanFalsePropertySetViaObjectsYaml());
 	}
 
 	/**

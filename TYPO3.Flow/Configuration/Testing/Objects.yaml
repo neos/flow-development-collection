@@ -36,6 +36,10 @@ TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC:
       value: 42.101010
     protectedArrayPropertySetViaObjectsYaml:
       value: { 'iAm': { 'aConfigured': 'arrayValue' } }
+    protectedBooleanTruePropertySetViaObjectsYaml:
+      value: TRUE
+    protectedBooleanFalsePropertySetViaObjectsYaml:
+      value: FALSE
 
   arguments:
     1:
