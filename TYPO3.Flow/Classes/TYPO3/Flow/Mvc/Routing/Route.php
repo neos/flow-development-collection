@@ -487,8 +487,9 @@ class Route {
 			if (substr($argumentKey, 0, 2) === '__') {
 				$internalArguments[$argumentKey] = $argumentValue;
 				unset($arguments[$argumentKey]);
+				continue;
 			}
-			if (is_array($argumentValue)) {
+			if (substr($argumentKey, 0, 2) === '--' && is_array($argumentValue)) {
 				$internalArguments[$argumentKey] = $this->extractInternalArguments($argumentValue);
 				if ($internalArguments[$argumentKey] === array()) {
 					unset($internalArguments[$argumentKey]);
