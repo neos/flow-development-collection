@@ -122,5 +122,17 @@ class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array($this->role1, $this->role2), $account->getRoles());
 	}
 
+	/**
+	 * @test
+	 */
+	public function expirationDateCanBeSetNull() {
+		$account = new Account();
+
+		$account->setExpirationDate(new \DateTime());
+		$account->setExpirationDate(NULL);
+
+		$this->assertEquals(NULL, $account->getExpirationDate());
+	}
+
 }
 ?>
