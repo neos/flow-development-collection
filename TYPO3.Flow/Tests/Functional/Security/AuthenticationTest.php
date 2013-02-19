@@ -39,6 +39,8 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$account = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'TestingProvider');
 		$accountRepository->add($account);
+		$account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'HttpBasicTestingProvider');
+		$accountRepository->add($account2);
 		$this->persistenceManager->persistAll();
 
 		$route = new Route();
@@ -66,6 +68,19 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		));
 		$route2->setAppendExceedingArguments(TRUE);
 		$this->router->addRoute($route2);
+
+		$route3 = new Route();
+		$route3->setName('Functional Test - Security::HttpBasicAuthentication');
+		$route3->setUriPattern('test/security/authentication/httpbasic(/{@action})');
+		$route3->setDefaults(array(
+			'@package' => 'TYPO3.Flow',
+			'@subpackage' => 'Tests\Functional\Security\Fixtures',
+			'@controller' => 'HttpBasicTest',
+			'@action' => 'authenticate',
+			'@format' => 'html'
+		));
+		$route3->setAppendExceedingArguments(TRUE);
+		$this->router->addRoute($route3);
 	}
 
 	/**
@@ -111,6 +126,17 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function failedAuthenticationCallsOnAuthenticationFailureMethod() {
 		$result = $this->browser->request('http://localhost/test/security/authentication');
 		$this->assertContains('Uncaught Exception in Flow #42: Failure Method Exception', $result->getContent());
+	}
+
+	/**
+	 * @test
+	 */
+	public function successfulAuthenticationDoesNotStartASessionIfNoTokenRequiresIt() {
+		$uri = new \TYPO3\Flow\Http\Uri('http://localhost/test/security/authentication/httpbasic');
+		$request = \TYPO3\Flow\Http\Request::create($uri);
+		$request->setHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
+		$result = $this->browser->sendRequest($request);
+		$this->assertEmpty($result->getCookies());
 	}
 
 }

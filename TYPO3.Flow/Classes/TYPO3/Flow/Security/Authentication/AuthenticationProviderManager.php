@@ -180,9 +180,6 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 * @return boolean
 	 */
 	public function isAuthenticated() {
-		if (!$this->session->isStarted() && !$this->session->canBeResumed()) {
-			return FALSE;
-		}
 		$atLeastOneTokenIsAuthenticated = FALSE;
 		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {

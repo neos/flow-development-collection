@@ -37,6 +37,7 @@ class Typo3OrgSsoToken extends \TYPO3\Flow\Security\Authentication\Token\Abstrac
 	 *
 	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request instance
 	 * @return void
+	 * @Flow\Session(autoStart=true)
 	 */
 	public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
 		$getArguments = $actionRequest->getArguments();
