@@ -48,7 +48,6 @@ class PersistedUsernamePasswordProvider extends \TYPO3\Flow\Security\Authenticat
 	 * @param \TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
-	 * @Flow\Session(autoStart=true)
 	 */
 	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken) {
 		if (!($authenticationToken instanceof \TYPO3\Flow\Security\Authentication\Token\UsernamePassword)) {

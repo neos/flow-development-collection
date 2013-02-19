@@ -59,6 +59,13 @@ TYPO3:
             entryPoint: 'WebRedirect'
             entryPointOptions:
               uri: 'flow/authentication'
+            requestPatterns:
+              controllerObjectName: 'TYPO3\Flow\Tests\.*'
+          HttpBasicTestingProvider:
+            provider: 'TYPO3\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider'
+            token: 'TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic'
+            requestPatterns:
+              controllerObjectName: 'TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\HttpBasicTestController'
 
     # Setting for functional tests to test global objects in runtime evaluations
     aop:
