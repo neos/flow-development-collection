@@ -22,6 +22,11 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\StringLengthValidator';
 
 	/**
+	 * @var \TYPO3\FLOW3\Validation\Validator\StringLengthValidator
+	 */
+	protected $validator;
+
+	/**
 	 * @test
 	 */
 	public function validateReturnsNoErrorIfTheGivenValueIsNull() {
@@ -172,6 +177,14 @@ class StringLengthValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Valid
 
 		$object = new $className();
 		$this->assertTrue($this->validator->validate($object)->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
+	public function validateRegardsMultibyteStringsCorrectly() {
+		$this->validatorOptions(array('maximum' => 8));
+		$this->assertFalse($this->validator->validate('überlang')->hasErrors());
 	}
 }
 

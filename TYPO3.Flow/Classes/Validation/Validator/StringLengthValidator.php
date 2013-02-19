@@ -45,7 +45,7 @@ class StringLengthValidator extends AbstractValidator {
 			return;
 		}
 
-		$stringLength = strlen($value);
+		$stringLength = \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($value);
 		$isValid = TRUE;
 		if (isset($this->options['minimum']) && $stringLength < $this->options['minimum']) {
 			$isValid = FALSE;
