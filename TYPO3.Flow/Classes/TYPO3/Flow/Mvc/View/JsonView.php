@@ -221,18 +221,22 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * supplied configuration.
 	 *
 	 * @param mixed $value The value to transform
-	 * @param mixed $configuration Configuration for transforming the value or NULL
+	 * @param array $configuration Configuration for transforming the value
 	 * @return array The transformed value
 	 */
-	protected function transformValue($value, $configuration) {
+	protected function transformValue($value, array $configuration) {
 		if (is_array($value) || $value instanceof \ArrayAccess) {
 			$array = array();
 			foreach ($value as $key => $element) {
 				if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
 					$array[] = $this->transformValue($element, $configuration['_descendAll']);
 				} else {
-					if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($key, $configuration['_only'])) continue;
-					if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) continue;
+					if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($key, $configuration['_only'])) {
+						continue;
+					}
+					if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) {
+						continue;
+					}
 					$array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
 				}
 			}
@@ -249,10 +253,10 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * array structure.
 	 *
 	 * @param object $object Object to traverse
-	 * @param mixed $configuration Configuration for transforming the given object or NULL
-	 * @return array Object structure as an aray
+	 * @param array $configuration Configuration for transforming the given object or NULL
+	 * @return array Object structure as an array
 	 */
-	protected function transformObject($object, $configuration) {
+	protected function transformObject($object, array $configuration) {
 		if ($object instanceof \DateTime) {
 			return $object->format('Y-m-d\TH:i:s');
 		} else {
