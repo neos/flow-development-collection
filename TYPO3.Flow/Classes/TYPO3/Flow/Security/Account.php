@@ -225,7 +225,7 @@ class Account {
 	 * @param \DateTime $expirationDate
 	 * @return void
 	 */
-	public function setExpirationDate(\DateTime $expirationDate) {
+	public function setExpirationDate(\DateTime $expirationDate = NULL) {
 		$this->expirationDate = $expirationDate;
 	}
 
