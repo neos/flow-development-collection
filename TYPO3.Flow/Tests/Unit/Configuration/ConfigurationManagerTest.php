@@ -665,8 +665,9 @@ EOD;
 	 */
 	public function loadConfigurationForRoutesLoadsContextSpecificRoutesFirst() {
 		$configurationManager = $this->getConfigurationManagerWithFlowPackage('packageRoutesCallback', 'Testing/System1');
-		$mockPackages = $this->getMockPackages();
 
+		$mockPackages = $this->getMockPackages();
+		$configurationManager->setPackages($mockPackages);
 		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 
 		$actualConfigurations = $configurationManager->_get('configurations');
@@ -724,9 +725,9 @@ EOD;
 
 	/**
 	 * Callback for the above test.
+	 * @param string $filenameAndPath
 	 */
-	public function packageRoutesCallback() {
-		$filenameAndPath = func_get_arg(0);
+	public function packageRoutesCallback($filenameAndPath) {
 
 		// The routes from the innermost context should be added FIRST, such that
 		// they take precedence over more generic contexts
@@ -814,6 +815,163 @@ EOD;
 		}
 	}
 
+	/**
+	 * @test
+	 */
+	public function loadConfigurationForRoutesLoadsSubRoutesRecursively() {
+		$configurationManager = $this->getConfigurationManagerWithFlowPackage('packageSubRoutesCallback', 'Testing/System1');
+
+		$mockPackages = $this->getMockPackages();
+		$configurationManager->setPackages($mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
+
+		$actualConfigurations = $configurationManager->_get('configurations');
+		$expectedRoutesConfiguration = array(
+			array (
+				'name' => 'a :: b1 :: c1',
+				'uriPattern' => 'a/b1/c1'
+			),
+			array (
+				'name' => 'a :: b2 :: d1 :: c1',
+				'uriPattern' => 'a/b2/d1/c1'
+			),
+			array (
+				'name' => 'a :: b1 :: c2 :: e1',
+				'uriPattern' => 'a/b1/c2/e1'
+			),
+			array (
+				'name' => 'a :: b2 :: d1 :: c2 :: e1',
+				'uriPattern' => 'a/b2/d1/c2/e1'
+			),
+			array (
+				'name' => 'a :: b1 :: c2 :: e2',
+				'uriPattern' => 'a/b1/c2/e2'
+			),
+			array (
+				'name' => 'a :: b2 :: d1 :: c2 :: e2',
+				'uriPattern' => 'a/b2/d1/c2/e2'
+			),
+		);
+
+		$this->assertSame($expectedRoutesConfiguration, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+	}
+
+	/**
+	 * Callback for the above test.
+	 * @param string $filenameAndPath
+	 */
+	public function packageSubRoutesCallback($filenameAndPath) {
+
+		$globalRoutes = array(
+			array(
+				'name' => 'a',
+				'uriPattern' => 'a/<b>/<c>',
+				'subRoutes' => array(
+					'b' => array(
+						'package' => 'TYPO3.Flow',
+						'suffix' => 'b'
+					),
+					'c' => array(
+						'package' => 'TYPO3.Flow',
+						'suffix' => 'c'
+					)
+				)
+			)
+		);
+
+		$subRoutesB = array(
+			array(
+				'name' => 'b1',
+				'uriPattern' => 'b1'
+			),
+			array(
+				'name' => 'b2',
+				'uriPattern' => 'b2/<d>',
+				'subRoutes' => array(
+					'd' => array(
+						'package' => 'TYPO3.Flow',
+						'suffix' => 'd'
+					)
+				)
+			)
+		);
+
+		$subRoutesC = array(
+			array(
+				'name' => 'c1',
+				'uriPattern' => 'c1'
+			),
+			array(
+				'name' => 'c2',
+				'uriPattern' => 'c2/<e>',
+				'subRoutes' => array(
+					'e' => array(
+						'package' => 'TYPO3.Flow',
+						'suffix' => 'e'
+					)
+				)
+			)
+		);
+
+		$subRoutesD = array(
+			array(
+				'name' => 'd1',
+				'uriPattern' => 'd1'
+			)
+		);
+
+		$subRoutesE = array(
+			array(
+				'name' => 'e1',
+				'uriPattern' => 'e1'
+			),
+			array(
+				'name' => 'e2',
+				'uriPattern' => 'e2'
+			),
+		);
+
+		switch ($filenameAndPath) {
+			case FLOW_PATH_CONFIGURATION . 'Routes' :
+				return $globalRoutes;
+			case 'Flow/Configuration/Routes.b' :
+				return $subRoutesB;
+			case 'Flow/Configuration/Routes.c' :
+				return $subRoutesC;
+			case 'Flow/Configuration/Routes.d' :
+				return $subRoutesD;
+			case 'Flow/Configuration/Routes.e' :
+				return $subRoutesE;
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Configuration\Exception\RecursionException
+	 */
+	public function loadConfigurationForRoutesThrowsExceptionIfSubRoutesContainCircularReferences() {
+		$mockSubRouteConfiguration =
+			array(
+				'name' => 'SomeRouteOrSubRoute',
+				'uriPattern' => '<PackageSubroutes>',
+				'subRoutes' => array(
+					'PackageSubroutes' => array(
+						'package' => 'TYPO3.Flow'
+					)
+				),
+			);
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue(array($mockSubRouteConfiguration)));
+
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Production')));
+		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+
+		$mockPackages = $this->getMockPackages();
+		$configurationManager->setPackages($mockPackages);
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
+	}
 
 	/**
 	 * @test
@@ -835,6 +993,35 @@ EOD;
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
 		$configurationManager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
+	}
+
+	/**
+	 * @test
+	 */
+	public function mergeRoutesWithSubRoutesRespectsSuffixSubRouteOption() {
+		$mockRoutesConfiguration = array(
+			array(
+				'name' => 'SomeRoute',
+				'uriPattern' => '<PackageSubroutes>',
+				'subRoutes' => array(
+					'PackageSubroutes' => array(
+						'package' => 'TYPO3.Flow',
+						'suffix' => 'Foo'
+					)
+				),
+			)
+		);
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+		$mockConfigurationSource->expects($this->at(0))->method('load')->with('Flow/Configuration/Testing/System1/Routes.Foo')->will($this->returnValue(array()));
+		$mockConfigurationSource->expects($this->at(1))->method('load')->with('Flow/Configuration/Testing/Routes.Foo')->will($this->returnValue(array()));
+		$mockConfigurationSource->expects($this->at(2))->method('load')->with('Flow/Configuration/Routes.Foo')->will($this->returnValue(array()));
+
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Testing/System1')));
+		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+
+		$mockPackages = $this->getMockPackages();
+		$configurationManager->setPackages($mockPackages);
+		$configurationManager->_call('mergeRoutesWithSubRoutes', $mockRoutesConfiguration);
 	}
 
 	/**
@@ -926,7 +1113,7 @@ EOD;
 			)
 		);
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
-		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes');
+		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', array());
 
 		$this->assertEquals($expectedResult, $actualResult);
 	}
@@ -989,7 +1176,7 @@ EOD;
 			)
 		);
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('dummy'), array(new ApplicationContext('Testing')));
-		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes');
+		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', array());
 
 		$this->assertEquals($expectedResult, $actualResult);
 	}

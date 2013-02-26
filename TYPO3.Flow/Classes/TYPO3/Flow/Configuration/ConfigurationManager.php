@@ -22,6 +22,8 @@ use TYPO3\Flow\Utility\Arrays;
  */
 class ConfigurationManager {
 
+	const MAXIMUM_RECURSIONS = 99;
+
 	const CONFIGURATION_TYPE_CACHES = 'Caches';
 	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
@@ -94,6 +96,12 @@ class ConfigurationManager {
 	 * @var boolean
 	 */
 	protected $cacheNeedsUpdate = FALSE;
+
+	/**
+	 * Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_RECURSIONS, an exception is thrown
+	 * @var integer
+	 */
+	protected $subRoutesRecursionLevel = 0;
 
 	/**
 	 * Constructs the configuration manager
@@ -282,6 +290,7 @@ class ConfigurationManager {
 				}
 
 				$settings = array();
+				/** @var $package \TYPO3\Flow\Package\PackageInterface */
 				foreach ($packages as $packageKey => $package) {
 					if (Arrays::getValueByPath($settings, $packageKey) === NULL) {
 						$settings = Arrays::setValueByPath($settings, $packageKey, array());
@@ -307,6 +316,7 @@ class ConfigurationManager {
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
 				$this->configurations[$configurationType] = array();
+				/** @var $package \TYPO3\Flow\Package\PackageInterface */
 				foreach ($packages as $packageKey => $package) {
 
 					$configuration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
@@ -322,6 +332,7 @@ class ConfigurationManager {
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
 				$this->configurations[$configurationType] = array();
+				/** @var $package \TYPO3\Flow\Package\PackageInterface */
 				foreach ($packages as $package) {
 					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
 				}
@@ -335,17 +346,6 @@ class ConfigurationManager {
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
-
-					// load subroutes
-				$subRoutesConfiguration = array();
-				foreach ($packages as $packageKey => $package) {
-					$subRoutesConfiguration[$packageKey] = array();
-					foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
-						$subRoutesConfiguration[$packageKey] = array_merge($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType));
-					}
-					$subRoutesConfiguration[$packageKey] = array_merge($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
-				}
-
 					// load main routes
 				$this->configurations[$configurationType] = array();
 				foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
@@ -353,8 +353,8 @@ class ConfigurationManager {
 				}
 				$this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
-					// Merge routes with subroutes
-				$this->mergeRoutesWithSubRoutes($this->configurations[$configurationType], $subRoutesConfiguration);
+					// Merge routes with SubRoutes recursively
+				$this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
 			break;
 			default:
 				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
@@ -456,11 +456,11 @@ EOD;
 	 * Loads specified sub routes and builds composite routes.
 	 *
 	 * @param array $routesConfiguration
-	 * @param array $subRoutesConfiguration
 	 * @return void
 	 * @throws \TYPO3\Flow\Configuration\Exception\ParseErrorException
+	 * @throws \TYPO3\Flow\Configuration\Exception\RecursionException
 	 */
-	protected function mergeRoutesWithSubRoutes(array &$routesConfiguration, array $subRoutesConfiguration) {
+	protected function mergeRoutesWithSubRoutes(array &$routesConfiguration) {
 		$mergedRoutesConfiguration = array();
 		foreach ($routesConfiguration as $routeConfiguration) {
 			if (!isset($routeConfiguration['subRoutes'])) {
@@ -469,11 +469,33 @@ EOD;
 			}
 			$mergedSubRoutesConfiguration = array($routeConfiguration);
 			foreach ($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
-				if (!isset($subRouteOptions['package']) || !isset($subRoutesConfiguration[$subRouteOptions['package']])) {
-					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('Missing package configuration for SubRoute "' . (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route') . '".', 1318414040);
+				if (!isset($subRouteOptions['package'])) {
+					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException(sprintf('Missing package configuration for SubRoute in Route "%s".', (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route')), 1318414040);
 				}
-				$packageSubRoutesConfiguration = $subRoutesConfiguration[$subRouteOptions['package']];
-				$mergedSubRoutesConfiguration = $this->buildSubrouteConfigurations($mergedSubRoutesConfiguration, $packageSubRoutesConfiguration, $subRouteKey);
+				if (!isset($this->packages[$subRouteOptions['package']])) {
+					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException(sprintf('The SubRoute Package "%s" referenced in Route "%s" is not available.', $subRouteOptions['package'], (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route')), 1318414040);
+				}
+				/** @var $package \TYPO3\Flow\Package\PackageInterface */
+				$package = $this->packages[$subRouteOptions['package']];
+				$subRouteFilename = 'Routes';
+				if (isset($subRouteOptions['suffix'])) {
+					$subRouteFilename .= '.' . $subRouteOptions['suffix'];
+				}
+				$subRouteConfiguration = array();
+				foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
+					$subRouteFilePathAndName = $package->getConfigurationPath() . $contextName . '/' . $subRouteFilename;
+					$subRouteConfiguration = array_merge($subRouteConfiguration, $this->configurationSource->load($subRouteFilePathAndName));
+				}
+				$subRouteFilePathAndName = $package->getConfigurationPath() . $subRouteFilename;
+				$subRouteConfiguration = array_merge($subRouteConfiguration, $this->configurationSource->load($subRouteFilePathAndName));
+				if ($this->subRoutesRecursionLevel > self::MAXIMUM_RECURSIONS) {
+					throw new \TYPO3\Flow\Configuration\Exception\RecursionException(sprintf('Recursion level of SubRoutes exceed ' . self::MAXIMUM_RECURSIONS . ', probably because of a circular reference. Last successfully loaded route configuration is "%s".', $subRouteFilePathAndName), 1361535753);
+				}
+
+				$this->subRoutesRecursionLevel ++;
+				$this->mergeRoutesWithSubRoutes($subRouteConfiguration);
+				$this->subRoutesRecursionLevel --;
+				$mergedSubRoutesConfiguration = $this->buildSubRouteConfigurations($mergedSubRoutesConfiguration, $subRouteConfiguration, $subRouteKey, $subRouteOptions);
 			}
 			$mergedRoutesConfiguration = array_merge($mergedRoutesConfiguration, $mergedSubRoutesConfiguration);
 		}
@@ -486,28 +508,47 @@ EOD;
 	 * @param array $routesConfiguration
 	 * @param array $subRoutesConfiguration
 	 * @param string $subRouteKey the key of the sub route: <subRouteKey>
+	 * @param array $subRouteOptions
 	 * @return array the merged route configuration
 	 * @throws \TYPO3\Flow\Configuration\Exception\ParseErrorException
 	 */
-	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
+	protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey, array $subRouteOptions) {
+		$variables = isset($subRouteOptions['variables']) ? $subRouteOptions['variables'] : array();
 		$mergedSubRoutesConfigurations = array();
 		foreach ($subRoutesConfiguration as $subRouteConfiguration) {
 			foreach ($routesConfiguration as $routeConfiguration) {
-				$subRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
-				if (!isset($subRouteConfiguration['uriPattern'])) {
-					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $subRouteConfiguration['name'] . '".', 1274197615);
+				$mergedSubRouteConfiguration = $subRouteConfiguration;
+				$mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
+				$mergedSubRouteConfiguration['name'] = $this->replacePlaceholders($mergedSubRouteConfiguration['name'], $variables);
+				if (!isset($mergedSubRouteConfiguration['uriPattern'])) {
+					throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $mergedSubRouteConfiguration['name'] . '".', 1274197615);
 				}
-				if ($subRouteConfiguration['uriPattern'] !== '') {
-					$subRouteConfiguration['uriPattern'] = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
+				if ($mergedSubRouteConfiguration['uriPattern'] !== '') {
+					$mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($mergedSubRouteConfiguration['uriPattern'], $variables);
+					$mergedSubRouteConfiguration['uriPattern'] = $this->replacePlaceholders($routeConfiguration['uriPattern'], array($subRouteKey => $mergedSubRouteConfiguration['uriPattern']));
 				} else {
-					$subRouteConfiguration['uriPattern'] = rtrim(str_replace('<' . $subRouteKey . '>', '', $routeConfiguration['uriPattern']), '/');
+					$mergedSubRouteConfiguration['uriPattern'] = rtrim($this->replacePlaceholders($routeConfiguration['uriPattern'], array($subRouteKey => '')), '/');
 				}
-				$subRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $subRouteConfiguration);
-				unset($subRouteConfiguration['subRoutes']);
-				$mergedSubRoutesConfigurations[] = $subRouteConfiguration;
+				$mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
+				unset($mergedSubRouteConfiguration['subRoutes']);
+				$mergedSubRoutesConfigurations[] = $mergedSubRouteConfiguration;
 			}
 		}
 		return $mergedSubRoutesConfigurations;
+	}
+
+	/**
+	 * Replaces placeholders in the format <variableName> with the corresponding variable of the specified $variables collection.
+	 *
+	 * @param string $string
+	 * @param array $variables
+	 * @return string
+	 */
+	protected function replacePlaceholders($string, array $variables) {
+		foreach ($variables as $variableName => $variableValue) {
+			$string = str_replace('<' . $variableName . '>', $variableValue, $string);
+		}
+		return $string;
 	}
 }
 ?>
