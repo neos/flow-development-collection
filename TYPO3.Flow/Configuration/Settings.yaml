@@ -159,14 +159,14 @@ TYPO3:
        'symfony.console' : ['Symfony\\Component\\Console\\Tests\\.*']
        'mikey179.vfsStream' : ['.*']
        # workaround, should rather be deactivated
-       'typo3.flowcomposerinstallers': ['.*']
+       'Composer.Installers': ['.*']
 
     package:
 
       # This can be used to make packages inactive, even though they would be
       # activated automatically otherwise.
       inactiveByDefault:
-        - 'typo3.flowcomposerinstallers'
+        - 'Composer.Installers'
 
     persistence:
 
