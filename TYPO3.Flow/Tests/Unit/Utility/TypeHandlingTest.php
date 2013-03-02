@@ -56,8 +56,9 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function parseTypeReturnsArrayWithInformation($type, $expectedResult) {
 		$this->assertEquals(
+			$expectedResult,
 			\TYPO3\Flow\Utility\TypeHandling::parseType($type),
-			$expectedResult
+			'Failed for ' . $type
 		);
 	}
 
@@ -99,7 +100,7 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider nonliteralTypes
 	 */
 	public function isLiteralReturnsFalseForNonLiteralTypes($type) {
-		$this->assertFalse(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type));
+		$this->assertFalse(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type), 'Failed for ' . $type);
 	}
 
 	/**
@@ -122,7 +123,37 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider literalTypes
 	 */
 	public function isLiteralReturnsTrueForLiteralType($type) {
-		$this->assertTrue(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type));
+		$this->assertTrue(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type), 'Failed for ' . $type);
+	}
+
+	/**
+	 * data provider for isCollectionTypeReturnsTrueForCollectionType
+	 */
+	public function collectionTypes() {
+		return array(
+			array('integer', FALSE),
+			array('int', FALSE),
+			array('float', FALSE),
+			array('double', FALSE),
+			array('boolean', FALSE),
+			array('bool', FALSE),
+			array('string', FALSE),
+			array('SomeClassThatIsUnknownToPhpAtThisPoint', FALSE),
+			array('array', TRUE),
+			array('ArrayObject', TRUE),
+			array('SplObjectStorage', TRUE),
+			array('SplObjectStorage', TRUE),
+			array('Doctrine\Common\Collections\Collection', TRUE),
+			array('Doctrine\Common\Collections\ArrayCollection', TRUE)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider collectionTypes
+	 */
+	public function isCollectionTypeReturnsTrueForCollectionType($type, $expected) {
+		$this->assertSame($expected, \TYPO3\Flow\Utility\TypeHandling::isCollectionType($type), 'Failed for ' . $type);
 	}
 }
 ?>
