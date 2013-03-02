@@ -114,11 +114,23 @@ class TypeHandling {
 			return TRUE;
 		}
 
-		foreach (self::$collectionTypes as $collectionType) {
-			if (is_subclass_of($type, $collectionType) === TRUE) {
-				return TRUE;
+		if (class_exists($type) === TRUE) {
+			foreach (self::$collectionTypes as $collectionType) {
+				if (is_subclass_of($type, $collectionType) === TRUE) {
+					return TRUE;
+				}
 			}
 		}
+
+			// is_subclasss_of does not check for interfaces in PHP < 5.3.7
+		if (version_compare(PHP_VERSION, '5.3.7', '<') === TRUE) {
+			foreach (self::$collectionTypes as $collectionType) {
+				if (in_array($collectionType, class_implements($type)) === TRUE) {
+					return TRUE;
+				}
+			}
+		}
+
 		return FALSE;
 	}
 
