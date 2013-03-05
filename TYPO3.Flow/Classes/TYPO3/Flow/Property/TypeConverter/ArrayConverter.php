@@ -47,7 +47,28 @@ class ArrayConverter extends AbstractTypeConverter {
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return $source;
+		if ($configuration === NULL) {
+			return $source;
+		}
+
+		$target = array();
+		foreach ($source as $propertyName => $propertyValue) {
+			$targetPropertyName = $configuration->getTargetPropertyName($propertyName);
+
+			if ($configuration->shouldSkip($targetPropertyName)) {
+				continue;
+			}
+
+			if (!$configuration->shouldMap($targetPropertyName)) {
+				if ($configuration->shouldSkipUnknownProperties()) {
+					continue;
+				}
+				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1362564508);
+			}
+
+			$target[$targetPropertyName] = $propertyValue;
+		}
+		return $target;
 	}
 }
 ?>
