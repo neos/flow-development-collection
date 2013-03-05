@@ -26,11 +26,11 @@ class TestingProviderTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function authenticateStartsASession() {
 		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
-		$this->assertFalse($session->isStarted());
+		$this->assertFalse($session->isStarted(), 'Session has been started already before authentication!');
 
 		$this->authenticateRoles(array('Administrator'));
 
-		$this->assertTrue($session->isStarted());
+		$this->assertTrue($session->isStarted(), 'No session was started with authentication');
 	}
 }
 ?>
