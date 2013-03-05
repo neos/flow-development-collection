@@ -534,7 +534,7 @@ plaintext password in from the token.
 If you want to know more about accounts and how you can create them, look in the
 corresponding section above.
 
-* Token*
+*Token*
 
 The username/password token is implemented in the class
 ``TYPO3\Flow\Security\Authentication\Token\UsernamePassword``. It fetches the credentials
@@ -544,7 +544,7 @@ from the HTTP POST data, look at the following program listing for details::
 	$username = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($postArguments,
 	    '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.username');
 	$password = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($postArguments,
-	    '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password'');
+	    '__authentication.TYPO3.Flow.Security.Authentication.Token.UsernamePassword.password');
 
 .. note::
 
