@@ -390,5 +390,25 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$actualResult = $this->view->render();
 		$this->assertEquals($expectedResult, $actualResult);
 	}
+
+	/**
+	 * @test
+	 */
+	public function descendAllKeepsArrayIndexes() {
+		$array = array(array('name' => 'Foo', 'secret' => TRUE), array('name' => 'Bar', 'secret' => TRUE));
+
+		$this->view->assign('value', $array);
+		$this->view->setConfiguration(array(
+			'value' => array(
+				'_descendAll' => array(
+					'_descendAll' => array()
+				)
+			)
+		));
+
+		$expectedResult = '[{"name":"Foo","secret":true},{"name":"Bar","secret":true}]';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
 }
 ?>
