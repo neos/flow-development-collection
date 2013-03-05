@@ -61,11 +61,25 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 	protected $propertiesToBeMapped = array();
 
 	/**
+	 * List of property names to be skipped during property mapping
+	 *
+	 * @var array
+	 */
+	protected $propertiesToSkip = array();
+
+	/**
 	 * List of disallowed property names which will be ignored while property mapping
 	 *
 	 * @var array
 	 */
 	protected $propertiesNotToBeMapped = array();
+
+	/**
+	 * If TRUE, unknown properties will be skipped during property mapping
+	 *
+	 * @var boolean
+	 */
+	protected $skipUnknownProperties = FALSE;
 
 	/**
 	 * If TRUE, unknown properties will be mapped.
@@ -102,6 +116,17 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 	}
 
 	/**
+	 * Check if the given $propertyName should be skipped during mapping.
+	 *
+	 * @param string $propertyName
+	 * @return boolean
+	 * @api
+	 */
+	public function shouldSkip($propertyName) {
+		return isset($this->propertiesToSkip[$propertyName]);
+	}
+
+	/**
 	 * Allow all properties in property mapping, even unknown ones.
 	 *
 	 * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
@@ -129,6 +154,22 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 	}
 
 	/**
+	 * Skip a list of specific properties. All arguments of
+	 * skipProperties are used here (varargs).
+	 *
+	 * Example: skipProperties('unused', 'dummy')
+	 *
+	 * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+	 * @api
+	 */
+	public function skipProperties() {
+		foreach (func_get_args() as $propertyName) {
+			$this->propertiesToSkip[$propertyName] = $propertyName;
+		}
+		return $this;
+	}
+
+	/**
 	 * Allow all properties during property mapping, but reject a few
 	 * selected ones (blacklist).
 	 *
@@ -144,6 +185,29 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 			$this->propertiesNotToBeMapped[$propertyName] = $propertyName;
 		}
 		return $this;
+	}
+
+	/**
+	 * When this is enabled, properties that are disallowed will be skipped
+	 * instead of triggering an error during mapping.
+	 *
+	 * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
+	 * @api
+	 */
+	public function skipUnknownProperties() {
+		$this->skipUnknownProperties = TRUE;
+		return $this;
+	}
+
+	/**
+	 * Whether unknown (unconfigured) properties should be skipped during
+	 * mapping, instead if causing an error.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function shouldSkipUnknownProperties() {
+		return $this->skipUnknownProperties;
 	}
 
 	/**

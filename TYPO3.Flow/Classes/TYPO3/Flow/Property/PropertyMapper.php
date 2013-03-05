@@ -172,7 +172,14 @@ class PropertyMapper {
 		$convertedChildProperties = array();
 		foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
 			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
+			if ($configuration->shouldSkip($targetPropertyName)) {
+				continue;
+			}
+
 			if (!$configuration->shouldMap($targetPropertyName)) {
+				if ($configuration->shouldSkipUnknownProperties()) {
+					continue;
+				}
 				throw new Exception\InvalidPropertyMappingConfigurationException('It is not allowed to map property "' . $targetPropertyName . '". You need to use $propertyMappingConfiguration->allowProperties(\'' . $targetPropertyName . '\') to enable mapping of this property.', 1335969887);
 			}
 
