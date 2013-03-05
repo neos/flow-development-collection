@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Security\Authentication;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Security\Exception;
 use TYPO3\Flow\Security\RequestPatternResolver;
@@ -154,7 +155,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 
 		$tokens = $this->securityContext->getAuthenticationTokens();
 		if (count($tokens) === 0) {
-			throw new AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
+			throw new NoTokensAuthenticatedException('The security context contained no tokens which could be authenticated.', 1258721059);
 		}
 
 		/** @var $token TokenInterface */
@@ -186,7 +187,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 		}
 
 		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== Context::AUTHENTICATE_ANY_TOKEN) {
-			throw new AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
+			throw new NoTokensAuthenticatedException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
 
 		$this->isAuthenticated = $anyTokenAuthenticated;

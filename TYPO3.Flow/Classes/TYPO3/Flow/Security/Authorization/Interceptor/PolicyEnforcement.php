@@ -70,12 +70,21 @@ class PolicyEnforcement implements \TYPO3\Flow\Security\Authorization\Intercepto
 	 * @return boolean TRUE if the security checks was passed
 	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException if an entity could not be found (assuming it is bound to the current session), causing a redirect to the authentication entrypoint
+	 * @throws \TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException if no tokens could be found and the accessDecisionManager denied access to the resource, causing a redirect to the authentication entrypoint
 	 */
 	public function invoke() {
 		try {
 			$this->authenticationManager->authenticate();
 		} catch (\Doctrine\ORM\EntityNotFoundException $exception) {
 			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
+		} catch (\TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException $noTokensAuthenticatedException) {
+				// We still need to check if the resource is available to "Everybody".
+			try {
+				$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
+				return;
+			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $accessDeniedException) {
+				throw $noTokensAuthenticatedException;
+			}
 		}
 		$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
 	}
