@@ -505,12 +505,13 @@ class Scripts {
 	 * @param string $commandIdentifier E.g. typo3.flow:cache:flush
 	 * @param array $settings The TYPO3.Flow settings
 	 * @param boolean $outputResults if FALSE the output of this command is only echoed if the execution was not successful
+	 * @param array $commandArguments Command arguments
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 * @api
 	 * @throws \TYPO3\Flow\Core\Booting\Exception\SubProcessException if execution of the sub process failed
 	 */
-	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE) {
-		$command = self::buildSubprocessCommand($commandIdentifier, $settings);
+	static public function executeCommand($commandIdentifier, array $settings, $outputResults = TRUE, array $commandArguments = array()) {
+		$command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
 		$output = array();
 		exec($command, $output, $result);
 		if ($result !== 0) {
@@ -532,10 +533,11 @@ class Scripts {
 	/**
 	 * @param string $commandIdentifier E.g. typo3.flow:cache:flush
 	 * @param array $settings The TYPO3.Flow settings
+	 * @param array $commandArguments Command arguments
 	 *
 	 * @return string A command line command ready for being exec()uted
 	 */
-	protected static function buildSubprocessCommand($commandIdentifier, $settings) {
+	protected static function buildSubprocessCommand($commandIdentifier, $settings, array $commandArguments = array()) {
 		$subRequestEnvironmentVariables = array(
 			'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
 			'FLOW_CONTEXT' => $settings['core']['context']
@@ -566,8 +568,20 @@ class Scripts {
 			}
 			$command .= ' -c ' . escapeshellarg($useIniFile);
 		}
-		$command .= sprintf(' %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier));
-		return $command;
+
+		$escapedArguments = '';
+		if ($commandArguments !== array()) {
+			foreach ($commandArguments as $argument=>$argumentValue) {
+				$escapedArguments .= escapeshellarg('--' . trim($argument));
+				if (trim($argumentValue) !== '') {
+					$escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
+				}
+			}
+		}
+
+		$command .= sprintf(' %s %s %s', escapeshellarg(FLOW_PATH_FLOW . 'Scripts/flow.php'), escapeshellarg($commandIdentifier), trim($escapedArguments));
+
+		return trim($command);
 	}
 }
 
