@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Http;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Http\Cookie;
 
@@ -182,7 +181,7 @@ class Message {
 	 *
 	 * This is a shortcut for $message->getHeaders()->setCookie($cookie);
 	 *
-	 * @param TYPO3\Flow\Http\Cookie $cookie The cookie to set
+	 * @param \TYPO3\Flow\Http\Cookie $cookie The cookie to set
 	 * @return void
 	 * @api
 	 */

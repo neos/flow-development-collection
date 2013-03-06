@@ -155,10 +155,10 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * data provider for testTransformValueWithObjectIdentifierExposation()
+	 * data provider for testTransformValueWithObjectIdentifierExposure()
 	 * @return array
 	 */
-	public function objectIdentifierExposationTestData() {
+	public function objectIdentifierExposureTestData() {
 		$output = array();
 
 		$dummyIdentifier = 'e4f40dfc-8c6e-4414-a5b1-6fd3c5cf7a53';
@@ -185,9 +185,9 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider objectIdentifierExposationTestData
+	 * @dataProvider objectIdentifierExposureTestData
 	 */
-	public function testTransformValueWithObjectIdentifierExposation($object, $configuration, $expected, $dummyIdentifier, $description) {
+	public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description) {
 		$persistenceManagerMock = $this->getMock('TYPO3\Flow\Persistence\Generic\PersistenceManager', array('getIdentifierByObject'));
 		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
 		$jsonView->_set('persistenceManager', $persistenceManagerMock);
