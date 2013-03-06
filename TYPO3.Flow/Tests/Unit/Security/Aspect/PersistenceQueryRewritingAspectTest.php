@@ -492,6 +492,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$rewritingAspect->expects($this->at(1))->method('checkConstraintDefinitionsOnResultObject')->with(array('parsedConstraints'), $result)->will($this->returnValue(FALSE));
 		$rewritingAspect->_set('policyService', $mockPolicyService);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('reflectionService', $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('initialize')));
 
 		$this->assertEquals($result, $rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint));
 		$this->assertEquals(NULL, $rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint));
@@ -519,6 +520,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('policyService', $mockPolicyService);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('reflectionService', $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('initialize')));
 
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
 	}
@@ -545,6 +547,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('policyService', $this->getMock('TYPO3\Flow\Security\Policy\PolicyService'));
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('reflectionService', $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('initialize')));
 
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
 	}
@@ -624,6 +627,7 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
 		$rewritingAspect->_set('policyService', $mockPolicyService);
+		$rewritingAspect->_set('reflectionService', $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array('dummy')));
 
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
 	}
@@ -903,5 +907,94 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
 		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
 		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
+	}
+
+	/**
+	 * signature: $operator, $leftValue, $rightValue, $expectationGetObjectValueByPathAt
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectCanWorkWithCollectionsDataProvider() {
+		return array(
+			array('in', 'this.party', 'current.party', 0),
+			array('contains', 'current.party', 'this.party', 1)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider checkSingleConstraintDefinitionOnResultObjectCanWorkWithCollectionsDataProvider
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectCanWorkWithCollections($operator, $leftValue, $rightValue, $expectationGetObjectValueByPathAt) {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \TYPO3\Flow\Object\Proxy\ProxyInterface {
+			public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+			public function __wakeup() {}
+		}');
+		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassNameByObject');
+		$mockReflectionService->expects($this->any())->method('isClassAnnotatedWith')->will($this->returnValue(FALSE));
+		$rewritingAspect->_set('reflectionService', $mockReflectionService);
+
+		$mockCollection = $this->getMock('Doctrine\Common\Collections\Collection');
+		$mockCollection->expects($this->atLeastOnce())->method('contains')->with('blub')->will($this->returnValue(TRUE));
+		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockCollection));
+		$rewritingAspect->expects($this->at($expectationGetObjectValueByPathAt))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue('blub'));
+
+		$constraint = array(
+			'operator' => $operator,
+			'leftValue' => $leftValue,
+			'rightValue' =>  $rightValue
+		);
+
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+	}
+
+	/**
+	 * signature: $leftValue, $rightValue
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectCanWorkWithCollectionsOnMatchesOperatorDataProvider() {
+		return array(
+			array('this.party', 'current.party'),
+			array('current.party', 'this.party'),
+			array('this.party', 'this.collection'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider checkSingleConstraintDefinitionOnResultObjectCanWorkWithCollectionsOnMatchesOperatorDataProvider
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectCanWorkWithCollectionsOnMatchesOperator($leftValue, $rightValue) {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \TYPO3\Flow\Object\Proxy\ProxyInterface {
+			public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+			public function __wakeup() {}
+		}');
+		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassNameByObject');
+		$mockReflectionService->expects($this->any())->method('isClassAnnotatedWith')->will($this->returnValue(FALSE));
+		$rewritingAspect->_set('reflectionService', $mockReflectionService);
+
+		$mockCollection = $this->getMock('Doctrine\Common\Collections\Collection');
+		$mockCollection->expects($this->atLeastOnce())->method('toArray')->will($this->returnValue(array('foo')));
+		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('foo')));
+		$rewritingAspect->expects($this->any())->method('getObjectValueByPath')->will($this->returnValue($mockCollection));
+
+		$constraint = array(
+			'operator' => 'matches',
+			'leftValue' => $leftValue,
+			'rightValue' =>  $rightValue
+		);
+
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
 	}
 }
