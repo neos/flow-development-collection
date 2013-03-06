@@ -11,13 +11,13 @@ namespace TYPO3\Flow\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\ORM\Proxy\Proxy;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Persistence\EmptyQueryResult;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * An aspect which rewrites persistence query to filter objects one should not be able to retrieve.
@@ -162,11 +162,7 @@ class PersistenceQueryRewritingAspect {
 
 		$authenticatedRoles = $this->securityContext->getRoles();
 
-		if ($result instanceof Proxy) {
-			$entityType = get_parent_class($result);
-		} else {
-			$entityType = get_class($result);
-		}
+		$entityType = $this->reflectionService->getClassNameByObject($result);
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
 			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) {
@@ -377,6 +373,7 @@ class PersistenceQueryRewritingAspect {
 					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($leftOperand), 'Doctrine\ORM\Mapping\Entity')
 			)
 		) {
+			$originalLeftOperand = $leftOperand;
 			$leftOperand = $this->persistenceManager->getIdentifierByObject($leftOperand);
 		}
 
@@ -386,6 +383,7 @@ class PersistenceQueryRewritingAspect {
 					|| $this->reflectionService->isClassAnnotatedWith($this->reflectionService->getClassNameByObject($rightOperand), 'Doctrine\ORM\Mapping\Entity')
 			)
 		) {
+			$originalRightOperand = $rightOperand;
 			$rightOperand = $this->persistenceManager->getIdentifierByObject($rightOperand);
 		}
 
@@ -409,12 +407,24 @@ class PersistenceQueryRewritingAspect {
 				return ($leftOperand >= $rightOperand);
 				break;
 			case 'in':
-				return in_array($leftOperand, $rightOperand);
+				if ($rightOperand instanceof Collection) {
+					return $rightOperand->contains(isset($originalLeftOperand) ? $originalLeftOperand : $leftOperand);
+				}
+				return in_array((isset($originalLeftOperand) ? $originalLeftOperand : $leftOperand), $rightOperand);
 				break;
 			case 'contains':
-				return in_array($rightOperand, $leftOperand);
+				if ($leftOperand instanceof Collection) {
+					return $leftOperand->contains(isset($originalRightOperand) ? $originalRightOperand : $rightOperand);
+				}
+				return in_array((isset($originalRightOperand) ? $originalRightOperand : $rightOperand), $leftOperand);
 				break;
 			case 'matches':
+				if ($leftOperand instanceof Collection) {
+					$leftOperand = $leftOperand->toArray();
+				}
+				if ($rightOperand instanceof Collection) {
+					$rightOperand = $rightOperand->toArray();
+				}
 				return (count(array_intersect($leftOperand, $rightOperand)) !== 0);
 				break;
 		}
