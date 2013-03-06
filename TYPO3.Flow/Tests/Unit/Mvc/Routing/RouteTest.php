@@ -726,6 +726,29 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function routeAlwaysAppendsExceedingInternalArgumentsRecursively() {
+		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
+		$this->route->setDefaults(array('@format' => 'xml'));
+		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '--subRequest' => array('__someInternalArgument' => 'someValue'));
+
+		$this->assertTrue($this->route->resolves($this->routeValues));
+		$this->assertEquals('value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', $this->route->getMatchingUri());
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeDoesNotResolveIfRouteValuesContainAnIdentityForAnArgumentThatIsNotPartOfTheRoute() {
+		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
+		$this->route->setDefaults(array('@format' => 'xml'));
+		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'someArgument' => array('__identity' => 'someUuid'));
+
+		$this->assertFalse($this->route->resolves($this->routeValues));
+	}
+
+	/**
+	 * @test
+	 */
 	public function routeAppendsAllAdditionalQueryParametersIfUriPatternContainsLessValuesThanAreSpecifiedIfAppendExceedingArgumentsIsTrue() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 		$this->route->setDefaults(array('@format' => 'xml'));
