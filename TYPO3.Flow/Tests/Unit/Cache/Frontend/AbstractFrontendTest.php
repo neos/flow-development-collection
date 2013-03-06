@@ -25,6 +25,8 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		foreach (array('x', 'someValue', '123fivesixseveneight', 'some&', 'ab_cd%', rawurlencode('resource://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
 			$this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 		}
+			// dummy assertion to silence PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -39,6 +41,8 @@ class AbstractFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			} catch (\InvalidArgumentException $exception) {
 			}
 		}
+			// dummy assertion to silence PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
