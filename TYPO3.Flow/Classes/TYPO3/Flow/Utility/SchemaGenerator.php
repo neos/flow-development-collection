@@ -127,11 +127,11 @@ class SchemaGenerator {
 	 */
 	protected function filterDuplicatesFromArray(array $values) {
 		$uniqueItems = array();
-		foreach($values as $value){
+		foreach ($values as $value) {
 			$uniqueItems[md5(serialize($value))] = $value;
 		}
 		$result = array_values($uniqueItems);
-		if (count($result) == 1){
+		if (count($result) === 1) {
 			return $result[0];
 		} else {
 			return $result;

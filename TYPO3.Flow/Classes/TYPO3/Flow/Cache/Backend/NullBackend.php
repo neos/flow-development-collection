@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Cache\Backend;
 
 // @codeCoverageIgnoreStart
 
-
 /**
  * A caching backend which forgets everything immediately
  *

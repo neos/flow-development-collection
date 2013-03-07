@@ -43,10 +43,14 @@ class AuthenticationProviderResolver {
 	 */
 	public function resolveProviderClass($providerName) {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);
-		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
+		if ($resolvedObjectName !== FALSE) {
+			return $resolvedObjectName;
+		}
 
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\Flow\Security\Authentication\Provider\\' . $providerName);
-		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
+		if ($resolvedObjectName !== FALSE) {
+			return $resolvedObjectName;
+		}
 
 		throw new \TYPO3\Flow\Security\Exception\NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
 	}

@@ -102,8 +102,12 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
-		if (!is_string($data)) throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
+		}
+		if (!is_string($data)) {
+			throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
+		}
 
 		if ($this->has($entryIdentifier)) {
 			$this->remove($entryIdentifier);
@@ -113,12 +117,16 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
 		$result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, time(), $lifetime, $data));
-		if ($result === FALSE) throw new \TYPO3\Flow\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
+		if ($result === FALSE) {
+			throw new \TYPO3\Flow\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
+		}
 
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
 		foreach ($tags as $tag) {
 			$result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, $tag));
-			if ($result === FALSE) throw new \TYPO3\Flow\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+			if ($result === FALSE) {
+				throw new \TYPO3\Flow\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+			}
 		}
 	}
 

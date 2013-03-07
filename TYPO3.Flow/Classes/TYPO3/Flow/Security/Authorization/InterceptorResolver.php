@@ -43,10 +43,14 @@ class InterceptorResolver {
 	 */
 	public function resolveInterceptorClass($name) {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
-		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
+		if ($resolvedObjectName !== FALSE) {
+			return $resolvedObjectName;
+		}
 
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\Flow\Security\Authorization\Interceptor\\' . $name);
-		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
+		if ($resolvedObjectName !== FALSE) {
+			return $resolvedObjectName;
+		}
 
 		throw new \TYPO3\Flow\Security\Exception\NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}

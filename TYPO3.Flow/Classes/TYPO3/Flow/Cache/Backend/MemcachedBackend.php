@@ -84,7 +84,9 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	 * @throws \TYPO3\Flow\Cache\Exception
 	 */
 	public function __construct(\TYPO3\Flow\Core\ApplicationContext $context, array $options = array()) {
-		if (!extension_loaded('memcache')) throw new \TYPO3\Flow\Cache\Exception('The PHP extension "memcache" must be installed and loaded in order to use the Memcached backend.', 1213987706);
+		if (!extension_loaded('memcache')) {
+			throw new \TYPO3\Flow\Cache\Exception('The PHP extension "memcache" must be installed and loaded in order to use the Memcached backend.', 1213987706);
+		}
 		parent::__construct($context, $options);
 	}
 
@@ -122,7 +124,9 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	 * @throws \TYPO3\Flow\Cache\Exception
 	 */
 	public function initializeObject() {
-		if (!count($this->servers)) throw new \TYPO3\Flow\Cache\Exception('No servers were given to Memcache', 1213115903);
+		if (!count($this->servers)) {
+			throw new \TYPO3\Flow\Cache\Exception('No servers were given to Memcache', 1213115903);
+		}
 
 		$this->memcache = new \Memcache();
 		$defaultPort = ini_get('memcache.default_port');
@@ -188,9 +192,15 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
-		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
-		if (!is_string($data)) throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) {
+			throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
+		}
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
+		}
+		if (!is_string($data)) {
+			throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		}
 
 		$tags[] = '%MEMCACHEBE%' . $this->cacheIdentifier;
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
@@ -236,7 +246,7 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 		if (substr($value, 0, 13) === 'Flow*chunked:') {
 			list( , $chunkCount) = explode(':', $value);
 			$value = '';
-			for ($chunkNumber = 1 ; $chunkNumber < $chunkCount; $chunkNumber++) {
+			for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {
 				$value .= $this->memcache->get($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber);
 			}
 		}
@@ -305,7 +315,9 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	 * @api
 	 */
 	public function flush() {
-		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) throw new \TYPO3\Flow\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\Flow\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		}
 
 		$this->flushByTag('%MEMCACHEBE%' . $this->cacheIdentifier);
 	}

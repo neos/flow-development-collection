@@ -64,21 +64,21 @@ class SchemaValidator {
 		$result = new \TYPO3\Flow\Error\Result();
 
 		if (is_string($schema) === TRUE) {
-			$result->merge($this->validateType($value, array('type'=>$schema)));
+			$result->merge($this->validateType($value, array('type' => $schema)));
 		} elseif ($this->isNumericallyIndexedArray($schema)) {
 			$isValid = FALSE;
 			foreach ($schema as $singleSchema) {
 				$singleResult = $this->validate($value, $singleSchema);
-				if ($singleResult->hasErrors() === FALSE){
+				if ($singleResult->hasErrors() === FALSE) {
 					$isValid = TRUE;
 				}
 			}
-			if ($isValid == FALSE){
+			if ($isValid === FALSE) {
 				$result->addError($this->createError('None of the given schemas matched ' . $value));
 			}
 		} elseif ($this->isSchema($schema)) {
 			if (isset($schema['type'])) {
-				if (is_array($schema['type'])){
+				if (is_array($schema['type'])) {
 					$result->merge($this->validateTypeArray($value, $schema));
 				} else {
 					$result->merge($this->validateType($value, $schema));
@@ -202,11 +202,11 @@ class SchemaValidator {
 		if (isset($schema['maximum'])) {
 			if (isset($schema['exclusiveMaximum']) && $schema['exclusiveMaximum'] === TRUE) {
 				if ($value >= $schema['maximum']) {
-					$result->addError($this->createError('maximum(exclusive)=' .$schema['maximum'], $value));
+					$result->addError($this->createError('maximum(exclusive)=' . $schema['maximum'], $value));
 				}
 			} else {
 				if ($value > $schema['maximum']) {
-					$result->addError($this->createError('maximum=' .$schema['maximum'] , $value));
+					$result->addError($this->createError('maximum=' . $schema['maximum'], $value));
 				}
 			}
 		}
@@ -214,11 +214,11 @@ class SchemaValidator {
 		if (isset($schema['minimum'])) {
 			if (isset($schema['exclusiveMinimum']) && $schema['exclusiveMinimum'] === TRUE) {
 				if ($value <= $schema['minimum']) {
-					$result->addError($this->createError('minimum(exclusive)=' .$schema['minimum'], $value));
+					$result->addError($this->createError('minimum(exclusive)=' . $schema['minimum'], $value));
 				}
 			} else {
 				if ($value < $schema['minimum']) {
-					$result->addError($this->createError('minimum=' .$schema['minimum'], $value));
+					$result->addError($this->createError('minimum=' . $schema['minimum'], $value));
 				}
 			}
 		}
@@ -259,7 +259,7 @@ class SchemaValidator {
 	 * @param array $schema
 	 * @return \TYPO3\Flow\Error\Result
 	 */
-	protected function validateBooleanType($value, array $schema){
+	protected function validateBooleanType($value, array $schema) {
 		$result = new \TYPO3\Flow\Error\Result();
 		if (is_bool($value) === FALSE) {
 			$result->addError($this->createError('type=boolean', 'type=' . gettype($value)));
@@ -281,7 +281,7 @@ class SchemaValidator {
 	 * @param array $schema
 	 * @return \TYPO3\Flow\Error\Result
 	 */
-	protected function validateArrayType($value, array $schema){
+	protected function validateArrayType($value, array $schema) {
 		$result = new \TYPO3\Flow\Error\Result();
 		if (is_array($value) === FALSE || $this->isNumericallyIndexedArray($value) === FALSE) {
 			$result->addError($this->createError('type=array', 'type=' . gettype($value)));
@@ -309,7 +309,7 @@ class SchemaValidator {
 			$values = array();
 			foreach ($value as $itemValue) {
 				$itemHash = is_array($itemValue) ? serialize($itemValue) : $itemValue;
-				if (in_array($itemHash, $values)){
+				if (in_array($itemHash, $values)) {
 					$result->addError($this->createError('Unique values are expected'));
 					break;
 				} else {
@@ -344,7 +344,7 @@ class SchemaValidator {
 		$propertyKeysToHandle = array_keys($value);
 
 		if (isset($schema['properties'])) {
-			foreach ($schema['properties'] as $propertyName => $propertySchema){
+			foreach ($schema['properties'] as $propertyName => $propertySchema) {
 				if (array_key_exists($propertyName, $value)) {
 					$propertyValue = $value[$propertyName];
 					$subresult = $this->validate($propertyValue, $propertySchema);
@@ -354,7 +354,7 @@ class SchemaValidator {
 					$propertyKeysToHandle = array_diff($propertyKeysToHandle, array($propertyName));
 				} else {
 						// is subproperty required
-					if(is_array($propertySchema) && $this->isSchema($propertySchema) && isset($propertySchema['required']) && $propertySchema['required'] == TRUE) {
+					if (is_array($propertySchema) && $this->isSchema($propertySchema) && isset($propertySchema['required']) && $propertySchema['required'] === TRUE) {
 						$result->addError($this->createError('Property ' . $propertyName . ' is required'));
 					}
 				}
@@ -362,12 +362,12 @@ class SchemaValidator {
 		}
 
 		if (isset($schema['patternProperties']) && count($propertyKeysToHandle) > 0 && $this->isDictionary($schema['patternProperties'])) {
-			foreach (array_values($propertyKeysToHandle) as $propertyKey){
-				foreach ($schema['patternProperties'] as $propertyPattern => $propertySchema){
+			foreach (array_values($propertyKeysToHandle) as $propertyKey) {
+				foreach ($schema['patternProperties'] as $propertyPattern => $propertySchema) {
 					$keyResult = $this->validateStringType($propertyKey, array('pattern' => $propertyPattern));
 					if ($keyResult->hasErrors() === FALSE) {
 						$subresult = $this->validate($value[$propertyKey], $propertySchema);
-						if ($subresult->hasErrors()){
+						if ($subresult->hasErrors()) {
 							$result->forProperty($propertyKey)->merge($subresult);
 						}
 						$propertyKeysToHandle = array_diff($propertyKeysToHandle, array($propertyKey));
@@ -377,12 +377,12 @@ class SchemaValidator {
 		}
 
 		if (isset($schema['formatProperties']) && count($propertyKeysToHandle) > 0 && $this->isDictionary($schema['formatProperties'])) {
-			foreach (array_values($propertyKeysToHandle) as $propertyKey){
-				foreach ($schema['formatProperties'] as $propertyPattern => $propertySchema){
+			foreach (array_values($propertyKeysToHandle) as $propertyKey) {
+				foreach ($schema['formatProperties'] as $propertyPattern => $propertySchema) {
 					$keyResult = $this->validateStringType($propertyKey, array('format' => $propertyPattern));
 					if ($keyResult->hasErrors() === FALSE) {
 						$subresult = $this->validate($value[$propertyKey], $propertySchema);
-						if ($subresult->hasErrors()){
+						if ($subresult->hasErrors()) {
 							$result->forProperty($propertyKey)->merge($subresult);
 						}
 						$propertyKeysToHandle = array_diff($propertyKeysToHandle, array($propertyKey));
@@ -399,7 +399,7 @@ class SchemaValidator {
 			} else {
 				foreach ($propertyKeysToHandle as $propertyKey) {
 					$subresult = $this->validate($value[$propertyKey], $schema['additionalProperties']);
-					if ($subresult->hasErrors()){
+					if ($subresult->hasErrors()) {
 						$result->forProperty($propertyKey)->merge($subresult);
 					}
 				}

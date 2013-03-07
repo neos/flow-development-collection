@@ -45,7 +45,7 @@ abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInt
 	 */
 	protected $isOptional = FALSE;
 
- 	/**
+	/**
 	 * Specifies whether this Route Part should be converted to lower case when resolved.
 	 *
 	 * @var boolean
@@ -145,7 +145,7 @@ abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInt
 		return $this->isOptional;
 	}
 
- 	/**
+	/**
 	 * Specifies whether this Route part should be converted to lower case when resolved.
 	 *
 	 * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.

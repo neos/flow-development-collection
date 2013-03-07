@@ -165,18 +165,30 @@ class PluralsReader {
 				switch ($condition[0]) {
 					case 'is':
 					case 'isnot':
-						if (is_int($quantity) && $quantity === $condition[1]) $subrulePassed = TRUE;
-						if ($condition[0] === 'isnot') $subrulePassed = !$subrulePassed;
+						if (is_int($quantity) && $quantity === $condition[1]) {
+							$subrulePassed = TRUE;
+						}
+						if ($condition[0] === 'isnot') {
+							$subrulePassed = !$subrulePassed;
+						}
 						break;
 					case 'in':
 					case 'notin':
-						if (is_int($quantity) && $quantity >= $condition[1] && $quantity <= $condition[2]) $subrulePassed = TRUE;
-						if ($condition[0] === 'notin') $subrulePassed = !$subrulePassed;
+						if (is_int($quantity) && $quantity >= $condition[1] && $quantity <= $condition[2]) {
+							$subrulePassed = TRUE;
+						}
+						if ($condition[0] === 'notin') {
+							$subrulePassed = !$subrulePassed;
+						}
 						break;
 					case 'within':
 					case 'notwithin':
-						if ($quantity >= $condition[1] && $quantity <= $condition[2]) $subrulePassed = TRUE;
-						if ($condition[0] === 'notwithin') $subrulePassed = !$subrulePassed;
+						if ($quantity >= $condition[1] && $quantity <= $condition[2]) {
+							$subrulePassed = TRUE;
+						}
+						if ($condition[0] === 'notwithin') {
+							$subrulePassed = !$subrulePassed;
+						}
 						break;
 				}
 

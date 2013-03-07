@@ -42,8 +42,12 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
-		if (!is_string($data)) throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
+		if (!$this->cache instanceof \TYPO3\Flow\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\Flow\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
+		}
+		if (!is_string($data)) {
+			throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
+		}
 		$this->entries[$entryIdentifier] = $data;
 		foreach ($tags as $tag) {
 			$this->tagsAndEntries[$tag][$entryIdentifier] = TRUE;
@@ -80,7 +84,7 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		if (isset($this->entries[$entryIdentifier]))  {
+		if (isset($this->entries[$entryIdentifier])) {
 			unset($this->entries[$entryIdentifier]);
 			foreach (array_keys($this->tagsAndEntries) as $tag) {
 				if (isset($this->tagsAndEntries[$tag][$entryIdentifier])) {

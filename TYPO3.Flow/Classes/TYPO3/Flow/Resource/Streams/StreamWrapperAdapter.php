@@ -34,7 +34,7 @@ class StreamWrapperAdapter {
 	/**
 	 * @var resource
 	 */
-	public $context ;
+	public $context;
 
 	/**
 	 * @var \TYPO3\Flow\Resource\Streams\StreamWrapperInterface

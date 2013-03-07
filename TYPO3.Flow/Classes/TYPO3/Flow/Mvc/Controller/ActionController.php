@@ -191,7 +191,9 @@ class ActionController extends AbstractController {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
-			if ($dataType === NULL) throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
+			if ($dataType === NULL) {
+				throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
+			}
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
@@ -267,7 +269,9 @@ class ActionController extends AbstractController {
 				// else => call action method
 			$shouldCallActionMethod = TRUE;
 			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
-				if (!$subValidationResult->hasErrors()) continue;
+				if (!$subValidationResult->hasErrors()) {
+					continue;
+				}
 
 				if (array_search($argumentName, $ignoredArguments) !== FALSE) {
 					continue;
@@ -331,7 +335,7 @@ class ActionController extends AbstractController {
 		$format = $this->request->getFormat();
 
 		if ($subpackageKey !== NULL && $subpackageKey !== '') {
-			$packageKey.= '\\' . $subpackageKey;
+			$packageKey .= '\\' . $subpackageKey;
 		}
 		$possibleViewObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleViewObjectName);
 		$possibleViewObjectName = str_replace('@controller', $this->request->getControllerName(), $possibleViewObjectName);

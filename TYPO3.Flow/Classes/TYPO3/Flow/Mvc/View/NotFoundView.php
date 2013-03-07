@@ -37,7 +37,9 @@ class NotFoundView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @api
 	 */
 	public function render() {
-		if (!is_object($this->controllerContext->getRequest())) throw new \TYPO3\Flow\Mvc\Exception('Can\'t render view without request object.', 1192450280);
+		if (!is_object($this->controllerContext->getRequest())) {
+			throw new \TYPO3\Flow\Mvc\Exception('Can\'t render view without request object.', 1192450280);
+		}
 
 		$template = file_get_contents($this->getTemplatePathAndFilename());
 		$template = str_replace('{BASEURI}', $this->controllerContext->getRequest()->getHttpRequest()->getBaseUri(), $template);

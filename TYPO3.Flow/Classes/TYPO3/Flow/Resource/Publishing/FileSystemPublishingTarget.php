@@ -116,7 +116,9 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 			symlink($sourcePath, $targetPath);
 		} else {
 			foreach (\TYPO3\Flow\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
-				if (substr(strtolower($sourcePathAndFilename), -4, 4) === '.php') continue;
+				if (substr(strtolower($sourcePathAndFilename), -4, 4) === '.php') {
+					continue;
+				}
 				$targetPathAndFilename = \TYPO3\Flow\Utility\Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
 				if (!file_exists($targetPathAndFilename) || filemtime($sourcePathAndFilename) > filemtime($targetPathAndFilename)) {
 					$this->mirrorFile($sourcePathAndFilename, $targetPathAndFilename, TRUE);
@@ -279,7 +281,9 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 	 */
 	protected function buildPersistentResourcePublishPathAndFilename(\TYPO3\Flow\Resource\Resource $resource, $returnFilename) {
 		$publishPath = $this->resourcesPublishingPath . 'Persistent/';
-		if ($returnFilename === TRUE) return $publishPath . $resource->getResourcePointer()->getHash() . '.' . $resource->getFileExtension();
+		if ($returnFilename === TRUE) {
+			return $publishPath . $resource->getResourcePointer()->getHash() . '.' . $resource->getFileExtension();
+		}
 		return $publishPath;
 	}
 

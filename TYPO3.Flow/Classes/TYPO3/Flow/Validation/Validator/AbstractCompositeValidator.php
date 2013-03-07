@@ -110,7 +110,9 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
 	 * @api
 	 */
 	public function removeValidator(\TYPO3\Flow\Validation\Validator\ValidatorInterface $validator) {
-		if (!$this->validators->contains($validator)) throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('Cannot remove validator because its not in the conjunction.', 1207020177);
+		if (!$this->validators->contains($validator)) {
+			throw new \TYPO3\Flow\Validation\Exception\NoSuchValidatorException('Cannot remove validator because its not in the conjunction.', 1207020177);
+		}
 		$this->validators->detach($validator);
 	}
 

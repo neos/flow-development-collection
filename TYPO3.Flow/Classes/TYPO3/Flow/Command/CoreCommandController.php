@@ -230,7 +230,7 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		echo "Flow Interactive Shell\n\n";
 
-		while (true) {
+		while (TRUE) {
 			$commandLine = readline('Flow > ');
 			if ($commandLine == '') {
 				echo "\n";
@@ -313,8 +313,8 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 
 		$read = array($pipes[1]);
-		$write = null;
-		$except = null;
+		$write = NULL;
+		$except = NULL;
 		$readTimeout = 30;
 
 		stream_select($read, $write, $except, $readTimeout);

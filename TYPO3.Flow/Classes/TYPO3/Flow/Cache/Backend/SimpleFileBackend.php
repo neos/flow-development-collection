@@ -93,14 +93,18 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 				throw new \TYPO3\Flow\Cache\Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
 			}
 		}
-		if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) throw new \TYPO3\Flow\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-		if (!is_writable($cacheDirectory)) throw new \TYPO3\Flow\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+		if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) {
+			throw new \TYPO3\Flow\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+		}
+		if (!is_writable($cacheDirectory)) {
+			throw new \TYPO3\Flow\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+		}
 
 		$this->cacheDirectory = $cacheDirectory;
 		$this->cacheEntryFileExtension = ($cache instanceof PhpFrontend) ? '.php' : '';
 
 		if ((strlen($this->cacheDirectory) + 23) > $this->environment->getMaximumPathLength()) {
-			throw new \TYPO3\Flow\Cache\Exception('The length of the temporary cache path "' . $this->cacheDirectory . '" exceeds the maximum path length of ' . ($this->environment->getMaximumPathLength() - 23). '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+			throw new \TYPO3\Flow\Cache\Exception('The length of the temporary cache path "' . $this->cacheDirectory . '" exceeds the maximum path length of ' . ($this->environment->getMaximumPathLength() - 23) . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
 	}
 

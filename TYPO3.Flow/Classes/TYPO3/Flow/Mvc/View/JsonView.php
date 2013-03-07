@@ -264,8 +264,12 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 
 			$propertiesToRender = array();
 			foreach ($propertyNames as $propertyName) {
-				if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) continue;
-				if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) continue;
+				if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) {
+					continue;
+				}
+				if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) {
+					continue;
+				}
 
 				$propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $propertyName);
 

@@ -81,14 +81,14 @@ abstract class AbstractBackend implements \TYPO3\Flow\Log\Backend\BackendInterfa
 		}
 		$output = '';
 		if (is_array($var)) {
-			foreach ($var as $k=>$v) {
+			foreach ($var as $k => $v) {
 				if (is_array($v)) {
-					$output .= str_repeat(' ',$spaces) . $k . ' => array (' . PHP_EOL . $this->getFormattedVarDump($v, $spaces+3) . str_repeat (' ', $spaces) . ')' . PHP_EOL;
+					$output .= str_repeat(' ', $spaces) . $k . ' => array (' . PHP_EOL . $this->getFormattedVarDump($v, $spaces + 3) . str_repeat (' ', $spaces) . ')' . PHP_EOL;
 				} else {
 					if (is_object($v)) {
 						$output .= str_repeat(' ', $spaces) . $k . ' => object: ' . get_class($v) . PHP_EOL;
 					} else {
-						$output .= str_repeat(' ',$spaces) . $k . ' => ' . ($v === NULL ? '␀' : $v) . PHP_EOL;
+						$output .= str_repeat(' ', $spaces) . $k . ' => ' . ($v === NULL ? '␀' : $v) . PHP_EOL;
 					}
 				}
 			}

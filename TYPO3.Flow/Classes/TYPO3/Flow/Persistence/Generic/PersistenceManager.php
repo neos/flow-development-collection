@@ -114,7 +114,9 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @throws \TYPO3\Flow\Persistence\Generic\Exception\MissingBackendException
 	 */
 	public function initialize() {
-		if (!$this->backend instanceof \TYPO3\Flow\Persistence\Generic\Backend\BackendInterface) throw new \TYPO3\Flow\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		if (!$this->backend instanceof \TYPO3\Flow\Persistence\Generic\Backend\BackendInterface) {
+			throw new \TYPO3\Flow\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		}
 		$this->backend->setPersistenceManager($this);
 		$this->backend->initialize($this->settings['backendOptions']);
 	}

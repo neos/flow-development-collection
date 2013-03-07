@@ -233,7 +233,9 @@ class ProxyClassBuilder {
 	 * @return mixed The \TYPO3\Flow\Aop\Pointcut\Pointcut or FALSE if none was found
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
-		if (!isset($this->aspectContainers[$aspectClassName])) return FALSE;
+		if (!isset($this->aspectContainers[$aspectClassName])) {
+			return FALSE;
+		}
 		foreach ($this->aspectContainers[$aspectClassName]->getPointcuts() as $pointcut) {
 			if ($pointcut->getPointcutMethodName() === $pointcutMethodName) {
 				return $pointcut;
@@ -377,7 +379,9 @@ class ProxyClassBuilder {
 				$aspectContainer->addPropertyIntroduction($introduction);
 			}
 		}
-		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getInterfaceIntroductions()) < 1) throw new \TYPO3\Flow\Aop\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
+		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getInterfaceIntroductions()) < 1) {
+			throw new \TYPO3\Flow\Aop\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
+		}
 		return $aspectContainer;
 	}
 
@@ -401,7 +405,9 @@ class ProxyClassBuilder {
 		$this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
 		$this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
-		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1) return FALSE;
+		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1) {
+			return FALSE;
+		}
 
 		$proxyClass = $this->compiler->getProxyClass($targetClassName);
 		if ($proxyClass === FALSE) {
@@ -484,7 +490,9 @@ class ProxyClassBuilder {
 	 * @see buildProxyClass()
 	 */
 	protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
-		if (count($methodsAndGroupedAdvices) < 1) return '';
+		if (count($methodsAndGroupedAdvices) < 1) {
+			return '';
+		}
 
 		$methodsAndAdvicesArrayCode = "\n\t\t\$objectManager = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager;\n";
 		$methodsAndAdvicesArrayCode .= "\t\t\$this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices = array(\n";
@@ -588,7 +596,9 @@ EOT;
 				foreach ($methods as $method) {
 					list($methodDeclaringClassName, $methodName) = $method;
 
-					if ($this->reflectionService->isMethodFinal($targetClassName, $methodName)) continue;
+					if ($this->reflectionService->isMethodFinal($targetClassName, $methodName)) {
+						continue;
+					}
 
 					if ($pointcut->matches($targetClassName, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 						$advice = $advisor->getAdvice();
@@ -699,7 +709,9 @@ EOT;
 			$methodNames = get_class_methods($interfaceName);
 			if (is_array($methodNames)) {
 				foreach ($methodNames as $newMethodName) {
-					if (isset($methodsAndIntroductions[$newMethodName])) throw new \TYPO3\Flow\Aop\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
+					if (isset($methodsAndIntroductions[$newMethodName])) {
+						throw new \TYPO3\Flow\Aop\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
+					}
 					$methods[] = array($interfaceName, $newMethodName);
 					$methodsAndIntroductions[$newMethodName] = $introduction;
 				}

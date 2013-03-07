@@ -175,7 +175,7 @@ class Configuration {
 		if (!class_exists($className, TRUE)) {
 			throw new \TYPO3\Flow\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
 		}
-		$this->factoryObjectName= $className;
+		$this->factoryObjectName = $className;
 	}
 
 	/**

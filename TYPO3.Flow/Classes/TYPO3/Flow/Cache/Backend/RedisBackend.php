@@ -220,7 +220,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 			throw new \InvalidArgumentException('The specified database number is of type "' . gettype($database) . '" but an integer is expected.', 1279763057);
 		}
 		if ($database < 0) {
-			throw new \InvalidArgumentException('The specified database "' . $database. '" must be greater or equal than zero.', 1279763534);
+			throw new \InvalidArgumentException('The specified database "' . $database . '" must be greater or equal than zero.', 1279763534);
 		}
 
 		$this->database = $database;

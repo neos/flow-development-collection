@@ -256,14 +256,18 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 		$now = $_SERVER['REQUEST_TIME'];
 		$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
 		for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
-			if ($directoryIterator->isDot()) continue;
+			if ($directoryIterator->isDot()) {
+				continue;
+			}
 
 			$cacheEntryPathAndFilename = $directoryIterator->getPathname();
 			$index = (integer)file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
 			$metaData = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index);
 
 			$expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
-			if ($expiryTime !== 0 && $expiryTime < $now) continue;
+			if ($expiryTime !== 0 && $expiryTime < $now) {
+				continue;
+			}
 			if (in_array($searchedTag, explode(' ', substr($metaData, self::EXPIRYTIME_LENGTH, -self::DATASIZE_DIGITS)))) {
 				if ($cacheEntryFileExtensionLength > 0) {
 					$entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
@@ -298,7 +302,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
-		if (count($identifiers) === 0) return;
+		if (count($identifiers) === 0) {
+			return;
+		}
 
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);

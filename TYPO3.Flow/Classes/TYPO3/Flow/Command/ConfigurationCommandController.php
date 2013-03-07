@@ -135,12 +135,12 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 				$packageSchemaFiles = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($packageSchemaPath, '.schema.yaml');
 				foreach ($packageSchemaFiles as $schemaFile) {
 					$schemaName = substr($schemaFile, strlen($packageSchemaPath) + 1, -strlen('.schema.yaml'));
-					$schemaNameParts = explode('.', str_replace('/', '.' ,$schemaName), 2);
+					$schemaNameParts = explode('.', str_replace('/', '.', $schemaName), 2);
 
 					$schemaType = $schemaNameParts[0];
 					$schemaPath = isset($schemaNameParts[1]) ? $schemaNameParts[1] : NULL;
 
-					if ($schemaType === $type && ($path === NULL || strpos($schemaPath, $path) === 0)){
+					if ($schemaType === $type && ($path === NULL || strpos($schemaPath, $path) === 0)) {
 						$schemaFileInfos[] = array(
 							'file' => $schemaFile,
 							'name' => $schemaName,
@@ -164,7 +164,7 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 					$data = $configuration;
 				}
 
-				if (empty($data)){
+				if (empty($data)) {
 					$result->forProperty($schemaFileInfo['path'])->addError(new \TYPO3\Flow\Error\Error('configuration in path ' . $schemaFileInfo['path'] . ' is empty'));
 					$this->outputLine(' - package: "' . $schemaFileInfo['packageKey'] . '" schema: "' . $schemaFileInfo['name'] . '" -> <b>configuration is empty</b>');
 				} else {
@@ -193,8 +193,8 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 		if ($result->hasErrors()) {
 			$errors = $result->getFlattenedErrors();
 			$this->outputLine('<b>%s errors were found:</b>', array(count($errors)));
-			foreach ($errors as $path => $pathErrors){
-				foreach ($pathErrors as $error){
+			foreach ($errors as $path => $pathErrors) {
+				foreach ($pathErrors as $error) {
 					$this->outputLine(' - %s -> %s', array($path, $error->render()));
 				}
 			}
@@ -221,12 +221,12 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$data = \Symfony\Component\Yaml\Yaml::parse($yaml);
 		} elseif ($type !== NULL) {
 			$data = $this->configurationManager->getConfiguration($type);
-			if ($path !== NULL){
+			if ($path !== NULL) {
 				$data = \TYPO3\Flow\Utility\Arrays::getValueByPath($data, $path);
 			}
 		}
 
-		if (empty($data)){
+		if (empty($data)) {
 			$this->outputLine('Data was not found or is empty');
 			return;
 		}

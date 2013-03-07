@@ -68,7 +68,9 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 	 * @api
 	 */
 	public function removeBackend(\TYPO3\Flow\Log\Backend\BackendInterface $backend) {
-		if (!$this->backends->contains($backend)) throw new \TYPO3\Flow\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
+		if (!$this->backends->contains($backend)) {
+			throw new \TYPO3\Flow\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
+		}
 		$backend->close();
 		$this->backends->detach($backend);
 	}
@@ -125,7 +127,7 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 			mkdir(FLOW_PATH_DATA . 'Logs/Exceptions');
 		}
 		if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : date('YmdHis' , $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
 			$exceptionDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
 			file_put_contents($exceptionDumpPathAndFilename, $message . PHP_EOL . PHP_EOL . \TYPO3\Flow\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE));
 			$message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
@@ -144,7 +146,7 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
 		$backTrace = $exception->getTrace();
 		$line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-		return 'Uncaught exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage() ;
+		return 'Uncaught exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage();
 	}
 
 	/**

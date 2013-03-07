@@ -112,7 +112,7 @@ class PersistentObjectConverter extends ObjectConverter {
 			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
 		}
 		$propertyInformation = $schema->getProperty($propertyName);
-		return $propertyInformation['type'] . ($propertyInformation['elementType']!==NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
+		return $propertyInformation['type'] . ($propertyInformation['elementType'] !== NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
 	}
 
 	/**

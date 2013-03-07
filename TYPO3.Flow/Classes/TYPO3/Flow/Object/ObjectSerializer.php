@@ -218,7 +218,7 @@ class ObjectSerializer {
 			if (is_array($value)) {
 				$storableArray[$key][self::TYPE] = 'array';
 				$storableArray[$key][self::VALUE] = $this->buildStorageArrayForArrayProperty($value);
-			} else if (is_object($value)) {
+			} elseif (is_object($value)) {
 				$storableArray[$key][self::TYPE] = 'object';
 				$storableArray[$key][self::VALUE] = spl_object_hash($value);
 

@@ -170,7 +170,7 @@ class CommandManager {
 				list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
 				if (count($commandsByCommandName[$commandName][$controllerName]) > 1 || $this->bootstrap->isCompiletimeCommand($availableCommand->getCommandIdentifier())) {
 					$packageKeyParts = array_reverse(explode('.', $packageKey));
-					for($i = 1; $i <= count($packageKeyParts); $i++) {
+					for ($i = 1; $i <= count($packageKeyParts); $i++) {
 						$shortCommandIdentifier = implode('.', array_slice($packageKeyParts, 0, $i)) .  ':' . $controllerName . ':' . $commandName;
 						try {
 							$this->getCommandByIdentifier($shortCommandIdentifier);
@@ -207,8 +207,7 @@ class CommandManager {
 		if ($searchedCommandIdentifierPartsCount === 3 || $searchedCommandIdentifierPartsCount === 1) {
 			$searchedPackageKey = array_shift($searchedCommandIdentifierParts);
 			if ($searchedPackageKey !== $packageKey
-				&& substr($packageKey, - (strlen($searchedPackageKey) + 1)) !== '.' . $searchedPackageKey)
-			{
+					&& substr($packageKey, - (strlen($searchedPackageKey) + 1)) !== '.' . $searchedPackageKey) {
 				return FALSE;
 			}
 		}

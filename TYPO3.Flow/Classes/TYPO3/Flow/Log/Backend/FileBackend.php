@@ -147,12 +147,16 @@ class FileBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 		} else {
 			$logPath = dirname($this->logFileUrl);
 			if (!is_dir($logPath) && !is_link($logPath)) {
-				if ($this->createParentDirectories === FALSE) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
+				if ($this->createParentDirectories === FALSE) {
+					throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
+				}
 				\TYPO3\Flow\Utility\Files::createDirectoryRecursively($logPath);
 			}
 
 			$this->fileHandle = fopen($this->logFileUrl, 'ab');
-			if ($this->fileHandle === FALSE) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
+			if ($this->fileHandle === FALSE) {
+				throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
+			}
 
 			$streamMeta = stream_get_meta_data($this->fileHandle);
 			if ($streamMeta['wrapper_type'] === 'plainfile') {
@@ -161,7 +165,9 @@ class FileBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 				$this->fileHandle = fopen($this->logFileUrl, 'ab');
 			}
 		}
-		if ($this->fileHandle === FALSE) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
+		if ($this->fileHandle === FALSE) {
+			throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
+		}
 	}
 
 	/**
@@ -186,7 +192,7 @@ class FileBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 					if ($logFileCount == $this->logFilesToKeep) {
 						unlink($rotatedLogFileUrl);
 					} else {
-						rename($rotatedLogFileUrl, $this->logFileUrl . '.' . ($logFileCount+1));
+						rename($rotatedLogFileUrl, $this->logFileUrl . '.' . ($logFileCount + 1));
 					}
 				}
 			}

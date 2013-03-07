@@ -155,7 +155,7 @@ class ValidatorResolver {
 		foreach ($methodParameters as $parameterName => $methodParameter) {
 			$validatorConjunction = $this->createValidator('TYPO3\Flow\Validation\Validator\ConjunctionValidator');
 
-			if (!array_key_exists('type' , $methodParameter)) {
+			if (!array_key_exists('type', $methodParameter)) {
 				throw new Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
 			}
 			if (strpos($methodParameter['type'], '\\') === FALSE) {
@@ -248,7 +248,7 @@ class ValidatorResolver {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
 				try {
-					$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType(trim(implode('' , $classPropertyTagsValues['var']), ' \\'));
+					$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
 				} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744);
 				}
@@ -276,7 +276,9 @@ class ValidatorResolver {
 					$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
 				}
 			}
-			if (count($objectValidator->getPropertyValidators()) > 0) $conjunctionValidator->addValidator($objectValidator);
+			if (count($objectValidator->getPropertyValidators()) > 0) {
+				$conjunctionValidator->addValidator($objectValidator);
+			}
 
 				// Custom validator for the class
 			$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $targetClassName) . 'Validator';

@@ -161,7 +161,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		if (isset ($groupedAdvices['TYPO3\Flow\Aop\Advice\BeforeAdvice'])) {
 			$advicesCode .= '
 					$advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'TYPO3\Flow\Aop\Advice\BeforeAdvice\'];
-					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode.');
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ');
 					foreach ($advices as $advice) {
 						$advice->invoke($joinPoint);
 					}
@@ -180,7 +180,7 @@ abstract class AbstractMethodInterceptorBuilder {
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';
 		} else {
 			$advicesCode .= '
-					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode.');
+					$joinPoint = new \TYPO3\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', ' . $methodArgumentsCode . ');
 					$result = $this->Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
 ';
 			$methodArgumentsCode = '$joinPoint->getMethodArguments()';

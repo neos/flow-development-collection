@@ -165,7 +165,9 @@ class Request implements RequestInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
 	 */
 	public function setArgument($argumentName, $value) {
-		if (!is_string($argumentName) || $argumentName === '') throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException('Invalid argument name.', 1300893885);
+		if (!is_string($argumentName) || $argumentName === '') {
+			throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException('Invalid argument name.', 1300893885);
+		}
 		$this->arguments[$argumentName] = $value;
 	}
 
@@ -187,7 +189,9 @@ class Request implements RequestInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException if such an argument does not exist
 	 */
 	public function getArgument($argumentName) {
-		if (!isset($this->arguments[$argumentName])) throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1300893886);
+		if (!isset($this->arguments[$argumentName])) {
+			throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1300893886);
+		}
 		return $this->arguments[$argumentName];
 	}
 

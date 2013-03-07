@@ -201,13 +201,13 @@ class Service {
 
 		$currentVersion = $configuration->getCurrentVersion();
 		if ($currentVersion) {
-			$currentVersionFormatted = $configuration->formatVersion($currentVersion) . ' ('.$currentVersion.')';
+			$currentVersionFormatted = $configuration->formatVersion($currentVersion) . ' (' . $currentVersion . ')';
 		} else {
 			$currentVersionFormatted = 0;
 		}
 		$latestVersion = $configuration->getLatestVersion();
 		if ($latestVersion) {
-			$latestVersionFormatted = $configuration->formatVersion($latestVersion) . ' ('.$latestVersion.')';
+			$latestVersionFormatted = $configuration->formatVersion($latestVersion) . ' (' . $latestVersion . ')';
 		} else {
 			$latestVersionFormatted = 0;
 		}

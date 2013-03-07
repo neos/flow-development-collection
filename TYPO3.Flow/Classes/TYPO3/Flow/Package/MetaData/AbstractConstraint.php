@@ -37,7 +37,7 @@ abstract class AbstractConstraint {
 	 * @param string $minVersion
 	 * @param string $maxVersion
 	 */
-	public function __construct($constraintType, $value, $minVersion = null, $maxVersion = null) {
+	public function __construct($constraintType, $value, $minVersion = NULL, $maxVersion = NULL) {
 		$this->constraintType = $constraintType;
 		$this->value = $value;
 		$this->minVersion = $minVersion;

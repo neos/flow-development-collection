@@ -31,10 +31,10 @@ class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 	 * @return void
 	 */
 	public function walkSelectStatement(\Doctrine\ORM\Query\AST\SelectStatement $AST) {
-		$parent = null;
-		$parentName = null;
+		$parent = NULL;
+		$parentName = NULL;
 		foreach ($this->_getQueryComponents() AS $dqlAlias => $qComp) {
-			if ($qComp['parent'] === null && $qComp['nestingLevel'] == 0) {
+			if ($qComp['parent'] === NULL && $qComp['nestingLevel'] == 0) {
 				$parent = $qComp;
 				$parentName = $dqlAlias;
 				break;
@@ -49,12 +49,12 @@ class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 
 		$AST->selectClause->selectExpressions = array(
 			new \Doctrine\ORM\Query\AST\SelectExpression(
-				new \Doctrine\ORM\Query\AST\AggregateExpression('count', $pathExpression, true), null
+				new \Doctrine\ORM\Query\AST\AggregateExpression('count', $pathExpression, TRUE), NULL
 			)
 		);
 
 			// ORDER BY is not needed, only increases query execution through unnecessary sorting.
-		$AST->orderByClause = null;
+		$AST->orderByClause = NULL;
 	}
 
 }

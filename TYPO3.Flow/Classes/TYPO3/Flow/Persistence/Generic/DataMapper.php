@@ -145,7 +145,9 @@ class DataMapper {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
 
 		foreach ($objectData['properties'] as $propertyName => $propertyData) {
-			if (!$classSchema->hasProperty($propertyName)) continue;
+			if (!$classSchema->hasProperty($propertyName)) {
+				continue;
+			}
 			$propertyValue = NULL;
 
 			if ($propertyData['value'] !== NULL) {
@@ -231,7 +233,9 @@ class DataMapper {
 	 * @return array
 	 */
 	protected function mapArray(array $arrayValues = NULL) {
-		if ($arrayValues === NULL) return array();
+		if ($arrayValues === NULL) {
+			return array();
+		}
 
 		$array = array();
 		foreach ($arrayValues as $arrayValue) {
@@ -279,7 +283,9 @@ class DataMapper {
 	 * @todo restore information attached to objects?
 	 */
 	protected function mapSplObjectStorage(array $objectStorageValues = NULL, $createLazySplObjectStorage = FALSE) {
-		if ($objectStorageValues === NULL) return new \SplObjectStorage();
+		if ($objectStorageValues === NULL) {
+			return new \SplObjectStorage();
+		}
 
 		if ($createLazySplObjectStorage) {
 			$objectIdentifiers = array();

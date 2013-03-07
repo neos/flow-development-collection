@@ -85,7 +85,7 @@ interface RoutePartInterface {
 	 */
 	public function isOptional();
 
- 	/**
+	/**
 	 * Specifies whether this Route part should be converted to lower case when resolved.
 	 *
 	 * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.

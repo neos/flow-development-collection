@@ -90,13 +90,23 @@ class Locale {
 	 * @api
 	 */
 	public function __construct($localeIdentifier) {
-		if (!is_string($localeIdentifier)) throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) throw new \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+		if (!is_string($localeIdentifier)) {
+			throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
+		}
+		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) {
+			throw new \TYPO3\Flow\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+		}
 
 		$this->language = strtolower($matches['language']);
-		if (!empty($matches['script'])) $this->script = ucfirst(strtolower($matches['script']));
-		if (!empty($matches['region'])) $this->region = strtoupper($matches['region']);
-		if (!empty($matches['variant'])) $this->variant = strtoupper($matches['variant']);
+		if (!empty($matches['script'])) {
+			$this->script = ucfirst(strtolower($matches['script']));
+		}
+		if (!empty($matches['region'])) {
+			$this->region = strtoupper($matches['region']);
+		}
+		if (!empty($matches['variant'])) {
+			$this->variant = strtoupper($matches['variant']);
+		}
 	}
 
 	/**
@@ -148,9 +158,15 @@ class Locale {
 	public function __toString() {
 		$localeIdentifier = $this->language;
 
-		if ($this->script !== NULL) $localeIdentifier .= '_' . $this->script;
-		if ($this->region !== NULL) $localeIdentifier .= '_' . $this->region;
-		if ($this->variant !== NULL) $localeIdentifier .= '_' . $this->variant;
+		if ($this->script !== NULL) {
+			$localeIdentifier .= '_' . $this->script;
+		}
+		if ($this->region !== NULL) {
+			$localeIdentifier .= '_' . $this->region;
+		}
+		if ($this->variant !== NULL) {
+			$localeIdentifier .= '_' . $this->variant;
+		}
 
 		return $localeIdentifier;
 	}

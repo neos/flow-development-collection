@@ -25,7 +25,7 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	/**
 	 * @var resource
 	 */
-	public $context ;
+	public $context;
 
 	/**
 	 * @var resource

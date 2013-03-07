@@ -62,7 +62,7 @@ class ObjectAccess {
 	 */
 	static public function getProperty($subject, $propertyName, $forceDirectAccess = FALSE) {
 		if (!is_object($subject) && !is_array($subject)) {
-			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
+			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
 		}
 		if (!is_string($propertyName) && !is_integer($propertyName)) {
 			throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
@@ -195,8 +195,12 @@ class ObjectAccess {
 			return TRUE;
 		}
 
-		if (!is_object($subject)) throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject). ' given.', 1237301368);
-		if (!is_string($propertyName) && !is_integer($propertyName)) throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
+		if (!is_object($subject)) {
+			throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
+		}
+		if (!is_string($propertyName) && !is_integer($propertyName)) {
+			throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
+		}
 
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
@@ -229,7 +233,9 @@ class ObjectAccess {
 	 * @throws \InvalidArgumentException
 	 */
 	static public function getGettablePropertyNames($object) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
+		if (!is_object($object)) {
+			throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
+		}
 		if ($object instanceof \stdClass) {
 			$declaredPropertyNames = array_keys(get_object_vars($object));
 			$class = 'stdClass';
@@ -270,7 +276,9 @@ class ObjectAccess {
 	 * @throws \InvalidArgumentException
 	 */
 	static public function getSettablePropertyNames($object) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1264022994);
+		if (!is_object($object)) {
+			throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1264022994);
+		}
 		if ($object instanceof \stdClass) {
 			$declaredPropertyNames = array_keys(get_object_vars($object));
 		} else {
@@ -297,7 +305,9 @@ class ObjectAccess {
 	 * @throws \InvalidArgumentException
 	 */
 	static public function isPropertySettable($object, $propertyName) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828920);
+		if (!is_object($object)) {
+			throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
+		}
 		if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
 			return TRUE;
 		} elseif (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) {
@@ -315,7 +325,9 @@ class ObjectAccess {
 	 * @throws \InvalidArgumentException
 	 */
 	static public function isPropertyGettable($object, $propertyName) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
+		if (!is_object($object)) {
+			throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828921);
+		}
 		if ($object instanceof \ArrayAccess && isset($object[$propertyName]) === TRUE) {
 			return TRUE;
 		} elseif ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
@@ -340,7 +352,9 @@ class ObjectAccess {
 	 * @todo What to do with ArrayAccess
 	 */
 	static public function getGettableProperties($object) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301370);
+		if (!is_object($object)) {
+			throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301370);
+		}
 		$properties = array();
 		foreach (self::getGettablePropertyNames($object) as $propertyName) {
 			$propertyExists = FALSE;

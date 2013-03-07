@@ -157,9 +157,13 @@ class PersistenceQueryRewritingAspect {
 		}
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
-			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) return NULL;
+			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) {
+				return NULL;
+			}
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
-			if ($this->checkConstraintDefinitionsOnResultObject($policyConstraintsDefinition, $result) === FALSE) return NULL;
+			if ($this->checkConstraintDefinitionsOnResultObject($policyConstraintsDefinition, $result) === FALSE) {
+				return NULL;
+			}
 		}
 
 		return $result;
@@ -229,7 +233,7 @@ class PersistenceQueryRewritingAspect {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);
-		} else if (!is_array($constraintDefinition['rightValue']) && strpos($constraintDefinition['rightValue'], 'this.') === 0) {
+		} elseif (!is_array($constraintDefinition['rightValue']) && strpos($constraintDefinition['rightValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['rightValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['leftValue']);
 		} else {
@@ -351,7 +355,9 @@ class PersistenceQueryRewritingAspect {
 			$rightOperand = $this->getValueForOperand($constraintDefinition['rightValue']);
 		}
 
-		if ($referenceToThisFound === FALSE) throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
+		if ($referenceToThisFound === FALSE) {
+			throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
+		}
 
 		if (is_object($leftOperand)
 			&& (
@@ -417,15 +423,15 @@ class PersistenceQueryRewritingAspect {
 				$result[] = $this->getValueForOperand($expressionEntry);
 			}
 			return $result;
-		} else if (is_numeric($expression)) {
+		} elseif (is_numeric($expression)) {
 			return $expression;
-		} else if ($expression === 'TRUE') {
+		} elseif ($expression === 'TRUE') {
 			return TRUE;
-		} else if ($expression === 'FALSE') {
+		} elseif ($expression === 'FALSE') {
 			return FALSE;
-		} else if ($expression === 'NULL') {
+		} elseif ($expression === 'NULL') {
 			return NULL;
-		} else if (strpos($expression, 'current.') === 0) {
+		} elseif (strpos($expression, 'current.') === 0) {
 			$objectAccess = explode('.', $expression, 3);
 			$globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
 			$globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);

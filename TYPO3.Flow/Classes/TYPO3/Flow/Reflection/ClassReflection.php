@@ -34,7 +34,7 @@ class ClassReflection extends \ReflectionClass {
 		spl_autoload_register($throwExceptionOnUnloadedClasses);
 		try {
 			parent::__construct($classNameOrObject);
-		} catch(\TYPO3\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException $exception) {
+		} catch (\TYPO3\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException $exception) {
 			spl_autoload_unregister($throwExceptionOnUnloadedClasses);
 			throw $exception;
 		}

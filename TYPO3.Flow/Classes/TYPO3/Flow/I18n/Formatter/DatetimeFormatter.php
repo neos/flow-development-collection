@@ -196,11 +196,15 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 				return $this->padString($dateTime->format('G'), $formatLengthOfSubformat);
 			case 'K':
 				$hour = (int)($dateTime->format('g'));
-				if ($hour === 12) $hour = 0;
+				if ($hour === 12) {
+					$hour = 0;
+				}
 				return $this->padString($hour, $formatLengthOfSubformat);
 			case 'k':
 				$hour = (int)($dateTime->format('G'));
-				if ($hour === 0) $hour = 24;
+				if ($hour === 0) {
+					$hour = 24;
+				}
 				return $this->padString($hour, $formatLengthOfSubformat);
 			case 'a':
 				return $localizedLiterals['dayPeriods']['format']['wide'][$dateTime->format('a')];
@@ -222,22 +226,24 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 				$formatType = ($subformat[0] === 'L') ? 'stand-alone' : 'format';
 				if ($formatLengthOfSubformat <= 2) {
 					return $this->padString($month, $formatLengthOfSubformat);
-				} else if ($formatLengthOfSubformat === 3) {
+				} elseif ($formatLengthOfSubformat === 3) {
 					return $localizedLiterals['months'][$formatType]['abbreviated'][$month];
-				} else if ($formatLengthOfSubformat === 4) {
+				} elseif ($formatLengthOfSubformat === 4) {
 					return $localizedLiterals['months'][$formatType]['wide'][$month];
 				} else {
 					return $localizedLiterals['months'][$formatType]['narrow'][$month];
 				}
 			case 'y':
 				$year = (int)$dateTime->format('Y');
-				if ($formatLengthOfSubformat === 2) $year %= 100;
+				if ($formatLengthOfSubformat === 2) {
+					$year %= 100;
+				}
 				return $this->padString($year, $formatLengthOfSubformat);
 			case 'E':
 				$day = strtolower($dateTime->format('D'));
 				if ($formatLengthOfSubformat <= 3) {
 					return $localizedLiterals['days']['format']['abbreviated'][$day];
-				} else if ($formatLengthOfSubformat === 4) {
+				} elseif ($formatLengthOfSubformat === 4) {
 					return $localizedLiterals['days']['format']['wide'][$day];
 				} else {
 					return $localizedLiterals['days']['format']['narrow'][$day];
@@ -252,7 +258,7 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 				$formatType = ($subformat[0] === 'q') ? 'stand-alone' : 'format';
 				if ($formatLengthOfSubformat <= 2) {
 					return $this->padString($quarter, $formatLengthOfSubformat);
-				} else if ($formatLengthOfSubformat === 3) {
+				} elseif ($formatLengthOfSubformat === 3) {
 					return $localizedLiterals['quarters'][$formatType]['abbreviated'][$quarter];
 				} else {
 					return $localizedLiterals['quarters'][$formatType]['wide'][$quarter];
@@ -261,7 +267,7 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 				$era = (int)($dateTime->format('Y') > 0);
 				if ($formatLengthOfSubformat <= 3) {
 					return $localizedLiterals['eras']['eraAbbr'][$era];
-				} else if ($formatLengthOfSubformat === 4) {
+				} elseif ($formatLengthOfSubformat === 4) {
 					return $localizedLiterals['eras']['eraNames'][$era];
 				} else {
 					return $localizedLiterals['eras']['eraNarrow'][$era];

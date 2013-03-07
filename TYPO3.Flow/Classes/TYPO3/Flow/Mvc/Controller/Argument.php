@@ -94,8 +94,12 @@ class Argument {
 	 * @api
 	 */
 	public function __construct($name, $dataType) {
-		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
-		if (strlen($name) === 0) throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
+		if (!is_string($name)) {
+			throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
+		}
+		if (strlen($name) === 0) {
+			throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
+		}
 		$this->name = $name;
 		$this->setDataType($dataType);
 	}

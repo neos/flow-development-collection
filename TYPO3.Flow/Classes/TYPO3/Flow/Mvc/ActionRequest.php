@@ -375,12 +375,12 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function getControllerName() {
 		$controllerObjectName = $this->getControllerObjectName();
-		if ($controllerObjectName !== '')  {
+		if ($controllerObjectName !== '') {
 
 				// Extract the controller name from the controller object name to assure that
 				// the case is correct.
 				// Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
-			return substr($controllerObjectName, -(strlen($this->controllerName)+10), -10);
+			return substr($controllerObjectName, -(strlen($this->controllerName) + 10), - 10);
 		} else {
 			return $this->controllerName;
 		}
@@ -416,7 +416,7 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function getControllerActionName() {
 		$controllerObjectName = $this->getControllerObjectName();
-		if ($controllerObjectName !== '' && ($this->controllerActionName === strtolower($this->controllerActionName)))  {
+		if ($controllerObjectName !== '' && ($this->controllerActionName === strtolower($this->controllerActionName))) {
 			$controllerClassName = $this->objectManager->getClassNameByObjectName($controllerObjectName);
 			$lowercaseActionMethodName = strtolower($this->controllerActionName) . 'action';
 			foreach (get_class_methods($controllerClassName) as $existingMethodName) {
@@ -488,7 +488,9 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getArgument($argumentName) {
-		if (!isset($this->arguments[$argumentName])) throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
+		if (!isset($this->arguments[$argumentName])) {
+			throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
+		}
 		return $this->arguments[$argumentName];
 	}
 

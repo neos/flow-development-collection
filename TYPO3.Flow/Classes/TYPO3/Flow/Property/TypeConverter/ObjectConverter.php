@@ -210,7 +210,7 @@ class ObjectConverter extends AbstractTypeConverter {
 				} elseif ($constructorArgumentInformation['optional'] === TRUE) {
 					$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
 				} else {
-					throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1268734872);
+					throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
 				}
 			}
 			$classReflection = new \ReflectionClass($className);

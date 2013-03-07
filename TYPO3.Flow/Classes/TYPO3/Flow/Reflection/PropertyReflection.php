@@ -82,8 +82,12 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @throws \TYPO3\Flow\Reflection\Exception
 	 */
 	public function getValue($object = NULL) {
-		if (!is_object($object)) throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
-		if ($this->isPublic()) return parent::getValue($object);
+		if (!is_object($object)) {
+			throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+		}
+		if ($this->isPublic()) {
+			return parent::getValue($object);
+		}
 
 		parent::setAccessible(TRUE);
 		return parent::getValue($object);
@@ -98,7 +102,9 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @throws \TYPO3\Flow\Reflection\Exception
 	 */
 	public function setValue($object = NULL, $value = NULL) {
-		if (!is_object($object)) throw new \TYPO3\Flow\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+		if (!is_object($object)) {
+			throw new \TYPO3\Flow\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+		}
 
 		if ($this->isPublic()) {
 			parent::setValue($object, $value);

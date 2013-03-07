@@ -180,7 +180,7 @@ class ProxyClassBuilder {
 
 		$className = $objectConfiguration->getClassName();
 		foreach ($this->objectConfigurations as $otherObjectConfiguration) {
-			if	 ($otherObjectConfiguration !== $objectConfiguration && $otherObjectConfiguration->getClassName() === $className) {
+			if ($otherObjectConfiguration !== $objectConfiguration && $otherObjectConfiguration->getClassName() === $className) {
 				$code .= '		if (get_class($this) === \'' . $otherObjectConfiguration->getClassName() . '\') \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->setInstance(\'' . $otherObjectConfiguration->getObjectName() . '\', $this);' . "\n";
 			}
 		}
@@ -225,12 +225,12 @@ class ProxyClassBuilder {
 
 			$code = "\t\t\$this->Flow_Object_PropertiesToSerialize = array();
 	\$reflectionService = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Reflection\\ReflectionService');
-	\$reflectedClass = new \\ReflectionClass('".$className."');
+	\$reflectedClass = new \\ReflectionClass('" . $className . "');
 	\$allReflectedProperties = \$reflectedClass->getProperties();
 	foreach (\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'Flow_Aop_Proxy_groupedAdviceChains', 'Flow_Aop_Proxy_methodIsInAdviceMode'))) continue;
-		if (\$reflectionService->isPropertyTaggedWith('".$className."', \$propertyName, 'transient')) continue;
+		if (\$reflectionService->isPropertyTaggedWith('" . $className . "', \$propertyName, 'transient')) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
 			foreach (\$this->\$propertyName as \$key => \$value) {
 				\$this->searchForEntitiesAndStoreIdentifierArray((string)\$key, \$value, \$propertyName);
@@ -320,7 +320,7 @@ class ProxyClassBuilder {
 		$constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
 		$argumentNumberToOptionalInfo = array();
 		foreach ($constructorParameterInfo as $parameterInfo) {
-			$argumentNumberToOptionalInfo[($parameterInfo['position'] +1)] = $parameterInfo['optional'];
+			$argumentNumberToOptionalInfo[($parameterInfo['position'] + 1)] = $parameterInfo['optional'];
 		}
 
 		foreach ($argumentConfigurations as $argumentNumber => $argumentConfiguration) {
@@ -359,7 +359,7 @@ class ProxyClassBuilder {
 					break;
 
 					case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-						$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
+						$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
 					break;
 				}
 			}
@@ -647,7 +647,7 @@ class ProxyClassBuilder {
 					break;
 
 					case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-						$preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
+						$preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \'' . $argumentValue . '\'))';
 					break;
 				}
 			}

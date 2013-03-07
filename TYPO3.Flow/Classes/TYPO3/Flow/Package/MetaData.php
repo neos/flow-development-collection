@@ -168,7 +168,9 @@ class MetaData implements \TYPO3\Flow\Package\MetaDataInterface {
 	 * @return array Package constraints
 	 */
 	public function getConstraintsByType($constraintType) {
-		if (!isset($this->constraints[$constraintType])) return array();
+		if (!isset($this->constraints[$constraintType])) {
+			return array();
+		}
 		return $this->constraints[$constraintType];
 	}
 

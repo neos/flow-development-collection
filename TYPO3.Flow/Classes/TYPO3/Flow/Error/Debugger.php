@@ -132,7 +132,7 @@ class Debugger {
 	 */
 	static protected function renderArrayDump($array, $level, $plaintext = FALSE, $ansiColors = FALSE) {
 		$type = is_array($array) ? 'array' : get_class($array);
-		$dump = $type . (count($array) ? '(' . count($array) .')' : '(empty)');
+		$dump = $type . (count($array) ? '(' . count($array) . ')' : '(empty)');
 		foreach ($array as $key => $value) {
 			$dump .= chr(10) . str_repeat(' ', $level) . self::renderDump($key, 0, $plaintext, $ansiColors) . ' => ';
 			$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
@@ -203,7 +203,7 @@ class Debugger {
 			$dump .= ($scope !== '') ? ' ' . self::ansiEscapeWrap($scope, '44;37', $ansiColors) : '';
 		} else {
 			$dump .= '<span class="debug-object' . $additionalAttributes . '" title="' . $objectIdentifier . '">' . $className . '</span>';
-			$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope .'</span>' : '';
+			$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope . '</span>' : '';
 		}
 
 		if (property_exists($object, 'Persistence_Object_Identifier')) {
@@ -399,7 +399,7 @@ class Debugger {
 						}
 					}
 					for ($line = $startLine; $line < $endLine; $line++) {
-						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
+						$codeLine = str_replace("\t", ' ', $phpFile[$line - 1]);
 
 						if ($line === $lineNumber) {
 							if (!$plaintext) {

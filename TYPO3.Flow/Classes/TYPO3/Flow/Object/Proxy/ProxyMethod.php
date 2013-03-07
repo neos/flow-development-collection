@@ -219,7 +219,9 @@ class ProxyMethod {
 		$defaultValue = '';
 		$byReferenceSign = '';
 
-		if ($fullClassName === NULL || $methodName === NULL) return '';
+		if ($fullClassName === NULL || $methodName === NULL) {
+			return '';
+		}
 
 		$methodParameters = $this->reflectionService->getMethodParameters($fullClassName, $methodName);
 		if (count($methodParameters) > 0) {

@@ -39,7 +39,7 @@ class Files {
 	 * @return string
 	 */
 	static public function getNormalizedPath($path) {
-		return rtrim($path, '/') .'/';
+		return rtrim($path, '/') . '/';
 	}
 
 	/**
@@ -81,7 +81,9 @@ class Files {
 	 * @throws Exception
 	 */
 	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, $returnDotFiles = FALSE, &$filenames = array()) {
-		if (!is_dir($path)) throw new \TYPO3\Flow\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
+		if (!is_dir($path)) {
+			throw new \TYPO3\Flow\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
+		}
 
 		$directoryIterator = new \DirectoryIterator($path);
 		$suffixLength = strlen($suffix);
@@ -236,7 +238,9 @@ class Files {
 	 * @return mixed The file content as a string or FALSE if the file could not be opened.
 	 */
 	static public function getFileContents($pathAndFilename, $flags = 0, $context = NULL, $offset = -1, $maximumLength = -1) {
-		if ($flags === TRUE) $flags = FILE_USE_INCLUDE_PATH;
+		if ($flags === TRUE) {
+			$flags = FILE_USE_INCLUDE_PATH;
+		}
 		try {
 			if ($maximumLength > -1) {
 				$content = file_get_contents($pathAndFilename, $flags, $context, $offset, $maximumLength);

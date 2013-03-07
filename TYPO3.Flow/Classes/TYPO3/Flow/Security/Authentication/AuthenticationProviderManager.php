@@ -163,7 +163,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 					return;
 				}
 			} else {
-				 if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ALL_TOKENS) {
+				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ALL_TOKENS) {
 					throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
 				}
 			}
@@ -289,7 +289,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 
 			if (isset($providerConfiguration['entryPoint'])) {
 				if (is_array($providerConfiguration['entryPoint'])) {
-					$message = 'Invalid entry point configuration in setting "TYPO3:Flow:security:authentication:providers:' . $providerName .'. Check your settings and make sure to specify only one entry point for each provider.';
+					$message = 'Invalid entry point configuration in setting "TYPO3:Flow:security:authentication:providers:' . $providerName . '. Check your settings and make sure to specify only one entry point for each provider.';
 					throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException($message, 1327671458);
 				}
 				$entryPointName = $providerConfiguration['entryPoint'];

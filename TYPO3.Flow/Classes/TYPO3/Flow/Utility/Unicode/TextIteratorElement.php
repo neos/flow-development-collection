@@ -48,7 +48,7 @@ class TextIteratorElement {
 	 * @param integer $length
 	 * @param boolean $boundary
 	 */
-	public function __construct($value, $offset, $length=0, $boundary=FALSE) {
+	public function __construct($value, $offset, $length = 0, $boundary = FALSE) {
 		$this->value = $value;
 		$this->offset = $offset;
 		$this->length = $length;

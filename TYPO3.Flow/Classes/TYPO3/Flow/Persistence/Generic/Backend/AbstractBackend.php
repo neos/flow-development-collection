@@ -314,7 +314,9 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 	protected function validateObject($object) {
 		$classSchema = $this->reflectionService->getClassSchema($object);
 		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
-		if ($validator === NULL) return;
+		if ($validator === NULL) {
+			return;
+		}
 		$validationResult = $validator->validate($object);
 		if ($validationResult->hasErrors()) {
 			$errorMessages = '';

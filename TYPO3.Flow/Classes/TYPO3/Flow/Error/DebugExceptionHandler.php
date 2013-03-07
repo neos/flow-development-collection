@@ -56,7 +56,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 	protected function renderStatically($statusCode, $exception) {
 		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
 		$exceptionHeader = '';
-		while (true) {
+		while (TRUE) {
 			$pathPosition = strpos($exception->getFile(), 'Packages/');
 			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
@@ -167,7 +167,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 		}
 
 		for ($index = 0; $index < count($backtraceSteps); $index ++) {
-			echo PHP_EOL . '#' . $index . ' ' ;
+			echo PHP_EOL . '#' . $index . ' ';
 			if (isset($backtraceSteps[$index]['class'])) {
 				echo $backtraceSteps[$index]['class'];
 			}
@@ -192,17 +192,17 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 	 */
 	protected function getCreateIssueLink(\Exception $exception) {
 		$filename = basename($exception->getFile());
-		return 'http://forge.typo3.org/projects/package-typo3-flow/issues/new?issue[subject]='
-			. urlencode(get_class($exception) . ' thrown in file ' . $filename)
-			. '&issue[description]='
-			. urlencode(
-				$exception->getMessage() . chr(10)
-				. strip_tags(
+		return 'http://forge.typo3.org/projects/package-typo3-flow/issues/new?issue[subject]=' .
+			urlencode (get_class($exception) . ' thrown in file ' . $filename) .
+			'&issue[description]=' .
+			urlencode (
+				$exception->getMessage() . chr(10) .
+				strip_tags(
 					str_replace(array('<br />', '</pre>'), chr(10), \TYPO3\Flow\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE))
-				  )
-				. chr(10) . 'Please include more helpful information!'
-			  )
-			. '&issue[category_id]=554&issue[priority_id]=7';
+				) .
+				chr(10) . 'Please include more helpful information!'
+			) .
+			'&issue[category_id]=554&issue[priority_id]=7';
 	}
 }
 

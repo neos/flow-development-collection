@@ -38,7 +38,7 @@ class Role {
 	 */
 	public function __construct($identifier) {
 		if (!is_string($identifier)) {
-			throw new \RuntimeException('Role identifier must be a string, "' . gettype($identifier) .'" given.', 1296509556);
+			throw new \RuntimeException('Role identifier must be a string, "' . gettype($identifier) . '" given.', 1296509556);
 		}
 		$this->identifier = $identifier;
 	}

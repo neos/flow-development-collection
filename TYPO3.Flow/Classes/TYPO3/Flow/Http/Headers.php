@@ -429,7 +429,7 @@ class Headers {
 	 */
 	protected function setCookiesFromRawHeader($rawFieldValue) {
 		$cookiePairs = explode(';', $rawFieldValue);
-		foreach($cookiePairs as $cookiePair) {
+		foreach ($cookiePairs as $cookiePair) {
 			list($name, $value) = explode('=', $cookiePair, 2);
 			$this->setCookie(new Cookie(trim($name), urldecode(trim($value, "\t ;\""))));
 		}

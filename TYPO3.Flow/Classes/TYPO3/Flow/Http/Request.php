@@ -76,7 +76,7 @@ class Request extends Message {
 		$this->headers = Headers::createFromServer($server);
 		$this->setMethod(isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET');
 		$protocol = (isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0))) ? 'https' : 'http';
-		$this->uri = new Uri($protocol . '://' . (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost') . str_replace('/index.php' , '', (isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/')));
+		$this->uri = new Uri($protocol . '://' . (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost') . str_replace('/index.php', '', (isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/')));
 		$this->server = $server;
 		$this->arguments = $this->buildUnifiedArguments($get, $post, $files);
 	}

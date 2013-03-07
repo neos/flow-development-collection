@@ -161,12 +161,12 @@ class PackageManagerController extends \TYPO3\Flow\Mvc\Controller\ActionControll
 	public function helpAction() {
 		return PHP_EOL .
 			'Flow Package CLI Controller' . PHP_EOL .
-			'Usage: php Public/index.php Flow Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL.
+			'Usage: php Public/index.php Flow Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL .
 			PHP_EOL .
 			'<command>:' . PHP_EOL .
-			'  create     - create a new package' . PHP_EOL.
-			'  activate   - activate a package' . PHP_EOL.
-			'  deactivate - activate a package' . PHP_EOL.
+			'  create     - create a new package' . PHP_EOL .
+			'  activate   - activate a package' . PHP_EOL .
+			'  deactivate - activate a package' . PHP_EOL .
 			'  delete     - delete a package' . PHP_EOL
 		;
 	}

@@ -166,10 +166,14 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 */
 	protected function createAccessDecisionVoters(array $voterClassNames) {
 		foreach ($voterClassNames as $voterClassName) {
-			if (!$this->objectManager->isRegistered($voterClassName)) throw new \TYPO3\Flow\Security\Exception\VoterNotFoundException('No voter of type ' . $voterClassName . ' found!', 1222267934);
+			if (!$this->objectManager->isRegistered($voterClassName)) {
+				throw new \TYPO3\Flow\Security\Exception\VoterNotFoundException('No voter of type ' . $voterClassName . ' found!', 1222267934);
+			}
 
 			$voter = $this->objectManager->get($voterClassName);
-			if (!($voter instanceof \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface)) throw new \TYPO3\Flow\Security\Exception\VoterNotFoundException('The found voter class did not implement \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
+			if (!($voter instanceof \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface)) {
+				throw new \TYPO3\Flow\Security\Exception\VoterNotFoundException('The found voter class did not implement \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
+			}
 
 			$this->accessDecisionVoters[] = $voter;
 		}

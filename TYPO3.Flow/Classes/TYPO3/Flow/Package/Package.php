@@ -207,10 +207,11 @@ class Package implements PackageInterface {
 	 * Returns the PHP namespace of classes in this package.
 	 *
 	 * @return string
+	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageStateException
 	 * @api
 	 */
 	public function getNamespace() {
-		if(!$this->namespace) {
+		if (!$this->namespace) {
 			$manifest = $this->getComposerManifest();
 			if (isset($manifest->autoload->{'psr-0'})) {
 				$namespaces = $manifest->autoload->{'psr-0'};
@@ -405,8 +406,12 @@ class Package implements PackageInterface {
 		$currentPath = $classesPath . $subDirectory;
 		$currentRelativePath = substr($currentPath, strlen($this->packagePath));
 
-		if (!is_dir($currentPath)) return array();
-		if ($recursionLevel > 100) throw new \TYPO3\Flow\Package\Exception('Recursion too deep.', 1166635495);
+		if (!is_dir($currentPath)) {
+			return array();
+		}
+		if ($recursionLevel > 100) {
+			throw new \TYPO3\Flow\Package\Exception('Recursion too deep.', 1166635495);
+		}
 
 		try {
 			$classesDirectoryIterator = new \DirectoryIterator($currentPath);
@@ -414,7 +419,7 @@ class Package implements PackageInterface {
 				$filename = $classesDirectoryIterator->getFilename();
 				if ($filename[0] != '.') {
 					if (is_dir($currentPath . $filename)) {
-						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel+1)));
+						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel + 1)));
 					} else {
 						if (substr($filename, -4, 4) === '.php') {
 							$className = (str_replace('/', '\\', ($extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));

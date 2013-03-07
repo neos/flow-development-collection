@@ -47,10 +47,12 @@ class DocCommentParser {
 		$lines = explode(chr(10), $docComment);
 		foreach ($lines as $line) {
 			$line = trim($line);
-			if ($line === '*/') break;
+			if ($line === '*/') {
+				break;
+			}
 			if (strlen($line) > 0 && strpos($line, '* @') !== FALSE) {
 				$this->parseTag(substr($line, strpos($line, '@')));
-			} else if (count($this->tags) === 0) {
+			} elseif (count($this->tags) === 0) {
 				$this->description .= preg_replace('/\s*\\/?[\\\\*]*\s?(.*)$/', '$1', $line) . chr(10);
 			}
 		}
@@ -76,7 +78,9 @@ class DocCommentParser {
 	 * @throws \TYPO3\Flow\Reflection\Exception
 	 */
 	public function getTagValues($tagName) {
-		if (!$this->isTaggedWith($tagName)) throw new \TYPO3\Flow\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
+		if (!$this->isTaggedWith($tagName)) {
+			throw new \TYPO3\Flow\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
+		}
 		return $this->tags[$tagName];
 	}
 

@@ -83,7 +83,9 @@ class CacheManager {
 	 */
 	public function setCacheConfigurations(array $cacheConfigurations) {
 		foreach ($cacheConfigurations as $identifier => $configuration) {
-			if (!is_array($configuration)) throw new \InvalidArgumentException('The cache configuration for cache "' . $identifier . '" was not an array as expected.', 1231259656);
+			if (!is_array($configuration)) {
+				throw new \InvalidArgumentException('The cache configuration for cache "' . $identifier . '" was not an array as expected.', 1231259656);
+			}
 			$this->cacheConfigurations[$identifier] = $configuration;
 		}
 	}

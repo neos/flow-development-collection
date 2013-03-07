@@ -345,19 +345,21 @@ class DatesReader {
 
 					$parsedFormat[] = array('\'');
 					++$i;
-				} else if ($duringCompletionOfLiteral) {
+				} elseif ($duringCompletionOfLiteral) {
 					$parsedFormat[] = array($literal);
 					$literal = '';
 					$duringCompletionOfLiteral = FALSE;
 				} else {
 					$duringCompletionOfLiteral = TRUE;
 				}
-			} else if ($duringCompletionOfLiteral) {
+			} elseif ($duringCompletionOfLiteral) {
 				$literal .= $subformatSymbol;
 			} else {
 					// Count the length of subformat
 				for ($j = $i + 1; $j < $formatLengthOfFormat; ++$j) {
-					if ($format[$j] !== $subformatSymbol) break;
+					if ($format[$j] !== $subformatSymbol) {
+						break;
+					}
 				}
 
 				$subformat = str_repeat($subformatSymbol, $j - $i);
@@ -365,7 +367,9 @@ class DatesReader {
 				if (isset(self::$maxLengthOfSubformats[$subformatSymbol])) {
 					if (self::$maxLengthOfSubformats[$subformatSymbol] === 0 || strlen($subformat) <= self::$maxLengthOfSubformats[$subformatSymbol]) {
 						$parsedFormat[] = $subformat;
-					} else throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
+					} else {
+						throw new \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
+					}
 				} else {
 					$parsedFormat[] = array($subformat);
 				}

@@ -79,7 +79,7 @@ class CsrfProtection implements \TYPO3\Flow\Security\RequestPatternInterface {
 		}
 
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
-		$actionName = $request->getControllerActionName(). 'Action';
+		$actionName = $request->getControllerActionName() . 'Action';
 
 		if ($this->policyService->hasPolicyEntryForMethod($controllerClassName, $actionName) && !$this->reflectionService->isMethodTaggedWith($controllerClassName, $actionName, 'skipcsrfprotection')) {
 			$internalArguments = $request->getMainRequest()->getInternalArguments();

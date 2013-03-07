@@ -57,7 +57,9 @@ class ConsoleBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 		);
 
 		$this->streamHandle = fopen('php://' . $this->streamName, 'w');
-		if (!is_resource($this->streamHandle)) throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open stream "' . $this->streamName . '" for write access.', 1310986609);
+		if (!is_resource($this->streamHandle)) {
+			throw new \TYPO3\Flow\Log\Exception\CouldNotOpenResourceException('Could not open stream "' . $this->streamName . '" for write access.', 1310986609);
+		}
 	}
 
 	/**

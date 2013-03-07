@@ -161,7 +161,9 @@ class ClassSchema {
 	 * @throws \InvalidArgumentException
 	 */
 	public function setModelType($modelType) {
-		if ($modelType !== self::MODELTYPE_ENTITY && $modelType !== self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
+		if ($modelType !== self::MODELTYPE_ENTITY && $modelType !== self::MODELTYPE_VALUEOBJECT) {
+			throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
+		}
 		$this->modelType = $modelType;
 		if ($modelType === self::MODELTYPE_VALUEOBJECT) {
 			$this->identityProperties = array();
@@ -186,7 +188,9 @@ class ClassSchema {
 	 * @throws \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException
 	 */
 	public function setRepositoryClassName($repositoryClassName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) {
+			throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
+		}
 		$this->repositoryClassName = $repositoryClassName;
 	}
 
@@ -227,7 +231,9 @@ class ClassSchema {
 	 * @throws \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException
 	 */
 	public function markAsIdentityProperty($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have identity properties', 1264102084);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) {
+			throw new \TYPO3\Flow\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have identity properties', 1264102084);
+		}
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}

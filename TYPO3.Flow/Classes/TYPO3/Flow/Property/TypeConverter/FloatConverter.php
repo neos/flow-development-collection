@@ -136,7 +136,7 @@ class FloatConverter extends AbstractTypeConverter {
 		}
 
 		if (!is_numeric($source)) {
-			return new Error('"%s" cannot be converted to a float value.' , 1332934124, array($source));
+			return new Error('"%s" cannot be converted to a float value.', 1332934124, array($source));
 		}
 		return (float)$source;
 	}
@@ -147,6 +147,7 @@ class FloatConverter extends AbstractTypeConverter {
 	 * @param string $source
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return float|\TYPO3\Flow\Validation\Error Parsed float number or error
+	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
 	 */
 	protected function parseUsingLocaleIfConfigured($source, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuration = $this->getConfigurationKeysAndValues($configuration, array('locale', 'strictMode', 'formatLength', 'formatType'));

@@ -173,7 +173,7 @@ class RequestBuilder {
 				if (isset($optionalArguments[$argumentName])) {
 					$argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $optionalArguments[$argumentName]['type']);
 					$commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
-				} elseif(isset($requiredArguments[$argumentName])) {
+				} elseif (isset($requiredArguments[$argumentName])) {
 					if ($decidedToUseUnnamedArguments) {
 						throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
 					}

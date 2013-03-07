@@ -159,7 +159,9 @@ class DatetimeParser {
 					if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $subformat[0])) {
 						$datetimeToParse = substr_replace($datetimeToParse, '', 0, strlen($subformat[0]));
 						continue;
-					} else return FALSE;
+					} else {
+						return FALSE;
+					}
 				}
 
 				$lengthOfSubformat = strlen($subformat);
@@ -170,7 +172,9 @@ class DatetimeParser {
 					case 'K':
 						$hour = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 12);
 						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
-						if ($subformat[0] === 'h' && $hour === 12) $hour = 0;
+						if ($subformat[0] === 'h' && $hour === 12) {
+							$hour = 0;
+						}
 						$datetimeElements['hour'] = $hour;
 						$using12HourClock = TRUE;
 						break;
@@ -178,7 +182,9 @@ class DatetimeParser {
 					case 'H':
 						$hour = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 24);
 						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
-						if ($subformat[0] === 'k' && $hour === 24) $hour = 0;
+						if ($subformat[0] === 'k' && $hour === 24) {
+							$hour = 0;
+						}
 						$datetimeElements['hour'] = $hour;
 						break;
 					case 'a':
@@ -188,7 +194,9 @@ class DatetimeParser {
 						} elseif (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $dayPeriods['pm'])) {
 							$timeIsPm = TRUE;
 							$numberOfCharactersToRemove = strlen($dayPeriods['pm']);
-						} else return FALSE;
+						} else {
+							return FALSE;
+						}
 						break;
 					case 'm':
 						$minute = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 0, 59);
@@ -211,7 +219,7 @@ class DatetimeParser {
 						if ($lengthOfSubformat <= 2) {
 							$month = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 12);
 							$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $month < 10) ? 1 : 2;
-						} else if ($lengthOfSubformat <= 4) {
+						} elseif ($lengthOfSubformat <= 4) {
 							$lengthOfLiteral = ($lengthOfSubformat === 3) ? 'abbreviated' : 'wide';
 
 							$month = 0;
@@ -221,9 +229,13 @@ class DatetimeParser {
 									break;
 								}
 							}
-						} else throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1279965245);
+						} else {
+							throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1279965245);
+						}
 
-						if ($month === 0) return FALSE;
+						if ($month === 0) {
+							return FALSE;
+						}
 						$datetimeElements['month'] = $month;
 						break;
 					case 'y':
@@ -260,7 +272,9 @@ class DatetimeParser {
 							$pattern = self::PATTERN_MATCH_STRICT_TIMEZONE_TZ;
 						}
 
-						if (preg_match($pattern, $datetimeToParse, $matches) !== 1) return FALSE;
+						if (preg_match($pattern, $datetimeToParse, $matches) !== 1) {
+							return FALSE;
+						}
 
 						$datetimeElements['timezone'] = $matches[0];
 						break;
@@ -358,29 +372,41 @@ class DatetimeParser {
 							break;
 						}
 					case 'h':
-						if (!isset($hour)) $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
+						if (!isset($hour)) {
+							$hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
+						}
 						if ($hour >= 1 && $hour <= 12) {
 							$numberOfCharactersToRemove = $position + strlen($hour);
-							if ((int)$hour === 12) $hour = 0;
+							if ((int)$hour === 12) {
+								$hour = 0;
+							}
 							$datetimeElements['hour'] = (int)$hour;
 							$using12HourClock = TRUE;
 							break;
 						}
 					case 'H':
-						if (!isset($hour)) $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
+						if (!isset($hour)) {
+							$hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
+						}
 						if ($hour >= 0 && $hour <= 23) {
 							$numberOfCharactersToRemove = $position + strlen($hour);
 							$datetimeElements['hour'] = (int)$hour;
 							break;
 						}
 					case 'k':
-						if (!isset($hour)) $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
+						if (!isset($hour)) {
+							$hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
+						}
 						if ($hour >= 1 && $hour <= 24) {
 							$numberOfCharactersToRemove = $position + strlen($hour);
-							if ((int)$hour === 24) $hour = 0;
+							if ((int)$hour === 24) {
+								$hour = 0;
+							}
 							$datetimeElements['hour'] = (int)$hour;
 							break;
-						} else throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match number string to any hour format.', 1280488645);
+						} else {
+							throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match number string to any hour format.', 1280488645);
+						}
 					case 'a':
 						$dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
 						$positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
@@ -391,24 +417,32 @@ class DatetimeParser {
 							if ($positionOfDayPeriod !== FALSE) {
 								$numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
 								$timeIsPm = TRUE;
-							} else throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match any day period.', 1280489183);
+							} else {
+								throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Unable to match any day period.', 1280489183);
+							}
 						}
 						break;
 					case 'm':
 						$minute = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-						if ($minute < 0 && $minute > 59) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected minute is out of range.', 1280489411);
+						if ($minute < 0 && $minute > 59) {
+							throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected minute is out of range.', 1280489411);
+						}
 						$numberOfCharactersToRemove = $position + strlen($minute);
 						$datetimeElements['minute'] = (int)$minute;
 						break;
 					case 's':
 						$second = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-						if ($second < 0 && $second > 59) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected second is out of range.', 1280489412);
+						if ($second < 0 && $second > 59) {
+							throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected second is out of range.', 1280489412);
+						}
 						$numberOfCharactersToRemove = $position + strlen($second);
 						$datetimeElements['second'] = (int)$second;
 						break;
 					case 'd':
 						$day = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-						if ($day < 1 && $day > 31) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected day is out of range.', 1280489413);
+						if ($day < 1 && $day > 31) {
+							throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected day is out of range.', 1280489413);
+						}
 						$numberOfCharactersToRemove = $position + strlen($day);
 						$datetimeElements['day'] = (int)$day;
 						break;
@@ -451,7 +485,9 @@ class DatetimeParser {
 									}
 								}
 
-								if ($datetimeElements['month'] === NULL) throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Neither month name or number were matched.', 1280497950);
+								if ($datetimeElements['month'] === NULL) {
+									throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Neither month name or number were matched.', 1280497950);
+								}
 							default:
 								throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1280495827);
 						}

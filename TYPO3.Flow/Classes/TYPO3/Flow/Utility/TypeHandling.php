@@ -30,7 +30,7 @@ class TypeHandling {
 	/**
 	 * @var array
 	 */
-	static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection');
+	static protected $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection');
 
 	/**
 	 * Returns an array with type information, including element type for

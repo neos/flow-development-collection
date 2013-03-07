@@ -96,7 +96,7 @@ abstract class AbstractController implements ControllerInterface {
 	 */
 	protected function initializeController(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response) {
 		if (!$request instanceof ActionRequest) {
-			throw new \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports action requests – requests of type "' . get_class($request) . '" given. ' , 1187701131);
+			throw new \TYPO3\Flow\Mvc\Exception\UnsupportedRequestTypeException(get_class($this) . ' only supports action requests – requests of type "' . get_class($request) . '" given.', 1187701131);
 		}
 
 		$this->request = $request;

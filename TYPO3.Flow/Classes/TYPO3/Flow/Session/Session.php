@@ -174,6 +174,7 @@ class Session implements SessionInterface {
 	 * @param string $storageIdentifier The private storage identifier which is used for cache entries
 	 * @param integer $lastActivityTimestamp Unix timestamp of the last known activity for this session
 	 * @param array $tags A list of tags set for this session
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($sessionIdentifier = NULL, $storageIdentifier = NULL, $lastActivityTimestamp = NULL, array $tags = array()) {
 		if ($sessionIdentifier !== NULL) {
@@ -335,6 +336,8 @@ class Session implements SessionInterface {
 	 * to the new session.
 	 *
 	 * @return string The new session ID
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\Flow\Session\Exception\OperationNotSupportedException
 	 * @api
 	 */
 	public function renewId() {
@@ -372,6 +375,7 @@ class Session implements SessionInterface {
 	 *
 	 * @param string $key Entry identifier of the session data
 	 * @return boolean
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function hasKey($key) {
 		if ($this->started !== TRUE) {
@@ -408,6 +412,7 @@ class Session implements SessionInterface {
 	 * time. For a remote session, the unix timestamp will be returned.
 	 *
 	 * @return integer unix timestamp
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 * @api
 	 */
 	public function getLastActivityTimestamp() {
@@ -425,6 +430,8 @@ class Session implements SessionInterface {
 	 *
 	 * @param string $tag The tag – must match be a valid cache frontend tag
 	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function addTag($tag) {
@@ -444,6 +451,7 @@ class Session implements SessionInterface {
 	 *
 	 * @param string $tag The tag – must match be a valid cache frontend tag
 	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 * @api
 	 */
 	public function removeTag($tag) {
@@ -461,6 +469,7 @@ class Session implements SessionInterface {
 	 * Returns the tags this session has been tagged with.
 	 *
 	 * @return array The tags or an empty array if there aren't any
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 * @api
 	 */
 	public function getTags() {
@@ -474,6 +483,7 @@ class Session implements SessionInterface {
 	 * Updates the last activity time to "now".
 	 *
 	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function touch() {
 		if ($this->started !== TRUE) {
@@ -571,7 +581,7 @@ class Session implements SessionInterface {
 			}
 			$this->started = FALSE;
 
-			$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) -1;
+			$decimals = strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
 			$factor = ($decimals > -1) ? $decimals * 10 : 1;
 			if (rand(0, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
 				$this->collectGarbage();
@@ -600,6 +610,7 @@ class Session implements SessionInterface {
 	 * Initialize request, response and session cookie
 	 *
 	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\InvalidRequestResponseException
 	 */
 	protected function initializeHttpAndCookie() {
 		$requestHandler = $this->bootstrap->getActiveRequestHandler();

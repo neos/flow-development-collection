@@ -90,10 +90,10 @@ class ResourceTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 				case \UPLOAD_ERR_INI_SIZE:
 				case \UPLOAD_ERR_FORM_SIZE:
 				case \UPLOAD_ERR_PARTIAL:
-					return new \TYPO3\Flow\Error\Error(\TYPO3\Flow\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+					return new \TYPO3\Flow\Error\Error(\TYPO3\Flow\Utility\Files::getUploadErrorMessage($source['error']), 1264440823);
 				default:
 					$this->systemLogger->log(sprintf('A server error occurred while converting an uploaded resource: "%s"', \TYPO3\Flow\Utility\Files::getUploadErrorMessage($source['error'])), LOG_ERR);
-					return new \TYPO3\Flow\Error\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains' , 1340193849);
+					return new \TYPO3\Flow\Error\Error('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
 			}
 		}
 
@@ -103,7 +103,7 @@ class ResourceTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 
 		$resource = $this->resourceManager->importUploadedResource($source);
 		if ($resource === FALSE) {
-			return new \TYPO3\Flow\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
+			return new \TYPO3\Flow\Error\Error('The resource manager could not create a Resource instance.', 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;

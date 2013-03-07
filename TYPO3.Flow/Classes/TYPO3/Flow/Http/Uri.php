@@ -98,7 +98,7 @@ class Uri {
 		$parseUrlException = NULL;
 		try {
 			$uriParts = parse_url($uriString);
-		} catch(\TYPO3\Flow\Error\Exception $exception) {
+		} catch (\TYPO3\Flow\Error\Exception $exception) {
 			$parseUrlException = $exception;
 		}
 		if (is_array($uriParts)) {

@@ -339,7 +339,9 @@ class ReflectionService {
 		if ($interfaceName[0] === '\\') {
 			$interfaceName = substr($interfaceName, 1);
 		}
-		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
+		if (interface_exists($interfaceName) === FALSE) {
+			throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
+		}
 		$this->loadOrReflectClassIfNecessary($interfaceName);
 
 		$classNamesFound = isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]) ? array_keys($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]) : array();
@@ -1057,8 +1059,12 @@ class ReflectionService {
 			$this->classReflectionData[$className] = array();
 		}
 
-		if ($class->isAbstract()) $this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT] = TRUE;
-		if ($class->isFinal()) $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = TRUE;
+		if ($class->isAbstract()) {
+			$this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT] = TRUE;
+		}
+		if ($class->isFinal()) {
+			$this->classReflectionData[$className][self::DATA_CLASS_FINAL] = TRUE;
+		}
 
 		foreach ($this->getParentClasses($class) as $parentClass) {
 			$parentClassName = $parentClass->getName();
@@ -1393,7 +1399,6 @@ class ReflectionService {
 		if ($parameter->allowsNull()) {
 			$parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = TRUE;
 		}
-
 
 		$parameterClass = $parameter->getClass();
 		if ($parameterClass !== NULL) {

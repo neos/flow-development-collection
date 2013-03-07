@@ -94,7 +94,7 @@ class ConfigurationBuilder {
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
 				$objectName = str_replace('_', '\\', $objectName);
 				if (!is_array($rawObjectConfiguration)) {
-					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey. '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
+					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey . '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
 				}
 
 				$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
@@ -104,7 +104,7 @@ class ConfigurationBuilder {
 				$newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
 				if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, TRUE) && !class_exists($objectName, FALSE)) {
-					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey. '". Please check your Objects.yaml.', 1184926175);
+					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
 				}
 
 				if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, TRUE)) {
@@ -270,7 +270,7 @@ class ConfigurationBuilder {
 				if (isset($objectNameOrConfiguration['factoryObjectName'])) {
 					$objectName = NULL;
 				} else {
-					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Object configuration for property "' . $propertyName . '" contains neither object name nor factory object name in '. $configurationSourceHint, 1297097815);
+					throw new \TYPO3\Flow\Object\Exception\InvalidObjectConfigurationException('Object configuration for property "' . $propertyName . '" contains neither object name nor factory object name in ' . $configurationSourceHint, 1297097815);
 				}
 			}
 			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', property "' . $propertyName .'"');
@@ -293,10 +293,10 @@ class ConfigurationBuilder {
 		if (is_array($objectNameOrConfiguration)) {
 			$objectName = $objectNameOrConfiguration['name'];
 			unset($objectNameOrConfiguration['name']);
-			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName .'"');
-			$argument = new ConfigurationArgument($argumentName,  $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');
+			$argument = new ConfigurationArgument($argumentName, $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 		} else {
-			$argument = new ConfigurationArgument($argumentName,  $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+			$argument = new ConfigurationArgument($argumentName, $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 		}
 		return $argument;
 	}

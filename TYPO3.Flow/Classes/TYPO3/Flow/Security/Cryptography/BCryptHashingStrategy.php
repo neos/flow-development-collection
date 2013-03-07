@@ -33,7 +33,7 @@ class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
 			throw new \InvalidArgumentException('BCrypt cost must be between 04 and 31.', 1318447710);
 		}
 
-		$this->cost = sprintf("%02d", $cost);
+		$this->cost = sprintf('%02d', $cost);
 	}
 
 	/**

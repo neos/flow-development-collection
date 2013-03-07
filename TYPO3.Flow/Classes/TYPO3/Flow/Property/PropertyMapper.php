@@ -186,7 +186,9 @@ class PropertyMapper {
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
 	 */
 	protected function findTypeConverter($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
-		if ($configuration->getTypeConverter() !== NULL) return $configuration->getTypeConverter();
+		if ($configuration->getTypeConverter() !== NULL) {
+			return $configuration->getTypeConverter();
+		}
 
 		$sourceType = $this->determineSourceType($source);
 
@@ -238,7 +240,9 @@ class PropertyMapper {
 		}
 
 		foreach (class_parents($targetClass) as $parentClass) {
-			if (!isset($convertersForSource[$parentClass])) continue;
+			if (!isset($convertersForSource[$parentClass])) {
+				continue;
+			}
 
 			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$parentClass], $source, $targetClass);
 			if ($converter !== NULL) {
@@ -266,7 +270,9 @@ class PropertyMapper {
 	 * @return mixed Either the matching object converter or NULL
 	 */
 	protected function findEligibleConverterWithHighestPriority($converters, $source, $targetType) {
-		if (!is_array($converters)) return NULL;
+		if (!is_array($converters)) {
+			return NULL;
+		}
 		krsort($converters);
 		reset($converters);
 		foreach ($converters as $converter) {

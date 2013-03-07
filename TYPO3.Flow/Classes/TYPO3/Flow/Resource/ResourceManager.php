@@ -111,7 +111,7 @@ class ResourceManager {
 		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->persistentResourcesStorageBaseUri);
 
 		$this->importedResources = new \SplObjectStorage();
-  	}
+	}
 
 	/**
 	 * Imports a resource (file) from the given location as a persistent resource.
@@ -139,7 +139,7 @@ class ResourceManager {
 		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
 		if (rename($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
 			unlink($temporaryTargetPathAndFilename);
-			$this->systemLogger->log('Could not copy temporary file from "' . $temporaryTargetPathAndFilename. '" to final destination "' . $finalTargetPathAndFilename . '".', LOG_WARNING);
+			$this->systemLogger->log('Could not copy temporary file from "' . $temporaryTargetPathAndFilename . '" to final destination "' . $finalTargetPathAndFilename . '".', LOG_WARNING);
 			return FALSE;
 		}
 		$this->fixFilePermissions($finalTargetPathAndFilename);

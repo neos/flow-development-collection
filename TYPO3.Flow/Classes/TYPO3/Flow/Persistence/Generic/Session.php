@@ -215,22 +215,34 @@ class Session {
 	protected function isSingleValuedPropertyDirty($type, $previousValue, $currentValue) {
 		switch ($type) {
 			case 'integer':
-				if ($currentValue === (int) $previousValue) return FALSE;
+				if ($currentValue === (int) $previousValue) {
+					return FALSE;
+				}
 			break;
 			case 'float':
-				if ($currentValue === (float) $previousValue) return FALSE;
+				if ($currentValue === (float) $previousValue) {
+					return FALSE;
+				}
 			break;
 			case 'boolean':
-				if ($currentValue === (boolean) $previousValue) return FALSE;
+				if ($currentValue === (boolean) $previousValue) {
+					return FALSE;
+				}
 			break;
 			case 'string':
-				if ($currentValue === (string) $previousValue) return FALSE;
+				if ($currentValue === (string) $previousValue) {
+					return FALSE;
+				}
 			break;
 			case 'DateTime':
-				if ($currentValue instanceof \DateTime && $currentValue->getTimestamp() === (int) $previousValue) return FALSE;
+				if ($currentValue instanceof \DateTime && $currentValue->getTimestamp() === (int) $previousValue) {
+					return FALSE;
+				}
 			break;
 			default:
-				if (is_object($currentValue) && $this->getIdentifierByObject($currentValue) === $previousValue['identifier']) return FALSE;
+				if (is_object($currentValue) && $this->getIdentifierByObject($currentValue) === $previousValue['identifier']) {
+					return FALSE;
+				}
 			break;
 		}
 		return TRUE;

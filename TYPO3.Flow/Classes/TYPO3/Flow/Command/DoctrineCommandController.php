@@ -261,7 +261,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 				$this->outputLine($result);
 			} else {
 				if (!$quiet) {
-					$this->outputLine('Wrote migration SQL to file "' . $output .'".');
+					$this->outputLine('Wrote migration SQL to file "' . $output . '".');
 				}
 			}
 		} else {

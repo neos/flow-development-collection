@@ -38,8 +38,12 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 	 * @throws \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	public function parseMethodResources($pointcutExpression, array $methodResourcesTree, array &$trace = array()) {
-		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
-		if (count($methodResourcesTree) > 0) $this->methodResourcesTree = $methodResourcesTree;
+		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) {
+			throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
+		}
+		if (count($methodResourcesTree) > 0) {
+			$this->methodResourcesTree = $methodResourcesTree;
+		}
 
 		$pointcutFilterComposite = new \TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite();
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -54,7 +58,9 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 			}
 
 			if (strpos($expression, '(') === FALSE) {
-				if (in_array($expression, $trace)) throw new \TYPO3\Flow\Security\Exception\CircularResourceDefinitionDetectedException('A circular reference was detected in the security policy resources definition. Look near: ' . $expression, 1222028842);
+				if (in_array($expression, $trace)) {
+					throw new \TYPO3\Flow\Security\Exception\CircularResourceDefinitionDetectedException('A circular reference was detected in the security policy resources definition. Look near: ' . $expression, 1222028842);
+				}
 				$trace[] = $expression;
 				$this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite, $trace);
 			}
@@ -100,7 +106,9 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 	 * @throws \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException
 	 */
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, \TYPO3\Flow\Aop\Pointcut\PointcutFilterComposite $pointcutFilterComposite, array &$trace = array()) {
-		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('The given resource was not defined: "' . $pointcutExpression . '".', 1222014591);
+		if (!isset($this->methodResourcesTree[$pointcutExpression])) {
+			throw new \TYPO3\Flow\Aop\Exception\InvalidPointcutExpressionException('The given resource was not defined: "' . $pointcutExpression . '".', 1222014591);
+		}
 
 		$pointcutFilterComposite->addFilter($operator, $this->parseMethodResources($this->methodResourcesTree[$pointcutExpression], array(), $trace));
 	}
@@ -121,12 +129,16 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 		for ($i = 0; $i < count($expressionParts); $i += 2) {
 			$operator = ($i > 1 ? $expressionParts[$i - 1] : '&&');
 
-			if (!isset($constraints[$operator])) $constraints[$operator] = array();
+			if (!isset($constraints[$operator])) {
+				$constraints[$operator] = array();
+			}
 
 			if (preg_match('/\s(==|!=|<=|>=|<|>|in|contains|matches)\s/', $expressionParts[$i]) > 0) {
 				$constraints[$operator] = array_merge($constraints[$operator], $this->getRuntimeEvaluationConditionsFromEvaluateString($expressionParts[$i]));
 			} else {
-				if (!isset($entityResourcesTree[$expressionParts[$i]])) throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('Entity resource "' . $expressionParts[$i] . '" not found in policy.', 1267722067);
+				if (!isset($entityResourcesTree[$expressionParts[$i]])) {
+					throw new \TYPO3\Flow\Security\Exception\NoEntryInPolicyException('Entity resource "' . $expressionParts[$i] . '" not found in policy.', 1267722067);
+				}
 				$constraints[$operator]['subConstraints'] = $this->parseSingleEntityResource($expressionParts[$i], $entityResourcesTree);
 			}
 		}

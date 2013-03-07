@@ -43,7 +43,7 @@ class Route {
 	 */
 	protected $uriPattern = NULL;
 
- 	/**
+	/**
 	 * Specifies whether Route Parts of this Route should be converted to lower case when resolved.
 	 *
 	 * @var boolean
@@ -161,7 +161,9 @@ class Route {
 	 * @throws \InvalidArgumentException
 	 */
 	public function setUriPattern($uriPattern) {
-		if (!is_string($uriPattern)) throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
+		if (!is_string($uriPattern)) {
+			throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
+		}
 		$this->uriPattern = $uriPattern;
 		$this->isParsed = FALSE;
 	}
@@ -175,7 +177,7 @@ class Route {
 		return $this->uriPattern;
 	}
 
- 	/**
+	/**
 	 * Specifies whether Route parts of this route should be converted to lower case when resolved.
 	 * This setting can be overwritten for all dynamic Route parts.
 	 *

@@ -99,7 +99,9 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	protected function validateObject($object, \SplObjectStorage $validatedInstancesContainer) {
 		$className = $this->entityManager->getClassMetadata(get_class($object))->getName();
 		$validator = $this->validatorResolver->getBaseValidatorConjunction($className, array('Persistence', 'Default'));
-		if ($validator === NULL) return;
+		if ($validator === NULL) {
+			return;
+		}
 
 		$validator->setValidatedInstancesContainer($validatedInstancesContainer);
 		$validationResult = $validator->validate($object);

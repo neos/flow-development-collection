@@ -342,7 +342,7 @@ class CldrModel {
 				for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
 					unset($currentPathNodeNames[count($currentPathNodeNames) - 1]);
 				}
-				$sourcePath = implode('/', $currentPathNodeNames) . '/'. $sourcePath;
+				$sourcePath = implode('/', $currentPathNodeNames) . '/' . $sourcePath;
 
 				unset($data[$nodeString]);
 				$sourceData = $this->getRawData($sourcePath);

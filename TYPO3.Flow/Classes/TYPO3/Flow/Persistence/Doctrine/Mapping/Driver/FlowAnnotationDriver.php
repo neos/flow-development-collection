@@ -255,12 +255,12 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			$namedQueriesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\NamedQueries'];
 
 			if (!is_array($namedQueriesAnnotation->value)) {
-				throw new \UnexpectedValueException("@NamedQueries should contain an array of @NamedQuery annotations.");
+				throw new \UnexpectedValueException('@NamedQueries should contain an array of @NamedQuery annotations.');
 			}
 
 			foreach ($namedQueriesAnnotation->value as $namedQuery) {
 				if (!($namedQuery instanceof \Doctrine\ORM\Mapping\NamedQuery)) {
-					throw new \UnexpectedValueException("@NamedQueries should contain an array of @NamedQuery annotations.");
+					throw new \UnexpectedValueException('@NamedQueries should contain an array of @NamedQuery annotations.');
 				}
 				$metadata->addNamedQuery(array(
 					'name'  => $namedQuery->name,
@@ -712,7 +712,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 
 		if ($joinColumnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumn')) {
 			$joinColumns[] = $this->joinColumnToArray($joinColumnAnnotation, strtolower($property->getName()));
-		} else if ($joinColumnsAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumns')) {
+		} elseif ($joinColumnsAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumns')) {
 			foreach ($joinColumnsAnnotation->value as $joinColumnAnnotation) {
 				$joinColumns[] = $this->joinColumnToArray($joinColumnAnnotation, strtolower($property->getName()));
 			}

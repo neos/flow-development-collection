@@ -655,7 +655,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		}
 
 		/**
- 		 * @todo similar functionality in registerPackage - should be refactored
+		 * @todo similar functionality in registerPackage - should be refactored
 		 */
 		foreach ($packagePaths as $packagePath => $composerManifestPath) {
 			try {
@@ -670,7 +670,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			}
 			if (!isset($this->packageStatesConfiguration['packages'][$packageKey]['state'])) {
 				/**
- 				 * @todo doesn't work, settings not available at this time
+				 * @todo doesn't work, settings not available at this time
 				 */
 				if (is_array($this->settings['package']['inactiveByDefault']) && in_array($packageKey, $this->settings['package']['inactiveByDefault'], TRUE)) {
 					$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'inactive';
@@ -754,6 +754,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @param string $key Optional. Only return the part of the manifest indexed by 'key'
 	 * @param object $composerManifest Optional. Manifest to use instead of reading it from file
 	 * @return mixed
+	 * @throws \TYPO3\Flow\Package\Exception\MissingPackageManifestException
 	 * @see json_decode for return values
 	 */
 	static public function getComposerManifest($manifestPath, $key = NULL, $composerManifest = NULL) {

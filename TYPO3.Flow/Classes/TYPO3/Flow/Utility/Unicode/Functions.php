@@ -49,18 +49,21 @@ class Functions {
 	 * @api
 	 */
 	static public function substr($string, $start, $length = NULL) {
-		if ($length === 0) return '';
+		if ($length === 0) {
+			return '';
+		}
 
-			// cannot omit $len, when specifying charset
-		if ($length === NULL)	{
-			$enc = mb_internal_encoding();	// save internal encoding
+			// Cannot omit $len, when specifying charset
+		if ($length === NULL) {
+				// save internal encoding
+			$enc = mb_internal_encoding();
 			mb_internal_encoding('UTF-8');
-			$str = mb_substr($string,$start);
-			mb_internal_encoding($enc);	// restore internal encoding
+			$str = mb_substr($string, $start);
+				// restore internal encoding
+			mb_internal_encoding($enc);
 
 			return $str;
-		}
-		else {
+		} else {
 			return mb_substr($string, $start, $length, 'UTF-8');
 		}
 	}
@@ -129,8 +132,8 @@ class Functions {
 	 * @return integer The character position
 	 * @api
 	 */
-	static public function strpos($haystack,$needle,$offset=0) {
-		return mb_strpos($haystack, $needle, $offset,'UTF-8');
+	static public function strpos($haystack, $needle, $offset = 0) {
+		return mb_strpos($haystack, $needle, $offset, 'UTF-8');
 	}
 
 }

@@ -52,7 +52,7 @@ class IntegerConverter extends AbstractTypeConverter {
 			return NULL;
 		}
 		if (!is_numeric($source)) {
-			return new Error('"%s" is no integer.' , 1332933658, array($source));
+			return new Error('"%s" is no integer.', 1332933658, array($source));
 		}
 		return (integer)$source;
 	}

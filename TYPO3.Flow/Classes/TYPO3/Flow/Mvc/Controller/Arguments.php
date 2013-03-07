@@ -36,7 +36,9 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function offsetSet($offset, $value) {
-		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\Flow\Mvc\Controller\Argument objects.', 1187953786);
+		if (!$value instanceof Argument) {
+			throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\Flow\Mvc\Controller\Argument objects.', 1187953786);
+		}
 
 		$argumentName = $value->getName();
 		parent::offsetSet($argumentName, $value);
@@ -52,7 +54,9 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function append($value) {
-		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\Flow\Mvc\Controller\Argument objects.', 1187953786);
+		if (!$value instanceof Argument) {
+			throw new \InvalidArgumentException('Controller arguments must be valid \TYPO3\Flow\Mvc\Controller\Argument objects.', 1187953786);
+		}
 		$this->offsetSet(NULL, $value);
 	}
 
@@ -95,7 +99,9 @@ class Arguments extends \ArrayObject {
 	 */
 	public function offsetGet($offset) {
 		$translatedOffset = $this->translateToLongArgumentName($offset);
-		if ($translatedOffset === '') throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
+		if ($translatedOffset === '') {
+			throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
+		}
 		return parent::offsetGet($translatedOffset);
 	}
 
@@ -193,7 +199,9 @@ class Arguments extends \ArrayObject {
 	 * @throws \LogicException
 	 */
 	public function __call($methodName, array $arguments) {
-		if (substr($methodName, 0, 3) !== 'set') throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
+		if (substr($methodName, 0, 3) !== 'set') {
+			throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
+		}
 		$firstLowerCaseArgumentName = $this->translateToLongArgumentName(strtolower($methodName[3]) . substr($methodName, 4));
 		$firstUpperCaseArgumentName = $this->translateToLongArgumentName(ucfirst(substr($methodName, 3)));
 
@@ -217,9 +225,13 @@ class Arguments extends \ArrayObject {
 	 * @return string long argument name or empty string
 	 */
 	protected function translateToLongArgumentName($argumentName) {
-		if (in_array($argumentName, $this->getArgumentNames())) return $argumentName;
+		if (in_array($argumentName, $this->getArgumentNames())) {
+			return $argumentName;
+		}
 		foreach ($this as $argument) {
-			if ($argumentName === $argument->getShortName()) return $argument->getName();
+			if ($argumentName === $argument->getShortName()) {
+				return $argument->getName();
+			}
 		}
 		return '';
 	}

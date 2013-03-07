@@ -84,7 +84,9 @@ class PrivateResourcesPublishingAspect {
 
 		if (count(array_intersect($allowedRoles, $this->securityContext->getRoles())) > 0) {
 			$privatePathSegment = $this->session->getID();
-			if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') $privatePathSegment = \TYPO3\Flow\Utility\Files::concatenatePaths(array($privatePathSegment, $allowedRoles[0]));
+			if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') {
+				$privatePathSegment = \TYPO3\Flow\Utility\Files::concatenatePaths(array($privatePathSegment, $allowedRoles[0]));
+			}
 
 			$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
 			$result = \TYPO3\Flow\Utility\Files::concatenatePaths(array($joinPoint->getProxy()->getResourcesBaseUri(), 'Persistent/', $privatePathSegment, $resource->getResourcePointer()->getHash() . $rewrittenFilename));
@@ -140,7 +142,9 @@ class PrivateResourcesPublishingAspect {
 				$publishingPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $allowedRoles[0])) . '/';
 			}
 
-			if ($returnFilename === TRUE) $publishingPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $filename));
+			if ($returnFilename === TRUE) {
+				$publishingPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $filename));
+			}
 		}
 
 		return $publishingPath;

@@ -315,9 +315,13 @@ class Context {
 					if ($token->isAuthenticated()) {
 						$tokenRoles = $token->getRoles();
 						foreach ($tokenRoles as $currentRole) {
-							if (!in_array($currentRole, $roles)) $roles[] = $currentRole;
+							if (!in_array($currentRole, $roles)) {
+								$roles[] = $currentRole;
+							}
 							foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
-								if (!in_array($currentParentRole, $roles)) $roles[] = $currentParentRole;
+								if (!in_array($currentParentRole, $roles)) {
+									$roles[] = $currentParentRole;
+								}
 							}
 						}
 					}
