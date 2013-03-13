@@ -29,6 +29,7 @@ class Service {
 	protected $settings;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -37,11 +38,13 @@ class Service {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
+	 * @Flow\Inject(lazy=false)
 	 * @var \TYPO3\Flow\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
 	/**
+	 * @Flow\Inject(lazy=false)
 	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
@@ -67,37 +70,11 @@ class Service {
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
-	 * @return void
-	 */
-	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\I18n\LocaleCollection $localeCollection
-	 * @return void
-	 */
-	public function injectLocaleCollection(\TYPO3\Flow\I18n\LocaleCollection $localeCollection) {
-		$this->localeCollection = $localeCollection;
-	}
-
-	/**
-	 * Injects the Flow_I18n_Service cache
-	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
-	 * @return void
-	 */
-	public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
-		$this->cache = $cache;
-	}
-
-	/**
-	 * Initializes this locale service
+	 * Initializes the locale service
 	 *
 	 * @return void
 	 */
-	public function initialize() {
+	public function initializeObject() {
 		$this->configuration = new Configuration($this->settings['defaultLocale']);
 		$this->configuration->setFallbackRule($this->settings['fallbackRule']);
 
