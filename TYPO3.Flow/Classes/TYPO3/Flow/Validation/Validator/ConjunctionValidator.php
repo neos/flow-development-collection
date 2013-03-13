@@ -28,10 +28,20 @@ class ConjunctionValidator extends AbstractCompositeValidator {
 	 * @api
 	 */
 	public function validate($value) {
-		$result = new \TYPO3\Flow\Error\Result();
-		foreach ($this->validators as $validator) {
-			$result->merge($validator->validate($value));
+		$validators = $this->getValidators();
+		if ($validators->count() > 0) {
+			$result = NULL;
+			foreach ($validators as $validator) {
+				if ($result === NULL) {
+					$result = $validator->validate($value);
+				} else {
+					$result->merge($validator->validate($value));
+				}
+			}
+		} else {
+			$result = new \TYPO3\Flow\Error\Result();
 		}
+
 		return $result;
 	}
 }
