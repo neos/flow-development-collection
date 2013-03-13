@@ -167,11 +167,9 @@ class Compiler {
 				if (isset($this->proxyClasses[$fullOriginalClassName])) {
 					$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
 					if ($proxyClassCode !== '') {
-						$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode);
-
 						$class = new \ReflectionClass($fullOriginalClassName);
 						$classPathAndFilename = $class->getFileName();
-						$this->cacheOriginalClassFile($fullOriginalClassName, $classPathAndFilename);
+						$this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
 						$classCount ++;
 					}
 				}
@@ -186,16 +184,17 @@ class Compiler {
 	 *
 	 * @param string $className Short class name of the class to copy
 	 * @param string $pathAndFilename Full path and filename of the original class file
+	 * @param string $proxyClassCode The code that makes up the proxy class
 	 * @return void
 	 */
-	protected function cacheOriginalClassFile($className, $pathAndFilename) {
+	protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode) {
 		$classCode = file_get_contents($pathAndFilename);
 		$classCode = preg_replace('/^<\\?php.*\n/', '', $classCode);
 		$classCode = preg_replace('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', '$1$2 $3' . self::ORIGINAL_CLASSNAME_SUFFIX, $classCode);
 
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
-		$this->classesCache->set(str_replace('\\', '_', $className . self::ORIGINAL_CLASSNAME_SUFFIX), $classCode);
+		$this->classesCache->set(str_replace('\\', '_', $className), $classCode . $proxyClassCode);
 	}
 
 
