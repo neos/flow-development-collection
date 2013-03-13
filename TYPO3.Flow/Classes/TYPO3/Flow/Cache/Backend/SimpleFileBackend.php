@@ -252,7 +252,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	}
 
 	/**
-	 * Loads PHP code from the cache and require_onces it right away.
+	 * Loads PHP code from the cache and include_onces it right away.
 	 *
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed Potential return value from the include operation
@@ -264,7 +264,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		if ($entryIdentifier !== basename($entryIdentifier)) {
 			throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
 		}
-		return (file_exists($pathAndFilename) ? require_once($pathAndFilename) : FALSE);
+		return @include_once($pathAndFilename);
 	}
 }
 ?>
