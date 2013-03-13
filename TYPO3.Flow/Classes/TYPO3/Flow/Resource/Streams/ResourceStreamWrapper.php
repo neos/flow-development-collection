@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A stream wrapper for package resources.
- *
  */
 class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrapperInterface {
 
@@ -39,13 +38,13 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	protected $uri;
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = FALSE)
 	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = FALSE)
 	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
 	protected $resourceManager;
