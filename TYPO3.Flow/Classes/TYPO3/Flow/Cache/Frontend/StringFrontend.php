@@ -32,10 +32,16 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	 * @api
 	 */
 	public function set($entryIdentifier, $string, array $tags = array(), $lifetime = NULL) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
-		if (!is_string($string)) throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('Given data is of type "' . gettype($string) . '", but a string is expected for string cache.', 1222808333);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
+		}
+		if (!is_string($string)) {
+			throw new \TYPO3\Flow\Cache\Exception\InvalidDataException('Given data is of type "' . gettype($string) . '", but a string is expected for string cache.', 1222808333);
+		}
 		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057512);
+			if (!$this->isValidTag($tag)) {
+				throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057512);
+			}
 		}
 
 		$this->backend->set($entryIdentifier, $string, $tags, $lifetime);
@@ -66,7 +72,9 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	 * @api
 	 */
 	public function getByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057772);
+		if (!$this->isValidTag($tag)) {
+			throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057772);
+		}
 
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);

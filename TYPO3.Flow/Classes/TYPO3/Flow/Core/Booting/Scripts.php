@@ -196,7 +196,7 @@ class Scripts {
 	}
 
 	/**
-	 * Runs the compile step if neccessary
+	 * Runs the compile step if necessary
 	 *
 	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void

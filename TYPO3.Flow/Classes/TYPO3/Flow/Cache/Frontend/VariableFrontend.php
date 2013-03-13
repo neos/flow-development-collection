@@ -49,9 +49,13 @@ class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	 * @api
 	 */
 	public function set($entryIdentifier, $variable, array $tags = array(), $lifetime = NULL) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
+		}
 		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058269);
+			if (!$this->isValidTag($tag)) {
+				throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058269);
+			}
 		}
 		if ($this->useIgBinary === TRUE) {
 			$this->backend->set($entryIdentifier, igbinary_serialize($variable), $tags, $lifetime);
@@ -90,7 +94,9 @@ class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	 * @api
 	 */
 	public function getByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058312);
+		if (!$this->isValidTag($tag)) {
+			throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058312);
+		}
 
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
