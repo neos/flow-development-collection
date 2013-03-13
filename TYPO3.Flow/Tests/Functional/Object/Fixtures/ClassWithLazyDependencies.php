@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Annotations;
+namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,33 +11,30 @@ namespace TYPO3\Flow\Annotations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
- * Used to enable property injection.
- *
- * Flow will build Dependency Injection code for the property and try
- * to inject a value as specified by the var annotation.
- *
- * @Annotation
- * @Target("PROPERTY")
+ * A class which has lazy dependencies
  */
-final class Inject {
+class ClassWithLazyDependencies {
 
 	/**
-	 * Whether the dependency should be injected instantly or if a lazy dependency
-	 * proxy should be injected instead
-	 *
-	 * @var boolean
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
 	 */
-	public $lazy = TRUE;
+	public $lazyA;
 
 	/**
-	 * @param array $values
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB
 	 */
-	public function __construct(array $values) {
-		if (isset($values['lazy'])) {
-			$this->lazy = (boolean)$values['lazy'];
-		}
-	}
+	public $lazyB;
+
+	/**
+	 * @Flow\Inject(lazy = FALSE)
+	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC
+	 */
+	public $eagerC;
 
 }
 ?>

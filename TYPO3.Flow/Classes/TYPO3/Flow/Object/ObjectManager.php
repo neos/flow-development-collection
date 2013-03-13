@@ -17,6 +17,7 @@ use TYPO3\Flow\Core\ApplicationContext;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 
 /**
  * Object Manager
@@ -49,6 +50,11 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @var array
 	 */
 	protected $objects = array();
+
+	/**
+	 * @var array<\TYPO3\Flow\Object\DependencyInjection\DependencyProxy>
+	 */
+	protected $dependencyProxies = array();
 
 	/**
 	 * @var array
@@ -299,6 +305,58 @@ class ObjectManager implements ObjectManagerInterface {
 		}
 		$this->objects[$objectName]['i'] = $instance;
 	}
+
+	/**
+	 * Returns TRUE if this object manager already has an instance for the specified
+	 * object.
+	 *
+	 * @param string $objectName The object name
+	 * @return boolean TRUE if an instance already exists
+	 */
+	public function hasInstance($objectName) {
+		return isset($this->objects[$objectName]);
+	}
+
+	/**
+	 * This method is used internally to retrieve either an actual (singleton) instance
+	 * of the specified dependency or, if no instance exists yet, a Dependency Proxy
+	 * object which automatically triggers the creation of an instance as soon as
+	 * it is used the first time.
+	 *
+	 * Internally used by the injectProperties method of generated proxy classes.
+	 *
+	 * @param mixed &$propertyReferenceVariable Reference of the variable to inject into once the proxy is activated
+	 * @return mixed
+	 */
+	public function getLazyDependencyByHash($hash,  &$propertyReferenceVariable) {
+		if (!isset($this->dependencyProxies[$hash])) {
+			return NULL;
+		}
+		$this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
+		return $this->dependencyProxies[$hash];
+	}
+
+	/**
+	 * Creates a new DependencyProxy class for a dependency built through code
+	 * identified through "hash" for a dependency of class $className. The
+	 * closure in $builder contains code for actually creating the dependency
+	 * instance once it needs to be materialized.
+	 *
+	 * Internally used by the injectProperties method of generated proxy classes.
+	 *
+	 * @param string $hash An md5 hash over the code needed to actually build the dependency instance
+	 * @param string &$propertyReferenceVariable A first variable where the dependency needs to be injected into
+	 * @param string $className Name of the class of the dependency which eventually will be instantiated
+	 * @param \Closure $builder An anonymous function which creates the instance to be injected
+	 * @return \TYPO3\Flow\Object\DependencyInjection\DependencyProxy
+	 */
+	public function createLazyDependency($hash, &$propertyReferenceVariable, $className, \Closure $builder) {
+		$this->dependencyProxies[$hash] = new DependencyProxy($className, $builder);
+		$this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
+		return $this->dependencyProxies[$hash];
+
+	}
+
 
 	/**
 	 * Unsets the instance of the given object

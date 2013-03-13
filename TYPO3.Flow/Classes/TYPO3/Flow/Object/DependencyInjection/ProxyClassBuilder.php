@@ -11,6 +11,9 @@ namespace TYPO3\Flow\Object\DependencyInjection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Object\Configuration\Configuration;
+use TYPO3\Flow\Object\Configuration\ConfigurationArgument;
+use TYPO3\Flow\Object\Configuration\ConfigurationProperty;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 
@@ -165,11 +168,11 @@ class ProxyClassBuilder {
 	 *
 	 * This also makes sure that object creation does not end in an endless loop due to bi-directional dependencies.
 	 *
-	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration
+	 * @param Configuration $objectConfiguration
 	 * @return string
 	 */
-	protected function buildSetInstanceCode(\TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration) {
-		if ($objectConfiguration->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
+	protected function buildSetInstanceCode(Configuration $objectConfiguration) {
+		if ($objectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
 			return '';
 		}
 
@@ -212,10 +215,10 @@ class ProxyClassBuilder {
 	 * Renders code to create identifier/type information from related entities in an object.
 	 * Used in sleep methods.
 	 *
-	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration
+	 * @param Configuration $objectConfiguration
 	 * @return string
 	 */
-	protected function buildSerializeRelatedEntitiesCode(\TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration) {
+	protected function buildSerializeRelatedEntitiesCode(Configuration $objectConfiguration) {
 		$className = $objectConfiguration->getClassName();
 		$code = '';
 		if ($this->reflectionService->hasMethod($className, '__sleep') === FALSE) {
@@ -255,7 +258,7 @@ class ProxyClassBuilder {
 				);
 				continue;
 			}
-			if (\$className !== FALSE && \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getScope(\$className) === \\TYPO3\\Flow\\Object\\Configuration\\Configuration::SCOPE_SINGLETON) {
+			if (\$className !== FALSE && (\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getScope(\$className) === \\TYPO3\\Flow\\Object\\Configuration\\Configuration::SCOPE_SINGLETON || \$className === 'TYPO3\\Flow\\Object\\DependencyInjection\\DependencyProxy')) {
 				continue;
 			}
 		}
@@ -306,11 +309,11 @@ class ProxyClassBuilder {
 	/**
 	 * Renders additional code for the __construct() method of the Proxy Class which realizes constructor injection.
 	 *
-	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration
+	 * @param Configuration $objectConfiguration
 	 * @return string The built code
 	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
 	 */
-	protected function buildConstructorInjectionCode(\TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration) {
+	protected function buildConstructorInjectionCode(Configuration $objectConfiguration) {
 		$assignments = array();
 
 		$argumentConfigurations = $objectConfiguration->getArguments();
@@ -330,10 +333,10 @@ class ProxyClassBuilder {
 				$assignments[] = $assignmentPrologue . 'NULL';
 			} else {
 				switch ($argumentConfiguration->getType()) {
-					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
-						if ($argumentValue instanceof \TYPO3\Flow\Object\Configuration\Configuration) {
+					case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
+						if ($argumentValue instanceof Configuration) {
 							$argumentValueObjectName = $argumentValue->getObjectName();
-							if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
+							if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
 								$assignments[] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
 							} else {
 								$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
@@ -351,11 +354,11 @@ class ProxyClassBuilder {
 						}
 					break;
 
-					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
+					case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
 						$assignments[] = $assignmentPrologue . var_export($argumentValue, TRUE);
 					break;
 
-					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_SETTING:
+					case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
 						$assignments[] = $assignmentPrologue . '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
 					break;
 				}
@@ -368,7 +371,7 @@ class ProxyClassBuilder {
 			if ($parameterInfo['optional'] === TRUE) {
 				break;
 			}
-			if ($objectConfiguration->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+			if ($objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
 				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
 			} else {
 				$code .= '		if (!array_key_exists(' . $index . ', $arguments)) throw new \TYPO3\Flow\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
@@ -382,64 +385,29 @@ class ProxyClassBuilder {
 	/**
 	 * Builds the code necessary to inject setter based dependencies.
 	 *
-	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration (needed to produce helpful exception message)
+	 * @param Configuration $objectConfiguration (needed to produce helpful exception message)
 	 * @return string The built code
 	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
 	 */
-	protected function buildPropertyInjectionCode(\TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration) {
+	protected function buildPropertyInjectionCode(Configuration $objectConfiguration) {
 		$commands = array();
-		$className = $objectConfiguration->getClassName();
-		$objectName = $objectConfiguration->getObjectName();
-
 		foreach ($objectConfiguration->getProperties() as $propertyName => $propertyConfiguration) {
-			if ($propertyConfiguration->getAutowiring() === \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF) {
+			/* @var $propertyConfiguration ConfigurationProperty */
+			if ($propertyConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
 				continue;
 			}
 
 			$propertyValue = $propertyConfiguration->getValue();
 			switch ($propertyConfiguration->getType()) {
-				case \TYPO3\Flow\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT:
-					if ($propertyValue instanceof \TYPO3\Flow\Object\Configuration\Configuration) {
-						$propertyClassName = $propertyValue->getClassName();
-						if ($propertyClassName === NULL) {
-							$preparedSetterArgument = $this->buildCustomFactoryCall($propertyValue->getFactoryObjectName(), $propertyValue->getFactoryMethodName(), $propertyValue->getArguments());
-						} else {
-							if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
-								$configurationSource = $objectConfiguration->getConfigurationSourceHint();
-								throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectName . '" (' . $configurationSource . ').', 1296130876);
-							}
-							if ($this->objectConfigurations[$propertyClassName]->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-								$preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($propertyValue->getArguments()) . ')';
-							} else {
-								$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyClassName . '\')';
-							}
-						}
+				case ConfigurationProperty::PROPERTY_TYPES_OBJECT:
+					if ($propertyValue instanceof Configuration) {
+						$commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfiguration($objectConfiguration, $propertyName, $propertyValue));
 					} else {
-						if (strpos($propertyValue, '.') !== FALSE) {
-							$settingPath = explode('.', $propertyValue);
-							$settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
-							$propertyValue = Arrays::getValueByPath($settings, $settingPath);
-						}
-						if (!isset($this->objectConfigurations[$propertyValue])) {
-							$configurationSource = $objectConfiguration->getConfigurationSourceHint();
-							if (!isset($propertyValue[0])) {
-								throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Malformed DocComent block for a property in class "' . $$className . '".', 1360171313);
-							}
-							if ($propertyValue[0] === '\\') {
-								throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object name "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
-							} else {
-								throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
-							}
-						}
-						$propertyClassName = $this->objectConfigurations[$propertyValue]->getClassName();
-						if ($this->objectConfigurations[$propertyValue]->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-							$preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($this->objectConfigurations[$propertyValue]->getArguments()) . ')';
-						} else {
-							$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyValue . '\')';
-						}
+						$commands = array_merge($commands, $this->buildPropertyInjectionCodeByString($objectConfiguration, $propertyName, $propertyValue));
 					}
+
 				break;
-				case \TYPO3\Flow\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
+				case ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
 					if (is_string($propertyValue)) {
 						$preparedSetterArgument = '\'' . str_replace('\'', '\\\'', $propertyValue) . '\'';
 					} elseif (is_array($propertyValue)) {
@@ -449,36 +417,176 @@ class ProxyClassBuilder {
 					} else {
 						$preparedSetterArgument = $propertyValue;
 					}
+					$commands[] = '$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';';
 				break;
-				case \TYPO3\Flow\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING:
-					$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $propertyValue . '\')';
+				case ConfigurationProperty::PROPERTY_TYPES_SETTING:
+					$commands = array_merge($commands, $this->buildPropertyInjectionCodeBySettingPath($objectConfiguration, $propertyName, $propertyValue));
 				break;
-			}
-			$setterMethodName = 'inject' . ucfirst($propertyName);
-			if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
-				$commands[] = "\$this->$setterMethodName($preparedSetterArgument);";
-				continue;
-			}
-			$setterMethodName = 'set' . ucfirst($propertyName);
-			if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
-				$commands[] = "\$this->$setterMethodName($preparedSetterArgument);";
-				continue;
-			}
-			if (property_exists($className, $propertyName)) {
-				$commands[] = "\$this->$propertyName = $preparedSetterArgument;";
 			}
 		}
 		return count($commands) > 0 ? "\t\t" . implode("\n\t\t", $commands) . "\n" : '';
 	}
 
 	/**
+	 * Builds code which injects an object which was specified by its object configuration
+	 *
+	 * @param Configuration $objectConfiguration Configuration of the object to inject into
+	 * @param string $propertyName Name of the property to inject
+	 * @param Configuration $propertyConfiguration Configuration of the object to inject
+	 * @return array PHP code
+	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+	 */
+	protected function buildPropertyInjectionCodeByConfiguration(Configuration $objectConfiguration, $propertyName, Configuration $propertyConfiguration) {
+		$className = $objectConfiguration->getClassName();
+		$propertyClassName = $propertyConfiguration->getClassName();
+		if ($propertyClassName === NULL) {
+			$preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getArguments());
+		} else {
+			if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
+				$configurationSource = $objectConfiguration->getConfigurationSourceHint();
+				throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ').', 1296130876);
+			}
+			if ($this->objectConfigurations[$propertyClassName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+				$preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($propertyConfiguration->getArguments()) . ')';
+			} else {
+				$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyClassName . '\')';
+			}
+		}
+
+		$result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+		if ($result !== NULL) {
+			return $result;
+		}
+
+		return $this->buildLazyPropertyInjectionCode($propertyClassName, $propertyName, $preparedSetterArgument);
+	}
+
+	/**
+	 * Builds code which injects an object which was specified by its object name
+	 *
+	 * @param Configuration $objectConfiguration Configuration of the object to inject into
+	 * @param $propertyName
+	 * @param $propertyObjectName
+	 * @param string $propertyName Name of the property to inject
+	 * @param string $propertyObjectName Object name of the object to inject
+	 * @return array PHP code
+	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+	 */
+	public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, $propertyName, $propertyObjectName) {
+		$className = $objectConfiguration->getClassName();
+
+		if (strpos($propertyObjectName, '.') !== FALSE) {
+			$settingPath = explode('.', $propertyObjectName);
+			$settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+			$propertyObjectName = Arrays::getValueByPath($settings, $settingPath);
+		}
+		if (!isset($this->objectConfigurations[$propertyObjectName])) {
+			$configurationSource = $objectConfiguration->getConfigurationSourceHint();
+			if (!isset($propertyObjectName[0])) {
+				throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('Malformed DocComent block for a property in class "' . $$className . '".', 1360171313);
+			}
+			if ($propertyObjectName[0] === '\\') {
+				throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object name "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
+			} else {
+				throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
+			}
+		}
+		$propertyClassName = $this->objectConfigurations[$propertyObjectName]->getClassName();
+		if ($this->objectConfigurations[$propertyObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+			$preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($this->objectConfigurations[$propertyObjectName]->getArguments()) . ')';
+		} else {
+			$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyObjectName . '\')';
+		}
+
+		$result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+		if ($result !== NULL) {
+			return $result;
+		}
+
+		$annotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
+		if ($annotation->lazy === TRUE && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+			return $this->buildLazyPropertyInjectionCode($propertyClassName, $propertyName, $preparedSetterArgument);
+		} else {
+			return array('$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
+		}
+	}
+
+	/**
+	 * Builds code which assigns the value stored in the specified setting into the given
+	 * class property.
+	 *
+	 * @param Configuration $objectConfiguration Configuration of the object to inject into
+	 * @param string $propertyName Name of the property to inject
+	 * @param string $settingPath Path with "." as separator specifying the setting value to inject
+	 * @return array PHP code
+	 */
+	public function buildPropertyInjectionCodeBySettingPath(Configuration $objectConfiguration, $propertyName, $settingPath) {
+		$className = $objectConfiguration->getClassName();
+		$preparedSetterArgument = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $settingPath . '\')';
+
+		$result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+		if ($result !== NULL) {
+			return $result;
+		}
+		return array('$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
+	}
+
+	/**
+	 * Builds code which injects a DependencyProxy instead of the actual dependency
+	 *
+	 * @param string $propertyClassName Class name of the dependency to inject
+	 * @param string $propertyName Name of the property in the class to inject into
+	 * @param string $preparedSetterArgument PHP code to use for retrieving the value to inject
+	 * @return array PHP code
+	 */
+	protected function buildLazyPropertyInjectionCode($propertyClassName, $propertyName, $preparedSetterArgument) {
+		$propertyReferenceVariable = '$' . $propertyName . '_reference';
+		$setterArgumentHash = "'" . md5($preparedSetterArgument) . "'";
+
+		$commands[] = $propertyReferenceVariable . ' = &$this->' . $propertyName . ';';
+		$commands[] = '$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getLazyDependencyByHash(' . $setterArgumentHash . ', ' . $propertyReferenceVariable . ');';
+		$commands[] = 'if ($this->' . $propertyName . ' === NULL) {';
+		$commands[] = '	$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->createLazyDependency(' . $setterArgumentHash . ',  ' . $propertyReferenceVariable . ', \'' . $propertyClassName . '\', function() { return ' . $preparedSetterArgument . '; });';
+		$commands[] = '}';
+
+		return $commands;
+	}
+
+	/**
+	 * Builds a code snippet which tries to inject the specified property first through calling the related
+	 * inject*() method and then the set*() method. If neither exists and the property doesn't exist either,
+	 * an empty array is returned.
+	 *
+	 * If neither inject*() nor set*() exists, but the property does exist, NULL is returned
+	 *
+	 * @param string $className Name of the class to inject into
+	 * @param string $propertyName Name of the property to inject
+	 * @param string $preparedSetterArgument PHP code to use for retrieving the value to inject
+	 * @return array PHP code
+	 */
+	protected function buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument) {
+		$setterMethodName = 'inject' . ucfirst($propertyName);
+		if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
+			return array("\$this->$setterMethodName($preparedSetterArgument);");
+		}
+		$setterMethodName = 'set' . ucfirst($propertyName);
+		if ($this->reflectionService->hasMethod($className, $setterMethodName)) {
+			return array("\$this->$setterMethodName($preparedSetterArgument);");
+		}
+		if (!property_exists($className, $propertyName)) {
+			return array();
+		}
+		return NULL;
+	}
+
+	/**
 	 * Builds code which calls the lifecycle initialization method, if any.
 	 *
-	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration
+	 * @param Configuration $objectConfiguration
 	 * @param integer $cause a \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
 	 * @return string
 	 */
-	protected function buildLifecycleInitializationCode(\TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration, $cause) {
+	protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, $cause) {
 		$lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
 		if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleInitializationMethodName)) {
 			return '';
@@ -489,10 +597,10 @@ class ProxyClassBuilder {
 	/**
 	 * Builds code which registers the lifecycle shutdown method, if any.
 	 *
-	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration
+	 * @param Configuration $objectConfiguration
 	 * @return string
 	 */
-	protected function buildLifecycleShutdownCode(\TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration) {
+	protected function buildLifecycleShutdownCode(Configuration $objectConfiguration) {
 		$lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
 		if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
 			return '';
@@ -516,10 +624,10 @@ class ProxyClassBuilder {
 				$argumentValue = $argument->getValue();
 
 				switch ($argument->getType()) {
-					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
-						if ($argumentValue instanceof \TYPO3\Flow\Object\Configuration\Configuration) {
+					case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
+						if ($argumentValue instanceof Configuration) {
 							$argumentValueObjectName = $argumentValue->getObjectName();
-							if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
+							if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
 								$preparedArguments[] = '$this->getPrototype(\'' . $argumentValueObjectName . '\', array(' . $this->buildMethodParametersCode($argumentValue->getArguments(), $this->objectConfigurations) . '))';
 							} else {
 								$preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
@@ -534,11 +642,11 @@ class ProxyClassBuilder {
 						}
 					break;
 
-					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
+					case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
 						$preparedArguments[] = var_export($argumentValue, TRUE);
 					break;
 
-					case \TYPO3\Flow\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_SETTING:
+					case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
 						$preparedArguments[] = '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
 					break;
 				}
@@ -557,5 +665,6 @@ class ProxyClassBuilder {
 		$parametersCode = $this->buildMethodParametersCode($arguments);
 		return '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $customFactoryObjectName . '\')->' . $customFactoryMethodName . '(' . $parametersCode . ')';
 	}
+
 }
 ?>

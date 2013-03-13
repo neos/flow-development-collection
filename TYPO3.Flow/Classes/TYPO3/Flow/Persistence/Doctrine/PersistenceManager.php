@@ -27,6 +27,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	protected $systemLogger;
 
 	/**
+	 * @Flow\Inject
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
