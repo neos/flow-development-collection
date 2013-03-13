@@ -114,20 +114,12 @@ class ClassLoader {
 			if (substr($className, 0, $packageData['namespaceLength']) === $packageNamespace) {
 				if ($this->considerTestsNamespace === TRUE && substr($className, $packageData['namespaceLength'] + 1, 16) === 'Tests\Functional') {
 					$classPathAndFilename = $this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageData['namespaceLength'] + 1)) . '.php';
-					if (file_exists($classPathAndFilename)) {
-						require($classPathAndFilename);
-						return TRUE;
-					}
 				} else {
-
-						// The only reason using file_exists here is that Doctrine tries
-						// out several combinations of annotation namespaces and thus also triggers
-						// autoloading for non-existent classes in a valid package namespace
-					$classPathAndFilename = $packageData['classesPath'] . '/'.  str_replace('\\', '/', $className) . '.php';
-					if (file_exists($classPathAndFilename)) {
-						require ($classPathAndFilename);
-						return TRUE;
-					}
+					$classPathAndFilename = $packageData['classesPath'] . str_replace('\\', '/', $className) . '.php';
+				}
+				$result = @include($classPathAndFilename);
+				if ($result !== FALSE) {
+					return TRUE;
 				}
 			}
 		}
