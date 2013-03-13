@@ -84,20 +84,16 @@ class EntityManagerFactory {
 		$config = new \Doctrine\ORM\Configuration();
 		$config->setClassMetadataFactoryName('TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
-		if (class_exists($this->settings['doctrine']['cacheImplementation'])) {
-				// safeguard against apc being disabled in CLI...
-			if ($this->settings['doctrine']['cacheImplementation'] !== 'Doctrine\Common\Cache\ApcCache' || function_exists('apc_fetch')) {
-				$cache = new $this->settings['doctrine']['cacheImplementation']();
-				$config->setMetadataCacheImpl($cache);
-				$config->setQueryCacheImpl($cache);
-			}
-		}
+		$cache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
+			// must use ObjectManager in compile phase...
+		$cache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine'));
+		$config->setMetadataCacheImpl($cache);
+		$config->setQueryCacheImpl($cache);
 
 		if (class_exists($this->settings['doctrine']['sqlLogger'])) {
 			$config->setSQLLogger(new $this->settings['doctrine']['sqlLogger']());
 		}
 
-			// must use ObjectManager in compile phase...
 		$flowAnnotationDriver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$config->setMetadataDriverImpl($flowAnnotationDriver);
 
