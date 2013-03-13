@@ -25,14 +25,32 @@ class Result {
 	protected $errors = array();
 
 	/**
+	 * Caches the existence of errors
+	 * @var boolean
+	 */
+	protected $errorsExist = FALSE;
+
+	/**
 	 * @var array<\TYPO3\Flow\Error\Warning>
 	 */
 	protected $warnings = array();
 
 	/**
+	 * Caches the existence of warning
+	 * @var boolean
+	 */
+	protected $warningsExist = FALSE;
+
+	/**
 	 * @var array<\TYPO3\Flow\Error\Notice>
 	 */
 	protected $notices = array();
+
+	/**
+	 * Caches the existence of notices
+	 * @var boolean
+	 */
+	protected $noticesExist = FALSE;
 
 	/**
 	 * The result objects for the sub properties
@@ -42,6 +60,32 @@ class Result {
 	protected $propertyResults = array();
 
 	/**
+	 * @var \TYPO3\Flow\Error\Result
+	 */
+	protected $parent = NULL;
+
+	/**
+	 * Injects the parent result and propagates the
+	 * cached error states upwards
+	 *
+	 * @param \TYPO3\Flow\Error\Result $parent
+	 * @return void
+	 */
+	public function setParent(\TYPO3\Flow\Error\Result $parent) {
+		if ($this->parent !== $parent) {
+			$this->parent = $parent;
+			if ($this->hasErrors()) {
+				$parent->setErrorsExist();
+			}
+			if ($this->hasWarnings()) {
+				$parent->setWarningsExist();
+			}
+			if ($this->hasNotices()) {
+				$parent->setNoticesExist();
+			}
+		}
+	}
+	/**
 	 * Add an error to the current Result object
 	 *
 	 * @param \TYPO3\Flow\Error\Error $error
@@ -50,6 +94,7 @@ class Result {
 	 */
 	public function addError(\TYPO3\Flow\Error\Error $error) {
 		$this->errors[] = $error;
+		$this->setErrorsExist();
 	}
 
 	/**
@@ -61,6 +106,7 @@ class Result {
 	 */
 	public function addWarning(\TYPO3\Flow\Error\Warning $warning) {
 		$this->warnings[] = $warning;
+		$this->setWarningsExist();
 	}
 
 	/**
@@ -72,6 +118,7 @@ class Result {
 	 */
 	public function addNotice(\TYPO3\Flow\Error\Notice $notice) {
 		$this->notices[] = $notice;
+		$this->setNoticesExist();
 	}
 
 	/**
@@ -151,8 +198,15 @@ class Result {
 		if ($propertyPath === '' || $propertyPath === NULL) {
 			return $this;
 		}
-		$propertyPathSegments = explode('.', $propertyPath);
-		return $this->recurseThroughResult($propertyPathSegments);
+		if (strpos($propertyPath, '.') !== FALSE) {
+			return $this->recurseThroughResult(explode('.', $propertyPath));
+		} else {
+			if (!isset($this->propertyResults[$propertyPath])) {
+				$this->propertyResults[$propertyPath] = new \TYPO3\Flow\Error\Result();
+				$this->propertyResults[$propertyPath]->setParent($this);
+			}
+			return $this->propertyResults[$propertyPath];
+		}
 	}
 
 	/**
@@ -170,30 +224,10 @@ class Result {
 
 		if (!isset($this->propertyResults[$propertyName])) {
 			$this->propertyResults[$propertyName] = new \TYPO3\Flow\Error\Result();
+			$this->propertyResults[$propertyName]->setParent($this);
 		}
 
 		return $this->propertyResults[$propertyName]->recurseThroughResult($pathSegments);
-	}
-
-	/**
-	 * Internal use only!
-	 *
-	 * @param string $propertyName
-	 * @param string $checkerMethodName
-	 * @return boolean
-	 */
-	protected function hasProperty($propertyName, $checkerMethodName) {
-		if (count($this->$propertyName) > 0) {
-			return TRUE;
-		}
-
-		foreach ($this->propertyResults as $subResult) {
-			if ($subResult->$checkerMethodName()) {
-				return TRUE;
-			}
-		}
-
-		return FALSE;
 	}
 
 	/**
@@ -203,9 +237,20 @@ class Result {
 	 * @api
 	 */
 	public function hasErrors() {
-		return $this->hasProperty('errors', 'hasErrors');
+		return $this->errorsExist;
 	}
 
+	/**
+	 * Sets the error cache to TRUE and propagates the information
+	 * upwards the Result-Object Tree
+	 * @return void
+	 */
+	protected function setErrorsExist() {
+		$this->errorsExist = TRUE;
+		if ($this->parent !== NULL) {
+			$this->parent->setErrorsExist();
+		}
+	}
 
 	/**
 	 * Does the current Result object have Warnings? (Recursively)
@@ -214,7 +259,19 @@ class Result {
 	 * @api
 	 */
 	public function hasWarnings() {
-		return $this->hasProperty('warnings', 'hasWarnings');
+		return $this->warningsExist;
+	}
+
+	/**
+	 * Sets the warning cache to TRUE and propagates the information
+	 * upwards the Result-Object Tree
+	 * @return void
+	 */
+	protected function setWarningsExist() {
+		$this->warningsExist = TRUE;
+		if ($this->parent !== NULL) {
+			$this->parent->setWarningsExist();
+		}
 	}
 
 	/**
@@ -224,8 +281,31 @@ class Result {
 	 * @api
 	 */
 	public function hasNotices() {
-		return $this->hasProperty('notices', 'hasNotices');
+		return $this->noticesExist;
 	}
+
+	/**
+	 * Sets the notices cache to TRUE and propagates the information
+	 * upwards the Result-Object Tree
+	 * @return void
+	 */
+	protected function setNoticesExist() {
+		$this->noticesExist = TRUE;
+		if ($this->parent !== NULL) {
+			$this->parent->setNoticesExist();
+		}
+	}
+
+
+	/**
+	 * Does the current Result object have Notices, Errors or Warnings? (Recursively)
+	 *
+	 * @return bool
+	 */
+	public function hasMessages() {
+		return $this->errorsExist || $this->noticesExist || $this->warningsExist;
+	}
+
 
 	/**
 	 * Get a list of all Error objects recursively. The result is an array,
@@ -298,12 +378,24 @@ class Result {
 	 * @api
 	 */
 	public function merge(\TYPO3\Flow\Error\Result $otherResult) {
-		$this->mergeProperty($otherResult, 'getErrors', 'addError');
-		$this->mergeProperty($otherResult, 'getWarnings', 'addWarning');
-		$this->mergeProperty($otherResult, 'getNotices', 'addNotice');
+		if ($otherResult->errorsExist) {
+			$this->mergeProperty($otherResult, 'getErrors', 'addError');
+		}
+		if ($otherResult->warningsExist) {
+			$this->mergeProperty($otherResult, 'getWarnings', 'addWarning');
+		}
+		if ($otherResult->noticesExist) {
+			$this->mergeProperty($otherResult, 'getNotices', 'addNotice');
+		}
 
 		foreach ($otherResult->getSubResults() as $subPropertyName => $subResult) {
-			$this->forProperty($subPropertyName)->merge($subResult);
+			/** @var $subResult Result */
+			if (array_key_exists($subPropertyName, $this->propertyResults) && $this->propertyResults[$subPropertyName]->hasMessages()) {
+				$this->forProperty($subPropertyName)->merge($subResult);
+			} else {
+				$this->propertyResults[$subPropertyName] = $subResult;
+				$subResult->setParent($this);
+			}
 		}
 	}
 
@@ -324,10 +416,26 @@ class Result {
 	/**
 	 * Get a list of all sub Result objects available.
 	 *
-	 * @return array<\TYPO3\Flow\Erro\Result>
+	 * @return array<\TYPO3\Flow\Error\Result>
 	 */
 	public function getSubResults() {
 		return $this->propertyResults;
+	}
+
+	/**
+	 * Clears the result
+	 * @return void
+	 */
+	public function clear() {
+		$this->errors = array();
+		$this->notices = array();
+		$this->warnings = array();
+
+		$this->warningsExist = FALSE;
+		$this->noticesExist = FALSE;
+		$this->errorsExist = FALSE;
+
+		$this->propertyResults = array();
 	}
 }
 
