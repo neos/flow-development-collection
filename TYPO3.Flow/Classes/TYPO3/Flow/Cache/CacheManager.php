@@ -224,6 +224,7 @@ class CacheManager {
 				}
 				if ($flushDoctrineProxyCache === TRUE) {
 					$this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
+					$this->getCache('Flow_Persistence_Doctrine')->flush();
 					$objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
 				}
 			break;

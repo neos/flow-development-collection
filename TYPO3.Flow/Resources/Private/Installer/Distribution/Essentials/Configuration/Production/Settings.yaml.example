@@ -15,8 +15,3 @@ TYPO3:
         dbname: 'flow'       # adjust to your database name
         user: ''             # adjust to your database user
         password: ''         # adjust to your database password
-
-#      doctrine:
-        # If you have APC, you should consider using it for Production,
-        # also MemcacheCache and XcacheCache exist.
-#        cacheImplementation: 'Doctrine\Common\Cache\ApcCache'

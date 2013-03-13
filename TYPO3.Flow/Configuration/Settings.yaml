@@ -181,7 +181,6 @@ TYPO3:
       doctrine:
         # By default Doctrine proxy compilation is done in the Flow bootstrap
         enable: TRUE
-        cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
         sqlLogger: NULL
 
     reflection:
