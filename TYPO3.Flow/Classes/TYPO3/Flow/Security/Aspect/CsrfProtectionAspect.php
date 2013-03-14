@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
  * An aspect which cares for CSRF protection.
  *
  * @Flow\Aspect
+ * @Flow\Scope("singleton")
  */
 class CsrfProtectionAspect {
 

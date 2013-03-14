@@ -16,6 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Adds the aspect of lazy loading to relevant objects
  *
+ * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
 class LazyLoadingObjectAspect {
