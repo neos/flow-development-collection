@@ -65,12 +65,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 
 		$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
 
-		for($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
+		for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
 			if ($directoryIterator->isDot()) {
 				continue;
 			}
 			if ($cacheEntryFileExtensionLength > 0) {
-				$entryIdentifier = substr ($directoryIterator->getFilename(), 0, - $cacheEntryFileExtensionLength);
+				$entryIdentifier = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
 			} else {
 				$entryIdentifier = $directoryIterator->getFilename();
 			}
@@ -189,8 +189,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 		if ($this->isCacheFileExpired($pathAndFilename)) {
 			return FALSE;
 		}
-		$dataSize = (integer)file_get_contents($pathAndFilename, NULL, NULL, filesize($pathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
-		return file_get_contents($pathAndFilename, NULL, NULL, 0, $dataSize);
+		$cacheData = file_get_contents($pathAndFilename);
+		$dataSize = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
+		return substr($cacheData, 0, $dataSize);
 	}
 
 	/**
@@ -254,18 +255,18 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 		$entryIdentifiers = array();
 		$now = $_SERVER['REQUEST_TIME'];
 		$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
-		for($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
+		for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
 			if ($directoryIterator->isDot()) continue;
 
 			$cacheEntryPathAndFilename = $directoryIterator->getPathname();
-			$index = (integer) file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
+			$index = (integer)file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
 			$metaData = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index);
 
 			$expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
 			if ($expiryTime !== 0 && $expiryTime < $now) continue;
 			if (in_array($searchedTag, explode(' ', substr($metaData, self::EXPIRYTIME_LENGTH, -self::DATASIZE_DIGITS)))) {
 				if ($cacheEntryFileExtensionLength > 0) {
-					$entryIdentifiers[] = substr ($directoryIterator->getFilename(), 0, - $cacheEntryFileExtensionLength);
+					$entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
 				} else {
 					$entryIdentifiers[] = $directoryIterator->getFilename();
 				}
@@ -317,8 +318,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 			return TRUE;
 		}
 
-		$index = (integer) file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
-		$expiryTime = intval(file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index, self::EXPIRYTIME_LENGTH));
+		$cacheData = file_get_contents($cacheEntryPathAndFilename);
+		$index = (integer)substr($cacheData, -(self::DATASIZE_DIGITS));
+		$expiryTime = (integer)substr($cacheData, $index, (self::EXPIRYTIME_LENGTH));
 		return ($expiryTime !== 0 && $expiryTime < time());
 	}
 
@@ -341,7 +343,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 			if ($this->isCacheFileExpired($directoryIterator->getPathname())) {
 				$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
 				if ($cacheEntryFileExtensionLength > 0) {
-					$this->remove(substr($directoryIterator->getFilename(), 0, - $cacheEntryFileExtensionLength));
+					$this->remove(substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength));
 				} else {
 					$this->remove($directoryIterator->getFilename());
 				}
@@ -391,4 +393,5 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 		}
 	}
 }
+
 ?>
