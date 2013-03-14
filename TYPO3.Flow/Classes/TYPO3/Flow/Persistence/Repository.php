@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Persistence;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * The Flow default Repository
  *
@@ -19,6 +21,7 @@ namespace TYPO3\Flow\Persistence;
 abstract class Repository implements \TYPO3\Flow\Persistence\RepositoryInterface {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -45,16 +48,6 @@ abstract class Repository implements \TYPO3\Flow\Persistence\RepositoryInterface
 		} else {
 			$this->entityClassName = static::ENTITY_CLASSNAME;
 		}
-	}
-
-	/**
-	 * Injects the persistence manager
-	 *
-	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 */
-	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**

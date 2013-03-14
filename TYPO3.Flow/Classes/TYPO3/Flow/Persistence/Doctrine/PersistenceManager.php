@@ -22,6 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceManager {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -33,46 +34,16 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	protected $entityManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
-
-	/**
-	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
-	 * @return void
-	 */
-	public function injectEntityManager(\Doctrine\Common\Persistence\ObjectManager $entityManager) {
-		$this->entityManager = $entityManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Validation\ValidatorResolver $validatorResolver
-	 * @return void
-	 */
-	public function injectValidatorResolver(\TYPO3\Flow\Validation\ValidatorResolver $validatorResolver) {
-		$this->validatorResolver = $validatorResolver;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
 
 	/**
 	 * Initializes the persistence manager, called by Flow.

@@ -46,7 +46,7 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
 		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
-		$resourceManager->injectReflectionService($mockReflectionService);
+		$this->inject($resourceManager, 'reflectionService', $mockReflectionService);
 		$resourceManager->initialize();
 
 		$this->assertContains(get_class($mockStreamWrapperAdapter), \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());
@@ -73,8 +73,8 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 
 		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
-		$resourceManager->injectResourcePublisher($mockResourcePublisher);
-		$resourceManager->injectStatusCache($mockStatusCache);
+		$this->inject($resourceManager, 'resourcePublisher', $mockResourcePublisher);
+		$this->inject($resourceManager, 'statusCache', $mockStatusCache);
 		$resourceManager->injectSettings($settings);
 
 		$resourceManager->publishPublicPackageResources(array('Foo' => $mockPackage, 'Bar' => $mockPackage));
@@ -96,8 +96,8 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 
 		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
-		$resourceManager->injectResourcePublisher($mockResourcePublisher);
-		$resourceManager->injectStatusCache($mockStatusCache);
+		$this->inject($resourceManager, 'resourcePublisher', $mockResourcePublisher);
+		$this->inject($resourceManager, 'statusCache', $mockStatusCache);
 		$resourceManager->injectSettings($settings);
 
 		$resourceManager->publishPublicPackageResources(array('Foo' => $mockPackage, 'Bar' => $mockPackage));
@@ -132,11 +132,11 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$resourceManager = $this->getAccessibleMock('\TYPO3\Flow\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
 		$resourceManager->_set('importedResources', new \SplObjectStorage());
-		$resourceManager->injectEnvironment($mockEnvironment);
-		$resourceManager->injectSystemLogger($mockLogger);
+		$this->inject($resourceManager, 'environment', $mockEnvironment);
+		$this->inject($resourceManager, 'systemLogger', $mockLogger);
 
 		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
-		$resourceManager->injectPersistenceManager($mockPersistenceManager);
+		$this->inject($resourceManager, 'persistenceManager', $mockPersistenceManager);
 
 		return $resourceManager;
 	}

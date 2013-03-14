@@ -21,16 +21,19 @@ use TYPO3\Flow\Annotations as Flow;
 class EntityManagerFactory {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
@@ -39,30 +42,6 @@ class EntityManagerFactory {
 	 * @var array
 	 */
 	protected $settings = array();
-
-	/**
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Utility\Environment $environment
-	 * @return void
-	 */
-	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
 
 	/**
 	 * Injects the Flow settings, the persistence part is kept
