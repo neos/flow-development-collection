@@ -23,16 +23,19 @@ use TYPO3\Flow\Annotations as Flow;
 class PropertyMapper {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
 	 */
 	protected $configurationBuilder;
@@ -54,30 +57,6 @@ class PropertyMapper {
 	 * @var \TYPO3\Flow\Error\Result
 	 */
 	protected $messages;
-
-	/**
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
-	 * @return void
-	 */
-	public function injectPropertyMappingConfigurationBuilder(\TYPO3\Flow\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder) {
-		$this->configurationBuilder = $propertyMappingConfigurationBuilder;
-	}
 
 	/**
 	 * Lifecycle method, called after all dependencies have been injected.

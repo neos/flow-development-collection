@@ -22,36 +22,43 @@ use TYPO3\Flow\Annotations as Flow;
 class ResourceManager {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
 	 */
 	protected $statusCache;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -70,76 +77,6 @@ class ResourceManager {
 	 * @var \SplObjectStorage
 	 */
 	protected $importedResources;
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the resource publisher
-	 *
-	 * @param \TYPO3\Flow\Resource\Publishing\ResourcePublisher $resourcePublisher
-	 * @return void
-	 */
-	public function injectResourcePublisher(\TYPO3\Flow\Resource\Publishing\ResourcePublisher $resourcePublisher) {
-		$this->resourcePublisher = $resourcePublisher;
-	}
-
-	/**
-	 * Injects the reflection service
-	 *
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the environment
-	 *
-	 * @param \TYPO3\Flow\Utility\Environment $environment
-	 * @return void
-	 */
-	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
-
-	/**
-	 * Injects the status cache
-	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $statusCache
-	 * @return void
-	 */
-	public function injectStatusCache(\TYPO3\Flow\Cache\Frontend\StringFrontend $statusCache) {
-		$this->statusCache = $statusCache;
-	}
-
-	/**
-	 * Injects the persistence manager
-	 *
-	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 */
-	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
 
 	/**
 	 * Injects the settings of this package

@@ -47,30 +47,16 @@ class ObjectConverter extends AbstractTypeConverter {
 	protected $priority = 0;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
-
-	/**
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
 
 	/**
 	 * Only convert non-persistent types

@@ -83,8 +83,8 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(TRUE));
 
 		$this->uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
-		$this->uriBuilder->injectRouter($this->mockRouter);
-		$this->uriBuilder->injectEnvironment($environment);
+		$this->inject($this->uriBuilder, 'router', $this->mockRouter);
+		$this->inject($this->uriBuilder, 'environment', $environment);
 		$this->uriBuilder->setRequest($this->mockMainRequest);
 	}
 
@@ -667,7 +667,7 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function buildPrependsIndexFileIfRewriteUrlsIsOff() {
 		$this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
 		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
-		$this->uriBuilder->injectEnvironment($mockEnvironment);
+		$this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
 		$expectedResult = 'index.php/resolvedUri';
 		$actualResult = $this->uriBuilder->build();

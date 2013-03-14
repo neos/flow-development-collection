@@ -27,24 +27,11 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\Poi
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
 	 * @param \TYPO3\Flow\Object\CompileTimeObjectManager $objectManager
 	 * @return void
 	 */
 	public function injectObjectManager(\TYPO3\Flow\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\Flow\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
 	}
 
 	/**
