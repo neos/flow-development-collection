@@ -144,19 +144,15 @@ TYPO3:
       registerFunctionalTestClasses: FALSE
 
       # Exclude classes from object management (Reflection and Configuration building).
-      # Sequence of package keys each with a sequence of regular expressions
+      # Sequence of package keys (a * as wildcard as last character is allowed) each
+      # with a sequence of regular expressions.
       # Each regular expression will be tested against the list of fully qualified
       # class names in the package and classes will be excluded if matching.
       excludeClasses:
-       'Doctrine.Common' : ['.*']
-       'Doctrine.ORM' : ['.*']
-       'Doctrine.DBAL' : ['.*']
-       'doctrine.annotations' : ['.*']
-       'doctrine.collections' : ['.*']
-       'doctrine.migrations' : ['.*']
-       'symfony.domcrawler' : ['Symfony\\Component\\DomCrawler\\Tests\\.*']
-       'symfony.yaml' : ['Symfony\\Component\\Yaml\\Tests\\.*']
-       'symfony.console' : ['Symfony\\Component\\Console\\Tests\\.*']
+       'Doctrine.*' : ['.*']
+       'doctrine.*' : ['.*']
+       'symfony.*' : ['.*']
+       'phpunit.*' : ['.*']
        'mikey179.vfsStream' : ['.*']
        # workaround, should rather be deactivated
        'typo3.flowcomposerinstallers': ['.*']
