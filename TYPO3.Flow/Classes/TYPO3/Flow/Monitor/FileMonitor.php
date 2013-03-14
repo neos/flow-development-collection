@@ -212,16 +212,16 @@ class FileMonitor {
 		}
 
 		foreach ($this->directoriesAndFiles as $path => $pathAndFilenames) {
-			if (!is_dir($path)) {
-				unset($this->directoriesAndFiles[$path]);
-				$this->directoriesChanged = TRUE;
-				$changedDirectories[$path] = \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
-			} else {
+			try {
 				$currentSubDirectoriesAndFiles = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($path);
 				if ($currentSubDirectoriesAndFiles != $pathAndFilenames) {
 					$pathAndFilenames = array_unique(array_merge($currentSubDirectoriesAndFiles, $pathAndFilenames));
 				}
 				$changedFiles = array_merge($changedFiles, $this->detectChangedFiles($pathAndFilenames));
+			} catch (\TYPO3\Flow\Utility\Exception $exception) {
+				unset($this->directoriesAndFiles[$path]);
+				$this->directoriesChanged = TRUE;
+				$changedDirectories[$path] = \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
 			}
 		}
 
@@ -231,7 +231,9 @@ class FileMonitor {
 		if (count($changedDirectories) > 0) {
 			$this->emitDirectoriesHaveChanged($this->identifier, $changedDirectories);
 		}
-		if (count($changedFiles) > 0 || count($changedDirectories) > 0) $this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, count($changedFiles), count($changedDirectories)), LOG_INFO);
+		if (count($changedFiles) > 0 || count($changedDirectories) > 0) {
+			$this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, count($changedFiles), count($changedDirectories)), LOG_INFO);
+		}
 	}
 
 	/**

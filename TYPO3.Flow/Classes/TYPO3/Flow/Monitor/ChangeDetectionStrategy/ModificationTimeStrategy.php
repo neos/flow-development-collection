@@ -73,9 +73,9 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	 * @return integer One of the STATUS_* constants
 	 */
 	public function getFileStatus($pathAndFilename) {
+		$actualModificationTime = @filemtime($pathAndFilename);
 		if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
-			if (file_exists($pathAndFilename)) {
-				$actualModificationTime = filemtime($pathAndFilename);
+			if ($actualModificationTime !== FALSE) {
 				if ($this->filesAndModificationTimes[$pathAndFilename] === $actualModificationTime) {
 					return self::STATUS_UNCHANGED;
 				} else {
@@ -89,8 +89,8 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 				return self::STATUS_DELETED;
 			}
 		} else {
-			if (file_exists($pathAndFilename)) {
-				$this->filesAndModificationTimes[$pathAndFilename] = filemtime($pathAndFilename);
+			if ($actualModificationTime !== FALSE) {
+				$this->filesAndModificationTimes[$pathAndFilename] = $actualModificationTime;
 				$this->modificationTimesChanged = TRUE;
 				return self::STATUS_CREATED;
 			} else {
