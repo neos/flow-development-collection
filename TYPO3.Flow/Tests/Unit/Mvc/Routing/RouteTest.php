@@ -51,11 +51,11 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->mockRouter = $this->getMock('TYPO3\Flow\Mvc\Routing\RouterInterface');
 		$this->mockRouter->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('SomeControllerObjectName'));
-		$this->route->injectRouter($this->mockRouter);
+		$this->inject($this->route, 'router', $this->mockRouter);
 
 		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$this->mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnCallback(function ($array) { return $array; }));
-		$this->route->injectPersistenceManager($this->mockPersistenceManager);
+		$this->inject($this->route, 'persistenceManager', $this->mockPersistenceManager);
 	}
 
 	/**
@@ -837,7 +837,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$this->route = new \TYPO3\Flow\Mvc\Routing\Route($this->mockObjectManager, $mockObjectManager);
-		$this->route->injectRouter($this->mockRouter);
+		$this->inject($this->route, 'router', $this->mockRouter);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
 
@@ -908,7 +908,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArray)->will($this->returnValue($convertedArray));
-		$this->route->injectPersistenceManager($mockPersistenceManager);
+		$this->inject($this->route, 'persistenceManager', $mockPersistenceManager);
 
 		$this->route->setUriPattern('foo');
 		$this->route->setAppendExceedingArguments(TRUE);
@@ -934,7 +934,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockRouter = $this->getMock('TYPO3\Flow\Mvc\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')->with('Snow', '', 'flake')->will($this->returnValue(NULL));
-		$this->route->injectRouter($mockRouter);
+		$this->inject($this->route, 'router', $mockRouter);
 
 		$this->route->resolves($this->routeValues);
 	}
@@ -949,7 +949,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockRouter = $this->getMock('TYPO3\Flow\Mvc\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')->with('SomePackage', 'Some\Subpackage', 'SomeExistingController')->will($this->returnValue('ControllerObjectName'));
-		$this->route->injectRouter($mockRouter);
+		$this->inject($this->route, 'router', $mockRouter);
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
 	}
@@ -1000,8 +1000,8 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$route = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Route', array('compareAndRemoveMatchingDefaultValues'));
 		$route->setAppendExceedingArguments(TRUE);
-		$route->injectRouter($this->mockRouter);
-		$route->injectPersistenceManager($this->mockPersistenceManager);
+		$this->inject($route, 'router', $this->mockRouter);
+		$this->inject($route, 'persistenceManager', $this->mockPersistenceManager);
 		$route->setUriPattern('foo');
 		$route->setDefaults($defaultValues);
 		$route->_set('isParsed', TRUE);

@@ -39,8 +39,8 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->objectArgument = new \TYPO3\Flow\Mvc\Controller\Argument('someName', 'DateTime');
 
 		$this->mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
-		$this->simpleValueArgument->injectPropertyMapper($this->mockPropertyMapper);
-		$this->objectArgument->injectPropertyMapper($this->mockPropertyMapper);
+		$this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
+		$this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
 		$this->mockConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
 

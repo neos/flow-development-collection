@@ -34,6 +34,7 @@ class Router implements \TYPO3\Flow\Mvc\Routing\RouterInterface {
 	protected $controllerObjectNamePattern = '@package\@subpackage\Controller\@controllerController';
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -71,16 +72,6 @@ class Router implements \TYPO3\Flow\Mvc\Routing\RouterInterface {
 	 * @var \TYPO3\Flow\Mvc\Routing\Route
 	 */
 	protected $lastResolvedRoute;
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Sets the routes configuration.

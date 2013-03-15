@@ -151,7 +151,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->will($this->returnValue('TestPackage\Controller\FooController'));
 
 		$router = new \TYPO3\Flow\Mvc\Routing\Router();
-		$router->injectObjectManager($mockObjectManager);
+		$this->inject($router, 'objectManager', $mockObjectManager);
 		$this->assertEquals('TestPackage\Controller\FooController', $router->getControllerObjectName('testpackage', '', 'foo'));
 	}
 
@@ -165,7 +165,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->will($this->returnValue('TestPackage\Bar\Baz\Controller\FooController'));
 
 		$router = new \TYPO3\Flow\Mvc\Routing\Router();
-		$router->injectObjectManager($mockObjectManager);
+		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$this->assertEquals('TestPackage\Bar\Baz\Controller\FooController', $router->getControllerObjectName('testpackage', 'bar\baz', 'foo'));
 	}
@@ -275,7 +275,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->will($this->returnValue(FALSE));
 
 		$router = new \TYPO3\Flow\Mvc\Routing\Router();
-		$router->injectObjectManager($mockObjectManager);
+		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$this->assertEquals('', $router->getControllerObjectName('testpackage', '', 'foo'));
 	}
@@ -302,7 +302,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnArgument(0));
 
 		$router = new \TYPO3\Flow\Mvc\Routing\Router();
-		$router->injectObjectManager($mockObjectManager);
+		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$this->assertEquals($expectedObjectName, $router->getControllerObjectName($packageKey, $subpackageKey, $controllerName));
 	}

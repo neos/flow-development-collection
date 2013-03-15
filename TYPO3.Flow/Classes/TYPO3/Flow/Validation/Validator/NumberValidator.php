@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Validator for general numbers.
@@ -30,30 +31,16 @@ class NumberValidator extends AbstractValidator {
 	);
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\I18n\Parser\NumberParser
 	 */
 	protected $numberParser;
-
-	/**
-	 * @param \TYPO3\Flow\I18n\Service $localizationService
-	 * @return void
-	 */
-	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
-		$this->localizationService = $localizationService;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\I18n\Parser\NumberParser $numberParser
-	 * @return void
-	 */
-	public function injectNumberParser(\TYPO3\Flow\I18n\Parser\NumberParser $numberParser) {
-		$this->numberParser = $numberParser;
-	}
 
 	/**
 	 * Checks if the given value is a valid number.

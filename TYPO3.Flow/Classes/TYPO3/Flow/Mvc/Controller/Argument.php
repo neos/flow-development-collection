@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 
 /**
  * A controller argument
@@ -76,21 +75,15 @@ class Argument {
 	protected $validationResults = NULL;
 
 	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
 
-
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
-
-	/**
-	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
-	 */
-	protected $propertyMappingConfigurationBuilder;
 
 	/**
 	 * Constructs this controller argument
@@ -105,14 +98,6 @@ class Argument {
 		if (strlen($name) === 0) throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
 		$this->name = $name;
 		$this->setDataType($dataType);
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Property\PropertyMapper $propertyMapper The property mapper
-	 * @return void
-	 */
-	public function injectPropertyMapper(\TYPO3\Flow\Property\PropertyMapper $propertyMapper) {
-		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
@@ -306,8 +291,8 @@ class Argument {
 	 * @api
 	 */
 	public function getPropertyMappingConfiguration() {
-		if ($this->propertyMappingConfiguration instanceof DependencyProxy) {
-			$this->propertyMappingConfiguration->_activateDependency();
+		if ($this->propertyMappingConfiguration === NULL) {
+			$this->propertyMappingConfiguration = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration();
 		}
 		return $this->propertyMappingConfiguration;
 	}

@@ -103,32 +103,16 @@ class Route {
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
 	 */
 	protected $router;
-
-	/**
-	 * Injects the Persistence Manager
-	 *
-	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 */
-	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Mvc\Routing\RouterInterface $router
-	 * @return void
-	 */
-	public function injectRouter(\TYPO3\Flow\Mvc\Routing\RouterInterface $router) {
-		$this->router = $router;
-	}
 
 	/**
 	 * Sets Route name.

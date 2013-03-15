@@ -62,7 +62,7 @@ class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Ab
 		$this->mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
 
 		$this->validatorOptions(array('locale' => $this->sampleLocale));
-		$this->validator->injectNumberParser($this->mockNumberParser);
+		$this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
 		$this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
 	}
@@ -76,7 +76,7 @@ class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Ab
 		$this->mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
 
 		$this->validatorOptions(array('locale' => 'en_GB', 'formatLength' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
-		$this->validator->injectNumberParser($this->mockNumberParser);
+		$this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
 		$this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
 	}

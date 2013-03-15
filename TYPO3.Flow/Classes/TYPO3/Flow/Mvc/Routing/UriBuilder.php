@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An URI Builder
@@ -21,11 +22,13 @@ use TYPO3\Flow\Utility\Arrays;
 class UriBuilder {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
 	 */
 	protected $router;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Utility\Environment
 	 */
 	protected $environment;
@@ -79,26 +82,6 @@ class UriBuilder {
 	 * @var boolean
 	 */
 	protected $linkProtectionEnabled = TRUE;
-
-	/**
-	 * Injects the Router
-	 *
-	 * @param \TYPO3\Flow\Mvc\Routing\RouterInterface $router
-	 * @return void
-	 */
-	public function injectRouter(\TYPO3\Flow\Mvc\Routing\RouterInterface $router) {
-		$this->router = $router;
-	}
-
-	/**
-	 * Injects the environment
-	 *
-	 * @param \TYPO3\Flow\Utility\Environment $environment
-	 * @return void
-	 */
-	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
 
 	/**
 	 * Sets the current request and resets the UriBuilder
