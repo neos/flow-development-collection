@@ -170,14 +170,14 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @todo improve try/catch block
 	 */
 	public function getIdentifierByObject($object) {
-		if ($this->entityManager->contains($object)) {
+		if (property_exists($object, 'Persistence_Object_Identifier')) {
+			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
+		} elseif ($this->entityManager->contains($object)) {
 			try {
 				return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
 			} catch (\Doctrine\ORM\ORMException $e) {
 				return NULL;
 			}
-		} elseif (property_exists($object, 'Persistence_Object_Identifier')) {
-			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
 		} else {
 			return NULL;
 		}
