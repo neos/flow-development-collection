@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Authentication;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * The default authentication manager, which relies on Authentication Providers
@@ -67,6 +68,11 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 * @var array
 	 */
 	protected $tokens = array();
+
+	/**
+	 * @var boolean
+	 */
+	protected $isAuthenticated = NULL;
 
 	/**
 	 * Constructor.
@@ -135,6 +141,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function authenticate() {
+		$this->isAuthenticated = FALSE;
 		$anyTokenAuthenticated = FALSE;
 		if ($this->securityContext === NULL) {
 			throw new \TYPO3\Flow\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
@@ -160,6 +167,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			if ($token->isAuthenticated()) {
 				$anyTokenAuthenticated = TRUE;
 				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ONE_TOKEN) {
+					$this->isAuthenticated = TRUE;
 					return;
 				}
 			} else {
@@ -172,23 +180,23 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== \TYPO3\Flow\Security\Context::AUTHENTICATE_ANY_TOKEN) {
 			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
+		$this->isAuthenticated = $anyTokenAuthenticated;
 	}
 
 	/**
-	 * Checks if there exists a user session and if at least one token is authenticated
+	 * Checks if one or all tokens are authenticated (depending on the authentication strategy).
+	 *
+	 * Will call authenticate() if not done before.
 	 *
 	 * @return boolean
 	 */
 	public function isAuthenticated() {
-		$atLeastOneTokenIsAuthenticated = FALSE;
-		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
-		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated()) {
-				$atLeastOneTokenIsAuthenticated = TRUE;
-				break;
-			}
+		if ($this->isAuthenticated === NULL) {
+			try {
+				$this->authenticate();
+			} catch(AuthenticationRequiredException $e) {}
 		}
-		return $atLeastOneTokenIsAuthenticated;
+		return $this->isAuthenticated;
 	}
 
 	/**
@@ -200,6 +208,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 		if ($this->isAuthenticated() !== TRUE) {
 			return;
 		}
+		$this->isAuthenticated = NULL;
 		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			$token->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
