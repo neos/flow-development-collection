@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Annotations;
+namespace TYPO3\Flow\Tests\Unit\Object\DependencyInject;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -11,33 +11,21 @@ namespace TYPO3\Flow\Annotations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+
 /**
- * Used to enable property injection.
  *
- * Flow will build Dependency Injection code for the property and try
- * to inject a value as specified by the var annotation.
- *
- * @Annotation
- * @Target("PROPERTY")
  */
-final class Inject {
+class DependencyProxyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * Whether the dependency should be injected instantly or if a lazy dependency
-	 * proxy should be injected instead
-	 *
-	 * @var boolean
+	 * @test
 	 */
-	public $lazy = TRUE;
-
-	/**
-	 * @param array $values
-	 */
-	public function __construct(array $values) {
-		if (isset($values['lazy'])) {
-			$this->lazy = (boolean)$values['lazy'];
-		}
+	public function getClassNameReturnsTheNameOfTheProxiedDependencyClass() {
+		$proxy = new DependencyProxy('SomeClass', function() {});
+		$this->assertSame('SomeClass', $proxy->_getClassName());
 	}
 
 }
+
 ?>

@@ -21,7 +21,7 @@ use TYPO3\Flow\Http\Response;
 class WebRedirect extends AbstractEntryPoint {
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = FALSE)
 	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
 	 */
 	protected $uriBuilder;

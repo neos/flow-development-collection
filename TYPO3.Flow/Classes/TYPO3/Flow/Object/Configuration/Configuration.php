@@ -306,7 +306,7 @@ class Configuration {
 	/**
 	 * Returns the currently set injection properties of the object
 	 *
-	 * @return array Array of \TYPO3\Flow\Object\Configuration\ConfigurationProperty
+	 * @return array<TYPO3\Flow\Object\Configuration\ConfigurationProperty>
 	 */
 	public function getProperties() {
 		return $this->properties;
@@ -326,7 +326,7 @@ class Configuration {
 	 * Setter function for injection constructor arguments. If an empty array is passed to this
 	 * method, all (possibly) defined constructor arguments are removed from the configuration.
 	 *
-	 * @param array $arguments Array of \TYPO3\Flow\Object\Configuration\ConfigurationArgument
+	 * @param array<TYPO3\Flow\Object\Configuration\ConfigurationArgument> $arguments
 	 * @return void
 	 */
 	public function setArguments(array $arguments) {

@@ -574,6 +574,116 @@ injection methods directly are unit tests. Therefore we consider it safe to say 
 can still switch back from property injection to setter injection without problems if it
 turns out that you really need it.
 
+Lazy Dependency Injection
+-------------------------
+
+Using Property Injection is, in its current implementation, the most performant way
+to inject a dependency. As an important additional benefit you also get Lazy
+Dependency Injection: instead of loading the class of the dependency, instantiating
+and intializing it, a ``proxy`` is injected instead. This object waits until it
+will be accessed the first time. Once you start using the dependency, the proxy
+will build or retrieve the real dependency, call the requested method and return
+the result. On all following method calls, the real object will be used.
+
+By default all dependencies injected through Property Injection are lazy. Usually
+this process is fully transparent to the user, unless you start passing around
+dependencies to other objects:
+
+*Example: Passing a dependency around* ::
+
+	namespace MyCompany\MyPackage;
+
+	class Foo {
+
+		/**
+		 * A dependency, injected lazily:
+		 *
+		 * @var \MyCompany\MyPackage\BarInterface
+		 * @Flow\Inject
+		 */
+		protected $bar;
+
+		...
+
+		public function doSomething() {
+			$this->baz->doSomethingElse($this->bar);
+		}
+
+	}
+
+	class Baz {
+
+		public function doSomethingElse(Bar $bar) {
+			...
+		}
+
+	}
+
+The above example will break: at the time you pass ``$this->bar`` to the
+``doSomethingElse()`` method, it is not yet a ``Bar`` object but a
+``DependencyProxy`` object. Because ``doSomethingElse()`` has a type hint requiring
+a ``Bar`` object, PHP will issue a fatal error.
+
+There are two ways to solve this:
+
+* activating the dependency manually
+* turning off lazy dependency injection for this property
+
+*Example: Manually activating a dependency* ::
+
+	namespace MyCompany\MyPackage;
+
+	class Foo {
+
+		/**
+		 * A dependency, injected lazily:
+		 *
+		 * @var \MyCompany\MyPackage\BarInterface
+		 * @Flow\Inject
+		 */
+		protected $bar;
+
+		...
+
+		public function doSomething() {
+			if ($this->bar instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+				$this->bar->_activateDependency();
+			}
+			$this->baz->doSomethingElse($this->bar);
+		}
+
+	}
+
+In the example above, ``$this->bar`` is activated before it is passed to the next
+method. It's important to check if the object still is a proxy because otherwise
+calling ``_activateDependency()`` will fail.
+
+*Example: Turning off lazy dependency injection* ::
+
+	namespace MyCompany\MyPackage;
+
+	class Foo {
+
+		/**
+		 * A dependency, injected eagerly
+		 *
+		 * @var \MyCompany\MyPackage\BarInterface
+		 * @Flow\Inject(lazy = FALSE)
+		 */
+		protected $bar;
+
+		...
+
+		public function doSomething() {
+			$this->baz->doSomethingElse($this->bar);
+		}
+
+	}
+
+In the second solution, lazy dependency injection is turned off. This way you can
+be sure that ``$this->bar`` always contains the object you expected, but you don't
+benefit from the speed optimizations.
+
 Settings Injection
 ------------------
 

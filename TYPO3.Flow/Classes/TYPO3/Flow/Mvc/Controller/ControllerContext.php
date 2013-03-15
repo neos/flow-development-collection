@@ -12,6 +12,11 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\RequestInterface;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * The controller context holds information about the request, response, arguments
  * and further details of a controller. Instances of this class act as a container
@@ -43,6 +48,7 @@ class ControllerContext {
 	protected $uriBuilder;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Mvc\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
@@ -54,15 +60,12 @@ class ControllerContext {
 	 * @param \TYPO3\Flow\Http\Response $response
 	 * @param \TYPO3\Flow\Mvc\Controller\Arguments $arguments
 	 * @param \TYPO3\Flow\Mvc\Routing\UriBuilder $uriBuilder
-	 * @param \TYPO3\Flow\Mvc\FlashMessageContainer $flashMessageContainer The flash messages
 	 */
-	public function __construct(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Http\Response $response, \TYPO3\Flow\Mvc\Controller\Arguments $arguments,
-			\TYPO3\Flow\Mvc\Routing\UriBuilder $uriBuilder, \TYPO3\Flow\Mvc\FlashMessageContainer $flashMessageContainer) {
+	public function __construct(RequestInterface $request, Response $response, Arguments $arguments, UriBuilder $uriBuilder) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->arguments = $arguments;
 		$this->uriBuilder = $uriBuilder;
-		$this->flashMessageContainer = $flashMessageContainer;
 	}
 
 	/**
