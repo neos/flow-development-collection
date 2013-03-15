@@ -11,6 +11,7 @@ namespace TYPO3\Flow\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Represents a locale
@@ -31,6 +32,8 @@ namespace TYPO3\Flow\I18n;
  * @api
  * @see http://www.unicode.org/reports/tr35/
  * @see \TYPO3\Flow\I18n\Service
+ *
+ * @Flow\Proxy(false)
  */
 class Locale {
 
@@ -151,6 +154,7 @@ class Locale {
 
 		return $localeIdentifier;
 	}
+
 }
 
 ?>

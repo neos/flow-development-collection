@@ -460,16 +460,6 @@ class Scripts {
 	}
 
 	/**
-	 * Initializes the I18n service
-	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
-	 * @return void
-	 */
-	static public function initializeI18n(Bootstrap $bootstrap) {
-		$bootstrap->getObjectManager()->get('TYPO3\Flow\I18n\Service')->initialize();
-	}
-
-	/**
 	 * Initializes the persistence framework
 	 *
 	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
