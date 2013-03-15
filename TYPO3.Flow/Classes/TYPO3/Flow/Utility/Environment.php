@@ -133,5 +133,13 @@ class Environment {
 
 		return $temporaryDirectory;
 	}
+
+	/**
+	 * @return \TYPO3\Flow\Core\ApplicationContext
+	 */
+	public function getContext() {
+		return $this->context;
+	}
+
 }
 ?>

@@ -59,6 +59,11 @@ class ProxyClassBuilder {
 	protected $objectConfigurations;
 
 	/**
+	 * @var array
+	 */
+	protected $classesWithCompileStaticAnnotation;
+
+	/**
 	 * @param \TYPO3\Flow\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
@@ -159,6 +164,10 @@ class ProxyClassBuilder {
 			$constructor = $proxyClass->getConstructor();
 			$constructor->addPreParentCallCode($constructorPreCode);
 			$constructor->addPostParentCallCode($constructorPostCode);
+
+			if ($this->objectManager->getContext()->isProduction()) {
+				$this->compileStaticMethods($className, $proxyClass);
+			}
 		}
 	}
 
@@ -664,6 +673,33 @@ class ProxyClassBuilder {
 	protected function buildCustomFactoryCall($customFactoryObjectName, $customFactoryMethodName, array $arguments) {
 		$parametersCode = $this->buildMethodParametersCode($arguments);
 		return '\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $customFactoryObjectName . '\')->' . $customFactoryMethodName . '(' . $parametersCode . ')';
+	}
+
+	/**
+	 * Compile the result of methods marked with CompileStatic into the proxy class
+	 *
+	 * @param string $className
+	 * @param \TYPO3\Flow\Object\Proxy\ProxyClass $proxyClass
+	 * @return void
+	 */
+	protected function compileStaticMethods($className, $proxyClass) {
+		if ($this->classesWithCompileStaticAnnotation === NULL) {
+			$this->classesWithCompileStaticAnnotation = array_flip($this->reflectionService->getClassesContainingMethodsAnnotatedWith('TYPO3\Flow\Annotations\CompileStatic'));
+		}
+		if (!isset($this->classesWithCompileStaticAnnotation[$className])) {
+			return;
+		}
+
+		$methodNames = get_class_methods($className);
+		foreach ($methodNames as $methodName) {
+			if ($this->reflectionService->isMethodStatic($className, $methodName) && $this->reflectionService->isMethodAnnotatedWith($className, $methodName, 'TYPO3\Flow\Annotations\CompileStatic')) {
+				$compiledMethod = $proxyClass->getMethod($methodName);
+
+				$value = call_user_func(array($className, $methodName), $this->objectManager);
+				$compiledResult = var_export($value, TRUE);
+				$compiledMethod->setMethodBody('return ' . $compiledResult . ';');
+			}
+		}
 	}
 
 }
