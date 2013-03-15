@@ -578,6 +578,9 @@ class Bootstrap {
 	 * @return void
 	 */
 	protected function requireAutoloaderForPhpUnit() {
+		if (class_exists('PHPUnit_Framework_TestCase')) {
+			return;
+		}
 		$composerAutoloader = __DIR__ . '/../../../../../../Libraries/autoload.php';
 		$phpUnitInstallationFolder = __DIR__ . '/../../../../../../Libraries/phpunit/phpunit/';
 		if (file_exists($composerAutoloader) && is_dir($phpUnitInstallationFolder)) {
