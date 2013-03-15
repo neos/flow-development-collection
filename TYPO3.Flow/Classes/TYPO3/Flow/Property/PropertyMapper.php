@@ -30,12 +30,6 @@ class PropertyMapper {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
 	 */
 	protected $configurationBuilder;
@@ -66,7 +60,8 @@ class PropertyMapper {
 	 * @throws \TYPO3\Flow\Property\Exception\DuplicateTypeConverterException
 	 */
 	public function initializeObject() {
-		foreach ($this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Property\TypeConverterInterface') as $typeConverterClassName) {
+		$typeConverterClassNames = static::getTypeConverterImplementationClassNames($this->objectManager);
+		foreach ($typeConverterClassNames as $typeConverterClassName) {
 			$typeConverter = $this->objectManager->get($typeConverterClassName);
 			foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
 				if (isset($this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()])) {
@@ -75,6 +70,18 @@ class PropertyMapper {
 				$this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] = $typeConverter;
 			}
 		}
+	}
+
+	/**
+	 * Returns all class names implementing the TypeConverterInterface.
+	 *
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of type converter implementations
+	 * @Flow\CompileStatic
+	 */
+	static public function getTypeConverterImplementationClassNames($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+		return $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Property\TypeConverterInterface');
 	}
 
 	/**

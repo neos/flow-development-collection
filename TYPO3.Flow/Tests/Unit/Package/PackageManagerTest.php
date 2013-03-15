@@ -35,7 +35,14 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\Flow\SignalSlot\Dispatcher')));
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockBootstrap->expects($this->any())->method('getObjectManager')->will($this->returnValue($mockObjectManager));
-		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->will($this->returnValue(new \TYPO3\Flow\Reflection\ReflectionService));
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function($object) {
+			if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
+				return get_parent_class($object);
+			}
+			return get_class($object);
+		}));
+		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->will($this->returnValue($mockReflectionService));
 		$this->packageManager = new \TYPO3\Flow\Package\PackageManager();
 
 		mkdir('vfs://Test/Packages/Application', 0700, TRUE);

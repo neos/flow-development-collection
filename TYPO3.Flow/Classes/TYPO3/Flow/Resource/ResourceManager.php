@@ -29,12 +29,6 @@ class ResourceManager {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
@@ -95,7 +89,7 @@ class ResourceManager {
 	 * @return void
 	 */
 	public function initialize() {
-		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
+		$streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($this->objectManager);
 		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
 			$scheme = $streamWrapperClassName::getScheme();
 			if (in_array($scheme, stream_get_wrappers())) {
@@ -111,6 +105,18 @@ class ResourceManager {
 		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->persistentResourcesStorageBaseUri);
 
 		$this->importedResources = new \SplObjectStorage();
+	}
+
+	/**
+	 * Returns all class names implementing the StreamWrapperInterface.
+	 *
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of stream wrapper implementations
+	 * @Flow\CompileStatic
+	 */
+	static public function getStreamWrapperImplementationClassNames($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+		return $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Resource\Streams\StreamWrapperInterface');
 	}
 
 	/**

@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * An HTTP based multi-action controller.
@@ -181,7 +179,12 @@ class ActionController extends AbstractController {
 	 * @see initializeArguments()
 	 */
 	protected function initializeActionMethodArguments() {
-		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
+		$actionMethodParameters = static::getActionMethodParameters($this->objectManager);
+		if (isset($actionMethodParameters[$this->actionMethodName])) {
+			$methodParameters = $actionMethodParameters[$this->actionMethodName];
+		} else {
+			$methodParameters = array();
+		}
 
 		$this->arguments->removeAll();
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
@@ -200,7 +203,30 @@ class ActionController extends AbstractController {
 	}
 
 	/**
-	 * Adds the needed valiators to the Arguments:
+	 * Returns a map of action method names and their parameters.
+	 *
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of method parameters by action name
+	 * @Flow\CompileStatic
+	 */
+	static public function getActionMethodParameters($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+
+		$result = array();
+
+		$className = get_called_class();
+		$methodNames = get_class_methods($className);
+		foreach ($methodNames as $methodName) {
+			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+				$result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Adds the needed validators to the Arguments:
 	 *
 	 * - Validators checking the data type from the @param annotation
 	 * - Custom validators specified with validate annotations.
@@ -210,14 +236,26 @@ class ActionController extends AbstractController {
 	 * @return void
 	 */
 	protected function initializeActionMethodValidators() {
-		$validationGroups = array('Default', 'Controller');
-		$validationGroupsAnnotation = $this->reflectionService->getMethodAnnotation(get_class($this), $this->actionMethodName, 'TYPO3\Flow\Annotations\ValidationGroups');
-
-		if ($validationGroupsAnnotation !== NULL) {
-			$validationGroups = $validationGroupsAnnotation->validationGroups;
+		$validateGroupAnnotations = static::getActionValidationGroups($this->objectManager);
+		if (isset($validateGroupAnnotations[$this->actionMethodName])) {
+			$validationGroups = $validateGroupAnnotations[$this->actionMethodName];
+		} else {
+			$validationGroups = array('Default', 'Controller');
 		}
 
-		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
+		$actionMethodParameters = static::getActionMethodParameters($this->objectManager);
+		if (isset($actionMethodParameters[$this->actionMethodName])) {
+			$methodParameters = $actionMethodParameters[$this->actionMethodName];
+		} else {
+			$methodParameters = array();
+		}
+		$actionValidateAnnotations = static::getActionValidateAnnotationData($this->objectManager);
+		if (isset($actionValidateAnnotations[$this->actionMethodName])) {
+			$validateAnnotations = $actionValidateAnnotations[$this->actionMethodName];
+		} else {
+			$validateAnnotations = array();
+		}
+		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations);
 
 		foreach ($this->arguments as $argument) {
 			$validator = $parameterValidators[$argument->getName()];
@@ -228,6 +266,62 @@ class ActionController extends AbstractController {
 			}
 			$argument->setValidator($validator);
 		}
+	}
+
+	/**
+	 * Returns a map of action method names and their validation groups.
+	 *
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of validation groups by action method name
+	 * @Flow\CompileStatic
+	 */
+	static public function getActionValidationGroups($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+
+		$result = array();
+
+		$className = get_called_class();
+		$methodNames = get_class_methods($className);
+		foreach ($methodNames as $methodName) {
+			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+				$validationGroupsAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, 'TYPO3\Flow\Annotations\ValidationGroups');
+				if ($validationGroupsAnnotation !== NULL) {
+					$result[$methodName] = $validationGroupsAnnotation->validationGroups;
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Returns a map of action method names and their validation parameters.
+	 *
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of validate annotation parameters by action method name
+	 * @Flow\CompileStatic
+	 */
+	static public function getActionValidateAnnotationData($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+
+		$result = array();
+
+		$className = get_called_class();
+		$methodNames = get_class_methods($className);
+		foreach ($methodNames as $methodName) {
+			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+				$validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\Validate');
+				$result[$methodName] = array_map(function($validateAnnotation) {
+					return array(
+						'type' => $validateAnnotation->type,
+						'options' => $validateAnnotation->options,
+						'argumentName' => $validateAnnotation->argumentName,
+					);
+				}, $validateAnnotations);
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -262,8 +356,12 @@ class ActionController extends AbstractController {
 		if (!$validationResult->hasErrors()) {
 			$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
 		} else {
-			$ignoreValidationAnnotations = $this->reflectionService->getMethodAnnotations(get_class($this), $this->actionMethodName, 'TYPO3\Flow\Annotations\IgnoreValidation');
-			$ignoredArguments = array_map(function($annotation) { return $annotation->argumentName; }, $ignoreValidationAnnotations);
+			$actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
+			if (isset($actionIgnoredArguments[$this->actionMethodName])) {
+				$ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
+			} else {
+				$ignoredArguments = array();
+			}
 
 				// if there exists more errors than in ignoreValidationAnnotations_=> call error method
 				// else => call action method
@@ -294,6 +392,31 @@ class ActionController extends AbstractController {
 		} elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
 			$this->response->appendContent((string)$actionResult);
 		}
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of arguments ignored for validation by action method name
+	 * @Flow\CompileStatic
+	 */
+	static public function getActionIgnoredValidationArguments($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+
+		$result = array();
+
+		$className = get_called_class();
+		$methodNames = get_class_methods($className);
+		foreach ($methodNames as $methodName) {
+			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+				$ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\IgnoreValidation');
+				$ignoredArguments = array_map(function($annotation) { return $annotation->argumentName; }, $ignoreValidationAnnotations);
+				if ($ignoredArguments !== array()) {
+					$result[$methodName] = $ignoredArguments;
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**

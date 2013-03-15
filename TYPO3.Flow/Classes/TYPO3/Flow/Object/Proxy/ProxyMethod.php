@@ -61,6 +61,11 @@ class ProxyMethod {
 	protected $methodParametersCode = '';
 
 	/**
+	 * @var string
+	 */
+	public $methodBody = '';
+
+	/**
 	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -136,23 +141,26 @@ class ProxyMethod {
 		$methodParametersCode = ($this->methodParametersCode !== '' ? $this->methodParametersCode : $this->buildMethodParametersCode($this->fullOriginalClassName, $this->methodName));
 		$callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->methodName);
 
-		$staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
+		$staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static' : '';
 
 		$visibility = ($this->visibility === NULL ? $this->getMethodVisibilityString() : $this->visibility);
 
 		$code = '';
-		if (strlen($this->addedPreParentCallCode) + strlen($this->addedPostParentCallCode) > 0) {
+		if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
 			$code = "\n" .
 				$methodDocumentation .
-				"	" . $staticKeyword . " " . $visibility . " function " . $this->methodName . "(" . $methodParametersCode . ") {\n" .
-				$this->addedPreParentCallCode;
-
-			if ($this->addedPostParentCallCode !== '') {
-				$code .= "		\$result = " . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
-				$code .= $this->addedPostParentCallCode;
-				$code .= "		return \$result;\n";
+				"	" . $staticKeyword . " " . $visibility . " function " . $this->methodName . "(" . $methodParametersCode . ") {\n";
+			if ($this->methodBody !== '') {
+				$code .= "\n" . $this->methodBody . "\n";
 			} else {
-				$code .= ($callParentMethodCode === '' ? '' : "		return " . $callParentMethodCode . ";\n");
+				$code .= $this->addedPreParentCallCode;
+				if ($this->addedPostParentCallCode !== '') {
+					$code .= "		\$result = " . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+					$code .= $this->addedPostParentCallCode;
+					$code .= "		return \$result;\n";
+				} else {
+					$code .= ($callParentMethodCode === '' ? '' : "		return " . $callParentMethodCode . ";\n");
+				}
 			}
 			$code .= "	}\n";
 
@@ -311,6 +319,16 @@ class ProxyMethod {
 			return 'private';
 		}
 		return 'public';
+	}
+
+	/**
+	 * Override the method body
+	 *
+	 * @param string $methodBody
+	 * @return void
+	 */
+	public function setMethodBody($methodBody) {
+		$this->methodBody = $methodBody;
 	}
 }
 ?>

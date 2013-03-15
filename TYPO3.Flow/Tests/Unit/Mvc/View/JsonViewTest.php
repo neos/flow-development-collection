@@ -246,7 +246,11 @@ class JsonViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				 )
 			)
 		);
-		$reflectionService = new \TYPO3\Flow\Reflection\ReflectionService;
+		$reflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$reflectionService->expects($this->any())->method('getClassNameByObject')->will($this->returnCallback(function($object) {
+			return get_class($object);
+		}));
+
 		$jsonView = $this->getAccessibleMock('TYPO3\Flow\Mvc\View\JsonView', array('dummy'), array(), '', FALSE);
 		$this->inject($jsonView, 'reflectionService', $reflectionService);
 		$actual = $jsonView->_call('transformValue', $object, $configuration);
