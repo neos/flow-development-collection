@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Adds the aspect of persistence magic to relevant objects
  *
+ * @Flow\Scope("singleton")
  * @Flow\Aspect
  * @Flow\Introduce("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface")
  */
