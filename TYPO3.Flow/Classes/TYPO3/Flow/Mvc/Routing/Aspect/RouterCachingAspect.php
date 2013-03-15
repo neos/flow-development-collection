@@ -56,9 +56,10 @@ class RouterCachingAspect {
 		$routePath = $joinPoint->getMethodArgument('routePath');
 
 		$cacheIdentifier = md5($routePath);
-		if ($this->findMatchResultsCache->has($cacheIdentifier)) {
+		$cachedResult = $this->findMatchResultsCache->get($cacheIdentifier);
+		if ($cachedResult !== FALSE) {
 			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $cacheIdentifier, $routePath), LOG_DEBUG);
-			return $this->findMatchResultsCache->get($cacheIdentifier);
+			return $cachedResult;
 		}
 
 		$matchResults = $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -88,8 +89,9 @@ class RouterCachingAspect {
 			$routeValues = $this->convertObjectsToHashes($routeValues);
 			\TYPO3\Flow\Utility\Arrays::sortKeysRecursively($routeValues);
 			$cacheIdentifier = md5(http_build_query($routeValues));
-			if ($this->resolveCache->has($cacheIdentifier)) {
-				return $this->resolveCache->get($cacheIdentifier);
+			$cachedResult = $this->resolveCache->get($cacheIdentifier);
+			if ($cachedResult !== FALSE) {
+				return $cachedResult;
 			}
 		} catch (\InvalidArgumentException $exception) {
 		}
