@@ -137,6 +137,12 @@ class Context {
 	protected $interceptedRequest;
 
 	/**
+	 * @Flow\Transient
+	 * @var array<\TYPO3\Flow\Security\Policy\Role>
+	 */
+	protected $roles = NULL;
+
+	/**
 	 * Inject the authentication manager
 	 *
 	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
@@ -298,26 +304,30 @@ class Context {
 			$this->initialize();
 		}
 
-		$roles = array(new Role('Everybody'));
+		if ($this->roles === NULL) {
+			$roles = array(new Role('Everybody'));
 
-		if ($this->authenticationManager->isAuthenticated() === FALSE) {
-			$roles[] = new Role('Anonymous');
-		} else {
-			/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
-			foreach ($this->getAuthenticationTokens() as $token) {
-				if ($token->isAuthenticated()) {
-					$tokenRoles = $token->getRoles();
-					foreach ($tokenRoles as $currentRole) {
-						if (!in_array($currentRole, $roles)) $roles[] = $currentRole;
-						foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
-							if (!in_array($currentParentRole, $roles)) $roles[] = $currentParentRole;
+			if ($this->authenticationManager->isAuthenticated() === FALSE) {
+				$roles[] = new Role('Anonymous');
+			} else {
+				/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+				foreach ($this->getAuthenticationTokens() as $token) {
+					if ($token->isAuthenticated()) {
+						$tokenRoles = $token->getRoles();
+						foreach ($tokenRoles as $currentRole) {
+							if (!in_array($currentRole, $roles)) $roles[] = $currentRole;
+							foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
+								if (!in_array($currentParentRole, $roles)) $roles[] = $currentParentRole;
+							}
 						}
 					}
 				}
+				$roles = array_intersect($roles, $this->policyService->getRoles());
 			}
-			$roles = array_intersect($roles, $this->policyService->getRoles());
+			$this->roles = $roles;
 		}
-		return $roles;
+
+		return $this->roles;
 	}
 
 	/**
@@ -600,6 +610,8 @@ class Context {
 				$token->updateCredentials($this->request);
 			}
 		}
+
+		$this->roles = NULL;
 	}
 
 	/**
