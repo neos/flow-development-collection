@@ -150,6 +150,8 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	/**
 	 * Sets up security test requirements
 	 *
+	 * Security is based on action requests so we need a working route for the TestingProvider.
+	 *
 	 * @return void
 	 */
 	protected function setupSecurity() {
@@ -160,6 +162,14 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 
 		$this->testingProvider = $this->objectManager->get('TYPO3\Flow\Security\Authentication\Provider\TestingProvider');
 		$this->testingProvider->setName('TestingProvider');
+
+		$this->registerRoute('functionaltestroute', 'typo3/flow/test', array(
+			'@package' => 'TYPO3.Flow',
+			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+			'@controller' => 'Standard',
+			'@action' => 'index',
+			'@format' => 'html'
+		));
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$httpRequest = $requestHandler->getHttpRequest();
