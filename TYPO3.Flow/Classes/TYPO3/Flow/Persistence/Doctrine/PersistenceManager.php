@@ -171,16 +171,17 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 */
 	public function getIdentifierByObject($object) {
 		if (property_exists($object, 'Persistence_Object_Identifier')) {
-			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
-		} elseif ($this->entityManager->contains($object)) {
+			$identifierCandidate = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
+			if ($identifierCandidate !== NULL) {
+				return $identifierCandidate;
+			}
+		}
+		if ($this->entityManager->contains($object)) {
 			try {
 				return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-			} catch (\Doctrine\ORM\ORMException $e) {
-				return NULL;
-			}
-		} else {
-			return NULL;
+			} catch (\Doctrine\ORM\ORMException $e) {}
 		}
+		return NULL;
 	}
 
 	/**
