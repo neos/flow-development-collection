@@ -95,6 +95,7 @@ TYPO3:
 
       # Settings for TYPO3 Flow's default loggers
       systemLogger:
+        logger: TYPO3\Flow\Log\Logger
         backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW_PATH_DATA%Logs/System.log
