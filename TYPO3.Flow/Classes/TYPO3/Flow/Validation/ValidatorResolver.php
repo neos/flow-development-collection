@@ -247,10 +247,13 @@ class ValidatorResolver {
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
+				if (!isset($classPropertyTagsValues['var'])) {
+					throw new \InvalidArgumentException(sprintf('There is no @var annotation for property "%s" in class "%s".', $classPropertyName, $targetClassName), 1363778104);
+				}
 				try {
 					$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
 				} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
-					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744);
+					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744, $exception);
 				}
 				$propertyTargetClassName = $parsedType['type'];
 				if (\TYPO3\Flow\Utility\TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
