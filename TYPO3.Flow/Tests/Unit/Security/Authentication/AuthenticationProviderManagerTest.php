@@ -379,6 +379,44 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function isAuthenticatedReturnsFalseIfNoTokenIsAuthenticatedWithStrategyAnyToken() {
+		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$authenticationTokens = array($token1, $token2);
+
+		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->any())->method('getAuthenticationStrategy')->will($this->returnValue(\TYPO3\Flow\Security\Context::AUTHENTICATE_ANY_TOKEN));
+		$mockContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
+		$this->authenticationProviderManager->setSecurityContext($mockContext);
+
+		$this->assertFalse($this->authenticationProviderManager->isAuthenticated());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isAuthenticatedReturnsTrueIfOneTokenIsAuthenticatedWithStrategyAnyToken() {
+		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$authenticationTokens = array($token1, $token2);
+
+		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->any())->method('getAuthenticationStrategy')->will($this->returnValue(\TYPO3\Flow\Security\Context::AUTHENTICATE_ANY_TOKEN));
+		$mockContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
+		$this->authenticationProviderManager->setSecurityContext($mockContext);
+
+		$this->assertTrue($this->authenticationProviderManager->isAuthenticated());
+	}
+
+	/**
+	 * @test
+	 */
 	public function logoutReturnsIfNoAccountIsAuthenticated() {
 		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
 		$mockContext->expects($this->never())->method('isInitialized');
