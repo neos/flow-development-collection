@@ -416,7 +416,7 @@ class UriBuilder {
 			while ($subRequest instanceof \TYPO3\Flow\Mvc\ActionRequest) {
 				$requestArguments = (array)$subRequest->getArguments();
 
-				// Reset arguments for the request that is bound to this UriBuilder instance
+					// Reset arguments for the request that is bound to this UriBuilder instance
 				if ($subRequest === $this->request) {
 					if ($this->addQueryString === FALSE) {
 						$requestArguments = array();
@@ -425,9 +425,21 @@ class UriBuilder {
 							unset($requestArguments[$argumentToBeExcluded]);
 						}
 					}
+				} else {
+						// Remove all arguments of the current sub request if it's namespaced
+					if ($this->request->getArgumentNamespace() !== '') {
+						$requestNamespace = $this->getRequestNamespacePath($this->request);
+						if ($this->addQueryString === FALSE) {
+							$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
+						} else {
+							foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+								$requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
+							}
+						}
+					}
 				}
 
-					// merge special arguments (package, subpackage, controller & action) from main request
+					// Merge special arguments (package, subpackage, controller & action) from main request
 				$requestPackageKey = $subRequest->getControllerPackageKey();
 				if (!empty($requestPackageKey)) {
 					$requestArguments['@package'] = $requestPackageKey;
@@ -453,6 +465,7 @@ class UriBuilder {
 				$subRequest = $subRequest->getParentRequest();
 			}
 		}
+
 		if ($this->addQueryString === TRUE) {
 			$requestArguments = $this->request->getArguments();
 			foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
@@ -480,11 +493,9 @@ class UriBuilder {
 		if (!$request instanceof \TYPO3\Flow\Http\Request) {
 			$parentPath = $this->getRequestNamespacePath($request->getParentRequest());
 			return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
-		} else {
-			return '';
 		}
+		return '';
 	}
 
 }
-
 ?>
