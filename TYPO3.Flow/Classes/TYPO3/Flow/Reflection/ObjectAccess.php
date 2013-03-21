@@ -93,9 +93,19 @@ class ObjectAccess {
 		if ($subject === NULL) {
 			return NULL;
 		}
+		if (is_array($subject)) {
+			if (array_key_exists($propertyName, $subject)) {
+				$propertyExists = TRUE;
+				return $subject[$propertyName];
+			}
+			return NULL;
+		} elseif (!is_object($subject)) {
+			return NULL;
+		}
+
 		$propertyExists = TRUE;
 
-		if ($forceDirectAccess === TRUE && !is_array($subject)) {
+		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
 				$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection(get_class($subject), $propertyName);
 				return $propertyReflection->getValue($subject);
@@ -104,16 +114,6 @@ class ObjectAccess {
 			} else {
 				throw new \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
 			}
-		}
-
-		if (is_array($subject) || ($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage)) {
-			if (isset($subject[$propertyName]) || array_key_exists($propertyName, $subject)) {
-				return $subject[$propertyName];
-			}
-			$propertyExists = FALSE;
-			return NULL;
-		} elseif (is_object($subject) === FALSE) {
-			return NULL;
 		}
 
 		$class = get_class($subject);
@@ -128,7 +128,7 @@ class ObjectAccess {
 				if (is_callable(array($subject, $getterMethodName))) {
 					self::$propertyGetterCache[$identifier]['accessorMethod'] = $getterMethodName;
 				} else {
-					if (is_object($subject) && array_key_exists($propertyName, get_object_vars($subject))) {
+					if (!($subject instanceof \ArrayAccess) && array_key_exists($propertyName, get_object_vars($subject))) {
 						self::$propertyGetterCache[$identifier]['publicProperty'] = $propertyName;
 					}
 				}
@@ -141,6 +141,13 @@ class ObjectAccess {
 		} elseif (isset(self::$propertyGetterCache[$identifier]['publicProperty'])) {
 			return $subject->$propertyName;
 		}
+
+		if (($subject instanceof \ArrayAccess) && !($subject instanceof \SplObjectStorage)) {
+			if (isset($subject[$propertyName])) {
+				return $subject[$propertyName];
+			}
+		}
+
 		$propertyExists = FALSE;
 		return NULL;
 	}
