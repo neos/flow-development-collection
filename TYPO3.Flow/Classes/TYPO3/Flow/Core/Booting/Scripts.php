@@ -54,7 +54,7 @@ class Scripts {
 	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	static public function forceFlushCachesIfNeccessary(Bootstrap $bootstrap) {
+	static public function forceFlushCachesIfNecessary(Bootstrap $bootstrap) {
 		if (!isset($_SERVER['argv']) || !isset($_SERVER['argv'][1]) || !isset($_SERVER['argv'][2])
 			|| !in_array($_SERVER['argv'][1], array('typo3.flow:cache:flush', 'flow:cache:flush'))
 			|| !in_array($_SERVER['argv'][2], array('--force', '-f'))) {
