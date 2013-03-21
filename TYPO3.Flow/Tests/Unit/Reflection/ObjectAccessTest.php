@@ -182,8 +182,38 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyCanAccessPropertiesOfAnArrayObject() {
 		$arrayObject = new \ArrayObject(array('key' => 'value'));
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayObject, 'key');
-		$this->assertEquals($expected, 'value', 'getProperty does not work with ArrayObject property.');
+		$expectedResult = 'value';
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayObject, 'key');
+		$this->assertEquals($expectedResult, $actualResult, 'getProperty does not work with ArrayObject property.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyCallsCustomGettersOfObjectsImplementingArrayAccess() {
+		$arrayObject = new \ArrayObject();
+		$expectedResult = 'ArrayIterator';
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayObject, 'iteratorClass');
+		$this->assertEquals($expectedResult, $actualResult, 'getProperty does not call existing getter of object implementing ArrayAccess.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyCallsGettersBeforeCheckingViaArrayAccess() {
+		$arrayObject = new \ArrayObject(array('iteratorClass' => 'This should be ignored'));
+		$expectedResult = 'ArrayIterator';
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayObject, 'iteratorClass');
+		$this->assertEquals($expectedResult, $actualResult, 'getProperty does not call existing getter of object implementing ArrayAccess.');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+	 */
+	public function getPropertyThrowsExceptionIfArrayObjectDoesNotContainMatchingKeyNorGetter() {
+		$arrayObject = new \ArrayObject();
+		\TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayObject, 'nonExistingProperty');
 	}
 
 	/**
@@ -200,8 +230,9 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
 		$arrayAccessInstance = new \TYPO3\Flow\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayAccessInstance, 'key');
-		$this->assertEquals($expected, 'value', 'getPropertyPath does not work with Array Access property.');
+		$expectedResult = 'value';
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayAccessInstance, 'key');
+		$this->assertEquals($expectedResult, $actualResult, 'getPropertyPath does not work with Array Access property.');
 	}
 
 	/**
@@ -209,8 +240,8 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyRespectsForceDirectAccessForArrayAccess() {
 		$arrayAccessInstance = new \TYPO3\Flow\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayAccessInstance, 'internalProperty', TRUE);
-		$this->assertEquals($expected, 'access through forceDirectAccess', 'getPropertyPath does not respect ForceDirectAccess for ArrayAccess implementations.');
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($arrayAccessInstance, 'internalProperty', TRUE);
+		$this->assertEquals('access through forceDirectAccess', $actualResult, 'getPropertyPath does not respect ForceDirectAccess for ArrayAccess implementations.');
 	}
 
 	/**
@@ -218,8 +249,8 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyCanAccessPropertiesOfAnArray() {
 		$array = array('key' => 'value');
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($array, 'key');
-		$this->assertEquals($expected, 'value', 'getProperty does not work with Array property.');
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($array, 'key');
+		$this->assertEquals('value', $actualResult, 'getProperty does not work with Array property.');
 	}
 
 	/**
@@ -227,8 +258,8 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyCanAccessNullPropertyOfAnArray() {
 		$array = array('key' => NULL);
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($array, 'key');
-		$this->assertEquals($expected, NULL, 'getProperty should allow access to NULL properties.');
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($array, 'key');
+		$this->assertNull($actualResult, 'getProperty should allow access to NULL properties.');
 	}
 
 	/**
@@ -236,8 +267,8 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyPathCanAccessPropertiesOfAnArray() {
 		$array = array('parent' => array('key' => 'value'));
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($array, 'parent.key');
-		$this->assertEquals($expected, 'value', 'getPropertyPath does not work with Array property.');
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($array, 'parent.key');
+		$this->assertEquals('value', $actualResult, 'getPropertyPath does not work with Array property.');
 	}
 
 	/**
@@ -245,26 +276,26 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertyPathCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
 		$array = array('parent' => new \ArrayObject(array('key' => 'value')));
-		$expected = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($array, 'parent.key');
-		$this->assertEquals($expected, 'value', 'getPropertyPath does not work with Array Access property.');
+		$actualResult = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($array, 'parent.key');
+		$this->assertEquals('value', $actualResult, 'getPropertyPath does not work with Array Access property.');
 	}
 
 	/**
 	 * @test
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
-		$gettablePropertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
-		$this->assertEquals($gettablePropertyNames, $expectedPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
+		$actualPropertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
+		$this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
 	}
 
 	/**
 	 * @test
 	 */
 	public function getSettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
-		$settablePropertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getSettablePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2', 'writeOnlyMagicProperty');
-		$this->assertEquals($settablePropertyNames, $expectedPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
+		$actualPropertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getSettablePropertyNames($this->dummyObject);
+		$this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
 	}
 
 	/**
@@ -275,16 +306,15 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$stdClassObject->property = 'string1';
 		$stdClassObject->property2 = NULL;
 
-		$settablePropertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getSettablePropertyNames($stdClassObject);
 		$expectedPropertyNames = array('property', 'property2');
-		$this->assertEquals($expectedPropertyNames, $settablePropertyNames, 'getSettablePropertyNames returns not all settable properties.');
+		$actualPropertyNames = \TYPO3\Flow\Reflection\ObjectAccess::getSettablePropertyNames($stdClassObject);
+		$this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
 	}
 
 	/**
 	 * @test
 	 */
 	public function getGettablePropertiesReturnsTheCorrectValuesForAllProperties() {
-		$allProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
 			'booleanProperty' => 'method called 1',
@@ -292,7 +322,8 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'property2' => NULL,
 			'publicProperty' => NULL,
 			'publicProperty2' => 42);
-		$this->assertEquals($allProperties, $expectedProperties, 'expectedProperties did not return the right values for the properties.');
+		$actualProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
+		$this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
 	}
 
 	/**
@@ -303,12 +334,12 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$stdClassObject->property = 'string1';
 		$stdClassObject->property2 = NULL;
 		$stdClassObject->publicProperty2 = 42;
-		$allProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($stdClassObject);
 		$expectedProperties = array(
 			'property' => 'string1',
 			'property2' => NULL,
 			'publicProperty2' => 42);
-		$this->assertEquals($expectedProperties, $allProperties, 'expectedProperties did not return the right values for the properties.');
+		$actualProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($stdClassObject);
+		$this->assertEquals($expectedProperties, $actualProperties, 'expectedProperties did not return the right values for the properties.');
 	}
 
 	/**
