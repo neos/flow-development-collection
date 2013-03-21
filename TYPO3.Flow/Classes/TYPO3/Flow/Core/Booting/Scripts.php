@@ -132,6 +132,9 @@ class Scripts {
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Configuration\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
+		if (!isset($settings['log']['systemLogger']['logger'])) {
+			$settings['log']['systemLogger']['logger'] = 'TYPO3\Flow\Log\Logger';
+		}
 		$systemLogger = \TYPO3\Flow\Log\LoggerFactory::create('SystemLogger', $settings['log']['systemLogger']['logger'], $settings['log']['systemLogger']['backend'], $settings['log']['systemLogger']['backendOptions']);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface', $systemLogger);
 		$packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
