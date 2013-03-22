@@ -194,6 +194,19 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function createResourceWithFilenameWithoutExtensionCreatesResource() {
+		$resourceManager = $this->setupResourceManager();
+
+		$filename = 'myFile';
+		$content = 'some content';
+		$resultResource = $resourceManager->createResourceFromContent($content, $filename);
+
+		$this->assertEquals($filename, $resultResource->getFilename());
+	}
+
+	/**
+	 * @test
+	 */
 	public function importResourceReturnsFalseForPhpFiles() {
 		$resourceManager = $this->setupResourceManager();
 
