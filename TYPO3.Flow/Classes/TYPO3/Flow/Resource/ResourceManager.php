@@ -162,7 +162,7 @@ class ResourceManager {
 	 */
 	public function createResourceFromContent($content, $filename) {
 		$pathInfo = pathinfo($filename);
-		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
+		if (isset($pathInfo['extension']) && substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
 			$this->systemLogger->log('Creation of resources with a "php" extension is not allowed.', LOG_WARNING);
 			return FALSE;
 		}
@@ -213,7 +213,7 @@ class ResourceManager {
 	 */
 	public function importUploadedResource(array $uploadInfo) {
 		$pathInfo = pathinfo($uploadInfo['name']);
-		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
+		if (isset($pathInfo['extension']) && substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
 			return FALSE;
 		}
 
