@@ -116,6 +116,15 @@ class ObjectAccess {
 			}
 		}
 
+		if ($subject instanceof \stdClass) {
+			if (array_key_exists($propertyName, get_object_vars($subject))) {
+				return $subject->$propertyName;
+			} else {
+				$propertyExists = FALSE;
+				return NULL;
+			}
+		}
+
 		$class = get_class($subject);
 		$identifier = $class . '|' . $propertyName;
 		if (!isset(self::$propertyGetterCache[$identifier])) {
