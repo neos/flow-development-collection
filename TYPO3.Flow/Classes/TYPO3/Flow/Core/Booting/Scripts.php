@@ -514,13 +514,11 @@ class Scripts {
 		$output = array();
 		exec($command, $output, $result);
 		if ($result !== 0) {
-			$exceptionMessage = sprintf('Execution of subprocess failed with exit code %d', $result);
 			if (count($output) > 0) {
-				$exceptionMessage .= ' and output:' .  PHP_EOL . PHP_EOL . implode(PHP_EOL, $output);
+				$exceptionMessage = implode(PHP_EOL, $output);
 			} else {
-				$exceptionMessage .= ' and no output.';
+				$exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);
 			}
-			$exceptionMessage .= PHP_EOL . PHP_EOL . 'The erroneous command was:' . PHP_EOL . $command;
 			throw new Exception\SubProcessException($exceptionMessage, 1355480641);
 		}
 		if ($outputResults) {
