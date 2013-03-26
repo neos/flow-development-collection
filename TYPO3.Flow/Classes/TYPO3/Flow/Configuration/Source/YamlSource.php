@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @api
  */
-class YamlSource implements \TYPO3\Flow\Configuration\Source\SourceInterface {
+class YamlSource {
 
 	/**
 	 * Loads the specified configuration file and returns its content as an

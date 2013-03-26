@@ -18,7 +18,6 @@ if (file_exists(__DIR__ . '/../../../Libraries/autoload.php')) {
 	require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Exception.php');
 	require (__DIR__ . '/../Classes/TYPO3/Flow/Utility/Files.php');
 	require (__DIR__ . '/../Classes/TYPO3/Flow/Configuration/ConfigurationManager.php');
-	require (__DIR__ . '/../Classes/TYPO3/Flow/Configuration/Source/SourceInterface.php');
 	require (__DIR__ . '/../Classes/TYPO3/Flow/Configuration/Source/YamlSource.php');
 }
 
