@@ -567,7 +567,7 @@ decisions that must be taken during development.
 Register a Cache
 ----------------
 
-To register a cache it must be configured in *Caches.yaml* of a package:::
+To register a cache it must be configured in *Caches.yaml* of a package::
 
 	MyPackage_FooCache:
 	  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
@@ -588,7 +588,7 @@ A cache is usually retrieved through dependency injection, either constructor or
 injection. Which is chosen depends on when you need the cache to be available. Keep in
 mind that even if you seem to need a cache in the constructor, you could always make use
 of ``initializeObject()``. Here is an example for setter injection matching the
-configuration given above. First you need to configure the injection in *Settings.yaml*:::
+configuration given above. First you need to configure the injection in *Objects.yaml*::
 
 	MyCompany\MyPackage\SomeClass:
 	  properties:
@@ -600,7 +600,7 @@ configuration given above. First you need to configure the injection in *Setting
 	          1:
 	            value: MyPackage_FooCache
 
-This configures what will be injected into the following setter:::
+This configures what will be injected into the following setter::
 
 	/**
 	 * Sets the foo cache
