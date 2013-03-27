@@ -166,6 +166,25 @@ token for example looks for a username and password in the two POST parameters:
 available credentials itself, e.g. from available headers or parameters or anything else
 you can provide credentials with.
 
+Sessionless authentication tokens
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default Flow assumes that a token which has been successfully authenticated needs
+a session in order to keep being authenticated on the next HTTP request. Therefore,
+whenever a user sends a ``UsernamePassword`` token for authentication, Flow will
+implicitly start a session and send a session cookie.
+
+For authentication mechanisms which don't require a session this process can be
+optimized. Headers for HTTP Basic Authentication or an API key is sent on every
+request, so there's no need to start a session for keeping the token. Especially
+when dealing with REST services, it is not desirable to start a session.
+
+Authentication tokens which don't require a session simply need to implement the
+``TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface`` marker
+interface. If a token carries this marker, the Authentication Manager will refrain
+from starting a session during authentication.
+
+
 Authentication manager and provider
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -40,7 +40,6 @@ class PasswordToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractTo
 	 *
 	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request
 	 * @return void
-	 * @Flow\Session(autoStart=true)
 	 */
 	public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
 		if ($actionRequest->getHttpRequest()->getMethod() !== 'POST') {

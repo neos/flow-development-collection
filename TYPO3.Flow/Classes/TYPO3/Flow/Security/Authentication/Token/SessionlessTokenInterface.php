@@ -11,31 +11,9 @@ namespace TYPO3\Flow\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * An authentication token used for functional tests
+ * Marker interface for authentication tokens which don't need a session.
  */
-class TestingToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToken {
-
-	/**
-	 * Simply sets the authentication status to AUTHENTICATION_NEEDED
-	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest The current action request instance
-	 * @return void
-	 */
-	public function updateCredentials(\TYPO3\Flow\Mvc\ActionRequest $actionRequest) {
-		$this->authenticationStatus = self::AUTHENTICATION_NEEDED;
-	}
-
-	/**
-	 * Returns a string representation of the token for logging purposes.
-	 *
-	 * @return string The username credential
-	 */
-	public function  __toString() {
-		return 'Testing token';
-	}
-
+interface SessionlessTokenInterface {
 }
 ?>
