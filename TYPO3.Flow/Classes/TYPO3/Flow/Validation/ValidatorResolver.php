@@ -209,6 +209,16 @@ class ValidatorResolver {
 	}
 
 	/**
+	 * Resets the baseValidatorConjunctions
+	 * It is usually not required to reset the ValidatorResolver during one request. This method is mainly useful for functional tests
+	 *
+	 * @return void
+	 */
+	public function reset() {
+		$this->baseValidatorConjunctions = array();
+	}
+
+	/**
 	 * Builds a chain of nested object validators by specification of the given
 	 * object path.
 	 *

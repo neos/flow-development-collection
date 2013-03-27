@@ -562,6 +562,18 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$validatorResolver->_set('objectManager', $mockObjectManager);
 		$this->assertEquals('Raw', $validatorResolver->_call('getValidatorType', 'mixed'));
 	}
+
+	/**
+	 * @test
+	 */
+	public function resetEmptiesBaseValidatorConjunctions() {
+		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('dummy'));
+		$mockConjunctionValidator = $this->getMock('TYPO3\Flow\Validation\Validator\ConjunctionValidator');
+		$validatorResolver->_set('baseValidatorConjunctions', array('SomeId##' => $mockConjunctionValidator));
+
+		$validatorResolver->reset();
+		$this->assertEmpty($validatorResolver->_get('baseValidatorConjunctions'));
+	}
 }
 
 ?>
