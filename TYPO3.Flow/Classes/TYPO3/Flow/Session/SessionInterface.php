@@ -83,7 +83,7 @@ interface SessionInterface {
 	 * Stores the given data under the given key in the session
 	 *
 	 * @param string $key The key under which the data should be stored
-	 * @param object $data The data to be stored
+	 * @param mixed $data The data to be stored
 	 * @return void
 	 * @throws \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */

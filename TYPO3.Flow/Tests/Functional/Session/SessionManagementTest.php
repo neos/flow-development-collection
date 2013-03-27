@@ -11,10 +11,31 @@ namespace TYPO3\Flow\Tests\Functional\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Mvc\Routing\Route;
+
 /**
  * Test suite for the Session Management
  */
 class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		$route = new Route();
+		$route->setName('Functional Test - Session::SessionTest');
+		$route->setUriPattern('test/session(/{@action})');
+		$route->setDefaults(array(
+			'@package' => 'TYPO3.Flow',
+			'@subpackage' => 'Tests\Functional\Session\Fixtures',
+			'@controller' => 'SessionTest',
+			'@action' => 'sessionStart',
+			'@format' =>'html'
+		));
+		$this->router->addRoute($route);
+	}
 
 	/**
 	 * @test
@@ -64,6 +85,21 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$session->start();
 			// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
+	}
+
+	/**
+	 * This test makes sure that if a session is used through the HTTP Browser in
+	 * a functional test, the Session does not have side effects which result, for
+	 * example, in a cookie sent only at the end of the first request.
+	 *
+	 * @test
+	 */
+	public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest() {
+		$response = $this->browser->request('http://localhost/test/session');
+		$this->assertTrue($response->hasCookie('TYPO3_Flow_Session'));
+
+		$response = $this->browser->request('http://localhost/test/session');
+		$this->assertTrue($response->hasCookie('TYPO3_Flow_Session'));
 	}
 }
 ?>
