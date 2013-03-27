@@ -34,6 +34,10 @@ use TYPO3\Flow\Cache\Frontend\FrontendInterface;
  * You can use the Session Manager for accessing sessions which are not currently
  * active.
  *
+ * Note that Flow's bootstrap (that is, TYPO3\Flow\Core\Scripts) will try to resume
+ * a possibly existing session automatically. If a session could be resumed during
+ * that phase already, calling start() at a later stage will be a no-operation.
+ *
  * @see \TYPO3\Flow\Session\SessionManager
  */
 class Session implements SessionInterface {
@@ -534,6 +538,7 @@ class Session implements SessionInterface {
 		$this->sessionIdentifier = NULL;
 		$this->storageIdentifier = NULL;
 		$this->tags = array();
+		$this->request = NULL;
 	}
 
 	/**
@@ -587,6 +592,7 @@ class Session implements SessionInterface {
 				$this->collectGarbage();
 			}
 		}
+		$this->request = NULL;
 	}
 
 	/**
