@@ -254,6 +254,24 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Flow\Session\Exception\InvalidRequestHandlerException
+	 */
+	public function startThrowsAnExceptionIfIncompatibleRequestHandlerIsUsed() {
+		$mockRequestHandler = $this->getMock('TYPO3\Flow\Cli\RequestHandler', array(), array(), '', FALSE, FALSE);
+
+		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE, FALSE);
+		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
+
+		$session = new Session();
+		$this->inject($session, 'bootstrap', $mockBootstrap);
+		$this->inject($session, 'settings', $this->settings);
+		$this->inject($session, 'cache', $this->createCache());
+
+		$session->start();
+	}
+
+	/**
+	 * @test
 	 */
 	public function getIdReturnsTheCurrentSessionIdentifier() {
 		$session = new Session();
