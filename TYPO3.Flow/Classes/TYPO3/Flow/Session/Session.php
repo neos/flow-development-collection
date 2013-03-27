@@ -241,7 +241,11 @@ class Session implements SessionInterface {
 	 */
 	public function start() {
 		if ($this->request === NULL) {
-			$this->initializeHttpAndCookie();
+			$requestHandler = $this->bootstrap->getActiveRequestHandler();
+			if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+				throw new \TYPO3\Flow\Session\Exception\InvalidRequestHandlerException('Could not start a session because the currently active request handler (%s) is not an HTTP Request Handler.', 1364367520);
+			}
+			$this->initializeHttpAndCookie($requestHandler);
 		}
 		if ($this->started === FALSE) {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
@@ -270,7 +274,7 @@ class Session implements SessionInterface {
 	 */
 	public function canBeResumed() {
 		if ($this->request === NULL) {
-			$this->initializeHttpAndCookie();
+			$this->initializeHttpAndCookie($this->bootstrap->getActiveRequestHandler());
 		}
 		if ($this->sessionCookie === NULL || $this->request === NULL || $this->started === TRUE) {
 			return FALSE;
@@ -615,26 +619,23 @@ class Session implements SessionInterface {
 	/**
 	 * Initialize request, response and session cookie
 	 *
+	 * @param \TYPO3\Flow\Http\HttpRequestHandlerInterface $requestHandler
 	 * @return void
-	 * @throws \TYPO3\Flow\Session\Exception\InvalidRequestResponseException
 	 */
-	protected function initializeHttpAndCookie() {
-		$requestHandler = $this->bootstrap->getActiveRequestHandler();
-		if ($requestHandler instanceof HttpRequestHandlerInterface) {
-			$this->request = $requestHandler->getHttpRequest();
-			$this->response = $requestHandler->getHttpResponse();
+	protected function initializeHttpAndCookie(HttpRequestHandlerInterface $requestHandler) {
+		$this->request = $requestHandler->getHttpRequest();
+		$this->response = $requestHandler->getHttpResponse();
 
-			if (!$this->request instanceof Request || !$this->response instanceof Response) {
-				$className = get_class($requestHandler);
-				$requestMessage = 'the request was ' . (is_object($this->request) ? 'of type ' . get_class($this->request) : gettype($this->request));
-				$responseMessage = 'and the response was ' . (is_object($this->response) ? 'of type ' . get_class($this->response) : gettype($this->response));
-				throw new \TYPO3\Flow\Session\Exception\InvalidRequestResponseException(sprintf('The active request handler "%s" did not provide a valid HTTP request / HTTP response pair: %s %s.', $className, $requestMessage, $responseMessage), 1354633950);
-			}
+		if (!$this->request instanceof Request || !$this->response instanceof Response) {
+			$className = get_class($requestHandler);
+			$requestMessage = 'the request was ' . (is_object($this->request) ? 'of type ' . get_class($this->request) : gettype($this->request));
+			$responseMessage = 'and the response was ' . (is_object($this->response) ? 'of type ' . get_class($this->response) : gettype($this->response));
+			throw new \TYPO3\Flow\Session\Exception\InvalidRequestResponseException(sprintf('The active request handler "%s" did not provide a valid HTTP request / HTTP response pair: %s %s.', $className, $requestMessage, $responseMessage), 1354633950);
+		}
 
-			if ($this->request->hasCookie($this->sessionCookieName)) {
-				$sessionIdentifier = $this->request->getCookie($this->sessionCookieName)->getValue();
-				$this->sessionCookie = new Cookie($this->sessionCookieName, $sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
-			}
+		if ($this->request->hasCookie($this->sessionCookieName)) {
+			$sessionIdentifier = $this->request->getCookie($this->sessionCookieName)->getValue();
+			$this->sessionCookie = new Cookie($this->sessionCookieName, $sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 		}
 	}
 
