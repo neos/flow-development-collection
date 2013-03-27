@@ -11,7 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
 
 /**
  * Testcase for Authentication
@@ -41,6 +46,8 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$accountRepository->add($account);
 		$account2 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'HttpBasicTestingProvider');
 		$accountRepository->add($account2);
+		$account3 = $accountFactory->createAccountWithPassword('functional_test_account', 'a_very_secure_long_password', array('Administrator'), 'UsernamePasswordTestingProvider');
+		$accountRepository->add($account3);
 		$this->persistenceManager->persistAll();
 
 		$route = new Route();
@@ -81,6 +88,19 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		));
 		$route3->setAppendExceedingArguments(TRUE);
 		$this->router->addRoute($route3);
+
+		$route4 = new Route();
+		$route4->setName('Functional Test - Security::UsernamePasswordAuthentication');
+		$route4->setUriPattern('test/security/authentication/usernamepassword(/{@action})');
+		$route4->setDefaults(array(
+			'@package' => 'TYPO3.Flow',
+			'@subpackage' => 'Tests\Functional\Security\Fixtures',
+			'@controller' => 'UsernamePasswordTest',
+			'@action' => 'authenticate',
+			'@format' => 'html'
+		));
+		$route4->setAppendExceedingArguments(TRUE);
+		$this->router->addRoute($route4);
 	}
 
 	/**
@@ -108,15 +128,12 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function successfulAuthenticationCallsOnAuthenticationSuccessMethod() {
-		$providers = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->authenticationManager, 'providers', TRUE);
-		foreach ($providers as $provider) {
-			if ($provider instanceof \TYPO3\Flow\Security\Authentication\Provider\TestingProvider) {
-				$provider->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
-			}
-		}
+		$arguments = array();
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
-		$result = $this->browser->request('http://localhost/test/security/authentication');
-		$this->assertSame($result->getContent(), 'Authentication Success returned!');
+		$response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
+		$this->assertSame($response->getContent(), 'UsernamePasswordTestController success!');
 	}
 
 
@@ -124,20 +141,40 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function failedAuthenticationCallsOnAuthenticationFailureMethod() {
-		$result = $this->browser->request('http://localhost/test/security/authentication');
-		$this->assertContains('Uncaught Exception in Flow #42: Failure Method Exception', $result->getContent());
+		$response = $this->browser->request('http://localhost/test/security/authentication');
+		$this->assertContains('Uncaught Exception in Flow #42: Failure Method Exception', $response->getContent());
 	}
 
 	/**
 	 * @test
 	 */
 	public function successfulAuthenticationDoesNotStartASessionIfNoTokenRequiresIt() {
-		$uri = new \TYPO3\Flow\Http\Uri('http://localhost/test/security/authentication/httpbasic');
-		$request = \TYPO3\Flow\Http\Request::create($uri);
+		$uri = new Uri('http://localhost/test/security/authentication/httpbasic');
+		$request = Request::create($uri);
 		$request->setHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
-		$result = $this->browser->sendRequest($request);
-		$this->assertEmpty($result->getCookies());
+		$response = $this->browser->sendRequest($request);
+		$this->assertEmpty($response->getCookies());
 	}
 
+	/**
+	 * @test
+	 */
+	public function successfulAuthenticationDoesStartASessionIfTokenRequiresIt() {
+		$arguments = array();
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
+
+		$response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
+		$this->assertNotEmpty($response->getCookies());
+	}
+
+	/**
+	 * @test
+	 */
+	public function noSessionIsStartedIfAUnrestrictedActionIsCalled() {
+		$response = $this->browser->request('http://localhost/test/security/restricted/public');
+		$this->assertEmpty($response->getCookies());
+	}
 }
+
 ?>

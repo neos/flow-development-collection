@@ -25,25 +25,25 @@ use TYPO3\Flow\Mvc\Routing\Route;
 class InternalRequestEngine implements RequestEngineInterface {
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = false)
 	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = false)
 	 * @var \TYPO3\Flow\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = false)
 	 * @var \TYPO3\Flow\Mvc\Routing\Router
 	 */
 	protected $router;
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = false)
 	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
@@ -87,6 +87,11 @@ class InternalRequestEngine implements RequestEngineInterface {
 			$this->securityContext->setRequest($actionRequest);
 
 			$this->dispatcher->dispatch($actionRequest, $response);
+
+			$session = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Session\SessionInterface');
+			if ($session->isStarted()) {
+				$session->close();
+			}
 		} catch (\Exception $exception) {
 			$pathPosition = strpos($exception->getFile(), 'Packages/');
 			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();

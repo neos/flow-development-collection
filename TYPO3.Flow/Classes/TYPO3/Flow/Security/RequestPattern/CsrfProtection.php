@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\RequestPattern;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 
 /**
  * This class holds a request pattern that decides, if csrf protection was enabled for the current request and searches
@@ -74,7 +75,7 @@ class CsrfProtection implements \TYPO3\Flow\Security\RequestPatternInterface {
 	 * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
 	public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request) {
-		if ($this->authenticationManager->isAuthenticated() === FALSE) {
+		if ($this->authenticationManager instanceof DependencyProxy || $this->authenticationManager->isAuthenticated() === FALSE) {
 			return FALSE;
 		}
 

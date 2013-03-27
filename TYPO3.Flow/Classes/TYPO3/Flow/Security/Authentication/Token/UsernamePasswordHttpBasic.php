@@ -13,9 +13,8 @@ namespace TYPO3\Flow\Security\Authentication\Token;
 
 /**
  * An authentication token used for simple username and password authentication via HTTP Basic Auth.
- *
  */
-class UsernamePasswordHttpBasic extends UsernamePassword {
+class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessTokenInterface {
 
 	/**
 	 * Updates the username and password credentials from the HTTP authorization header.

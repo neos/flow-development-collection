@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Authentication;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
@@ -23,8 +24,8 @@ use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Log\SecurityLoggerInterface
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SecurityLoggerInterface
 	 */
 	protected $securityLogger;
 
@@ -86,7 +87,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	}
 
 	/**
-	 * Inject the settings
+	 * Inject the settings and does a fresh build of tokens based on the injected settings
 	 *
 	 * @param array $settings The settings
 	 * @return void
@@ -143,6 +144,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	public function authenticate() {
 		$this->isAuthenticated = FALSE;
 		$anyTokenAuthenticated = FALSE;
+
 		if ($this->securityContext === NULL) {
 			throw new \TYPO3\Flow\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
 		}
@@ -152,11 +154,11 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
 		}
 
-		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+		/** @var $token TokenInterface */
 		foreach ($tokens as $token) {
 			/** @var $provider \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface */
-			foreach ($this->providers as $provider) {
-				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
+			foreach ($this->providers as $providerName => $provider) {
+				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === TokenInterface::AUTHENTICATION_NEEDED) {
 					$provider->authenticate($token);
 					if ($token->isAuthenticated()) {
 						$this->emitAuthenticatedToken($token);
@@ -165,11 +167,14 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 				}
 			}
 			if ($token->isAuthenticated()) {
-				$anyTokenAuthenticated = TRUE;
+				if (!$token instanceof SessionlessTokenInterface && !$this->session->isStarted()) {
+					$this->session->start();
+				}
 				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ONE_TOKEN) {
 					$this->isAuthenticated = TRUE;
 					return;
 				}
+				$anyTokenAuthenticated = TRUE;
 			} else {
 				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ALL_TOKENS) {
 					throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
@@ -180,6 +185,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== \TYPO3\Flow\Security\Context::AUTHENTICATE_ANY_TOKEN) {
 			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
+
 		$this->isAuthenticated = $anyTokenAuthenticated;
 	}
 
@@ -209,9 +215,9 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			return;
 		}
 		$this->isAuthenticated = NULL;
-		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
+		/** @var $token TokenInterface */
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-			$token->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+			$token->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 		$this->emitLoggedOut();
 		if ($this->session->isStarted()) {
@@ -271,13 +277,13 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 
 			/** @var $providerInstance \TYPO3\Flow\Security\Authentication\AuthenticationProviderInterface */
 			$providerInstance = new $providerObjectName($providerName, $providerOptions);
-			$this->providers[] = $providerInstance;
+			$this->providers[$providerName] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
 				if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
 					continue;
 				}
-				/** @var $tokenInstance \TYPO3\Flow\Security\Authentication\TokenInterface */
+				/** @var $tokenInstance TokenInterface */
 				$tokenInstance = new $tokenClassName();
 				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
