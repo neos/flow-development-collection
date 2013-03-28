@@ -18,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class ProductionExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
+class ProductionExceptionHandler extends AbstractExceptionHandler {
 
 	/**
 	 * Echoes an exception for the web.

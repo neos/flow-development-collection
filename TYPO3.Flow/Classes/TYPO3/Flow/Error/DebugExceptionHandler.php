@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Exception;
+use TYPO3\Flow\Http\Response;
 
 /**
  * A basic but solid exception handler which catches everything which
@@ -20,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
+class DebugExceptionHandler extends AbstractExceptionHandler {
 
 	/**
 	 * Formats and echoes the exception as XHTML.
@@ -30,10 +32,10 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		$statusCode = 500;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof Exception) {
 			$statusCode = $exception->getStatusCode();
 		}
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = Response::getStatusMessageByCode($statusCode);
 		if (!headers_sent()) {
 			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
@@ -51,10 +53,10 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 	 *
 	 * @param integer $statusCode
 	 * @param \Exception $exception
-	 * @return string
+	 * @return void
 	 */
 	protected function renderStatically($statusCode, $exception) {
-		$statusMessage = \TYPO3\Flow\Http\Response::getStatusMessageByCode($statusCode);
+		$statusMessage = Response::getStatusMessageByCode($statusCode);
 		$exceptionHeader = '';
 		while (TRUE) {
 			$pathPosition = strpos($exception->getFile(), 'Packages/');
@@ -69,7 +71,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
-			if ($exception instanceof \TYPO3\Flow\Exception) {
+			if ($exception instanceof Exception) {
 				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
 			}
 			if ($exception->getPrevious() === NULL) {
@@ -81,7 +83,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 			}
 		}
 
-		$backtraceCode = \TYPO3\Flow\Error\Debugger::getBacktraceCode($exception->getTrace());
+		$backtraceCode = Debugger::getBacktraceCode($exception->getTrace());
 
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
@@ -138,7 +140,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 		echo PHP_EOL . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
 		echo 'in line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof \TYPO3\Flow\Exception) {
+		if ($exception instanceof Exception) {
 			echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
 		}
 
@@ -153,7 +155,7 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 			echo PHP_EOL . $indent . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 			echo $indent . 'thrown in file ' . $filePathAndName . PHP_EOL;
 			echo $indent . 'in line ' . $exception->getLine() . PHP_EOL;
-			if ($exception instanceof \TYPO3\Flow\Exception) {
+			if ($exception instanceof Exception) {
 				echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
 			}
 
@@ -198,12 +200,11 @@ class DebugExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
 			urlencode (
 				$exception->getMessage() . chr(10) .
 				strip_tags(
-					str_replace(array('<br />', '</pre>'), chr(10), \TYPO3\Flow\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE))
+					str_replace(array('<br />', '</pre>'), chr(10), Debugger::getBacktraceCode($exception->getTrace(), FALSE))
 				) .
 				chr(10) . 'Please include more helpful information!'
 			) .
 			'&issue[category_id]=554&issue[priority_id]=7';
 	}
 }
-
 ?>
