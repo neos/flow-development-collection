@@ -20,26 +20,6 @@ class DisjunctionValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function allValidatorsInTheDisjunctionAreCalledEvenIfOneReturnsNoError() {
-		$validatorDisjunction = new \TYPO3\Flow\Validation\Validator\DisjunctionValidator(array());
-		$validatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \TYPO3\Flow\Error\Result()));
-
-		$errors = new \TYPO3\Flow\Error\Result();
-		$errors->addError(new \TYPO3\Flow\Error\Error('Error', 123));
-
-		$secondValidatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->exactly(1))->method('validate')->will($this->returnValue($errors));
-
-		$validatorDisjunction->addValidator($validatorObject);
-		$validatorDisjunction->addValidator($secondValidatorObject);
-
-		$validatorDisjunction->validate('some subject');
-	}
-
-	/**
-	 * @test
-	 */
 	public function validateReturnsNoErrorsIfOneValidatorReturnsNoError() {
 		$validatorDisjunction = new \TYPO3\Flow\Validation\Validator\DisjunctionValidator(array());
 		$validatorObject = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
