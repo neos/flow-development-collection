@@ -11,17 +11,13 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
-/**
- */
-
 /**
  * An object representation of a generic error. Subclass this to create
  * more specific errors if necessary.
  *
  * @api
  */
-class Error extends \TYPO3\Flow\Error\Message {
+class Error extends Message {
 
 	/**
 	 * The severity of this message ('Error').

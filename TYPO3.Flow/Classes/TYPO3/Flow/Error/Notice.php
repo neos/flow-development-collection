@@ -11,17 +11,13 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
-/**
- */
-
 /**
  * An object representation of a generic notice. Subclass this to create
  * more specific notices if necessary.
  *
  * @api
  */
-class Notice extends \TYPO3\Flow\Error\Message {
+class Notice extends Message {
 
 	/**
 	 * The severity of this message ('Notice').
@@ -30,5 +26,4 @@ class Notice extends \TYPO3\Flow\Error\Message {
 	protected $severity = self::SEVERITY_NOTICE;
 
 }
-
 ?>

@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
 /**
  * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
  *
@@ -72,6 +71,7 @@ class Message {
 
 	/**
 	 * Returns the error message
+	 *
 	 * @return string The error message
 	 * @api
 	 */
@@ -81,6 +81,7 @@ class Message {
 
 	/**
 	 * Returns the error code
+	 *
 	 * @return integer The error code
 	 * @api
 	 */
@@ -133,5 +134,4 @@ class Message {
 		return $this->render();
 	}
 }
-
 ?>
