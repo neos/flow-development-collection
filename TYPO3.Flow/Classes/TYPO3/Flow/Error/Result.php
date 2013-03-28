@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-
 /**
  * Result object for operations dealing with objects, such as the Property Mapper or the Validators.
  *
@@ -71,7 +70,7 @@ class Result {
 	 * @param \TYPO3\Flow\Error\Result $parent
 	 * @return void
 	 */
-	public function setParent(\TYPO3\Flow\Error\Result $parent) {
+	public function setParent(Result $parent) {
 		if ($this->parent !== $parent) {
 			$this->parent = $parent;
 			if ($this->hasErrors()) {
@@ -85,6 +84,7 @@ class Result {
 			}
 		}
 	}
+
 	/**
 	 * Add an error to the current Result object
 	 *
@@ -92,7 +92,7 @@ class Result {
 	 * @return void
 	 * @api
 	 */
-	public function addError(\TYPO3\Flow\Error\Error $error) {
+	public function addError(Error $error) {
 		$this->errors[] = $error;
 		$this->setErrorsExist();
 	}
@@ -104,7 +104,7 @@ class Result {
 	 * @return void
 	 * @api
 	 */
-	public function addWarning(\TYPO3\Flow\Error\Warning $warning) {
+	public function addWarning(Warning $warning) {
 		$this->warnings[] = $warning;
 		$this->setWarningsExist();
 	}
@@ -116,7 +116,7 @@ class Result {
 	 * @return void
 	 * @api
 	 */
-	public function addNotice(\TYPO3\Flow\Error\Notice $notice) {
+	public function addNotice(Notice $notice) {
 		$this->notices[] = $notice;
 		$this->setNoticesExist();
 	}
@@ -200,13 +200,12 @@ class Result {
 		}
 		if (strpos($propertyPath, '.') !== FALSE) {
 			return $this->recurseThroughResult(explode('.', $propertyPath));
-		} else {
-			if (!isset($this->propertyResults[$propertyPath])) {
-				$this->propertyResults[$propertyPath] = new \TYPO3\Flow\Error\Result();
-				$this->propertyResults[$propertyPath]->setParent($this);
-			}
-			return $this->propertyResults[$propertyPath];
 		}
+		if (!isset($this->propertyResults[$propertyPath])) {
+			$this->propertyResults[$propertyPath] = new Result();
+			$this->propertyResults[$propertyPath]->setParent($this);
+		}
+		return $this->propertyResults[$propertyPath];
 	}
 
 	/**
@@ -223,7 +222,7 @@ class Result {
 		$propertyName = array_shift($pathSegments);
 
 		if (!isset($this->propertyResults[$propertyName])) {
-			$this->propertyResults[$propertyName] = new \TYPO3\Flow\Error\Result();
+			$this->propertyResults[$propertyName] = new Result();
 			$this->propertyResults[$propertyName]->setParent($this);
 		}
 
@@ -243,6 +242,7 @@ class Result {
 	/**
 	 * Sets the error cache to TRUE and propagates the information
 	 * upwards the Result-Object Tree
+	 *
 	 * @return void
 	 */
 	protected function setErrorsExist() {
@@ -265,6 +265,7 @@ class Result {
 	/**
 	 * Sets the warning cache to TRUE and propagates the information
 	 * upwards the Result-Object Tree
+	 *
 	 * @return void
 	 */
 	protected function setWarningsExist() {
@@ -287,6 +288,7 @@ class Result {
 	/**
 	 * Sets the notices cache to TRUE and propagates the information
 	 * upwards the Result-Object Tree
+	 *
 	 * @return void
 	 */
 	protected function setNoticesExist() {
@@ -305,7 +307,6 @@ class Result {
 	public function hasMessages() {
 		return $this->errorsExist || $this->noticesExist || $this->warningsExist;
 	}
-
 
 	/**
 	 * Get a list of all Error objects recursively. The result is an array,
@@ -377,7 +378,7 @@ class Result {
 	 * @return void
 	 * @api
 	 */
-	public function merge(\TYPO3\Flow\Error\Result $otherResult) {
+	public function merge(Result $otherResult) {
 		if ($otherResult->errorsExist) {
 			$this->mergeProperty($otherResult, 'getErrors', 'addError');
 		}
@@ -407,7 +408,7 @@ class Result {
 	 * @param string $adderName
 	 * @return void
 	 */
-	protected function mergeProperty(\TYPO3\Flow\Error\Result $otherResult, $getterName, $adderName) {
+	protected function mergeProperty(Result $otherResult, $getterName, $adderName) {
 		foreach ($otherResult->$getterName() as $messageInOtherResult) {
 			$this->$adderName($messageInOtherResult);
 		}
@@ -424,6 +425,7 @@ class Result {
 
 	/**
 	 * Clears the result
+	 *
 	 * @return void
 	 */
 	public function clear() {
@@ -438,5 +440,4 @@ class Result {
 		$this->propertyResults = array();
 	}
 }
-
 ?>
