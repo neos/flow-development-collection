@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
  * Configuration source based on YAML files
  *
  * @Flow\Scope("singleton")
+ * @Flow\Proxy(FALSE)
  * @api
  */
 class YamlSource {

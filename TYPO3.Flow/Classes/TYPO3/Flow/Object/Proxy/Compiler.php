@@ -59,7 +59,7 @@ class Compiler {
 	 * Hardcoded list of Flow sub packages (first 14 characters) which must be immune proxying for security, technical or conceptual reasons.
 	 * @var array
 	 */
-	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop', 'TYPO3\Flow\Con', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti');
+	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti');
 
 	/**
 	 * Injects the Flow settings
