@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect;
+
 /**
  * Testcase for the PersistenceMagicAspect
  *
@@ -18,16 +20,41 @@ namespace TYPO3\Flow\Tests\Unit\Persistence\Aspect;
 class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
+	 * @var PersistenceMagicAspect
+	 */
+	protected $persistenceMagicAspect;
+
+	/**
+	 * @var \TYPO3\Flow\Aop\JoinPointInterface
+	 */
+	protected $mockJoinPoint;
+
+	/**
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $mockPersistenceManager;
+
+	/**
+	 * Sets up this test case
+	 */
+	public function setUp() {
+		$this->persistenceMagicAspect = $this->getAccessibleMock('TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect', array('dummy'), array());
+
+		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$this->persistenceMagicAspect->_set('persistenceManager', $this->mockPersistenceManager);
+
+		$this->mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
+	}
+
+	/**
 	 * @test
 	 * @return void
 	 */
 	public function cloneObjectMarksTheObjectAsCloned() {
 		$object = new \stdClass();
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
-		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
+		$this->mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 
-		$aspect = new \TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect();
-		$aspect->cloneObject($mockJoinPoint);
+		$this->persistenceMagicAspect->cloneObject($this->mockJoinPoint);
 		$this->assertTrue($object->Flow_Persistence_clone);
 	}
 
@@ -40,15 +67,9 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		eval('class ' . $className . ' implements \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface { public $Persistence_Object_Identifier = NULL; }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
-
-		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->atLeastOnce())->method('registerNewObject')->with($object);
-
-		$aspect = $this->getAccessibleMock('TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect', array('dummy'), array());
-		$aspect->_set('persistenceManager', $mockPersistenceManager);
-		$aspect->generateUuid($mockJoinPoint);
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('registerNewObject')->with($object);
+		$this->persistenceMagicAspect->generateUuid($this->mockJoinPoint);
 
 		$this->assertEquals(36, strlen($object->Persistence_Object_Identifier));
 	}
@@ -72,12 +93,10 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		eval('class ' . $className . ' { public $foo; public $bar; }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 
-		$aspect = new \TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect();
-		$aspect->generateValueHash($mockJoinPoint);
+		$this->persistenceMagicAspect->generateValueHash($this->mockJoinPoint);
 		$this->assertEquals(sha1($className . 'uuidhash'), $object->Persistence_Object_Identifier);
 	}
 
@@ -94,12 +113,10 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$object = new $className();
 		$object->Persistence_Object_Identifier = 'existinguuidhash';
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 
-		$aspect = new \TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect();
-		$aspect->generateValueHash($mockJoinPoint);
+		$this->persistenceMagicAspect->generateValueHash($this->mockJoinPoint);
 		$this->assertEquals(sha1($className . 'existinguuidhash' . 'bar'), $object->Persistence_Object_Identifier);
 	}
 
@@ -116,12 +133,10 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		eval('class ' . $className . ' { }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
+		$this->mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 
-		$aspect = new \TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect();
-		$aspect->generateValueHash($mockJoinPoint);
+		$this->persistenceMagicAspect->generateValueHash($this->mockJoinPoint);
 		$this->assertEquals(sha1($className . $date->getTimestamp()), $object->Persistence_Object_Identifier);
 	}
 

@@ -13,6 +13,9 @@ namespace TYPO3\Flow\Persistence\Aspect;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * Adds the aspect of persistence magic to relevant objects
@@ -68,11 +71,12 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @Flow\Before("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)())")
+	 * @Flow\Before("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
 	 */
-	public function generateUuid(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function generateUuid(JoinPointInterface $joinPoint) {
+		/** @var $proxy \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface */
 		$proxy = $joinPoint->getProxy();
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', \TYPO3\Flow\Utility\Algorithms::generateUUID(), TRUE);
+		ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', Algorithms::generateUUID(), TRUE);
 		$this->persistenceManager->registerNewObject($proxy);
 	}
 
@@ -81,13 +85,13 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @Flow\Before("classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject) && method(.*->__construct())")
+	 * @Flow\Before("classAnnotatedWith(TYPO3\Flow\Annotations\ValueObject) && method(.*->__construct()) && filter(TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
 	 */
-	public function generateValueHash(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function generateValueHash(JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		$hashSource = get_class($proxy);
 		if (property_exists($proxy, 'Persistence_Object_Identifier')) {
-			$hashSource .= \TYPO3\Flow\Reflection\ObjectAccess::getProperty($proxy, 'Persistence_Object_Identifier', TRUE);
+			$hashSource .= ObjectAccess::getProperty($proxy, 'Persistence_Object_Identifier', TRUE);
 		}
 		foreach ($joinPoint->getMethodArguments() as $argumentValue) {
 			if (is_array($argumentValue)) {
@@ -95,13 +99,13 @@ class PersistenceMagicAspect {
 			} elseif (!is_object($argumentValue)) {
 				$hashSource .= $argumentValue;
 			} elseif (property_exists($argumentValue, 'Persistence_Object_Identifier')) {
-				$hashSource .= \TYPO3\Flow\Reflection\ObjectAccess::getProperty($argumentValue, 'Persistence_Object_Identifier', TRUE);
+				$hashSource .= ObjectAccess::getProperty($argumentValue, 'Persistence_Object_Identifier', TRUE);
 			} elseif ($argumentValue instanceof \DateTime) {
 				$hashSource .= $argumentValue->getTimestamp();
 			}
 		}
 		$proxy = $joinPoint->getProxy();
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', sha1($hashSource), TRUE);
+		ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', sha1($hashSource), TRUE);
 	}
 
 	/**
@@ -114,7 +118,7 @@ class PersistenceMagicAspect {
 	 * @return void
 	 * @Flow\AfterReturning("TYPO3\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
 	 */
-	public function cloneObject(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function cloneObject(JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->Flow_Persistence_clone = TRUE;
 	}
 
