@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Object;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 
 /**
  * The object serializer. This serializer traverses an object tree and transforms
@@ -127,6 +128,10 @@ class ObjectSerializer {
 
 			$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection($className, $propertyName);
 			$propertyValue = $propertyReflection->getValue($object);
+
+			if (is_object($propertyValue) && $propertyValue instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+				continue;
+			}
 
 			if (is_object($propertyValue) && isset($this->objectReferences[$propertyValue])) {
 				$propertyArray[$propertyName][self::TYPE] = 'object';

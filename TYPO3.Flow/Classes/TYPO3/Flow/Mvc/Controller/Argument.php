@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 
 /**
  * A controller argument
@@ -278,7 +279,7 @@ class Argument {
 			$this->value = $rawValue;
 			return $this;
 		}
-		$this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->propertyMappingConfiguration);
+		$this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
 		$this->validationResults = $this->propertyMapper->getMessages();
 		if ($this->validator !== NULL) {
 			$validationMessages = $this->validator->validate($this->value);
@@ -305,6 +306,9 @@ class Argument {
 	 * @api
 	 */
 	public function getPropertyMappingConfiguration() {
+		if ($this->propertyMappingConfiguration instanceof DependencyProxy) {
+			$this->propertyMappingConfiguration->_activateDependency();
+		}
 		return $this->propertyMappingConfiguration;
 	}
 

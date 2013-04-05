@@ -32,7 +32,7 @@ class Service {
 	public $output = array();
 
 	/**
-	 * @Flow\Inject
+	 * @Flow\Inject(lazy = FALSE)
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
