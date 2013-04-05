@@ -164,11 +164,11 @@ class ServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$service = $this->getAccessibleMock('TYPO3\Flow\I18n\Service', array('dummy'));
 		$service->_set('localeBasePath', 'vfs://Foo/');
-		$service->injectPackageManager($mockPackageManager);
-		$service->injectLocaleCollection($mockLocaleCollection);
+		$this->inject($service, 'packageManager', $mockPackageManager);
+		$this->inject($service, 'localeCollection', $mockLocaleCollection);
 		$service->injectSettings($mockSettings);
-		$service->injectCache($mockCache);
-		$service->initialize();
+		$this->inject($service, 'cache', $mockCache);
+		$service->initializeObject();
 	}
 }
 
