@@ -99,38 +99,19 @@ class Tools {
 	}
 
 	/**
-	 * Does a simple str_replace on the given file.
+	 * Does a search and replace operation on the given file.
 	 *
-	 * @param string $search
-	 * @param string $replace
-	 * @param string $pathAndFilename
-	 * @return boolean|NULL FALSE on errors, NULL on skip, TRUE on success
-	 */
-	static public function searchAndReplace($search, $replace, $pathAndFilename) {
-		$pathInfo = pathinfo($pathAndFilename);
-		if (!isset($pathInfo['filename']) || $pathAndFilename === __FILE__) {
-			return FALSE;
-		}
-
-		$file = file_get_contents($pathAndFilename);
-		$fileBackup = $file;
-		$file = str_replace($search, $replace, $file);
-		if ($file !== $fileBackup) {
-			file_put_contents($pathAndFilename, $file);
-		}
-		return TRUE;
-	}
-
-	/**
-	 * Does a simple preg_replace on the given file. The given patterns
+	 * A simple str_replace is used, unless $regularExpression is set
+	 * to TRUE. In tha case preg_replace is used. The given patterns
 	 * are used as given, no quoting is applied!
 	 *
 	 * @param string $search
 	 * @param string $replace
 	 * @param string $pathAndFilename
+	 * @param boolean $regularExpression
 	 * @return boolean|NULL FALSE on errors, NULL on skip, TRUE on success
 	 */
-	static public function searchAndReplaceRegex($search, $replace, $pathAndFilename) {
+	static public function searchAndReplace($search, $replace, $pathAndFilename, $regularExpression = FALSE) {
 		$pathInfo = pathinfo($pathAndFilename);
 		if (!isset($pathInfo['filename']) || $pathAndFilename === __FILE__) {
 			return FALSE;
@@ -138,11 +119,17 @@ class Tools {
 
 		$file = file_get_contents($pathAndFilename);
 		$fileBackup = $file;
-		$file = preg_replace($search, $replace, $file);
+		if ($regularExpression === TRUE) {
+			echo $search . PHP_EOL;
+			$file = preg_replace($search, $replace, $file);
+		} else {
+			$file = str_replace($search, $replace, $file);
+		}
 		if ($file !== $fileBackup) {
 			file_put_contents($pathAndFilename, $file);
+			return TRUE;
 		}
-		return TRUE;
+		return NULL;
 	}
 }
 
