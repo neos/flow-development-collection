@@ -12,7 +12,7 @@ namespace TYPO3\Flow\Property;
  *                                                                        */
 
 /**
- * Configuration object for the property mapper. This interface specified all methods
+ * Configuration object for the property mapper. This interface specifies all methods
  * which are used by the property mapper and by the type converters during the conversion
  * process. Thus, this interface does only contain read-only methods, and no methods
  * to set any of these options.
@@ -30,6 +30,24 @@ interface PropertyMappingConfigurationInterface {
 	 * @api
 	 */
 	public function shouldMap($propertyName);
+
+	/**
+	 * Check if the given $propertyName should be skipped during mapping.
+	 *
+	 * @param string $propertyName
+	 * @return boolean
+	 * @api
+	 */
+	public function shouldSkip($propertyName);
+
+	/**
+	 * Whether unknown (unconfigured) properties should be skipped during
+	 * mapping, instead if causing an error.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function shouldSkipUnknownProperties();
 
 	/**
 	 * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!

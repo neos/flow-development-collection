@@ -84,6 +84,25 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @covers \TYPO3\Flow\Property\PropertyMappingConfiguration::shouldSkip
+	 */
+	public function shouldSkipReturnsFalseByDefault() {
+		$this->assertFalse($this->propertyMappingConfiguration->shouldSkip('someSourceProperty'));
+		$this->assertFalse($this->propertyMappingConfiguration->shouldSkip('someOtherSourceProperty'));
+	}
+
+	/**
+	 * @test
+	 * @covers \TYPO3\Flow\Property\PropertyMappingConfiguration::shouldSkip
+	 */
+	public function shouldSkipReturnsTrueIfConfigured() {
+		$this->propertyMappingConfiguration->skipProperties('someSourceProperty', 'someOtherSourceProperty');
+		$this->assertTrue($this->propertyMappingConfiguration->shouldSkip('someSourceProperty'));
+		$this->assertTrue($this->propertyMappingConfiguration->shouldSkip('someOtherSourceProperty'));
+	}
+
+	/**
+	 * @test
 	 */
 	public function setTypeConverterOptionsCanBeRetrievedAgain() {
 		$mockTypeConverterClass = $this->getMockClass('TYPO3\FLOW3\Property\TypeConverterInterface');
@@ -96,7 +115,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function inexistentTypeConverterOptionsReturnNull() {
+	public function nonexistentTypeConverterOptionsReturnNull() {
 		$this->assertNull($this->propertyMappingConfiguration->getConfigurationValue('foo', 'bar'));
 	}
 

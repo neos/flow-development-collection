@@ -34,6 +34,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockConfiguration = $this->getMock('TYPO3\Flow\Property\PropertyMappingConfigurationInterface');
 	}
 
+	/**
+	 * @return array
+	 */
 	public function validSourceTypes() {
 		return array(
 			array('someString', 'string'),
@@ -53,7 +56,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($sourceType, $propertyMapper->_call('determineSourceType', $source));
 	}
 
-
+	/**
+	 * @return array
+	 */
 	public function invalidSourceTypes() {
 		return array(
 			array(NULL),
@@ -61,6 +66,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array(new \ArrayObject())
 		);
 	}
+
 	/**
 	 * @test
 	 * @dataProvider invalidSourceTypes
@@ -71,7 +77,14 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$propertyMapper->_call('determineSourceType', $source);
 	}
 
-	protected function getMockTypeConverter($name = '', $canConvertFrom = TRUE, $properties = array(), $typeOfSubObject = '') {
+	/**
+	 * @param string $name
+	 * @param boolean $canConvertFrom
+	 * @param array $properties
+	 * @param string $typeOfSubObject
+	 * @return \TYPO3\Flow\Property\TypeConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function getMockTypeConverter($name = '', $canConvertFrom = TRUE, array $properties = array(), $typeOfSubObject = '') {
 		$mockTypeConverter = $this->getMock('TYPO3\Flow\Property\TypeConverterInterface');
 		$mockTypeConverter->_name = $name;
 		$mockTypeConverter->expects($this->any())->method('canConvertFrom')->will($this->returnValue($canConvertFrom));
@@ -93,7 +106,10 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($mockTypeConverter, $propertyMapper->_call('findTypeConverter', 'someSource', 'someTargetType', $this->mockConfiguration));
 	}
 
-	// Simple type conversion
+	/**
+	 * Simple type conversion
+	 * @return array
+	 */
 	public function dataProviderForFindTypeConverter() {
 		return array(
 			array('someStringSource', 'string', array(
@@ -126,6 +142,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedTypeConverter, $actualTypeConverter->_name);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function dataProviderForObjectTypeConverters() {
 		$data = array();
 
@@ -322,6 +341,48 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$propertyPath = '';
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
 		$this->assertSame($source, $propertyMapper->_call('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertSkipsPropertiesIfConfiguredTo() {
+		$source = array('firstProperty' => 1, 'secondProperty' => 2);
+		$typeConverters = array(
+			'array' => array(
+				'stdClass' => array(10 => $this->getMockTypeConverter('array2object', TRUE, $source, 'integer'))
+			),
+			'integer' => array(
+				'integer' => array(10 => $this->getMockTypeConverter('integer2integer'))
+			)
+		);
+		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+
+		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->_set('typeConverters', $typeConverters);
+
+		$propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipProperties('secondProperty'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertSkipsUnknownPropertiesIfConfiguredTo() {
+		$source = array('firstProperty' => 1, 'secondProperty' => 2);
+		$typeConverters = array(
+			'array' => array(
+				'stdClass' => array(10 => $this->getMockTypeConverter('array2object', TRUE, $source, 'integer'))
+			),
+			'integer' => array(
+				'integer' => array(10 => $this->getMockTypeConverter('integer2integer'))
+			)
+		);
+		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+
+		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->_set('typeConverters', $typeConverters);
+
+		$propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipUnknownProperties());
 	}
 }
 ?>
