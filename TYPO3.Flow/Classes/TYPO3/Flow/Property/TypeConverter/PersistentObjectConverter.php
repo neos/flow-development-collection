@@ -56,17 +56,10 @@ class PersistentObjectConverter extends ObjectConverter {
 	protected $priority = 1;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
-
-	/**
-	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 */
-	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
 
 	/**
 	 * We can only convert if the $targetType is either tagged with entity or value object.

@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Validator for DateTime objects.
@@ -30,30 +31,16 @@ class DateTimeValidator extends AbstractValidator {
 	);
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\I18n\Parser\DatetimeParser
 	 */
 	protected $datetimeParser;
-
-	/**
-	 * @param \TYPO3\Flow\I18n\Service $localizationService
-	 * @return void
-	 */
-	public function injectLocalizationService(\TYPO3\Flow\I18n\Service $localizationService) {
-		$this->localizationService = $localizationService;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\I18n\Parser\DatetimeParser $datetimeParser
-	 * @return void
-	 */
-	public function injectDatetimeParser(\TYPO3\Flow\I18n\Parser\DatetimeParser $datetimeParser) {
-		$this->datetimeParser = $datetimeParser;
-	}
 
 	/**
 	 * Checks if the given value is a valid DateTime object.

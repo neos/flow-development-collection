@@ -279,7 +279,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function convertShouldAskConfigurationBuilderForDefaultConfiguration() {
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
-		$propertyMapper->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
+		$this->inject($propertyMapper, 'configurationBuilder', $this->mockConfigurationBuilder);
 
 		$this->mockConfigurationBuilder->expects($this->once())->method('build')->will($this->returnValue($this->mockConfiguration));
 

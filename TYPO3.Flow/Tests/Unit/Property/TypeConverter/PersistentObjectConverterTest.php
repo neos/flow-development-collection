@@ -33,13 +33,13 @@ class PersistentObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		$this->converter = new \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter();
 		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
-		$this->converter->injectReflectionService($this->mockReflectionService);
+		$this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
 		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
-		$this->converter->injectPersistenceManager($this->mockPersistenceManager);
+		$this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
 		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$this->converter->injectObjectManager($this->mockObjectManager);
+		$this->inject($this->converter, 'objectManager', $this->mockObjectManager);
 	}
 
 	/**

@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * The Flow default Repository, based on Doctrine 2
  *
@@ -19,6 +21,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
 abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\Flow\Persistence\RepositoryInterface {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -53,16 +56,6 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 		}
 		parent::__construct($entityManager, $classMetadata);
 		$this->entityManager = $this->_em;
-	}
-
-	/**
-	 * Injects the persistence manager
-	 *
-	 * @param \TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 */
-	public function injectPersistenceManager(\TYPO3\Flow\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**

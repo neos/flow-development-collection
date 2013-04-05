@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Query class for Doctrine 2
@@ -25,6 +26,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	protected $entityClassName;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -79,14 +81,6 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 */
 	public function __construct($entityClassName) {
 		$this->entityClassName = $entityClassName;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\TYPO3\Flow\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
 	}
 
 	/**
