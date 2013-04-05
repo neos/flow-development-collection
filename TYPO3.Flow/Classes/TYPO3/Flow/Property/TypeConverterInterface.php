@@ -39,6 +39,17 @@ interface TypeConverterInterface {
 	public function getSupportedTargetType();
 
 	/**
+	 * Returns the type for a given source, depending on e.g. the __type setting or other properties.
+	 *
+	 * @param mixed $source the source data
+	 * @param string $originalTargetType the type we originally want to convert to
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return string
+	 * @api
+	 */
+	public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = NULL);
+
+	/**
 	 * Return the priority of this TypeConverter. TypeConverters with a high priority are chosen before low priority.
 	 *
 	 * @return integer

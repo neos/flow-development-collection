@@ -206,13 +206,16 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 
 	/**
 	 * Set all options for the given $typeConverter.
+	 *
 	 * @param string $typeConverter class name of type converter
 	 * @param array $options
 	 * @return \TYPO3\Flow\Property\PropertyMappingConfiguration this
 	 * @api
 	 */
 	public function setTypeConverterOptions($typeConverter, array $options) {
-		$this->configuration[$typeConverter] = $options;
+		foreach ($this->getTypeConvertersWithParentClasses($typeConverter) as $typeConverter) {
+			$this->configuration[$typeConverter] = $options;
+		}
 		return $this;
 	}
 
@@ -226,8 +229,26 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 	 * @api
 	 */
 	public function setTypeConverterOption($typeConverter, $optionKey, $optionValue) {
-		$this->configuration[$typeConverter][$optionKey] = $optionValue;
+		foreach ($this->getTypeConvertersWithParentClasses($typeConverter) as $typeConverter) {
+			$this->configuration[$typeConverter][$optionKey] = $optionValue;
+		}
 		return $this;
+	}
+
+	/**
+	 * Get type converter classes including parents for the given type converter
+	 *
+	 * When setting an option on a subclassed type converter, this option must also be set on
+	 * all its parent type converters.
+	 *
+	 * @param string $typeConverter The type converter class
+	 * @return array Class names of type converters
+	 */
+	protected function getTypeConvertersWithParentClasses($typeConverter) {
+		$typeConverterClasses = class_parents($typeConverter);
+		$typeConverterClasses = $typeConverterClasses === FALSE ? array() : $typeConverterClasses;
+		$typeConverterClasses[] = $typeConverter;
+		return $typeConverterClasses;
 	}
 
 	/**

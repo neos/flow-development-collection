@@ -163,6 +163,7 @@ class PropertyMapper {
 		}
 
 		$typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
+		$targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
 
 		if (!is_object($typeConverter) || !($typeConverter instanceof \TYPO3\Flow\Property\TypeConverterInterface)) {
 			throw new Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
