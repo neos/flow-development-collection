@@ -43,42 +43,5 @@ class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sourceArray = array('Foo' => 'Bar', 'Baz');
 		$this->assertEquals($sourceArray, $this->converter->convertFrom($sourceArray, 'array'));
 	}
-
-	/**
-	 * @test
-	 */
-	public function convertOnlyMapsAllowedProperties() {
-		$sourceArray = array('Foo' => 'Bar', 'Baz');
-		$expectedTargetArray = array('Foo' => 'Bar');
-		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-		$configuration->allowProperties('Foo')->skipUnknownProperties();
-
-		$this->assertEquals($expectedTargetArray, $this->converter->convertFrom($sourceArray, 'array', array('Foo' => 'Bar'), $configuration));
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
-	 */
-	public function convertThrowsExceptionOnUnknownProperties() {
-		$sourceArray = array('Foo' => 'Bar', 'Baz');
-		$expectedTargetArray = array('Foo' => 'Bar');
-		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-		$configuration->allowProperties('Foo');
-
-		$this->assertEquals($expectedTargetArray, $this->converter->convertFrom($sourceArray, 'array', array('Foo' => 'Bar'), $configuration));
-	}
-
-	/**
-	 * @test
-	 */
-	public function convertSkipsPropertiesIfConfiguredTo() {
-		$sourceArray = array('Foo' => 'Bar', 'Baz');
-		$expectedTargetArray = array('Baz');
-		$configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-		$configuration->allowAllProperties()->skipProperties('Foo');
-
-		$this->assertEquals($expectedTargetArray, $this->converter->convertFrom($sourceArray, 'array', array('Foo' => 'Bar'), $configuration));
-	}
 }
 ?>
