@@ -61,7 +61,7 @@ class BrowserTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$response = $this->browser->request('http://localhost/test/http/redirecting');
 		$this->assertNotContains('arrived.', $response->getContent());
 		$this->assertEquals(303, $response->getStatusCode());
-		$this->assertEquals('http://localhost/index.php/test/http/redirecting/tohere', $response->getHeader('Location'));
+		$this->assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeader('Location'));
 	}
 
 }
