@@ -61,7 +61,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
 		$this->assertEquals('test/security/restricted', (string)$uri);
 
-		$this->authenticateRoles(array('Administrator'));
+		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
 		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
 		$this->assertEquals('test/security/restricted?__csrfToken', substr($uri, 0, 36));
 

@@ -60,15 +60,17 @@ class Account {
 	protected $expirationDate;
 
 	/**
-	 * @var array<\TYPO3\Flow\Security\Policy\Role>
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Security\Policy\Role>
+	 * @ORM\ManyToMany
 	 */
-	protected $roles = array();
+	protected $roles;
 
 	/**
 	 * Upon creation the creationDate property is initialized.
 	 */
 	public function __construct() {
 		$this->creationDate = new \DateTime();
+		$this->roles = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 
 	/**
@@ -150,12 +152,12 @@ class Account {
 	/**
 	 * Returns the roles this account has assigned
 	 *
-	 * @return array<\TYPO3\Flow\Security\Policy\Role> The assigned roles
+	 * @return array<\TYPO3\Flow\Security\Policy\Role> The assigned roles, indexed by role identifier
 	 */
 	public function getRoles() {
 		$roles = array();
-		foreach ($this->roles as $role) {
-			$roles[] = new \TYPO3\Flow\Security\Policy\Role($role);
+		foreach ($this->roles->toArray() as $role) {
+			$roles[$role->getIdentifier()] = $role;
 		}
 		return $roles;
 	}
@@ -167,9 +169,9 @@ class Account {
 	 * @return void
 	 */
 	public function setRoles(array $roles) {
-		$this->roles = array();
+		$this->roles->clear();
 		foreach ($roles as $role) {
-			$this->roles[] = (string)$role;
+			$this->roles->add($role);
 		}
 	}
 
@@ -180,7 +182,7 @@ class Account {
 	 * @return boolean
 	 */
 	public function hasRole(\TYPO3\Flow\Security\Policy\Role $role) {
-		return in_array((string) $role, $this->roles, TRUE);
+		return $this->roles->contains($role);
 	}
 
 	/**
@@ -191,7 +193,7 @@ class Account {
 	 */
 	public function addRole(\TYPO3\Flow\Security\Policy\Role $role) {
 		if (!$this->hasRole($role)) {
-			$this->roles[] = (string)$role;
+			$this->roles->add($role);
 		}
 	}
 
@@ -202,8 +204,8 @@ class Account {
 	 * @return void
 	 */
 	public function removeRole(\TYPO3\Flow\Security\Policy\Role $role) {
-		if (($key = array_search((string)$role, $this->roles, TRUE)) !== FALSE) {
-			unset($this->roles[$key]);
+		if ($this->hasRole($role)) {
+			$this->roles->removeElement($role);
 		}
 	}
 

@@ -47,7 +47,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function administratorsAreAllowedToSeeHiddenRestrictableEntities() {
-		$this->authenticateRoles(array('Administrator'));
+		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
 
 		$defaultEntity = new Fixtures\RestrictableEntity('default');
 		$hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -62,7 +62,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->clearState();
 
 		$result = $this->restrictableEntityRepository->findAll();
-		$this->assertTrue(count($result) === 2);
+		$this->assertEquals(2, count($result));
 
 		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
 		$this->assertNotNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity'));
@@ -76,7 +76,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function customersAreNotAllowedToSeeHiddenRestrictableEntities() {
-		$this->authenticateRoles(array('Customer'));
+		$this->authenticateRoles(array('TYPO3.Flow:Customer'));
 
 		$defaultEntity = new Fixtures\RestrictableEntity('default');
 		$hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -136,7 +136,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function customersCannotSeeOthersRestrictableEntites() {
-		$ownAccount = $this->authenticateRoles(array('Customer'));
+		$ownAccount = $this->authenticateRoles(array('TYPO3.Flow:Customer'));
 		$ownAccount->setAccountIdentifier('ownAccount');
 		$ownAccount->setAuthenticationProviderName('SomeProvider');
 		$ownAccount->setCredentialsSource('foobar');
@@ -175,7 +175,7 @@ class ContentSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function administratorsCanSeeOthersRestrictableEntites() {
-		$ownAccount = $this->authenticateRoles(array('Administrator', 'Customer'));
+		$ownAccount = $this->authenticateRoles(array('TYPO3.Flow:Administrator', 'TYPO3.Flow:Customer'));
 		$ownAccount->setAccountIdentifier('ownAccount');
 		$ownAccount->setAuthenticationProviderName('SomeProvider');
 		$ownAccount->setCredentialsSource('foobar');

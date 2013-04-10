@@ -23,6 +23,29 @@ use TYPO3\Flow\Utility\Arrays;
 class YamlSource {
 
 	/**
+	 * Checks for the specified configuration file and returns TRUE if it exists.
+	 *
+	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
+	 * @param boolean $allowSplitSource If TRUE, the type will be used as a prefix when looking for configuration files
+	 * @return boolean
+	 */
+	public function has($pathAndFilename, $allowSplitSource = FALSE) {
+		if ($allowSplitSource === TRUE) {
+			$pathsAndFileNames = glob($pathAndFilename . '*.yaml');
+			foreach ($pathsAndFileNames as $pathAndFilename) {
+				if (file_exists($pathAndFilename)) {
+					return TRUE;
+				}
+			}
+		} else {
+			if (file_exists($pathAndFilename . '.yaml')) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
 	 * Loads the specified configuration file and returns its content as an
 	 * array. If the file does not exist or could not be loaded, an empty
 	 * array is returned

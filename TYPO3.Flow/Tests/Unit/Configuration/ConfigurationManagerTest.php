@@ -16,7 +16,6 @@ use org\bovigo\vfs\vfsStream;
 
 /**
  * Testcase for the configuration manager
- *
  */
 class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -158,6 +157,27 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$actualConfiguration = $configurationManager->getConfiguration($configurationType);
 			$this->assertSame($expectedConfiguration, $actualConfiguration);
 		}
+
+		$expectedConfigurationTypes = array('Caches', 'Objects', 'Routes', 'Policy', 'Settings', 'Custom');
+		$this->assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
+	}
+
+	/**
+	 * @expectedException \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException
+	 * @test
+	 */
+	public function getConfigurationThrowsExceptionOnInvalidConfigurationType() {
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager->getConfiguration('Nonsense');
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @test
+	 */
+	public function registerConfigurationTypeThrowsExceptionOnInvalidConfigurationProcessingType() {
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager->registerConfigurationType('MyCustomType', 'Nonsense');
 	}
 
 	/**
@@ -584,7 +604,6 @@ EOD;
 
 	/**
 	 * Callback for the above test.
-	 *
 	 */
 	public function packagePolicyCallback() {
 		$filenameAndPath = func_get_arg(0);
@@ -617,12 +636,12 @@ EOD;
 		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packagePolicyCallback')));
 
-		$mockPackageFlow3 = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE);
-		$mockPackageFlow3->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
-		$mockPackageFlow3->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
+		$mockPackageFlow = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE);
+		$mockPackageFlow->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
+		$mockPackageFlow->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
 
 		$mockPackages = array(
-			'TYPO3.Flow' => $mockPackageFlow3
+			'TYPO3.Flow' => $mockPackageFlow
 		);
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
@@ -636,11 +655,45 @@ EOD;
 		$actualConfigurations = $configurationManager->_get('configurations');
 		$expectedConfiguration = array(
 			'roles' => array(
-				'Customer' => array(),
-				'Expert' => array('Customer')
+				'TYPO3.Flow:Customer' => array(),
+				'TYPO3.Flow:Expert' => array('TYPO3.Flow:Customer')
 			)
 		);
 		$this->assertEquals($expectedConfiguration, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY]);
+	}
+
+	/**
+	 * @expectedException TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @test
+	 */
+	public function loadConfigurationThrowsExceptionIfPolicyRedefinesSystemRoles() {
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('load', 'save'));
+		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(
+			function($pathAndFilename) {
+				if ($pathAndFilename === 'Flow/Configuration/Policy') {
+					return array(
+						'roles' => array(
+							'Customer' => array(),
+							'Everybody' => array()
+						)
+					);
+				}
+			}
+		));
+
+		$mockPackageFlow = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE);
+		$mockPackageFlow->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
+		$mockPackageFlow->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
+
+		$mockPackages = array(
+			'TYPO3.Flow' => $mockPackageFlow
+		);
+
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+		$configurationManager->_set('context', 'Testing');
+
+		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY, $mockPackages);
 	}
 
 	/**
@@ -1062,7 +1115,7 @@ EOD;
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue(array($mockSubRouteConfiguration)));
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(new ApplicationContext('Production')));
-		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+		$configurationManager->injectConfigurationSource($mockConfigurationSource);
 
 		$mockPackages = $this->getMockPackages();
 		$configurationManager->setPackages($mockPackages);

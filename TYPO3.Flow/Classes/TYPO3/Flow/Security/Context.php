@@ -220,6 +220,9 @@ class Context {
 	 * @throws \TYPO3\Flow\Security\Exception
 	 */
 	public function initialize() {
+		if ($this->initialized === TRUE) {
+			return;
+		}
 		if ($this->canBeInitialized() === FALSE) {
 			throw new Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
 		}
@@ -294,10 +297,13 @@ class Context {
 	}
 
 	/**
-	 * Returns the roles of all active and authenticated tokens.
-	 * If no authenticated roles could be found the "Everybody" role is returned
+	 * Returns the roles of all authenticated accounts, including inherited roles.
 	 *
-	 * @return array Array of TYPO3\Flow\Security\Policy\Role objects
+	 * If no authenticated roles could be found the "Anonymous" role is returned.
+	 *
+	 * The "Everybody" roles is always returned.
+	 *
+	 * @return array<\TYPO3\Flow\Security\Policy\Role>
 	 */
 	public function getRoles() {
 		if ($this->initialized === FALSE) {
@@ -305,58 +311,53 @@ class Context {
 		}
 
 		if ($this->roles === NULL) {
-			$roles = array(new Role('Everybody'));
+			$this->roles = array('Everybody' => $this->policyService->getRole('Everybody'));
 
 			if ($this->authenticationManager->isAuthenticated() === FALSE) {
-				$roles[] = new Role('Anonymous');
+				$this->roles['Anonymous'] = $this->policyService->getRole('Anonymous');
 			} else {
 				/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 				foreach ($this->getAuthenticationTokens() as $token) {
-					if ($token->isAuthenticated()) {
-						$tokenRoles = $token->getRoles();
-						foreach ($tokenRoles as $currentRole) {
-							if (!in_array($currentRole, $roles)) {
-								$roles[] = $currentRole;
-							}
-							foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
-								if (!in_array($currentParentRole, $roles)) {
-									$roles[] = $currentParentRole;
+					if ($token->isAuthenticated() === TRUE) {
+						$account = $token->getAccount();
+						if ($account !== NULL) {
+							$accountRoles = $account->getRoles();
+							foreach ($accountRoles as $currentRole) {
+								if (!in_array($currentRole, $this->roles)) {
+									$this->roles[$currentRole->getIdentifier()] = $currentRole;
+								}
+								foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
+									if (!in_array($currentParentRole, $this->roles)) {
+										$this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
+									}
 								}
 							}
 						}
 					}
 				}
-				$roles = array_intersect($roles, $this->policyService->getRoles());
 			}
-			$this->roles = $roles;
 		}
 
 		return $this->roles;
 	}
 
 	/**
-	 * Returns TRUE, if at least one of the currently authenticated tokens holds
-	 * a role with the given string representation, also recursively.
+	 * Returns TRUE, if at least one of the currently authenticated accounts holds
+	 * a role with the given identifier, also recursively.
 	 *
-	 * @param string $roleName The string representation of the role to search for
+	 * @param string $roleIdentifier The string representation of the role to search for
 	 * @return boolean TRUE, if a role with the given string representation was found
 	 */
-	public function hasRole($roleName) {
-		if ($roleName === 'Everybody') {
+	public function hasRole($roleIdentifier) {
+		if ($roleIdentifier === 'Everybody') {
 			return TRUE;
 		}
-		if ($roleName === 'Anonymous') {
+		if ($roleIdentifier === 'Anonymous') {
 			return (!$this->authenticationManager->isAuthenticated());
 		}
 
 		$roles = $this->getRoles();
-		foreach ($roles as $role) {
-			if ((string)$role === $roleName) {
-				return TRUE;
-			}
-		}
-
-		return FALSE;
+		return isset($roles[$roleIdentifier]);
 	}
 
 	/**
@@ -522,6 +523,7 @@ class Context {
 	 * @return void
 	 */
 	public function clearContext() {
+		$this->roles = NULL;
 		$this->tokens = array();
 		$this->activeTokens = array();
 		$this->inactiveTokens = array();
