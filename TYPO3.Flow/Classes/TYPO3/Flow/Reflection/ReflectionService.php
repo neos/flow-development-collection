@@ -1382,10 +1382,13 @@ class ReflectionService {
 		$needsArtificialIdentity = TRUE;
 		foreach ($this->getClassPropertyNames($className) as $propertyName) {
 			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Transient')) {
-				$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-				if (preg_match('/\s/', $declaredType) === 1) {
-					throw new \TYPO3\Flow\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
+				$varTagValues = $this->getPropertyTagValues($className, $propertyName, 'var');
+				if (count($varTagValues) > 1) {
+					throw new \TYPO3\Flow\Reflection\Exception\InvalidPropertyTypeException('More than one @var annotation given for "' . $className . '::$' . $propertyName . '"', 1367334366);
+				} else {
+					$declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
 				}
+
 				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'Doctrine\ORM\Mapping\Id')) {
 					$needsArtificialIdentity = FALSE;
 				}
