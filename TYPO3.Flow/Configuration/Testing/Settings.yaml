@@ -49,6 +49,14 @@ TYPO3:
         username: NULL
         password: NULL
 
+      doctrine:
+        eventSubscribers:
+          - 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber'
+        eventListeners:
+          -
+            events: ['onFlush', 'preFlush', 'postFlush']
+            listener: 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener'
+
     security:
       authentication:
         authenticationStrategy: anyToken

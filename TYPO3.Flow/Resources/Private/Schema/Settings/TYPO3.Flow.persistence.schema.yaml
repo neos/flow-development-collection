@@ -60,3 +60,12 @@ properties:
     properties:
       'enable': { type: boolean, required: TRUE }
       'sqlLogger': { type: [string, 'null'], required: TRUE }
+      'eventSubscribers': { type: array, items: { type: string, format: class-name } }
+      'eventListeners':
+        type: array
+        items:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'events': { type: [string, array], items: { type: string } }
+            'listener': { type: string, format: class-name }

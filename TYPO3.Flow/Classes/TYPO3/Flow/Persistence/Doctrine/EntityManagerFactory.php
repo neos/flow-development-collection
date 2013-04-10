@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 
 /**
  * EntityManager factory for Doctrine integration
@@ -73,6 +74,8 @@ class EntityManagerFactory {
 			$config->setSQLLogger(new $this->settings['doctrine']['sqlLogger']());
 		}
 
+		$eventManager = $this->buildEventManager();
+
 		$flowAnnotationDriver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$config->setMetadataDriverImpl($flowAnnotationDriver);
 
@@ -82,11 +85,36 @@ class EntityManagerFactory {
 		$config->setProxyNamespace('TYPO3\Flow\Persistence\Doctrine\Proxies');
 		$config->setAutoGenerateProxyClasses(FALSE);
 
-		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
+		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config, $eventManager);
 		$flowAnnotationDriver->setEntityManager($entityManager);
 		return $entityManager;
 	}
 
-}
+	/**
+	 * Add configured event subscribers and listeners to the event manager
+	 *
+	 * @return \Doctrine\Common\EventManager
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+	 */
+	protected function buildEventManager() {
+		$eventManager = new \Doctrine\Common\EventManager();
+		if (isset($this->settings['doctrine']['eventSubscribers']) && is_array($this->settings['doctrine']['eventSubscribers'])) {
+			foreach ($this->settings['doctrine']['eventSubscribers'] as $subscriberClassName) {
+				$subscriber = $this->objectManager->get($subscriberClassName);
+				if (!$subscriber instanceof \Doctrine\Common\EventSubscriber) {
+					throw new IllegalObjectTypeException('Doctrine eventSubscribers must extend class \Doctrine\Common\EventSubscriber, ' . $subscriberClassName . ' fails to do so.', 1366018193);
+				}
+				$eventManager->addEventSubscriber($subscriber);
+			}
+		}
+		if (isset($this->settings['doctrine']['eventListeners']) && is_array($this->settings['doctrine']['eventListeners'])) {
+			foreach ($this->settings['doctrine']['eventListeners'] as $listenerOptions) {
+				$listener = $this->objectManager->get($listenerOptions['listener']);
+				$eventManager->addEventListener($listenerOptions['events'], $listener);
+			}
+		}
+		return $eventManager;
+	}
 
+}
 ?>
