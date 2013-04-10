@@ -100,5 +100,25 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedConfiguration, $configuration);
 	}
 
+	/**
+	 * @test
+	 */
+	public function splitConfigurationFilesAreMergedAsExpected() {
+		$expectedConfiguration = array(
+			'configurationFileHasBeenLoaded' => TRUE,
+			'TYPO3' => array(
+				'Flow' => array(
+					'something' => 'zzz',
+					'@bar' => 1,
+					'aboolean' => TRUE
+				)
+			)
+		);
+		$pathAndFilename = __DIR__ . '/../Fixture/SplitYamlConfigurationFile';
+		$configurationSource = new \TYPO3\Flow\Configuration\Source\YamlSource();
+		$configuration = $configurationSource->load($pathAndFilename, TRUE);
+		$this->assertSame($expectedConfiguration, $configuration);
+	}
+
 }
 ?>

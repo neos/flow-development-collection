@@ -40,11 +40,11 @@ class ConfigurationManager {
 	 * @var array
 	 */
 	protected $configurationTypes = array(
-		self::CONFIGURATION_TYPE_CACHES => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-		self::CONFIGURATION_TYPE_OBJECTS => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS,
-		self::CONFIGURATION_TYPE_ROUTES => self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
-		self::CONFIGURATION_TYPE_POLICY => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-		self::CONFIGURATION_TYPE_SETTINGS => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS
+		self::CONFIGURATION_TYPE_CACHES => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => FALSE),
+		self::CONFIGURATION_TYPE_OBJECTS => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => FALSE),
+		self::CONFIGURATION_TYPE_ROUTES => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => FALSE),
+		self::CONFIGURATION_TYPE_POLICY => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => FALSE),
+		self::CONFIGURATION_TYPE_SETTINGS => array('processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => FALSE)
 	);
 
 	/**
@@ -172,9 +172,23 @@ class ConfigurationManager {
 	 */
 	public function resolveConfigurationProcessingType($configurationType) {
 		if (!isset($this->configurationTypes[$configurationType])) {
-			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType, $configurationProcessingType).', 1339166495);
+			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
 		}
-		return $this->configurationTypes[$configurationType];
+		return $this->configurationTypes[$configurationType]['processingType'];
+	}
+
+	/**
+	 * Check the allowSplitSource setting for the configuration type.
+	 *
+	 * @param string $configurationType
+	 * @return boolean
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException on non-existing configurationType
+	 */
+	public function isSplitSourceAllowedForConfigurationType($configurationType) {
+		if (!isset($this->configurationTypes[$configurationType])) {
+			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1359998400);
+		}
+		return $this->configurationTypes[$configurationType]['allowSplitSource'];
 	}
 
 	/**
@@ -185,10 +199,11 @@ class ConfigurationManager {
 	 *
 	 * @param string $configurationType The type to register, may be anything
 	 * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
+	 * @param boolean $allowSplitSource If TRUE, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
 	 * @return void
 	 */
-	public function registerConfigurationType($configurationType, $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
-		$this->configurationTypes[$configurationType] = $configurationProcessingType;
+	public function registerConfigurationType($configurationType, $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, $allowSplitSource = FALSE) {
+		$this->configurationTypes[$configurationType] = array('processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource);
 	}
 
 	/**
@@ -204,14 +219,15 @@ class ConfigurationManager {
 	 * Returns the specified raw configuration.
 	 * The actual configuration will be merged from different sources in a defined order.
 	 *
-	 * Note that this is a low level method and only makes sense to be used by Flow internally.
+	 * Note that this is a low level method and mostly makes sense to be used by Flow internally.
+	 * If possible just use settings and have them injected.
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param string $packageKey The package key to fetch configuration for.
+	 * @param string $configurationPath The path inside the configuration to fetch
 	 * @return array The configuration
 	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 */
-	public function getConfiguration($configurationType, $packageKey = NULL) {
+	public function getConfiguration($configurationType, $configurationPath = NULL) {
 		$configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
 		$configuration = array();
 		switch ($configurationProcessingType) {
@@ -244,8 +260,8 @@ class ConfigurationManager {
 				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 
-		if ($packageKey !== NULL && $configuration !== NULL) {
-			return (Arrays::getValueByPath($configuration, $packageKey));
+		if ($configurationPath !== NULL && $configuration !== NULL) {
+			return (Arrays::getValueByPath($configuration, $configurationPath));
 		} else {
 			return $configuration;
 		}
@@ -278,6 +294,7 @@ class ConfigurationManager {
 		$this->cacheNeedsUpdate = TRUE;
 
 		$configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
+		$allowSplitSource = $this->isSplitSourceAllowedForConfigurationType($configurationType);
 		switch ($configurationProcessingType) {
 			case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
 
@@ -295,15 +312,15 @@ class ConfigurationManager {
 					if (Arrays::getValueByPath($settings, $packageKey) === NULL) {
 						$settings = Arrays::setValueByPath($settings, $packageKey, array());
 					}
-					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
 				}
-				$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
+				$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
 				foreach ($this->orderedListOfContextNames as $contextName) {
 					foreach ($packages as $package) {
-						$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType));
+						$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
 					}
-					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
+					$settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
 				}
 
 				if ($this->configurations[$configurationType] !== array()) {
@@ -335,15 +352,15 @@ class ConfigurationManager {
 				$this->configurations[$configurationType] = array();
 				/** @var $package \TYPO3\Flow\Package\PackageInterface */
 				foreach ($packages as $package) {
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType), FALSE, $emptyValuesOverride);
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
 				}
-				$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType), FALSE, $emptyValuesOverride);
+				$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
 
 				foreach ($this->orderedListOfContextNames as $contextName) {
 					foreach ($packages as $package) {
-						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType), FALSE, $emptyValuesOverride);
+						$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
 					}
-					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType), FALSE, $emptyValuesOverride);
+					$this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
