@@ -21,7 +21,7 @@ use TYPO3\Flow\Annotations as Flow;
 class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 
 	/**
-	 * Definition for the class name exposation configuration,
+	 * Definition for the class name exposure configuration,
 	 * that is, if the class name of an object should also be
 	 * part of the output JSON, if configured.
 	 *
@@ -229,7 +229,7 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 			$array = array();
 			foreach ($value as $key => $element) {
 				if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
-					$array[] = $this->transformValue($element, $configuration['_descendAll']);
+					$array[$key] = $this->transformValue($element, $configuration['_descendAll']);
 				} else {
 					if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($key, $configuration['_only'])) {
 						continue;
