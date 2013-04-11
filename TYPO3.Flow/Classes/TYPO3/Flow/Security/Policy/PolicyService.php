@@ -649,13 +649,12 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 * @throws \TYPO3\Flow\Security\Exception\NoSuchRoleException
 	 */
 	protected function initializeRolesFromPolicy() {
+			// for compile time the repository needs to be inject manually:
+		if ($this->roleRepository === NULL) {
+			$this->roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
+		}
+
 		if ($this->initializedRoles !== TRUE && !$this->cache->has('rolesFromPolicyUpToDate')) {
-
-				// for compile time the repository needs to be inject manually:
-			if ($this->roleRepository === NULL) {
-				$this->roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
-			}
-
 			if ($this->roleRepository->findByIdentifier('Anonymous') === NULL) {
 				$this->roleRepository->add($this->systemRoles['Anonymous']);
 			}
