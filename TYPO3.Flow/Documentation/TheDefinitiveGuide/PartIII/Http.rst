@@ -183,6 +183,20 @@ best fitting according to the preferences of the client::
 
 	$preferredType = $request->getNegotiatedMediaType(array('application/json', 'text/html'));
 
+Request Methods
+~~~~~~~~~~~~~~~
+
+Flow supports all valid request methods, namely ``CONNECT``, ``DELETE``, ``GET``, ``HEAD``, ``OPTIONS``, ``PATCH``,
+``POST``, ``PUT`` and ``TRACE``.
+Due to limited browser support and restrictive firewalls one sometimes need to tunnel request methods:
+By sending a ``POST`` request and specifying the ``__method`` argument, the request method can be overridden::
+
+	<form method="POST">
+		<input type="hidden" name="__method" value="DELETE" />
+	</form>
+
+Additionally Flow respects the ``X-HTTP-Method`` respectively ``X-HTTP-Method-Override`` header.
+
 Response
 --------
 

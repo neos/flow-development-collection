@@ -74,7 +74,17 @@ class Request extends Message {
 	 */
 	public function __construct(array $get, array $post, array $files, array $server) {
 		$this->headers = Headers::createFromServer($server);
-		$this->setMethod(isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET');
+		$method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';
+		if ($method === 'POST') {
+			if (isset($post['__method'])) {
+				$method = $post['__method'];
+			} elseif (isset($server['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+				$method = $server['HTTP_X_HTTP_METHOD_OVERRIDE'];
+			} elseif (isset($server['HTTP_X_HTTP_METHOD'])) {
+				$method = $server['HTTP_X_HTTP_METHOD'];
+			}
+		}
+		$this->setMethod($method);
 		$protocol = (isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0))) ? 'https' : 'http';
 		$this->uri = new Uri($protocol . '://' . (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost') . str_replace('/index.php', '', (isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/')));
 		$this->server = $server;
@@ -94,10 +104,6 @@ class Request extends Message {
 	 * @api
 	 */
 	static public function create(Uri $uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array()) {
-		if (!in_array($method, array('OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'CONNECT'))) {
-			throw new \InvalidArgumentException(sprintf('Invalid method "%s".', $method), 1326706916);
-		}
-
 		$get = $uri->getArguments();
 		$post = $arguments;
 
@@ -215,7 +221,7 @@ class Request extends Message {
 	 * @api
 	 */
 	public function setMethod($method) {
-		if (!in_array($method, array('OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'CONNECT'))) {
+		if (!in_array($method, array('CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'))) {
 			throw new \InvalidArgumentException(sprintf('Invalid method "%s".', $method), 1326445656);
 		}
 		$this->method = $method;
