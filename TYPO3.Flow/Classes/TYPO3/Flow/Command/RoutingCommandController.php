@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Request;
 
 /**
  * Command controller for tasks related to routing
@@ -149,18 +150,22 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * the selected package, controller and action.
 	 *
 	 * @param string $path The route path to resolve
+	 * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
 	 * @return void
 	 */
-	public function routePathCommand($path) {
+	public function routePathCommand($path, $method = 'GET') {
 		$this->initializeRouter();
 
+		$server = array(
+			'REQUEST_URI' => $path,
+			'REQUEST_METHOD' => $method
+		);
+		$httpRequest = new Request(array(), array(), array(), $server);
+
 		foreach ($this->router->getRoutes() as $route) {
-			if ($route->matches($path) === TRUE) {
+			if ($route->matches($httpRequest) === TRUE) {
 
 				$routeValues = $route->getMatchResults();
-				if (!isset($routeValues['@subpackage'])) {
-					$routeValues['@subpackage'] = '';
-				}
 
 				$this->outputLine('<b>Path:</b>');
 				$this->outputLine('  ' . $path);
@@ -170,25 +175,25 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 				$this->outputLine('  Pattern: ' . $route->getUriPattern());
 
 				$this->outputLine('<b>Result:</b>');
-				$this->outputLine('  Package: ' . $routeValues['@package']);
-				$this->outputLine('  Subpackage: ' . $routeValues['@subpackage']);
-				$this->outputLine('  Controller: ' . $routeValues['@controller']);
-				$this->outputLine('  Action: ' . $routeValues['@action']);
-				$this->outputLine('  Format: ' . $routeValues['@format']);
+				$this->outputLine('  Package: ' . (isset($routeValues['@package']) ? $routeValues['@package'] : '-'));
+				$this->outputLine('  Subpackage: ' . (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : '-'));
+				$this->outputLine('  Controller: ' . (isset($routeValues['@controller']) ? $routeValues['@controller'] : '-'));
+				$this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
+				$this->outputLine('  Format: ' . (isset($routeValues['@format']) ? isset($routeValues['@format']) : '-'));
 
-				$controllerObjectName = $this->router->getControllerObjectName($routeValues['@package'], $routeValues['@subpackage'], $routeValues['@controller']);
-				if ($controllerObjectName !== NULL) {
-					$this->outputLine('<b>Controller:</b>');
-					$this->outputLine('  ' . $controllerObjectName);
-				} else {
+				$controllerObjectName = $this->router->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : NULL), $routeValues['@controller']);
+				if ($controllerObjectName === NULL) {
 					$this->outputLine('<b>Controller Error:</b>');
 					$this->outputLine('  !!! No Controller Object found !!!');
+					$this->quit(1);
 				}
-
-				return;
+				$this->outputLine('<b>Controller:</b>');
+				$this->outputLine('  ' . $controllerObjectName);
+				$this->quit(0);
 			}
 		}
 		$this->outputLine('No matching Route was found');
+		$this->quit(1);
 	}
 
 	/**

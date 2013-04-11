@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\Routing\Aspect;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -52,10 +53,12 @@ class RouterCachingAspect {
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return array Result of the target method
 	 */
-	public function cacheMatchingCall(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		$routePath = $joinPoint->getMethodArgument('routePath');
+	public function cacheMatchingCall(JoinPointInterface $joinPoint) {
+		/** @var $httpRequest \TYPO3\Flow\Http\Request */
+		$httpRequest = $joinPoint->getMethodArgument('httpRequest');
+		$routePath = substr($httpRequest->getUri()->getPath(), strlen($httpRequest->getBaseUri()->getPath()));
 
-		$cacheIdentifier = md5($routePath);
+		$cacheIdentifier = md5($routePath) . '_' . $httpRequest->getMethod();
 		$cachedResult = $this->findMatchResultsCache->get($cacheIdentifier);
 		if ($cachedResult !== FALSE) {
 			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $cacheIdentifier, $routePath), LOG_DEBUG);
@@ -79,10 +82,10 @@ class RouterCachingAspect {
 	 * Around advice
 	 *
 	 * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\Router->resolve())")
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+	 * @param JoinPointInterface $joinPoint The current join point
 	 * @return string Result of the target method
 	 */
-	public function cacheResolveCall(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function cacheResolveCall(JoinPointInterface $joinPoint) {
 		$cacheIdentifier = NULL;
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
 		try {

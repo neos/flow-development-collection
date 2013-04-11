@@ -85,6 +85,26 @@
     '@controller': 'RoutingTestA'
 
 -
+  name: 'Functional Test: httpMethods are respected'
+  uriPattern: 'typo3/flow/test/httpmethods'
+  defaults:
+    '@package':    'TYPO3.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'ActionControllerTestA'
+    '@action':     'first'
+  httpMethods: ['GET']
+
+-
+  name: 'Functional Test: httpMethods are respected'
+  uriPattern: 'typo3/flow/test/httpmethods'
+  defaults:
+    '@package':    'TYPO3.Flow'
+    '@subpackage': 'Tests\Functional\Mvc\Fixtures'
+    '@controller': 'ActionControllerTestA'
+    '@action':     'second'
+  httpMethods: ['POST', 'PUT']
+
+-
   name: 'Functional Test: Standard'
   uriPattern: 'typo3/flow/test'
   defaults:
