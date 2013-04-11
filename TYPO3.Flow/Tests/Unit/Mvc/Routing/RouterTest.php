@@ -50,6 +50,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'uriPattern' => 'number3',
 			'toLowerCase' => FALSE,
 			'appendExceedingArguments' => TRUE,
+			'httpMethods' => array('POST', 'PUT')
 		);
 
 		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
@@ -61,12 +62,36 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($createdRoutes[0]->isLowerCase());
 		$this->assertFalse($createdRoutes[0]->getAppendExceedingArguments());
 		$this->assertEquals('number2', $createdRoutes[1]->getUriPattern());
+		$this->assertFalse($createdRoutes[1]->hasHttpMethodConstraints());
+		$this->assertEquals(array(), $createdRoutes[1]->getHttpMethods());
 		$this->assertEquals('route3', $createdRoutes[2]->getName());
 		$this->assertEquals(array('foodefault'), $createdRoutes[2]->getDefaults());
 		$this->assertEquals(array('fooroutepart'), $createdRoutes[2]->getRoutePartsConfiguration());
 		$this->assertEquals('number3', $createdRoutes[2]->getUriPattern());
 		$this->assertFalse($createdRoutes[2]->isLowerCase());
 		$this->assertTrue($createdRoutes[2]->getAppendExceedingArguments());
+		$this->assertTrue($createdRoutes[2]->hasHttpMethodConstraints());
+		$this->assertEquals(array('POST', 'PUT'), $createdRoutes[2]->getHttpMethods());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException
+	 */
+	public function createRoutesFromConfigurationThrowsExceptionIfOnlySomeRoutesWithTheSameUriPatternHaveHttpMethodConstraints() {
+		$routesConfiguration = array(
+			array(
+				'uriPattern' => 'somePattern'
+			),
+			array(
+				'uriPattern' => 'somePattern',
+				'httpMethods' => array('POST', 'PUT')
+			),
+		);
+		shuffle($routesConfiguration);
+		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('dummy'));
+		$router->setRoutesConfiguration($routesConfiguration);
+		$router->_call('createRoutesFromConfiguration');
 	}
 
 	/**
@@ -174,12 +199,6 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function routeSetsDefaultControllerAndActionNameIfNoRouteMatches() {
-		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/requestPath'));
-
-		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockBaseUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/'));
-
 		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
 		$mockActionRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
 		$mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
@@ -188,11 +207,9 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
-		$mockHttpRequest->expects($this->once())->method('getUri')->will($this->returnValue($mockUri));
-		$mockHttpRequest->expects($this->once())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 
 		$router = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Router')->setMethods(array('findMatchResults'))->getMock();
-		$router->expects($this->once())->method('findMatchResults')->with('requestPath')->will($this->returnValue(NULL));
+		$router->expects($this->once())->method('findMatchResults')->with($mockHttpRequest)->will($this->returnValue(NULL));
 
 		$router->route($mockHttpRequest);
 	}
@@ -218,23 +235,15 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'newValue' => 'new value from route'
 		);
 
-		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/requestPath'));
-
-		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockBaseUri->expects($this->once())->method('getPath')->will($this->returnValue('http://www.domain.tld/'));
-
 		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
 		$mockActionRequest->expects($this->once())->method('getArguments')->will($this->returnValue($requestArguments));
 		$mockActionRequest->expects($this->once())->method('setArguments')->with($expectedResult);
 
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
-		$mockHttpRequest->expects($this->once())->method('getUri')->will($this->returnValue($mockUri));
-		$mockHttpRequest->expects($this->once())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 
 		$router = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Router')->setMethods(array('findMatchResults'))->getMock();
-		$router->expects($this->once())->method('findMatchResults')->with('requestPath')->will($this->returnValue($routeValues));
+		$router->expects($this->once())->method('findMatchResults')->with($mockHttpRequest)->will($this->returnValue($routeValues));
 
 		$router->route($mockHttpRequest);
 	}
@@ -251,16 +260,17 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function findMatchResultsSetsLastMatchedRoute() {
-		$routePath = 'some/request/path';
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+
 		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
-		$mockRoute1->expects($this->once())->method('matches')->with($routePath)->will($this->returnValue(FALSE));
+		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
 		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
-		$mockRoute2->expects($this->once())->method('matches')->with($routePath)->will($this->returnValue(TRUE));
+		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
 
 		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
 
-		$router->_call('findMatchResults', $routePath);
+		$router->_call('findMatchResults', $mockHttpRequest);
 
 		$this->assertSame($mockRoute2, $router->getLastMatchedRoute());
 	}

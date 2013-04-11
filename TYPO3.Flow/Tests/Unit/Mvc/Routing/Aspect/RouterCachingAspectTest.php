@@ -53,6 +53,16 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockAdviceChain;
 
 	/**
+	 * @var \TYPO3\Flow\Http\Request
+	 */
+	protected $mockHttpRequest;
+
+	/**
+	 * @var \TYPO3\Flow\Http\Uri
+	 */
+	protected $mockUri;
+
+	/**
 	 * Sets up this test case
 	 */
 	public function setUp() {
@@ -75,6 +85,17 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockRouter = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Router')->getMock();
 		$this->mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($mockRouter));
+
+		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockHttpRequest->expects($this->any())->method('getMethod')->will($this->returnValue('GET'));
+
+		$this->mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$this->mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/some/route/path'));
+		$this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockUri));
+
+		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+		$this->mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 	}
 
 	/**
@@ -98,6 +119,7 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function containsObjectDetectsObjectsInVariousSituations($expectedResult, $subject) {
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$actualResult = $this->routerCachingAspect->_call('containsObject', $subject);
 		$this->assertSame($expectedResult, $actualResult);
 	}
@@ -106,10 +128,9 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function cacheMatchingCallReturnsCachedMatchResultsIfFoundInCache() {
-		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routePath')->will($this->returnValue('some/route/path'));
-
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$expectedResult = array('cached' => 'route values');
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f';
+		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue($expectedResult));
 
 		$actualResult = $this->routerCachingAspect->cacheMatchingCall($this->mockJoinPoint);
@@ -120,10 +141,9 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function cacheMatchingCallReturnsOriginalMatchResultsIfNotFoundInCache() {
-		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routePath')->will($this->returnValue('some/route/path'));
-
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$expectedResult = array('uncached' => 'route values');
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f';
+		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(FALSE));
 
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($expectedResult));
@@ -136,10 +156,9 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function cacheMatchingCallStoresMatchResultsInCacheIfNotFoundInCache() {
-		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routePath')->will($this->returnValue('some/route/path'));
-
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$matchResults = array('uncached' => 'route values');
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f';
+		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchResults));
 
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(FALSE));
@@ -152,10 +171,9 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function cacheMatchingCallDoesNotStoreMatchResultsInCacheIfItsNull() {
-		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routePath')->will($this->returnValue('some/route/path'));
-
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$matchResults = NULL;
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f';
+		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchResults));
 
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(FALSE));
@@ -168,10 +186,9 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function cacheMatchingCallDoesNotStoreMatchResultsInCacheIfTheyContainObjects() {
-		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routePath')->will($this->returnValue('some/route/path'));
-
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$matchResults = array('this' => array('contains' => array('objects', new \stdClass())));
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f';
+		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchResults));
 
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(FALSE));
