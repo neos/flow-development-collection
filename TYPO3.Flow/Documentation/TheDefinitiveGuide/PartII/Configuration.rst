@@ -152,6 +152,9 @@ for a common MySQL setup, it would look similar to this:
 For global settings and Production context, the relevant files would be directly
 in ``Configuration`` respectively ``Configuration/Production```.`
 
+.. tip::
+  Configure your MySQL server to use the ``utf8_unicode_ci`` collation by default if possible!
+
 If you configured everything correctly, the following command will create the initial
 table structure needed by TYPO3 Flow:
 
