@@ -33,14 +33,11 @@ clone the 2.0.0 version, include development dependencies and keep git metadata 
 	*/var/apache2/htdocs/tutorial* and that */var/apache2/htdocs* is the document root
 	of your web server. On a Windows machine you might use *c:\\xampp\\htdocs* instead.
 
-To install all dependencies including those marked is "needed for development",
-now run this from the top-level folder of the distribution:
+To update all dependencies, run this from the top-level folder of the distribution:
 
 .. code-block:: none
 
-	composer install --dev
-
-Updating is as easy, just use ``update`` instead of ``install``.
+	composer update
 
 Directory Structure
 ===================
