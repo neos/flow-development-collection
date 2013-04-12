@@ -117,13 +117,15 @@ class ClassLoader {
 				} else {
 					$classPathAndFilename = $packageData['classesPath'] . str_replace('\\', '/', $className) . '.php';
 				}
-				$result = @include($classPathAndFilename);
-				if ($result !== FALSE) {
-					return TRUE;
+				try {
+					$result = include($classPathAndFilename);
+					if ($result !== FALSE) {
+						return TRUE;
+					}
+				} catch (\Exception $e) {
 				}
 			}
 		}
-
 		return FALSE;
 	}
 

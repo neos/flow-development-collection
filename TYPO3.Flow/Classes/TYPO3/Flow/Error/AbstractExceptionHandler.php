@@ -11,9 +11,10 @@ namespace TYPO3\Flow\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('Exception.php');
+
 /**
  * An abstract exception handler
- *
  */
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 
