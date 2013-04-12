@@ -1534,7 +1534,7 @@ class ReflectionService {
 					continue;
 				}
 
-				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Lazy'));
+				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Lazy'), $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Transient'));
 				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\Flow\Annotations\Identity')) {
 					$classSchema->markAsIdentityProperty($propertyName);
 				}

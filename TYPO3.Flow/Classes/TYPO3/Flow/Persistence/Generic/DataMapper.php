@@ -145,7 +145,8 @@ class DataMapper {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
 
 		foreach ($objectData['properties'] as $propertyName => $propertyData) {
-			if (!$classSchema->hasProperty($propertyName)) {
+			if (!$classSchema->hasProperty($propertyName) ||
+				$classSchema->isPropertyTransient($propertyName)) {
 				continue;
 			}
 			$propertyValue = NULL;
@@ -172,8 +173,7 @@ class DataMapper {
 						$propertyValue = new \Doctrine\Common\Collections\ArrayCollection($this->mapArray($propertyData['value']));
 					break;
 					case 'SplObjectStorage':
-						$propertyMetaData = $classSchema->getProperty($propertyName);
-						$propertyValue = $this->mapSplObjectStorage($propertyData['value'], $propertyMetaData['lazy']);
+						$propertyValue = $this->mapSplObjectStorage($propertyData['value'], $classSchema->isPropertyLazy($propertyName));
 					break;
 					case 'DateTime':
 						$propertyValue = $this->mapDateTime($propertyData['value']);

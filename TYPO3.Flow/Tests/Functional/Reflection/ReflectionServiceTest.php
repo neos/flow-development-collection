@@ -119,19 +119,9 @@ class ReflectionServiceTest extends FunctionalTestCase {
 	 */
 	public function domainModelPropertyTypesAreExpandedWithUseStatementsInClassSchema() {
 		$classSchema = $this->reflectionService->getClassSchema('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements');
-		$expected = array(
-			'type' => 'TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity',
-			'elementType' => NULL,
-			'lazy' => FALSE
-		);
-		$this->assertEquals($expected, $classSchema->getProperty('subSubEntity'));
+		$this->assertEquals('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity', $classSchema->getProperty('subSubEntity')['type']);
 
-		$expected = array(
-			'type' => 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity',
-			'elementType' => NULL,
-			'lazy' => FALSE
-		);
-		$this->assertEquals($expected, $classSchema->getProperty('propertyFromOtherNamespace'));
+		$this->assertEquals('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity', $classSchema->getProperty('propertyFromOtherNamespace')['type']);
 	}
 
 	/**

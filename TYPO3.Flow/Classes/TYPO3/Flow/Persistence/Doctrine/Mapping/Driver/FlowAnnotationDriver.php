@@ -478,6 +478,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 
 		foreach ($class->getProperties() as $property) {
 			if (!$classSchema->hasProperty($property->getName())
+					|| $classSchema->isPropertyTransient($property->getName())
 					|| $metadata->isMappedSuperclass && !$property->isPrivate()
 					|| $metadata->isInheritedField($property->getName())
 					|| $metadata->isInheritedAssociation($property->getName())) {

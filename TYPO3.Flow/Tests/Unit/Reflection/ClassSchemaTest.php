@@ -38,15 +38,41 @@ class ClassSchemaTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getPropertiesReturnsAddedProperties() {
 		$expectedProperties = array(
-			'a' => array('type' => 'string', 'elementType' => NULL, 'lazy' => FALSE),
-			'b' => array('type' => 'TYPO3\Flow\SomeObject', 'elementType' => NULL, 'lazy' => TRUE)
+			'a' => array('type' => 'string', 'elementType' => NULL, 'lazy' => FALSE, 'transient' => FALSE),
+			'b' => array('type' => 'TYPO3\Flow\SomeObject', 'elementType' => NULL, 'lazy' => TRUE, 'transient' => FALSE),
+			'c' => array('type' => 'TYPO3\Flow\SomeOtherObject', 'elementType' => NULL, 'lazy' => TRUE, 'transient' => TRUE)
 		);
 
 		$classSchema = new \TYPO3\Flow\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
 		$classSchema->addProperty('b', 'TYPO3\Flow\SomeObject', TRUE);
+		$classSchema->addProperty('c', 'TYPO3\Flow\SomeOtherObject', TRUE, TRUE);
 
 		$this->assertSame($expectedProperties, $classSchema->getProperties());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isPropertyLazyReturnsAttributeForAddedProperties() {
+		$classSchema = new \TYPO3\Flow\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', 'TYPO3\Flow\SomeObject');
+		$classSchema->addProperty('b', 'TYPO3\Flow\SomeObject', TRUE);
+
+		$this->assertFalse($classSchema->isPropertyLazy('a'));
+		$this->assertTrue($classSchema->isPropertyLazy('b'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isPropertyTransientReturnsAttributeForAddedProperties() {
+		$classSchema = new \TYPO3\Flow\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', 'TYPO3\Flow\SomeObject');
+		$classSchema->addProperty('b', 'TYPO3\Flow\SomeObject', FALSE, TRUE);
+
+		$this->assertFalse($classSchema->isPropertyTransient('a'));
+		$this->assertTrue($classSchema->isPropertyTransient('b'));
 	}
 
 	/**
@@ -129,6 +155,7 @@ class ClassSchemaTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('int<TYPO3\Flow\Baz>')
 		);
 	}
+
 	/**
 	 * @dataProvider invalidPropertyTypes()
 	 * @test
@@ -162,7 +189,6 @@ class ClassSchemaTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$classSchema->setModelType(\TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$classSchema->markAsIdentityProperty('foo');
 	}
-
 
 	/**
 	 * @test

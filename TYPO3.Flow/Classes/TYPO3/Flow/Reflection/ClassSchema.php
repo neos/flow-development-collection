@@ -106,10 +106,11 @@ class ClassSchema {
 	 * @param string $name Name of the property
 	 * @param string $type Type of the property
 	 * @param boolean $lazy Whether the property should be lazy-loaded when reconstituting
+	 * @param boolean $transient Whether the property should not be considered for persistence
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public function addProperty($name, $type, $lazy = FALSE) {
+	public function addProperty($name, $type, $lazy = FALSE, $transient = FALSE) {
 		try {
 			$type = \TYPO3\Flow\Utility\TypeHandling::parseType($type);
 		} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
@@ -118,7 +119,8 @@ class ClassSchema {
 		$this->properties[$name] = array(
 			'type' => $type['type'],
 			'elementType' => $type['elementType'],
-			'lazy' => $lazy
+			'lazy' => $lazy,
+			'transient' => $transient
 		);
 	}
 
@@ -218,6 +220,26 @@ class ClassSchema {
 	 */
 	public function hasProperty($propertyName) {
 		return array_key_exists($propertyName, $this->properties);
+	}
+
+	/**
+	 * If a certain class schema property is to be lazy loaded
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return boolean
+	 */
+	public function isPropertyLazy($propertyName) {
+		return $this->properties[$propertyName]['lazy'];
+	}
+
+	/**
+	 * If a certain class schema property is to disregarded for persistence
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return boolean
+	 */
+	public function isPropertyTransient($propertyName) {
+		return $this->properties[$propertyName]['transient'];
 	}
 
 	/**
