@@ -39,6 +39,12 @@ TYPO3:
       # optional list of variables (key: value) that will be set for all Flow CLI sub requests
       subRequestEnvironmentVariables: []
 
+      # Set which php.ini file should be used for the CLI sub requests.
+      # If not set (that is value equals NULL) the php.ini file of the executing process (usually the web server's) is used.
+      # If set to a path and filename, the specified php.ini file is loaded.
+      # If set to boolean FALSE, Flow does not try to specify any php.ini file to the sub process.
+      subRequestPhpIniPathAndFilename: NULL
+
     error:
 
       exceptionHandler:
