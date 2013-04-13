@@ -22,21 +22,15 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Utility\SchemaValidator
+	 * @Flow\Inject(lazy = FALSE)
+	 * @var \TYPO3\Flow\Configuration\ConfigurationSchemaValidator
 	 */
-	protected $schemaValidator;
+	protected $configurationSchemaValidator;
 
 	/**
 	 * @Flow\Inject
@@ -87,109 +81,61 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
+	 * List registered configuration types
+	 *
+	 * @return void
+	 */
+	public function listTypesCommand() {
+		$this->outputLine('The following configuration types are registered:');
+		$this->outputLine();
+
+		foreach ($this->configurationManager->getAvailableConfigurationTypes() as $type) {
+			$this->outputFormatted('- %s', array($type));
+		}
+	}
+
+	/**
 	 * Validate the given configuration
 	 *
+	 * <b>Validate all configuration</b>
+	 * ./flow configuration:validate
+	 *
+	 * <b>Validate configuration at a certain subtype</b>
 	 * ./flow configuration:validate --type Settings --path TYPO3.Flow.persistence
 	 *
-	 * The schemas are searched in the path "Resources/Private/Schema" of all
-	 * active Packages. The schema-filenames must match the pattern
-	 * __type__.__path__.schema.yaml. The type and/or the path can also be
-	 * expressed as subdirectories of Resources/Private/Schema. So
-	 * Settings/TYPO3/Flow.persistence.schema.yaml will match the same pathes
-	 * like Settings.TYPO3.Flow.persistence.schema.yaml or
-	 * Settings/TYPO3.Flow/persistence.schema.yaml
+	 * You can retrieve the available configuration types with:
+	 * ./flow configuration:listtypes
 	 *
 	 * @param string $type Configuration type to validate
 	 * @param string $path path to the subconfiguration separated by "." like "TYPO3.Flow"
+	 * @param boolean $verbose if TRUE, output more verbose information on the schema files which were used
 	 * @return void
 	 */
-	public function validateCommand($type = NULL, $path = NULL) {
-		$availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
+	public function validateCommand($type = NULL, $path = NULL, $verbose = FALSE) {
+		if ($type === NULL) {
+			$this->outputLine('Validating <b>all</b> configuration');
+		} else {
+			$this->outputLine('Validating <b>' . $type . '</b> configuration' . ($path !== NULL ? ' on path <b>' . $path . '</b>' : ''));
+		}
+		$this->outputLine();
 
-		if (in_array($type, $availableConfigurationTypes) === FALSE) {
-			if ($type !== NULL) {
-				$this->outputLine('<b>Configuration type "%s" was not found!</b>', array($type));
-				$this->outputLine();
-			}
-			$this->outputLine('<b>Available configuration types:</b>');
-			foreach ($availableConfigurationTypes as $availableConfigurationType) {
-				$this->outputLine('  ' . $availableConfigurationType);
+		try {
+			$validatedSchemaFiles = array();
+			$result = $this->configurationSchemaValidator->validate($type, $path, $validatedSchemaFiles);
+		} catch (\TYPO3\Flow\Configuration\Exception\SchemaValidationException $exception) {
+			$this->outputLine('<b>Error:</b>');
+			$this->outputFormatted($exception->getMessage(), array(), 4);
+			$this->quit(2);
+		}
+
+		if ($verbose) {
+			$this->outputLine('Loaded Schema Files:');
+			foreach ($validatedSchemaFiles as $validatedSchemaFile) {
+				$this->outputLine('- ' . substr($validatedSchemaFile, strlen(FLOW_PATH_ROOT)));
 			}
 			$this->outputLine();
-			$this->outputLine('Hint: <b>%s configuration:validate --type <configurationType></b>', array($this->getFlowInvocationString()));
-			$this->outputLine('      validates the configuration of the specified type.');
-			return;
 		}
 
-		$configuration = $this->configurationManager->getConfiguration($type);
-
-		$this->outputLine('<b>Validating configuration for type: "' . $type . '"' . (($path !== NULL) ? ' and path: "' . $path . '"': '') . '</b>');
-
-			// find schema files for the given type and path
-		$schemaFileInfos = array();
-		$activePackages = $this->packageManager->getActivePackages();
-		foreach ($activePackages as $package) {
-			$packageKey = $package->getPackageKey();
-			$packageSchemaPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($package->getResourcesPath(), 'Private/Schema'));
-			if (is_dir($packageSchemaPath)) {
-				$packageSchemaFiles = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($packageSchemaPath, '.schema.yaml');
-				foreach ($packageSchemaFiles as $schemaFile) {
-					$schemaName = substr($schemaFile, strlen($packageSchemaPath) + 1, -strlen('.schema.yaml'));
-					$schemaNameParts = explode('.', str_replace('/', '.', $schemaName), 2);
-
-					$schemaType = $schemaNameParts[0];
-					$schemaPath = isset($schemaNameParts[1]) ? $schemaNameParts[1] : NULL;
-
-					if ($schemaType === $type && ($path === NULL || strpos($schemaPath, $path) === 0)) {
-						$schemaFileInfos[] = array(
-							'file' => $schemaFile,
-							'name' => $schemaName,
-							'path' => $schemaPath,
-							'packageKey' => $packageKey
-						);
-					}
-				}
-			}
-		}
-
-		$this->outputLine();
-		if (count($schemaFileInfos) > 0) {
-			$this->outputLine('%s schema files were found:', array(count($schemaFileInfos)));
-			$result = new \TYPO3\Flow\Error\Result();
-			foreach ($schemaFileInfos as $schemaFileInfo) {
-
-				if ($schemaFileInfo['path'] !== NULL) {
-					$data = \TYPO3\Flow\Utility\Arrays::getValueByPath($configuration, $schemaFileInfo['path']);
-				} else {
-					$data = $configuration;
-				}
-
-				if (empty($data)) {
-					$result->forProperty($schemaFileInfo['path'])->addError(new \TYPO3\Flow\Error\Error('configuration in path ' . $schemaFileInfo['path'] . ' is empty'));
-					$this->outputLine(' - package: "' . $schemaFileInfo['packageKey'] . '" schema: "' . $schemaFileInfo['name'] . '" -> <b>configuration is empty</b>');
-				} else {
-					$parsedSchema = \Symfony\Component\Yaml\Yaml::parse($schemaFileInfo['file']);
-					$schemaResult = $this->schemaValidator->validate($data, $parsedSchema);
-
-					if ($schemaResult->hasErrors()) {
-						$this->outputLine(' - package:"' . $schemaFileInfo['packageKey'] . '" schema:"' . $schemaFileInfo['name'] . '" -> <b>' .  count($schemaResult->getFlattenedErrors()) . ' errors</b>');
-					} else {
-						$this->outputLine(' - package:"' . $schemaFileInfo['packageKey'] . '" schema:"' . $schemaFileInfo['name'] . '" -> <b>is valid</b>');
-					}
-
-					if ($schemaFileInfo['path'] !== NULL) {
-						$result->forProperty($schemaFileInfo['path'])->merge($schemaResult);
-					} else {
-						$result->merge($schemaResult);
-					}
-				}
-			}
-		} else {
-			$this->outputLine('No matching schema-files were found!');
-			return;
-		}
-
-		$this->outputLine();
 		if ($result->hasErrors()) {
 			$errors = $result->getFlattenedErrors();
 			$this->outputLine('<b>%s errors were found:</b>', array(count($errors)));
@@ -198,8 +144,10 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 					$this->outputLine(' - %s -> %s', array($path, $error->render()));
 				}
 			}
+			$this->quit(1);
 		} else {
-			$this->outputLine('<b>The configuration is valid!</b>');
+			$this->outputLine('<b>All Valid!</b>');
+			$this->quit(0);
 		}
 	}
 

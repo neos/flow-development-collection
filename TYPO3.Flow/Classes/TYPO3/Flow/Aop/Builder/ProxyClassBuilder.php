@@ -67,7 +67,7 @@ class ProxyClassBuilder {
 	 * Hardcoded list of Flow sub packages (first 15 characters) which must be immune to AOP proxying for security, technical or conceptual reasons.
 	 * @var array
 	 */
-	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop\\', 'TYPO3\Flow\Cach', 'TYPO3\Flow\Conf', 'TYPO3\Flow\Erro', 'TYPO3\Flow\Log\\', 'TYPO3\Flow\Moni', 'TYPO3\Flow\Obje', 'TYPO3\Flow\Pack', 'TYPO3\Flow\Prop', 'TYPO3\Flow\Refl', 'TYPO3\Flow\Util', 'TYPO3\Flow\Vali');
+	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop\\', 'TYPO3\Flow\Cach', 'TYPO3\Flow\Erro', 'TYPO3\Flow\Log\\', 'TYPO3\Flow\Moni', 'TYPO3\Flow\Obje', 'TYPO3\Flow\Pack', 'TYPO3\Flow\Prop', 'TYPO3\Flow\Refl', 'TYPO3\Flow\Util', 'TYPO3\Flow\Vali');
 
 	/**
 	 * A registry of all known aspects

@@ -18,6 +18,7 @@ use TYPO3\Flow\Utility\Arrays;
  * Configuration source based on YAML files
  *
  * @Flow\Scope("singleton")
+ * @Flow\Proxy(FALSE)
  * @api
  */
 class YamlSource {
