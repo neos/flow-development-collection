@@ -45,8 +45,11 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->will($this->returnValue($mockReflectionService));
+
 		$resourceManager = new \TYPO3\Flow\Resource\ResourceManager();
-		$this->inject($resourceManager, 'reflectionService', $mockReflectionService);
+		$this->inject($resourceManager, 'objectManager', $mockObjectManager);
 		$resourceManager->initialize();
 
 		$this->assertContains(get_class($mockStreamWrapperAdapter), \TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::getRegisteredStreamWrappers());

@@ -346,8 +346,6 @@ class Scripts {
 		$reflectionService->injectSettings($configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow'));
 		$reflectionService->injectEnvironment($bootstrap->getEarlyInstance('TYPO3\Flow\Utility\Environment'));
 
-		$reflectionService->initialize($bootstrap);
-
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Reflection\ReflectionService', $reflectionService);
 		$bootstrap->getObjectManager()->setInstance('TYPO3\Flow\Reflection\ReflectionService', $reflectionService);
 	}
