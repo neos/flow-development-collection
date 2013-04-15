@@ -612,6 +612,12 @@ EOD;
 			'roles' => array(
 				'Customer' => array(),
 				'Expert' => array('Customer')
+			),
+			'acls' => array(
+				'Everybody' => array(),
+				'Anonymous' => array(),
+				'Customer' => array(),
+				'Expert' => array(),
 			)
 		);
 
@@ -657,13 +663,19 @@ EOD;
 			'roles' => array(
 				'TYPO3.Flow:Customer' => array(),
 				'TYPO3.Flow:Expert' => array('TYPO3.Flow:Customer')
+			),
+			'acls' => array(
+				'Everybody' => array(),
+				'Anonymous' => array(),
+				'TYPO3.Flow:Customer' => array(),
+				'TYPO3.Flow:Expert' => array()
 			)
 		);
 		$this->assertEquals($expectedConfiguration, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY]);
 	}
 
 	/**
-	 * @expectedException TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @expectedException \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
 	 * @test
 	 */
 	public function loadConfigurationThrowsExceptionIfPolicyRedefinesSystemRoles() {

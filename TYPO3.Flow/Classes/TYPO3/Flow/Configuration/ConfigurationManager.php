@@ -458,8 +458,9 @@ class ConfigurationManager {
 			// Read acls
 		if (isset($configuration['acls']) && is_array($configuration['acls'])) {
 			foreach ($configuration['acls'] as $aclIndex => $aclConfiguration) {
-				if (preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1) {
-					$roleIdentifier = $aclIndex;
+				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous'
+					|| preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1) {
+						$roleIdentifier = $aclIndex;
 				} elseif (preg_match('/^[\w]+$/', $aclIndex) === 1) {
 					$roleIdentifier = $packageKeyOfCurrentPackage . ':' . $aclIndex;
 				} else {
