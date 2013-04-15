@@ -305,5 +305,36 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity', $configuration);
 	}
+
+	/**
+	 * Test case for #47232
+	 *
+	 * @test
+	 */
+	public function convertedAccountRolesCanBeSet() {
+		$source = array(
+			'accountIdentifier' => 'someAccountIdentifier',
+			'credentialsSource' => 'someEncryptedStuff',
+			'authenticationProviderName' => 'DefaultProvider',
+			'roles' => array('Anonymous', 'Some.Package:Customer', 'Some.Package:Administrator')
+		);
+
+		$roles = array('Anonymous', 'Some.Package:Customer', 'Some.Package:Administrator');
+
+		foreach ($roles as $role) {
+			$this->persistenceManager->add(new \TYPO3\Flow\Security\Policy\Role($role));
+		}
+
+		$configuration = $this->objectManager->get('TYPO3\Flow\Property\PropertyMappingConfigurationBuilder')->build();
+		$configuration->forProperty('roles.*')->allowProperties();
+
+		$account = $this->propertyMapper->convert($source, 'TYPO3\Flow\Security\Account', $configuration);
+
+		$this->assertInstanceOf('\TYPO3\Flow\Security\Account', $account);
+		$this->assertEquals(3, count($account->getRoles()));
+		$this->assertEquals($roles, array_keys($account->getRoles()));
+	}
+
 }
+
 ?>

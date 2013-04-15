@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -165,13 +166,20 @@ class Account {
 	/**
 	 * Sets the roles for this account
 	 *
-	 * @param array $roles An array of TYPO3\Flow\Security\Policy\Role objects
+	 * @param array|\Doctrine\Common\Collections\Collection $roles A Collection of TYPO3\Flow\Security\Policy\Role objects
+	 * @throws \InvalidArgumentException
 	 * @return void
 	 */
-	public function setRoles(array $roles) {
-		$this->roles->clear();
-		foreach ($roles as $role) {
-			$this->roles->add($role);
+	public function setRoles($roles) {
+		if ($roles instanceof Collection) {
+			$this->roles = clone $roles;
+		} elseif (is_array($roles)) {
+			$this->roles->clear();
+			foreach ($roles as $role) {
+				$this->roles->add($role);
+			}
+		} else {
+			throw new \InvalidArgumentException(sprintf('setRoles() expects an array or Doctrine Collection, %s given.', is_object($roles) ? get_class($roles) : gettype($roles)), 1366103284);
 		}
 	}
 
