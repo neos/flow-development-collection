@@ -15,7 +15,6 @@ require_once(__DIR__ . '/ViewHelperBaseTestcase.php');
 
 /**
  * Test for the Form view helper
- *
  */
 class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase {
 
@@ -23,6 +22,11 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 */
 	protected $hashService;
+
+	/**
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $securityContext;
 
 	/**
 	 * Set up test dependencies
@@ -52,6 +56,8 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$this->inject($viewHelper, 'hashService', $this->hashService);
 		$this->mvcPropertyMappingConfigurationService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService');
 		$this->inject($viewHelper, 'mvcPropertyMappingConfigurationService', $this->mvcPropertyMappingConfigurationService);
+		$this->securityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$this->inject($viewHelper, 'securityContext', $this->securityContext);
 		parent::injectDependenciesIntoViewHelper($viewHelper);
 	}
 
@@ -64,6 +70,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('renderChildren', 'renderHiddenIdentityField', 'renderAdditionalIdentityFields', 'renderHiddenReferrerFields', 'addFormObjectNameToViewHelperVariableContainer', 'addFieldNamePrefixToViewHelperVariableContainer', 'removeFormObjectNameFromViewHelperVariableContainer', 'removeFieldNamePrefixFromViewHelperVariableContainer', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', FALSE);
 		$this->arguments['object'] = $formObject;
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$this->viewHelperVariableContainer->expects($this->at(0))->method('add')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObject', $formObject);
 		$this->viewHelperVariableContainer->expects($this->at(1))->method('add')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'additionalIdentityProperties', array());
@@ -83,6 +90,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormObjectToViewHelperVariableContainer', 'addFieldNamePrefixToViewHelperVariableContainer', 'removeFormObjectFromViewHelperVariableContainer', 'removeFieldNamePrefixFromViewHelperVariableContainer', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', FALSE);
 		$this->arguments['name'] = $objectName;
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$this->viewHelperVariableContainer->expects($this->once())->method('add')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName', $objectName);
 		$this->viewHelperVariableContainer->expects($this->once())->method('remove')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
@@ -99,6 +107,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$this->arguments['name'] = 'formName';
 		$this->arguments['objectName'] = $objectName;
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$this->viewHelperVariableContainer->expects($this->once())->method('add')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName', $objectName);
 		$this->viewHelperVariableContainer->expects($this->once())->method('remove')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
@@ -112,6 +121,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('renderChildren', 'renderHiddenReferrerFields', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', FALSE);
 		$viewHelper->expects($this->once())->method('renderHiddenReferrerFields');
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$viewHelper->render('index');
 	}
@@ -126,6 +136,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 
 		$this->arguments['object'] = $object;
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$mockObjectSerializer = $this->getMock('TYPO3\Flow\Object\ObjectSerializer');
 		$viewHelper->injectObjectSerializer($mockObjectSerializer);
@@ -145,6 +156,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$this->arguments['method'] = 'GET';
 		$this->arguments['actionUri'] = 'http://localhost/fluid/test?foo=bar%20baz';
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 		$viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('formContent'));
 
 		$expectedResult = chr(10) .
@@ -172,6 +184,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$this->arguments['method'] = 'GET';
 		$this->arguments['actionUri'] = 'http://localhost/fluid/test';
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 		$viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('formContent'));
 
 		$expectedResult = chr(10) .
@@ -197,6 +210,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('renderChildren', 'renderAdditionalIdentityFields'), array(), '', FALSE);
 		$viewHelper->expects($this->once())->method('renderAdditionalIdentityFields');
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$mockObjectSerializer = $this->getMock('TYPO3\Flow\Object\ObjectSerializer');
 		$viewHelper->injectObjectSerializer($mockObjectSerializer);
@@ -210,6 +224,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 	public function renderWrapsHiddenFieldsWithDivForXhtmlCompatibility() {
 		$viewHelper = $this->getMock($this->buildAccessibleProxy('TYPO3\Fluid\ViewHelpers\FormViewHelper'), array('renderChildren', 'renderHiddenIdentityField', 'renderAdditionalIdentityFields', 'renderHiddenReferrerFields', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', FALSE);
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 		$viewHelper->expects($this->once())->method('renderHiddenIdentityField')->will($this->returnValue('hiddenIdentityField'));
 		$viewHelper->expects($this->once())->method('renderAdditionalIdentityFields')->will($this->returnValue('additionalIdentityFields'));
 		$viewHelper->expects($this->once())->method('renderHiddenReferrerFields')->will($this->returnValue('hiddenReferrerFields'));
@@ -250,6 +265,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$this->markTestIncomplete('Sebastian -- TODO after T3BOARD');
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('dummy'), array(), '', FALSE);
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$mockObjectSerializer = $this->getMock('TYPO3\Flow\Object\ObjectSerializer');
 		$viewHelper->injectObjectSerializer($mockObjectSerializer);
@@ -274,6 +290,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$this->markTestIncomplete('Sebastian -- TODO after T3BOARD');
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('dummy'), array(), '', FALSE);
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$mockObjectSerializer = $this->getMock('TYPO3\Flow\Object\ObjectSerializer');
 		$viewHelper->injectObjectSerializer($mockObjectSerializer);
@@ -318,6 +335,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', FALSE);
 		$this->arguments['fieldNamePrefix'] = $prefix;
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$this->viewHelperVariableContainer->expects($this->once())->method('add')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'fieldNamePrefix', $prefix);
 		$this->viewHelperVariableContainer->expects($this->once())->method('remove')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'fieldNamePrefix');
@@ -332,6 +350,7 @@ class FormViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
 
 		$viewHelper = $this->getAccessibleMock('TYPO3\Fluid\ViewHelpers\FormViewHelper', array('renderChildren', 'renderHiddenIdentityField', 'renderHiddenReferrerFields', 'addFormFieldNamesToViewHelperVariableContainer', 'removeFormFieldNamesFromViewHelperVariableContainer', 'addEmptyHiddenFieldNamesToViewHelperVariableContainer', 'removeEmptyHiddenFieldNamesFromViewHelperVariableContainer', 'renderEmptyHiddenFields', 'renderTrustedPropertiesField'), array(), '', FALSE);
 		$this->injectDependenciesIntoViewHelper($viewHelper);
+		$this->securityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(FALSE));
 
 		$this->viewHelperVariableContainer->expects($this->once())->method('add')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'fieldNamePrefix', $expectedPrefix);
 		$this->viewHelperVariableContainer->expects($this->once())->method('remove')->with('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'fieldNamePrefix');
