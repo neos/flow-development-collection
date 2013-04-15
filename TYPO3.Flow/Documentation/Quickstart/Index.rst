@@ -714,6 +714,13 @@ unless you tell TYPO3 Flow explicitly to apply the changes::
 This allows for a very efficient dirty checking and is a safety measure - as it leaves
 control over the changes in your hands.
 
+Speaking about safety measures: it's important to know that Flow supports the notion
+of "safe request methods". According to the HTTP 1.1 specification, GET and HEAD
+requests should not modify data on the sever side. Since we consider this a good
+principle, Flow will not persist any changes automatically if the request method
+is "safe". So ... don't use regular links for deleting your coffee beans - send
+a POST or DELETE request instead.
+
 Next Steps
 ----------
 
@@ -743,7 +750,7 @@ about how we can improve TYPO3 Flow and its documentation:
 I am sure that, if you’re a passionate developer, you will love TYPO3 Flow – because it was
 made with you, the developer, in mind.
 
-Happy TYPO3 Flow Experience!
+Happy Flow Experience!
 
 *Robert on behalf of the TYPO3 Flow team*
 

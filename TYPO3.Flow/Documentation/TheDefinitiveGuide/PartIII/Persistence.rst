@@ -214,6 +214,23 @@ When using the Doctrine 2 persistence, this is done by virtually creating cascad
 on the mapped associations. That means if you changed an object attached to some aggregate
 root, you need to hand that aggregate root to ``update`` for the change to be persisted.
 
+Safe request methods are read-only
+----------------------------------
+
+According to the HTTP 1.1 specification, so called "safe request methods" (usually
+GET or HEAD requests) should not change your data on the server side and should be
+considered read-only. If you need to add, modify or remove data, you should use the
+respective request methods (POST, PUT, DELETE and PATCH).
+
+Flow supports this principle because it helps making your application more secure
+and perform better. In practice that means for any Flow application: if the current
+request is a "safe request method", the persistence framework will NOT trigger
+``persistAll()`` at the end of the script run.
+
+If you need to store some data during a safe request (for example, logging some data
+for your analytics), you are still free to call ``PersistenceManager->persistAll()``
+manually.
+
 Conventions for File and Class Names
 ====================================
 

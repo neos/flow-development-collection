@@ -37,42 +37,64 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->restrictedController = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController');
 
-		$this->registerRoute('test', 'test/security/restricted(/{@action})', array(
+		$accountRepository = $this->objectManager->get('\TYPO3\Flow\Security\AccountRepository');
+		$accountFactory = $this->objectManager->get('\TYPO3\Flow\Security\AccountFactory');
+
+		$account = $accountFactory->createAccountWithPassword('admin', 'password', array('TYPO3.Flow:Administrator'), 'UsernamePasswordTestingProvider');
+		$accountRepository->add($account);
+		$this->persistenceManager->persistAll();
+
+		$this->registerRoute('authentication', 'test/security/authentication/usernamepassword(/{@action})', array(
+			'@package' => 'TYPO3.Flow',
+			'@subpackage' => 'Tests\Functional\Security\Fixtures',
+			'@controller' => 'UsernamePasswordTest',
+			'@action' => 'authenticate',
+			'@format' => 'html'
+		));
+
+		$this->registerRoute('controller', 'test/security/restricted(/{@action})', array(
 			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Security\Fixtures',
 			'@controller' => 'Restricted',
 			'@action' => 'public',
-			'@format' =>'html'
-		));
+			'@format' =>'html',
+		), TRUE
+		);
 	}
 
 	/**
 	 * @test
 	 */
-	public function linkToPublicActionIsCsrfProtected() {
-		$httpRequest = Request::create(new Uri('http://localhost/test/security/restricted/public'));
-		$actionRequest = $httpRequest->createActionRequest();
+	public function postRequestOnRestrictedActionWithoutCsrfTokenCausesAccessDeniedException() {
+		$this->markTestIncomplete('Needs to be implemtend');
+		return;
 
-		$uriBuilder = new UriBuilder();
-		$uriBuilder->setRequest($actionRequest);
+		$arguments = array();
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'admin';
+		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'password';
 
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('test/security/restricted', (string)$uri);
+		$request = Request::create(new Uri('http://localhost/test/security/authentication/usernamepassword/authenticate'), 'POST', $arguments);
+		$response = $this->browser->sendRequest($request);
 
-		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('test/security/restricted?__csrfToken', substr($uri, 0, 36));
+		$sessionCookie = $response->getCookie('TYPO3_Flow_Session');
 
-		$uriBuilder->setLinkProtectionEnabled(FALSE);
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('test/security/restricted', (string)$uri);
+		$request = Request::create(new Uri('http://localhost/test/security/restricted/admin'));
+		$request->setCookie($sessionCookie);
+		$response = $this->browser->sendRequest($request);
 
-		$uriBuilder->reset();
-		$this->assertTrue($uriBuilder->isLinkProtectionEnabled());
-		$uri = $uriBuilder->uriFor('public', array(), 'Restricted', 'TYPO3.Flow', 'Tests\Functional\Security\Fixtures');
-		$this->assertEquals('test/security/restricted?__csrfToken', substr($uri, 0, 36));
+			// Expect an exception because no account is authenticated:
+		$response = $this->browser->request(new Uri('http://localhost/test/security/restricted/customer'), 'POST');
+		   // ...
+
+			// Expect an different exception because although an account is authenticated, the request lacks a CSRF token:
+		$response = $this->browser->request(new Uri('http://localhost/test/security/restricted/customer'), 'POST', $arguments);
+		   // ...
+
+			// Expect that it works after you logged in
+		$csrfToken = $this->securityContext->getCsrfProtectionToken();
+		$request = Request::create(new Uri('http://localhost/test/security/restricted/customer'), 'POST');
+		   // ...
 	}
 
 }
