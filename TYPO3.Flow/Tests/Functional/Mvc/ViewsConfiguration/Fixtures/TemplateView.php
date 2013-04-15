@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Mvc\View;
+namespace TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -14,9 +14,27 @@ namespace TYPO3\Flow\Mvc\View;
 /**
  * An empty view - a special case.
  *
- * @deprecated since Flow 2.0. Return an empty string if you want an action to render blank
  */
-final class EmptyView implements ViewInterface {
+final class TemplateView extends \TYPO3\Flow\Mvc\View\AbstractView {
+	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'templateRootPathPattern' => array('@packageResourcesPath/Private/Templates', 'Pattern to be resolved for "@templateRoot" in the other patterns', 'string'),
+		'partialRootPathPattern' => array('@packageResourcesPath/Private/Partials', 'Pattern to be resolved for "@partialRoot" in the other patterns', 'string'),
+		'layoutRootPathPattern' => array('@packageResourcesPath/Private/Layouts', 'Pattern to be resolved for "@layoutRoot" in the other patterns', 'string'),
+
+		'templateRootPath' => array(NULL, 'Path to the template root. If NULL, then $this->templateRootPathPattern will be used', 'string'),
+		'partialRootPath' => array(NULL, 'Path to the partial root. If NULL, then $this->partialRootPathPattern will be used', 'string'),
+		'layoutRootPath' => array(NULL, 'Path to the layout root. If NULL, then $this->layoutRootPathPattern will be used', 'string'),
+
+		'templatePathAndFilenamePattern' => array('@templateRoot/@subpackage/@controller/@action.@format', 'File pattern for resolving the template file', 'string'),
+		'partialPathAndFilenamePattern' => array('@partialRoot/@subpackage/@partial.@format', 'Directory pattern for global partials. Not part of the public API, should not be changed for now.', 'string'),
+		'layoutPathAndFilenamePattern' => array('@layoutRoot/@layout.@format', 'File pattern for resolving the layout', 'string'),
+
+		'templatePathAndFilename' => array(NULL, 'Path and filename of the template file. If set,  overrides the templatePathAndFilenamePattern', 'string'),
+		'layoutPathAndFilename' => array(NULL, 'Path and filename of the layout file. If set, overrides the layoutPathAndFilenamePattern', 'string'),
+	);
 
 	/**
 	 * Dummy method to satisfy the ViewInterface
@@ -56,6 +74,7 @@ final class EmptyView implements ViewInterface {
 	 *
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE
+	 * @api
 	 */
 	public function canRender(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		return TRUE;
@@ -67,7 +86,7 @@ final class EmptyView implements ViewInterface {
 	 * @return string An empty string
 	 */
 	public function render() {
-		return '';
+		return get_class($this);
 	}
 
 	/**

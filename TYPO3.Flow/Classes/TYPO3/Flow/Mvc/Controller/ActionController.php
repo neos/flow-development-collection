@@ -55,6 +55,12 @@ class ActionController extends AbstractController {
 	protected $mvcPropertyMappingConfigurationService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\ViewConfigurationManager
+	 */
+	protected $viewConfigurationManager;
+
+	/**
 	 * The current view, as resolved by resolveView()
 	 *
 	 * @var \TYPO3\Flow\Mvc\View\ViewInterface
@@ -145,12 +151,17 @@ class ActionController extends AbstractController {
 
 		$this->mapRequestArgumentsToControllerArguments();
 
-		$this->view = $this->resolveView();
+		if ($this->view === NULL) {
+			$this->view = $this->resolveView();
+		}
 		if ($this->view !== NULL) {
 			$this->view->assign('settings', $this->settings);
+			$this->view->setControllerContext($this->controllerContext);
 			$this->initializeView($this->view);
 		}
+
 		$this->callActionMethod();
+
 	}
 
 	/**
@@ -424,23 +435,32 @@ class ActionController extends AbstractController {
 	 * the current action.
 	 *
 	 * @return \TYPO3\Flow\Mvc\View\ViewInterface the resolved view
-	 * @api
 	 * @throws \TYPO3\Flow\Mvc\Exception\ViewNotFoundException if no view can be resolved
 	 */
 	protected function resolveView() {
-		$viewObjectName = $this->resolveViewObjectName();
-		if ($viewObjectName !== FALSE) {
-			$view = $this->objectManager->get($viewObjectName);
-		} elseif ($this->defaultViewObjectName != '') {
-			$view = $this->objectManager->get($this->defaultViewObjectName);
+		$viewsConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->request);
+
+		if (isset($viewsConfiguration['viewObjectName'])) {
+			$viewObjectName = $viewsConfiguration['viewObjectName'];
+		} elseif (($resolvedViewObjectName = $this->resolveViewObjectName()) !== FALSE) {
+			$viewObjectName = $resolvedViewObjectName;
+		} elseif ($this->defaultViewObjectName !== '') {
+			$viewObjectName = $this->defaultViewObjectName;
 		}
+
+		if (isset($viewsConfiguration['options'])) {
+			$view = $this->objectManager->get($viewObjectName, $viewsConfiguration['options']);
+		} else {
+			$view = $this->objectManager->get($viewObjectName);
+		}
+
 		if (!isset($view)) {
 			throw new \TYPO3\Flow\Mvc\Exception\ViewNotFoundException(sprintf('Could not resolve view for action "%s" in controller "%s"', $this->request->getControllerActionName(), get_class($this)), 1355153185);
 		}
 		if (!$view instanceof \TYPO3\Flow\Mvc\View\ViewInterface) {
 			throw new \TYPO3\Flow\Mvc\Exception\ViewNotFoundException(sprintf('View has to be of type ViewInterface, got "%s" in action "%s" of controller "%s"', get_class($view), $this->request->getControllerActionName(), get_class($this)), 1355153188);
 		}
-		$view->setControllerContext($this->controllerContext);
+
 		return $view;
 	}
 
@@ -538,4 +558,5 @@ class ActionController extends AbstractController {
 		return new \TYPO3\Flow\Error\Error('An error occurred while trying to call %1$s->%2$s()', NULL, array(get_class($this), $this->actionMethodName));
 	}
 }
+
 ?>

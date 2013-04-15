@@ -22,8 +22,6 @@ use TYPO3\Flow\Error\Message;
  * Althought the functions we want to test are really implemented in the Abstract
  * Controller, this fixture class is an ActionController as this is the easiest way
  * to provide an implementation of the abstract class.
- *
- * @Flow\Scope("singleton")
  */
 class AbstractControllerTestAController extends ActionController {
 
