@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication;
 
 /**
  * Testcase for authentication provider manager
- *
  */
 class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 

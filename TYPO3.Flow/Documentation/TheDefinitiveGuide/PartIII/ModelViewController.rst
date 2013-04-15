@@ -320,8 +320,9 @@ are the automatically generated *HMAC* and *CSRF* hashes [#]_ which are sent alo
 with the form data::
 
 	<form enctype="multipart/form-data" name="newPost" method="post"
-			action="posts/create?__csrfToken=cca240aa13af5bdacea3756b85ed12a2">
+			action="posts/create">
 		<input type="hidden" name="__trustedProperties" value="a:3:{s:4:&quot;blog&quot;;…
+		<input type="hidden" name="__csrfToken" value="__csrfToken=cca240aa13af5bdacea3…
 		<label for="author">Author</label><br />
 		<input id="author" type="text" name="newPost[author]" value="First Last" /><br />
 		…
@@ -712,8 +713,7 @@ Generating Links
 ----------------
 
 Links to other controller and their actions should not be rendered manually because
-hardcoded or manually rendered links circumvent many of TYPO3 Flow's features, including
-some security-related ones.
+hardcoded or manually rendered links circumvent many of TYPO3 Flow's features.
 
 For generating links to other controllers, the ``UriBuilder`` which is available
 as ``$this->uriBuilder`` can be used. However, in most cases, the user does not
