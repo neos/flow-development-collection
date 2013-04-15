@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Exception;
 use TYPO3\Flow\Http\Response;
 
 /**
@@ -32,7 +31,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		$statusCode = 500;
-		if ($exception instanceof Exception) {
+		if ($exception instanceof \TYPO3\Flow\Exception) {
 			$statusCode = $exception->getStatusCode();
 		}
 		$statusMessage = Response::getStatusMessageByCode($statusCode);
@@ -71,7 +70,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
-			if ($exception instanceof Exception) {
+			if ($exception instanceof \TYPO3\Flow\Exception) {
 				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
 			}
 			if ($exception->getPrevious() === NULL) {
@@ -140,7 +139,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 		echo PHP_EOL . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
 		echo 'in line ' . $exception->getLine() . PHP_EOL;
-		if ($exception instanceof Exception) {
+		if ($exception instanceof \TYPO3\Flow\Exception) {
 			echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
 		}
 
@@ -155,7 +154,7 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 			echo PHP_EOL . $indent . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 			echo $indent . 'thrown in file ' . $filePathAndName . PHP_EOL;
 			echo $indent . 'in line ' . $exception->getLine() . PHP_EOL;
-			if ($exception instanceof Exception) {
+			if ($exception instanceof \TYPO3\Flow\Exception) {
 				echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
 			}
 
