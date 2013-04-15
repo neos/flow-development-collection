@@ -16,7 +16,6 @@ use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * Testcase for the account
- *
  */
 class AccountTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
