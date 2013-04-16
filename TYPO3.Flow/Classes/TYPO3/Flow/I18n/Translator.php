@@ -103,9 +103,7 @@ class Translator {
 	 * format defined by these placeholders).
 	 *
 	 * If $quantity is provided, correct plural form for provided $locale will
-	 * be chosen and used to choose correct translation variant. If $arguments
-	 * contains exactly one numeric element, it is automatically used as the
-	 * $quantity.
+	 * be chosen and used to choose correct translation variant.
 	 *
 	 * If no $locale is provided, default system locale will be used.
 	 *
@@ -122,7 +120,7 @@ class Translator {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getConfiguration()->getCurrentLocale();
 		}
-		$pluralForm = $this->getPluralForm($quantity, $arguments, $locale);
+		$pluralForm = $this->getPluralForm($quantity, $locale);
 
 		$translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
 
@@ -148,9 +146,7 @@ class Translator {
 	 * format defined by these placeholders).
 	 *
 	 * If $quantity is provided, correct plural form for provided $locale will
-	 * be chosen and used to choose correct translation variant. If $arguments
-	 * contains exactly one numeric element, it is automatically used as the
-	 * $quantity.
+	 * be chosen and used to choose correct translation variant.
 	 *
 	 * @param string $labelId Key to use for finding translation
 	 * @param array $arguments An array of values to replace placeholders with
@@ -166,13 +162,13 @@ class Translator {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getConfiguration()->getCurrentLocale();
 		}
-		$pluralForm = $this->getPluralForm($quantity, $arguments, $locale);
+		$pluralForm = $this->getPluralForm($quantity, $locale);
 
 		$translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
 
 		if ($translatedMessage === FALSE) {
 			return $labelId;
-		} elseif ($arguments !== array()) {
+		} elseif (!empty($arguments)) {
 			return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
 		}
 		return $translatedMessage;
@@ -181,26 +177,18 @@ class Translator {
 	/**
 	 * Get the plural form to be used.
 	 *
-	 * If $quantity is non-NULL, the plural form for provided $locale will be
+	 * If $quantity is numeric and non-NULL, the plural form for provided $locale will be
 	 * chosen according to it.
-	 *
-	 * Otherwise, if $arguments contains exactly one numeric element, it is
-	 * automatically used as the $quantity.
 	 *
 	 * In all other cases, NULL is returned.
 	 *
 	 * @param mixed $quantity
-	 * @param array $arguments
 	 * @param \TYPO3\Flow\I18n\Locale $locale
 	 * @return string
 	 */
-	protected function getPluralForm($quantity, array $arguments, Locale $locale) {
+	protected function getPluralForm($quantity, Locale $locale) {
 		if (!is_numeric($quantity)) {
-			if (count($arguments) === 1) {
-				return is_numeric(current($arguments)) ? $this->pluralsReader->getPluralForm(current($arguments), $locale) : NULL;
-			} else {
-				return NULL;
-			}
+			return NULL;
 		} else {
 			return $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
