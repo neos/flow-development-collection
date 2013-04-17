@@ -143,6 +143,75 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function methodCanBeOverriddenDataProvider() {
+		return array(
+			array(
+				'originalMethod' => 'GET',
+				'arguments' => array(),
+				'server' => array(),
+				'expectedMethod' => 'GET'
+			),
+			array(
+				'originalMethod' => 'GET',
+				'arguments' => array('__method' => 'POST'),
+				'server' => array(),
+				'expectedMethod' => 'GET'
+			),
+			array(
+				'originalMethod' => 'PUT',
+				'arguments' => array('__method' => 'POST'),
+				'server' => array(),
+				'expectedMethod' => 'PUT'
+			),
+			array(
+				'originalMethod' => 'POST',
+				'arguments' => array('__method' => 'PUT'),
+				'server' => array(),
+				'expectedMethod' => 'PUT'
+			),
+				// __method argument overrules HTTP_X_HTTP_METHOD_* headers
+			array(
+				'originalMethod' => 'POST',
+				'arguments' => array('__method' => 'DELETE'),
+				'server' => array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
+				'expectedMethod' => 'DELETE'
+			),
+				// HTTP_X_HTTP_METHOD_OVERRIDE header overrules HTTP_X_HTTP_METHOD header
+			array(
+				'originalMethod' => 'POST',
+				'arguments' => array(),
+				'server' => array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'DELETE', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
+				'expectedMethod' => 'PUT'
+			),
+		);
+	}
+
+	/**
+	 * @param string $originalMethod
+	 * @param array $arguments
+	 * @param array $server
+	 * @param string $expectedMethod
+	 * @test
+	 * @dataProvider methodCanBeOverriddenDataProvider
+	 */
+	public function methodCanBeOverridden($originalMethod, array $arguments, array $server, $expectedMethod) {
+		$uri = new Uri('http://flow.typo3.org');
+		$request = Request::create($uri, $originalMethod, $arguments, array(), $server);
+		$this->assertEquals($expectedMethod, $request->getMethod());
+	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @test
+	 */
+	public function overriddenMethodMustBeValid() {
+		$uri = new Uri('http://flow.typo3.org');
+		$request = Request::create($uri, 'POST', array('__method' => 'INVALID'));
+	}
+
+	/**
 	 * HTML 2.0 and up
 	 * (see also HTML5, section 4.10.22.5 "URL-encoded form data")
 	 *
@@ -397,7 +466,6 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}
 		$this->assertSame($negotiatedType, $request->getNegotiatedMediaType($supportedTypes));
 	}
-
 
 	/**
 	 * @test
