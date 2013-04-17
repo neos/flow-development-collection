@@ -1,7 +1,7 @@
 TYPO3 Flow Validator Reference
 ==============================
 
-This reference was automatically generated from code on 2012-12-12
+This reference was automatically generated from code on 2013-04-17
 
 
 AlphanumericValidator
@@ -361,6 +361,26 @@ want to be sure of that, use a customized regular expression or filter on output
 See http://php.net/filter_var for details.
 
 .. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+
+UniqueEntityValidator
+---------------------
+
+Validator for uniqueness of entities.
+
+Checks if the given value is a unique entity depending on it's identity properties or
+custom configured identity properties.
+
+.. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+Arguments
+*********
+
+* ``identityProperties`` (array, *optional*): List of custom identity properties.
 
 
 

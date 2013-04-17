@@ -1,10 +1,10 @@
-FLOW3 Command Reference
-=======================
+TYPO3 Flow Command Reference
+============================
 
 .. note:
 
-  This reference uses ``./flow3`` as the command to invoke. If you are on
-  Windows, this will probably not work, there you need to use ``flow3.bat``
+  This reference uses ``./flow`` as the command to invoke. If you are on
+  Windows, this will probably not work, there you need to use ``flow.bat``
   instead.
 
 The commands in this reference are shown with their full command identifiers.
@@ -17,11 +17,31 @@ commands that may be available, use::
 
   ./flow3 help
 
-The following reference was automatically generated from code on 2012-12-10
+The following reference was automatically generated from code on 2013-04-17
 
 
 Package *TYPO3.FLOW*
 --------------------
+
+
+``typo3.flow:help:help``
+************************
+
+**Display help for a command**
+
+The help command displays help for a given command:
+./flow help <commandIdentifier>
+
+
+
+Options
+^^^^^^^
+
+``--command-identifier``
+  Identifier of a command for more details
+
+
+
 
 
 ``typo3.flow:cache:flush``
@@ -551,26 +571,6 @@ Related commands
   Execute a single migration
 ``typo3.flow:doctrine:migrationversion``
   Mark/unmark a migration as migrated
-
-
-
-``typo3.flow:help:help``
-************************
-
-**Display help for a command**
-
-The help command displays help for a given command:
-./flow help <commandIdentifier>
-
-
-
-Options
-^^^^^^^
-
-``--command-identifier``
-  Identifier of a command for more details
-
-
 
 
 

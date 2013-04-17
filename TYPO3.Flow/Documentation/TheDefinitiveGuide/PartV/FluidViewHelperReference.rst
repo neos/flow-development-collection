@@ -1,7 +1,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-12-12
+This reference was automatically generated from code on 2013-04-17
 
 
 f:alias
@@ -764,6 +764,8 @@ Arguments
 * ``readonly`` (string, *optional*): The readonly attribute of the input field
 
 * ``size`` (int, *optional*): The size of the input field
+
+* ``placeholder`` (string, *optional*): The placeholder of the input field
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
@@ -2618,6 +2620,8 @@ Arguments
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
 * ``role`` (string): The role
+
+* ``packageKey`` (string, *optional*): PackageKey of the package defining the role
 
 
 

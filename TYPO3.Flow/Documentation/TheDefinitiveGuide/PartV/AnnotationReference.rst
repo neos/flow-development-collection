@@ -1,7 +1,7 @@
 TYPO3 Flow Annotation Reference
 ===============================
 
-This reference was automatically generated from code on 2012-12-10
+This reference was automatically generated from code on 2013-04-17
 
 
 After
@@ -132,6 +132,14 @@ Arguments
 
 
 
+CompileStatic
+-------------
+
+
+
+
+
+
 Entity
 ------
 
@@ -213,6 +221,14 @@ to inject a value as specified by the var annotation.
 
 :Applicable to: Property
 
+
+
+
+Arguments
+*********
+
+* ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
+proxy should be injected instead
 
 
 
