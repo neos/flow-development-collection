@@ -108,7 +108,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 			}
 			$response->setStatus($statusCode);
 			$response->setContent($content);
-			$response->setHeader('X-Flow-ExceptionCode', $exceptionCodeNumber);
+			$response->setHeader('X-Flow-ExceptionCode', $exception->getCode());
 			$response->setHeader('X-Flow-ExceptionMessage', $exception->getMessage());
 		}
 		return $response;
