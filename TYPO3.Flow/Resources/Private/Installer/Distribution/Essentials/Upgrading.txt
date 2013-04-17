@@ -41,6 +41,20 @@ the Classes folder structure of a package.
 MVC changes
 ^^^^^^^^^^^
 
+Flow now treats **safe requests** in a special way. HTTP request
+methods which are, by definition, considered to be "safe" (that is,
+"read-only") are now treated as such.
+
+In practice it means that GET requests will not trigger a
+``persistAll()`` call anymore and **CSRF protection** for actions is
+not checked anymore if the request is a GET request.
+
+Please adjust your applications to cleanly observe this principle since
+more optimizations in this direction are planned for later versions of
+TYPO3 Flow.
+
+----
+
 **Custom Error Renderers** are now available, the exception handlers
 can render arbitrary templates based on the status code and/or class
 name of the thrown exception. This is considered a breaking change
@@ -109,6 +123,28 @@ If you provided specific configuration for session cookies through
 TYPO3:FLOW3:Session:PHPSession:* (or TYPO3:FLOW3:Session:PhpSession:*),
 you will need to adjust your settings to use options in
 TYPO3:Flow:Session:* instead.
+
+Security changes
+^^^^^^^^^^^^^^^^
+
+The way **CSRF protection** is handled changed with the special handling
+of safe requests, as outlined earlier in this document.
+
+----
+
+**Role handling** has changed, roles are consistently used as objects.
+
+To prevent naming conflicts between roles from different packages the
+package key is added to the role names.
+
+The handling of roles now is more strict and does not allow the use of
+not configured (non-existent) roles anymore.
+
+Roles are now referenced as real instances instead of their string
+identifiers in models. Roles which were defined in policies are now
+automatically mirrored to the RoleRepository.
+
+The getRoles() method has been removed from TokenInterface.
 
 Persistence changes
 ^^^^^^^^^^^^^^^^^^^
