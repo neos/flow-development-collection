@@ -842,6 +842,45 @@ Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 	``flow:doctrine:migrationversion --version all --add`` to avoid migration
 	errors later.
 
+Doctrine Connection Wrappers - Master/Slave Connections
+-------------------------------------------------------
+
+Doctrine 2 allows to create Connection wrapper classes, that change the way Doctrine connects
+to your database. A common use case is a master/slave replication setup, with one master server
+and several slaves that share the load for all reading queries.
+Doctrine already provides a wrapper for such a connection and you can configure Flow to use
+that connection wrapper by setting the following options in your packages ``Settings.yaml``:
+
+.. code-block:: text
+
+   TYPO3:
+     Flow:
+       persistence:
+         backendOptions:
+           wrapperClass: 'Doctrine\DBAL\Connections\MasterSlaveConnection'
+           master:
+             host: '127.0.0.1'      # adjust to your master database host
+             dbname: 'master'       # adjust to your database name
+             user: 'user'           # adjust to your database user
+             password: 'pass'       # adjust to your database password
+           slaves:
+             slave1:
+               host: '127.0.0.1'        # adjust to your slave database host
+               dbname: 'slave1'         # adjust to your database name
+               user: 'user'             # adjust to your database user
+               password: 'user'         # adjust to your database password
+
+With this setup, Doctrine will use one of the slave connections picked once per request randomly
+for all queries until the first writing query (e.g. insert or update) is executed. From that point
+on the master server will be used solely. This is to solve the problems of replication lag and
+possibly inconsistent query results.
+
+.. tip::
+
+	You can also setup the master database as a slave, if you want to also use it for load-balancing
+	reading queries. However, this might lead to higher load on the master database and should be
+	well observed.
+
 Generic Persistence
 ===================
 
