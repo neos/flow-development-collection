@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Functional\Aop;
 
 /**
  * Test suite for aop proxy classes
- *
  */
 class AopProxyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
@@ -42,6 +41,14 @@ class AopProxyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals('argument1', $proxiedClass->argument1);
 		$this->assertNull($proxiedClass->argument2);
 		$this->assertEquals('argument3', $proxiedClass->argument3);
+	}
+
+	/**
+	 * @test
+	 */
+	public function staticMethodsCannotBeAdvised() {
+		$targetClass01 = new Fixtures\TargetClass01();
+		$this->assertSame('I won\' take any advice', $targetClass01->someStaticMethod());
 	}
 
 }

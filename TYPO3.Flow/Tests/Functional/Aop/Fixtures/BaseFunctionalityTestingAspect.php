@@ -62,6 +62,15 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
+	 * @Flow\Around("within(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01) && method(.*->someStaticMethod())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function tryToWrapStaticMethodAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+		return 'failed';
+	}
+
+	/**
 	 * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->saySomethingSmart())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
 	 * @return string
