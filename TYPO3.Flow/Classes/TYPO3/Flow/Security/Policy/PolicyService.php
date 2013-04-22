@@ -289,9 +289,25 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	}
 
 	/**
+	 * Checks if a role exists
+	 *
+	 * @param string $roleIdentifier The role identifier, format: (<PackageKey>:)<Role>
+	 * @return boolean
+	 */
+	public function hasRole($roleIdentifier) {
+		if (isset($this->systemRoles[$roleIdentifier])) {
+			return TRUE;
+		}
+
+		$this->initializeRolesFromPolicy();
+
+		return $this->roleRepository->findByIdentifier($roleIdentifier) !== NULL;
+	}
+
+	/**
 	 * Returns a Role object configured in the PolicyService
 	 *
-	 * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>.)<Role>
+	 * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>:)<Role>
 	 * @return \TYPO3\Flow\Security\Policy\Role
 	 * @throws \TYPO3\Flow\Security\Exception\NoSuchRoleException
 	 */

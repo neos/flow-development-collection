@@ -1108,6 +1108,51 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function hasRoleReturnsTrueForExistingSystemRole() {
+		$anonymousRole = new \TYPO3\Flow\Security\Policy\Role('Anonymous');
+		$systemRoles = array(
+			'Anonymous' => $anonymousRole
+		);
+		/** @var $policyService \TYPO3\Flow\Security\Policy\PolicyService */
+		$policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('dummy'));
+		$policyService->_set('systemRoles', $systemRoles);
+
+		$this->assertTrue($policyService->hasRole('Anonymous'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasRoleReturnsTrueForExistingRoleFromRepository() {
+		$role = new \TYPO3\Flow\Security\Policy\Role('Acme.Demo:Test');
+
+		$mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
+		$mockRoleRepository->expects($this->any())->method('findByIdentifier')->with('Acme.Demo:Test')->will($this->returnValue($role));
+
+		/** @var $policyService \TYPO3\Flow\Security\Policy\PolicyService */
+		$policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('initializeRolesFromPolicy'));
+		$policyService->_set('roleRepository', $mockRoleRepository);
+
+		$this->assertTrue($policyService->hasRole('Acme.Demo:Test'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasRoleReturnsFalseIfRoleIsUnknown() {
+		$mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
+		$mockRoleRepository->expects($this->any())->method('findByIdentifier')->will($this->returnValue(NULL));
+
+		/** @var $policyService \TYPO3\Flow\Security\Policy\PolicyService */
+		$policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('initializeRolesFromPolicy'));
+		$policyService->_set('roleRepository', $mockRoleRepository);
+
+		$this->assertFalse($policyService->hasRole('Acme.Fizzle.Guzzle'));
+	}
+
+	/**
 	 * @expectedException \TYPO3\Flow\Security\Exception\NoSuchRoleException
 	 * @test
 	 */
