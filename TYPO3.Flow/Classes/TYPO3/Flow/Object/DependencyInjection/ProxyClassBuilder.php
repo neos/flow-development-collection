@@ -447,6 +447,7 @@ class ProxyClassBuilder {
 	 */
 	protected function buildPropertyInjectionCodeByConfiguration(Configuration $objectConfiguration, $propertyName, Configuration $propertyConfiguration) {
 		$className = $objectConfiguration->getClassName();
+		$propertyObjectName = $propertyConfiguration->getObjectName();
 		$propertyClassName = $propertyConfiguration->getClassName();
 		if ($propertyClassName === NULL) {
 			$preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getArguments());
@@ -467,7 +468,7 @@ class ProxyClassBuilder {
 			return $result;
 		}
 
-		return $this->buildLazyPropertyInjectionCode($propertyClassName, $propertyName, $preparedSetterArgument);
+		return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
 	}
 
 	/**
@@ -514,7 +515,7 @@ class ProxyClassBuilder {
 
 		$annotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
 		if ($annotation->lazy === TRUE && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
-			return $this->buildLazyPropertyInjectionCode($propertyClassName, $propertyName, $preparedSetterArgument);
+			return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
 		} else {
 			return array('$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
 		}
@@ -543,19 +544,23 @@ class ProxyClassBuilder {
 	/**
 	 * Builds code which injects a DependencyProxy instead of the actual dependency
 	 *
+	 * @param string $propertyObjectName Object name of the dependency to inject
 	 * @param string $propertyClassName Class name of the dependency to inject
 	 * @param string $propertyName Name of the property in the class to inject into
 	 * @param string $preparedSetterArgument PHP code to use for retrieving the value to inject
 	 * @return array PHP code
 	 */
-	protected function buildLazyPropertyInjectionCode($propertyClassName, $propertyName, $preparedSetterArgument) {
+	protected function buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument) {
 		$propertyReferenceVariable = '$' . $propertyName . '_reference';
 		$setterArgumentHash = "'" . md5($preparedSetterArgument) . "'";
 
 		$commands[] = $propertyReferenceVariable . ' = &$this->' . $propertyName . ';';
-		$commands[] = '$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getLazyDependencyByHash(' . $setterArgumentHash . ', ' . $propertyReferenceVariable . ');';
+		$commands[] = '$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getInstance(\'' . $propertyObjectName . '\');';
 		$commands[] = 'if ($this->' . $propertyName . ' === NULL) {';
-		$commands[] = '	$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->createLazyDependency(' . $setterArgumentHash . ',  ' . $propertyReferenceVariable . ', \'' . $propertyClassName . '\', function() { return ' . $preparedSetterArgument . '; });';
+		$commands[] = '	$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->getLazyDependencyByHash(' . $setterArgumentHash . ', ' . $propertyReferenceVariable . ');';
+		$commands[] = '	if ($this->' . $propertyName . ' === NULL) {';
+		$commands[] = '		$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->createLazyDependency(' . $setterArgumentHash . ',  ' . $propertyReferenceVariable . ', \'' . $propertyClassName . '\', function() { return ' . $preparedSetterArgument . '; });';
+		$commands[] = '	}';
 		$commands[] = '}';
 
 		return $commands;

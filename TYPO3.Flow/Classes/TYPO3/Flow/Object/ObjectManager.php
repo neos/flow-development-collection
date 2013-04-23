@@ -314,7 +314,18 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @return boolean TRUE if an instance already exists
 	 */
 	public function hasInstance($objectName) {
-		return isset($this->objects[$objectName]);
+		return isset($this->objects[$objectName]['i']);
+	}
+
+	/**
+	 * Returns the instance of the specified object or NULL if no instance has been
+	 * registered yet.
+	 *
+	 * @param string $objectName The object name
+	 * @return object The object or NULL
+	 */
+	public function getInstance($objectName) {
+		return isset($this->objects[$objectName]['i']) ? $this->objects[$objectName]['i'] : NULL;
 	}
 
 	/**

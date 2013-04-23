@@ -21,6 +21,8 @@ class LazyDependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lazyDependencyIsOnlyInjectedIfMethodOnDependencyIsCalledForTheFirstTime() {
+		$this->objectManager->forgetInstance('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA');
+
 		$object = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies');
 		$this->assertInstanceOf('TYPO3\Flow\Object\DependencyInjection\DependencyProxy', $object->lazyA);
 
@@ -45,6 +47,9 @@ class LazyDependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lazyDependencyIsInjectedIntoAllClassesWhichNeedItIfItIsUsedTheFirstTime() {
+		$this->objectManager->forgetInstance('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA');
+		$this->objectManager->forgetInstance('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB');
+
 		$object1 = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\ClassWithLazyDependencies');
 		$object2 = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\AnotherClassWithLazyDependencies');
 
