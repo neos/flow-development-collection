@@ -215,7 +215,7 @@ class ActionController extends AbstractController {
 		$className = get_called_class();
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
-			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
 				$result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
 			}
 		}
@@ -281,7 +281,7 @@ class ActionController extends AbstractController {
 		$className = get_called_class();
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
-			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
 				$validationGroupsAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, 'TYPO3\Flow\Annotations\ValidationGroups');
 				if ($validationGroupsAnnotation !== NULL) {
 					$result[$methodName] = $validationGroupsAnnotation->validationGroups;
@@ -307,7 +307,7 @@ class ActionController extends AbstractController {
 		$className = get_called_class();
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
-			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
 				$validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\Validate');
 				$result[$methodName] = array_map(function($validateAnnotation) {
 					return array(
@@ -403,7 +403,7 @@ class ActionController extends AbstractController {
 		$className = get_called_class();
 		$methodNames = get_class_methods($className);
 		foreach ($methodNames as $methodName) {
-			if (strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
+			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
 				$ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\IgnoreValidation');
 				$ignoredArguments = array_map(function($annotation) { return $annotation->argumentName; }, $ignoreValidationAnnotations);
 				if ($ignoredArguments !== array()) {
