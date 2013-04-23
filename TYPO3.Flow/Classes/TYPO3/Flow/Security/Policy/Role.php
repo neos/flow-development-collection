@@ -153,7 +153,7 @@ class Role {
 	public function setParentRoles(array $parentRoles) {
 		$this->parentRoles->clear();
 		foreach ($parentRoles as $role) {
-			$this->parentRoles->add($role);
+			$this->addParentRole($role);
 		}
 	}
 
