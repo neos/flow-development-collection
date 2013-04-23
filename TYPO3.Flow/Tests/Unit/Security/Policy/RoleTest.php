@@ -11,11 +11,11 @@ namespace TYPO3\Flow\Tests\Unit\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * Testcase for for the policy service
- *
  */
 class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -42,6 +42,34 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertEquals($name, $role->getName());
 		$this->assertEquals($packageKey, $role->getPackageKey());
+	}
+
+	/**
+	 * @test
+	 */
+	public function setParentRolesMakesSureThatParentRolesDontContainDuplicates() {
+		$role = new Role('Acme.Demo:Test');
+		$role->initializeObject();
+
+		$parentRole1 = new Role('Acme.Demo:Parent1');
+		$parentRole2 = new Role('Acme.Demo:Parent2');
+
+		$parentRole2->addParentRole($parentRole1);
+
+		$role->setParentRoles(array($parentRole1, $parentRole2, $parentRole2, $parentRole1));
+
+		$expectedParentRoles = array(
+			'Acme.Demo:Parent1' => $parentRole1,
+			'Acme.Demo:Parent2' => $parentRole2
+		);
+
+			// Internally, parentRoles might contain duplicates which Doctrine will try
+			// to persist - even though getParentRoles() will return an array which
+			// does not contain duplicates:
+		$internalParentRolesCollection = ObjectAccess::getProperty($role, 'parentRoles', TRUE);
+		$this->assertEquals(2, count($internalParentRolesCollection->toArray()));
+
+		$this->assertEquals($expectedParentRoles, $role->getParentRoles());
 	}
 
 }
