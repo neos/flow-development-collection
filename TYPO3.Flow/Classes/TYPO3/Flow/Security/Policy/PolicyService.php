@@ -283,7 +283,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		}
 
 		$role = new Role($roleIdentifier);
-		$this->roleRepository->add($roleIdentifier);
+		$this->roleRepository->add($role);
 
 		return $role;
 	}
