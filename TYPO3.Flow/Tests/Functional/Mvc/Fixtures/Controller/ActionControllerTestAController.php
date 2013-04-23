@@ -82,5 +82,15 @@ class ActionControllerTestAController extends ActionController {
 	public function ignoreValidationAction($brokenArgument1, $brokenArgument2) {
 		return 'action was called';
 	}
+
+	/**
+	 * A method with a very short name, to make sure that the ActionController code
+	 * does not choke on it.
+	 *
+	 * @return void
+	 * @see http://forge.typo3.org/issues/47469
+	 */
+	public function b() {
+	}
 }
 ?>
