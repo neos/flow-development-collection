@@ -29,6 +29,13 @@ class AlgorithmsTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function generateUUIDGeneratesAtLeastNotTheSameUuidOnSubsequentCalls() {
+		$this->assertNotEquals(Algorithms::generateUUID(), Algorithms::generateUUID());
+	}
+
+	/**
+	 * @test
+	 */
 	public function generateRandomBytesGeneratesRandomBytes() {
 		$this->assertEquals(20, strlen(Algorithms::generateRandomBytes(20)));
 	}
