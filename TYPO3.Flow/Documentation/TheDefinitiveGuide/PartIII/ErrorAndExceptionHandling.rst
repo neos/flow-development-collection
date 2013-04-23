@@ -109,3 +109,84 @@ should be converted into exceptions. All other errors are silently ignored:
 Custom Error Views
 ------------------
 
+In order to allow customized, specifically looking error templates; even depending on the
+nature of an error; Flow provides configurable rendering groups. Each such rendering group
+holds information about what template to use, what text information should be provided,
+and finally, what HTTP status codes or what Exception class names each rendering group is
+responsible for.
+
+An example configuration could look like in the following Settings.yaml excerpt:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+	    error:
+	      exceptionHandler:
+	        defaultRenderingOptions: []
+
+	        renderingGroups:
+
+	          notFoundExceptions:
+	            matchingStatusCodes: [404]
+	            options:
+	              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
+	              variables:
+	                errorDescription: 'Sorry, the page you requested was not found.'
+
+	          databaseConnectionExceptions:
+	            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
+	            options:
+	              templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
+	              variables:
+	                errorDescription: 'Sorry, the database connection couldn''t be established.'
+
+``defaultRenderingOptions``:
+	this carries default options which can be overridden by the ``options`` key of a particular
+	rendering group; see below.
+
+``notFoundExceptions`` and ``databaseConnectionExceptions`` are freely chosen, descriptive
+key names, their actual naming has no further impressions.
+
+``matchingStatusCodes``:
+	an array of integer values what HTTP status codes the rendering group is for
+
+``matchingExceptionClassNames``:
+	an array of string values what Exception types the rendering group is for. Keep in mind that, as always
+	the class name must not contain a leading slash, but must be fully qualified, of course.
+
+``options``:
+	``templatePathAndFilename``:
+		a resource string to the (Fluid) filename to use
+
+	``layoutRootPath``:
+		a resource string to the layout root path
+
+	``partialRootPath``:
+		a resource string to the partial root path
+
+	``format``:
+		the format to use, for example ``html`` or ``json``, if appropriate
+
+	``variables``
+		an array of additional, arbitrary variables which can be accessed in the template
+
+The following variables will be assigned to the template an can be used there:
+
+``exception``:
+	the Exception object which was thrown
+
+``renderingOptions``:
+	the complete rendering options array, as defined in the settings. This is a merge
+	of ``TYPO3.Flow.error.exceptionHandler.defaultRenderingOptions`` and the ``options``
+	array of the particular rendering group
+
+``statusCode``:
+	the integer value of the HTTP status code which has been thrown (``404``, ``503`` etc.)
+
+``statusMessage``:
+	the HTTP status message equivalent,  for example ``Not Found``, ``Service Unavailable`` etc.
+	If no matching status message could be found, this value is ``Unknown Status``.
+
+``referenceCode``:
+	the reference code of the exception, if applicable.
