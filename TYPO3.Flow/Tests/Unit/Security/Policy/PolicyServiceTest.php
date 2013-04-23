@@ -1275,7 +1275,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
 		$mockRoleRepository->expects($this->any())->method('findByIdentifier')->will($this->returnValue(NULL));
-		$mockRoleRepository->expects($this->once())->method('add')->with($this->equalTo($newRole));
+		$mockRoleRepository->expects($this->once())->method('add')->with($this->logicalAnd($this->isInstanceOf('TYPO3\Flow\Security\Policy\Role'), $this->equalTo($newRole)));
 
 		/** @var $policyService \TYPO3\Flow\Security\Policy\PolicyService */
 		$policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('initializeRolesFromPolicy'));
