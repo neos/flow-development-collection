@@ -157,7 +157,8 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 	 */
 	public function unpublishPersistentResource(\TYPO3\Flow\Resource\Resource $resource) {
 		$result = FALSE;
-		foreach (glob($this->buildPersistentResourcePublishPathAndFilename($resource, FALSE) . '*') as $publishedResourcePathAndFilename) {
+		$pathAndFilename = $this->buildPersistentResourcePublishPathAndFilename($resource, TRUE);
+		foreach (glob($pathAndFilename . '*') as $publishedResourcePathAndFilename) {
 			unlink($publishedResourcePathAndFilename);
 			$result = TRUE;
 		}
