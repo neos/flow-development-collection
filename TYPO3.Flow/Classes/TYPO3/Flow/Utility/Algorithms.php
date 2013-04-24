@@ -30,7 +30,7 @@ class Algorithms {
 	 * @todo check for randomness, optionally generate type 1 and type 5 UUIDs, use php5-uuid extension if available
 	 */
 	static public function generateUUID() {
-		return \Security_Randomizer::getRandomGUID();
+		return strtolower(\Security_Randomizer::getRandomGUID());
 	}
 
 	/**

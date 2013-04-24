@@ -29,6 +29,14 @@ class AlgorithmsTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function generateUUIDGeneratesLowercaseString() {
+		$uuid = Algorithms::generateUUID();
+		$this->assertSame(strtolower($uuid), $uuid);
+	}
+
+	/**
+	 * @test
+	 */
 	public function generateUUIDGeneratesAtLeastNotTheSameUuidOnSubsequentCalls() {
 		$this->assertNotEquals(Algorithms::generateUUID(), Algorithms::generateUUID());
 	}
