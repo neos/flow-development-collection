@@ -130,5 +130,23 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->assertNull($objectE->getNullValue());
 	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfObjectFromSameNamespace() {
+		$nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
+		$classB = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB');
+		$this->assertSame($classB, $nonNamespacedDependencies->getSingletonClassB());
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfObjectFromSubNamespace() {
+		$nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
+		$aClassFromSubNamespace = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SubNamespace\AnotherClass');
+		$this->assertSame($aClassFromSubNamespace, $nonNamespacedDependencies->getClassFromSubNamespace());
+	}
 }
 ?>
