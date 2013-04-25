@@ -123,5 +123,12 @@ class TargetClass01 implements SayHelloInterface {
 	public function setCurrentName(\TYPO3\Flow\Tests\Functional\Aop\Fixtures\Name $name = NULL) {
 		$this->currentName = $name;
 	}
+
+	/**
+	 * @return void
+	 */
+	static public function someStaticMethod() {
+		return 'I won\' take any advice';
+	}
 }
 ?>

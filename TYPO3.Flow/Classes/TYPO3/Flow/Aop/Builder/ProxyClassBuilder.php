@@ -600,6 +600,10 @@ EOT;
 						continue;
 					}
 
+					if ($this->reflectionService->isMethodStatic($targetClassName, $methodName)) {
+						continue;
+					}
+
 					if ($pointcut->matches($targetClassName, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 						$advice = $advisor->getAdvice();
 						$interceptedMethods[$methodName]['groupedAdvices'][get_class($advice)][] = array(
