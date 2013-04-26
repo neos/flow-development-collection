@@ -48,7 +48,7 @@ class AopProxyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function staticMethodsCannotBeAdvised() {
 		$targetClass01 = new Fixtures\TargetClass01();
-		$this->assertSame('I won\' take any advice', $targetClass01->someStaticMethod());
+		$this->assertSame('I won\'t take any advice', $targetClass01->someStaticMethod());
 	}
 
 }
