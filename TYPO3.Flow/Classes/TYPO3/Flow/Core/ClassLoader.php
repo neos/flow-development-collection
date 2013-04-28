@@ -115,7 +115,7 @@ class ClassLoader {
 				if ($this->considerTestsNamespace === TRUE && substr($className, $packageData['namespaceLength'] + 1, 16) === 'Tests\Functional') {
 					$classPathAndFilename = $this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageData['namespaceLength'] + 1)) . '.php';
 				} else {
-					$classPathAndFilename = $packageData['classesPath'] . str_replace('\\', '/', $className) . '.php';
+					$classPathAndFilename = $packageData['classesPath'] . str_replace(array('\\', '_'), '/', $className) . '.php';
 				}
 				try {
 					$result = include($classPathAndFilename);
