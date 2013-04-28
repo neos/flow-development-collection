@@ -103,5 +103,20 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->classLoader->loadClass('Acme\MyAppAddon\Class');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
+
+	/**
+	 * Checks if the package autoloader loads classes from subdirectories.
+	 *
+	 * @test
+	 */
+	public function classesWithUnderscoresAreLoaded() {
+		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+
+		self::$testClassWasLoaded = FALSE;
+		$this->classLoader->loadClass('Acme\MyApp_Foo');
+		$this->assertTrue(self::$testClassWasLoaded);
+	}
+
 }
 ?>
