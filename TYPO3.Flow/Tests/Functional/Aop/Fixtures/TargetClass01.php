@@ -128,7 +128,7 @@ class TargetClass01 implements SayHelloInterface {
 	 * @return void
 	 */
 	static public function someStaticMethod() {
-		return 'I won\' take any advice';
+		return 'I won\'t take any advice';
 	}
 }
 ?>
