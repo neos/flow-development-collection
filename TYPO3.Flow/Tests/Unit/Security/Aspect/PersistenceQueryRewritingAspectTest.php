@@ -104,7 +104,6 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->never())->method('matching');
 
-
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed');
 
@@ -134,15 +133,95 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 	/**
 	 * @test
 	 */
-	public function rewriteQomQueryDoesNotRewriteQueryIfSecurityContextIsNotInitialized() {
+	public function rewriteQomQueryInitializesSecurityContextIfPossible() {
+		$entityType = 'MyClass';
+
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed');
+
+		$mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
+
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->once())->method('canBeInitialized')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->once())->method('initialize');
+		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
+
+		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(FALSE));
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('alreadyRewrittenQueries', new \SplObjectStorage());
+		$rewritingAspect->_set('policyService', $mockPolicyService);
+
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function rewriteQomQueryDoesNotRewriteQueryIfAuthorizationIsDisabled() {
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->never())->method('getProxy');
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('areAuthorizationChecksDisabled')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->never())->method('isInitialized');
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('policyService', $this->getMock('TYPO3\Flow\Security\Policy\PolicyService', array(), array(), '', FALSE));
+
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function rewriteQomQueryDoesNotRewriteQueryIfPolicyHasNoEntriesForEntities() {
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->never())->method('getProxy');
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('areAuthorizationChecksDisabled')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->never())->method('isInitialized');
+
+		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->once())->method('hasPolicyEntriesForEntities')->will($this->returnValue(FALSE));
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('policyService', $mockPolicyService);
+
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function rewriteQomQueryDoesNotRewriteQueryIfSecurityContextCannotBeInitialized() {
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed');
 
 		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->never())->method('getProxy');
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->once())->method('canBeInitialized')->will($this->returnValue(FALSE));
 
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
@@ -444,11 +523,10 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
 	}
 
-
 	/**
 	 * @test
 	 */
-	public function checkAccessAfterFetchingAnObjectByIdentifierReturnsObjectIfSecurityContextIsNotInitialized() {
+	public function checkAccessAfterFetchingAnObjectByIdentifierInitializesSecurityContextIfPossible() {
 		$mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
 		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
 
@@ -460,9 +538,92 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->once())->method('canBeInitialized')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->once())->method('initialize');
+		$mockSecurityContext->expects($this->any())->method('getRoles')->will($this->returnValue(array()));
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('policyService', $this->getMock('TYPO3\Flow\Security\Policy\PolicyService'));
+		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+
+		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function checkAccessAfterFetchingAnObjectByIdentifierReturnsObjectIfAuthorizationIsDisabled() {
+		$mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
+		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
+
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('areAuthorizationChecksDisabled')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->never())->method('isInitialized');
 
 		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('policyService', $this->getMock('TYPO3\Flow\Security\Policy\PolicyService'));
+
+		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function checkAccessAfterFetchingAnObjectByIdentifierReturnsObjectIfPolicyHasNoEntriesForEntities() {
+		$mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
+		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
+
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+
+		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->once())->method('hasPolicyEntriesForEntities')->will($this->returnValue(FALSE));
+		$mockPolicyService->expects($this->never())->method('hasPolicyEntryForEntityType');
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->never())->method('isInitialized');
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('policyService', $mockPolicyService);
+
+		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function checkAccessAfterFetchingAnObjectByIdentifierReturnsObjectIfSecurityContextCannotInitialized() {
+		$mockQuery = $this->getMock('TYPO3\Flow\Persistence\QueryInterface');
+		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
+
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+
+		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->never())->method('hasPolicyEntryForEntityType');
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->once())->method('canBeInitialized')->will($this->returnValue(FALSE));
+
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\Flow\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect->_set('securityContext', $mockSecurityContext);
+		$rewritingAspect->_set('policyService', $mockPolicyService);
 
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
 	}

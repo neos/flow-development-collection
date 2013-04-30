@@ -12,11 +12,14 @@ namespace TYPO3\Flow\Security\Authentication\Provider;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authentication\Token\Typo3OrgSsoToken;
+use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
 /**
  * An authentication provider that authenticates SSO requests from typo3.org
  */
-class Typo3OrgSsoProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider {
+class Typo3OrgSsoProvider extends AbstractProvider {
 
 	/**
 	 * @var \TYPO3\Flow\Security\AccountRepository
@@ -29,6 +32,12 @@ class Typo3OrgSsoProvider extends \TYPO3\Flow\Security\Authentication\Provider\A
 	 * @Flow\Inject
 	 */
 	protected $rsaWalletService;
+
+	/**
+	 * @var \TYPO3\Flow\Security\Context
+	 * @Flow\Inject
+	 */
+	protected $securityContext;
 
 	/**
 	 * Returns the class names of the tokens this provider can authenticate.
@@ -46,9 +55,9 @@ class Typo3OrgSsoProvider extends \TYPO3\Flow\Security\Authentication\Provider\A
 	 * @return void
 	 * @throws \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException
 	 */
-	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \TYPO3\Flow\Security\Authentication\Token\Typo3OrgSsoToken)) {
-			throw new \TYPO3\Flow\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+	public function authenticate(TokenInterface $authenticationToken) {
+		if (!($authenticationToken instanceof Typo3OrgSsoToken)) {
+			throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
 		}
 
 		/** @var $account \TYPO3\Flow\Security\Account */
@@ -56,7 +65,10 @@ class Typo3OrgSsoProvider extends \TYPO3\Flow\Security\Authentication\Provider\A
 		$credentials = $authenticationToken->getCredentials();
 
 		if (is_array($credentials) && isset($credentials['username'])) {
-			$account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $this->name);
+			$providerName = $this->name;
+			$this->securityContext->withoutAuthorizationChecks(function() use ($credentials, $providerName, &$account) {
+				$account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $providerName);
+			});
 		}
 
 		if (is_object($account)) {
@@ -71,13 +83,13 @@ class Typo3OrgSsoProvider extends \TYPO3\Flow\Security\Authentication\Provider\A
 			if ($this->rsaWalletService->verifySignature($authenticationData, $credentials['signature'], $this->options['rsaKeyUuid'])
 				&& $credentials['expires'] > time()) {
 
-				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				$authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
 				$authenticationToken->setAccount($account);
 			} else {
-				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+				$authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
 			}
-		} elseif ($authenticationToken->getAuthenticationStatus() !== \TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
-			$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		} elseif ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+			$authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
 

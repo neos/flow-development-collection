@@ -26,7 +26,11 @@ class HttpBasicTestController extends \TYPO3\Flow\Security\Authentication\Contro
 		if ($originalRequest !== NULL) {
 			$this->redirectToRequest($originalRequest);
 		}
-		return 'Authentication Success returned!';
+		$result = 'HttpBasicTestController success!' . chr(10);
+		foreach ($this->securityContext->getRoles() as $role) {
+			$result .= $role->getIdentifier() . chr(10);
+		}
+		return $result;
 	}
 
 	/**

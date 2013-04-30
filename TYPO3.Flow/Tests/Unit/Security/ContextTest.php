@@ -782,5 +782,47 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
 		$this->assertFalse($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
 	}
+
+	/**
+	 * @test
+	 */
+	public function authorizationChecksAreEnabledByDefault() {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+	}
+
+	/**
+	 * @test
+	 */
+	public function withoutAuthorizationChecksDisabledAuthorizationChecks() {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+		$self = $this;
+		$securityContext->withoutAuthorizationChecks(function() use ($securityContext, $self) {
+			$self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+		});
+	}
+
+	/**
+	 * @test
+	 */
+	public function withoutAuthorizationChecksReactivatesAuthorizationChecksAfterClosureInvocation() {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+		$securityContext->withoutAuthorizationChecks(function(){});
+		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+	}
+
+	/**
+	 * @test
+	 */
+	public function withoutAuthorizationChecksReactivatesAuthorizationChecksAfterClosureInvocationIfClosureThrowsException() {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+		try {
+			$securityContext->withoutAuthorizationChecks(function() {
+				throw new \Exception('Test Exception');
+			});
+		} catch (\Exception $exception) {
+		}
+		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
+	}
 }
 ?>

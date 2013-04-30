@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Security;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -143,14 +144,56 @@ class Context {
 	protected $roles = NULL;
 
 	/**
+	 * Whether authorization is disabled @see areAuthorizationChecksDisabled()
+	 * @Flow\Transient
+	 * @var boolean
+	 */
+	protected $authorizationChecksDisabled = FALSE;
+
+	/**
 	 * Inject the authentication manager
 	 *
 	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 */
-	public function injectAuthenticationManager(\TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
+	public function injectAuthenticationManager(Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->authenticationManager->setSecurityContext($this);
+	}
+
+	/**
+	 * Lets you switch off authorization checks (CSRF token, policies, content security, ...) for the runtime of $callback
+	 *
+	 * Usage:
+	 * $this->securityContext->withoutAuthorizationChecks(function ($accountRepository, $username, $providerName, &$account) {
+	 *   // this will disable the PersistenceQueryRewritingAspect for this one call
+	 *   $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($username, $providerName)
+	 * });
+	 *
+	 * @param \Closure $callback
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function withoutAuthorizationChecks(\Closure $callback) {
+		$this->authorizationChecksDisabled = TRUE;
+		try {
+			$callback->__invoke();
+		} catch (\Exception $exception) {
+			$this->authorizationChecksDisabled = FALSE;
+			throw $exception;
+		}
+		$this->authorizationChecksDisabled = FALSE;
+	}
+
+	/**
+	 * Returns TRUE if authorization should be ignored, otherwise FALSE
+	 * This is mainly useful to fetch records without Content Security to kick in (e.g. for AuthenticationProviders)
+	 *
+	 * @return boolean
+	 * @see withoutAuthorizationChecks()
+	 */
+	public function areAuthorizationChecksDisabled() {
+		return $this->authorizationChecksDisabled;
 	}
 
 	/**
@@ -217,14 +260,14 @@ class Context {
 	 * Initializes the security context for the given request.
 	 *
 	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception
+	 * @throws \TYPO3\Flow\Exception
 	 */
 	public function initialize() {
 		if ($this->initialized === TRUE) {
 			return;
 		}
 		if ($this->canBeInitialized() === FALSE) {
-			throw new Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
+			throw new \TYPO3\Flow\Exception('The security Context cannot be initialized yet. Please check if it can be initialized with $securityContext->canBeInitialized() before trying to do so.', 1358513802);
 		}
 
 		if ($this->csrfProtectionStrategy !== self::CSRF_ONE_PER_SESSION) {
@@ -263,7 +306,7 @@ class Context {
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array Array of set \TYPO3\Flow\Security\Authentication\TokenInterface objects
+	 * @return array<\TYPO3\Flow\Security\Authentication\TokenInterface> Array of set tokens
 	 */
 	public function getAuthenticationTokens() {
 		if ($this->initialized === FALSE) {
@@ -279,7 +322,7 @@ class Context {
 	 * against the current request it is determined as not active.
 	 *
 	 * @param string $className The class name
-	 * @return array Array of set \TYPO3\Flow\Authentication\Token objects
+	 * @return array<\TYPO3\Flow\Security\Authentication\TokenInterface> Array of set tokens of the specified type
 	 */
 	public function getAuthenticationTokensOfType($className) {
 		if ($this->initialized === FALSE) {
@@ -322,10 +365,12 @@ class Context {
 						$account = $token->getAccount();
 						if ($account !== NULL) {
 							$accountRoles = $account->getRoles();
+							/** @var $currentRole Role */
 							foreach ($accountRoles as $currentRole) {
 								if (!in_array($currentRole, $this->roles)) {
 									$this->roles[$currentRole->getIdentifier()] = $currentRole;
 								}
+								/** @var $currentParentRole Role */
 								foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
 									if (!in_array($currentParentRole, $this->roles)) {
 										$this->roles[$currentParentRole->getIdentifier()] = $currentParentRole;
@@ -459,7 +504,7 @@ class Context {
 			reset($this->csrfProtectionTokens);
 			return key($this->csrfProtectionTokens);
 		}
-		$newToken = \TYPO3\Flow\Utility\Algorithms::generateRandomToken(16);
+		$newToken = Algorithms::generateRandomToken(16);
 		$this->csrfProtectionTokens[$newToken] = TRUE;
 
 		return $newToken;
@@ -571,7 +616,7 @@ class Context {
 	 * given by the manager.
 	 *
 	 * @param array $managerTokens Array of tokens provided by the authentication manager
-	 * @param array $sessionTokens Array of tokens resotored from the session
+	 * @param array $sessionTokens Array of tokens restored from the session
 	 * @return array Array of \TYPO3\Flow\Security\Authentication\TokenInterface objects
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {
@@ -581,6 +626,7 @@ class Context {
 			return $resultTokens;
 		}
 
+		/** @var $managerToken \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($managerTokens as $managerToken) {
 			$noCorrespondingSessionTokenFound = TRUE;
 
@@ -588,6 +634,7 @@ class Context {
 				continue;
 			}
 
+			/** @var $sessionToken \TYPO3\Flow\Security\Authentication\TokenInterface */
 			foreach ($sessionTokens as $sessionToken) {
 				if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
 					$resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;

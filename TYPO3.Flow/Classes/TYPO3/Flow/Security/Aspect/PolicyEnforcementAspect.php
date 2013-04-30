@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Security\Aspect;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
+use TYPO3\Flow\Security\Context;
 
 /**
  * The central security aspect, that invokes the security interceptors.
@@ -29,18 +31,17 @@ class PolicyEnforcementAspect {
 	protected $policyEnforcementInterceptor;
 
 	/**
-	 * The after invocation interceptor
-	 * @var \TYPO3\Flow\Security\Authorization\Interceptor\AfterInvocation
+	 * @var \TYPO3\Flow\Security\Context
 	 */
-	protected $afterInvocationInterceptor;
+	protected $securityContext;
 
 	/**
-	 * Constructor.
-	 *
 	 * @param \TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
+	 * @param \TYPO3\Flow\Security\Context $securityContext
 	 */
-	public function __construct(\TYPO3\Flow\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor) {
+	public function __construct(PolicyEnforcement $policyEnforcementInterceptor, Context $securityContext) {
 		$this->policyEnforcementInterceptor = $policyEnforcementInterceptor;
+		$this->securityContext = $securityContext;
 	}
 
 	/**
@@ -53,8 +54,10 @@ class PolicyEnforcementAspect {
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
 	public function enforcePolicy(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		$this->policyEnforcementInterceptor->setJoinPoint($joinPoint);
-		$this->policyEnforcementInterceptor->invoke();
+		if ($this->securityContext->areAuthorizationChecksDisabled() !== TRUE) {
+			$this->policyEnforcementInterceptor->setJoinPoint($joinPoint);
+			$this->policyEnforcementInterceptor->invoke();
+		}
 
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 

@@ -12,7 +12,14 @@ namespace TYPO3\Flow\Security\Aspect;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Log\SecurityLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect;
+use TYPO3\Flow\Security\Authorization\FirewallInterface;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * The central security aspect, that invokes the security interceptors.
@@ -38,13 +45,11 @@ class RequestDispatchingAspect {
 	protected $firewall;
 
 	/**
-	 * Constructor
-	 *
 	 * @param \TYPO3\Flow\Security\Context $securityContext
 	 * @param \TYPO3\Flow\Security\Authorization\FirewallInterface $firewall
 	 * @param \TYPO3\Flow\Log\SecurityLoggerInterface $securityLogger
 	 */
-	public function __construct(\TYPO3\Flow\Security\Context $securityContext, \TYPO3\Flow\Security\Authorization\FirewallInterface $firewall, \TYPO3\Flow\Log\SecurityLoggerInterface $securityLogger) {
+	public function __construct(Context $securityContext, FirewallInterface $firewall, SecurityLoggerInterface $securityLogger) {
 		$this->securityContext = $securityContext;
 		$this->firewall = $firewall;
 		$this->securityLogger = $securityLogger;
@@ -61,19 +66,19 @@ class RequestDispatchingAspect {
 	 * @Flow\Around("setting(TYPO3.Flow.security.enable) && method(TYPO3\Flow\Mvc\Dispatcher->dispatch())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
-	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException
-	 * @throws \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @throws \Exception|\TYPO3\Flow\Security\Exception\AccessDeniedException
+	 * @throws \Exception|\TYPO3\Flow\Security\Exception\AuthenticationRequiredException
 	 */
-	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
-		if (!$request instanceof ActionRequest) {
+		if (!($request instanceof ActionRequest) || $this->securityContext->areAuthorizationChecksDisabled()) {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
 
 		try {
 			$this->firewall->blockIllegalRequests($request);
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
-		} catch (\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception) {
+		} catch (AuthenticationRequiredException $exception) {
 			$response = $joinPoint->getMethodArgument('response');
 
 			$entryPointFound = FALSE;
@@ -83,7 +88,7 @@ class RequestDispatchingAspect {
 
 				if ($entryPoint !== NULL) {
 					$entryPointFound = TRUE;
-					if ($entryPoint instanceof \TYPO3\Flow\Security\Authentication\EntryPoint\WebRedirect) {
+					if ($entryPoint instanceof WebRedirect) {
 						$options = $entryPoint->getOptions();
 						$this->securityLogger->log('Redirecting to authentication entry point with URI ' . (isset($options['uri']) ? $options['uri'] : '- undefined -'), LOG_INFO);
 					} else {
@@ -97,7 +102,7 @@ class RequestDispatchingAspect {
 				$this->securityLogger->log('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.', LOG_NOTICE);
 				throw $exception;
 			}
-		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+		} catch (AccessDeniedException $exception) {
 			$this->securityLogger->log('Access denied', LOG_WARNING);
 			throw $exception;
 		}

@@ -11,7 +11,13 @@ namespace TYPO3\Flow\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Proxy\Proxy;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Persistence\EmptyQueryResult;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 
 /**
  * An aspect which rewrites persistence query to filter objects one should not be able to retrieve.
@@ -92,16 +98,20 @@ class PersistenceQueryRewritingAspect {
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed
 	 */
-	public function rewriteQomQuery(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function rewriteQomQuery(JoinPointInterface $joinPoint) {
+		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		if ($this->securityContext->areAuthorizationChecksDisabled() === TRUE || $this->policyService->hasPolicyEntriesForEntities() === FALSE) {
+			return $result;
+		}
 		if ($this->securityContext->isInitialized() === FALSE) {
-			if ($this->policyService->hasPolicyEntriesForEntities() === TRUE && $this->securityContext->canBeInitialized() === TRUE) {
+			if ($this->securityContext->canBeInitialized() === TRUE) {
 				$this->securityContext->initialize();
 			} else {
-				return $joinPoint->getAdviceChain()->proceed($joinPoint);
+				return $result;
 			}
 		}
 
-		/** @var $query \TYPO3\Flow\Persistence\QueryInterface */
+		/** @var $query QueryInterface */
 		$query = $joinPoint->getProxy();
 
 		if ($this->alreadyRewrittenQueries->contains($query)) {
@@ -115,7 +125,7 @@ class PersistenceQueryRewritingAspect {
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
 			if ($this->policyService->isGeneralAccessForEntityTypeGranted($entityType, $authenticatedRoles) === FALSE) {
-				return ($joinPoint->getMethodName() === 'count') ? 0 : new \TYPO3\Flow\Persistence\EmptyQueryResult($query);
+				return ($joinPoint->getMethodName() === 'count') ? 0 : new EmptyQueryResult($query);
 			}
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
 			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
@@ -137,9 +147,11 @@ class PersistenceQueryRewritingAspect {
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 */
-	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
+	public function checkAccessAfterFetchingAnObjectByIdentifier(JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
-
+		if ($this->securityContext->areAuthorizationChecksDisabled() === TRUE || $this->policyService->hasPolicyEntriesForEntities() === FALSE) {
+			return $result;
+		}
 		if ($this->securityContext->isInitialized() === FALSE) {
 			if ($this->securityContext->canBeInitialized() === TRUE) {
 				$this->securityContext->initialize();
@@ -150,7 +162,7 @@ class PersistenceQueryRewritingAspect {
 
 		$authenticatedRoles = $this->securityContext->getRoles();
 
-		if ($result instanceof \Doctrine\ORM\Proxy\Proxy) {
+		if ($result instanceof Proxy) {
 			$entityType = get_parent_class($result);
 		} else {
 			$entityType = get_class($result);
@@ -176,7 +188,7 @@ class PersistenceQueryRewritingAspect {
 	 * @param \TYPO3\Flow\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint The build constraint object
 	 */
-	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\Flow\Persistence\QueryInterface $query) {
+	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, QueryInterface $query) {
 		$resourceConstraintObjects = array();
 		foreach ($constraintDefinitions as $resourceConstraintsDefinition) {
 			$resourceConstraintObject = NULL;
@@ -229,7 +241,7 @@ class PersistenceQueryRewritingAspect {
 	 * @return \TYPO3\Flow\Persistence\Generic\Qom\Constraint The build constraint object
 	 * @throws \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
-	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \TYPO3\Flow\Persistence\QueryInterface $query) {
+	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, QueryInterface $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);
@@ -237,7 +249,7 @@ class PersistenceQueryRewritingAspect {
 			$propertyName = substr($constraintDefinition['rightValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['leftValue']);
 		} else {
-			throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1267881842);
+			throw new InvalidQueryRewritingConstraintException('An entity constraint has to have one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1267881842);
 		}
 
 		switch ($constraintDefinition['operator']) {
@@ -282,7 +294,7 @@ class PersistenceQueryRewritingAspect {
 				break;
 		}
 
-		throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1270483540);
+		throw new InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1270483540);
 	}
 
 	/**
@@ -356,7 +368,7 @@ class PersistenceQueryRewritingAspect {
 		}
 
 		if ($referenceToThisFound === FALSE) {
-			throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
+			throw new InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 		}
 
 		if (is_object($leftOperand)
@@ -407,7 +419,7 @@ class PersistenceQueryRewritingAspect {
 				break;
 		}
 
-		throw new \TYPO3\Flow\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1277222521);
+		throw new InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1277222521);
 	}
 
 	/**
@@ -450,7 +462,7 @@ class PersistenceQueryRewritingAspect {
 	 * @return mixed The property value
 	 */
 	protected function getObjectValueByPath($object, $path) {
-		return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($object, $path);
+		return ObjectAccess::getPropertyPath($object, $path);
 	}
 }
 

@@ -13,7 +13,10 @@ namespace TYPO3\Flow\Security\Authentication;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
+use TYPO3\Flow\Security\Exception;
+use TYPO3\Flow\Security\RequestPatternResolver;
 
 /**
  * The default authentication manager, which relies on Authentication Providers
@@ -21,7 +24,7 @@ use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
  *
  * @Flow\Scope("singleton")
  */
-class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface {
+class AuthenticationProviderManager implements AuthenticationManagerInterface {
 
 	/**
 	 * @Flow\Inject
@@ -81,7 +84,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 * @param \TYPO3\Flow\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
 	 * @param \TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 */
-	public function __construct(AuthenticationProviderResolver $providerResolver, \TYPO3\Flow\Security\RequestPatternResolver $requestPatternResolver) {
+	public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver) {
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
 	}
@@ -106,7 +109,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 * @param \TYPO3\Flow\Security\Context $securityContext The security context of the current request
 	 * @return void
 	 */
-	public function setSecurityContext(\TYPO3\Flow\Security\Context $securityContext) {
+	public function setSecurityContext(Context $securityContext) {
 		$this->securityContext = $securityContext;
 	}
 
@@ -146,12 +149,12 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 		$anyTokenAuthenticated = FALSE;
 
 		if ($this->securityContext === NULL) {
-			throw new \TYPO3\Flow\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
+			throw new Exception('Cannot authenticate because no security context has been set.', 1232978667);
 		}
 
 		$tokens = $this->securityContext->getAuthenticationTokens();
 		if (count($tokens) === 0) {
-			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
+			throw new AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
 		}
 
 		/** @var $token TokenInterface */
@@ -170,20 +173,20 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 				if (!$token instanceof SessionlessTokenInterface && !$this->session->isStarted()) {
 					$this->session->start();
 				}
-				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ONE_TOKEN) {
+				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ONE_TOKEN) {
 					$this->isAuthenticated = TRUE;
 					return;
 				}
 				$anyTokenAuthenticated = TRUE;
 			} else {
-				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\Flow\Security\Context::AUTHENTICATE_ALL_TOKENS) {
-					throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
+				if ($this->securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ALL_TOKENS) {
+					throw new AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
 				}
 			}
 		}
 
-		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== \TYPO3\Flow\Security\Context::AUTHENTICATE_ANY_TOKEN) {
-			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
+		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== Context::AUTHENTICATE_ANY_TOKEN) {
+			throw new AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
 
 		$this->isAuthenticated = $anyTokenAuthenticated;
@@ -250,25 +253,25 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 	 *
 	 * @param array $providerConfigurations The configured provider settings
 	 * @return void
-	 * @throws \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException
-	 * @throws \TYPO3\Flow\Security\Exception\NoEntryPointFoundException
+	 * @throws Exception\InvalidAuthenticationProviderException
+	 * @throws Exception\NoEntryPointFoundException
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations) {
 		foreach ($providerConfigurations as $providerName => $providerConfiguration) {
 
 			if (isset($providerConfiguration['providerClass'])) {
-				throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "providerClass". Check your settings and use the new option "provider" instead.', 1327672030);
+				throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "providerClass". Check your settings and use the new option "provider" instead.', 1327672030);
 			}
 			if (isset($providerConfiguration['options'])) {
-				throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "options". Check your settings and use the new option "providerOptions" instead.', 1327672031);
+				throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" uses the deprecated option "options". Check your settings and use the new option "providerOptions" instead.', 1327672031);
 			}
 			if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
-				throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
+				throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
 			}
 
 			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['provider']);
 			if ($providerObjectName === NULL) {
-				throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
+				throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
 			}
 			$providerOptions = array();
 			if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) {
@@ -279,11 +282,13 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 			$providerInstance = new $providerObjectName($providerName, $providerOptions);
 			$this->providers[$providerName] = $providerInstance;
 
+			/** @var $tokenInstance TokenInterface */
+			$tokenInstance = NULL;
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
 				if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
 					continue;
 				}
-				/** @var $tokenInstance TokenInterface */
+
 				$tokenInstance = new $tokenClassName();
 				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
@@ -299,13 +304,15 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 					$requestPattern->setPattern($patternConfiguration);
 					$requestPatterns[] = $requestPattern;
 				}
-				$tokenInstance->setRequestPatterns($requestPatterns);
+				if ($tokenInstance !== NULL) {
+					$tokenInstance->setRequestPatterns($requestPatterns);
+				}
 			}
 
 			if (isset($providerConfiguration['entryPoint'])) {
 				if (is_array($providerConfiguration['entryPoint'])) {
 					$message = 'Invalid entry point configuration in setting "TYPO3:Flow:security:authentication:providers:' . $providerName . '. Check your settings and make sure to specify only one entry point for each provider.';
-					throw new \TYPO3\Flow\Security\Exception\InvalidAuthenticationProviderException($message, 1327671458);
+					throw new Exception\InvalidAuthenticationProviderException($message, 1327671458);
 				}
 				$entryPointName = $providerConfiguration['entryPoint'];
 				$entryPointClassName = $entryPointName;
@@ -313,7 +320,7 @@ class AuthenticationProviderManager implements \TYPO3\Flow\Security\Authenticati
 					$entryPointClassName = 'TYPO3\Flow\Security\Authentication\EntryPoint\\' . $entryPointClassName;
 				}
 				if (!class_exists($entryPointClassName)) {
-					throw new \TYPO3\Flow\Security\Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to TYPO3\Flow\Security\Authentication\EntryPoint!', 1236767282);
+					throw new Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to TYPO3\Flow\Security\Authentication\EntryPoint!', 1236767282);
 				}
 
 				/** @var $entryPoint \TYPO3\Flow\Security\Authentication\EntryPointInterface */

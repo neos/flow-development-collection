@@ -52,11 +52,14 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, 'listAction')->will($this->returnValue(TRUE));
 
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+
 		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\Flow\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
 		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
 		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
 		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
+		$mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 		$mockCsrfProtectionPattern->_set('systemLogger', $mockSystemLogger);
 
 		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockActionRequest));
@@ -87,10 +90,13 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(FALSE));
 
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+
 		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\Flow\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
 		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
 		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
+		$mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 		$mockCsrfProtectionPattern->_set('systemLogger', $mockSystemLogger);
 
 		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockActionRequest));
@@ -126,11 +132,14 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
 
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+
 		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\Flow\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
 		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
 		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
 		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
+		$mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 		$mockCsrfProtectionPattern->_set('systemLogger', $mockSystemLogger);
 
 		$this->assertTrue($mockCsrfProtectionPattern->matchRequest($mockActionRequest));
@@ -306,6 +315,45 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\Flow\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->_set('systemLogger', $mockSystemLogger);
+
+		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockActionRequest));
+	}
+
+	/**
+	 * @test
+	 */
+	public function matchRequestReturnsFalseIfRequestIsNoActionRequest() {
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+
+		$mockRequest = $this->getMock('TYPO3\Flow\Mvc\RequestInterface', array(), array(), '', FALSE);
+
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\Flow\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('systemLogger', $mockSystemLogger);
+
+		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
+	}
+
+	/**
+	 * @test
+	 */
+	public function matchRequestReturnsFalseIfAuthorizationChecksAreDisabled() {
+		$httpRequest = Request::create(new Uri('http://localhost'), 'POST');
+
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+
+		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface', array(), array(), '', FALSE);
+		$mockAuthenticationManager->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$mockSecurityContext->expects($this->atLeastOnce())->method('areAuthorizationChecksDisabled')->will($this->returnValue(TRUE));
+
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\Flow\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('authenticationManager', $mockAuthenticationManager);
+		$mockCsrfProtectionPattern->_set('systemLogger', $mockSystemLogger);
+		$mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 
 		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockActionRequest));
 	}
