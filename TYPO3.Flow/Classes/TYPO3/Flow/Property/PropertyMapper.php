@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Property;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * The Property Mapper transforms simple types (arrays, strings, integers, floats, booleans) to objects or other simple types.
@@ -210,18 +211,19 @@ class PropertyMapper {
 			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
 		}
 		$targetType = $this->parseCompositeType($targetType);
+		$normalizedTargetType = TypeHandling::normalizeType($targetType);
 		$converter = NULL;
 
-		if (\TYPO3\Flow\Utility\TypeHandling::isSimpleType($targetType)) {
-			if (isset($this->typeConverters[$sourceType][$targetType])) {
-				$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$targetType], $source, $targetType);
+		if (TypeHandling::isSimpleType($normalizedTargetType)) {
+			if (isset($this->typeConverters[$sourceType][$normalizedTargetType])) {
+				$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$normalizedTargetType], $source, $normalizedTargetType);
 			}
 		} else {
-			$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetType);
+			$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
 		}
 
 		if ($converter === NULL) {
-			throw new \TYPO3\Flow\Property\Exception\TypeConverterException('No converter found which can be used to convert from "' . $sourceType . '" to "' . $targetType . '".');
+			throw new \TYPO3\Flow\Property\Exception\TypeConverterException('No converter found which can be used to convert from "' . $sourceType . '" to "' . $normalizedTargetType . '".');
 		}
 
 		return $converter;

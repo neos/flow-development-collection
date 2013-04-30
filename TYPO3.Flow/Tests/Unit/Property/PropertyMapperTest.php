@@ -127,6 +127,22 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 						1 => $this->getMockTypeConverter('array2string,prio1')
 					)
 				)), 'array2string,prio10'
+			),
+			array('someStringSource', 'bool', array(
+				'string' => array(
+					'boolean' => array(
+						10 => $this->getMockTypeConverter('string2boolean,prio10'),
+						1 => $this->getMockTypeConverter('string2boolean,prio1')
+					)
+				)), 'string2boolean,prio10'
+			),
+			array('someStringSource', 'int', array(
+				'string' => array(
+					'integer' => array(
+						10 => $this->getMockTypeConverter('string2integer,prio10'),
+						1 => $this->getMockTypeConverter('string2integer,prio1')
+					)
+				)), 'string2integer,prio10'
 			)
 		);
 	}
