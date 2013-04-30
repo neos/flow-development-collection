@@ -130,7 +130,7 @@ The syntax of placeholders is very simple::
 where:
 
 * *id* is an integer used to index the arguments to insert
-* *formatter* (optional) is a name of a ``Formatter`` to use for formatting the argument
+* *formatter* (optional) is a name of one of the Formatters_ to use for formatting the argument
   (if no formatter is given the provided argument will be cast to string)
 * *attributes* (optional) are strings directly passed to the ``Formatter``. What they do
   depends on the concrete ``Formatter`` which is being used, but generally they are used
@@ -192,10 +192,12 @@ Every formatter provides few methods, one for each format type. For example,
 integers - and ``formatPercentNumber()`` - for percentage (parsed value is automatically
 multiplied by 100).
 
-You can create your own formatter class which will be automatically available for use in
+You can create your own formatter class which will be available for use in
 placeholders. Just make sure your class implements the
-``\TYPO3\Flow\I18n\Formatter\FormatterInterface``, is placed in the
-``\TYPO3\Flow\I18n\Formatter\`` namespace and is named with a *Formatter* suffix.
+``\TYPO3\Flow\I18n\Formatter\FormatterInterface``. Use the fully qualified class name,
+without the leading backslash, as formatter name::
+
+  {0,Acme\Foobar\Formatter\SampleFormatter}
 
 Translation Providers
 ---------------------
