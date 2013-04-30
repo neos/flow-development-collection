@@ -42,14 +42,34 @@ class BCryptHashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function hashAndValidatePasswordWithNotMatchingPasswordOrParametersFails() {
+	public function hashAndValidatePasswordWithNotMatchingPasswordFails() {
 		$strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(10);
 		$derivedKeyWithSalt = $strategy->hashPassword('password');
 
 		$this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt), 'Different password should not match');
+	}
 
-		$strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(8);
-		$this->assertFalse($strategy->validatePassword('password', $derivedKeyWithSalt), 'Different cost should not match');
+	/**
+	 * @test
+	 */
+	public function hashAndValidatePasswordWithDifferentCostsMatch() {
+		$strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(10);
+
+		$otherStrategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(6);
+		$derivedKeyWithSalt = $otherStrategy->hashPassword('password');
+
+		$this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt), 'Hashing strategy should validate password with different cost');
+	}
+
+	/**
+	 * @test
+	 */
+	public function validatePasswordWithInvalidHashFails() {
+		$strategy = new \TYPO3\Flow\Security\Cryptography\BCryptHashingStrategy(10);
+
+		$this->assertFalse($strategy->validatePassword('password', ''));
+		$this->assertFalse($strategy->validatePassword('password', '$1$abc'));
+		$this->assertFalse($strategy->validatePassword('password', '$2x$01$012345678901234567890123456789'));
 	}
 
 }
