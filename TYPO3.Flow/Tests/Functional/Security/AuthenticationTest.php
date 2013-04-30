@@ -127,15 +127,25 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function successfulAuthenticationResetsAuthenticatedRoles() {
+		$uri = new Uri('http://localhost/test/security/authentication/httpbasic');
+		$request = Request::create($uri);
+		$request->setHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
+		$response = $this->browser->sendRequest($request);
+		$this->assertSame($response->getContent(), 'HttpBasicTestController success!' . chr(10) . 'Everybody' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
+	}
+
+	/**
+	 * @test
+	 */
 	public function successfulAuthenticationCallsOnAuthenticationSuccessMethod() {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'functional_test_account';
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
 		$response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
-		$this->assertSame($response->getContent(), 'UsernamePasswordTestController success!');
+		$this->assertSame($response->getContent(), 'UsernamePasswordTestController success!' . chr(10) . 'Everybody' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
 	}
-
 
 	/**
 	 * @test

@@ -89,6 +89,10 @@ class CsrfProtection implements RequestPatternInterface {
 			$this->systemLogger->log('No CSRF required, not authenticated', LOG_DEBUG);
 			return FALSE;
 		}
+		if ($this->securityContext->areAuthorizationChecksDisabled() === TRUE) {
+			$this->systemLogger->log('No CSRF required, authorization checks are disabled', LOG_DEBUG);
+			return FALSE;
+		}
 
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
 		$actionName = $request->getControllerActionName() . 'Action';

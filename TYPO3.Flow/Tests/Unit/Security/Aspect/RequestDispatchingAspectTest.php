@@ -25,7 +25,63 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$actionRequest = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$response = new Response();
+
+		$getMethodArgumentCallback = function() use (&$actionRequest, &$response) {
+			$args = func_get_args();
+
+			if ($args[0] === 'request') return $actionRequest;
+			elseif ($args[0] === 'response') return $response;
+		};
+
+		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockFirewall = $this->getMock('TYPO3\Flow\Security\Authorization\FirewallInterface');
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+
+		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
+		$mockFirewall->expects($this->once())->method('blockIllegalRequests')->with($actionRequest);
+
+		$dispatchingAspect = new \TYPO3\Flow\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
+		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsOnlyInterceptsActionRequests() {
+		$httpRequest = Request::create(new Uri('http://wwwision.de'));
+		$response = new Response();
+
+		$getMethodArgumentCallback = function() use (&$httpRequest, &$response) {
+			$args = func_get_args();
+
+			if ($args[0] === 'request') return $httpRequest;
+			elseif ($args[0] === 'response') return $response;
+		};
+
+		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockFirewall = $this->getMock('TYPO3\Flow\Security\Authorization\FirewallInterface');
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+
+		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
+		$mockFirewall->expects($this->never())->method('blockIllegalRequests');
+
+		$dispatchingAspect = new \TYPO3\Flow\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
+		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
+	}
+
+		/**
+	 * @test
+	 */
+	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsDoesNotBlockRequestsIfAuthorizationChecksAreDisabled() {
+		$request = Request::create(new Uri('http://wwwision.de'))->createActionRequest();
 		$response = new Response();
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -40,10 +96,11 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('TYPO3\Flow\Security\Authorization\FirewallInterface');
 		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+		$mockSecurityContext->expects($this->atLeastOnce())->method('areAuthorizationChecksDisabled')->will($this->returnValue(TRUE));
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
-		$mockFirewall->expects($this->any())->method('blockIllegalRequests')->with($request);
+		$mockFirewall->expects($this->never())->method('blockIllegalRequests');
 
 		$dispatchingAspect = new \TYPO3\Flow\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
