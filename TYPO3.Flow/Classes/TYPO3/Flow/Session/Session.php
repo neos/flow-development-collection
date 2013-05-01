@@ -309,7 +309,6 @@ class Session implements SessionInterface {
 						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
 							$this->objectManager->setInstance($objectName, $object);
 							$this->objectManager->get('TYPO3\Flow\Session\Aspect\LazyLoadingAspect')->registerSessionInstance($objectName, $object);
-							$object->__wakeup();
 						}
 					}
 				}
