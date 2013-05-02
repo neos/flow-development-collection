@@ -223,14 +223,31 @@ class ResourceManager {
 			return FALSE;
 		}
 
-		if (!file_exists($uploadInfo['tmp_name'])) {
+		$temporaryTargetPathAndFilename = $uploadInfo['tmp_name'];
+		if (!is_uploaded_file($temporaryTargetPathAndFilename)) {
 			return FALSE;
 		}
-		$hash = sha1_file($uploadInfo['tmp_name']);
-		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
-		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
-			return FALSE;
+
+		$openBasedirEnabled = (boolean)ini_get('open_basedir');
+		if ($openBasedirEnabled === TRUE) {
+				// Move uploaded file to a readable folder before trying to read sha1 value of file
+			$newTemporaryTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . uniqid();
+			if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === FALSE) {
+				return FALSE;
+			}
+			$hash = sha1_file($newTemporaryTargetPathAndFilename);
+			$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
+			if (rename($newTemporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
+				return FALSE;
+			}
+		} else {
+			$hash = sha1_file($temporaryTargetPathAndFilename);
+			$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
+			if (move_uploaded_file($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
+				return FALSE;
+			}
 		}
+
 		$this->fixFilePermissions($finalTargetPathAndFilename);
 		$resource = new \TYPO3\Flow\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
@@ -349,5 +366,4 @@ class ResourceManager {
 		));
 	}
 }
-
 ?>
