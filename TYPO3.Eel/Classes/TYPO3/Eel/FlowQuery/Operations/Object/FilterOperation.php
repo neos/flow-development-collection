@@ -14,7 +14,29 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Filter operation, limiting the set of objects
+ * Filter operation, limiting the set of objects. The filter expression is
+ * expected as string argument and used to reduce the context to matching
+ * elements by checking each value against the filter.
+ *
+ * A filter expression is written in Fizzle, a grammar inspired by CSS selectors.
+ * It has the form `"[" [<value>] <operator> <operand> "]"` and supports the
+ * following operators:
+ *
+ * =
+ *   Strict equality of value and operand
+ * $=
+ *   Value ends with operand (string-based)
+ * ^=
+ *   Value starts with operand (string-based)
+ * \*=
+ *   Value contains operand (string-based)
+ * instanceof
+ *   Checks if the value is an instance of the operand
+ *
+ * For the latter the behavior is as follows: if the operand is one of the strings
+ * object, array, int(eger), float, double, bool(ean) or string the value is checked
+ * for being of the specified type. For any other strings the value is used as
+ * classname with the PHP instanceof operation to check if the value matches.
  */
 class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
 
@@ -29,8 +51,9 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @param array $arguments the filter expression to use (in index 0)
+	 * @return void
+	 * @throws \TYPO3\Eel\FlowQuery\FizzleException
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (!isset($arguments[0]) || empty($arguments[0])) {
@@ -100,6 +123,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 *
 	 * @param object $element
 	 * @param string $propertyNameFilter
+	 * @return void
 	 * @throws \TYPO3\Eel\FlowQuery\FizzleException
 	 */
 	protected function matchesPropertyNameFilter($element, $propertyNameFilter) {
@@ -109,11 +133,11 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	/**
 	 * Match a single attribute filter
 	 *
-	 * @param type $element
-	 * @param type $attributeFilter
-	 * @return type
+	 * @param mixed $element
+	 * @param array $attributeFilter
+	 * @return boolean
 	 */
-	protected function matchesAttributeFilter($element, $attributeFilter) {
+	protected function matchesAttributeFilter($element, array $attributeFilter) {
 		if ($attributeFilter['Identifier'] !== NULL) {
 			$value = $this->getPropertyPath($element, $attributeFilter['Identifier']);
 		} else {

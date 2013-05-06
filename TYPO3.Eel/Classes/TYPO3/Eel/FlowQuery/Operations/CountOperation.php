@@ -14,7 +14,9 @@ namespace TYPO3\Eel\FlowQuery\Operations;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Count the number of elements in the context, possibly filtering them before counting.
+ * Count the number of elements in the context.
+
+ * If arguments are given, these are used to filter the elements before counting.
  */
 class CountOperation extends AbstractOperation {
 
@@ -36,8 +38,8 @@ class CountOperation extends AbstractOperation {
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @param array $arguments filter arguments for this operation
+	 * @return integer with the number of elements
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (count($arguments) == 0) {

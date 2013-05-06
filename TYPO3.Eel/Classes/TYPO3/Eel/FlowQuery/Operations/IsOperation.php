@@ -15,6 +15,9 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Check whether the at least one of the context elements match the given filter.
+ *
+ * Without arguments is evaluates to TRUE if the context is not empty. If arguments
+ * are given, they are used to filter the context before evaluation.
  */
 class IsOperation extends AbstractOperation {
 
@@ -36,8 +39,8 @@ class IsOperation extends AbstractOperation {
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @param array $arguments the filter arguments
+	 * @return boolean
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (count($arguments) == 0) {

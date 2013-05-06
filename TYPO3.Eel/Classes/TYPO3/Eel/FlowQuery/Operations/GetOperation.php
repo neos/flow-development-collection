@@ -14,7 +14,15 @@ namespace TYPO3\Eel\FlowQuery\Operations;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Get a (non-wrapped) element from the context
+ * Get a (non-wrapped) element from the context.
+ *
+ * If FlowQuery is used, the result is always another FlowQuery. In case you
+ * need to pass a FlowQuery result (and lazy evaluation does not work out) you
+ * can use get() to unwrap the result from the "FlowQuery envelope".
+ *
+ * If no arguments are given, the full context is returned. Otherwise the
+ * value contained in the context at the index given as argument is
+ * returned. If no such index exists, NULL is returned.
  */
 class GetOperation extends AbstractOperation {
 
@@ -36,8 +44,8 @@ class GetOperation extends AbstractOperation {
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @param array $arguments the context index to fetch from
+	 * @return mixed
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		$context = $flowQuery->getContext();

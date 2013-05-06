@@ -44,7 +44,7 @@ class OperationResolver {
 	 * associative array of registered final operations:
 	 * shortOperationName => shortOperationName
 	 *
-	 * @var type
+	 * @var array
 	 */
 	protected $finalOperationNames = array();
 

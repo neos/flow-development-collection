@@ -14,7 +14,7 @@ namespace TYPO3\Eel\FlowQuery\Operations;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Get the last element inside the context
+ * Get the last element inside the context.
  */
 class LastOperation extends AbstractOperation {
 
@@ -29,8 +29,8 @@ class LastOperation extends AbstractOperation {
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @param array $arguments Ignored for this operation
+	 * @return void
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		$context = $flowQuery->getContext();

@@ -14,7 +14,10 @@ namespace TYPO3\Eel\FlowQuery\Operations\Object;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * "children" operation working on generic objects, using fizzle inside
+ * "children" operation working on generic objects. It iterates over all
+ * context elements and returns the values of the properties given in the
+ * filter expression that has to be specified as argument or in a following
+ * filter operation.
  */
 class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
 
@@ -29,8 +32,9 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @param array $arguments the filter expression to use (in index 0)
+	 * @return void
+	 * @throws \TYPO3\Eel\FlowQuery\FizzleException
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (!isset($arguments[0]) || empty($arguments[0])) {
@@ -63,7 +67,7 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 					}
 				}
 			} elseif (isset($filter['AttributeFilters'])) {
-				throw new \TYPO3\Eel\FlowQuery\FizzleException('children() must have an Property name filter and cannot only have an attribute filter.', 1332489432);
+				throw new \TYPO3\Eel\FlowQuery\FizzleException('children() must have a property name filter and cannot only have an attribute filter.', 1332489432);
 			}
 		} else {
 			throw new \TYPO3\Eel\FlowQuery\FizzleException('children() only supports a single filter group right now, i.e. nothing of the form "filter1, filter2"', 1332489489);
@@ -76,6 +80,7 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $query
 	 * @param string $propertyNameFilter
+	 * @return void
 	 */
 	protected function evaluatePropertyNameFilter(\TYPO3\Eel\FlowQuery\FlowQuery $query, $propertyNameFilter) {
 		$resultObjects = array();

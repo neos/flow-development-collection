@@ -209,7 +209,7 @@ class FlowQuery implements \IteratorAggregate, \Countable {
 	 * Should only be called inside an operation.
 	 *
 	 * @param string $operationName
-	 * @param string $arguments
+	 * @param array $arguments
 	 */
 	public function pushOperation($operationName, array $arguments) {
 		array_unshift($this->operations, array(
@@ -238,7 +238,7 @@ class FlowQuery implements \IteratorAggregate, \Countable {
 	 *
 	 * Should only be called inside an operation.
 	 *
-	 * @return array|Traversable
+	 * @return array|\Traversable
 	 */
 	public function getContext() {
 		return $this->context;
@@ -249,7 +249,7 @@ class FlowQuery implements \IteratorAggregate, \Countable {
 	 *
 	 * Should only be called inside an operation.
 	 *
-	 * @param $context array|Traversable
+	 * @param array|\Traversable $context
 	 */
 	public function setContext($context) {
 		$this->context = $context;

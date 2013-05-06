@@ -15,6 +15,10 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Access properties of an object using ObjectAccess.
+ *
+ * Expects the name of a property as argument. If the context is empty, NULL
+ * is returned. Otherwise the value of the property on the first context
+ * element is returned.
  */
 class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
 
@@ -36,20 +40,20 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
-	 * @param array $arguments the arguments for this operation
-	 * @return mixed the return value
+	 * @param array $arguments the property path to use (in index 0)
+	 * @return mixed
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (!isset($arguments[0]) || empty($arguments[0])) {
 			throw new \TYPO3\Eel\FlowQuery\FlowQueryException('property() must be given an attribute name when used on objects, fetching all attributes is not supported.', 1332492263);
 		} else {
 			$context = $flowQuery->getContext();
-			$propertyPath = $arguments[0];
-
-			if (!isset($context[0])) return NULL;
+			if (!isset($context[0])) {
+				return NULL;
+			}
 
 			$element = $context[0];
-
+			$propertyPath = $arguments[0];
 			return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, $propertyPath);
 		}
 	}
