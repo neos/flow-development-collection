@@ -21,7 +21,6 @@ use TYPO3\Flow\Utility\MediaTypes;
  * An abstract base class for HTTP based controllers
  *
  * @api
- * @Flow\Scope("singleton")
  */
 abstract class AbstractController implements ControllerInterface {
 
