@@ -10,35 +10,28 @@ use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>
- *
  * @Flow\Entity
  */
 class {modelName} {
 <f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
 	/**
-	 * The <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
 	 * @var {fieldDefinition.type->f:format.raw()}
 	 */
 	protected ${fieldName};
 </f:for>
 <f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
 	/**
-	 * Get the <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
-	 *
-	 * @return {fieldDefinition.type -> f:format.raw()} The <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
+	 * @return {fieldDefinition.type -> f:format.raw()}
 	 */
-	public function get<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>() {
+	public function get{fieldName -> k:format.ucfirst()}() {
 		return $this->{fieldName};
 	}
 
 	/**
-	 * Sets this <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
-	 *
-	 * @param {fieldDefinition.type -> f:format.raw()} ${fieldName} The <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
+	 * @param {fieldDefinition.type -> f:format.raw()} ${fieldName}
 	 * @return void
 	 */
-	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(<f:if condition="{fieldDefinition.typeHint}">{fieldDefinition.typeHint -> f:format.raw()} </f:if>${fieldName}) {
+	public function set{fieldName -> k:format.ucfirst()}(<f:if condition="{fieldDefinition.typeHint}">{fieldDefinition.typeHint -> f:format.raw()} </f:if>${fieldName}) {
 		$this->{fieldName} = ${fieldName};
 	}
 </f:for>

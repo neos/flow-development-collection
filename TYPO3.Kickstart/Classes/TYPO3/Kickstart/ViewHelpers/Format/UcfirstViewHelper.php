@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Kickstart\ViewHelpers\Inflect;
+namespace TYPO3\Kickstart\ViewHelpers\Format;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Kickstart".             *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Kickstart".       *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,37 +11,32 @@ namespace TYPO3\Kickstart\ViewHelpers\Inflect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * Pluralize a word
+ * Wrapper for PHPs ucfirst function.
+ * @see http://www.php.net/manual/en/ucfirst
  *
  * = Examples =
  *
  * <code title="Example">
- * {variable -> k:inflect.pluralize()}
+ * {textWithMixedCase -> k:ucfirst()}
  * </code>
  *
  * Output:
- * content of {variable} in its plural form (foo => foos)
+ * TextWithMixedCase
  *
  */
-class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class UcfirstViewHelper extends AbstractViewHelper {
 
 	/**
-	 * @var \TYPO3\Kickstart\Utility\Inflector
-	 * @Flow\Inject
-	 */
-	protected $inflector;
-
-	/**
-	 * Pluralize a word
+	 * Uppercase first character
 	 *
-	 * @return string The pluralized string
+	 * @return string The altered string.
 	 */
 	public function render() {
 		$content = $this->renderChildren();
-		return $this->inflector->pluralize($content);
+		return ucfirst($content);
 	}
 }
 ?>

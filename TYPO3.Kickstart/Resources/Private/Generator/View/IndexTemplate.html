@@ -1,12 +1,12 @@
 {namespace k=TYPO3\Kickstart\ViewHelpers}<![CDATA[<f:layout name="Default" />
 
-<f:section name="Title">]]>A list of <k:inflect.humanizeCamelCase lowercase="true"><k:inflect.pluralize>{modelName}</k:inflect.pluralize></k:inflect.humanizeCamelCase><![CDATA[</f:section>
+<f:section name="Title">]]>A list of {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[</f:section>
 
 <f:section name="Content">]]>
-	<![CDATA[<f:if condition="{]]><k:inflect.pluralize>{modelName}</k:inflect.pluralize><![CDATA[}">
+	<![CDATA[<f:if condition="{]]>{modelName -> k:inflect.pluralize()}<![CDATA[}">
 		<f:then>
 			<ul>
-				<f:for each="{]]><k:inflect.pluralize>{modelName}</k:inflect.pluralize><![CDATA[}" as="]]>{modelName}<![CDATA[">
+				<f:for each="{]]>{modelName -> k:inflect.pluralize()}<![CDATA[}" as="]]>{modelName}<![CDATA[">
 					<li>
 						<f:link.action action="show" arguments="{]]>{modelName}: {modelName}<![CDATA[}">{]]>{modelName}<![CDATA[.name}</f:link.action>
 						<f:link.action action="edit" arguments="{]]>{modelName}: {modelName}<![CDATA[}">Edit</f:link.action>
@@ -16,8 +16,8 @@
 			</ul>
 		</f:then>
 		<f:else>
-			]]><p>No <k:inflect.humanizeCamelCase lowercase="true"><k:inflect.pluralize>{modelName}</k:inflect.pluralize></k:inflect.humanizeCamelCase><![CDATA[ created yet.</p>
+			]]><p>No {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[ created yet.</p>
 		</f:else>
 	</f:if>
-	<p><f:link.action action="new">Create a new ]]><k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase><![CDATA[</f:link.action></p>]]>
+	<p><f:link.action action="new">Create a new ]]>{modelName -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[</f:link.action></p>]]>
 <![CDATA[</f:section>]]>
