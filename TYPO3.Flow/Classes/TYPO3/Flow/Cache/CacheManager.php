@@ -186,85 +186,121 @@ class CacheManager {
 
 		switch ($fileMonitorIdentifier) {
 			case 'Flow_ClassFiles' :
-				$modifiedAspectClassNamesWithUnderscores = array();
-				foreach ($changedFiles as $pathAndFilename => $status) {
-					$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
-					$matches = array();
-					if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches) === 1) {
-						if ($matches[2] === 'Classes') {
-							$classNameWithUnderscores = str_replace('/', '_', $matches[3]);
-						} else {
-							$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
-							$classNameWithUnderscores = str_replace('.', '_', $classNameWithUnderscores);
-						}
-						$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
-
-							// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
-						if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
-							$modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
-						}
-							// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
-						if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
-							$objectClassesCache->remove($classNameWithUnderscores);
-						}
-					}
-				}
-				$flushDoctrineProxyCache = FALSE;
-				if (count($modifiedClassNamesWithUnderscores) > 0) {
-					$reflectionStatusCache = $this->getCache('Flow_Reflection_Status');
-					foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
-						$reflectionStatusCache->remove($classNameWithUnderscores);
-						if ($flushDoctrineProxyCache === FALSE && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
-							$flushDoctrineProxyCache = TRUE;
-						}
-					}
-					$objectConfigurationCache->remove('allCompiledCodeUpToDate');
-				}
-				if (count($modifiedAspectClassNamesWithUnderscores) > 0) {
-					$this->systemLogger->log('Aspect classes have been modified, flushing the whole proxy classes cache.', LOG_INFO);
-					$objectClassesCache->flush();
-				}
-				if ($flushDoctrineProxyCache === TRUE) {
-					$this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
-					$this->getCache('Flow_Persistence_Doctrine')->flush();
-					$objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
-				}
+				$this->flushClassCachesByChangedFiles($changedFiles);
 			break;
 			case 'Flow_ConfigurationFiles' :
-				$policyChangeDetected = FALSE;
-				$routesChangeDetected = FALSE;
-				foreach (array_keys($changedFiles) as $pathAndFilename) {
-					$filename = basename($pathAndFilename);
-					if (!in_array($filename, array('Policy.yaml', 'Routes.yaml'))) {
-						continue;
-					}
-					if ($policyChangeDetected === FALSE && basename($pathAndFilename) === 'Policy.yaml') {
-						$this->systemLogger->log('The security policies have changed, flushing the policy cache.', LOG_INFO);
-						$this->getCache('Flow_Security_Policy')->flush();
-						$policyChangeDetected = TRUE;
-					} elseif ($routesChangeDetected === FALSE && basename($pathAndFilename) === 'Routes.yaml') {
-						$this->systemLogger->log('A Routes.yaml file has been changed, flushing the routing cache.', LOG_INFO);
-						$this->getCache('Flow_Mvc_Routing_FindMatchResults')->flush();
-						$this->getCache('Flow_Mvc_Routing_Resolve')->flush();
-						$routesChangeDetected = TRUE;
-					}
-				}
-
-				$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
-				$objectConfigurationCache->remove('allAspectClassesUpToDate');
-				$objectConfigurationCache->remove('allCompiledCodeUpToDate');
-				$objectClassesCache->flush();
+				$this->flushConfigurationCachesByChangedFiles($changedFiles);
 			break;
 			case 'Flow_TranslationFiles' :
-				foreach ($changedFiles as $pathAndFilename => $status) {
-					$matches = array();
-					if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename, $matches) === 1) {
-						$this->systemLogger->log('The localization files have changed, thus flushing the I18n XML model cache.', LOG_INFO);
-						$this->getCache('Flow_I18n_XmlModelCache')->flush();
-						break;
-					}
-				}
+				$this->flushTranslationCachesByChangedFiles($changedFiles);
 			break;
+		}
+	}
+
+	/**
+	 * Flushes entries tagged with class names if their class source files have changed.
+	 *
+	 * @param array $changedFiles A list of full paths to changed files
+	 * @return void
+	 * @see flushSystemCachesByChangedFiles()
+	 */
+	protected function flushClassCachesByChangedFiles(array $changedFiles) {
+		$objectClassesCache = $this->getCache('Flow_Object_Classes');
+		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
+		$modifiedAspectClassNamesWithUnderscores = array();
+		foreach ($changedFiles as $pathAndFilename => $status) {
+			$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
+			$matches = array();
+			if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches) === 1) {
+				if ($matches[2] === 'Classes') {
+					$classNameWithUnderscores = str_replace('/', '_', $matches[3]);
+				} else {
+					$classNameWithUnderscores = str_replace('/', '_', $matches[1] . '_' . ($matches[2] === 'Tests' ? 'Tests_' : '') . $matches[3]);
+					$classNameWithUnderscores = str_replace('.', '_', $classNameWithUnderscores);
+				}
+				$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
+
+					// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
+				if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
+					$modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
+				}
+					// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
+				if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
+					$objectClassesCache->remove($classNameWithUnderscores);
+				}
+			}
+		}
+		$flushDoctrineProxyCache = FALSE;
+		if (count($modifiedClassNamesWithUnderscores) > 0) {
+			$reflectionStatusCache = $this->getCache('Flow_Reflection_Status');
+			foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
+				$reflectionStatusCache->remove($classNameWithUnderscores);
+				if ($flushDoctrineProxyCache === FALSE && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
+					$flushDoctrineProxyCache = TRUE;
+				}
+			}
+			$objectConfigurationCache->remove('allCompiledCodeUpToDate');
+		}
+		if (count($modifiedAspectClassNamesWithUnderscores) > 0) {
+			$this->systemLogger->log('Aspect classes have been modified, flushing the whole proxy classes cache.', LOG_INFO);
+			$objectClassesCache->flush();
+		}
+		if ($flushDoctrineProxyCache === TRUE) {
+			$this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
+			$this->getCache('Flow_Persistence_Doctrine')->flush();
+			$objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
+		}
+	}
+
+	/**
+	 * Flushes policy/routing caches if routes or policies have changed
+	 *
+	 * @param array $changedFiles A list of full paths to changed files
+	 * @return void
+	 * @see flushSystemCachesByChangedFiles()
+	 */
+	protected function flushConfigurationCachesByChangedFiles(array $changedFiles) {
+		$objectClassesCache = $this->getCache('Flow_Object_Classes');
+		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
+		$caches = array(
+			'/Policy\.yaml/' => array('Flow_Security_Policy'),
+			'/Routes([^\/]*)\.yaml/' => array('Flow_Mvc_Routing_FindMatchResults', 'Flow_Mvc_Routing_Resolve'),
+		);
+		$cachesToFlush = array();
+		foreach (array_keys($changedFiles) as $pathAndFilename) {
+			foreach ($caches as $cacheFilePattern => $cacheNames) {
+				if (preg_match($cacheFilePattern, $pathAndFilename) !== 1) {
+					continue;
+				}
+				foreach ($caches[$cacheFilePattern] as $cacheName) {
+					$cachesToFlush[$cacheName] = $cacheFilePattern;
+				}
+			}
+		}
+		foreach ($cachesToFlush as $cacheName => $cacheFilePattern) {
+			$this->systemLogger->log(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LOG_INFO);
+			$this->getCache($cacheName)->flush();
+		}
+		$this->systemLogger->log('The configuration has changed, triggering an AOP proxy class rebuild.', LOG_INFO);
+		$objectConfigurationCache->remove('allAspectClassesUpToDate');
+		$objectConfigurationCache->remove('allCompiledCodeUpToDate');
+		$objectClassesCache->flush();
+	}
+
+	/**
+	 * Flushes I18n caches if translation files have changed
+	 *
+	 * @param array $changedFiles A list of full paths to changed files
+	 * @return void
+	 * @see flushSystemCachesByChangedFiles()
+	 */
+	protected function flushTranslationCachesByChangedFiles(array $changedFiles) {
+		foreach ($changedFiles as $pathAndFilename => $status) {
+			if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename) === 1) {
+				$this->systemLogger->log('The localization files have changed, thus flushing the I18n XML model cache.', LOG_INFO);
+				$this->getCache('Flow_I18n_XmlModelCache')->flush();
+				break;
+			}
 		}
 	}
 
