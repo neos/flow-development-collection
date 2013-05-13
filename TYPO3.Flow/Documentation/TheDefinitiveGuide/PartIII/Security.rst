@@ -422,15 +422,23 @@ configuration:
   security:
     authentication:
       providers:
+        'LocalNetworkProvider':
+          provider: 'FileBasedSimpleKeyProvider'
+          providerOptions:
+            keyName: 'AdminKey'
+            authenticateRoles: ['Acme.SomePackage:Administrator']
+          requestPatterns:
+            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
+            ip: '192.168.178.0/24'
         'MyLDAPProvider':
           provider: 'TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider'
           providerOptions: 'Some LDAP configuration options'
           requestPatterns:
-           controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
+            controllerObjectName: 'TYPO3\MyApplication\AdministrationArea\.*'
         DefaultProvider:
           provider: 'PersistedUsernamePasswordProvider'
           requestPatterns:
-           controllerObjectName: 'TYPO3\MyApplication\UserArea\.*'
+            controllerObjectName: 'TYPO3\MyApplication\UserArea\.*'
 
 Look at the new configuration option ``requestPatterns``. This enables or disables an
 authentication provider, depending on given patterns. The patterns will look into the
@@ -439,7 +447,8 @@ The patterns in the example above will match, if the controller object name of t
 request (the controller to be called) matches on the given regular expression. If a
 pattern does not match, the corresponding provider will be ignored in the whole
 authentication process. In the above scenario this means, all controllers responsible for
-the administration area will use the LDAP authentication provider, the user area
+the administration area will use the LDAP authentication provider unless the
+user is on the internal network, in which case he can use a simple password. The user area
 controllers will be authenticated by the default username/password provider.
 
 .. note::
@@ -1305,6 +1314,14 @@ firewall configuration will look like:
               patternType:  'URI'
               patternValue: '/some/url/blocked.*'
               interceptor:  'AccessDeny'
+            -
+              patternType:  'Host'
+              patternValue: 'static.mydomain.*'
+              interceptor:  'AccessDeny'
+            -
+              patternType:  'Ip'
+              patternValue: '192.168.178.0/24'
+              interceptor:  'AccessGrant'
             -
               patternType:  'Acme\MyPackage\Security\MyOwnRequestPattern'
               patternValue: 'some pattern value'
