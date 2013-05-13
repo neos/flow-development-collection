@@ -31,7 +31,7 @@ class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals(array('array', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
 		$this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
@@ -43,5 +43,37 @@ class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sourceArray = array('Foo' => 'Bar', 'Baz');
 		$this->assertEquals($sourceArray, $this->converter->convertFrom($sourceArray, 'array'));
 	}
+
+	/**
+	 * @test
+	 * @dataProvider stringToArrayDataProvider
+	 */
+	public function canConvertFromStringToArray($source, $expectedResult) {
+		$this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array'));
+	}
+
+	public function stringToArrayDataProvider() {
+		return array(
+			array('Foo,Bar,Baz', array('Foo', 'Bar', 'Baz')),
+			array('', array())
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function explodeDelimiterCanBeChangedByThePropertyMappingConfiguration() {
+		$source = 'Foo, Bar, Baz';
+		$expectedResult = array('Foo', 'Bar', 'Baz');
+
+		$propertyMappingConfiguration = $this->getMock('\TYPO3\Flow\Property\PropertyMappingConfiguration');
+		$propertyMappingConfiguration
+			->expects($this->any())
+			->method('getConfigurationValue')
+			->will($this->returnValue(', '));
+
+		$this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', array(), $propertyMappingConfiguration));
+	}
+
 }
 ?>
