@@ -56,6 +56,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 				$this->isValid($value);
 			}
 		}
+
 		return $this->result;
 	}
 
@@ -86,6 +87,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 			return TRUE;
 		} else {
 			$this->validatedInstancesContainer->attach($object);
+
 			return FALSE;
 		}
 	}

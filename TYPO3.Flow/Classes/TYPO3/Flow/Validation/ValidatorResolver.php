@@ -129,6 +129,7 @@ class ValidatorResolver {
 		if (!array_key_exists($indexKey, $this->baseValidatorConjunctions)) {
 			$this->buildBaseValidatorConjunction($indexKey, $targetClassName, $validationGroups);
 		}
+
 		return $this->baseValidatorConjunctions[$indexKey];
 	}
 
@@ -203,6 +204,7 @@ class ValidatorResolver {
 				throw new Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $annotationParameters['argumentName'] . '", but this argument does not exist.', 1253172726);
 			}
 		}
+
 		return $validatorConjunctions;
 	}
 
@@ -226,6 +228,7 @@ class ValidatorResolver {
 		}
 
 		$parentObjectValidator->addPropertyValidator(array_shift($objectPath), $propertyValidator);
+
 		return $rootObjectValidator;
 	}
 
@@ -271,8 +274,8 @@ class ValidatorResolver {
 				}
 				$propertyTargetClassName = $parsedType['type'];
 				if (\TYPO3\Flow\Utility\TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
-						$collectionValidator = $this->createValidator('TYPO3\Flow\Validation\Validator\CollectionValidator', array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
-						$objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
+					$collectionValidator = $this->createValidator('TYPO3\Flow\Validation\Validator\CollectionValidator', array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
+					$objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
 				} elseif (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\Flow\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
 					if (count($validatorForProperty) > 0) {
@@ -296,13 +299,51 @@ class ValidatorResolver {
 			if (count($objectValidator->getPropertyValidators()) > 0) {
 				$conjunctionValidator->addValidator($objectValidator);
 			}
+		}
 
-				// Custom validator for the class
-			$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $targetClassName) . 'Validator';
-			$customValidator = $this->createValidator($possibleValidatorClassName);
-			if ($customValidator !== NULL) {
-				$conjunctionValidator->addValidator($customValidator);
+		$this->addCustomValidators($targetClassName, $conjunctionValidator);
+	}
+
+	/**
+	 * This adds custom validators to the passed $conjunctionValidator.
+	 *
+	 * A custom validator is found if it follows the naming convention "Replace '\Model\' by '\Validator\' and
+	 * append 'Validator'". If found, it will be added to the $conjunctionValidator.
+	 *
+	 * In addition canValidate() will be called on all implementations of the ObjectValidatorInterface to find
+	 * all validators that could validate the target. The one with the highest priority will be added as well.
+	 * If multiple validators have the same priority, which one will be added is not deterministic.
+	 *
+	 * @param string $targetClassName
+	 * @param ConjunctionValidator $conjunctionValidator
+	 * @return NULL|Validator\ObjectValidatorInterface
+	 */
+	protected function addCustomValidators($targetClassName, ConjunctionValidator &$conjunctionValidator) {
+			// Custom validator for the class
+		$addedValidatorClassName = NULL;
+		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $targetClassName) . 'Validator';
+		$customValidator = $this->createValidator($possibleValidatorClassName);
+		if ($customValidator !== NULL) {
+			$conjunctionValidator->addValidator($customValidator);
+			$addedValidatorClassName = get_class($customValidator);
+		}
+
+			// find polytype validator for class
+		$acceptablePolyTypeValidators = array();
+		$objectValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface');
+		foreach ($objectValidatorImplementationClassNames as $validatorImplementationClassName) {
+			$acceptablePolyTypeValidator = $this->createValidator($validatorImplementationClassName);
+				// skip custom validator already added above
+			if ($addedValidatorClassName === get_class($acceptablePolyTypeValidator)) {
+				continue;
 			}
+			if ($acceptablePolyTypeValidator->canValidate($targetClassName)) {
+				$acceptablePolyTypeValidators[$acceptablePolyTypeValidator->getPriority()] = $acceptablePolyTypeValidator;
+			}
+		}
+		if (count($acceptablePolyTypeValidators) > 0) {
+			ksort($acceptablePolyTypeValidators);
+			$conjunctionValidator->addValidator(array_pop($acceptablePolyTypeValidators));
 		}
 	}
 
