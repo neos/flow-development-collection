@@ -1,10 +1,12 @@
-FLOW3 Command Reference
-=======================
+.. _TYPO3 Flow Command Reference:
+
+TYPO3 Flow Command Reference
+============================
 
 .. note:
 
-  This reference uses ``./flow3`` as the command to invoke. If you are on
-  Windows, this will probably not work, there you need to use ``flow3.bat``
+  This reference uses ``./flow`` as the command to invoke. If you are on
+  Windows, this will probably not work, there you need to use ``flow.bat``
   instead.
 
 The commands in this reference are shown with their full command identifiers.
@@ -15,9 +17,9 @@ identifier is determined during runtime).
 To see the shortest possible identifiers on your system as well as further
 commands that may be available, use::
 
-  ./flow3 help
+  ./flow help
 
-The following reference was automatically generated from code on 2012-12-10
+The following reference was automatically generated from code on 2013-05-15
 
 
 Package *TYPO3.FLOW*
@@ -84,6 +86,44 @@ Related commands
 
 
 
+``typo3.flow:configuration:generateschema``
+*******************************************
+
+**Generate a schema for the given configuration or YAML file.**
+
+./flow configuration:generateschema --type Settings --path TYPO3.Flow.persistence
+
+The schema will be output to standard output.
+
+
+
+Options
+^^^^^^^
+
+``--type``
+  Configuration type to create a schema for
+``--path``
+  path to the subconfiguration separated by "." like "TYPO3.Flow
+``--yaml``
+  YAML file to create a schema for
+
+
+
+
+
+``typo3.flow:configuration:listtypes``
+**************************************
+
+**List registered configuration types**
+
+
+
+
+
+
+
+
+
 ``typo3.flow:configuration:show``
 *********************************
 
@@ -113,15 +153,14 @@ Options
 
 **Validate the given configuration**
 
+**Validate all configuration**
+./flow configuration:validate
+
+**Validate configuration at a certain subtype**
 ./flow configuration:validate --type Settings --path TYPO3.Flow.persistence
 
-The schemas are searched in the path "Resources/Private/Schema" of all
-active Packages. The schema-filenames must match the pattern
-__type__.__path__.schema.yaml. The type and/or the path can also be
-expressed as subdirectories of Resources/Private/Schema. So
-Settings/TYPO3/Flow.persistence.schema.yaml will match the same pathes
-like Settings.TYPO3.Flow.persistence.schema.yaml or
-Settings/TYPO3.Flow/persistence.schema.yaml
+You can retrieve the available configuration types with:
+./flow configuration:listtypes
 
 
 
@@ -132,55 +171,8 @@ Options
   Configuration type to validate
 ``--path``
   path to the subconfiguration separated by "." like "TYPO3.Flow
-
-
-
-
-
-``typo3.flow:configuration:generateschema``
-*******************************************
-
-**Generate a schema for the given configuration or YAML file.**
-
-./flow configuration:generateschema --type Settings --path TYPO3.Flow.persistence
-
-The schema will be output to standard output.
-
-
-
-Options
-^^^^^^^
-
-``--type``
-  Configuration type to create a schema for
-``--path``
-  path to the subconfiguration separated by "." like "TYPO3.Flow
-``--yaml``
-  YAML file to create a schema for
-
-
-
-
-
-``typo3.flow:core:setfilepermissions``
-**************************************
-
-**Adjust file permissions for CLI and web server access**
-
-This command adjusts the file permissions of the whole Flow application to
-the given command line user and webserver user / group.
-
-Arguments
-^^^^^^^^^
-
-``--commandline-user``
-  User name of the command line user, for example "john
-``--webserver-user``
-  User name of the webserver, for example "www-data
-``--webserver-group``
-  Group name of the webserver, for example "www-data
-
-
+``--verbose``
+  if TRUE, output more verbose information on the schema files which were used
 
 
 
@@ -220,6 +212,30 @@ Related commands
 
 
 
+``typo3.flow:core:setfilepermissions``
+**************************************
+
+**Adjust file permissions for CLI and web server access**
+
+This command adjusts the file permissions of the whole Flow application to
+the given command line user and webserver user / group.
+
+Arguments
+^^^^^^^^^
+
+``--commandline-user``
+  User name of the command line user, for example "john
+``--webserver-user``
+  User name of the webserver, for example "www-data
+``--webserver-group``
+  Group name of the webserver, for example "www-data
+
+
+
+
+
+
+
 ``typo3.flow:core:shell``
 *************************
 
@@ -232,30 +248,6 @@ additionally supports autocompletion and a user-based command history.
 
 
 
-
-
-
-``typo3.flow:doctrine:validate``
-********************************
-
-**Validate the class/table mappings**
-
-Checks if the current class model schema is valid. Any inconsistencies
-in the relations between models (for example caused by wrong or
-missing annotations) will be reported.
-
-Note that this does not check the table structure in the database in
-any way.
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow:doctrine:entitystatus``
-  Show the current status of entities and mappings
 
 
 
@@ -289,34 +281,30 @@ Related commands
 
 
 
-``typo3.flow:doctrine:update``
-******************************
+``typo3.flow:doctrine:dql``
+***************************
 
-**Update the database schema**
+**Run arbitrary DQL and display results**
 
-Updates the database schema without using existing migrations.
+Any DQL queries passed after the parameters will be executed, the results will be output:
 
-It will not drop foreign keys, sequences and tables, unless *--unsafe-mode* is set.
+doctrine:dql --limit 10 'SELECT a FROM TYPO3\Flow\Security\Account a'
 
 
 
 Options
 ^^^^^^^
 
-``--unsafe-mode``
-  If set, foreign keys, sequences and tables can potentially be dropped.
-``--output``
-  A file to write SQL to, instead of executing the update directly
+``--depth``
+  How many levels deep the result should be dumped
+``--hydration-mode``
+  One of: object, array, scalar, single-scalar, simpleobject
+``--offset``
+  Offset the result by this number
+``--limit``
+  Limit the result to this number
 
 
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow:doctrine:create``
-  Create the database schema
-``typo3.flow:doctrine:migrate``
-  Migrate the database schema
 
 
 
@@ -345,59 +333,6 @@ Related commands
 
 ``typo3.flow:doctrine:validate``
   Validate the class/table mappings
-
-
-
-``typo3.flow:doctrine:dql``
-***************************
-
-**Run arbitrary DQL and display results**
-
-Any DQL queries passed after the parameters will be executed, the results will be output:
-
-doctrine:dql --limit 10 'SELECT a FROM TYPO3\Flow\Security\Account a'
-
-
-
-Options
-^^^^^^^
-
-``--depth``
-  How many levels deep the result should be dumped
-``--hydration-mode``
-  One of: object, array, scalar, single-scalar, simpleobject
-``--offset``
-  Offset the result by this number
-``--limit``
-  Limit the result to this number
-
-
-
-
-
-``typo3.flow:doctrine:migrationstatus``
-***************************************
-
-**Show the current migration status**
-
-Displays the migration configuration as well as the number of
-available, executed and pending migrations.
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow:doctrine:migrate``
-  Migrate the database schema
-``typo3.flow:doctrine:migrationexecute``
-  Execute a single migration
-``typo3.flow:doctrine:migrationgenerate``
-  Generate a new migration
-``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
 
 
 
@@ -480,6 +415,66 @@ Related commands
 
 
 
+``typo3.flow:doctrine:migrationgenerate``
+*****************************************
+
+**Generate a new migration**
+
+If $diffAgainstCurrent is TRUE (the default), it generates a migration file
+with the diff between current DB structure and the found mapping metadata.
+
+Otherwise an empty migration skeleton is generated.
+
+
+
+Options
+^^^^^^^
+
+``--diff-against-current``
+  Whether to base the migration on the current schema structure
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:doctrine:migrate``
+  Migrate the database schema
+``typo3.flow:doctrine:migrationstatus``
+  Show the current migration status
+``typo3.flow:doctrine:migrationexecute``
+  Execute a single migration
+``typo3.flow:doctrine:migrationversion``
+  Mark/unmark a migration as migrated
+
+
+
+``typo3.flow:doctrine:migrationstatus``
+***************************************
+
+**Show the current migration status**
+
+Displays the migration configuration as well as the number of
+available, executed and pending migrations.
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:doctrine:migrate``
+  Migrate the database schema
+``typo3.flow:doctrine:migrationexecute``
+  Execute a single migration
+``typo3.flow:doctrine:migrationgenerate``
+  Generate a new migration
+``typo3.flow:doctrine:migrationversion``
+  Mark/unmark a migration as migrated
+
+
+
 ``typo3.flow:doctrine:migrationversion``
 ****************************************
 
@@ -520,37 +515,58 @@ Related commands
 
 
 
-``typo3.flow:doctrine:migrationgenerate``
-*****************************************
+``typo3.flow:doctrine:update``
+******************************
 
-**Generate a new migration**
+**Update the database schema**
 
-If $diffAgainstCurrent is TRUE (the default), it generates a migration file
-with the diff between current DB structure and the found mapping metadata.
+Updates the database schema without using existing migrations.
 
-Otherwise an empty migration skeleton is generated.
+It will not drop foreign keys, sequences and tables, unless *--unsafe-mode* is set.
 
 
 
 Options
 ^^^^^^^
 
-``--diff-against-current``
-  Whether to base the migration on the current schema structure
+``--unsafe-mode``
+  If set, foreign keys, sequences and tables can potentially be dropped.
+``--output``
+  A file to write SQL to, instead of executing the update directly
 
 
 
 Related commands
 ^^^^^^^^^^^^^^^^
 
+``typo3.flow:doctrine:create``
+  Create the database schema
 ``typo3.flow:doctrine:migrate``
   Migrate the database schema
-``typo3.flow:doctrine:migrationstatus``
-  Show the current migration status
-``typo3.flow:doctrine:migrationexecute``
-  Execute a single migration
-``typo3.flow:doctrine:migrationversion``
-  Mark/unmark a migration as migrated
+
+
+
+``typo3.flow:doctrine:validate``
+********************************
+
+**Validate the class/table mappings**
+
+Checks if the current class model schema is valid. Any inconsistencies
+in the relations between models (for example caused by wrong or
+missing annotations) will be reported.
+
+Note that this does not check the table structure in the database in
+any way.
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:doctrine:entitystatus``
+  Show the current status of entities and mappings
 
 
 
@@ -569,51 +585,6 @@ Options
 
 ``--command-identifier``
   Identifier of a command for more details
-
-
-
-
-
-``typo3.flow:package:create``
-*****************************
-
-**Create a new package**
-
-This command creates a new package which contains only the mandatory
-directories and files.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.kickstart:kickstart:package``
-  Kickstart a new package
-
-
-
-``typo3.flow:package:delete``
-*****************************
-
-**Delete an existing package**
-
-This command deletes an existing package identified by the package key.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
 
 
 
@@ -644,6 +615,32 @@ Related commands
 
 
 
+``typo3.flow:package:create``
+*****************************
+
+**Create a new package**
+
+This command creates a new package which contains only the mandatory
+directories and files.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key of the package to create
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.kickstart:kickstart:package``
+  Kickstart a new package
+
+
+
 ``typo3.flow:package:deactivate``
 *********************************
 
@@ -669,25 +666,22 @@ Related commands
 
 
 
-``typo3.flow:package:list``
-***************************
+``typo3.flow:package:delete``
+*****************************
 
-**List available packages**
+**Delete an existing package**
 
-Lists all locally available packages. Displays the package key, version and
-package title and its state – active or inactive.
+This command deletes an existing package identified by the package key.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key of the package to create
 
 
 
 
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow:package:activate``
-  Activate an available package
-``typo3.flow:package:deactivate``
-  Deactivate a package
 
 
 
@@ -729,35 +723,25 @@ Related commands
 
 
 
-``typo3.flow:package:unfreeze``
-*******************************
+``typo3.flow:package:list``
+***************************
 
-**Unfreeze a package**
+**List available packages**
 
-Unfreezes a previously frozen package. On the next request, this package will
-be considered again by the file monitoring and related services – if they are
-enabled in the current context.
-
-By specifying **all** as a package key, all currently frozen packages are
-unfrozen (the default).
+Lists all locally available packages. Displays the package key, version and
+package title and its state – active or inactive.
 
 
-
-Options
-^^^^^^^
-
-``--package-key``
-  Key of the package to unfreeze, or 'all'
 
 
 
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:freeze``
-  Freeze a package
-``typo3.flow:cache:flush``
-  Flush all caches
+``typo3.flow:package:activate``
+  Activate an available package
+``typo3.flow:package:deactivate``
+  Deactivate a package
 
 
 
@@ -794,35 +778,35 @@ Related commands
 
 
 
-``typo3.flow:routing:list``
-***************************
+``typo3.flow:package:unfreeze``
+*******************************
 
-**List the known routes**
+**Unfreeze a package**
 
-This command displays a list of all currently registered routes.
+Unfreezes a previously frozen package. On the next request, this package will
+be considered again by the file monitoring and related services – if they are
+enabled in the current context.
 
-
-
-
-
-
-
-``typo3.flow:routing:show``
-***************************
-
-**Show informations for a route**
-
-This command displays the configuration of a route specified by index number.
-
-Arguments
-^^^^^^^^^
-
-``--index``
-  The index of the route as given by routing:list
+By specifying **all** as a package key, all currently frozen packages are
+unfrozen (the default).
 
 
 
+Options
+^^^^^^^
 
+``--package-key``
+  Key of the package to unfreeze, or 'all'
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:package:freeze``
+  Freeze a package
+``typo3.flow:cache:flush``
+  Flush all caches
 
 
 
@@ -858,6 +842,19 @@ Options
 
 
 
+``typo3.flow:routing:list``
+***************************
+
+**List the known routes**
+
+This command displays a list of all currently registered routes.
+
+
+
+
+
+
+
 ``typo3.flow:routing:routepath``
 ********************************
 
@@ -878,23 +875,22 @@ Arguments
 
 
 
-``typo3.flow:security:importpublickey``
-***************************************
+``typo3.flow:routing:show``
+***************************
 
-**Import a public key**
+**Show informations for a route**
 
-Read a PEM formatted public key from stdin and import it into the
-RSAWalletService.
+This command displays the configuration of a route specified by index number.
+
+Arguments
+^^^^^^^^^
+
+``--index``
+  The index of the route as given by routing:list
 
 
 
 
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow:security:importprivatekey``
-  Import a private key
 
 
 
@@ -922,6 +918,26 @@ Related commands
 
 ``typo3.flow:security:importpublickey``
   Import a public key
+
+
+
+``typo3.flow:security:importpublickey``
+***************************************
+
+**Import a public key**
+
+Read a PEM formatted public key from stdin and import it into the
+RSAWalletService.
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:security:importprivatekey``
+  Import a private key
 
 
 
@@ -962,34 +978,6 @@ Options
 
 Package *TYPO3.KICKSTART*
 -------------------------
-
-
-``typo3.kickstart:kickstart:package``
-*************************************
-
-**Kickstart a new package**
-
-Creates a new package and creates a standard Action Controller and a sample
-template for its Index Action.
-
-For creating a new package without sample code use the package:create command.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key, for example "MyCompany.MyPackageName
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``typo3.flow:package:create``
-  Create a new package
-
 
 
 ``typo3.kickstart:kickstart:actioncontroller``
@@ -1115,6 +1103,34 @@ Related commands
 
 ``typo3.kickstart:kickstart:repository``
   Kickstart a new domain repository
+
+
+
+``typo3.kickstart:kickstart:package``
+*************************************
+
+**Kickstart a new package**
+
+Creates a new package and creates a standard Action Controller and a sample
+template for its Index Action.
+
+For creating a new package without sample code use the package:create command.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key, for example "MyCompany.MyPackageName
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.flow:package:create``
+  Create a new package
 
 
 
