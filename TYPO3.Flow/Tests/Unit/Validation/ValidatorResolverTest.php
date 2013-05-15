@@ -37,7 +37,6 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
-		$this->mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface')->will($this->returnValue(array()));
 
 		$this->validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('dummy'));
 		$this->inject($this->validatorResolver, 'objectManager', $this->mockObjectManager);
@@ -207,6 +206,14 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildBaseValidatorCachesTheResultOfTheBuildBaseValidatorConjunctionCalls() {
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\ValidatorInterface')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->at(1))->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface')->will($this->returnValue(array()));
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockReflectionService));
+		$this->validatorResolver->_set('objectManager', $mockObjectManager);
+		$this->validatorResolver->_set('reflectionService', $mockReflectionService);
+
 		$result1 = $this->validatorResolver->getBaseValidatorConjunction('TYPO3\Virtual\Foo');
 		$this->assertInstanceOf('TYPO3\Flow\Validation\Validator\ConjunctionValidator', $result1, '#1');
 
@@ -450,9 +457,11 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildBaseValidatorConjunctionReturnsNullIfNoValidatorBuilt() {
+		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\ValidatorInterface')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->at(1))->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface')->will($this->returnValue(array()));
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockReflectionService = $this->getMock('\TYPO3\Flow\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface')->will($this->returnValue(array()));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockReflectionService));
 		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('dummy'));
 		$validatorResolver->_set('objectManager', $mockObjectManager);
 		$validatorResolver->_set('reflectionService', $mockReflectionService);
