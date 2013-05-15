@@ -1266,11 +1266,12 @@ The results of methods annotated with ``CompileStatic`` will only be compile in
 ``Production`` context. When Flow is started in a different context, the method
 will be executed during each run.
 
-.. note:: The static method must except exactly one argument which is the TYPO3 Flow
-Object Manager. You cannot use a type hint at this point (for the ``$objectManager``
-argument) because the argument passed could actually be a ``DependencyProxy`` and
-not the real ObjectManager. Please refer to the section about Lazy Dependency
-Injection for more information about ``DependencyProxy``.
+.. note::
+	The static method must except exactly one argument which is the TYPO3 Flow
+	Object Manager. You cannot use a type hint at this point (for the ``$objectManager``
+	argument) because the argument passed could actually be a ``DependencyProxy`` and
+	not the real ObjectManager. Please refer to the section about Lazy Dependency
+	Injection for more information about ``DependencyProxy``.
 
 .. _Martin Fowler's article: http://martinfowler.com/articles/injection.html
 .. _his blog:                http://tapestryjava.blogspot.com/2004/08/dependency-injection-mirror-of-garbage.html
