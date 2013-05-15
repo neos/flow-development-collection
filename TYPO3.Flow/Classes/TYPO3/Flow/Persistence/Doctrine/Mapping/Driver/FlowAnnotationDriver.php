@@ -308,7 +308,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 					}
 				}
 
-				if ($discriminatorMap !== array()) {
+				if (count($discriminatorMap) > 1) {
 					$metadata->setDiscriminatorColumn($discriminatorColumn);
 					$metadata->setDiscriminatorMap($discriminatorMap);
 				} else {
