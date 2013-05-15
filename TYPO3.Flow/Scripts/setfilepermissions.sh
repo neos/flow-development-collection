@@ -52,10 +52,10 @@ sudo -u $COMMANDLINE_USER mkdir -p Web/_Resources
 sudo rm -rf Data/Temporary/*
 
 echo "Setting file permissions, trying to set ACLs via chmod ..." \
-	&& sudo chmod +a "$COMMANDLINE_USER allow read,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
-	&& sudo chmod -R +ai "$COMMANDLINE_USER allow read,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
-	&& sudo chmod +a "$WEBSERVER_USER allow read,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
-	&& sudo chmod -R +ai "$WEBSERVER_USER allow read,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
+	&& sudo chmod +a "$COMMANDLINE_USER allow read,search,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
+	&& sudo chmod -R +ai "$COMMANDLINE_USER allow read,search,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
+	&& sudo chmod +a "$WEBSERVER_USER allow read,search,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1 \
+	&& sudo chmod -R +ai "$WEBSERVER_USER allow read,search,write,append,delete,delete_child,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
 if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo "Setting file permissions, trying to set ACLs via setfacl ..." \
