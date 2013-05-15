@@ -5,15 +5,13 @@ TYPO3 Flow Documentation
 
 .. note::
 
-	This documentation is still incomplete and has rough edges – it's a beta version.
-	While we're working on it, we'd already love to get your feedback! Please share
-	your thoughts in the `TYPO3 Flow mailing list <http://lists.typo3.org/cgi-bin/mailman/listinfo/flow3-general>`_
-	or the #typo3-flow channel on irc.freenode.net
+	We'd love to get your feedback on this documentation! Please share
+	your thoughts in the `TYPO3 Flow mailing list <http://lists.typo3.org/cgi-bin/mailman/listinfo/flow>`_,
+	`the forum <http://forum.typo3.org/index.php/f/22/>`_ or the `#typo3-flow channel <irc://irc.freenode.net/#typo3-flow>`_
+	on irc.freenode.net.
 
 	Help is always greatly appreciated, read :ref:`ch-contributing` to find out how
 	you can improve TYPO3 Flow.
-
-.. tip:: You can also use the left and right arrow keys to jump to the previous or next chapter.
 
 Quickstart
 ----------
