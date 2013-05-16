@@ -250,6 +250,30 @@ It will output the translation assigned to *user.unregistered* key.
 When the translation for particular label or ID is not found, value placed between
 ``<f:translate>`` and ``</f:translate>`` tags will be displayed.
 
+Localizing validation error messages
+====================================
+
+Flow comes with a bundle of translations for all basic validator error messages. To make use
+of these translations, you have to adjust your templates to make use of the ``TranslateViewHelper``.
+
+.. code-block:: xml
+
+  <f:form.validationResults for="{property}">
+	<f:for each="{validationResults.errors}" as="error">
+		{error -> f:translate(key: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}
+	</f:for>
+  </f:form.validationResults>
+
+If you want to change the validation messages, you can create your own translation bundles and adjust
+the package and source parameters of the TranslateViewHelper at this place. See the ValidationErrors.xlf
+files in the Resources/Private/Translations subfolders for reference.
+
+.. tip::
+
+	If you want to have different messages depending on the property, for example if you want to
+	be more elaborate about specific validation errors depending on context, you could add the property
+	to the translate key and provide your own translations.
+
 Localizing resources
 ====================
 
