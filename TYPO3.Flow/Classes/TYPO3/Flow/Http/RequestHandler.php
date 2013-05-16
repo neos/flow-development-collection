@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Http;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Http\Component\ComponentContext;
 
 /**
  * A request handler which can handle HTTP requests.
@@ -24,39 +25,24 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 class RequestHandler implements HttpRequestHandlerInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @var Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Dispatcher
-	 */
-	protected $dispatcher;
-
-	/**
-	 * @var array
-	 */
-	protected $routesConfiguration;
-
-	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\Router
-	 */
-	protected $router;
-
-	/**
-	 * @var \TYPO3\Flow\Security\Context
-	 */
-	protected $securityContext;
-
-	/**
-	 * @var \TYPO3\Flow\Http\Request
+	 * @var Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \TYPO3\Flow\Http\Response
+	 * @var Response
 	 */
 	protected $response;
+
+	/**
+	 * @var Component\ComponentChain
+	 */
+	protected $baseComponentChain;
 
 	/**
 	 * The "http" settings
@@ -73,9 +59,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	public $exit;
 
 	/**
-	 * Constructor
-	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 */
 	public function __construct(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
@@ -115,15 +99,13 @@ class RequestHandler implements HttpRequestHandlerInterface {
 
 		$this->boot();
 		$this->resolveDependencies();
-		$this->request->injectSettings($this->settings);
+		if (isset($this->settings['http']['baseUri'])) {
+			$this->request->setBaseUri(new Uri($this->settings['http']['baseUri']));
+		}
 
-		$this->router->setRoutesConfiguration($this->routesConfiguration);
-		$actionRequest = $this->router->route($this->request);
-		$this->securityContext->setRequest($actionRequest);
+		$componentContext = new ComponentContext($this->request, $this->response);
+		$this->baseComponentChain->handle($componentContext);
 
-		$this->dispatcher->dispatch($actionRequest, $this->response);
-
-		$this->response->makeStandardsCompliant($this->request);
 		$this->response->send();
 
 		$this->bootstrap->shutdown('Runtime');
@@ -133,7 +115,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	/**
 	 * Returns the currently handled HTTP request
 	 *
-	 * @return \TYPO3\Flow\Http\Request
+	 * @return Request
 	 * @api
 	 */
 	public function getHttpRequest() {
@@ -143,7 +125,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	/**
 	 * Returns the HTTP response corresponding to the currently handled request
 	 *
-	 * @return \TYPO3\Flow\Http\Response
+	 * @return Response
 	 * @api
 	 */
 	public function getHttpResponse() {
@@ -169,14 +151,9 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 */
 	protected function resolveDependencies() {
 		$objectManager = $this->bootstrap->getObjectManager();
-		$this->dispatcher = $objectManager->get('TYPO3\Flow\Mvc\Dispatcher');
+		$this->baseComponentChain = $objectManager->get('TYPO3\Flow\Http\Component\ComponentChain');
 
 		$configurationManager = $objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
 		$this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
-
-		$this->routesConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-		$this->router = $objectManager->get('TYPO3\Flow\Mvc\Routing\Router');
-
-		$this->securityContext = $objectManager->get('TYPO3\Flow\Security\Context');
 	}
 }

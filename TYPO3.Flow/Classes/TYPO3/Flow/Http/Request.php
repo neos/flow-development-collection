@@ -30,12 +30,12 @@ class Request extends Message {
 	protected $method = 'GET';
 
 	/**
-	 * @var \TYPO3\Flow\Http\Uri
+	 * @var Uri
 	 */
 	protected $uri;
 
 	/**
-	 * @var \TYPO3\Flow\Http\Uri
+	 * @var Uri
 	 */
 	protected $baseUri;
 
@@ -106,13 +106,12 @@ class Request extends Message {
 	/**
 	 * Creates a new Request object from the given data.
 	 *
-	 * @param \TYPO3\Flow\Http\Uri $uri The request URI
+	 * @param Uri $uri The request URI
 	 * @param string $method Request method, for example "GET"
 	 * @param array $arguments Arguments to send in the request body
 	 * @param array $files
 	 * @param array $server
-	 * @return \TYPO3\Flow\Http\Request
-	 * @throws \InvalidArgumentException
+	 * @return Request
 	 * @api
 	 */
 	static public function create(Uri $uri, $method = 'GET', array $arguments = array(), array $files = array(), array $server = array()) {
@@ -160,23 +159,11 @@ class Request extends Message {
 	 * environment configuration and creates a new instance of this Request class
 	 * matching that data.
 	 *
-	 * @return \TYPO3\Flow\Http\Request
+	 * @return Request
 	 * @api
 	 */
 	static public function createFromEnvironment() {
 		return new static($_GET, $_POST, $_FILES, $_SERVER);
-	}
-
-	/**
-	 * Injects the settings of this package
-	 *
-	 * @param array $settings
-	 * @return void
-	 */
-	public function injectSettings(array $settings) {
-		if (isset($settings['http']['baseUri']) && $settings['http']['baseUri'] !== NULL) {
-			$this->baseUri = new Uri($settings['http']['baseUri']);
-		}
 	}
 
 	/**
@@ -194,7 +181,7 @@ class Request extends Message {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return \TYPO3\Flow\Http\Uri
+	 * @return Uri
 	 * @api
 	 */
 	public function getUri() {
@@ -204,7 +191,7 @@ class Request extends Message {
 	/**
 	 * Returns the detected base URI
 	 *
-	 * @return \TYPO3\Flow\Http\Uri
+	 * @return Uri
 	 * @api
 	 */
 	public function getBaseUri() {
@@ -212,6 +199,13 @@ class Request extends Message {
 			$this->detectBaseUri();
 		}
 		return $this->baseUri;
+	}
+
+	/**
+	 * @param Uri $baseUri
+	 */
+	public function setBaseUri($baseUri) {
+		$this->baseUri = $baseUri;
 	}
 
 	/**
@@ -229,7 +223,6 @@ class Request extends Message {
 	 *
 	 * @param string $method The request method, for example "GET".
 	 * @return void
-	 * @throws \InvalidArgumentException
 	 * @api
 	 */
 	public function setMethod($method) {
@@ -431,7 +424,7 @@ class Request extends Message {
 
 	/**
 	 * Returns the relative path (ie. relative to the web root) and name of the
-	 * script as it was accessed through the webserver.
+	 * script as it was accessed through the web server.
 	 *
 	 * @return string Relative path and name of the PHP script as accessed through the web
 	 * @api
@@ -448,7 +441,7 @@ class Request extends Message {
 
 	/**
 	 * Returns the relative path (ie. relative to the web root) to the script as
-	 * it was accessed through the webserver.
+	 * it was accessed through the web server.
 	 *
 	 * @return string Relative path to the PHP script as accessed through the web
 	 * @api
@@ -519,7 +512,7 @@ class Request extends Message {
 			} else {
 				$newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
 				array_walk($newFieldPaths,
-					function(&$value, $key) {
+					function(&$value) {
 						$value = explode('/', $value);
 					}
 				);
@@ -675,4 +668,5 @@ class Request extends Message {
 	static public function trimMediaType($rawMediaType) {
 		return MediaTypes::trimMediaType($rawMediaType);
 	}
+
 }

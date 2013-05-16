@@ -12,9 +12,11 @@ namespace TYPO3\Flow\Mvc;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\NoSuchOptionException;
 use TYPO3\Flow\Mvc\Controller\ControllerInterface;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  * Dispatches requests to the controller which was specified by the request and
@@ -26,7 +28,7 @@ use TYPO3\Flow\Mvc\Exception\ForwardException;
 class Dispatcher {
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -39,10 +41,10 @@ class Dispatcher {
 	 * Inject the Object Manager through setter injection because property injection
 	 * is not available during compile time.
 	 *
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -59,17 +61,18 @@ class Dispatcher {
 	/**
 	 * Dispatches a request to a controller
 	 *
-	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request to dispatch
-	 * @param \TYPO3\Flow\Mvc\ResponseInterface $response The response, to be modified by the controller
+	 * @param RequestInterface $request The request to dispatch
+	 * @param ResponseInterface $response The response, to be modified by the controller
 	 * @return void
-	 * @throws \TYPO3\Flow\Mvc\Exception\InfiniteLoopException
+	 * @throws Exception\InfiniteLoopException
 	 * @api
 	 */
 	public function dispatch(RequestInterface $request, ResponseInterface $response) {
 		$dispatchLoopCount = 0;
+		/** @var ActionRequest $request */
 		while (!$request->isDispatched()) {
 			if ($dispatchLoopCount++ > 99) {
-				throw new \TYPO3\Flow\Mvc\Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+				throw new Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
 			}
 			$controller = $this->resolveController($request);
 			try {
@@ -90,9 +93,9 @@ class Dispatcher {
 	/**
 	 * This signal is emitted directly before the request is been dispatched to a controller.
 	 *
-	 * @param \TYPO3\Flow\Mvc\RequestInterface $request
-	 * @param \TYPO3\Flow\Mvc\ResponseInterface $response
-	 * @param \TYPO3\Flow\Mvc\Controller\ControllerInterface $controller
+	 * @param RequestInterface $request
+	 * @param ResponseInterface $response
+	 * @param ControllerInterface $controller
 	 * @return void
 	 * @Flow\Signal
 	 */
@@ -103,9 +106,9 @@ class Dispatcher {
 	 * This signal is emitted directly after the request has been dispatched to a controller and the controller
 	 * returned control back to the dispatcher.
 	 *
-	 * @param \TYPO3\Flow\Mvc\RequestInterface $request
-	 * @param \TYPO3\Flow\Mvc\ResponseInterface $response
-	 * @param \TYPO3\Flow\Mvc\Controller\ControllerInterface $controller
+	 * @param RequestInterface $request
+	 * @param ResponseInterface $response
+	 * @param ControllerInterface $controller
 	 * @return void
 	 * @Flow\Signal
 	 */
@@ -116,16 +119,17 @@ class Dispatcher {
 	 * Finds and instantiates a controller that matches the current request.
 	 * If no controller can be found, an instance of NotFoundControllerInterface is returned.
 	 *
-	 * @param \TYPO3\Flow\Mvc\RequestInterface $request The request to dispatch
-	 * @return \TYPO3\Flow\Mvc\Controller\ControllerInterface
-	 * @throws \TYPO3\Flow\Configuration\Exception\NoSuchOptionException
-	 * @throws \TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException
+	 * @param RequestInterface $request The request to dispatch
+	 * @return ControllerInterface
+	 * @throws NoSuchOptionException
+	 * @throws Controller\Exception\InvalidControllerException
 	 */
-	protected function resolveController(\TYPO3\Flow\Mvc\RequestInterface $request) {
+	protected function resolveController(RequestInterface $request) {
+		/** @var ActionRequest $request */
 		$controllerObjectName = $request->getControllerObjectName();
 		if ($controllerObjectName === '') {
 			if (isset($this->settings['mvc']['notFoundController'])) {
-				throw new \TYPO3\Flow\Configuration\Exception\NoSuchOptionException('The configuration option TYPO3.Flow:mvc:notFoundController is deprecated since Flow 2.0. Use the "renderingGroups" option of the production exception handler instead in order to render custom error messages.', 1346949795);
+				throw new NoSuchOptionException('The configuration option TYPO3.Flow:mvc:notFoundController is deprecated since Flow 2.0. Use the "renderingGroups" option of the production exception handler instead in order to render custom error messages.', 1346949795);
 			}
 			$exceptionMessage = 'No controller could be resolved which would match your request';
 			if ($request instanceof ActionRequest) {
@@ -135,12 +139,12 @@ class Dispatcher {
 				}
 				$exceptionMessage .= sprintf('. (%s %s)', $request->getHttpRequest()->getMethod(), $request->getHttpRequest()->getUri());
 			}
-			throw new \TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException($exceptionMessage, 1303209195, NULL, $request);
+			throw new Controller\Exception\InvalidControllerException($exceptionMessage, 1303209195, NULL, $request);
 		}
 
 		$controller = $this->objectManager->get($controllerObjectName);
-		if (!$controller instanceof \TYPO3\Flow\Mvc\Controller\ControllerInterface) {
-			throw new \TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, NULL, $request);
+		if (!$controller instanceof ControllerInterface) {
+			throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, NULL, $request);
 		}
 		return $controller;
 	}

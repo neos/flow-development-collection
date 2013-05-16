@@ -207,7 +207,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->registerCache('Flow_Object_Classes');
 		$this->registerCache('Flow_Object_Configuration');
 
-		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_FindMatchResults');
+		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_Route');
 		$matchResultsCache->expects($this->never())->method('flush');
 		$resolveCache = $this->registerCache('Flow_Mvc_Routing_Resolve');
 		$resolveCache->expects($this->never())->method('flush');
@@ -224,7 +224,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->registerCache('Flow_Object_Classes');
 		$this->registerCache('Flow_Object_Configuration');
 
-		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_FindMatchResults');
+		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_Route');
 		$matchResultsCache->expects($this->once())->method('flush');
 		$resolveCache = $this->registerCache('Flow_Mvc_Routing_Resolve');
 		$resolveCache->expects($this->once())->method('flush');
@@ -243,7 +243,7 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->registerCache('Flow_Object_Classes');
 		$this->registerCache('Flow_Object_Configuration');
 
-		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_FindMatchResults');
+		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_Route');
 		$matchResultsCache->expects($this->once())->method('flush');
 		$resolveCache = $this->registerCache('Flow_Mvc_Routing_Resolve');
 		$resolveCache->expects($this->once())->method('flush');

@@ -17,7 +17,8 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use TYPO3\Flow\Mvc\Routing\Route;
-use TYPO3\Flow\Mvc\Routing\Router;
+use TYPO3\Flow\Mvc\Routing\RouterInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  * Command controller for tasks related to routing
@@ -34,9 +35,15 @@ class RoutingCommandController extends CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var Router
+	 * @var RouterInterface
 	 */
 	protected $router;
+
+	/**
+	 * @Flow\Inject
+	 * @var ObjectManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 * List the known routes
@@ -126,7 +133,7 @@ class RoutingCommandController extends CommandController {
 		foreach ($this->router->getRoutes() as $route) {
 			try {
 				$resolves = $route->resolves($routeValues);
-				$controllerObjectName = $this->router->getControllerObjectName($package, $subpackage, $controller);
+				$controllerObjectName = $this->getControllerObjectName($package, $subpackage, $controller);
 			} catch (InvalidControllerException $e) {
 				$resolves = FALSE;
 			}
@@ -191,7 +198,7 @@ class RoutingCommandController extends CommandController {
 				$this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
 				$this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
 
-				$controllerObjectName = $this->router->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : NULL), $routeValues['@controller']);
+				$controllerObjectName = $this->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : NULL), $routeValues['@controller']);
 				if ($controllerObjectName === NULL) {
 					$this->outputLine('<b>Controller Error:</b>');
 					$this->outputLine('  !!! No Controller Object found !!!');
@@ -214,5 +221,25 @@ class RoutingCommandController extends CommandController {
 	protected function initializeRouter() {
 		$routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
+	}
+
+	/**
+	 * Returns the object name of the controller defined by the package, subpackage key and
+	 * controller name
+	 *
+	 * @param string $packageKey the package key of the controller
+	 * @param string $subPackageKey the subpackage key of the controller
+	 * @param string $controllerName the controller name excluding the "Controller" suffix
+	 * @return string The controller's Object Name or NULL if the controller does not exist
+	 */
+	protected function getControllerObjectName($packageKey, $subPackageKey, $controllerName) {
+		$possibleObjectName = '@package\@subpackage\Controller\@controllerController';
+		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
+		$possibleObjectName = str_replace('@subpackage', $subPackageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
+		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
+
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
+		return ($controllerObjectName !== FALSE) ? $controllerObjectName : NULL;
 	}
 }

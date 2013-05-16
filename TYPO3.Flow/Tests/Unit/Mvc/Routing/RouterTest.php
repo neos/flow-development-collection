@@ -11,11 +11,12 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Mvc\Routing\Router;
 use TYPO3\Flow\Mvc\Routing\RouterCachingService;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
@@ -30,27 +31,22 @@ class RouterTest extends UnitTestCase {
 	protected $router;
 
 	/**
-	 * @var SystemLoggerInterface
+	 * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockSystemLogger;
 
 	/**
-	 * @var RouterCachingService
+	 * @var RouterCachingService|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockRouterCachingService;
 
 	/**
-	 * @var ObjectManagerInterface
-	 */
-	protected $mockObjectManager;
-
-	/**
-	 * @var \TYPO3\Flow\Http\Request
+	 * @var Request|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockHttpRequest;
 
 	/**
-	 * @var ActionRequest
+	 * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockActionRequest;
 
@@ -63,9 +59,6 @@ class RouterTest extends UnitTestCase {
 		$this->mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
 		$this->inject($this->router, 'systemLogger', $this->mockSystemLogger);
 
-		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$this->inject($this->router, 'objectManager', $this->mockObjectManager);
-
 		$this->mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
 		$this->mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriPath')->will($this->returnValue(FALSE));
 		$this->mockRouterCachingService->expects($this->any())->method('getCachedMatchResults')->will($this->returnValue(FALSE));
@@ -74,18 +67,19 @@ class RouterTest extends UnitTestCase {
 		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 
 		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-		$this->mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest', $this->mockHttpRequest)->will($this->returnValue($this->mockActionRequest));
 	}
 
 	/**
 	 * @test
 	 */
 	public function resolveCallsCreateRoutesFromConfiguration() {
+		/** @var Router|\PHPUnit_Framework_MockObject_MockObject $router */
 		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		// not saying anything, but seems better than to expect the exception we'd get otherwise
+		/** @var Route|\PHPUnit_Framework_MockObject_MockObject $mockRoute */
 		$mockRoute = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
 		$mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
 		$mockRoute->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
@@ -299,82 +293,13 @@ class RouterTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function theDefaultPatternForBuildingTheControllerObjectNameIsPackageKeyControllerControllerNameController() {
-		$this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('testpackage\Controller\fooController'))
-			->will($this->returnValue('TestPackage\Controller\FooController'));
-
-		$this->assertEquals('TestPackage\Controller\FooController', $this->router->getControllerObjectName('testpackage', '', 'foo'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
-		$this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('testpackage\bar\baz\Controller\fooController'))
-			->will($this->returnValue('TestPackage\Bar\Baz\Controller\FooController'));
-
-		$this->assertEquals('TestPackage\Bar\Baz\Controller\FooController', $this->router->getControllerObjectName('testpackage', 'bar\baz', 'foo'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function routeSetsDefaultControllerAndActionNameIfNoRouteMatches() {
-		$this->mockActionRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
-		$this->mockActionRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
-		$this->mockActionRequest->expects($this->once())->method('setControllerName')->with('Standard');
-		$this->mockActionRequest->expects($this->once())->method('setControllerActionName')->with('index');
-
-		$router = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Router')->setMethods(array('findMatchResults'))->getMock();
-		$this->inject($router, 'objectManager', $this->mockObjectManager);
-		$router->expects($this->once())->method('findMatchResults')->with($this->mockHttpRequest)->will($this->returnValue(NULL));
-
-		$router->route($this->mockHttpRequest);
-	}
-
-	/**
-	 * @test
-	 */
-	public function routeIgnoresRequestArguments() {
-		$requestArguments = array(
-			'product' => array('__identity' => 'SomeUUID', 'name' => 'name from request'),
-			'toBeOverridden' => 'from request',
-			'toBeKept' => 'keep me'
-		);
-		$routeValues = array(
-			'product' => array('name' => 'Some product', 'price' => 123.45),
-			'toBeOverridden' => 'from route',
-			'newValue' => 'new value from route'
-		);
-
-		$this->mockActionRequest->expects($this->never())->method('getArguments');
-		$this->mockActionRequest->expects($this->once())->method('setArguments')->with($routeValues);
-
-		$router = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Router')->setMethods(array('findMatchResults'))->getMock();
-		$this->inject($router, 'objectManager', $this->mockObjectManager);
-		$router->expects($this->once())->method('findMatchResults')->with($this->mockHttpRequest)->will($this->returnValue($routeValues));
-
-		$router->route($this->mockHttpRequest);
-	}
-
-	/**
-	 * @test
-	 */
 	public function routeReturnsCachedMatchResultsIfFoundInCache() {
 		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
 
 		$cachedMatchResults = array('some' => 'cached results');
 
-		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest', $mockHttpRequest)->will($this->returnValue($mockActionRequest));
-		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
 		$mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($mockHttpRequest)->will($this->returnValue($cachedMatchResults));
@@ -382,7 +307,7 @@ class RouterTest extends UnitTestCase {
 
 		$router->expects($this->never())->method('createRoutesFromConfiguration');
 
-		$this->assertSame($mockActionRequest, $router->route($mockHttpRequest));
+		$this->assertSame($cachedMatchResults, $router->route($mockHttpRequest));
 	}
 
 	/**
@@ -395,13 +320,7 @@ class RouterTest extends UnitTestCase {
 
 		$matchResults = array('some' => 'match results');
 
-		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest', $mockHttpRequest)->will($this->returnValue($mockActionRequest));
-		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
 		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
@@ -413,7 +332,7 @@ class RouterTest extends UnitTestCase {
 
 		$this->mockRouterCachingService->expects($this->once())->method('storeMatchResults')->with($mockHttpRequest, $matchResults);
 
-		$this->assertSame($mockActionRequest, $router->route($mockHttpRequest));
+		$this->assertSame($matchResults, $router->route($mockHttpRequest));
 	}
 
 	/**
@@ -426,13 +345,7 @@ class RouterTest extends UnitTestCase {
 
 		$matchResults = NULL;
 
-		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
-
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('get')->with('TYPO3\Flow\Mvc\ActionRequest', $mockHttpRequest)->will($this->returnValue($mockActionRequest));
-		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
 		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
@@ -460,7 +373,7 @@ class RouterTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function findMatchResultsSetsLastMatchedRoute() {
+	public function routeSetsLastMatchedRoute() {
 		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
 		$this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
 		$this->inject($router, 'systemLogger', $this->mockSystemLogger);
@@ -474,49 +387,9 @@ class RouterTest extends UnitTestCase {
 
 		$router->_set('routes', array($mockRoute1, $mockRoute2));
 
-		$router->_call('findMatchResults', $mockHttpRequest);
+		$router->route($mockHttpRequest);
 
 		$this->assertSame($mockRoute2, $router->getLastMatchedRoute());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getControllerObjectNameReturnsNullIfTheResolvedControllerDoesNotExist() {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('testpackage\Controller\fooController'))
-			->will($this->returnValue(FALSE));
-
-		$this->inject($this->router, 'objectManager', $mockObjectManager);
-
-		$this->assertEquals('', $this->router->getControllerObjectName('testpackage', '', 'foo'));
-	}
-
-	/**
-	 * Data Provider
-	 *
-	 * @return array
-	 */
-	public function getControllerObjectNameDataProvider() {
-		return array(
-			array('MyPackage', NULL, 'MyController', 'MyPackage\Controller\MyControllerController'),
-			array('MyCompany.MyPackage', NULL, 'MyController', 'MyCompany\MyPackage\Controller\MyControllerController'),
-			array('Com.FineDudeArt.Gallery', 'Media', 'Image', 'Com\FineDudeArt\Gallery\Media\Controller\ImageController')
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider getControllerObjectNameDataProvider
-	 */
-	public function getControllerObjectNameReturnsCorrectObjectNamesBasedOnTheGivenArguments($packageKey, $subpackageKey, $controllerName, $expectedObjectName) {
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnArgument(0));
-
-		$this->inject($this->router, 'objectManager', $mockObjectManager);
-
-		$this->assertEquals($expectedObjectName, $this->router->getControllerObjectName($packageKey, $subpackageKey, $controllerName));
 	}
 
 }

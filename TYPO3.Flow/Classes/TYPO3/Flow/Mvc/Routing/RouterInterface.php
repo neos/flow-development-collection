@@ -15,17 +15,16 @@ use TYPO3\Flow\Http\Request;
 
 /**
  * Contract for a Web Router
- *
  */
 interface RouterInterface {
 
 	/**
-	 * Walks through all configured routes and calls their respective matches-method.
-	 * When a corresponding route is found, package, controller, action and possible parameters
-	 * are set on the $request object
+	 * Iterates through all configured routes and calls matches() on them.
+	 * Returns the matchResults of the matching route or NULL if no matching
+	 * route could be found.
 	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @param Request $httpRequest
+	 * @return array The results of the matching route or NULL if no route matched
 	 */
 	public function route(Request $httpRequest);
 
@@ -37,15 +36,4 @@ interface RouterInterface {
 	 * @return string URI
 	 */
 	public function resolve(array $routeValues);
-
-	/**
-	 * Returns the object name of the controller defined by the package, subpackage key and
-	 * controller name
-	 *
-	 * @param string $packageKey the package key of the controller
-	 * @param string $subPackageKey the subpackage key of the controller
-	 * @param string $controllerName the controller name excluding the "Controller" suffix
-	 * @return string The controller's Object Name or NULL if the controller does not exist
-	 */
-	public function getControllerObjectName($packageKey, $subPackageKey, $controllerName);
 }

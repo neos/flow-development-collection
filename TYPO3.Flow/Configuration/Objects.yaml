@@ -143,18 +143,28 @@ TYPO3\Flow\Monitor\FileMonitor:
             value: Flow_Monitor
 
 #                                                                          #
+# HTTP                                                                     #
+#                                                                          #
+
+TYPO3\Flow\Http\Component\ComponentChain:
+  factoryObjectName: TYPO3\Flow\Http\Component\ComponentChainFactory
+  arguments:
+    1:
+      setting: TYPO3.Flow.http.chain
+
+#                                                                          #
 # MVC                                                                      #
 #                                                                          #
 
 TYPO3\Flow\Mvc\Routing\RouterCachingService:
   properties:
-    findMatchResultsCache:
+    routeCache:
       object:
         factoryObjectName: TYPO3\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
-            value: Flow_Mvc_Routing_FindMatchResults
+            value: Flow_Mvc_Routing_Route
     resolveCache:
       object:
         factoryObjectName: TYPO3\Flow\Cache\CacheManager

@@ -12,8 +12,8 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Request as HttpRequest;
-use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException;
 use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 
@@ -26,53 +26,45 @@ use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
 class Router implements RouterInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 * @Flow\Inject
+	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @var string
-	 */
-	protected $controllerObjectNamePattern = '@package\@subpackage\Controller\@controllerController';
-
-	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\RouterCachingService
-	 * @Flow\Inject
+	 * @var RouterCachingService
 	 */
 	protected $routerCachingService;
 
 	/**
-	 * Array containing the configuration for all routes.
+	 * Array containing the configuration for all routes
+	 *
 	 * @var array
 	 */
 	protected $routesConfiguration = array();
 
 	/**
 	 * Array of routes to match against
+	 *
 	 * @var array
 	 */
 	protected $routes = array();
 
 	/**
 	 * TRUE if route object have been created, otherwise FALSE
+	 *
 	 * @var boolean
 	 */
 	protected $routesCreated = FALSE;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\Route
+	 * @var Route
 	 */
 	protected $lastMatchedRoute;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\Route
+	 * @var Route
 	 */
 	protected $lastResolvedRoute;
 
@@ -88,21 +80,33 @@ class Router implements RouterInterface {
 	}
 
 	/**
-	 * Routes the specified web request by setting the controller name, action and possible
-	 * parameters. If the request could not be routed, it will be left untouched.
+	 * Iterates through all configured routes and calls matches() on them.
+	 * Returns the matchResults of the matching route or NULL if no matching
+	 * route could be found.
 	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest The web request the returned ActionRequest will be bound to
-	 * @return ActionRequest
+	 * @param Request $httpRequest The web request to be analyzed. Will be modified by the router.
+	 * @return array The results of the matching route or NULL if no route matched
 	 */
-	public function route(HttpRequest $httpRequest) {
-		/** @var $actionRequest ActionRequest */
-		$actionRequest = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $httpRequest);
-		$matchResults = $this->findMatchResults($httpRequest);
-		if ($matchResults !== NULL) {
-			$actionRequest->setArguments($matchResults);
+	public function route(Request $httpRequest) {
+		$cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
+		if ($cachedMatchResults !== FALSE) {
+			return $cachedMatchResults;
 		}
-		$this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
-		return $actionRequest;
+		$this->lastMatchedRoute = NULL;
+		$this->createRoutesFromConfiguration();
+
+		/** @var $route Route */
+		foreach ($this->routes as $route) {
+			if ($route->matches($httpRequest) === TRUE) {
+				$this->lastMatchedRoute = $route;
+				$matchResults = $route->getMatchResults();
+				if ($matchResults !== NULL) {
+					$this->routerCachingService->storeMatchResults($httpRequest, $matchResults);
+				}
+				return $matchResults;
+			}
+		}
+		return NULL;
 	}
 
 	/**
@@ -128,62 +132,12 @@ class Router implements RouterInterface {
 	/**
 	 * Manually adds a route to the beginning of the configured routes
 	 *
-	 * @param \TYPO3\Flow\Mvc\Routing\Route $route
+	 * @param Route $route
 	 * @return void
 	 */
 	public function addRoute(Route $route) {
 		$this->createRoutesFromConfiguration();
 		array_unshift($this->routes, $route);
-	}
-
-	/**
-	 * Set the default controller and action names if none has been specified.
-	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest
-	 * @return void
-	 */
-	protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest) {
-		if ($actionRequest->getControllerName() === NULL) {
-			$actionRequest->setControllerName('Standard');
-		}
-		if ($actionRequest->getControllerActionName() === NULL) {
-			$actionRequest->setControllerActionName('index');
-		}
-	}
-
-	/**
-	 * Iterates through all configured routes and calls matches() on them.
-	 * Returns the matchResults of the matching route or NULL if no matching
-	 * route could be found.
-	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
-	 * @return array results of the matching route
-	 * @see route()
-	 */
-	protected function findMatchResults(HttpRequest $httpRequest) {
-		$cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
-		if ($cachedMatchResults !== FALSE) {
-			return $cachedMatchResults;
-		}
-
-		$this->lastMatchedRoute = NULL;
-		$this->createRoutesFromConfiguration();
-
-		/** @var $route Route */
-		foreach ($this->routes as $route) {
-			if ($route->matches($httpRequest) === TRUE) {
-				$this->lastMatchedRoute = $route;
-				$matchResults = $route->getMatchResults();
-				$this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $route->getName(), $httpRequest->getRelativePath()), LOG_DEBUG);
-				if ($matchResults !== NULL) {
-					$this->routerCachingService->storeMatchResults($httpRequest, $matchResults);
-				}
-				return $matchResults;
-			}
-		}
-
-		$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
-		return NULL;
 	}
 
 	/**
@@ -194,7 +148,7 @@ class Router implements RouterInterface {
 	 *
 	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
 	 * @return string
-	 * @throws \TYPO3\Flow\Mvc\Exception\NoMatchingRouteException
+	 * @throws NoMatchingRouteException
 	 */
 	public function resolve(array $routeValues) {
 		$cachedResolvedUriPath = $this->routerCachingService->getCachedResolvedUriPath($routeValues);
@@ -231,11 +185,11 @@ class Router implements RouterInterface {
 	}
 
 	/**
-	 * Creates TYPO3\Flow\Mvc\Routing\Route objects from the injected routes
+	 * Creates \TYPO3\Flow\Mvc\Routing\Route objects from the injected routes
 	 * configuration.
 	 *
 	 * @return void
-	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException
+	 * @throws InvalidRouteSetupException
 	 */
 	protected function createRoutesFromConfiguration() {
 		if ($this->routesCreated === FALSE) {
@@ -276,26 +230,5 @@ class Router implements RouterInterface {
 			}
 			$this->routesCreated = TRUE;
 		}
-	}
-
-	/**
-	 * Returns the object name of the controller defined by the package, subpackage key and
-	 * controller name
-	 *
-	 * @param string $packageKey the package key of the controller
-	 * @param string $subPackageKey the subpackage key of the controller
-	 * @param string $controllerName the controller name excluding the "Controller" suffix
-	 * @return string The controller's Object Name or NULL if the controller does not exist
-	 * @api
-	 */
-	public function getControllerObjectName($packageKey, $subPackageKey, $controllerName) {
-		$possibleObjectName = $this->controllerObjectNamePattern;
-		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
-		$possibleObjectName = str_replace('@subpackage', $subPackageKey, $possibleObjectName);
-		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
-		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
-
-		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
-		return ($controllerObjectName !== FALSE) ? $controllerObjectName : NULL;
 	}
 }

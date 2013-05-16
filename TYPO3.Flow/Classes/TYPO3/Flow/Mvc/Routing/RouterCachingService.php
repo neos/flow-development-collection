@@ -28,7 +28,7 @@ class RouterCachingService {
 	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 * @Flow\Inject
 	 */
-	protected $findMatchResultsCache;
+	protected $routeCache;
 
 	/**
 	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
@@ -55,9 +55,9 @@ class RouterCachingService {
 	 * @return array|boolean the cached route values or FALSE if no cache entry was found
 	 */
 	public function getCachedMatchResults(Request $httpRequest) {
-		$cachedResult = $this->findMatchResultsCache->get($this->buildFindMatchResultsCacheIdentifier($httpRequest));
+		$cachedResult = $this->routeCache->get($this->buildRouteCacheIdentifier($httpRequest));
 		if ($cachedResult !== FALSE) {
-			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $this->buildFindMatchResultsCacheIdentifier($httpRequest), $httpRequest->getRelativePath()), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $this->buildRouteCacheIdentifier($httpRequest), $httpRequest->getRelativePath()), LOG_DEBUG);
 		}
 
 		return $cachedResult;
@@ -74,7 +74,7 @@ class RouterCachingService {
 		if ($this->containsObject($matchResults)) {
 			return;
 		}
-		$this->findMatchResultsCache->set($this->buildFindMatchResultsCacheIdentifier($httpRequest), $matchResults, $this->extractUuids($matchResults));
+		$this->routeCache->set($this->buildRouteCacheIdentifier($httpRequest), $matchResults, $this->extractUuids($matchResults));
 	}
 
 	/**
@@ -111,12 +111,12 @@ class RouterCachingService {
 	}
 
 	/**
-	 * Flushes 'findMatchResults' and 'resolve' caches.
+	 * Flushes 'route' and 'resolve' caches.
 	 *
 	 * @return void
 	 */
 	public function flushCaches() {
-		$this->findMatchResultsCache->flush();
+		$this->routeCache->flush();
 		$this->resolveCache->flush();
 	}
 
@@ -127,7 +127,7 @@ class RouterCachingService {
 	 * @return void
 	 */
 	public function flushCachesByTag($tag) {
-		$this->findMatchResultsCache->flushByTag($tag);
+		$this->routeCache->flushByTag($tag);
 		$this->resolveCache->flushByTag($tag);
 	}
 
@@ -186,7 +186,7 @@ class RouterCachingService {
 	 * @param Request $httpRequest
 	 * @return string
 	 */
-	protected function buildFindMatchResultsCacheIdentifier(Request $httpRequest) {
+	protected function buildRouteCacheIdentifier(Request $httpRequest) {
 		return md5(sprintf('%s_%s_%s', $httpRequest->getUri()->getHost(), $httpRequest->getRelativePath(), $httpRequest->getMethod()));
 	}
 

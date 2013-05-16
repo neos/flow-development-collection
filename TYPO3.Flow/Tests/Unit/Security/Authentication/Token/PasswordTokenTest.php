@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request as HttpRequest;
+use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\ActionRequest;
 use	TYPO3\Flow\Security\Authentication\TokenInterface;
 use	TYPO3\Flow\Security\Authentication\Token\PasswordToken;
@@ -33,7 +33,7 @@ class PasswordTokenTest extends UnitTestCase {
 	protected $mockActionRequest;
 
 	/**
-	 * @var HttpRequest
+	 * @var Request
 	 */
 	protected $mockHttpRequest;
 
