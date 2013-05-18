@@ -17,6 +17,11 @@ namespace TYPO3\Eel\Tests\Unit\FlowQuery;
 class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $mockPersistenceManager;
+
+	/**
 	 * @test
 	 */
 	public function firstReturnsFirstObject() {
@@ -51,6 +56,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$myObject->myProperty2 = 'asdf';
 
 		$myObject2 = new \stdClass();
+		$myObject2->__identity = 'object-identifier-A1-B2';
 
 		$myObject3 = new \stdClass();
 		$myObject3->myProperty = 'aaa';
@@ -168,6 +174,12 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
 				'filter' => '[ myProperty *= sd ]',
 				'expectedResult' => array($myObject)
+			),
+
+			'Identifier match' => array(
+				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+				'filter' => '#object-identifier-A1-B2',
+				'expectedResult' => array($myObject2)
 			)
 		);
 	}
@@ -341,11 +353,25 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return \TYPO3\Eel\FlowQuery\FlowQuery
 	 */
 	protected function createFlowQuery(array $elements) {
-		$flowQuery = $this->getAccessibleMock('\TYPO3\Eel\FlowQuery\FlowQuery', array('dummy'), array($elements));
+		$flowQuery = $this->getAccessibleMock('TYPO3\Eel\FlowQuery\FlowQuery', array('dummy'), array($elements));
 
+			// Set up mock persistence manager to return dummy object identifiers
+		$this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		$this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function($object) {
+			if (isset($object->__identity)) {
+				return $object->__identity;
+			}
+		}));
+
+		$mockPersistenceManager = $this->mockPersistenceManager;
 		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$objectManager->expects($this->any())->method('get')->will($this->returnCallback(function($object) {
-			return new $object;
+		$objectManager->expects($this->any())->method('get')->will($this->returnCallback(function($className) use($mockPersistenceManager) {
+			$instance = new $className;
+				// Special case to inject the mock persistence manager into the filter operation
+			if ($className === 'TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation') {
+				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, TRUE);
+			}
+			return $instance;
 		}));
 
 		$operationResolver = $this->getAccessibleMock('TYPO3\Eel\FlowQuery\OperationResolver', array('dummy'));

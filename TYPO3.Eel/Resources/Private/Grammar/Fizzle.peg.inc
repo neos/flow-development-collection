@@ -19,6 +19,12 @@ namespace TYPO3\Eel\FlowQuery;
  * You can think of it as "Sizzle for PHP" (hence the name).
  */
 class FizzleParser extends \TYPO3\Eel\AbstractParser {
+/*!* FizzleTypes
+
+ObjectIdentifier: / [0-9a-zA-Z_-]+ /
+
+*/
+
 /*!* FilterExpressions
 
 FilterGroup: :Filter ( S ',' S :Filter )*
@@ -29,7 +35,7 @@ FilterGroup: :Filter ( S ',' S :Filter )*
 		$result['Filters'][] = $sub;
 	}
 
-Filter: ( :PropertyNameFilter ) ?  ( AttributeFilters:AttributeFilter )*
+Filter: ( :IdentifierFilter ) ? ( :PropertyNameFilter ) ?  ( AttributeFilters:AttributeFilter )*
 	function AttributeFilters(&$result, $sub) {
 		if (!isset($result['AttributeFilters'])) {
 			$result['AttributeFilters'] = array();
@@ -39,11 +45,16 @@ Filter: ( :PropertyNameFilter ) ?  ( AttributeFilters:AttributeFilter )*
 	function PropertyNameFilter(&$result, $sub) {
 		$result['PropertyNameFilter'] = $sub['Identifier'];
 	}
+	function IdentifierFilter(&$result, $sub) {
+		$result['IdentifierFilter'] = substr($sub['text'], 1);
+	}
 
 PropertyNameFilter: Identifier
 	function Identifier(&$result, $sub) {
 		$result['Identifier'] = $sub['text'];
 	}
+
+IdentifierFilter: '#':ObjectIdentifier
 
 AttributeFilter:
   '[' S

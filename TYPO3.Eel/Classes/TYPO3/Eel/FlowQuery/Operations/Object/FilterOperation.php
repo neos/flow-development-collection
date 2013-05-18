@@ -48,6 +48,12 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	static protected $shortName = 'filter';
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
@@ -104,6 +110,9 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 * @return boolean TRUE if $element matches filter, FALSE otherwise
 	 */
 	protected function matchesFilter($element, $filter) {
+		if (isset($filter['IdentifierFilter']) && !$this->matchesIdentifierFilter($element, $filter['IdentifierFilter'])) {
+			return FALSE;
+		}
 		if (isset($filter['PropertyNameFilter']) && !$this->matchesPropertyNameFilter($element, $filter['PropertyNameFilter'])) {
 			return FALSE;
 		}
@@ -123,7 +132,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	 *
 	 * @param object $element
 	 * @param string $propertyNameFilter
-	 * @return void
+	 * @return boolean
 	 * @throws \TYPO3\Eel\FlowQuery\FizzleException
 	 */
 	protected function matchesPropertyNameFilter($element, $propertyNameFilter) {
@@ -149,6 +158,17 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 		}
 
 		return $this->evaluateOperator($value, $attributeFilter['Operator'], $operand);
+	}
+
+	/**
+	 * Filter the object by its identifier (UUID)
+	 *
+	 * @param object $element
+	 * @param string $identifier
+	 * @return boolean
+	 */
+	protected function matchesIdentifierFilter($element, $identifier) {
+		return ($this->persistenceManager->getIdentifierByObject($element) === $identifier);
 	}
 
 	/**
