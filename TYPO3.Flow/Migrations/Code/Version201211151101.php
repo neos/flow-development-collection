@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Core\Migrations;
 use TYPO3\Flow\Utility\Files;
 
 /**
- * Rename FLOW3 to TYPO3 Flow
+ * Check for globally defined role identifiers in Policy.yaml files
  */
 class Version201211151101 extends AbstractMigration {
 
@@ -25,6 +25,9 @@ class Version201211151101 extends AbstractMigration {
 		$policyExaminationResult = array();
 		$this->processConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY,
 			function ($configuration) use (&$policyExaminationResult) {
+				if (!isset($configuration['roles'])) {
+					return;
+				}
 				$localRoles = array();
 				foreach ($configuration['roles'] as $roleIdentifier => $roleConfiguration) {
 					$localRoles[] = $roleIdentifier;
@@ -35,14 +38,14 @@ class Version201211151101 extends AbstractMigration {
 						continue;
 					}
 					foreach ($roleConfiguration as $parentRoleIdentifier) {
-						if (!in_array($parentRoleIdentifier, $localRoles, TRUE)) {
+						if (strpos($parentRoleIdentifier, ':') === FALSE && !in_array($parentRoleIdentifier, $localRoles, TRUE)) {
 							$policyExaminationResult[] = '"' . $parentRoleIdentifier . '" is used as parent role for "' . $roleIdentifier . '"';
 						}
 					}
 				}
 
 				foreach ($configuration['acls'] as $roleIdentifier => $acl) {
-					if (!in_array($roleIdentifier, $localRoles, TRUE)) {
+					if (strpos($roleIdentifier, ':') === FALSE && !in_array($roleIdentifier, $localRoles, TRUE)) {
 							$policyExaminationResult[] = '"' . $roleIdentifier . '" is used in ACL definition';
 					}
 				}
