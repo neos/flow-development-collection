@@ -102,11 +102,15 @@ class Tools {
 	 * Does a search and replace operation on the given file.
 	 *
 	 * A simple str_replace is used, unless $regularExpression is set
-	 * to TRUE. In tha case preg_replace is used. The given patterns
+	 * to TRUE. In that case preg_replace is used. The given patterns
 	 * are used as given, no quoting is applied!
 	 *
+	 * In case $regularExpression is TRUE, a closure can be given for
+	 * the $replace variable. It should return a string and is given an
+	 * array of matches as parameter.
+	 *
 	 * @param string $search
-	 * @param string $replace
+	 * @param string|\Closure $replace
 	 * @param string $pathAndFilename
 	 * @param boolean $regularExpression
 	 * @return boolean|NULL FALSE on errors, NULL on skip, TRUE on success
@@ -120,8 +124,11 @@ class Tools {
 		$file = file_get_contents($pathAndFilename);
 		$fileBackup = $file;
 		if ($regularExpression === TRUE) {
-			echo $search . PHP_EOL;
-			$file = preg_replace($search, $replace, $file);
+			if ($replace instanceof \Closure) {
+				$file = preg_replace_callback($search, $replace, $file);
+			} else {
+				$file = preg_replace($search, $replace, $file);
+			}
 		} else {
 			$file = str_replace($search, $replace, $file);
 		}
