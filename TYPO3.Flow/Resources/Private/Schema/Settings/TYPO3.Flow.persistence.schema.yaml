@@ -20,6 +20,38 @@ properties:
       'user': { type: string }
       'password':  { type: string }
       'path': { type: string }
+      'wrapperClass': { type: string, format: class-name }
+      'master':
+        type: dictionary
+        properties:
+          'host':
+            -
+              type: string
+              format: host-name
+            -
+              type: string
+              format: ip-address
+          'charset': { type: string }
+          'dbname': { type: string }
+          'user': { type: string }
+          'password':  { type: string }
+      'slaves':
+        type: dictionary
+        additionalProperties:
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'host':
+              -
+                type: string
+                format: host-name
+              -
+                type: string
+                format: ip-address
+            'charset': { type: string }
+            'dbname': { type: string }
+            'user': { type: string }
+            'password':  { type: string }
 
   'doctrine':
     type: dictionary
@@ -27,5 +59,4 @@ properties:
     additionalProperties: FALSE
     properties:
       'enable': { type: boolean, required: TRUE }
-      'cacheImplementation': { type: string, format: class-name, required: TRUE }
       'sqlLogger': { type: [string, 'null'], required: TRUE }
