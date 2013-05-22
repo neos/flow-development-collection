@@ -184,10 +184,13 @@ abstract class AbstractMigration {
 	 * Does a regex search and replace on all (textual) files. The filter array can be
 	 * used to give file extensions to limit the operation to.
 	 *
-	 * The patterns are used as is, no quoting is done.
+	 * The patterns are used as is, no quoting is done. A closure can be given for
+	 * the $replacement variable. It should return a string and is given an
+	 * array of matches as parameter.
+
 	 *
 	 * @param string $search
-	 * @param string $replacement
+	 * @param string|\Closure $replacement
 	 * @param array $filter
 	 * @return void
 	 * @api
