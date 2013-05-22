@@ -15,8 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An action controller for RESTful web services
- *
- * @Flow\Scope("singleton")
  */
 class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
