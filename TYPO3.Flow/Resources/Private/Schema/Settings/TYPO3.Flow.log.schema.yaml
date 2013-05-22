@@ -3,6 +3,7 @@ additionalProperties:
   type: dictionary
   additionalProperties: FALSE
   properties:
+    'logger': { type: string, format: class-name }
     'backend': { type: string, format: class-name }
     'backendOptions':
       type: dictionary
