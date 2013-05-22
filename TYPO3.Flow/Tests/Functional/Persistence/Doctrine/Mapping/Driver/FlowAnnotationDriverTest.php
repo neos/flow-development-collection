@@ -16,6 +16,8 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
  */
 class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
+	static protected $testablePersistenceEnabled = TRUE;
+
 	/**
 	 * @return void
 	 */
@@ -50,10 +52,10 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function inheritanceTypeIsSetToNoneIfNoSubclassesExist() {
-		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
-		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
-		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
-		$this->assertSame($classMetadata->inheritanceType, \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE);
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$this->assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE, $classMetadata->inheritanceType);
 	}
 
 	/**
@@ -141,7 +143,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'fieldName' => 'related',
 			'columnName' => 'related',
 			'joinTable' => array(
-				'name' => 'typo3_flow_tests_functional_persistence_fix_3ebc7_related_join',
+				'name' => 'typo3_flow_tests_functional_persistence_fixt_7e1da_related_join',
 				'schema' => NULL,
 				'joinColumns' => array(
 					0 => array(
