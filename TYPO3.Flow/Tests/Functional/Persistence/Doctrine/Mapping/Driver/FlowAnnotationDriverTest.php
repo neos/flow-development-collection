@@ -51,10 +51,20 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function inheritanceTypeIsSetToNoneIfNoSubclassesExist() {
+	public function inheritanceTypeIsNotChangedIfNoSubclassesOfNonAbstractClassExist() {
 		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
+		$this->assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_JOINED, $classMetadata->inheritanceType);
+	}
+
+	/**
+	 * @test
+	 */
+	public function inheritanceTypeIsSetToNoneIfNoSubclassesOfAbstractClassExist() {
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AbstractEntity');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AbstractEntity', $classMetadata);
 		$this->assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE, $classMetadata->inheritanceType);
 	}
 
