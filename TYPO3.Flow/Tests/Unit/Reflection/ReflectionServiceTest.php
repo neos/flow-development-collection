@@ -62,4 +62,45 @@ class ReflectionServiceTest extends UnitTestCase {
 	public function reflectClassThrowsExceptionForClassesWithNoMatchingFilename() {
 		$this->reflectionService->_call('reflectClass', 'TYPO3\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent');
 	}
+
+	/**
+	 * @test
+	 */
+	public function isTagIgnoredReturnsTrueForIgnoredTags() {
+		$settings = array('reflection' => array('ignoredTags' => array('ignored' => TRUE)));
+		$this->reflectionService->injectSettings($settings);
+
+		$this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isTagIgnoredReturnsFalseForTagsThatAreNotIgnored() {
+		$settings = array('reflection' => array('ignoredTags' => array('notignored' => FALSE)));
+		$this->reflectionService->injectSettings($settings);
+
+		$this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isTagIgnoredReturnsFalseForTagsThatAreNotConfigured() {
+		$settings = array('reflection' => array('ignoredTags' => array('ignored' => TRUE, 'notignored' => FALSE)));
+		$this->reflectionService->injectSettings($settings);
+
+		$this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function isTagIgnoredWorksWithOldConfiguration() {
+		$settings = array('reflection' => array('ignoredTags' => array('ignored')));
+		$this->reflectionService->injectSettings($settings);
+
+		$this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
+		$this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
+	}
 }

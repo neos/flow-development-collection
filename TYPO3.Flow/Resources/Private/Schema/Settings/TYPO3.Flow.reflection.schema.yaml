@@ -2,7 +2,7 @@ type: dictionary
 additionalProperties: FALSE
 properties:
   'ignoredTags':
-    type: array
+    type: dictionary
     required: TRUE
-    items: { type: string }
+    additionalProperties: { type: boolean }
   'logIncorrectDocCommentHints': { type: boolean, required: TRUE }

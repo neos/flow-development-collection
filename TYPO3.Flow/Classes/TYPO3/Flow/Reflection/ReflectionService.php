@@ -330,8 +330,13 @@ class ReflectionService {
 		}
 
 		$this->annotationReader = new AnnotationReader();
-		foreach ($this->settings['reflection']['ignoredTags'] as $tag) {
-			AnnotationReader::addGlobalIgnoredName($tag);
+		foreach ($this->settings['reflection']['ignoredTags'] as $tagName => $ignoreFlag) {
+			// Make this setting backwards compatible with old array schema (deprecated since 3.0)
+			if (is_numeric($tagName) && is_string($ignoreFlag)) {
+				AnnotationReader::addGlobalIgnoredName($ignoreFlag);
+			} elseif ($ignoreFlag === TRUE) {
+				AnnotationReader::addGlobalIgnoredName($tagName);
+			}
 		}
 		AnnotationRegistry::registerLoader(array($this->classLoader, 'loadClass'));
 
@@ -1243,6 +1248,23 @@ class ReflectionService {
 	}
 
 	/**
+	 * Check if a specific annotation tag is configured to be ignored.
+	 *
+	 * @param string $tagName The annotation tag to check
+	 * @return boolean TRUE if the tag is configured to be ignored, FALSE otherwise
+	 */
+	protected function isTagIgnored($tagName) {
+		if (isset($this->settings['reflection']['ignoredTags'][$tagName]) && $this->settings['reflection']['ignoredTags'][$tagName] === TRUE) {
+			return TRUE;
+		}
+		// Make this setting backwards compatible with old array schema (deprecated since 3.0)
+		if (in_array($tagName, $this->settings['reflection']['ignoredTags'], TRUE)) {
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	/**
 	 * Reflects the given class and stores the results in this service's properties.
 	 *
 	 * @param string $className Full qualified name of the class to reflect
@@ -1305,17 +1327,18 @@ class ReflectionService {
 			$visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
 			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
 
-			foreach ($property->getTagsValues() as $tag => $values) {
-				if (array_search($tag, $this->settings['reflection']['ignoredTags']) === FALSE) {
-					if ($tag === 'var' && isset($values[0])) {
-						if ($property->getDeclaringClass()->getName() !== $className && isset($this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag])) {
-							$values = $this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag];
-						} else {
-							$values[0] = $this->expandType($class, $values[0]);
-						}
-					}
-					$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] = $values;
+			foreach ($property->getTagsValues() as $tagName => $tagValues) {
+				if ($this->isTagIgnored($tagName)) {
+					continue;
 				}
+				if ($tagName === 'var' && isset($tagValues[0])) {
+					if ($property->getDeclaringClass()->getName() !== $className && isset($this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName])) {
+						$tagValues = $this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName];
+					} else {
+						$tagValues[0] = $this->expandType($class, $tagValues[0]);
+					}
+				}
+				$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName] = $tagValues;
 			}
 			foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
 				$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
