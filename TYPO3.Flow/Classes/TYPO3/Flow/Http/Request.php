@@ -24,9 +24,6 @@ use TYPO3\Flow\Utility\MediaTypes;
  */
 class Request extends Message {
 
-	const PATTERN_SPLITMEDIARANGE = '/^(?P<type>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
-	const PATTERN_SPLITMEDIATYPE = '/^(?P<type>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
-
 	/**
 	 * @var string
 	 */
@@ -404,13 +401,13 @@ class Request extends Message {
 		$acceptedMediaTypes = $this->getAcceptedMediaTypes();
 		foreach ($acceptedMediaTypes as $acceptedMediaType) {
 			foreach ($supportedMediaTypes as $supportedMediaType) {
-				if (self::mediaRangeMatches($acceptedMediaType, $supportedMediaType)) {
+				if (MediaTypes::mediaRangeMatches($acceptedMediaType, $supportedMediaType)) {
 					$negotiatedMediaType = $supportedMediaType;
 					break 2;
 				}
 			}
 		}
-		return ($trim ? self::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
+		return ($trim ? MediaTypes::trimMediaType($negotiatedMediaType) : $negotiatedMediaType);
 	}
 
 	/**
@@ -503,7 +500,7 @@ class Request extends Message {
 	 * @return array The decoded body
 	 */
 	protected function decodeBodyArguments($body, $mediaType) {
-		switch (self::trimMediaType($mediaType)) {
+		switch (MediaTypes::trimMediaType($mediaType)) {
 			case 'application/json':
 			case 'application/x-javascript':
 			case 'text/javascript':
@@ -614,7 +611,7 @@ class Request extends Message {
 		$valuesWithoutQualityValue = array(array(), array(), array(), array());
 		foreach ($acceptedTypes as $typeAndQuality) {
 			if ($typeAndQuality[1] === '') {
-				$parsedType = Request::parseMediaType($typeAndQuality[0]);
+				$parsedType = MediaTypes::parseMediaType($typeAndQuality[0]);
 				if ($parsedType['type'] === '*') {
 					$valuesWithoutQualityValue[3][$typeAndQuality[0]] = TRUE;
 				} elseif ($parsedType['subtype'] === '*') {
@@ -636,74 +633,40 @@ class Request extends Message {
 
 	/**
 	 * Parses a RFC 2616 Media Type and returns its parts in an associative array.
-	 *
-	 * media-type = type "/" subtype *( ";" parameter)
-	 *
-	 * The media type "text/html; charset=UTF-8" would be parsed and returned with
-	 * the following array keys and values:
-	 *
-	 * "type" => the type as a string, "text"
-	 * "subtype" => the subtype as a string, "html"
-	 * "parameters" => an array of parameter names and values, array("charset" => "UTF-8")
+	 * @see \TYPO3\Flow\Utility\MediaTypes::parseMediaType()
 	 *
 	 * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
 	 * @return array An associative array with parsed information
+	 * @deprecated since Flow 2.1. Use \TYPO3\Flow\Utility\MediaTypes::parseMediaType() instead
 	 */
-	public static function parseMediaType($rawMediaType) {
-		preg_match(self::PATTERN_SPLITMEDIATYPE, $rawMediaType, $matches);
-		$result = array();
-		$result['type'] = isset($matches['type']) ? $matches['type'] : '';
-		$result['subtype'] = isset($matches['subtype']) ? $matches['subtype'] : '';
-		$result['parameters'] = array();
-
-		if (isset($matches['parameters'])) {
-			foreach (Arrays::trimExplode(';', $matches['parameters']) as $parameter) {
-				$pieces = explode('=', $parameter);
-				if (count($pieces) === 2) {
-					$name = trim($pieces[0]);
-					$result['parameters'][$name] = trim($pieces[1]);
-				}
-			}
-		}
-		return $result;
+	static public function parseMediaType($rawMediaType) {
+		return MediaTypes::parseMediaType($rawMediaType);
 	}
 
 	/**
 	 * Checks if the given media range and the media type match.
-	 *
-	 * The pattern used by this function splits each into media type and subtype
-	 * and ignores possible additional parameters or extensions. The prepared types
-	 * and subtypes are then compared and wildcards are considered in this process.
-	 *
-	 * Media ranges are explained in RFC 2616, section 14.1. "Accept".
+	 * @see \TYPO3\Flow\Utility\MediaTypes::mediaRangeMatches()
 	 *
 	 * @param string $mediaRange The media range, for example "text/*"
 	 * @param string $mediaType The media type to match against, for example "text/html"
 	 * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
+	 * @deprecated since Flow 2.1. Use \TYPO3\Flow\Utility\MediaTypes::mediaRangeMatches() instead
 	 */
-	public static function mediaRangeMatches($mediaRange, $mediaType) {
-		preg_match(self::PATTERN_SPLITMEDIARANGE, $mediaRange, $mediaRangeMatches);
-		preg_match(self::PATTERN_SPLITMEDIATYPE, $mediaType, $mediaTypeMatches);
-		if ($mediaRangeMatches === array() || $mediaTypeMatches === array()) {
-			return FALSE;
-		}
-
-		$typeMatches = ($mediaRangeMatches['type'] === '*' || $mediaRangeMatches['type'] === $mediaTypeMatches['type']);
-		$subtypeMatches = ($mediaRangeMatches['subtype'] === '*' || $mediaRangeMatches['subtype'] === $mediaTypeMatches['subtype']);
-
-		return ($typeMatches && $subtypeMatches);
+	static public function mediaRangeMatches($mediaRange, $mediaType) {
+		return MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
 	}
 
 	/**
 	 * Strips off any parameters from the given media type and returns just the type
 	 * and subtype in the format "type/subtype".
+	 * @see \TYPO3\Flow\Utility\MediaTypes::trimMediaType()
 	 *
 	 * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
 	 * @return string Just the type and subtype, for example "application/json"
+	 * @deprecated since Flow 2.1. Use \TYPO3\Flow\Utility\MediaTypes::trimMediaType() instead
 	 */
 	static public function trimMediaType($rawMediaType) {
-		$pieces = self::parseMediaType($rawMediaType);
-		return trim(sprintf('%s/%s', $pieces['type'], $pieces['subtype']), '/') ?: NULL;
+		return MediaTypes::trimMediaType($rawMediaType);
 	}
 }
 

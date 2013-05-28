@@ -27,6 +27,9 @@ namespace TYPO3\Flow\Utility;
  */
 class MediaTypes {
 
+	const PATTERN_SPLITMEDIARANGE = '/^(?P<type>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
+	const PATTERN_SPLITMEDIATYPE = '/^(?P<type>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
+
 	/**
 	 * A map of file extensions to Internet Media Types
 	 *
@@ -1825,6 +1828,78 @@ class MediaTypes {
 	 */
 	static public function getFilenameExtensionsFromMediaType($mediaType) {
 		return isset(self::$mediaTypeToFileExtension[$mediaType]) ? self::$mediaTypeToFileExtension[$mediaType] : array();
+	}
+
+	/**
+	 * Parses a RFC 2616 Media Type and returns its parts in an associative array.
+	 *
+	 * media-type = type "/" subtype *( ";" parameter)
+	 *
+	 * The media type "text/html; charset=UTF-8" would be parsed and returned with
+	 * the following array keys and values:
+	 *
+	 * "type" => the type as a string, "text"
+	 * "subtype" => the subtype as a string, "html"
+	 * "parameters" => an array of parameter names and values, array("charset" => "UTF-8")
+	 *
+	 * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
+	 * @return array An associative array with parsed information
+	 */
+	static public function parseMediaType($rawMediaType) {
+		preg_match(self::PATTERN_SPLITMEDIATYPE, $rawMediaType, $matches);
+		$result = array();
+		$result['type'] = isset($matches['type']) ? $matches['type'] : '';
+		$result['subtype'] = isset($matches['subtype']) ? $matches['subtype'] : '';
+		$result['parameters'] = array();
+
+		if (isset($matches['parameters'])) {
+			foreach (Arrays::trimExplode(';', $matches['parameters']) as $parameter) {
+				$pieces = explode('=', $parameter);
+				if (count($pieces) === 2) {
+					$name = trim($pieces[0]);
+					$result['parameters'][$name] = trim($pieces[1]);
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Checks if the given media range and the media type match.
+	 *
+	 * The pattern used by this function splits each into media type and subtype
+	 * and ignores possible additional parameters or extensions. The prepared types
+	 * and subtypes are then compared and wildcards are considered in this process.
+	 *
+	 * Media ranges are explained in RFC 2616, section 14.1. "Accept".
+	 *
+	 * @param string $mediaRange The media range, for example "text/*"
+	 * @param string $mediaType The media type to match against, for example "text/html"
+	 * @return boolean TRUE if both match, FALSE if they don't match or either of them is invalid
+	 */
+	static public function mediaRangeMatches($mediaRange, $mediaType) {
+		preg_match(self::PATTERN_SPLITMEDIARANGE, $mediaRange, $mediaRangeMatches);
+		preg_match(self::PATTERN_SPLITMEDIATYPE, $mediaType, $mediaTypeMatches);
+		if ($mediaRangeMatches === array() || $mediaTypeMatches === array()) {
+			return FALSE;
+		}
+
+		$typeMatches = ($mediaRangeMatches['type'] === '*' || $mediaRangeMatches['type'] === $mediaTypeMatches['type']);
+		$subtypeMatches = ($mediaRangeMatches['subtype'] === '*' || $mediaRangeMatches['subtype'] === $mediaTypeMatches['subtype']);
+
+		return ($typeMatches && $subtypeMatches);
+	}
+
+	/**
+	 * Strips off any parameters from the given media type and returns just the type
+	 * and subtype in the format "type/subtype".
+	 *
+	 * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
+	 * @return string Just the type and subtype, for example "application/json"
+	 */
+	static public function trimMediaType($rawMediaType) {
+		$pieces = self::parseMediaType($rawMediaType);
+		return trim(sprintf('%s/%s', $pieces['type'], $pieces['subtype']), '/') ?: NULL;
 	}
 }
 ?>
