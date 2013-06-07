@@ -159,7 +159,7 @@ you need to make sure that the directory grants the neccessary rights:
 .. code-block:: none
 
 	<Directory /var/apache2/htdocs/tutorial/>
-		AllowOverride FileInfo
+		AllowOverride FileInfo Options=MultiViews
 	</Directory>
 
 The way TYPO3 Flow addresses resources on the web makes it incompatible with the ``MultiViews``
