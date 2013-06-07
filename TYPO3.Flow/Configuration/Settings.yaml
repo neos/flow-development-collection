@@ -150,13 +150,13 @@ TYPO3:
       # Each regular expression will be tested against the list of fully qualified
       # class names in the package and classes will be excluded if matching.
       excludeClasses:
-       'Doctrine.*' : ['.*']
-       'doctrine.*' : ['.*']
-       'symfony.*' : ['.*']
-       'phpunit.*' : ['.*']
-       'mikey179.vfsStream' : ['.*']
-       # workaround, should rather be deactivated
-       'Composer.Installers': ['.*']
+        'Doctrine.*': ['.*']
+        'doctrine.*': ['.*']
+        'symfony.*': ['.*']
+        'phpunit.*': ['.*']
+        'mikey179.vfsStream': ['.*']
+        # workaround, should rather be deactivated
+        'Composer.Installers': ['.*']
 
     package:
 
