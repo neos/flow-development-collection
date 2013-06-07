@@ -322,9 +322,10 @@ qualified class names in the package and classes will be excluded if matching::
 
   TYPO3:
     Flow:
-      excludeClasses:
-       'Acme.Broken' : ['.*']
-       'other.weird.package' : ['Other\\Weird\\Package\\Tests\\.*']
+      object:
+        excludeClasses:
+          'Acme.Broken' : ['.*']
+          'other.weird.package' : ['Other\\Weird\\Package\\Tests\\.*']
 
 Class loading
 -------------
