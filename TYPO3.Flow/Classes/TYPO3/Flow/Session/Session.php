@@ -554,11 +554,12 @@ class Session implements SessionInterface {
 	public function collectGarbage() {
 		$sessionRemovalCount = 0;
 		if ($this->inactivityTimeout !== 0) {
-			foreach ($this->cache->getByTag('session') as $sessionInfo) {
+			foreach ($this->cache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
 				$lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
 				if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
 					$this->cache->flushByTag($sessionInfo['storageIdentifier']);
 					$sessionRemovalCount ++;
+					$this->cache->remove($sessionIdentifier);
 				}
 			}
 		}

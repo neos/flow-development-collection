@@ -911,11 +911,12 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->resume();
 		$this->assertTrue($session->isStarted());
+		$this->assertTrue($cache->has($sessionIdentifier1), 'session 1 meta entry doesnt exist');
 		$session->close();
 
 		$sessionInfo1 = $cache->get($sessionIdentifier1);
 		$sessionInfo1['lastActivityTimestamp'] = time() - 4000;
-		$cache->set($sessionIdentifier1, $sessionInfo1, array($sessionInfo1['storageIdentifier'], 'session'), 0);
+		$cache->set($sessionIdentifier1, $sessionInfo1, array('session'), 0);
 
 			// Because we change the timeout post factum, the previously valid session
 			// now expires:
@@ -941,6 +942,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sessionInfo2 = $cache->get($sessionIdentifier2);
 
 			// Check how the cache looks like - data of session 1 should be gone:
+		$this->assertFalse($cache->has($sessionIdentifier1), 'session 1 meta entry still there');
 		$this->assertFalse($cache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 1')), 'session 1 key 1 still there');
 		$this->assertFalse($cache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
 		$this->assertTrue($cache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
