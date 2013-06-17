@@ -31,12 +31,12 @@ class SessionManager implements SessionManagerInterface {
 	protected $remoteSessions;
 
 	/**
-	 * Storage cache used by sessions
+	 * Meta data cache used by sessions
 	 *
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
-	protected $cache;
+	protected $metaDataCache;
 
 	/**
 	 * Returns the currently active session which stores session data for the
@@ -67,8 +67,8 @@ class SessionManager implements SessionManagerInterface {
 		if (isset($this->remoteSessions[$sessionIdentifier])) {
 			return $this->remoteSessions[$sessionIdentifier];
 		}
-		if ($this->cache->has($sessionIdentifier)) {
-			$sessionInfo = $this->cache->get($sessionIdentifier);
+		if ($this->metaDataCache->has($sessionIdentifier)) {
+			$sessionInfo = $this->metaDataCache->get($sessionIdentifier);
 			$this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
 			return $this->remoteSessions[$sessionIdentifier];
 		}
@@ -82,7 +82,7 @@ class SessionManager implements SessionManagerInterface {
 	 */
 	public function getActiveSessions() {
 		$activeSessions = array();
-		foreach ($this->cache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
+		foreach ($this->metaDataCache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
 			$session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
 			$activeSessions[] = $session;
 		}
@@ -98,7 +98,7 @@ class SessionManager implements SessionManagerInterface {
 	 */
 	public function getSessionsByTag($tag) {
 		$taggedSessions = array();
-		foreach ($this->cache->getByTag(Session::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionInfo) {
+		foreach ($this->metaDataCache->getByTag(Session::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionInfo) {
 			$session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
 			$taggedSessions[] = $session;
 		}

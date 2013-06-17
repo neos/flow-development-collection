@@ -356,14 +356,21 @@ TYPO3:
       # If left empty, the session name will be determined from the base URL.
       name: 'TYPO3_Flow_Session'
 
-      # The probability in percent of a session shutdown triggering a garbage
-      # collection which removes expired session data from other sessions.
-      #
-      # Examples:
-      #    1    (would be a 1% chance to clean up)
-      #   20    (would be a 20% chance to clean up)
-      #    0.42 (would be a 0.42 % chance to clean up)
-      garbageCollectionProbability: 1
+      # Configuration for handling of expired sessions
+      garbageCollection:
+
+        # The probability in percent of a session shutdown triggering a garbage
+        # collection which removes expired session data from other sessions.
+        #
+        # Examples:
+        #    1    (would be a 1% chance to clean up)
+        #   20    (would be a 20% chance to clean up)
+        #    0.42 (would be a 0.42 % chance to clean up)
+        probability: 30
+
+        # The number of invalid and expired sessions which are removed per garbage
+        # collection run.
+        maximumPerRun: 1000
 
       # Configuration for the session cookie:
       cookie:

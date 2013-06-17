@@ -110,8 +110,10 @@ class LoggingAspect {
 		$sessionRemovalCount = $joinPoint->getResult();
 		if ($sessionRemovalCount > 0) {
 			$this->systemLogger->log(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount), LOG_INFO);
-		} elseif ($sessionRemovalCount !== FALSE) {
+		} elseif ($sessionRemovalCount === 0) {
 			$this->systemLogger->log(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)), LOG_INFO);
+		} elseif ($sessionRemovalCount === FALSE) {
+			$this->systemLogger->log(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)), LOG_WARNING);
 		}
 	}
 
