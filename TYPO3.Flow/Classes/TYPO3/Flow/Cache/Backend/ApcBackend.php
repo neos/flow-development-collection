@@ -16,6 +16,9 @@ namespace TYPO3\Flow\Cache\Backend;
  * A caching backend which stores cache entries by using APC.
  *
  * This backend uses the following types of keys:
+ *
+ * - entry_xxx
+ *   the actual cache entry with the data to be stored
  * - tag_xxx
  *   xxx is tag name, value is array of associated identifiers identifier. This
  *   is "forward" tag index. It is mainly used for obtaining content by tag
@@ -29,20 +32,27 @@ namespace TYPO3\Flow\Cache\Backend;
  *
  * Each key is prepended with a prefix. By default prefix consists from two parts
  * separated by underscore character and ends in yet another underscore character:
+ *
  * - "Flow"
- * - MD5 of SAPI type, path to Flow and user running Flow
+ * - MD5 of path to Flow and the current context (Production, Development, ...)
+ *
  * This prefix makes sure that keys from the different installations do not
  * conflict.
  *
  * @api
  */
-class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
+class ApcBackend extends AbstractBackend implements TaggableBackendInterface, IterableBackendInterface {
 
 	/**
 	 * A prefix to seperate stored data from other data possible stored in the APC
 	 * @var string
 	 */
 	protected $identifierPrefix;
+
+	/**
+	 * @var \ApcIterator
+	 */
+	protected $cacheEntriesIterator;
 
 	/**
 	 * Constructs this backend
@@ -67,8 +77,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	public function setCache(\TYPO3\Flow\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$pathHash = substr(md5(FLOW_PATH_WEB . PHP_SAPI . $processUser['name'] . $this->context .  $cache->getIdentifier()), 0, 12);
+		$pathHash = substr(md5(FLOW_PATH_ROOT . $this->context .  $cache->getIdentifier()), 0, 12);
 		$this->identifierPrefix = 'Flow_' . $pathHash . '_';
 	}
 
@@ -86,7 +95,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * @api
 	 */
 	public function getPrefixedIdentifier($entryIdentifier) {
-		return $this->identifierPrefix . $entryIdentifier;
+		return $this->identifierPrefix . 'entry_' . $entryIdentifier;
 	}
 
 	/**
@@ -113,7 +122,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 		$tags[] = '%APCBE%' . $this->cacheIdentifier;
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
 
-		$success = apc_store($this->identifierPrefix . $entryIdentifier, $data, $expiration);
+		$success = apc_store($this->identifierPrefix . 'entry_' . $entryIdentifier, $data, $expiration);
 		if ($success === TRUE) {
 			$this->removeIdentifierFromAllTags($entryIdentifier);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
@@ -131,7 +140,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 */
 	public function get($entryIdentifier) {
 		$success = FALSE;
-		$value = apc_fetch($this->identifierPrefix . $entryIdentifier, $success);
+		$value = apc_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
 		return ($success ? $value : $success);
 	}
 
@@ -144,7 +153,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 */
 	public function has($entryIdentifier) {
 		$success = FALSE;
-		apc_fetch($this->identifierPrefix . $entryIdentifier, $success);
+		apc_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
 		return $success;
 	}
 
@@ -159,7 +168,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 */
 	public function remove($entryIdentifier) {
 		$this->removeIdentifierFromAllTags($entryIdentifier);
-		return apc_delete($this->identifierPrefix . $entryIdentifier);
+		return apc_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
 	}
 
 	/**
@@ -282,6 +291,74 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * @api
 	 */
 	public function collectGarbage() {
+	}
+
+	/**
+	 * Returns the data of the current cache entry pointed to by the cache entry
+	 * iterator.
+	 *
+	 * @return mixed
+	 * @api
+	 */
+	public function current() {
+		if ($this->cacheEntriesIterator === NULL) {
+			$this->rewind();
+		}
+		return $this->cacheEntriesIterator->current();
+	}
+
+	/**
+	 * Move forward to the next cache entry
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function next() {
+		if ($this->cacheEntriesIterator === NULL) {
+			$this->rewind();
+		}
+		$this->cacheEntriesIterator->next();
+	}
+
+	/**
+	 * Returns the identifier of the current cache entry pointed to by the cache
+	 * entry iterator.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function key() {
+		if ($this->cacheEntriesIterator === NULL) {
+			$this->rewind();
+		}
+		return substr($this->cacheEntriesIterator->key(), strlen($this->identifierPrefix . 'entry_'));
+	}
+
+	/**
+	 * Checks if the current position of the cache entry iterator is valid
+	 *
+	 * @return boolean TRUE if the current position is valid, otherwise FALSE
+	 * @api
+	 */
+	public function valid() {
+		if ($this->cacheEntriesIterator === NULL) {
+			$this->rewind();
+		}
+		return $this->cacheEntriesIterator->valid();
+	}
+
+	/**
+	 * Rewinds the cache entry iterator to the first element
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function rewind() {
+		if ($this->cacheEntriesIterator === NULL) {
+			$this->cacheEntriesIterator = new \APCIterator('user', '/^' . $this->identifierPrefix . 'entry_.*/');
+		} else {
+			$this->cacheEntriesIterator->rewind();
+		}
 	}
 
 }
