@@ -3,7 +3,13 @@ additionalProperties: FALSE
 properties:
   'inactivityTimeout': { type: integer, required: TRUE }
   'name': { type: [string, 'null'], required: TRUE }
-  'garbageCollectionProbability': { type: integer, required: FALSE }
+  'garbageCollection':
+    type: dictionary
+    required: TRUE
+    additionalProperties: FALSE
+    properties:
+      'probability': { type: integer, required: TRUE }
+      'maximumPerRun': { type: integer, required: TRUE }
   'cookie':
     type: dictionary
     required: TRUE

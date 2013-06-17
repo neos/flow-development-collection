@@ -11,9 +11,12 @@ namespace TYPO3\Flow\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
+use TYPO3\Flow\Cache\Exception\InvalidBackendException;
 use TYPO3\Flow\Object\Configuration\Configuration as ObjectConfiguration;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Object\Proxy\ProxyInterface;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Algorithms;
@@ -51,12 +54,20 @@ class Session implements SessionInterface {
 	protected $objectManager;
 
 	/**
-	 * Cache storage for this session
+	 * Meta data cache for this session
 	 *
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
 	 */
-	protected $cache;
+	protected $metaDataCache;
+
+	/**
+	 * Storage cache for this session
+	 *
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 */
+	protected $storageCache;
 
 	/**
 	 * Bootstrap for retrieving the current HTTP request
@@ -127,6 +138,11 @@ class Session implements SessionInterface {
 	protected $garbageCollectionProbability;
 
 	/**
+	 * @var integer
+	 */
+	protected $garbageCollectionMaximumPerRun;
+
+	/**
 	 * The session identifier
 	 *
 	 * @var string
@@ -175,7 +191,7 @@ class Session implements SessionInterface {
 	 * the Session Manager or through dependency injection (use SessionInterface!).
 	 *
 	 * @param string $sessionIdentifier The public session identifier which is also used in the session cookie
-	 * @param string $storageIdentifier The private storage identifier which is used for cache entries
+	 * @param string $storageIdentifier The private storage identifier which is used for storage cache entries
 	 * @param integer $lastActivityTimestamp Unix timestamp of the last known activity for this session
 	 * @param array $tags A list of tags set for this session
 	 * @throws \InvalidArgumentException
@@ -208,8 +224,22 @@ class Session implements SessionInterface {
 		$this->sessionCookiePath =  $settings['session']['cookie']['path'];
 		$this->sessionCookieSecure =  (boolean)$settings['session']['cookie']['secure'];
 		$this->sessionCookieHttpOnly =  (boolean)$settings['session']['cookie']['httponly'];
-		$this->garbageCollectionProbability = $settings['session']['garbageCollectionProbability'];
+		$this->garbageCollectionProbability = $settings['session']['garbageCollection']['probability'];
+		$this->garbageCollectionMaximumPerRun = $settings['session']['garbageCollection']['maximumPerRun'];
 		$this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
+	}
+
+	/**
+	 * @return void
+	 * @throws \TYPO3\Flow\Cache\Exception\InvalidBackendException
+	 */
+	public function initializeObject() {
+		if (!$this->metaDataCache->getBackend() instanceof IterableBackendInterface) {
+			throw new InvalidBackendException(sprintf('The session meta data cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->metaDataCache->getBackend())), 1370964557);
+		}
+		if (!$this->storageCache->getBackend() instanceof IterableBackendInterface) {
+			throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->storageCache->getBackend())), 1370964558);
+		}
 	}
 
 	/**
@@ -255,7 +285,7 @@ class Session implements SessionInterface {
 			$this->lastActivityTimestamp = $this->now;
 			$this->started = TRUE;
 
-			$this->writeSessionInfoCacheEntry();
+			$this->writeSessionMetaDataCacheEntry();
 		}
 	}
 
@@ -279,13 +309,13 @@ class Session implements SessionInterface {
 		if ($this->sessionCookie === NULL || $this->request === NULL || $this->started === TRUE) {
 			return FALSE;
 		}
-		$sessionInfo = $this->cache->get($this->sessionCookie->getValue());
-		if ($sessionInfo === FALSE) {
+		$sessionMetaData = $this->metaDataCache->get($this->sessionCookie->getValue());
+		if ($sessionMetaData === FALSE) {
 			return FALSE;
 		}
-		$this->lastActivityTimestamp = $sessionInfo['lastActivityTimestamp'];
-		$this->storageIdentifier = $sessionInfo['storageIdentifier'];
-		$this->tags = $sessionInfo['tags'];
+		$this->lastActivityTimestamp = $sessionMetaData['lastActivityTimestamp'];
+		$this->storageIdentifier = $sessionMetaData['storageIdentifier'];
+		$this->tags = $sessionMetaData['tags'];
 		return !$this->autoExpire();
 	}
 
@@ -301,10 +331,10 @@ class Session implements SessionInterface {
 			$this->response->setCookie($this->sessionCookie);
 			$this->started = TRUE;
 
-			$sessionObjects = $this->cache->get($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'));
+			$sessionObjects = $this->storageCache->get($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'));
 			if (is_array($sessionObjects)) {
 				foreach ($sessionObjects as $object) {
-					if ($object instanceof \TYPO3\Flow\Object\Proxy\ProxyInterface) {
+					if ($object instanceof ProxyInterface) {
 						$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
 						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
 							$this->objectManager->setInstance($objectName, $object);
@@ -315,7 +345,7 @@ class Session implements SessionInterface {
 			} else {
 					// Fallback for some malformed session data, if it is no array but something else.
 					// In this case, we reset all session objects (graceful degradation).
-				$this->cache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->storageIdentifier), 0);
+				$this->storageCache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->storageIdentifier), 0);
 			}
 
 			$lastActivitySecondsAgo = ($this->now - $this->lastActivityTimestamp);
@@ -355,9 +385,9 @@ class Session implements SessionInterface {
 			throw new \TYPO3\Flow\Session\Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionIdentifier), 1354034230);
 		}
 
-		$this->removeSessionInfoCacheEntry($this->sessionIdentifier);
+		$this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
 		$this->sessionIdentifier = Algorithms::generateRandomString(32);
-		$this->writeSessionInfoCacheEntry();
+		$this->writeSessionMetaDataCacheEntry();
 
 		$this->sessionCookie->setValue($this->sessionIdentifier);
 		return $this->sessionIdentifier;
@@ -374,7 +404,7 @@ class Session implements SessionInterface {
 		if ($this->started !== TRUE) {
 			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
 		}
-		return $this->cache->get($this->storageIdentifier . md5($key));
+		return $this->storageCache->get($this->storageIdentifier . md5($key));
 	}
 
 	/**
@@ -388,7 +418,7 @@ class Session implements SessionInterface {
 		if ($this->started !== TRUE) {
 			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
 		}
-		return $this->cache->has($this->storageIdentifier . md5($key));
+		return $this->storageCache->has($this->storageIdentifier . md5($key));
 	}
 
 	/**
@@ -408,7 +438,7 @@ class Session implements SessionInterface {
 		if (is_resource($data)) {
 			throw new \TYPO3\Flow\Session\Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
 		}
-		$this->cache->set($this->storageIdentifier . md5($key), $data, array($this->storageIdentifier), 0);
+		$this->storageCache->set($this->storageIdentifier . md5($key), $data, array($this->storageIdentifier), 0);
 	}
 
 	/**
@@ -445,7 +475,7 @@ class Session implements SessionInterface {
 		if ($this->started !== TRUE) {
 			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
 		}
-		if (!$this->cache->isValidTag($tag)) {
+		if (!$this->metaDataCache->isValidTag($tag)) {
 			throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, FrontendInterface::PATTERN_TAG));
 		}
 		if (!in_array($tag, $this->tags)) {
@@ -501,7 +531,7 @@ class Session implements SessionInterface {
 			// will be updated on shutdown anyway:
 		if ($this->remote === TRUE) {
 			$this->lastActivityTimestamp = $this->now;
-			$this->writeSessionInfoCacheEntry();
+			$this->writeSessionMetaDataCacheEntry();
 		}
 	}
 
@@ -535,14 +565,20 @@ class Session implements SessionInterface {
 			$this->sessionCookie->expire();
 		}
 
-		$this->removeSessionInfoCacheEntry($this->sessionIdentifier);
-		$this->cache->flushByTag($this->storageIdentifier);
+		$this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
+		$this->storageCache->flushByTag($this->storageIdentifier);
 		$this->started = FALSE;
 		$this->sessionIdentifier = NULL;
 		$this->storageIdentifier = NULL;
 		$this->tags = array();
 		$this->request = NULL;
 	}
+
+	/**
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Iterates over all existing sessions and removes their data if the inactivity
@@ -552,17 +588,36 @@ class Session implements SessionInterface {
 	 * @api
 	 */
 	public function collectGarbage() {
+		if ($this->inactivityTimeout === 0) {
+			return 0;
+		}
+		if ($this->metaDataCache->has('_garbage-collection-running')) {
+			return FALSE;
+		}
+
 		$sessionRemovalCount = 0;
-		if ($this->inactivityTimeout !== 0) {
-			foreach ($this->cache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
-				$lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
-				if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-					$this->cache->flushByTag($sessionInfo['storageIdentifier']);
+		$this->metaDataCache->set('_garbage-collection-running', TRUE, array(), 120);
+
+		foreach ($this->metaDataCache->getIterator() as $sessionIdentifier => $sessionInfo) {
+			if ($sessionIdentifier === '_garbage-collection-running') {
+				continue;
+			}
+			$lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
+			if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
+				if ($sessionInfo['storageIdentifier'] === NULL) {
+					$this->systemLogger->log('SESSION INFO INVALID: ' . $sessionIdentifier, LOG_WARNING, $sessionInfo);
+				} else {
+					$this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
 					$sessionRemovalCount ++;
-					$this->cache->remove($sessionIdentifier);
 				}
+				$this->metaDataCache->remove($sessionIdentifier);
+			}
+			if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
+				break;
 			}
 		}
+
+		$this->metaDataCache->remove('_garbage-collection-running');
 		return $sessionRemovalCount;
 	}
 
@@ -577,7 +632,7 @@ class Session implements SessionInterface {
 	public function shutdownObject() {
 		if ($this->started === TRUE && $this->remote === FALSE) {
 
-			if ($this->cache->has($this->sessionIdentifier)) {
+			if ($this->metaDataCache->has($this->sessionIdentifier)) {
 					// Security context can't be injected and must be retrieved manually
 					// because it relies on this very session object:
 				$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
@@ -586,7 +641,7 @@ class Session implements SessionInterface {
 				}
 
 				$this->putData('TYPO3_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
-				$this->writeSessionInfoCacheEntry();
+				$this->writeSessionMetaDataCacheEntry();
 			}
 			$this->started = FALSE;
 
@@ -681,7 +736,7 @@ class Session implements SessionInterface {
 	 *
 	 * @return void
 	 */
-	protected function writeSessionInfoCacheEntry() {
+	protected function writeSessionMetaDataCacheEntry() {
 		$sessionInfo = array(
 			'lastActivityTimestamp' => $this->lastActivityTimestamp,
 			'storageIdentifier' => $this->storageIdentifier,
@@ -691,10 +746,9 @@ class Session implements SessionInterface {
 		$tagsForCacheEntry = array_map(function($tag) {
 			return Session::TAG_PREFIX . $tag;
 		}, $this->tags);
-		$tagsForCacheEntry[] = 'session';
 		$tagsForCacheEntry[] = $this->sessionIdentifier;
 
-		$this->cache->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
+		$this->metaDataCache->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
 	}
 
 	/**
@@ -706,8 +760,8 @@ class Session implements SessionInterface {
 	 * @param string $sessionIdentifier
 	 * @return void
 	 */
-	protected function removeSessionInfoCacheEntry($sessionIdentifier) {
-		$this->cache->remove($sessionIdentifier);
+	protected function removeSessionMetaDataCacheEntry($sessionIdentifier) {
+		$this->metaDataCache->remove($sessionIdentifier);
 	}
 }
 

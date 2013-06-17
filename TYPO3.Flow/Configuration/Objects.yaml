@@ -273,7 +273,14 @@ TYPO3\Flow\Session\SessionInterface:
 
 TYPO3\Flow\Session\Session:
   properties:
-    cache:
+    metaDataCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_MetaData
+    storageCache:
       object:
         factoryObjectName: TYPO3\Flow\Cache\CacheManager
         factoryMethodName: getCache
@@ -283,13 +290,13 @@ TYPO3\Flow\Session\Session:
 
 TYPO3\Flow\Session\SessionManager:
   properties:
-    cache:
+    metaDataCache:
       object:
         factoryObjectName: TYPO3\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
-            value: Flow_Session_Storage
+            value: Flow_Session_MetaData
 
 #                                                                          #
 # Utility                                                                  #
