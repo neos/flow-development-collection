@@ -23,7 +23,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @api
  * @Flow\Proxy(false)
  */
-class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInterface {
+class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface {
 
 	const SEPARATOR = '^';
 
@@ -63,6 +63,11 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 * @var boolean
 	 */
 	protected $useIgBinary = FALSE;
+
+	/**
+	 * @var \DirectoryIterator
+	 */
+	protected $cacheFilesIterator;
 
 	/**
 	 * Initializes this cache frontend
@@ -142,7 +147,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756736);
 		}
 
-		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . uniqid() . '.temp';
+		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . '.' . $entryIdentifier . '.tmp';
 		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data);
 		if ($result === FALSE) {
 			throw new \TYPO3\Flow\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1334756737);
@@ -274,5 +279,79 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			 return FALSE;
 		}
 	}
+
+	/**
+	 * Returns the data of the current cache entry pointed to by the cache entry
+	 * iterator.
+	 *
+	 * @return mixed
+	 * @api
+	 */
+	public function current() {
+		if ($this->cacheFilesIterator === NULL) {
+			$this->rewind();
+		}
+		return file_get_contents($this->cacheFilesIterator->getPathname());
+	}
+
+	/**
+	 * Move forward to the next cache entry
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function next() {
+		if ($this->cacheFilesIterator === NULL) {
+			$this->rewind();
+		}
+		$this->cacheFilesIterator->next();
+		while ($this->cacheFilesIterator->isDot() && $this->cacheFilesIterator->valid()) {
+			$this->cacheFilesIterator->next();
+		}
+	}
+
+	/**
+	 * Returns the identifier of the current cache entry pointed to by the cache
+	 * entry iterator.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function key() {
+		if ($this->cacheFilesIterator === NULL) {
+			$this->rewind();
+		}
+		return $this->cacheFilesIterator->getBasename($this->cacheEntryFileExtension);
+	}
+
+	/**
+	 * Checks if the current position of the cache entry iterator is valid
+	 *
+	 * @return boolean TRUE if the current position is valid, otherwise FALSE
+	 * @api
+	 */
+	public function valid() {
+		if ($this->cacheFilesIterator === NULL) {
+			$this->rewind();
+		}
+		return $this->cacheFilesIterator->valid();
+	}
+
+	/**
+	 * Rewinds the cache entry iterator to the first element
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function rewind() {
+		if ($this->cacheFilesIterator === NULL) {
+			$this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
+		}
+		$this->cacheFilesIterator->rewind();
+		while (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' && $this->cacheFilesIterator->valid()) {
+			$this->cacheFilesIterator->next();
+		}
+	}
+
 }
 ?>

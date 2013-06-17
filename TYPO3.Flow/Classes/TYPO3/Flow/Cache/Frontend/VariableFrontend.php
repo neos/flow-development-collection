@@ -11,13 +11,15 @@ namespace TYPO3\Flow\Cache\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Cache\Backend\IterableBackendInterface;
+use TYPO3\Flow\Cache\Exception\NotSupportedByBackendException;
 
 /**
  * A cache frontend for any kinds of PHP variables
  *
  * @api
  */
-class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
+class VariableFrontend extends AbstractFrontend {
 
 	/**
 	 * If the extension "igbinary" is installed, use it for increased performance.
@@ -107,6 +109,19 @@ class VariableFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 			}
 		}
 		return $entries;
+	}
+
+	/**
+	 * Returns an iterator over the entries of this cache
+	 *
+	 * @param integer $chunkSize Determines the number of entries fetched by the backend at once (not supported yet, for future use)
+	 * @return \TYPO3\Flow\Cache\Frontend\CacheEntryIterator
+	 */
+	public function getIterator($chunkSize = NULL) {
+		if (!$this->backend instanceof IterableBackendInterface) {
+			throw new NotSupportedByBackendException('The cache backend (%s) configured for cach "%s" does cannot be used as an iterator. Please choose a different cache backend or adjust the code using this cache.', 1371463860);
+		}
+		return new CacheEntryIterator($this, $this->backend, $chunkSize);
 	}
 
 }

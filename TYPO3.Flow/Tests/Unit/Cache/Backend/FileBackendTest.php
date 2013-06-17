@@ -12,6 +12,9 @@ namespace TYPO3\Flow\Tests\Unit\Cache\Backend;
  *                                                                        */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Cache\Backend\FileBackend;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the cache to file backend
@@ -689,5 +692,40 @@ class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$backend->flush();
 		$this->assertFalse($backend->isFrozen());
 	}
+
+	/**
+	 * @test
+	 */
+	public function backendAllowsForIteratingOverEntries() {
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = new FileBackend(new ApplicationContext('Testing'));
+		$backend->injectEnvironment($mockEnvironment);
+
+		$cache = new VariableFrontend('UnitTestCache', $backend);
+		$backend->setCache($cache);
+
+		for ($i = 0; $i < 100; $i++) {
+			$entryIdentifier = sprintf('entry-%s', $i);
+			$data = 'some data ' . $i;
+			$cache->set($entryIdentifier, $data);
+		}
+
+		$entries = array();
+		foreach ($cache->getIterator() as $entryIdentifier => $data) {
+			$entries[$entryIdentifier] = $data;
+		}
+		natsort($entries);
+		$i = 0;
+		foreach ($entries as $entryIdentifier => $data) {
+			$this->assertEquals(sprintf('entry-%s', $i), $entryIdentifier);
+			$this->assertEquals('some data ' . $i, $data);
+			$i++;
+		}
+		$this->assertEquals(100, $i);
+	}
+
 }
 ?>
