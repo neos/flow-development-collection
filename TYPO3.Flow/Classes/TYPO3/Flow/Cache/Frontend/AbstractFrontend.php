@@ -19,7 +19,7 @@ use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
  *
  * @api
  */
-abstract class AbstractFrontend implements \TYPO3\Flow\Cache\Frontend\FrontendInterface {
+abstract class AbstractFrontend implements FrontendInterface {
 
 	/**
 	 * Identifies this cache
