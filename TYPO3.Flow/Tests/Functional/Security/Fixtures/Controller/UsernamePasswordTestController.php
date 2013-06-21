@@ -27,7 +27,11 @@ class UsernamePasswordTestController extends AbstractAuthenticationController {
 		if ($originalRequest !== NULL) {
 			$this->redirectToRequest($originalRequest);
 		}
-		return 'UsernamePasswordTestController success!';
+		$result = 'UsernamePasswordTestController success!' . chr(10);
+		foreach ($this->securityContext->getRoles() as $role) {
+			$result .= $role->getIdentifier() . chr(10);
+		}
+		return $result;
 	}
 
 	/**
