@@ -37,6 +37,17 @@ class Scripts {
 	}
 
 	/**
+	 * Register the class loader into the Doctrine AnnotationRegistry so
+	 * the DocParser is able to load annation classes from packages.
+	 *
+	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @return void
+	 */
+	static public function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap) {
+		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader'), 'loadClass'));
+	}
+
+	/**
 	 * Injects the classes cache to the already initialized class loader
 	 *
 	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
