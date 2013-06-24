@@ -134,7 +134,7 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
 	 * display no flash message at all on errors. Override this to customize
 	 * the flash message in your action controller.
 	 *
-	 * Note: If you implement a nice redirect in the onAuthenticationFailed()
+	 * Note: If you implement a nice redirect in the onAuthenticationFailure()
 	 * method of you login controller, this message should never be displayed.
 	 *
 	 * @return \TYPO3\Flow\Error\Error The flash message
