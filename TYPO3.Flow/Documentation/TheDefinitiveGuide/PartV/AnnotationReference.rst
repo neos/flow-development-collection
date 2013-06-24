@@ -1,7 +1,9 @@
+.. _TYPO3 Flow Annotation Reference:
+
 TYPO3 Flow Annotation Reference
 ===============================
 
-This reference was automatically generated from code on 2013-04-17
+This reference was automatically generated from code on 2013-06-25
 
 
 After
@@ -18,7 +20,7 @@ pointcut matching the given expression.
 Arguments
 *********
 
-* ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``pointcutExpression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
 
 
@@ -37,7 +39,7 @@ after any pointcut matching the given expression returns.
 Arguments
 *********
 
-* ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``pointcutExpression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
 
 
@@ -56,7 +58,7 @@ after any pointcut matching the given expression throws an exception.
 Arguments
 *********
 
-* ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``pointcutExpression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
 
 
@@ -75,7 +77,7 @@ pointcut matching the given expression.
 Arguments
 *********
 
-* ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``pointcutExpression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
 
 
@@ -108,7 +110,7 @@ whole class or on the annotated property only.
 Arguments
 *********
 
-* ``enabled`` (boolean): Whether autowiring is enabled. (Can be given as anonymous argument.)
+* ``enabled`` (boolean):   Whether autowiring is enabled. (Can be given as anonymous argument.)
 
 
 
@@ -127,7 +129,7 @@ pointcut matching the given expression.
 Arguments
 *********
 
-* ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``pointcutExpression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
 
 
@@ -156,9 +158,9 @@ with that.
 Arguments
 *********
 
-* ``repositoryClass`` (string): Name of the repository class to use for managing the entity.
+* ``repositoryClass`` (string):   Name of the repository class to use for managing the entity.
 
-* ``readOnly`` (boolean): Whether the entity should be read-only.
+* ``readOnly`` (boolean):   Whether the entity should be read-only.
 
 
 
@@ -206,7 +208,7 @@ Used to ignore validation on a specific method argument.
 Arguments
 *********
 
-* ``argumentName`` (string): Name of the argument to skip validation for. (Can be given as anonymous argument.)
+* ``argumentName`` (string):   Name of the argument to skip validation for. (Can be given as anonymous argument.)
 
 
 
@@ -227,8 +229,8 @@ to inject a value as specified by the var annotation.
 Arguments
 *********
 
-* ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
-proxy should be injected instead
+* ``lazy`` (boolean):   Whether the dependency should be injected instantly or if a lazy dependency
+  proxy should be injected instead
 
 
 
@@ -261,9 +263,9 @@ the given pointcut expression.
 Arguments
 *********
 
-* ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``pointcutExpression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
-* ``interfaceName`` (string): The interface name to introduce.
+* ``interfaceName`` (string):   The interface name to introduce.
 
 
 
@@ -296,7 +298,7 @@ but can be used as a named pointcut instead of the given expression.
 Arguments
 *********
 
-* ``expression`` (string): The pointcut expression. (Can be given as anonymous argument.)
+* ``expression`` (string):   The pointcut expression. (Can be given as anonymous argument.)
 
 
 
@@ -317,7 +319,7 @@ on the object.
 Arguments
 *********
 
-* ``enabled`` (boolean): Whether proxy building for the target is disabled. (Can be given as anonymous argument.)
+* ``enabled`` (boolean):   Whether proxy building for the target is disabled. (Can be given as anonymous argument.)
 
 
 
@@ -335,7 +337,7 @@ Used to set the scope of an object.
 Arguments
 *********
 
-* ``value`` (string): The scope of an object: prototype, singleton, session. (Usually given as anonymous argument.)
+* ``value`` (string):   The scope of an object: prototype, singleton, session. (Usually given as anonymous argument.)
 
 
 
@@ -354,7 +356,7 @@ method is called.
 Arguments
 *********
 
-* ``autoStart`` (boolean): Whether the annotated method triggers the start of a session.
+* ``autoStart`` (boolean):   Whether the annotated method triggers the start of a session.
 
 
 
@@ -416,13 +418,13 @@ Controls how a property or method argument will be validated by Flow.
 Arguments
 *********
 
-* ``type`` (string): The validator type, either a FQCN or a Flow validator class name.
+* ``type`` (string):   The validator type, either a FQCN or a Flow validator class name.
 
-* ``options`` (array): Options for the validator, validator-specific.
+* ``options`` (array):   Options for the validator, validator-specific.
 
-* ``argumentName`` (string): The name of the argument this annotation is attached to, if used on a method. (Can be given as anonymous argument.)
+* ``argumentName`` (string):   The name of the argument this annotation is attached to, if used on a method. (Can be given as anonymous argument.)
 
-* ``validationGroups`` (array): The validation groups for which this validator should be executed.
+* ``validationGroups`` (array):   The validation groups for which this validator should be executed.
 
 
 
@@ -437,7 +439,7 @@ ValidationGroups
 Arguments
 *********
 
-* ``validationGroups`` (array): The validation groups for which validation on this method should be executed. (Can be given as anonymous argument.)
+* ``validationGroups`` (array):   The validation groups for which validation on this method should be executed. (Can be given as anonymous argument.)
 
 
 

@@ -55,6 +55,29 @@ TYPO3 Flow.
 
 ----
 
+Routing provides the possibility to **bind routes to HTTP methods** now.
+This allows to use different configuration for e.g. GET and POST, something
+that is useful for providing REST services.
+
+----
+
+The use of **sub routes can now be nested** and loading sub routes from
+files with a specified suffix possible. Also the use of placeholders in sub
+routes is now possible.
+
+----
+
+For a route to match the given route values, one now has to specify all
+the routing defaults exactly as they are specified by the route (except
+for when a route part appears in the uriPattern).
+
+This is a breaking change if you used Router or UriBuilder to create
+URIs without specifying all defaults (see #43589 for details).
+Besides, all Fluid ViewHelpers that use the UriBuilder now require the
+action argument to be specified.
+
+----
+
 **Custom Error Renderers** are now available, the exception handlers
 can render arbitrary templates based on the status code and/or class
 name of the thrown exception. This is considered a breaking change
@@ -124,11 +147,34 @@ TYPO3:FLOW3:Session:PHPSession:* (or TYPO3:FLOW3:Session:PhpSession:*),
 you will need to adjust your settings to use options in
 TYPO3:Flow:Session:* instead.
 
+----
+
+**Sessionless authentication** enables authentication without the need of a
+session to be started. This is useful for stateless services (e.g. REST).
+
+This is a breaking change if you created a custom authentication provider or -token
+and relied on the fact that AuthenticationProvider::authenticate() started a session.
+With this change the session is started when AuthenticationToken::updateCredentials() is
+called. This way the token can decide if it needs a session.
+Just add a @Flow\\Session(autoStart=true) to the updateCredentials() method if your custom
+token relies on a session.
+
 Security changes
 ^^^^^^^^^^^^^^^^
 
 The way **CSRF protection** is handled changed with the special handling
 of safe requests, as outlined earlier in this document.
+
+----
+
+The result of **isAuthenticated()** is now cached.  This will calculate
+the result of the authentication in authenticate() and respect the
+authentication strategy for the result. The authenticate() method will
+be called lazily if not done before.
+
+This is breaking since isAuthenticated() before would behave like the
+"at least one token" strategy was used, even the strategy was set to
+"all tokens".
 
 ----
 
@@ -145,6 +191,12 @@ identifiers in models. Roles which were defined in policies are now
 automatically mirrored to the RoleRepository.
 
 The getRoles() method has been removed from TokenInterface.
+
+----
+
+When **defining entity resources in a Policy.yaml file**, the entity type
+had to be the class name with \\ replaced by _. Now the regular class name
+is to be used instead.
 
 Persistence changes
 ^^^^^^^^^^^^^^^^^^^
@@ -199,6 +251,15 @@ returns a ``QueryResultInterface`` instance (as it should). This is a
 breaking change if you relied on the specific return values before, in
 this you need to adjust your code.
 
+----
+
+For **count on query results** limit and offset constraints are now correctly
+taken into account. This is a breaking change if you relied on Query::count()
+to always return all results regardless of a specified limit. In this case
+better generate multiple QueryResults (they're only created in-memory until
+you actually access them.)
+
+
 Other Flow changes
 ^^^^^^^^^^^^^^^^^^
 
@@ -216,12 +277,38 @@ none set, because every default time zone will be the wrong one for
 most people. This change is marked breaking because in cases where no
 timezone is set in PHP configuration, Flow will no longer work.
 
+----
+
+This change updates the behavior of arrayMergeRecursiveOverrule such
+that empty arrays are also treated as empty values. If you used this
+function before it can lead to different results after the change.
+
+This change is breaking if your settings hierarchy depends on
+empty array values not overriding a parent configuration.
+
+----
+
+**Lazy dependency injection** avoids loading of dependencies unless they
+are really used. The @Inject annotation now accepts an optional argument
+"lazy" which allows for turning off lazy dependency injection in specific
+cases. Please read the new section on lazy DI in the Object Management
+chapter of the Flow manual.
+
+
 Fluid changes
 ^^^^^^^^^^^^^
 
 The **uri.resource viewhelper** no longer has the ``uri`` attribute.
 The ``path`` attribute must be used instead, and now accepts
 ``resource://…`` URIs as well.
+
+----
+
+If you pass an object with __toString() method to the **urlencode view helper
+the view helper now uses that method instead of returning the object as is.
+This change is breaking if you rely on the viewhelper to return values that
+are not a string or an object with __toString. The viewhelper will now throw
+an exception in this case.
 
 ----
 
@@ -497,7 +584,7 @@ It looks like this::
      }
  }
 
-This tells Composer to install FLOW3 and it's dependencies (Doctrine
+This tells Composer to install Flow and it's dependencies (Doctrine
 and Symfony parts, TYPO3.Fluid, TYPO3.Party).
 
 Anything else you need can be added freely, have a look at the
@@ -515,4 +602,4 @@ the manifest (and in turn their dependencies, and in turn…).
 
 If you want to update the packages installed through this later, run::
 
- composer update --dev
+ composer update
