@@ -382,17 +382,24 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 	/**
 	 * Given a class and property name a table name is returned. That name should be reasonably unique.
 	 *
-	 * @param string $className
-	 * @param string $propertyName
-	 * @return string
+	 * @param string $className Model class name the table corresponds to
+	 * @param string $propertyName Name of the property to be joined
+	 * @return string Truncated database table name
 	 */
 	protected function inferJoinTableNameFromClassAndPropertyName($className, $propertyName) {
 		$prefix = $this->inferTableNameFromClassName($className);
 		$suffix = '_' . strtolower($propertyName . '_join');
+
+			// In order to keep backwards compatibility with earlier versions, truncate the table name in two steps:
 		if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
 			$prefix = $this->inferTableNameFromClassName($className, $this->getMaxIdentifierLength() - strlen($suffix));
 		}
-		return $prefix . $suffix;
+			// Truncate a second time if the property name was too long as well:
+		if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
+			return $this->truncateIdentifier($prefix . $suffix, $this->getMaxIdentifierLength());
+		} else {
+			return $prefix . $suffix;
+		}
 	}
 
 	/**
