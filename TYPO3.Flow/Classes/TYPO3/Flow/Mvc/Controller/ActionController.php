@@ -32,7 +32,6 @@ use TYPO3\Flow\Annotations as Flow;
  * view - will be selected. By specifying patterns, custom view classes or an alternative
  * controller / action to template path mapping can be defined.
  *
- * @Flow\Scope("singleton")
  * @api
  */
 class ActionController extends AbstractController {

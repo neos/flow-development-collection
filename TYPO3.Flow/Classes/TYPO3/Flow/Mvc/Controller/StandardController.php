@@ -16,8 +16,6 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A Special Case of a Controller: If no controller has been specified in the
  * request, this controller is chosen.
- *
- * @Flow\Scope("singleton")
  */
 class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
