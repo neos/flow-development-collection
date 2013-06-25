@@ -55,6 +55,12 @@ class InternalRequestEngine implements RequestEngineInterface {
 	protected $configurationManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Validation\ValidatorResolver
+	 */
+	protected $validatorResolver;
+
+	/**
 	 * Intialize this engine
 	 *
 	 * @return void
@@ -85,6 +91,7 @@ class InternalRequestEngine implements RequestEngineInterface {
 			$actionRequest = $this->router->route($request);
 			$this->securityContext->clearContext();
 			$this->securityContext->setRequest($actionRequest);
+			$this->validatorResolver->reset();
 
 			$this->dispatcher->dispatch($actionRequest, $response);
 
