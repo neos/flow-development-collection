@@ -483,7 +483,7 @@ You can even reference multiple SubRoutes from one route - that will create one 
 all possible combinations.
 
 Nested Subroutes
-~~~~~~~~~~~~~~~~
+----------------
 
 By default a SubRoute is loaded from the ``Routes.yaml`` file of the referred package but it is
 possible to load SubRoutes from a different file by specifying a ``suffix``:
@@ -504,10 +504,12 @@ Furthermore you can nest routes in order to minimize duplication in your configu
 different SubRoutes from within a SubRoute, using the same syntax as before.
 Additionally you can specify a set of ``variables`` that will be replaced in ``name`` and ``uriPattern`` of merged routes:
 
-Imagine following setup:
+Imagine the following setup:
 
 
 *global Routes.yaml (``Configuration/Routes.yaml``)*:
+
+.. code-block:: yaml
 
 	-
 	  name: 'My Package'
@@ -546,7 +548,9 @@ Imagine following setup:
 	      variables:
 	        'entityName': 'category'
 
-*And in ``My.Package/Configuration/Routes.Entity.yaml``:*
+*And in ``My.Package/Configuration/Routes.Entity.yaml``*:
+
+.. code-block:: yaml
 
 	-
 	  name: '<entityName> list view'
