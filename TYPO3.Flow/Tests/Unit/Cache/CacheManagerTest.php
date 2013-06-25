@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+
 /**
  * Testcase for the Cache Manager
  *
@@ -18,38 +20,65 @@ namespace TYPO3\Flow\Tests\Unit\Cache;
 class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
+	 * @var \TYPO3\Flow\Cache\CacheManager
+	 */
+	protected $cacheManager;
+
+	/**
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $mockSystemLogger;
+
+	public function setUp() {
+		$this->cacheManager = new \TYPO3\Flow\Cache\CacheManager();
+
+		$this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+		$this->cacheManager->injectSystemLogger($this->mockSystemLogger);
+	}
+
+	/**
+	 * Creates a mock cache with the given $cacheIdentifier and registers it with the cache manager
+	 *
+	 * @param $cacheIdentifier
+	 * @return \TYPO3\Flow\Cache\Frontend\FrontendInterface
+	 */
+	protected function registerCache($cacheIdentifier) {
+		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$cache->expects($this->any())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
+		$this->cacheManager->registerCache($cache);
+
+		return $cache;
+	}
+
+	/**
 	 * @test
 	 * @expectedException \TYPO3\Flow\Cache\Exception\DuplicateIdentifierException
 	 */
 	public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier() {
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-
-		$cache1 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
-		$cache2 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
-		$manager->registerCache($cache1);
-		$manager->registerCache($cache2);
+		$this->cacheManager->registerCache($cache1);
+		$this->cacheManager->registerCache($cache2);
 	}
 
 	/**
 	 * @test
 	 */
 	public function managerReturnsThePreviouslyRegisteredCached() {
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-
-		$cache1 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 
-		$cache2 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 
-		$manager->registerCache($cache1);
-		$manager->registerCache($cache2);
+		$this->cacheManager->registerCache($cache1);
+		$this->cacheManager->registerCache($cache2);
 
-		$this->assertSame($cache2, $manager->getCache('cache2'), 'The cache returned by getCache() was not the same I registered.');
+		$this->assertSame($cache2, $this->cacheManager->getCache('cache2'), 'The cache returned by getCache() was not the same I registered.');
 	}
 
 	/**
@@ -57,86 +86,72 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Cache\Exception\NoSuchCacheException
 	 */
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-		$cache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 
-		$manager->registerCache($cache);
-		$manager->getCache('someidentifier');
+		$this->cacheManager->registerCache($cache);
+		$this->cacheManager->getCache('someidentifier');
 
-		$manager->getCache('doesnotexist');
+		$this->cacheManager->getCache('doesnotexist');
 	}
 
 	/**
 	 * @test
 	 */
 	public function hasCacheReturnsCorrectResult() {
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-		$cache1 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
-		$manager->registerCache($cache1);
+		$this->cacheManager->registerCache($cache1);
 
-		$this->assertTrue($manager->hasCache('cache1'), 'hasCache() did not return TRUE.');
-		$this->assertFalse($manager->hasCache('cache2'), 'hasCache() did not return FALSE.');
+		$this->assertTrue($this->cacheManager->hasCache('cache1'), 'hasCache() did not return TRUE.');
+		$this->assertFalse($this->cacheManager->hasCache('cache2'), 'hasCache() did not return FALSE.');
 	}
 
 	/**
 	 * @test
 	 */
 	public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-
-		$cache1 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$cache1->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
-		$manager->registerCache($cache1);
+		$this->cacheManager->registerCache($cache1);
 
-		$cache2 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
-		$manager->registerCache($cache2);
+		$this->cacheManager->registerCache($cache2);
 
-		$manager->flushCachesByTag('theTag');
+		$this->cacheManager->flushCachesByTag('theTag');
 	}
 
 	/**
 	 * @test
 	 */
 	public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches() {
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-
-		$cache1 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$cache1->expects($this->once())->method('flush');
-		$manager->registerCache($cache1);
+		$this->cacheManager->registerCache($cache1);
 
-		$cache2 = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\AbstractFrontend')->disableOriginalConstructor()->getMock();
 		$cache2->expects($this->once())->method('flush');
-		$manager->registerCache($cache2);
+		$this->cacheManager->registerCache($cache2);
 
-		$manager->flushCaches();
+		$this->cacheManager->flushCaches();
 	}
 
 	/**
 	 * @test
 	 */
 	public function flushSystemCachesByChangedFilesWithChangedClassFileRemovesCacheEntryFromObjectClassesCache() {
-		$objectClassCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
-		$objectClassCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Classes'));
-		$objectConfigurationCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
-		$objectConfigurationCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Configuration'));
-		$reflectionStatusCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
-		$reflectionStatusCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Reflection_Status'));
-
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-		$manager->registerCache($objectClassCache);
-		$manager->registerCache($objectConfigurationCache);
-		$manager->registerCache($reflectionStatusCache);
+		$objectClassCache = $this->registerCache('Flow_Object_Classes');
+		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
+		$this->registerCache('Flow_Reflection_Status');
 
 		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Cache_CacheManager');
 		$objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
-		$manager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
-			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Cache/CacheManager.php' => \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
+			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Cache/CacheManager.php' => ChangeDetectionStrategyInterface::STATUS_CHANGED
 		));
 	}
 
@@ -144,25 +159,146 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function flushSystemCachesByChangedFilesWithChangedTestFileRemovesCacheEntryFromObjectClassesCache() {
-		$objectClassCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
-		$objectClassCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Classes'));
-		$objectConfigurationCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
-		$objectConfigurationCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Object_Configuration'));
-		$reflectionStatusCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
-		$reflectionStatusCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('Flow_Reflection_Status'));
-
-		$manager = new \TYPO3\Flow\Cache\CacheManager();
-		$manager->registerCache($objectClassCache);
-		$manager->registerCache($objectConfigurationCache);
-		$manager->registerCache($reflectionStatusCache);
+		$objectClassCache = $this->registerCache('Flow_Object_Classes');
+		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
+		$this->registerCache('Flow_Reflection_Status');
 
 		$objectClassCache->expects($this->once())->method('remove')->with('TYPO3_Flow_Tests_Functional_Cache_CacheManagerTest');
 		$objectConfigurationCache->expects($this->once())->method('remove')->with('allCompiledCodeUpToDate');
 
-		$manager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
-			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Functional/Cache/CacheManagerTest.php' => \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ClassFiles', array(
+			FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Functional/Cache/CacheManagerTest.php' => ChangeDetectionStrategyInterface::STATUS_CHANGED
 		));
 	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesDoesNotFlushPolicyCacheIfNoPolicyFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+		$policyCache = $this->registerCache('Flow_Security_Policy');
+		$policyCache->expects($this->never())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		));
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesFlushesPolicyCacheIfAPolicyFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+		$policyCache = $this->registerCache('Flow_Security_Policy');
+		$policyCache->expects($this->once())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+			'Some/Package/Configuration/Policy.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		));
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesDoesNotFlushRoutingCacheIfNoRoutesFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+
+		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_FindMatchResults');
+		$matchResultsCache->expects($this->never())->method('flush');
+		$resolveCache = $this->registerCache('Flow_Mvc_Routing_Resolve');
+		$resolveCache->expects($this->never())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		));
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesFlushesRoutingCacheIfARoutesFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+
+		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_FindMatchResults');
+		$matchResultsCache->expects($this->once())->method('flush');
+		$resolveCache = $this->registerCache('Flow_Mvc_Routing_Resolve');
+		$resolveCache->expects($this->once())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+			'Some/Package/Configuration/Routes.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+			'A/Different/Package/Configuration/Routes.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		));
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesFlushesRoutingCacheIfACustomSubRoutesFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+
+		$matchResultsCache = $this->registerCache('Flow_Mvc_Routing_FindMatchResults');
+		$matchResultsCache->expects($this->once())->method('flush');
+		$resolveCache = $this->registerCache('Flow_Mvc_Routing_Resolve');
+		$resolveCache->expects($this->once())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+			'Some/Package/Configuration/Routes.Custom.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+		));
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesTriggersAopProxyClassRebuild() {
+		$objectClassesCache = $this->registerCache('Flow_Object_Classes');
+		$objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
+
+		$objectClassesCache->expects($this->once())->method('flush');
+		$objectConfigurationCache->expects($this->at(0))->method('remove')->with('allAspectClassesUpToDate');
+		$objectConfigurationCache->expects($this->at(1))->method('remove')->with('allCompiledCodeUpToDate');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_ConfigurationFiles', array());
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesDoesNotFlushI18nCacheIfNoTranslationFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+
+		$i18nCache = $this->registerCache('Flow_I18n_XmlModelCache');
+		$i18nCache->expects($this->never())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_TranslationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		));
+	}
+
+	/**
+	 * @test
+	 */
+	public function flushSystemCachesByChangedFilesFlushesI18nCacheIfATranslationFileHasBeenModified() {
+		$this->registerCache('Flow_Object_Classes');
+		$this->registerCache('Flow_Object_Configuration');
+
+		$i18nCache = $this->registerCache('Flow_I18n_XmlModelCache');
+		$i18nCache->expects($this->once())->method('flush');
+
+		$this->cacheManager->flushSystemCachesByChangedFiles('Flow_TranslationFiles', array(
+			'Some/Other/File' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+			'Some/Package/Resources/Private/Translations/en/Foo.xlf' => ChangeDetectionStrategyInterface::STATUS_CHANGED,
+		));
+	}
+
 
 }
 ?>
