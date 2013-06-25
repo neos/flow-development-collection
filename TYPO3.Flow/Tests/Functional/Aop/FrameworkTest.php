@@ -188,6 +188,18 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * Public and protected properties can be introduced.
+	 *
+	 * @test
+	 */
+	public function onlyPropertiesCanBeIntroduced() {
+		$targetClass = new Fixtures\TargetClass04();
+
+		$this->assertTrue(property_exists(get_class($targetClass), 'introducedPublicProperty'));
+		$this->assertTrue(property_exists(get_class($targetClass), 'introducedProtectedProperty'));
+	}
+
+	/**
 	 * @test
 	 */
 	public function methodArgumentsCanBeSetInTheJoinpoint() {
