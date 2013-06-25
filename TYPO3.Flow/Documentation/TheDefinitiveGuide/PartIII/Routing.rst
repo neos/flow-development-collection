@@ -449,7 +449,7 @@ And in your global ``Routes.yaml``:
 	    '@package': 'My.Demo'
 	    '@format':  'html'
 	  subRoutes:
-	    DemoSubroutes:
+	    'DemoSubroutes':
 	      package: 'My.Demo'
 
 As you can see, you can reference SubRoutes by putting parts of the URI pattern in angle
@@ -481,6 +481,142 @@ in the following routing configuration:
 
 You can even reference multiple SubRoutes from one route - that will create one route for
 all possible combinations.
+
+Nested Subroutes
+~~~~~~~~~~~~~~~~
+
+By default a SubRoute is loaded from the ``Routes.yaml`` file of the referred package but it is
+possible to load SubRoutes from a different file by specifying a ``suffix``:
+
+.. code-block:: yaml
+
+	-
+	  name: 'Demo SubRoutes'
+	  uriPattern: 'demo/<DemoSubroutes>'
+	  subRoutes:
+	    'DemoSubroutes':
+	      package: 'My.Demo'
+	      suffix:  'Foo'
+
+This will load the SubRoutes from a file ``Routes.Foo.yaml`` in the ``My.Demo`` package.
+With that feature you can include multiple Routes with your package (for example providing different URI styles).
+Furthermore you can nest routes in order to minimize duplication in your configuration. You nest SubRoutes by including
+different SubRoutes from within a SubRoute, using the same syntax as before.
+Additionally you can specify a set of ``variables`` that will be replaced in ``name`` and ``uriPattern`` of merged routes:
+
+Imagine following setup:
+
+
+*global Routes.yaml (``Configuration/Routes.yaml``)*:
+
+	-
+	  name: 'My Package'
+	  uriPattern: '<MyPackageSubroutes>'
+	  subRoutes:
+	    'MyPackageSubroutes':
+	      package: 'My.Package'
+
+*default package Routes.yaml (``My.Package/Configuration/Routes.yaml``)*:
+
+.. code-block:: yaml
+
+	-
+	  name: 'Product'
+	  uriPattern: 'products/<EntitySubroutes>'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Product'
+	  subRoutes:
+	    'EntitySubroutes':
+	      package: 'My.Package'
+	      suffix:  'Entity'
+	      variables:
+	        'entityName': 'product'
+
+	-
+	  name: 'Category'
+	  uriPattern: 'categories/<EntitySubroutes>'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Category'
+	  subRoutes:
+	    'EntitySubroutes':
+	      package: 'My.Package'
+	      suffix:  'Entity'
+	      variables:
+	        'entityName': 'category'
+
+*And in ``My.Package/Configuration/Routes.Entity.yaml``:*
+
+	-
+	  name: '<entityName> list view'
+	  uriPattern: ''
+	  defaults:
+	    '@action': 'index'
+
+	-
+	  name: '<entityName> detail view'
+	  uriPattern: '{<entityName>}'
+	  defaults:
+	    '@action': 'show'
+
+	-
+	  name: '<entityName> edit view'
+	  uriPattern: '{<entityName>}/edit'
+	  defaults:
+	    '@action': 'edit'
+
+This will result in a merged configuration like this:
+
+.. code-block:: yaml
+
+	-
+	  name: 'My Package :: Product :: product list view'
+	  uriPattern: 'products'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Product'
+	    '@action':     'index'
+
+	-
+	  name: 'My Package :: Product :: product detail view'
+	  uriPattern: 'products/{product}'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Product'
+	    '@action':     'show'
+
+	-
+	  name: 'My Package :: Product :: product edit view'
+	  uriPattern: 'products/{product}/edit'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Product'
+	    '@action':     'edit'
+
+	-
+	  name: 'My Package :: Category :: category list view'
+	  uriPattern: 'categories'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Category'
+	    '@action':     'index'
+
+	-
+	  name: 'My Package :: Category :: category detail view'
+	  uriPattern: 'categories/{category}'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Category'
+	    '@action':     'show'
+
+	-
+	  name: 'My Package :: Category :: category edit view'
+	  uriPattern: 'categories/{category}/edit'
+	  defaults:
+	    '@package':    'My.Package'
+	    '@controller': 'Category'
+	    '@action':     'edit'
 
 .. tip::
 
