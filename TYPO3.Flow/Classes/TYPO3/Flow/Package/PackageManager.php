@@ -274,6 +274,84 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	}
 
 	/**
+	 * Returns an array of \TYPO3\Flow\PackageInterface objects of all packages that match
+	 * the given package state, path, and type filters. All three filters must match, if given.
+	 *
+	 * @param string $packageState defaults to available
+	 * @param string $packagePath
+	 * @param string $packageType
+	 *
+	 * @return array Array of \TYPO3\Flow\Package\PackageInterface
+	 * @throws Exception\InvalidPackageStateException
+	 * @api
+	 */
+	public function getFilteredPackages($packageState = 'available', $packagePath = NULL, $packageType = NULL) {
+		$packages = array();
+		switch (strtolower($packageState)) {
+			case 'available':
+				$packages = $this->getAvailablePackages();
+			break;
+			case 'active':
+				$packages = $this->getActivePackages();
+			break;
+			case 'frozen':
+				$packages = $this->getFrozenPackages();
+			break;
+			default:
+				throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
+		}
+
+		if($packagePath !== NULL) {
+			$packages = $this->filterPackagesByPath($packages, $packagePath);
+		}
+		if($packageType !== NULL) {
+			$packages = $this->filterPackagesByType($packages, $packageType);
+		}
+
+		return $packages;
+	}
+
+	/**
+	 * Returns an array of \TYPO3\Flow\Package objects in the given array of packages
+	 * that are in the specified Package Path
+	 *
+	 * @param array $packages Array of \TYPO3\Flow\Package\PackageInterface to be filtered
+	 * @param string $filterPath Filter out anything that's not in this path
+	 * @return array Array of \TYPO3\Flow\Package\PackageInterface
+	 */
+	protected function filterPackagesByPath(&$packages, $filterPath) {
+		$filteredPackages = array();
+		/** @var $package Package */
+		foreach ($packages as $package) {
+			$packagePath = substr($package->getPackagePath(), strlen(FLOW_PATH_PACKAGES));
+			$packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
+			if ($packageGroup === $filterPath) {
+				$filteredPackages[$package->getPackageKey()] = $package;
+			}
+		}
+		return $filteredPackages;
+	}
+
+	/**
+	 * Returns an array of \TYPO3\Flow\Package objects in the given array of packages
+	 * that are of the specified package type.
+	 *
+	 * @param array $packages Array of \TYPO3\Flow\Package\PackageInterface to be filtered
+	 * @param string $packageType Filter out anything that's not of this packageType
+	 * @return array Array of \TYPO3\Flow\Package\PackageInterface
+	 */
+	protected function filterPackagesByType(&$packages, $packageType) {
+		$filteredPackages = array();
+		/** @var $package Package */
+		foreach ($packages as $package) {
+			if ($package->getComposerManifest('type') === $packageType) {
+				$filteredPackages[$package->getPackageKey()] = $package;
+			}
+		}
+		return $filteredPackages;
+	}
+
+	/**
 	 * Returns the upper camel cased version of the given package key or FALSE
 	 * if no such package is available.
 	 *
@@ -330,7 +408,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException
 	 * @api
 	 */
-	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL, $packagesPath = '', $packageType = 'typo3-flow-package') {
+	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL, $packagesPath = NULL, $packageType = 'typo3-flow-package') {
 		if (!$this->isPackageKeyValid($packageKey)) {
 			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
 		}
@@ -338,8 +416,13 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			throw new \TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
 		}
 
-		if ($packagesPath === '') {
-			$packagesPath = Files::getUnixStylePath(Files::concatenatePaths(array($this->packagesBasePath, 'Application')));
+		if ($packagesPath === NULL) {
+			if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$packageType])) {
+				$packagesPath = $this->settings['package']['packagesPathByType'][$packageType];
+			} else {
+				$packagesPath = 'Application';
+			}
+			$packagesPath = Files::getUnixStylePath(Files::concatenatePaths(array($this->packagesBasePath, $packagesPath)));
 		}
 
 		if ($packageMetaData === NULL) {
@@ -544,7 +627,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			throw new Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already registered.', 1338996122);
 		}
 
-		$this->packages[$package->getPackageKey()] = $package;
+		$this->packages[$packageKey] = $package;
 		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = str_replace($this->packagesBasePath, '', $package->getPackagePath());
 		$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = str_replace($package->getPackagePath(), '', $package->getClassesPath());
 

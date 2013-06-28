@@ -55,6 +55,16 @@ type in the manifest file. This would place a package into *Packages/Acme*::
 
  "type": "typo3-flow-acme"
 
+If you would like to use ``package:create`` to create packages of this type in
+*Packages/Acme* instead of the default location *Packages/Application*, add an
+entry in the *Settings.yaml* of the package that expects packages of that type::
+
+  TYPO3:
+    Flow:
+      package:
+        packagesPathByType:
+          'typo3-flow-acme': 'Acme'
+
 Package Directory Layout
 ========================
 

@@ -67,10 +67,11 @@ class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 *
 	 * @Flow\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
+	 * @param string $packageType The package type of the package to create
 	 * @return string
 	 * @see typo3.kickstart:kickstart:package
 	 */
-	public function createCommand($packageKey) {
+	public function createCommand($packageKey, $packageType = 'typo3-flow-package') {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			$this->outputLine('The package key "%s" is not valid.', array($packageKey));
 			$this->quit(1);
@@ -79,7 +80,11 @@ class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('The package "%s" already exists.', array($packageKey));
 			$this->quit(1);
 		}
-		$package = $this->packageManager->createPackage($packageKey);
+		if (substr($packageType, 0, 11) !== 'typo3-flow-') {
+			$this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', array($packageKey));
+			$this->quit(1);
+		}
+		$package = $this->packageManager->createPackage($packageKey, NULL, NULL, $packageType);
 		$this->outputLine('Created new package "' . $packageKey . '" at "' . $package->getPackagePath() . '".');
 	}
 

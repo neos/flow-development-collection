@@ -164,6 +164,10 @@ TYPO3:
       # activated automatically otherwise.
       inactiveByDefault:
         - 'Composer.Installers'
+      # Option for the PackageManager::Create to map the packagesPath by package type
+      packagesPathByType:
+        'typo3-flow-package': 'Application'
+        'typo3-flow-framework': 'Framework'
 
     persistence:
 

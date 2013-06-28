@@ -84,6 +84,19 @@ interface PackageManagerInterface {
 	public function getActivePackages();
 
 	/**
+	 * Returns an array of \TYPO3\Flow\PackageInterface objects of all packages that match
+	 * the given package state, path, and type filters. All three filters must match, if given.
+	 *
+	 * @param string $packageState defaults to available
+	 * @param string $packagePath
+	 * @param string $packageType
+	 *
+	 * @return array Array of \TYPO3\Flow\Package\PackageInterface
+	 * @api
+	 */
+	public function getFilteredPackages($packageState = 'available', $packagePath = NULL, $packageType = NULL);
+
+	/**
 	 * Returns the upper camel cased version of the given package key or FALSE
 	 * if no such package is available.
 	 *
@@ -106,10 +119,12 @@ interface PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package key to use for the new package
 	 * @param \TYPO3\Flow\Package\MetaData $packageMetaData Package metadata
+	 * @param string $packagesPath If specified, the package will be created in this path
+	 * @param string $packageType If specified, the package type will be set
 	 * @return \TYPO3\Flow\Package\Package The newly created package
 	 * @api
 	 */
-	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL);
+	public function createPackage($packageKey, \TYPO3\Flow\Package\MetaData $packageMetaData = NULL, $packagesPath = NULL, $packageType = NULL);
 
 	/**
 	 * Deactivates a package if it is in the list of active packages
