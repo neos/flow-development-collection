@@ -579,7 +579,7 @@ class Scripts {
 		$escapedArguments = '';
 		if ($commandArguments !== array()) {
 			foreach ($commandArguments as $argument=>$argumentValue) {
-				$escapedArguments .= escapeshellarg('--' . trim($argument));
+				$escapedArguments .= ' ' . escapeshellarg('--' . trim($argument));
 				if (trim($argumentValue) !== '') {
 					$escapedArguments .= ' ' . escapeshellarg(trim($argumentValue));
 				}
