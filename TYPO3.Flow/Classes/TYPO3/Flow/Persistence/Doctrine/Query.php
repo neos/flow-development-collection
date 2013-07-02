@@ -77,6 +77,11 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	protected $joins;
 
 	/**
+	 * @var integer
+	 */
+	protected $joinAliasCounter = 0;
+
+	/**
 	 * @param string $entityClassName
 	 */
 	public function __construct($entityClassName) {
@@ -493,7 +498,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		$propertyPathParts = explode('.', $propertyPath);
 		$conditionPartsCount = count($propertyPathParts);
 		for ($i = 0; $i < $conditionPartsCount - 1; $i++) {
-			$joinAlias = uniqid($propertyPathParts[$i]);
+			$joinAlias = $propertyPathParts[$i] . $this->joinAliasCounter++;
 			$this->queryBuilder->leftJoin($previousJoinAlias . '.' . $propertyPathParts[$i], $joinAlias);
 			$this->joins[$joinAlias] = $previousJoinAlias . '.' . $propertyPathParts[$i];
 			$previousJoinAlias = $joinAlias;
