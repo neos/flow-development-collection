@@ -12,9 +12,17 @@ namespace TYPO3\Eel;
  *                                                                        */
 
 /**
- * A general Eel exception
+ * Interface for classes that are aware of a protected Eel context
+ *
+ * Allows for custom, dynamic policies for allowed method calls
  */
-class Exception extends \TYPO3\Flow\Exception {
+interface ProtectedContextAwareInterface {
+
+	/**
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	public function allowsCallOfMethod($methodName);
 
 }
 ?>

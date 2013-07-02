@@ -12,8 +12,10 @@ namespace TYPO3\Eel;
  *                                                                        */
 
 /**
- * Something like a variable container with
- * wrapping of return values for safe access without warnings.
+ * A Eel evaluation context
+ *
+ * It works as a variable container with wrapping of return values
+ * for safe access without warnings (on missing properties).
  */
 class Context {
 
@@ -41,7 +43,7 @@ class Context {
 	 * @return mixed The value
 	 */
 	public function get($path) {
-		if ($path instanceof \TYPO3\Eel\Context) {
+		if ($path instanceof Context) {
 			$path = $path->unwrap();
 		}
 		if ($path === NULL) {
@@ -121,7 +123,11 @@ class Context {
 	 * @return \TYPO3\Eel\Context
 	 */
 	public function wrap($value) {
-		return new Context($value);
+		if (!$value instanceof Context) {
+			return new static($value);
+		} else {
+			return $value;
+		}
 	}
 
 	/**

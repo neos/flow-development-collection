@@ -12,9 +12,9 @@ namespace TYPO3\Eel;
  *                                                                        */
 
 /**
- * A general Eel exception
+ * An exception that is thrown when methods are accessed which are not allowed
  */
-class Exception extends \TYPO3\Flow\Exception {
+class NotAllowedException extends EvaluationException {
 
 }
 ?>

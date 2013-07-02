@@ -11,13 +11,12 @@ namespace TYPO3\Eel\Tests\Unit\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Eel\Context;
-use Eel\Evaluator;
+use TYPO3\Eel\ProtectedContextAwareInterface;
 
 /**
  * Test fixture object
  */
-class TestObject {
+class TestObject implements ProtectedContextAwareInterface {
 
 	/**
 	 * @var string
@@ -29,6 +28,10 @@ class TestObject {
 	 */
 	protected $booleanProperty;
 
+	/**
+	 * @var string
+	 */
+	protected $dynamicMethodName;
 
 	/**
 	 * @return string
@@ -64,6 +67,21 @@ class TestObject {
 	 */
 	public function callMe($name) {
 		return 'Hello, ' . $name . '!';
+	}
+
+	/**
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	public function allowsCallOfMethod($methodName) {
+		return $methodName === $this->dynamicMethodName;
+	}
+
+	/**
+	 * @param string $dynamicMethodName
+	 */
+	public function setDynamicMethodName($dynamicMethodName) {
+		$this->dynamicMethodName = $dynamicMethodName;
 	}
 
 }

@@ -105,6 +105,15 @@ class OperationResolver {
 		}
 		throw new FlowQueryException('No operation which satisfies the runtime constraints found for "' . $operationName . '".', 1332491864);
 	}
+
+	/**
+	 * @param string $operationName
+	 * @return boolean
+	 */
+	public function hasOperation($operationName) {
+		return isset($this->operations[$operationName]);
+	}
+
 }
 
 ?>

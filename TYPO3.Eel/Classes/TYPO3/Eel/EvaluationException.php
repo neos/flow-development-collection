@@ -14,7 +14,7 @@ namespace TYPO3\Eel;
 /**
  * Some exception that occurred during evaluation of an expression
  */
-class EvaluationException extends \TYPO3\Flow\Exception {
+class EvaluationException extends Exception {
 
 }
 ?>

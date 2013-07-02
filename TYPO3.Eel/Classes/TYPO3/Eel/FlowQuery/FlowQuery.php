@@ -68,7 +68,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * If an operation is final, it should return the resulting value directly.
  */
-class FlowQuery implements \IteratorAggregate, \Countable {
+class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorAggregate, \Countable {
 
 	/**
 	 * the objects this FlowQuery object wraps
@@ -254,5 +254,14 @@ class FlowQuery implements \IteratorAggregate, \Countable {
 	public function setContext($context) {
 		$this->context = $context;
 	}
+
+	/**
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	public function allowsCallOfMethod($methodName) {
+		return $this->operationResolver->hasOperation($methodName);
+	}
+
 }
 ?>
