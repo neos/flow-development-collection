@@ -208,6 +208,7 @@ class CacheManager {
 		$objectClassesCache = $this->getCache('Flow_Object_Classes');
 		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
 		$modifiedAspectClassNamesWithUnderscores = array();
+		$modifiedClassNamesWithUnderscores = array();
 		foreach ($changedFiles as $pathAndFilename => $status) {
 			$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
 			$matches = array();
