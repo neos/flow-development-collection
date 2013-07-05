@@ -40,7 +40,7 @@ Surely some users will ask themselves why they should develop object oriented
 in the first place. Why not (just like until now) keep on developing
 procedural, thus stringing together functions.
 
-If we look at the roughly 4.300 extensions available for TYPO3 at the moment, we'll see
+If we look at the roughly 4.300 extensions available for TYPO3 CMS at the moment, we'll see
 that they are built with a class by default - but have been completed by the extension
 developer in a procedural way in about 95% of all cases.
 
