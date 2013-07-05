@@ -39,7 +39,7 @@ AOP enables you to move the security (or any other) aspect into its own package
 and leave the other objects with clear responsibilities, probably not
 implementing any security themselves.
 
-.. note::
+.. tip::
  Planning out the purpose and use cases of a package before you create it will
  allow for backwards compatibility by creating an unchanging interface for
  independent classes to consume.
@@ -51,7 +51,7 @@ Dependency Injection
 In AOP there is focus on building reusable components that can be wired together
 to create a cohesive architecture. This goal becomes increasingly difficult
 because as the size and complexity of an application expands, so does its
-dependencies. One technique to aliviate dependancy management is through
+dependencies. One technique to aliviate dependency management is through
 Dependency Injection (DI).
 
 Dependency Injection (DI) is a technique by which a package can request and gain
@@ -61,7 +61,7 @@ package interfaces upon request.
 
 DI enables a package to control what dependencies it requires while allowing the
 framework or another third party system to handle the fullfillment of each
-dependancy. This is know as Inversion of Control (IoC). IoC delegates the
+dependency. This is know as Inversion of Control (IoC). IoC delegates the
 responsibility of dependency resolution to the framework while each package
 specifies which dependencies it needs.
 
