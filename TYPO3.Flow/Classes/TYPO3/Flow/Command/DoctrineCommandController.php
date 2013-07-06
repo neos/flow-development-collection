@@ -264,10 +264,20 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 					$this->outputLine('Wrote migration SQL to file "' . $output . '".');
 				}
 			}
+
+			$this->emitAfterDatabaseMigration();
+
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
+	}
+
+	/**
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitAfterDatabaseMigration() {
 	}
 
 	/**
