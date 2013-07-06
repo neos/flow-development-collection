@@ -19,6 +19,11 @@ namespace TYPO3\Eel;
  */
 class CompilingEelParser extends EelParser {
 
+	/**
+	 * @var integer
+	 */
+	protected $tmpId;
+
 	public function NumberLiteral__finalise(&$self) {
 		$self['code'] = $self['text'];
 	}
