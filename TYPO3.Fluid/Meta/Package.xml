@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package xmlns="http://typo3.org/ns/2008/flow3/package">
+    <key>Fluid</key>
+    <title>Fluid Templating Framework</title>
+    <description>Next-Generation Templating Framework for FLOW3 and TYPO3 5.0, also backported to TYPO3 4.x</description>
+    <version>1.0.0-alpha4</version>
+    <categories/>
+    <parties>
+        <person role="LeadDeveloper">
+            <name>Sebastian Kurfürst</name>
+            <email>sebastian@typo3.org</email>
+            <website></website>
+            <organisation></organisation>
+            <repositoryUserName>sebastian</repositoryUserName>
+        </person>
+        <person role="CoDeveloper">
+            <name>Bastian Weidelich</name>
+            <email>bastian@typo3.org</email>
+            <website></website>
+            <organisation></organisation>
+            <repositoryUserName>bwaidelich</repositoryUserName>
+        </person>
+    </parties>
+    <constraints>
+        <depends/>
+        <conflicts/>
+        <suggests/>
+    </constraints>
+</package>

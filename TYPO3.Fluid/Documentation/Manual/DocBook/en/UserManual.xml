@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xml:id="fluid.usermanual"
+         xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>User Manual</title>
+
+  <para>This chapter describes all things the users of the templating system
+  needs to know. After you've read the introduction, you can dive into the
+  concepts of Fluid which are relevant to you.</para>
+
+  <para>The chapter starts with an overview of basic concepts, continues with
+  using layouts, and finishes with how to write your own view helpers.</para>
+
+  <section xml:id="fluid.usermanual.basicconcepts">
+    <title>Basic concepts</title>
+
+    <para>This section describes all basic concepts available.</para>
+
+    <para>This includes:</para>
+
+    <para><itemizedlist>
+        <listitem>
+          <para>Variables / Object Accessors</para>
+        </listitem>
+
+        <listitem>
+          <para>View Helpers</para>
+        </listitem>
+
+        <listitem>
+          <para>Arrays</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <section>
+      <title>Variables and Object Accessors</title>
+
+      <para>A templating system would be quite pointless if it was not
+      possible to display some external data in the templates. That's what
+      variables are for:</para>
+
+      <para>Suppose you want to output the title of your blog, you could write
+      the following snippet into your controller:</para>
+
+      <para><programlisting>$this-&gt;view-&gt;assign('blogTitle', $blog-&gt;getTitle());</programlisting>Then,
+      you could output the blog title in your template with the following
+      snippet:</para>
+
+      <para><programlisting>&lt;h1&gt;This blog is called {blogTitle}&lt;/h1&gt;</programlisting>Now,
+      you might want to extend the output by the blog author as well. To do
+      this, you could repeat the above steps, but that would be quite
+      inconvenient and hard to read. <footnote>
+          <para>Besides, the semantics between the controller and the view
+          should be the following: The controller says to the view "Please
+          render the blog object I give to you", and not "Please render the
+          Blog title, and the blog posting 1, ...". That's why passing objects
+          to the view is highly encouraged.</para>
+        </footnote></para>
+
+      <para>That's why the template language has a special syntax for object
+      access, demonstrated below. A nicer way of expressing the above is the
+      following:</para>
+
+      <para><programlisting><lineannotation>This should go into the controller:
+</lineannotation>$this-&gt;view-&gt;assign('blog', $blog);
+<lineannotation>This should go into the template:</lineannotation>
+&lt;h1&gt;This blog is called <emphasis>{blog.title}</emphasis>, written by <emphasis>{blog.author}</emphasis>&lt;/h1&gt;</programlisting>Instead
+      of passing strings to the template, we are passing whole objects around
+      now - which is much nicer to use both from the controller and the view
+      side. To access certain properties of these objects, you can use
+      <emphasis>Object Accessors</emphasis>. By writing
+      <code>{blog.title}</code>, the template engine will call a
+      <code>getTitle()</code> method on the <code>blog</code> object, if it
+      exists. Besides, you can use that syntax to traverse associative arrays
+      and public properties.</para>
+
+      <para><tip>
+          <para>Deep nesting is supported: If you want to output the email
+          address of the blog author, then you can use
+          <code>{blog.author.email}</code>, which internally calls
+          <code>$blog-&gt;getAuthor()-&gt;getEmail()</code>.</para>
+        </tip></para>
+    </section>
+
+    <section>
+      <title>View Helpers</title>
+
+      <para>All output logic is placed in <emphasis>View
+      Helpers</emphasis>.</para>
+
+      <para>The view helpers are invoked by using XML tags in the template,
+      and are implemented as PHP classes (more on that later).</para>
+
+      <para>This concept is best understood with an example:</para>
+
+      <para><example>
+          <title>Tags and Namespace declarations</title>
+
+          <programlisting>{namespace f=F3\Fluid\ViewHelpers}⁄<co
+              xml:id="co.tags-example.1"/>
+&lt;f:link.action controller="Administration"&gt;Administration&lt;/f:link.action&gt;<co
+              xml:id="co.tags-example.2"/></programlisting>
+
+          <calloutlist>
+            <callout arearefs="co.tags-example.1">
+              <para><emphasis>Namespace Declaration:</emphasis> You import the
+              PHP Namespace <code>F3\Fluid\ViewHelpers</code> under the prefix
+              <code>f</code>. Hint: you can leave out this namespace import
+              because it is imported by default.<footnote>
+                  <para>This is like an XML namespace import.</para>
+                </footnote></para>
+            </callout>
+
+            <callout arearefs="co.tags-example.2">
+              <para>Calling the <emphasis>View Helper:</emphasis> The
+              <code>&lt;f:link.action...&gt; ... &lt;/f:link.action&gt;</code>
+              tag renders a link.</para>
+            </callout>
+          </calloutlist>
+
+          <para>Now, the main difference between Fluid and other templating
+          engines is how the view helpers are implemented: <emphasis>For each
+          view helper, there exists a corresponding PHP class.</emphasis>
+          Let's see how this works for the example above:</para>
+
+          <para>The <code>&lt;f3:link.action /&gt;</code> tag is implemented
+          in the class
+          <classname>\F3\Fluid\ViewHelpers\Link\ActionViewHelper</classname>.</para>
+        </example></para>
+
+      <para>The class name of such a view helper is constructed for a given
+      tag as follows:<itemizedlist>
+          <listitem>
+            <para>The first part of the class name is the namespace which was
+            imported (the namespace prefix f was expanded to its full
+            namespace <code>F3\Fluid\ViewHelpers</code>)</para>
+          </listitem>
+
+          <listitem>
+            <para>The unqualified name of the tag, without the prefix, is
+            capitalized (<code>Link)</code>, and the postfix
+            <code>ViewHelper</code> is appended.</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>The tag and view helper concept is <emphasis>the core
+      concept</emphasis> of Fluid. <emphasis>All output logic is implemented
+      through such ViewHelpers / Tags!</emphasis> Things like
+      <code>if/else</code>, <code>for</code>, ... are all implemented using
+      custom tags - a main difference to other templating languages.</para>
+
+      <para>Some benefits of this approach are:<itemizedlist>
+          <listitem>
+            <para>You cannot override already existing view helpers by
+            accident.</para>
+          </listitem>
+
+          <listitem>
+            <para>It is very easy to write custom view helpers, which live
+            next to the standard view helpers</para>
+          </listitem>
+
+          <listitem>
+            <para>All user documentation for a view helper can be
+            automatically generated from the annotations and code
+            documentation. This includes Eclipse autocompletion<footnote>
+                <para>This is done through XML Schema Definition files which
+                are generated from the view helper's PHPdoc comments.</para>
+              </footnote></para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>Most view helpers have some parameters. These can be plain
+      strings, just like in <code>&lt;f:link.action
+      controller="Administration"&gt;...&lt;/f:link.action&gt;</code>, but as
+      well arbitary objects. Parameters of view helpers will just be parsed
+      with the same rules as the rest of the template, thus you can pass
+      arrays or objects as parameters.</para>
+
+      <para>This is often used when adding arguments to links:</para>
+
+      <example>
+        <title>Creating a link with arguments</title>
+
+        <programlisting>&lt;f:link.action controller="Blog" action="show" arguments="{id : blogPost.id}"&gt;... read more&lt;/f:link.action&gt;</programlisting>
+      </example>
+
+      <para>Here, the view helper will get a parameter called
+      <code>arguments</code> which is of type array.</para>
+
+      <warning>
+        <para>Make sure you <emphasis>do not put a space</emphasis> before or
+        after the opening or closing brackets of an array. If you type
+        <code>arguments=" {id : blogPost.id}"</code> (notice the space before
+        the opening curly bracket), the array is automatically casted to a
+        string (as a string concatenation takes place).</para>
+
+        <para>This also applies when using object accessors:
+        <code>&lt;f:do.something with="{object}" /&gt;</code> and
+        <code>&lt;f:do.something with=" {object}" /&gt;</code> are
+        substantially different: In the first case, the view helper will
+        receive an <emphasis>object</emphasis> as argument, while in the
+        second case, it will receive a <emphasis>string</emphasis> as
+        argument.</para>
+
+        <para>This might first seem like a bug, but actually it is just
+        consistent that it works that way.</para>
+      </warning>
+
+      <section>
+        <title>Boolean expressions</title>
+
+        <para>Often, you need some kind of conditions inside your template.
+        For them, you will usually use the <code>&lt;f:if&gt;</code>
+        ViewHelper. Now let's imagine we have a list of blog postings and want
+        to display some additional information for the currently selected blog
+        posting. We assume that the currently selected blog is available in
+        <code>{currentBlogPosting}</code>. Now, let's have a look how this
+        works:</para>
+
+        <example>
+          <title>Using boolean expressions</title>
+
+          <para><programlisting>&lt;f:for each="{blogPosts}" as="post"&gt;
+  &lt;f:if condition="<emphasis>{post} == {currentBlogPosting}</emphasis>"&gt;... some special output here ...&lt;/f:if&gt; 
+&lt;/f:for&gt;</programlisting></para>
+        </example>
+
+        <para>In the above example, there is a bit of new syntax involved:
+        <code>{post} == {currentBlogPosting}</code>. Intuitively, this says
+        "if the post I''m currently iterating over is the same as
+        currentBlogPosting, do something."</para>
+
+        <para>Why can we use this boolean expression syntax? Well, because the
+        IfViewHelper has registered the argument <code>condition</code> as
+        <code>boolean</code>. Thus, the boolean expression syntax is available
+        in all arguments of ViewHelpers which are of type boolean.</para>
+
+        <para>All boolean expressions have the form <emphasis>XX Comparator
+        YY</emphasis>, where:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>Comparator</emphasis> is one of the following:
+            <emphasis>==, &gt;, &gt;=, &lt;, &lt;=, %</emphasis>
+            (modulo)</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>XX / YY</emphasis> is one of the following:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>A number (integer or float</para>
+              </listitem>
+
+              <listitem>
+                <para>A JSON Array</para>
+              </listitem>
+
+              <listitem>
+                <para>A ViewHelper</para>
+              </listitem>
+
+              <listitem>
+                <para>An Object Accessor (this is probably the most used
+                example)</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </itemizedlist>
+      </section>
+    </section>
+
+    <section>
+      <title>Arrays</title>
+
+      <para>Some view helpers, like the <code>SelectViewHelper</code> (which
+      renders an HTML select dropdown box), need to get associative arrays as
+      arguments (mapping from internal to displayed name). See the following
+      example how this works:</para>
+
+      <para><programlisting>&lt;f:form.select options="{edit: 'Edit item', delete: 'Delete item'}" /&gt;</programlisting>The
+      array syntax used here is very similar to the JSON object
+      syntax<footnote>
+          <para>Actually, it should be the same. If not, please tell
+          us!</para>
+        </footnote>. Thus, the left side of the associative array is used as
+      key without any parsing, and the right side can be either:</para>
+
+      <para><itemizedlist>
+          <listitem>
+            <para>a number</para>
+
+            <para><programlisting>{a : 1,
+ b : 2
+}</programlisting></para>
+          </listitem>
+
+          <listitem>
+            <para>a string; Needs to be in either single- or double quotes. In
+            a double-quoted string, you need to escape the " with a \ in front
+            (and vice versa for single quoted strings).</para>
+
+            <para><programlisting>{a : 'Hallo',
+ b : "Second string with escaped \" (double quotes) but not escaped ' (single quotes)"
+}</programlisting></para>
+          </listitem>
+
+          <listitem>
+            <para>a nested array</para>
+
+            <para><programlisting>{a : {
+    a1 : "bla1",
+    a2 : "bla2"
+  },
+ b : "hallo"
+}</programlisting></para>
+          </listitem>
+
+          <listitem>
+            <para>a variable reference (=an object accessor)</para>
+
+            <para><programlisting>{blogTitle : blog.title,
+ blogObject: blog
+}</programlisting></para>
+          </listitem>
+        </itemizedlist></para>
+    </section>
+  </section>
+
+  <section xml:id="fluid.usermanual.passingdata">
+    <title>Passing data to the view</title>
+
+    <para>You can pass arbitary objects to the view, using
+    <code>$this-&gt;view-&gt;assign(⁄<replaceable>IdentifierString</replaceable>,
+    ⁄<replaceable>Object)</replaceable></code> from within the controller. See
+    the above paragraphs about Object Accessors for details how to use the
+    passed data.</para>
+  </section>
+
+  <section xml:id="fluid.usermanual.layouts">
+    <title>Layouts</title>
+
+    <para>In almost all web applications, there are many similarities between
+    each page. Usually, there are common templates or menu structures which
+    will not change for many pages.</para>
+
+    <para>To make this possible in Fluid, we created a layout system, which we
+    will introduce in this section.</para>
+
+    <section>
+      <title>Writing a layout</title>
+
+      <para>Every layout is placed in the
+      <filename>Resources/Private/Layouts</filename> directory, and has the
+      file ending <filename>.html</filename>. A layout is a normal Fluid
+      template file, except there are some parts where the actual content of
+      the target page should be inserted.</para>
+
+      <example>
+        <title>An example layout</title>
+
+        <programlisting>&lt;html&gt;
+&lt;head&gt;&lt;title&gt;My fancy web application&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="menu"&gt;... menu goes here ...&lt;/div&gt;
+&lt;div id="content"&gt;
+  <emphasis>&lt;f:render section="content" /&gt;</emphasis><co
+            xml:id="co.layout-example.1"/>
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</programlisting>
+
+        <calloutlist>
+          <callout arearefs="co.layout-example.1">
+            <para>With this tag, a section from the target template is
+            rendered.</para>
+          </callout>
+        </calloutlist>
+      </example>
+    </section>
+
+    <section>
+      <title>Using a layout</title>
+
+      <para>Using a layout involves two steps:<itemizedlist>
+          <listitem>
+            <para>Declare which layout to use: <code>&lt;f:layout name="..."
+            /&gt;</code> can be written anywhere on the page (though we
+            suggest to write it on top, right after the namespace declaration)
+            - the given name references the layout.</para>
+          </listitem>
+
+          <listitem>
+            <para>Provide the content for all sections used by the layout
+            using the <code>&lt;f:section&gt;...&lt;/f:section&gt;</code> tag:
+            <code>&lt;f:section
+            name="content"&gt;...&lt;/f3:section&gt;</code></para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>For the above layout, a minimal template would look like the
+      following:</para>
+
+      <example>
+        <title>A template for the above layout</title>
+
+        <programlisting>&lt;f:layout name="example.html" /&gt;
+
+&lt;f:section name="content"&gt;
+<replaceable>This HTML here will be outputted to inside the layout</replaceable>
+&lt;/f:section&gt;</programlisting>
+      </example>
+    </section>
+  </section>
+
+  <section xml:id="fluid.usermanual.writingaviewhelper">
+    <title>Writing your own View Helper</title>
+
+    <para>As we have seen before, <emphasis>all output logic resides in View
+    Helpers</emphasis>. This includes the standard control flow operators such
+    as <code>if/else</code>, HTML forms, and much more. This is the concept
+    which makes Fluid extremely versatile and extensible.</para>
+
+    <para>If you want to create a view helper which you can call from your
+    template (as a tag), you just write a plain PHP class which needs to
+    inherit from <classname>F3\Fluid\Core\AbstractViewHelper</classname> (or
+    its subclasses). You need to implement only one method to write a view
+    helper:</para>
+
+    <para><methodname>public function render()</methodname></para>
+
+    <section>
+      <title>Rendering the View Helper</title>
+
+      <para>We refresh what we have learned so far: When a user writes
+      something like <code>&lt;blog:displayNews /&gt;</code> inside a template
+      (and has imported the "blog" namespace to
+      <classname>F3\Blog\ViewHelpers</classname>), Fluid will automatically
+      instanciate the class
+      <classname>F3\Blog\ViewHelpers\DisplayNewsViewHelper</classname>, and
+      invoke the <methodname>render()</methodname> method on it.</para>
+
+      <para>This <methodname>render()</methodname> method should return the
+      rendered content as string.</para>
+
+      <para>You have the following possibilities to access the environment
+      when rendering your view helper:<itemizedlist>
+          <listitem>
+            <para><code>$this-&gt;arguments</code> is a read-only associative
+            array where you will find the values for all arguments you
+            registered previously.</para>
+          </listitem>
+
+          <listitem>
+            <para><code>$this-&gt;renderChildren()</code> renders everything
+            between the opening and closing tag of the view helper and returns
+            the rendered result (as string).</para>
+          </listitem>
+
+          <listitem>
+            <para><code>$this-&gt;variableContainer</code> is an instance of
+            <classname>F3\Fluid\Core\ViewHelper\TemplateVariableContainer</classname>,
+            with which you have access to all variables currently available in
+            the template.</para>
+
+            <para>Additionally, you can add variables to the container with
+            <code>$this-&gt;variableContainer-&gt;add($identifier,
+            $value)</code>, but you have to make sure that you
+            <emphasis>remove every variable you added</emphasis> again! This
+            is a security measure against side-effects.</para>
+
+            <para>It is also not possible to add a variable to the
+            VariableContainer if a variable of the same name already exists -
+            again to prevent side effects and scope problems.</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>Now, we will look at an example: How to write a view helper giving
+      us the <code>foreach</code> functionality of PHP.<footnote>
+          <para>This view helper is already available in the standard library
+          as <code>&lt;f:for&gt;..&lt;/f:for&gt;</code>. We still use it as
+          example here, as it is quite simple and shows many
+          possibilities.</para>
+        </footnote></para>
+
+      <example>
+        <title>Implementing a loop</title>
+
+        <para>A loop could be called within the template in the following
+        way:</para>
+
+        <programlisting>&lt;f:for each="{blogPosts}" as="blogPost"&gt;
+  &lt;h2&gt;{blogPost.title}&lt;/h2&gt;
+&lt;/f:for&gt;</programlisting>
+
+        <para>So, in words, what should the loop do?</para>
+
+        <para>It needs two arguments:<itemizedlist>
+            <listitem>
+              <para><code>each</code>: Will be set to some
+              <emphasis>object</emphasis><footnote>
+                  <para>Remember that the view helper can receive arbitary
+                  objects as parameters!</para>
+                </footnote> which can be iterated over.</para>
+            </listitem>
+
+            <listitem>
+              <para><code>as</code>: The <emphasis>name</emphasis> of a
+              variable which will contain the current element being iterated
+              over</para>
+            </listitem>
+          </itemizedlist></para>
+
+        <para>It then should do the following (in pseudocode):<programlisting>foreach ($each as $$as) {
+  // render everything between opening and closing tag
+}</programlisting></para>
+
+        <para>Implementing this is fairly straightforward, as you will see
+        right now:</para>
+
+        <programlisting>class ForViewHelper {
+  /**
+   * Renders a loop
+   *
+   * @param array $each Array to iterate over<co xml:id="co.forViewHelper.1"/>
+   * @param string $as Iteration variable
+   */
+  public function render(array $each, $as) {<co xml:id="co.forViewHelper.2"/>
+    $out = '';
+    foreach ($each as $singleElement) {
+      $this-&gt;variableContainer-&gt;add($as, $singleElement);
+      $out .= $this-&gt;renderChildren();<co xml:id="co.forViewHelper.3"/>
+      $this-&gt;variableContainer-&gt;remove($as);
+    }
+    return $out;
+  }
+}</programlisting>
+
+        <calloutlist>
+          <callout arearefs="co.forViewHelper.1">
+            <para>The PHPDoc <emphasis>is part of the code</emphasis>! Fluid
+            extracts the argument datatypes from the PHPDoc.</para>
+          </callout>
+
+          <callout arearefs="co.forViewHelper.2">
+            <para>You can simply register arguments to the view helper by
+            adding them as method arguments of the
+            <methodname>render()</methodname> method.</para>
+          </callout>
+
+          <callout arearefs="co.forViewHelper.3">
+            <para>Here, everything between the opening and closing tag of the
+            view helper is rendered and returned as string.</para>
+          </callout>
+        </calloutlist>
+
+        <para>The above example demonstrates how we add a variable, render all
+        children (everything between the opening and closing tag), and remove
+        the variable again to prevent side-effects.</para>
+      </example>
+    </section>
+
+    <section>
+      <title>Declaring arguments</title>
+
+      <para>We have now seen that we can add arguments just by adding them as
+      method arguments to the <methodname>render()</methodname> method. There
+      is, however, a second method to register arguments:</para>
+
+      <para>You can also register arguments inside a method called
+      <methodname>initializeArguments()</methodname>. Call
+      <code>$this-&gt;registerArgument(<replaceable>$name</replaceable>,
+      <replaceable>$dataType</replaceable>,
+      <replaceable>$description</replaceable>,
+      <replaceable>$isRequired</replaceable>,
+      <replaceable>$defaultValue</replaceable>=NULL) inside.</code></para>
+
+      <para><code>It depends how many arguments a view helper has. Sometimes,
+      registering them as render() arguments is more beneficial, and sometimes
+      it makes more sense to register them in
+      <methodname>initializeArguments()</methodname>.</code></para>
+    </section>
+
+    <section>
+      <title>TagBasedViewHelper</title>
+
+      <para>Many view helpers output an HTML tag - for example
+      <code>&lt;f3:link.action ...&gt; outputs </code>a <code>&lt;a
+      href="..."&gt;</code> tag. There are many view helpers which work that
+      way.</para>
+
+      <para>Very often, you want to add a CSS class or a target attribute to
+      an <code>&lt;a href="..."&gt;</code> tag. This often leads to repetitive
+      code like below. (Don't look at the code too thoroughly, it should just
+      demonstrate the boring and repetitive task one would have without the
+      TagBasedViewHelper).<programlisting>class LinkViewHelper extends \F3\Fluid\Core\AbstractViewHelper {
+  public function initializeArguments() {
+    $this-&gt;registerArgument('class', 'string', 'CSS class to add to the link');
+    $this-&gt;registerArgument('target', 'string', 'Target for the link');
+    ... and more ...
+  }
+  public function render() {
+    $output = '&lt;a href="..."';
+    if ($this-&gt;arguments['class']) {
+      $output .= ' class="' . $this-&gt;arguments['class'] . '"';
+    }
+    if ($this-&gt;arguments['target']) {
+      $output .= ' target="' . $this-&gt;arguments['target'] . '"';
+    }
+    $output .= '&gt;';
+    ... and more ...
+    return $output;
+  }
+}</programlisting></para>
+
+      <para>Now, the TagBasedViewHelper introduces two more methods you can
+      use inside <code>initializeArguments()</code>:<itemizedlist>
+          <listitem>
+            <para><code>registerTagAttribute($name, $type, $description,
+            $required)</code>: Use this method to register an attribute which
+            should be directly added to the tag</para>
+          </listitem>
+
+          <listitem>
+            <para><code>registerUniversalTagAttributes()</code>: If called,
+            registers the standard HTML attributes (class, id, dir, lang,
+            style, title).</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>Inside the TagBasedViewHelper, there is a TagBuilder object
+      available (with <code>$this-&gt;tag</code>) which makes building a tag a
+      lot more straightforward</para>
+
+      <para>With the above methods we get, the <code>LinkViewHelper</code>
+      from above can be condensed as follows:<programlisting>class LinkViewHelper extends \F3\Fluid\Core\AbstractViewHelper {
+	public function initializeArguments() {
+		$this-&gt;registerUniversalTagAttributes();
+	}
+
+	/**
+	 * Render the link.
+	 *
+	 * @param string $action Target action
+	 * @param array $arguments Arguments
+	 * @param string $controller Target controller. If NULL current controllerName is used
+	 * @param string $package Target package. if NULL current package is used
+	 * @param string $subpackage Target subpackage. if NULL current subpackage is used
+	 * @param string $section The anchor to be added to the URI
+	 * @return string The rendered link
+	 */
+	public function render($action = NULL, array $arguments = array(), $controller = NULL, $package = NULL, $subpackage = NULL, $section = '') {
+		$uriBuilder = $this-&gt;controllerContext-&gt;getURIBuilder();
+		$uri = $uriBuilder-&gt;URIFor($action, $arguments, $controller, $package, $subpackage, $section);
+		$this-&gt;tag-&gt;addAttribute('href', $uri);
+		$this-&gt;tag-&gt;setContent($this-&gt;renderChildren());
+
+		return $this-&gt;tag-&gt;render();
+	}
+}</programlisting></para>
+
+      <para>Additionally, we now already have support for all universal HTML
+      attributes.</para>
+
+      <para>You might now think that the building blocks are ready, but there
+      is one more nice thing to add: <code>additionalAttributes</code>! Read
+      about it in the next section.</para>
+
+      <section>
+        <title>additionalAttributes</title>
+
+        <para>Sometimes, you need some HTML attributes which are not part of
+        the standard. As an example: if you use the Dojo JavaScript framework,
+        using these non-standard attributes makes life a lot easier.<footnote>
+            <para>There are always some religious discussions whether to allow
+            non-standard attributes or not. People being against it argue that
+            it "pollutes" HTML, and makes it not validate anymore. More
+            pragmatic people see some benefits to custom attributes in some
+            contexts: If you use JavaScript to evaluate them, they will be
+            ignored by the rendering engine if JavaScript is switched off, and
+            can enable special behavior when JavaScript is turned on. Thus,
+            they can make it easy to provide degradable interfaces.</para>
+
+            <para>(Before bashing Dojo now: Of course you do not
+            <emphasis>need</emphasis> the additional HTML arguments, but they
+            make work with it a lot more comfortable)</para>
+          </footnote>We think that the templating framework should not
+        constrain the user in his possibilities - thus, it should be possible
+        to add custom HTML attributes as well, if they are needed (People who
+        have already worked with JSP know that it can be difficult to archive
+        this. Our solution looks as follows:</para>
+
+        <para><emphasis>Every view helper which inherits from
+        <code>TagBasedViewHelper</code> has a special property called
+        <code>additionalAttributes</code> which allows you to add arbitary
+        HTML attributes to the tag.</emphasis></para>
+
+        <para><code>additionalAttributes</code> should be an associative
+        array, where the key is the name of the HTML attribute.</para>
+
+        <para>If the link tag from above needed a new attribute called
+        <code>fadeDuration</code>, which is not part of HTML, you could do
+        that as follows:<programlisting>&lt;f:link.action ... additionalAttributes="{fadeDuration : 800}"&gt;Link with fadeDuration set&lt;/f:link.action&gt;</programlisting></para>
+
+        <para>This attribute is available in all tags that inherit from
+        <classname>F3\Fluid\Core\ViewHelper\TagBasedViewHelper</classname>.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Facets</title>
+
+      <para>The possibilities you get when you base your view helper on
+      <classname>F3\Fluid\Core\ViewHelper\AbstractViewHelper</classname>
+      should be enough for most use cases - however, there are some cases when
+      the view helper needs to interact in a special way with its surroundings
+      - an example is the "if/else" view helper group.</para>
+
+      <para>If a view helper needs to know more about its surroundings, it has
+      to implement a certain facet. Facets are plain PHP interfaces.</para>
+
+      <para><emphasis>Currently, all facets are NOT YET PUBLIC API! Use them
+      at your own risk!</emphasis></para>
+
+      <section>
+        <title>SubNodeAccess Facet</title>
+
+        <para>Sometimes, a view helper needs direct access to its child nodes
+        - as it does not want to render all of its children, but only a
+        subset. For this to work the
+        <interfacename>SubNodeAccessInterface</interfacename> has been
+        introduced.</para>
+
+        <para>Let's take if/then/else as an example and start with two
+        examples how this view helper is supposed to work:</para>
+
+        <para><programlisting>&lt;f:if condition="..."&gt;
+   This text should only be rendered if the condition evaluates to TRUE.
+&lt;/f:if&gt;</programlisting>This above case is the most simple case.
+        However, we want to support if/else as well:</para>
+
+        <para><programlisting>&lt;f:if condition="..."&gt;
+   &lt;f:then&gt;If condition evaluated to TRUE, "then" should be rendered&lt;/f:then&gt;
+   &lt;f:else&gt;If condition evaluated to FALSE, "else" should be rendered&lt;/f:else&gt;
+&lt;/f:if&gt;</programlisting>To implement the functionality of the
+        <code>&lt;f:if&gt;</code> view helper, a standard
+        <code>$this-&gt;renderChildren()</code> will not be sufficent, as the
+        <code>if</code>-Tag has no control whether the
+        <code>&lt;f:then&gt;</code> or <code>&lt;f:else&gt;</code> is
+        rendered. Thus, the <code>&lt;f:if&gt;</code> tag needs more
+        information about its environment, namely it needs access to its
+        subnodes in the syntax tree.</para>
+
+        <para>To make this work, the <code>&lt;f:if&gt;</code>-tag implements
+        the
+        <interfacename>F3\Fluid\Core\Facets\SubNodeAccessInterface</interfacename>.
+        Now, the method <methodname>setChildren(array
+        $childNodes)</methodname> (defined in the interface) will be called
+        before the <methodname>render()</methodname> method is invoked. Thus,
+        the view helper has all of its subnodes directly available in the
+        <methodname>render()</methodname> method and can decide which subnodes
+        it will render based on arbitary conditions.</para>
+      </section>
+
+      <section>
+        <title>PostParse Facet</title>
+
+        <note>
+          <para>This facet will be only needed in exceptional cases, so before
+          you use it, try to think of a different way to do it. Using this
+          facet can easily break template parsing if you do not know what you
+          are doing.</para>
+        </note>
+
+        <para>Sometimes, the presence of a tag affects global rendering
+        behavior - as seen in the template/layout subsystem: With the tag
+        <code>&lt;f:layout name="..." /&gt;</code> the user can specify a
+        layout name for the current template. Somehow, the parser needs to
+        know if a layout was selected directly after parsing the template -
+        before any data has been passed to it.</para>
+
+        <para>Thus, if a view helper implements the
+        <interfacename>F3\Fluid\Core\ViewHelper\Facets\PostParseInterface</interfacename>,
+        it can specify a callback which is called <emphasis>directly after the
+        tag has been parsed in the template</emphasis>. The method signature
+        looks as follows:</para>
+
+        <programlisting>static public function postParseEvent(\F3\Fluid\Core\SyntaxTree\ViewHelperNode $syntaxTreeNode, $viewHelperArguments, \F3\Fluid\Core\ViewHelper\TemplateVariableContainer $variableContainer);</programlisting>
+
+        <para>Note this method is <emphasis>static</emphasis><footnote>
+            <para>It is static because the ViewHelper has not been
+            instanciated at that point in time, thus it is forbidden to set
+            any instance variables.</para>
+          </footnote>. The arguments the method receives are as
+        follows:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>A reference to the current syntax tree node (which is always
+            a <classname>ViewHelperNode</classname>). This is particularly
+            useful if a ViewHelper wants to store a reference to its node in
+            the variableContainer.</para>
+          </listitem>
+
+          <listitem>
+            <para>The view helper arguments. This is an associative array,
+            with the argument name as key, and the associated syntax tree (an
+            instance of
+            <classname>F3\Fluid\Core\SyntaxTree\RootNode</classname>) as
+            value. Because variables are not bound at this point, you always
+            need to call <code>evaluate(...)</code> on the arguments you want
+            to receive. Look into the <code>LayoutViewHelper</code> for an
+            example.</para>
+          </listitem>
+
+          <listitem>
+            <para>A <emphasis>parsing</emphasis> variable container.
+            <emphasis>This is not the VariableContainer used for
+            rendering!</emphasis> The supplied VariableContainer is initially
+            empty, and is used to pass data from <code>ViewHelper</code>s to
+            the <code>View</code>. It is used mainly in the
+            <code>LayoutViewHelper</code> and
+            <code>SectionViewHelper</code>.</para>
+          </listitem>
+        </itemizedlist>
+      </section>
+    </section>
+  </section>
+
+  <xi:include href="ViewHelperLibrary.xml"/>
+</chapter>
