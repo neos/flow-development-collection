@@ -31,7 +31,7 @@ to produce clean code in no time.
 .. note::
 	If you're stuck at some point or stumble over some weirdnesses during the
 	tutorial, please let us know! We appreciate any feedback in our mailing
-	lists, as a ticket in our issue tracker or via private email. [#]
+	lists, as a ticket in our issue tracker or via private email. [#]_
 
 .. tip::
 	This tutorial goes best with a Caffè Latte or, if it's afternoon or late night
