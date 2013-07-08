@@ -71,7 +71,7 @@ File Permissions
 
 Most of the directories and files must be readable and writable for the user
 you're running TYPO3 Flow with. This user will usually be the same one running your
-web server (``httpd``, ``www`` or ``_www`` on most Unix based systems). However it
+web server (``httpd``, ``www``, ``_www`` or ``www-data`` on most Unix based systems). However it
 can and usually will happen that TYPO3 Flow is launched from the command line by a
 different user. Therefore it is important that both, the web server user and
 the command line user are members of a common group and the file permissions
