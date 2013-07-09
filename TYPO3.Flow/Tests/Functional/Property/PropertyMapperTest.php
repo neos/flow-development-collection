@@ -52,6 +52,22 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function domainObjectWithVirtualPropertiesCanBeCreated() {
+		$source = array(
+			'name' => 'Robert Skaarhoj',
+			'yearOfBirth' => '1988',
+			'averageNumberOfKids' => '1.5'
+		);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity');
+		$this->assertSame('Robert Skaarhoj', $result->getName());
+		$this->assertSame(25, $result->getAge());
+		$this->assertSame(1.5, $result->getAverageNumberOfKids());
+	}
+
+	/**
+	 * @test
+	 */
 	public function simpleObjectWithSimplePropertiesCanBeCreated() {
 		$source = array(
 			'name' => 'Christopher',

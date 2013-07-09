@@ -69,5 +69,17 @@ class TestEntity {
 	public function setAverageNumberOfKids($averageNumberOfKids) {
 		$this->averageNumberOfKids = $averageNumberOfKids;
 	}
+
+	/**
+	 * Set the age by specifying the year of birth
+	 *
+	 * For test purposes the reference year is hard-coded to 2013.
+	 *
+	 * @param integer $yearOfBirth
+	 */
+	public function setYearOfBirth($yearOfBirth) {
+		$this->setAge(2013 - $yearOfBirth);
+	}
+
 }
 ?>
