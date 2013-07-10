@@ -411,6 +411,40 @@ with TYPO3 Flow, so that most links will work out of the box.
 	While matching an incoming request to a route, this has no effect. Nevertheless, all query parameters
 	will be available in the resulting action request via ``$actionRequest::getArguments()``.
 
+Request Methods
+===============
+
+Usually the Routing Framework does not care whether it handles a GET or POST request and just looks at the request path.
+However in some cases it makes sense to restrict a route to certain HTTP methods. This is especially true for REST APIs
+where you often need the same URI to invoke different actions depending on the HTTP method.
+
+This can be achieved with a setting ``httpMethods``, which accepts an array of HTTP verbs:
+
+.. code-block:: yaml
+
+  -
+    uriPattern: 'some/path'
+    defaults:
+      '@package':    'Acme.Demo'
+      '@controller': 'Standard'
+      '@action':     'action1'
+    httpMethods: ['GET']
+  -
+    uriPattern: 'some/path'
+    defaults:
+      '@package':    'Acme.Demo'
+      '@controller': 'Standard'
+      '@action':     'action2'
+    httpMethods: ['POST', 'PUT']
+
+Given the above routes a *GET* request to ``http://localhost/some/path`` would invoke the ``action1Action()`` while
+*POST* and *PUT* requests to the same URI would call ``action2Action()``.
+
+.. note::
+
+	The setting ``httpMethods`` is only relevant for *matching* URIs.
+	While resolving route values to an URI, this setting has no effect.
+
 Subroutes
 =========
 
@@ -507,7 +541,7 @@ Additionally you can specify a set of ``variables`` that will be replaced in ``n
 Imagine the following setup:
 
 
-*global Routes.yaml (``Configuration/Routes.yaml``)*:
+global Routes.yaml (``Configuration/Routes.yaml``):
 
 .. code-block:: yaml
 
@@ -518,7 +552,7 @@ Imagine the following setup:
 	    'MyPackageSubroutes':
 	      package: 'My.Package'
 
-*default package Routes.yaml (``My.Package/Configuration/Routes.yaml``)*:
+default package Routes.yaml (``My.Package/Configuration/Routes.yaml``):
 
 .. code-block:: yaml
 

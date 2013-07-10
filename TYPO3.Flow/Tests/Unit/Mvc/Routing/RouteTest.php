@@ -59,6 +59,24 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @param string $routePath
+	 * @return boolean
+	 */
+	protected function routeMatchesPath($routePath) {
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+
+		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/' . $routePath));
+		$mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
+
+		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+		$mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+
+		return $this->route->matches($mockHttpRequest);
+	}
+
+	/**
 	 * @return object but only mocks
 	 */
 	public function objectManagerCallBack() {
@@ -68,7 +86,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/*                                                                        *
-	 * Basic functionality (scope, getters, setters, exceptions)              *
+	 * Basic functionality (getters, setters, exceptions)                     *
 	 *                                                                        */
 
 	/**
@@ -78,6 +96,19 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setName('SomeName');
 
 		$this->assertEquals('SomeName', $this->route->getName());
+	}
+
+	/**
+	 * @test
+	 */
+	public function httpMethodConstraintsCanBeSetAndRetrieved() {
+		$this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be FALSE by default');
+		$httpMethods = array('POST', 'PUT');
+		$this->route->setHttpMethods($httpMethods);
+		$this->assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be TRUE if httpMethods are set');
+		$this->assertEquals($httpMethods, $this->route->getHttpMethods());
+		$this->route->setHttpMethods(array());
+		$this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be FALSE if httpMethods is empty');
 	}
 
 	/**
@@ -226,17 +257,8 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function routeDoesNotMatchIfRequestPathIsNull() {
-		$this->route->setUriPattern('');
-
-		$this->assertFalse($this->route->matches(NULL), 'Route should not match if routePath is NULL.');
-	}
-
-	/**
-	 * @test
-	 */
 	public function routeDoesNotMatchEmptyRequestPathIfUriPatternIsNotSet() {
-		$this->assertFalse($this->route->matches(''), 'Route should not match if no URI Pattern is set.');
+		$this->assertFalse($this->routeMatchesPath(''), 'Route should not match if no URI Pattern is set.');
 	}
 
 	/**
@@ -245,7 +267,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchIfRequestPathIsDifferentFromStaticUriPattern() {
 		$this->route->setUriPattern('foo/bar');
 
-		$this->assertFalse($this->route->matches('bar/foo'), '"foo/bar"-Route should not match "bar/foo"-request.');
+		$this->assertFalse($this->routeMatchesPath('bar/foo'), '"foo/bar"-Route should not match "bar/foo"-request.');
 	}
 
 	/**
@@ -254,7 +276,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchIfOneSegmentOfRequestPathIsDifferentFromItsRespectiveStaticUriPatternSegment() {
 		$this->route->setUriPattern('foo/{bar}');
 
-		$this->assertFalse($this->route->matches('bar/someValue'), '"foo/{bar}"-Route should not match "bar/someValue"-request.');
+		$this->assertFalse($this->routeMatchesPath('bar/someValue'), '"foo/{bar}"-Route should not match "bar/someValue"-request.');
 	}
 
 	/**
@@ -263,7 +285,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesEmptyRequestPathIfUriPatternIsEmpty() {
 		$this->route->setUriPattern('');
 
-		$this->assertTrue($this->route->matches(''), 'Route should match if URI Pattern and RequestPath are empty.');
+		$this->assertTrue($this->routeMatchesPath(''), 'Route should match if URI Pattern and RequestPath are empty.');
 	}
 
 	/**
@@ -272,7 +294,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesIfRequestPathIsEqualToStaticUriPattern() {
 		$this->route->setUriPattern('foo/bar');
 
-		$this->assertTrue($this->route->matches('foo/bar'), '"foo/bar"-Route should match "foo/bar"-request.');
+		$this->assertTrue($this->routeMatchesPath('foo/bar'), '"foo/bar"-Route should match "foo/bar"-request.');
 	}
 
 	/**
@@ -281,7 +303,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchIfRequestPathIsEqualToStaticUriPatternWithoutSlashes() {
 		$this->route->setUriPattern('required1/required2');
 
-		$this->assertFalse($this->route->matches('required1required2'));
+		$this->assertFalse($this->routeMatchesPath('required1required2'));
 	}
 
 	/**
@@ -290,7 +312,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesIfStaticSegmentsMatchAndASegmentExistsForAllDynamicUriPartSegments() {
 		$this->route->setUriPattern('foo/{bar}');
 
-		$this->assertTrue($this->route->matches('foo/someValue'), '"foo/{bar}"-Route should match "foo/someValue"-request.');
+		$this->assertTrue($this->routeMatchesPath('foo/someValue'), '"foo/{bar}"-Route should match "foo/someValue"-request.');
 	}
 
 	/**
@@ -298,7 +320,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getMatchResultsReturnsCorrectResultsAfterSuccessfulMatch() {
 		$this->route->setUriPattern('foo/{bar}');
-		$this->route->matches('foo/someValue');
+		$this->routeMatchesPath('foo/someValue');
 
 		$this->assertEquals(array('bar' => 'someValue'), $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
@@ -309,8 +331,8 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function staticAndDynamicRoutesCanBeMixedInAnyOrder() {
 		$this->route->setUriPattern('{key1}/foo/{key2}/bar');
 
-		$this->assertFalse($this->route->matches('value1/foo/value2/foo'), '"{key1}/foo/{key2}/bar"-Route should not match "value1/foo/value2/foo"-request.');
-		$this->assertTrue($this->route->matches('value1/foo/value2/bar'), '"{key1}/foo/{key2}/bar"-Route should match "value1/foo/value2/bar"-request.');
+		$this->assertFalse($this->routeMatchesPath('value1/foo/value2/foo'), '"{key1}/foo/{key2}/bar"-Route should not match "value1/foo/value2/foo"-request.');
+		$this->assertTrue($this->routeMatchesPath('value1/foo/value2/bar'), '"{key1}/foo/{key2}/bar"-Route should match "value1/foo/value2/bar"-request.');
 		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2'), $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
@@ -320,8 +342,8 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function uriPatternSegmentCanContainTwoDynamicRouteParts() {
 		$this->route->setUriPattern('user/{firstName}-{lastName}');
 
-		$this->assertFalse($this->route->matches('user/johndoe'), '"user/{firstName}-{lastName}"-Route should not match "user/johndoe"-request.');
-		$this->assertTrue($this->route->matches('user/john-doe'), '"user/{firstName}-{lastName}"-Route should match "user/john-doe"-request.');
+		$this->assertFalse($this->routeMatchesPath('user/johndoe'), '"user/{firstName}-{lastName}"-Route should not match "user/johndoe"-request.');
+		$this->assertTrue($this->routeMatchesPath('user/john-doe'), '"user/{firstName}-{lastName}"-Route should match "user/john-doe"-request.');
 		$this->assertEquals(array('firstName' => 'john', 'lastName' => 'doe'), $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
@@ -331,8 +353,8 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function uriPatternSegmentsCanContainMultipleDynamicRouteParts() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 
-		$this->assertFalse($this->route->matches('value1-value2/value3.value4value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should not match "value1-value2/value3.value4value5"-request.');
-		$this->assertTrue($this->route->matches('value1-value2/value3.value4.value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should match "value1-value2/value3.value4.value5"-request.');
+		$this->assertFalse($this->routeMatchesPath('value1-value2/value3.value4value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should not match "value1-value2/value3.value4value5"-request.');
+		$this->assertTrue($this->routeMatchesPath('value1-value2/value3.value4.value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should match "value1-value2/value3.value4.value5"-request.');
 		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'), $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
@@ -343,7 +365,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('{foo}');
 		$this->route->setDefaults(array('foo' => 'bar'));
 
-		$this->assertFalse($this->route->matches(''), 'Route should not match if required Route Part does not match.');
+		$this->assertFalse($this->routeMatchesPath(''), 'Route should not match if required Route Part does not match.');
 	}
 
 	/**
@@ -359,7 +381,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 
 		$this->route->setDefaults($defaults);
-		$this->route->matches('SomePackage');
+		$this->routeMatchesPath('SomePackage');
 		$matchResults = $this->route->getMatchResults();
 
 		$this->assertEquals($defaults['@controller'], $matchResults{'@controller'});
@@ -380,7 +402,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 		$mockRoutePartHandler = new \TYPO3\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler();
 		$this->mockObjectManager->expects($this->once())->method('get')->with('TYPO3\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
-		$this->route->matches('foo/bar');
+		$this->routeMatchesPath('foo/bar');
 
 		$this->assertEquals(array('key1' => '_match_invoked_', 'key2' => 'bar'), $this->route->getMatchResults());
 	}
@@ -403,7 +425,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('foo');
 		$this->route->_set('routeParts', array($mockRoutePart));
 		$this->route->_set('isParsed', TRUE);
-		$this->route->matches('foo');
+		$this->routeMatchesPath('foo');
 	}
 
 	/**
@@ -443,7 +465,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('');
 		$this->route->_set('routeParts', array($mockRoutePart1, $mockRoutePart2, $mockRoutePart3));
 		$this->route->_set('isParsed', TRUE);
-		$this->route->matches('');
+		$this->routeMatchesPath('');
 
 		$expectedResult = array('firstLevel' => array('secondLevel' => array('routePart1' => 'foo', 'routePart2' => 'baz')), 'someOtherRoutePart' => 'bar');
 		$actualResult = $this->route->getMatchResults();
@@ -460,7 +482,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesEmptyRequestPathIfUriPatternContainsOneOptionalStaticRoutePart() {
 		$this->route->setUriPattern('(optional)');
 
-		$this->assertTrue($this->route->matches(''));
+		$this->assertTrue($this->routeMatchesPath(''));
 	}
 
 	/**
@@ -469,7 +491,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsOneOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('required(optional)');
 
-		$this->assertTrue($this->route->matches('requiredoptional'));
+		$this->assertTrue($this->routeMatchesPath('requiredoptional'));
 	}
 
 	/**
@@ -478,7 +500,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsOneRequiredAndOneOptionalStaticRoutePart() {
 		$this->route->setUriPattern('required(optional)');
 
-		$this->assertTrue($this->route->matches('required'));
+		$this->assertTrue($this->routeMatchesPath('required'));
 	}
 
 	/**
@@ -487,7 +509,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsOneOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('(optional)required');
 
-		$this->assertTrue($this->route->matches('required'));
+		$this->assertTrue($this->routeMatchesPath('required'));
 	}
 
 	/**
@@ -496,7 +518,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsTwoOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('(optional)required(optional2)');
 
-		$this->assertTrue($this->route->matches('required'));
+		$this->assertTrue($this->routeMatchesPath('required'));
 	}
 
 	/**
@@ -505,7 +527,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsTwoOptionalAndOneRequiredStaticRoutePart() {
 		$this->route->setUriPattern('(optional)required(optional2)');
 
-		$this->assertTrue($this->route->matches('optionalrequiredoptional2'));
+		$this->assertTrue($this->routeMatchesPath('optionalrequiredoptional2'));
 	}
 
 	/**
@@ -514,7 +536,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchEmptyRequestPathIfUriPatternContainsOneOptionalDynamicRoutePartWithoutDefaultValue() {
 		$this->route->setUriPattern('({optional})');
 
-		$this->assertFalse($this->route->matches(''));
+		$this->assertFalse($this->routeMatchesPath(''));
 	}
 
 	/**
@@ -524,7 +546,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('({optional})');
 		$this->route->setDefaults(array('optional' => 'defaultValue'));
 
-		$this->assertTrue($this->route->matches(''));
+		$this->assertTrue($this->routeMatchesPath(''));
 	}
 
 	/**
@@ -533,7 +555,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchRequestPathContainingNoneOfTheOptionalRoutePartsIfNoDefaultsAreSet() {
 		$this->route->setUriPattern('page(.{@format})');
 
-		$this->assertFalse($this->route->matches('page'));
+		$this->assertFalse($this->routeMatchesPath('page'));
 	}
 
 	/**
@@ -543,7 +565,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('page(.{@format})');
 		$this->route->setDefaults(array('@format' => 'html'));
 
-		$this->assertFalse($this->route->matches('page.'));
+		$this->assertFalse($this->routeMatchesPath('page.'));
 	}
 
 	/**
@@ -553,7 +575,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('page(.{@format})');
 		$this->route->setDefaults(array('@format' => 'html'));
 
-		$this->assertTrue($this->route->matches('page'));
+		$this->assertTrue($this->routeMatchesPath('page'));
 	}
 
 	/**
@@ -563,7 +585,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('page(.{@format})');
 		$this->route->setDefaults(array('@format' => 'html'));
 
-		$this->assertTrue($this->route->matches('page.html'));
+		$this->assertTrue($this->routeMatchesPath('page.html'));
 	}
 
 	/**
@@ -572,7 +594,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required(/optional1/optional2)');
 
-		$this->assertTrue($this->route->matches('required'));
+		$this->assertTrue($this->routeMatchesPath('required'));
 	}
 
 	/**
@@ -581,7 +603,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchRequestPathWithRequiredAndOnlyOneOptionalPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required(/optional1/optional2)');
 
-		$this->assertFalse($this->route->matches('required/optional1'));
+		$this->assertFalse($this->routeMatchesPath('required/optional1'));
 	}
 
 	/**
@@ -590,7 +612,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchRequestPathWithAllPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required(/optional1/optional2)');
 
-		$this->assertTrue($this->route->matches('required/optional1/optional2'));
+		$this->assertTrue($this->routeMatchesPath('required/optional1/optional2'));
 	}
 
 	/**
@@ -599,7 +621,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required1(/optional1/optional2)/required2');
 
-		$this->assertTrue($this->route->matches('required1/required2'));
+		$this->assertTrue($this->routeMatchesPath('required1/required2'));
 	}
 
 	/**
@@ -608,7 +630,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchRequestPathWithOnlyOneOptionalPartIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required1/(optional1/optional2/)required2');
 
-		$this->assertFalse($this->route->matches('required1/optional1/required2'));
+		$this->assertFalse($this->routeMatchesPath('required1/optional1/required2'));
 	}
 
 	/**
@@ -617,7 +639,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('required1/(optional1/optional2/)required2');
 
-		$this->assertTrue($this->route->matches('required1/optional1/optional2/required2'));
+		$this->assertTrue($this->routeMatchesPath('required1/optional1/optional2/required2'));
 	}
 
 	/**
@@ -626,7 +648,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('(optional1/optional2/)required1/required2');
 
-		$this->assertTrue($this->route->matches('required1/required2'));
+		$this->assertTrue($this->routeMatchesPath('required1/required2'));
 	}
 
 	/**
@@ -635,7 +657,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchRequestPathWithOnlyOneOptionalPartIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('(optional1/optional2/)required1/required2');
 
-		$this->assertFalse($this->route->matches('optional1/required1/required2'));
+		$this->assertFalse($this->routeMatchesPath('optional1/required1/required2'));
 	}
 
 	/**
@@ -644,7 +666,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeMatchesRequestPathWithAllPartsIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
 		$this->route->setUriPattern('(optional1/optional2/)required1/required2');
 
-		$this->assertTrue($this->route->matches('optional1/optional2/required1/required2'));
+		$this->assertTrue($this->routeMatchesPath('optional1/optional2/required1/required2'));
 	}
 
 	/**
@@ -653,7 +675,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function routeDoesNotMatchIfRoutePartDoesNotMatchAndIsOptionalButHasNoDefault() {
 		$this->route->setUriPattern('({foo})');
 
-		$this->assertFalse($this->route->matches(''), 'Route should not match if optional Route Part does not match and has no default value.');
+		$this->assertFalse($this->routeMatchesPath(''), 'Route should not match if optional Route Part does not match and has no default value.');
 	}
 
 	/**
@@ -663,7 +685,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setUriPattern('({foo})');
 		$this->route->setDefaults(array('foo' => 'bar'));
 
-		$this->assertTrue($this->route->matches(''), 'Route should match if optional Route Part has a default value.');
+		$this->assertTrue($this->routeMatchesPath(''), 'Route should match if optional Route Part has a default value.');
 	}
 
 	/**
@@ -678,9 +700,52 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'key4' => 'defaultValue4'
 		);
 		$this->route->setDefaults($defaults);
-		$this->route->matches('foo-/.bar.xml');
+		$this->routeMatchesPath('foo-/.bar.xml');
 
 		$this->assertEquals(array('key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'), $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeDoesNotMatchIfRequestMethodIsNotAccepted() {
+		$this->route->setUriPattern('');
+		$this->route->setHttpMethods(array('POST', 'PUT'));
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+
+		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+		$mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
+
+		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+		$mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+
+		$mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
+		$this->assertFalse($this->route->matches($mockHttpRequest), 'Route must not match GET requests if only POST or PUT requests are accepted.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeMatchesIfRequestMethodIsAccepted() {
+		$this->route->setUriPattern('');
+		$this->route->setHttpMethods(array('POST', 'PUT'));
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+
+		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+		$mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
+
+		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+		$mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+
+		$mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('PUT'));
+
+		$this->assertTrue($this->route->matches($mockHttpRequest), 'Route should match PUT requests if POST and PUT requests are accepted.');
 	}
 
 	/*                                                                        *
