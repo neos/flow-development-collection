@@ -111,11 +111,22 @@ class ClassLoader {
 
 			// Loads any non-proxied class of registered packages:
 		foreach ($this->packageNamespaces as $packageNamespace => $packageData) {
-			if (substr($className, 0, $packageData['namespaceLength']) === $packageNamespace) {
+				// replace underscores in classname with \ to match for packagenamespace
+			if (substr(str_replace('_', '\\', $className), 0, $packageData['namespaceLength']) === $packageNamespace) {
 				if ($this->considerTestsNamespace === TRUE && substr($className, $packageData['namespaceLength'] + 1, 16) === 'Tests\Functional') {
 					$classPathAndFilename = $this->packages[str_replace('\\', '.', $packageNamespace)]->getPackagePath() . str_replace('\\', '/', substr($className, $packageData['namespaceLength'] + 1)) . '.php';
 				} else {
-					$classPathAndFilename = $packageData['classesPath'] . str_replace(array('\\', '_'), '/', $className) . '.php';
+						// make the classname PSR-0 compliant by replacing underscores only in the classname not in the namespace
+					$fileName  = '';
+					$lastNamespacePosition = strrpos($className, '\\');
+					if ($lastNamespacePosition !== FALSE) {
+						$namespace = substr($className, 0, $lastNamespacePosition);
+						$className = substr($className, $lastNamespacePosition + 1);
+						$fileName  = str_replace('\\', '/', $namespace) . '/';
+					}
+					$fileName .= str_replace('_', '/', $className) . '.php';
+
+					$classPathAndFilename = $packageData['classesPath'] . $fileName;
 				}
 				try {
 					$result = include($classPathAndFilename);
