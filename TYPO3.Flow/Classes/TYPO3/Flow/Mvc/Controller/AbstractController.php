@@ -106,7 +106,7 @@ abstract class AbstractController implements ControllerInterface {
 		$this->uriBuilder->setRequest($this->request);
 
 		$this->arguments = new Arguments(array());
-		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder);
 
 		$mediaType = $request->getHttpRequest()->getNegotiatedMediaType($this->supportedMediaTypes);
 		if ($mediaType === NULL) {
