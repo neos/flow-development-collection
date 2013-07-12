@@ -234,7 +234,7 @@ welcome screen:
 
 .. tip::
 	If you get in trouble during the installation check out the `installation hints
-	<http://forge.typo3.org/projects/flow/wiki/Installation_hints>`_ on forge. On
+	<http://wiki.typo3.org/Flow_Installation_Hints>`_ on the TYPO3 wiki. On
 	Windows you will most likely have to check the section *Running on Windows OS's*
 	of that page.
 

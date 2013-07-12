@@ -21,7 +21,7 @@ You now have two options for delving further into TYPO3 Flow programming:
 If you can't wait to see the finished blog all you need to do is:
 
 -	Delete your blog package (that is *Packages/Application/TYPO3.Blog/*) and then
--	Clone the Blog package from git://git.typo3.org/Flow/Packages/TYPO3.Blog.git
+-	Clone the Blog package from git://git.typo3.org/Packages/TYPO3.Blog.git
 
 Feedback
 ========

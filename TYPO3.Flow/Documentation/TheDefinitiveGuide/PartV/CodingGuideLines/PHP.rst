@@ -27,7 +27,7 @@ CGL on One Page
 	The Coding Guidelines on One Page
 
 The most important parts of our `Coding Guidelines in a one page document
-<http://flow.typo3.org/_Resources/Static/Packages/TYPO3.Flow3Org/Assets/Content/TYPO3_Flow-CGL-on-one-page.pdf>`_
+<http://flow.typo3.org/_Resources/Static/Packages/TYPO3.FlowTypo3Org/Assets/Content/TYPO3_Flow-CGL-on-one-page.pdf>`_
 you can print out and hang on your wall for easy reference.
 Does it get any easier than that?
 
@@ -83,7 +83,7 @@ General considerations
 Make sure you use the correct license and mention the correct package in the header, we
 have some `some boilerplate text`_.
 
-.. _`some boilerplate text`: http://forge.typo3.org/projects/flow/wiki/Licensing_boilerplates_to_use_with_your_code
+.. _`some boilerplate text`: http://wiki.typo3.org/Flow_Licensing_Boilerplate
 
 Indentation and line formatting
 _______________________________

@@ -23,7 +23,7 @@ databases and think only in terms of objects.
     copy the needed files from there to "your" sandbox project.
 
     To see the full-scale code of the Blog as used by some of us, take a look at
-    the `Blog package <http://git.typo3.org/Flow/Packages/TYPO3.Blog.git>`_ in
+    the `Blog package <http://git.typo3.org/Packages/TYPO3.Blog.git>`_ in
     our Git repository.
 
 Domain models are really the heart of your application and therefore it is

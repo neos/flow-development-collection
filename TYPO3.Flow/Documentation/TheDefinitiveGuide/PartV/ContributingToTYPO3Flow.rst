@@ -17,7 +17,7 @@ this rocks big time.
 * *Tasks:* Find bugs, describe them, reproduce them in a unit test
 * *Skills needed:* Attention to detail, knowledge about PHP and PHPUnit is a plus
 
-**Report bugs in the** `TYPO3 Flow Base Distribution issue tracker <http://forge.typo3.org/projects/flow-distribution-base/issues>`_ **!**
+**Report bugs in the** `TYPO3 Flow Base Distribution issue tracker <http://forge.typo3.org/projects/flow3-distribution-base/issues>`_ **!**
 
 Improve Documentation
 =====================
@@ -34,11 +34,11 @@ For a quick start follow these simple steps:
 
    .. code-block:: none
 
-     $ git clone git://git.typo3.org/Flow/Packages/TYPO3.Flow.git
+     $ git clone git://git.typo3.org/Packages/TYPO3.Flow.git
      $ # set up git so you can push to Gerrit
 
    If you do not know how to set up Git correctly, follow the easy steps of
-   `our git wizard <http://www.wwwision.de/githelper/#Flow/Packages/TYPO3.Flow.git>`_.
+   `our git wizard <http://www.wwwision.de/githelper/#Packages/TYPO3.Flow.git>`_.
    Of course you can also use the package TYPO3.Flow from any TYPO3 Flow distribution you
    installed already.
 
