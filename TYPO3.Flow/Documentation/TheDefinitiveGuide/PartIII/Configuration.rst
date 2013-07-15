@@ -1,4 +1,4 @@
-﻿=============
+=============
 Configuration
 =============
 
@@ -37,6 +37,11 @@ i.e. later values override prior ones):
 The configuration manager also considers custom contexts, such as ``Production/Live``.
 First, the base configuration is loaded, followed by the context specific configuration
 for ``Production`` and ``Production/Live``.
+
+Flow's configuration system does not support placing configuration files anywhere except
+for in ``Configuration/`` or one of the context directories in ``Configuration/``. Flow
+only supports three top-level contexts: Production, Development, and Testing. These
+folders are reserved for the Flow configuration system.
 
 Configuration Files
 ===================
