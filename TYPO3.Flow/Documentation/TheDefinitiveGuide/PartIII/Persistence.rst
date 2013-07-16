@@ -281,7 +281,7 @@ handy to avoid excessive database roundtrips. Eager loading is the default when 
 operations in DQL or specifying the fetch mode in the mapping configuration.
 
 Doctrine Persistence
-======================
+====================
 
 Doctrine 2 ORM is used by default in TYPO3 Flow. Aside from very few internal changes it
 consists of the regular Doctrine ORM, DBAL, Migrations and Common libraries and is tied
@@ -385,6 +385,34 @@ entities for the time being, with some differences:
   serialized object in the database.
 * Upon persisting Value Objects already present in the underlying database will be
   deduplicated.
+
+On the Doctrine Event System
+----------------------------
+
+Doctrine provides a flexible event system to allow extensions to plug into different parts
+of the persistence. Therefore two methods to get notification of doctrine events are
+possible - through the EventSubscriber interface and registering EventListeners.
+TYPO3 Flow allows for easily registering both with Doctrine through the configuration settings
+``TYPO3.Flow.persistence.doctrine.eventSubscribers`` and ``TYPO3.Flow.persistence.doctrine.eventListeners``
+respectively. EventSubscribers need to implement the ``Doctrine\Common\EventSubscriber`` Interface
+and provide a list of the events they want to subscribe to. EventListeners need to be configured
+for the events they want to listen on, but do not need to implement any specific Interface.
+See the documentation ([#]_) for more information on the Doctrine Event System.
+
+*Example: Configuration for Doctrine EventSubscribers and EventListeners*:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+		persistence:
+		  doctrine:
+			eventSubscribers:
+			  - 'Foo\Bar\Events\EventSubscriber'
+			eventListeners:
+			  -
+				events: ['onFlush', 'preFlush', 'postFlush']
+				listener: 'Foo\Bar\Events\EventListener'
 
 Differences between TYPO3 Flow and plain Doctrine
 -------------------------------------------------
@@ -1062,3 +1090,4 @@ the array of objects being returned.
 .. [#] An alternative would have been to do an implicit persist call before a query, but
 	that seemed to be confusing.
 .. [#] See https://github.com/doctrine/doctrine2/pull/265 for one approach in the making.
+.. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/events.html

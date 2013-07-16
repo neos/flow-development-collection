@@ -293,6 +293,32 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function eventSubscribersAreProperlyExecuted() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+		$eventSubscriber = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber');
+		$this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
+		$this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
+		$this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function eventListenersAreProperlyExecuted() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+		$this->persistenceManager->persistAll();
+		$eventSubscriber = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\EventListener');
+		$this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
+		$this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
+		$this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
+	}
+
+	/**
 	 * Helper which inserts example data into the database.
 	 *
 	 * @param string $name
