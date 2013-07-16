@@ -65,7 +65,7 @@ General considerations
  namespace YourCompany\Package\Stuff\Here;
 
  /*                                                                        *
-  * This script belongs to the TYPO3 Flow package "Package".               *
+  * This script belongs to the TYPO3 Flow package "Vendor.Package".        *
   *                                                                        *
   * It is free software; you can redistribute it and/or modify it under    *
   * the terms of the GNU Lesser General Public License, either version 3   *
@@ -100,10 +100,9 @@ Here's a code snippet which shows the correct usage of tabs and spaces.
   * Returns the name of the currently set context.
   *
   * @return string Name of the current context
-  * @author Your Name <your@email.here>
   */
  public function getContextName() {
-   return $this->contextName;
+ 	return $this->contextName;
  }
 
 There seem to be very passionate opinions about whether TABs or spaces should be used for
@@ -143,9 +142,9 @@ namespace. The Object Manager for example is known under the class name
 namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
-central package key registry (like the one we have for TYPO3 4.x extensions) and secondly,
+central package key registry (like the one we have for TYPO3 CMS extensions) and secondly,
 it allows anyone to seamlessly integrate third-party packages, such as Symfony2 components
-and Zend Framework components or virtually any other PHP 5.3 based library.
+and Zend Framework components or virtually any other PHP 5.3+ based library.
 
 Think about your own vendor namespace for a few minutes. It will stay with you for a long
 time.
@@ -191,11 +190,11 @@ Fully qualified class name           Unqualified name Remarks
 ============================================ ================== ==========================
 Fully qualified class name                   Unqualified name   Remarks
 ============================================ ================== ==========================
-\\TYPO3\\Flow\\Session\\PhpSession           PHPSession         That's a PHP Session
+\\TYPO3\\Flow\\Session\\PhpSession           PhpSession         That's a PHP Session
 \\TYPO3\\Flow\\Cache\\Backend\\FileBackend   FileBackend        A File Backend
 \\TYPO3\\Flow\\Session\\SessionInterface     SessionInterface   Interface for a session
 \\TYPO3\\Foo\\Controller\\StandardController StandardController The standard controller
-\\TYPO3\\Flow\\Object\\ObjectManager         ObjectController   "ObjectManager" is clearer
+\\TYPO3\\Flow\\Object\\ObjectManager         ObjectManager      "ObjectManager" is clearer
 ============================================ ================== ==========================
 
 *Edge cases in naming of namespaces and classes*
@@ -216,6 +215,24 @@ Fully qualified class name                            Unqualified name    Remark
   string (e.g. given to the ``get``-Method of the ``ObjectManager``, in pointcut
   expressions or in YAML files), never use a leading backslash. This follows the native
   PHP notion of names in strings always being seen as fully qualified.
+
+Importing Namespaces
+--------------------
+
+If you refer to other classes or interfaces you are encouraged to import the namespace with the
+``use`` statement if it improves readability.
+
+Following rules apply:
+
+* If importing namespaces creates conflicting class names you might alias class/interface or namespaces
+  with the ``as`` keyword.
+* One ``use`` statement per line, one ``use` statement for each imported namespace
+* Imported namespaces should be ordered alphabetically (modern IDEs provide support for this)
+
+.. tip::
+
+ ``use`` statements have no side-effects (e.g. they don’t trigger autoloading).
+ Nevertheless you should remove unused imports for better readability
 
 Interface names
 ---------------
@@ -276,7 +293,7 @@ You'll surely agree the longer versions are better (don't you ...?).
 
 * ``$singletonObjectsRegistry``
 * ``$argumentsArray``
-* ``$aLotOfHTMLCode``
+* ``$aLotOfHtmlCode``
 
 *Incorrect naming of variables*
 
@@ -325,8 +342,8 @@ These are the rules for naming files:
   Contains the ``\TYPO3\Flow\Error\RuntimeException`` being a part of the package
   *TYPO3.Flow*
 
-``Acme.DataAccess/Classes/Acme/DataAccess/Manager.php``
-  Contains class ``\Acme\DataAccess\Manager`` which is part of the package
+``Acme.DataAccess/Classes/Acme/DataAccess/CustomQuery.php``
+  Contains class ``\Acme\DataAccess\CustomQuery`` which is part of the package
   *Acme.DataAccess*
 
 ``TYPO3.Flow/Tests/Unit/Package/PackageManagerTest.php``
@@ -337,12 +354,6 @@ These are the rules for naming files:
 PHP code formatting
 ===================
 
-Inline comments
----------------
-
-Inline comments must be indented one level more than surrounding source code. For
-documentation comments see `Source Code Documentation`_.
-
 Strings
 -------
 
@@ -352,7 +363,7 @@ In general, we use single quotes to enclose literal strings::
 
 If you'd like to insert values from variables, concatenate strings::
 
- $message = 'Hey ' . $name . ', you look ' . $look . ' today!';
+ $message = 'Hey ' . $name . ', you look ' . $appearance . ' today!';
 
 A space must be inserted before and after the dot for better readability::
 
@@ -365,6 +376,10 @@ indent each following line to mark them as part of the value assignment::
    'people ' .
    'to ' .
    'share';
+
+You should also consider using a PHP function such as `sprintf()` to concatenate strings to increase readability::
+
+ $message = sprintf('Hey %s, you look %s today!', $name, $appearance);
 
 Arrays
 ------
@@ -461,13 +476,6 @@ The syntax is as follows:
   [BUGFIX]
     A fix for a bug. There should be a ticket corresponding to this in the issue tracker
     as well as a new) unit test for the fix.
-  [API]
-    An API change, that is methods have been added or removed; method signatures or return
-    types have changed. This only refers to the public API, i.e. methods tagged with
-    ``@api``.
-  [CONFIGURATION]
-    Some configuration change. That could be a changed default value, a new setting or the
-    removal of some setting that used to exist.
   [TASK]
     Anything not covered by the above categories, e.g. coding style cleanup. Usually only
     used if there's no corresponding ticket.
@@ -476,7 +484,7 @@ The syntax is as follows:
   be written in a style that serves well for a change log read by users. In case of
   breaking changes give a hint on what needs to be changed by the user.
 
-* If corresponding tickets exist, mention the ticket numbers using footer lines after
+* If corresponding tickets exist, mention the ticket number(s) using footer lines after
   another blank line and use the following actions:
 
   Fixes: #<number>
@@ -517,7 +525,7 @@ The syntax is as follows:
  Resolves: #123
  Resolves: #456
  Related: #789
- Releases: 1.0, 1.1
+ Releases: master, 1.1, 1.0
 
 Source Code Documentation
 -------------------------
@@ -564,9 +572,21 @@ documenting them.
 
  /**
   * A short description, very much recommended
+  *
   * @var string
   */
  protected $title = 'Untitled';
+
+In general you should try to code in a way that the types can be derived (e.g. by using type hints and annotations).
+In some cases this is not possible, for example when iterating through an array of objects. In these cases it’s ok to
+add inline @var annotations to increase readability and to activate auto-completion and syntax-highlighting::
+
+ protected function someMethod(array $products) {
+ 	/** @var $product \Acme\SomePackage\Domain\Model\Product */
+ 	foreach ($products as $product) {
+ 		$product->getTitle();
+ 	}
+ }
 
 Method documentation
 --------------------
@@ -657,21 +677,26 @@ the order given here should be kept for the sake of consistency.
 
 *Class Documentation*
 
-* @api
-* @since
-* @deprecated
+* @Flow\Introduce
 * @Flow\Entity
 * @Flow\ValueObject
 * @Flow\Scope
+* @Flow\Autowiring
+* @Flow\Lazy
 * @Flow\Aspect
+* @api
+* @since
+* @deprecated
 
 *Property Documentation*
 
-* @var
 * @Flow\Introduce
 * @Flow\Identity
 * @Flow\Transient
 * @Flow\Lazy
+* @Flow\Inject
+* @Flow\Validate
+* @var
 * @api
 * @since
 * @deprecated
@@ -686,20 +711,28 @@ the order given here should be kept for the sake of consistency.
 
 *Method Documentation*
 
-* @param
-* @return
-* @throws
-* @Flow\Validate
-* @Flow\IgnoreValidation
-* @Flow\Signal
-* @api
-* @since
-* @deprecated
-* @Flow\Pointcut
+* @Flow\After
 * @Flow\AfterReturning
 * @Flow\AfterThrowing
 * @Flow\Around
 * @Flow\Before
+* @Flow\Pointcut
+* @Flow\Autowiring
+* @Flow\CompileStatic
+* @Flow\FlushesCaches
+* @Flow\Internal
+* @Flow\Session
+* @Flow\Signal
+* @Flow\IgnoreValidation
+* @Flow\SkipCsrfProtection
+* @Flow\Validate
+* @Flow\ValidationGroups
+* @param
+* @return
+* @throws
+* @api
+* @since
+* @deprecated
 
 *Testcase Documentation*
 
