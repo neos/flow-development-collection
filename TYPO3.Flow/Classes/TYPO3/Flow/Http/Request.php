@@ -17,12 +17,12 @@ use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\MediaTypes;
 
 /**
- * Represents a HTTP request
+ * Represents an HTTP request
  *
  * @api
  * @Flow\Proxy(false)
  */
-class Request extends Message {
+class Request extends AbstractMessage {
 
 	/**
 	 * @var string
@@ -468,6 +468,34 @@ class Request extends Message {
 	}
 
 	/**
+	 * Return the Request-Line of this Request Message, consisting of the method, the uri and the HTTP version
+	 * Would be, for example, "GET /foo?bar=baz HTTP/1.1"
+	 * Note that the URI part is, at the moment, only possible in the form "abs_path" since the
+	 * actual requestUri of the Request cannot be determined during the creation of the Request.
+	 *
+	 * @return string
+	 * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
+	 * @api
+	 */
+	public function getRequestLine() {
+		$requestUri = $this->uri->getPath() .
+			($this->uri->getQuery() ? '?' . $this->uri->getQuery() : '') .
+			($this->uri->getFragment() ? '#' . $this->uri->getFragment() : '');
+		return sprintf("%s %s %s\r\n", $this->method, $requestUri, $this->version);
+	}
+
+	/**
+	 * Returns the first line of this Request Message, which is the Request-Line in this case
+	 *
+	 * @return string The Request-Line of this Request
+	 * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
+	 * @api
+	 */
+	public function getStartLine() {
+		return $this->getRequestLine();
+	}
+
+	/**
 	 * Tries to detect the base URI of request.
 	 *
 	 * @return void
@@ -608,19 +636,15 @@ class Request extends Message {
 	 * @api
 	 */
 	public function renderHeaders() {
-		$preparedHeaders = array();
-		$uriPathQueryAndFragment = $this->uri->getPath() .
-			($this->uri->getQuery() ? '?' . $this->uri->getQuery() : '') .
-			($this->uri->getFragment() ? '#' . $this->uri->getFragment() : '');
-		$preparedHeaders[] = sprintf('%s %s HTTP/1.1', $this->method, $uriPathQueryAndFragment);
+		$headers = $this->getRequestLine();
 
 		foreach ($this->headers->getAll() as $name => $values) {
 			foreach ($values as $value) {
-				$preparedHeaders[] = $name . ': ' . $value;
+				$headers .= sprintf("%s: %s\r\n", $name, $value);
 			}
 		}
 
-		return implode("\r\n", $preparedHeaders) . "\r\n";
+		return $headers;
 	}
 
 	/**

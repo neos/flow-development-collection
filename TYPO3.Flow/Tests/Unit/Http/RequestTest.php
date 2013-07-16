@@ -120,6 +120,7 @@ class RequestTest extends UnitTestCase {
 
 		$this->assertEquals('GET', $request->getMethod());
 		$this->assertEquals($uri, $request->getUri());
+		$this->assertEquals('HTTP/1.1', $request->getVersion());
 
 		$uri = new Uri('https://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
 		$request = Request::create($uri);
@@ -131,6 +132,18 @@ class RequestTest extends UnitTestCase {
 
 		$this->assertEquals('POST', $request->getMethod());
 		$this->assertEquals($uri, $request->getUri());
+	}
+
+	/**
+	 * @test
+	 */
+	public function settingVersionHasExpectedImplications() {
+		$uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
+		$request = Request::create($uri);
+		$request->setVersion('HTTP/1.0');
+
+		$this->assertEquals('HTTP/1.0', $request->getVersion());
+		$this->assertStringEndsWith("HTTP/1.0\r\n", $request->getRequestLine());
 	}
 
 	/**

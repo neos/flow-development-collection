@@ -16,12 +16,12 @@ use TYPO3\Flow\Mvc\ResponseInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Represents a HTTP Response
+ * Represents an HTTP Response
  *
  * @api
  * @Flow\Proxy(false)
  */
-class Response extends Message implements ResponseInterface {
+class Response extends AbstractMessage implements ResponseInterface {
 
 	/**
 	 * @var \TYPO3\Flow\Http\Response
@@ -128,13 +128,14 @@ class Response extends Message implements ResponseInterface {
 		$response = new static($parentResponse);
 
 		$lines = explode(chr(10), $rawResponse);
-		$firstLine = array_shift($lines);
+		$statusLine = array_shift($lines);
 
-		if (substr($firstLine, 0, 5) !== 'HTTP/') {
+		if (substr($statusLine, 0, 5) !== 'HTTP/') {
 			throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
 		}
-		list(, $statusCode, $statusMessage) = explode(' ', $firstLine, 3);
-		$response->setStatus((integer)$statusCode, trim($statusMessage));
+		list($version, $statusCode, $reasonPhrase) = explode(' ', $statusLine, 3);
+		$response->setVersion($version);
+		$response->setStatus((integer)$statusCode, trim($reasonPhrase));
 
 		$parsingHeader = TRUE;
 		$contentLines = array();
@@ -450,7 +451,7 @@ class Response extends Message implements ResponseInterface {
 	 */
 	public function renderHeaders() {
 		$preparedHeaders = array();
-		$statusHeader = 'HTTP/1.1 ' . $this->statusCode . ' ' . $this->statusMessage;
+		$statusHeader = rtrim($this->getStatusLine(), "\r\n");
 
 		$preparedHeaders[] = $statusHeader;
 		foreach ($this->headers->getAll() as $name => $values) {
@@ -577,6 +578,29 @@ class Response extends Message implements ResponseInterface {
 		if ($this->content !== NULL) {
 			echo $this->getContent();
 		}
+	}
+
+	/**
+	 * Return the Status-Line of this Response Message, consisting of the version, the status code and the reason phrase
+	 * Would be, for example, "HTTP/1.1 200 OK" or "HTTP/1.1 400 Bad Request"
+	 *
+	 * @return string
+	 * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
+	 * @api
+	 */
+	public function getStatusLine() {
+		return sprintf("%s %s %s\r\n", $this->version, $this->statusCode, $this->statusMessage);
+	}
+
+	/**
+	 * Returns the first line of this Response Message, which is the Status-Line in this case
+	 *
+	 * @return string The Status-Line of this Response
+	 * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html chapter 4.1 "Message Types"
+	 * @api
+	 */
+	public function getStartLine() {
+		return $this->getStatusLine();
 	}
 
 	/**
