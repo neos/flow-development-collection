@@ -120,6 +120,10 @@ class XliffModel {
 	 * @return mixed Translated label or FALSE on failure
 	 */
 	public function getTargetBySource($source, $pluralFormIndex = 0) {
+		if (!isset($this->xmlParsedData['translationUnits'])) {
+			$this->systemLogger->log(sprintf('No trans-unit elements were found in "%s". This is allowed per specification, but no translation can be applied then.', $this->sourcePath), LOG_WARNING);
+			return FALSE;
+		}
 		foreach ($this->xmlParsedData['translationUnits'] as $translationUnit) {
 				// $source is always singular (or only) form, so compare with index 0
 			if (!isset($translationUnit[0]) || $translationUnit[0]['source'] !== $source) {
