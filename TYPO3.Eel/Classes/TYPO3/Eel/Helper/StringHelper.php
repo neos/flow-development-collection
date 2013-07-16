@@ -11,12 +11,13 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * String helpers for Eel contexts
  */
-class StringHelper {
+class StringHelper implements ProtectedContextAwareInterface {
 
 	/**
 	 * Return the characters in a string from start up to the given length
@@ -335,5 +336,16 @@ class StringHelper {
 	public function htmlSpecialChars($string, $preserveEntities = FALSE) {
 		return htmlspecialchars($string, NULL, NULL, !$preserveEntities);
 	}
+
+	/**
+	 * All methods are considered safe
+	 *
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	public function allowsCallOfMethod($methodName) {
+		return TRUE;
+	}
+
 }
 ?>

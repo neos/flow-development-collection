@@ -11,12 +11,13 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Array helpers for Eel contexts
  */
-class ArrayHelper {
+class ArrayHelper implements ProtectedContextAwareInterface {
 
 	/**
 	 * Concatenate arrays or values to a new array
@@ -140,6 +141,16 @@ class ArrayHelper {
 			return -1;
 		}
 		return $result;
+	}
+
+	/**
+	 * All methods are considered safe
+	 *
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	public function allowsCallOfMethod($methodName) {
+		return TRUE;
 	}
 
 }

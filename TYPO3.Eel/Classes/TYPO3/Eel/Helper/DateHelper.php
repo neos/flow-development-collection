@@ -11,12 +11,13 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Date helpers for Eel contexts
  */
-class DateHelper {
+class DateHelper implements ProtectedContextAwareInterface {
 
 	/**
 	 * Parse a date from string with a format to a DateTime object
@@ -103,6 +104,16 @@ class DateHelper {
 	 */
 	public function diff($dateA, $dateB) {
 		return $dateA->diff($dateB);
+	}
+
+	/**
+	 * All methods are considered safe
+	 *
+	 * @param string $methodName
+	 * @return boolean
+	 */
+	public function allowsCallOfMethod($methodName) {
+		return TRUE;
 	}
 
 }
