@@ -49,5 +49,29 @@ class PackageManagerTest extends FunctionalTestCase {
 		$this->assertNull($this->packageManager->getPackageOfObject($genericObject));
 	}
 
+	/**
+	 * @test
+	 */
+	public function getPackageByClassNameReturnsCorrectPackageForAnExistingClass() {
+		$existingClassName = get_class($this);
+		$package = $this->packageManager->getPackageByClassName($existingClassName);
+		$this->assertSame('TYPO3.Flow', $package->getPackageKey());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageByClassNameReturnsNullForNonExistingClasses() {
+		$nonExistingClassName = 'SomeNonExistingClass';
+		$this->assertNull($this->packageManager->getPackageByClassName($nonExistingClassName));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPackageByClassNameReturnsNullForClassesThatAreNotPartOfAPackage() {
+		$globalClassName = 'stdClass';
+		$this->assertNull($this->packageManager->getPackageByClassName($globalClassName));
+	}
 
 }

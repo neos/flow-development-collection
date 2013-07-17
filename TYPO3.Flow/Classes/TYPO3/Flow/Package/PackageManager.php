@@ -206,17 +206,26 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * by the length of their namespace descending.
 	 *
 	 * @param object $object The object to find the possessing package of
-	 * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
+	 * @return PackageInterface The package the given object belongs to or NULL if it could not be found
 	 */
 	public function getPackageOfObject($object) {
+		/** @var $reflectionService ReflectionService */
+		$reflectionService = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService');
+		$className = $reflectionService->getClassNameByObject($object);
+		return $this->getPackageByClassName($className);
+	}
+
+	/**
+	 * Finds a package by a given class name of that package, @see getPackageOfObject().
+	 *
+	 * @param string $className The fully qualified class name to find the possessing package of
+	 * @return PackageInterface The package the given object belongs to or NULL if it could not be found
+	 */
+	public function getPackageByClassName($className) {
 		$sortedAvailablePackages = $this->getAvailablePackages();
 		usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
 			return strlen($packageTwo->getNamespace()) - strlen($packageOne->getNamespace());
 		});
-
-		/** @var $reflectionService ReflectionService */
-		$reflectionService = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService');
-		$className = $reflectionService->getClassNameByObject($object);
 
 		/** @var $package PackageInterface */
 		foreach ($sortedAvailablePackages as $package) {
@@ -399,7 +408,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @param \TYPO3\Flow\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file, otherwise a rudimentary Package.xml file is created
 	 * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
 	 * @param string $packageType If specified, the package type will be set, otherwise it will default to "typo3-flow-package"
-	 * @return \TYPO3\Flow\Package\PackageInterface The newly created package
+	 * @return PackageInterface The newly created package
 	 * @throws \TYPO3\Flow\Package\Exception
 	 * @throws \TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException
@@ -1014,7 +1023,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		};
 
 		uasort($this->packages,
-			function (\TYPO3\Flow\Package\PackageInterface $firstPackage, \TYPO3\Flow\Package\PackageInterface $secondPackage) use ($comparator) {
+			function (PackageInterface $firstPackage, PackageInterface $secondPackage) use ($comparator) {
 				return $comparator($firstPackage->getPackageKey(), $secondPackage->getPackageKey());
 			}
 		);
