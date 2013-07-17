@@ -170,6 +170,12 @@ permissions.
 	If all you get is a 404, you might need to edit the ``.htaccess`` file in the
 	``Web`` folder to adjust the ``RewriteBase`` directive as needed.
 
+.. note::
+
+	Depending on your environment (especially on Windows systems) you might need to set the
+	path to the PHP binary in ``Configuration/Settings.yaml``. If you copied the provided
+	example Settings you only need to uncomment the corresponding lines and adjust the path.
+
 .. tip::
 
 	There are some friendly ghosts in our `IRC channel`_ and in the `users mailing list`_
