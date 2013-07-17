@@ -65,6 +65,15 @@ interface PackageManagerInterface {
 	public function getPackageOfObject($object);
 
 	/**
+	 * Finds a package by a given class name of that package
+	 *
+	 * @param string $className The class name to find the possessing package of
+	 * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
+	 * @see getPackageOfObject()
+	 */
+	public function getPackageByClassName($className);
+
+	/**
 	 * Returns an array of \TYPO3\Flow\Package\PackageInterface objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
