@@ -20,14 +20,15 @@ packages and TYPO3 Flow based applications.
 CGL on One Page
 ===============
 
-.. figure:: Images/TheDefinitiveGuide/PartV/TYPO3_Flow_Coding_Guidelines_on_one_page.png
+.. figure:: Images/TYPO3_Flow_Coding_Guidelines_on_one_page.png
 	:alt: The Coding Guidelines on One Page
 	:class: screenshot-detail
+	:target: ../../../_downloads/TYPO3_Flow_Coding_Guidelines_on_one_page.pdf
 
 	The Coding Guidelines on One Page
 
-The most important parts of our `Coding Guidelines in a one page document
-<http://flow.typo3.org/_Resources/Static/Packages/TYPO3.FlowTypo3Org/Assets/Content/TYPO3_Flow-CGL-on-one-page.pdf>`_
+The most important parts of our :download:`Coding Guidelines in a one page document
+<Pdf/TYPO3_Flow_Coding_Guidelines_on_one_page.pdf>`
 you can print out and hang on your wall for easy reference.
 Does it get any easier than that?
 
@@ -226,7 +227,7 @@ Following rules apply:
 
 * If importing namespaces creates conflicting class names you might alias class/interface or namespaces
   with the ``as`` keyword.
-* One ``use`` statement per line, one ``use` statement for each imported namespace
+* One ``use`` statement per line, one ``use`` statement for each imported namespace
 * Imported namespaces should be ordered alphabetically (modern IDEs provide support for this)
 
 .. tip::
@@ -835,7 +836,7 @@ PHP in General
    if ($foo === $bar))        // GOOD
    if ($foo !== $bar))        // GOOD
 
-  .. figure:: Images/TheDefinitiveGuide/PartV/PHP_TrueFalse.jpg
+  .. figure:: Images/PHP_TrueFalse.jpg
   	:alt: Truthy and falsy are fuzzy...
 
   	Truthy and falsy are fuzzy...
