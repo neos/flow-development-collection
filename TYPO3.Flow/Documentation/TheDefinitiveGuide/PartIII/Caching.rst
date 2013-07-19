@@ -627,6 +627,6 @@ convenience) for a cache::
 .. _Redis:                       http://redis.io/
 .. _phpredis:                    https://github.com/owlient/phpredis
 .. _Memcached:                   http://memcached.org/
-.. _PHP memcache bug #16927:     http://pecl.php.net/bugs/bug.php?id=16927
+.. _PHP memcache bug #16927:     https://bugs.php.net/bug.php?id=58943
 .. _APC:                         http://pecl.php.net/package/APC
-.. _PHP warning:                 http://pecl.php.net/bugs/bug.php?id=16966
+.. _PHP warning:                 https://bugs.php.net/bug.php?id=58982
