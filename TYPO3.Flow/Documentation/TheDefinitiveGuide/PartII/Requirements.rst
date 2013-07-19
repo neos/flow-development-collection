@@ -15,7 +15,7 @@ Server Environment
 Not surprisingly, you'll need a web server for running your TYPO3 Flow-based web
 application. We recommend Apache (though IIS and others work too – we just
 haven't really tested them). Please make sure that the
-`mod_rewrite <http://httpd.apache.org/docs/2.3/mod/mod_rewrite.html>`_ module is
+`mod_rewrite <http://httpd.apache.org/docs/current/mod/mod_rewrite.html>`_ module is
 enabled.
 
 .. tip::
@@ -27,7 +27,7 @@ enabled.
 	local security policy `Local Policies > User Rights Assignments > Create symbolic links`
 
 TYPO3 Flow's persistence mechanism requires a `database supported by Doctrine DBAL
-<http://www.doctrine-project.org/projects/dbal>`_.
+<http://www.doctrine-project.org/projects/dbal.html>`_.
 
 PHP
 ===

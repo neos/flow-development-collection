@@ -47,9 +47,8 @@ from the other applications and resides in its own layer, the **domain layer**.
 
 .. tip::
 	Of course there is much more to say about Domain-Driven Design which
-	doesn't belong in this tutorial. A good starter is the `section about
-	DDD <http://flow.typo3.org/documentation/guide/parti/conceptsofmodernprogramming>`_
-	on the TYPO3 Flow website.
+	doesn't belong in this tutorial. A good starter is the :ref:`section about DDD <ch-concepts-of-modern-programming>`
+	in the TYPO3 Flow documentation.
 
 Domain Model
 ============
@@ -196,4 +195,4 @@ first let's get our hands dirty and start with the actual implementation!
 		of your IDE's autocompletion feature. Fortunately IDEs like Netbeans or
 		Zend Studio provide functions to create getters and
 		setters automatically.
-.. [#]	see http://www.doctrine-project.org/api/common/2.0/doctrine/common/collections/collection.html
+.. [#]	see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#collections
