@@ -1217,7 +1217,7 @@ Expected result::
 Expected result::
 
 	<input type="file" name="formObject[attachments][0][originalResource]">
-	<input type="file" name="formObject[attachments][0][originalResource]">
+	<input type="file" name="formObject[attachments][1][originalResource]">
 
 
 
