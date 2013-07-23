@@ -16,7 +16,6 @@ use TYPO3\Flow\Utility\Files;
 
 /**
  * Testcase for the Utility Files class
- *
  */
 class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -235,6 +234,72 @@ class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist() {
 		Files::removeDirectoryRecursively('NonExistingPath');
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeEmptyDirectoriesOnPathRemovesAllDirectoriesOnPathIfTheyAreEmpty() {
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
+		$this->assertFalse(file_exists('vfs://Foo'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeEmptyDirectoriesOnPathRemovesOnlyDirectoriesWhichAreEmpty() {
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		file_put_contents('vfs://Foo/Bar/someFile.txt', 'x');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
+		$this->assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
+		$this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeEmptyDirectoriesOnPathDoesNotRemoveAnythingIfTopLevelPathContainsFile() {
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		file_put_contents('vfs://Foo/Bar/Baz/Quux/someFile.txt', 'x');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
+		$this->assertTrue(file_exists('vfs://Foo/Bar/Baz/Quux/someFile.txt'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeEmptyDirectoriesOnPathAlsoRemovesOSXFinderFilesIfNecessary() {
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		file_put_contents('vfs://Foo/Bar/someFile.txt', 'x');
+		file_put_contents('vfs://Foo/Bar/Baz/.DS_Store', 'x');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
+		$this->assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
+		$this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeEmptyDirectoriesOnPathRemovesOnlyDirectoriesBelowTheGivenBasePath() {
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Foo/Bar');
+		$this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+		$this->assertTrue(file_exists('vfs://Foo/Bar'));
+
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Foo/Bar/');
+		$this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+		$this->assertTrue(file_exists('vfs://Foo/Bar'));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Utility\Exception
+	 */
+	public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath() {
+		Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
+		Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Other/Bar');
 	}
 
 	/**

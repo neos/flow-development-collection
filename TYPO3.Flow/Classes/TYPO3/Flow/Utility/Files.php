@@ -10,10 +10,10 @@ namespace TYPO3\Flow\Utility;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * File and directory functions
- *
  */
 class Files {
 
@@ -23,6 +23,7 @@ class Files {
 	 *
 	 * @param string $path Path which should transformed to the Unix Style.
 	 * @return string
+	 * @api
 	 */
 	static public function getUnixStylePath($path) {
 		if (strpos($path, ':') === FALSE) {
@@ -37,6 +38,7 @@ class Files {
 	 *
 	 * @param string $path
 	 * @return string
+	 * @api
 	 */
 	static public function getNormalizedPath($path) {
 		return rtrim($path, '/') . '/';
@@ -51,6 +53,7 @@ class Files {
 	 * @param array $paths the file paths to be combined. Last array element may include the filename.
 	 * @return string concatenated path without trailing slash.
 	 * @see getUnixStylePath()
+	 * @api
 	 */
 	static public function concatenatePaths(array $paths) {
 		$resultingPath = '';
@@ -79,10 +82,11 @@ class Files {
 	 * @param array $filenames Internally used for the recursion - don't specify!
 	 * @return array Filenames including full path
 	 * @throws Exception
+	 * @api
 	 */
 	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, $returnDotFiles = FALSE, &$filenames = array()) {
 		if (!is_dir($path)) {
-			throw new \TYPO3\Flow\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
+			throw new Exception('"' . $path . '" is no directory.', 1207253462);
 		}
 
 		$directoryIterator = new \DirectoryIterator($path);
@@ -111,27 +115,61 @@ class Files {
 	 * @return void
 	 * @throws Exception
 	 * @see removeDirectoryRecursively()
+	 * @api
 	 */
 	static public function emptyDirectoryRecursively($path) {
 		if (!is_dir($path)) {
-			throw new \TYPO3\Flow\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
+			throw new Exception('"' . $path . '" is no directory.', 1169047616);
 		}
 
 		if (self::is_link($path)) {
 			if (self::unlink($path) !== TRUE) {
-				throw new \TYPO3\Flow\Utility\Exception('Could not unlink symbolic link "' . $path . '".', 1323697654);
+				throw new Exception('Could not unlink symbolic link "' . $path . '".', 1323697654);
 			}
 		} else {
 			$directoryIterator = new \RecursiveDirectoryIterator($path);
 			foreach ($directoryIterator as $fileInfo) {
 				if (!$fileInfo->isDir()) {
 					if (self::unlink($fileInfo->getPathname()) !== TRUE) {
-						throw new \TYPO3\Flow\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+						throw new Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 					}
 				} elseif (!$directoryIterator->isDot()) {
 					self::removeDirectoryRecursively($fileInfo->getPathname());
 				}
 			}
+		}
+	}
+
+	/**
+	 * Removes all empty directories on the specified path. If a base path is given, this function will not remove
+	 * directories, even if empty, above and including that base path.
+	 *
+	 * Any .DS_Store files are silently removed.
+	 *
+	 * @param string $path The path on which empty directories shall be removed
+	 * @param string $basePath A parent path of $path where removal of directories stops
+	 * @return void
+	 * @see removeDirectoryRecursively()
+	 * @api
+	 */
+	static public function removeEmptyDirectoriesOnPath($path, $basePath = NULL) {
+		if ($basePath !== NULL) {
+			$basePath = trim($basePath, '/');
+			if (strpos($path, $basePath) !== 0) {
+				throw new Exception(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
+			}
+		}
+		foreach (array_reverse(explode('/', $path)) as $currentSegment) {
+			if ($path === $basePath) {
+				break;
+			}
+			if (file_exists($path . '/.DS_Store')) {
+				@unlink($path . '/.DS_Store');
+			}
+			if (@rmdir($path) === FALSE) {
+				break;
+			}
+			$path = substr($path, 0, -(strlen($currentSegment) + 1));
 		}
 	}
 
@@ -144,20 +182,21 @@ class Files {
 	 * @return void
 	 * @throws Exception
 	 * @see emptyDirectoryRecursively()
+	 * @api
 	 */
 	static public function removeDirectoryRecursively($path) {
 		if (self::is_link($path)) {
 			if (self::unlink($path) !== TRUE) {
-				throw new \TYPO3\Flow\Utility\Exception('Could not unlink symbolic link "' . $path . '".', 1316000297);
+				throw new Exception('Could not unlink symbolic link "' . $path . '".', 1316000297);
 			}
 		} else {
 			self::emptyDirectoryRecursively($path);
 			try {
 				if (rmdir($path) !== TRUE) {
-					throw new \TYPO3\Flow\Utility\Exception('Could not remove directory "' . $path . '".', 1316000298);
+					throw new Exception('Could not remove directory "' . $path . '".', 1316000298);
 				}
 			} catch (\Exception $exception) {
-				throw new \TYPO3\Flow\Utility\Exception('Could not remove directory "' . $path . '".', 1323961907);
+				throw new Exception('Could not remove directory "' . $path . '".', 1323961907);
 			}
 		}
 	}
@@ -170,20 +209,21 @@ class Files {
 	 * @return void
 	 * @throws Exception
 	 * @todo Make mode configurable / make umask configurable
+	 * @api
 	 */
 	static public function createDirectoryRecursively($path) {
 		if (substr($path, -2) === '/.') {
 			$path = substr($path, 0, -1);
 		}
 		if (is_file($path)) {
-			throw new \TYPO3\Flow\Utility\Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
+			throw new Exception('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
 		}
 		if (!is_dir($path) && strlen($path) > 0) {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
 			umask($oldMask);
 			if (!is_dir($path)) {
-				throw new \TYPO3\Flow\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
+				throw new Exception('Could not create directory "' . $path . '"!', 1170251400);
 			}
 		}
 	}
@@ -204,15 +244,16 @@ class Files {
 	 * @param boolean $copyDotFiles
 	 * @return void
 	 * @throws Exception
+	 * @api
 	 */
 	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory, $keepExistingFiles = FALSE, $copyDotFiles = FALSE) {
 		if (!is_dir($sourceDirectory)) {
-			throw new \TYPO3\Flow\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
+			throw new Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
 		}
 
 		self::createDirectoryRecursively($targetDirectory);
 		if (!is_dir($targetDirectory)) {
-			throw new \TYPO3\Flow\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
+			throw new Exception('"' . $targetDirectory . '" is no directory.', 1235428780);
 		}
 
 		$sourceFilenames = self::readDirectoryRecursively($sourceDirectory, NULL, FALSE, $copyDotFiles);
@@ -236,6 +277,7 @@ class Files {
 	 * @param integer $offset (optional) Offset where reading of the file starts.
 	 * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
 	 * @return mixed The file content as a string or FALSE if the file could not be opened.
+	 * @api
 	 */
 	static public function getFileContents($pathAndFilename, $flags = 0, $context = NULL, $offset = -1, $maximumLength = -1) {
 		if ($flags === TRUE) {
@@ -289,6 +331,7 @@ class Files {
 	 *
 	 * @param string $pathAndFilename Path and name of the file or directory
 	 * @return boolean TRUE if the path exists and is a symbolic link, FALSE otherwise
+	 * @api
 	 */
 	static public function is_link($pathAndFilename) {
 			// if not on Windows, call PHPs own is_link() function
@@ -311,6 +354,7 @@ class Files {
 	 *
 	 * @param string $pathAndFilename Path and name of the file or directory
 	 * @return boolean TRUE if file/directory was removed successfully
+	 * @api
 	 */
 	static public function unlink($pathAndFilename) {
 		try {
