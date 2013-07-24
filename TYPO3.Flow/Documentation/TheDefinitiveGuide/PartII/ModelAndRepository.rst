@@ -23,7 +23,7 @@ databases and think only in terms of objects.
     copy the needed files from there to "your" sandbox project.
 
     To see the full-scale code of the Blog as used by some of us, take a look at
-    the `Blog package <http://git.typo3.org/Packages/TYPO3.Blog.git>`_ in
+    the `Blog package <https://git.typo3.org/Packages/TYPO3.Blog.git>`_ in
     our Git repository.
 
 Domain models are really the heart of your application and therefore it is
@@ -429,7 +429,7 @@ code:
 
 .. [#]	We love to call them POPOs, similar to POJOs
 		http://en.wikipedia.org/wiki/Plain_Old_Java_Object
-.. [#]	http://www.doctrine-project.org/docs/orm/2.1/en/reference/association-mapping.html#collections
+.. [#]	http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#collections
 .. [#]	``findBy*`` and ``findOneBy*`` are magic methods provided by the base
 		repository which allow you to find objects by properties. The
 		``BlogRepository`` for example would allow you to call magic methods

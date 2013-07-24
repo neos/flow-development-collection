@@ -494,4 +494,4 @@ example for such a case is the *typo3.flow:cache:flush* command which
 removes all cache entries which requires an immediate exit because
 TYPO3 Flow relies on caches being intact.
 
-.. _msysGit: http://msysgit.github.com
+.. _msysGit: http://msysgit.github.io

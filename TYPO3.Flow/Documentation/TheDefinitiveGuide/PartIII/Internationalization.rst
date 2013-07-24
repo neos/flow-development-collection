@@ -356,7 +356,7 @@ XLIFF message catalogs
 
 The primary source of translations in TYPO3 Flow are XLIFF message catalogs. `XLIFF
 <http://en.wikipedia.org/wiki/XLIFF>`_, the *XML Localisation Interchange File Format* is
-an `OASIS-blessed <http://www.oasis-open.org/committees/xliff>`_ standard format for
+an `OASIS-blessed <https://www.oasis-open.org/committees/xliff>`_ standard format for
 translations.
 
 .. note::
@@ -483,7 +483,7 @@ XLIFF file translation
 To translate XLIFF files you can use any text editor, but translation is a lot easier
 using one the available translation tools. To name two of them: Virtaal is a free and
 open-source tool for offline use and Pootle (both from the `Translate Toolkit
-<http://translate.sourceforge.net/wiki/toolkit/index>`_ project) is a web-based
+<http://toolkit.translatehouse.org>`_ project) is a web-based
 translation server.
 
 XLIFF can also easily be converted to *PO* file format, edited by well known *PO* editors
