@@ -30,6 +30,44 @@ class PhpFrontend extends \TYPO3\Flow\Cache\Frontend\StringFrontend {
 	}
 
 	/**
+	 * Finds and returns the original code from the cache.
+	 *
+	 * @param string $entryIdentifier Identifier of the cache entry to fetch
+	 * @return string The value
+	 * @throws \InvalidArgumentException
+	 * @api
+	 */
+	public function get($entryIdentifier) {
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
+		}
+		$code = $this->backend->get($entryIdentifier);
+
+		if ($code === FALSE) {
+			return FALSE;
+		}
+
+		preg_match('/^(?:.*\n){1}((?:.*\n)*)(?:.+\n?|\n)$/', $code, $matches);
+
+		return $matches[1];
+	}
+
+	/**
+	 * Returns the code wrapped in php tags as written to the cache, ready to be included.
+	 *
+	 * @param string $entryIdentifier
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	public function getWrapped($entryIdentifier) {
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) {
+			throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
+		}
+
+		return $this->backend->get($entryIdentifier);
+	}
+
+	/**
 	 * Saves the PHP source code in the cache.
 	 *
 	 * @param string $entryIdentifier An identifier used for this cache entry, for example the class name
