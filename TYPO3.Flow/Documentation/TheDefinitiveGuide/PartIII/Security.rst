@@ -499,11 +499,18 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 + Entry Point  + Description               + Configuration options                       +
 +==============+===========================+=============================================+
 + WebRedirect  + Triggers an HTTP redirect + Expects an associative array with           +
-+              + to a given uri.           + one entry.                                  +
-+              + that has been resolved    +                                             +
-+              + by the MVC dispatcher     + For example.:                               +
-+              + for the current .         +                                             +
-+              + request                   + ``uri: login/``                             +
++              + to a given uri or action. + either an entry ``uri`` (obsolete, see Note +
++              +                           + above), or an array ``routeValues``; for    +
++              +                           + example::                                   +
++              +                           +                                             +
++              +                           +   uri: login/                               +
++              +                           +                                             +
++              +                           + or ::                                       +
++              +                           +                                             +
++              +                           +   routeValues:                              +
++              +                           +     '@package': 'Your.Package'              +
++              +                           +     '@controller': 'Authenticate'           +
++              +                           +     '@action': 'login'                      +
 +--------------+---------------------------+---------------------------------------------+
 + HttpBasic    + Adds a WWW-Authenticate   + Optionally takes an option realm, which     +
 +              + header to the response,   + will be displayed in the authentication     +
