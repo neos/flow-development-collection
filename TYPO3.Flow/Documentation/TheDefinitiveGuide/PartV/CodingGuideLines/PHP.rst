@@ -420,7 +420,7 @@ if statements
 switch statements
 -----------------
 
-* There needs to be one space between the ``if`` keyword and the opening brace "(" of the
+* There needs to be one space between the ``switch`` keyword and the opening brace "(" of the
   test expression
 * After the closing brace ")" of the test expression follows one space before the curly
   brace "{"
