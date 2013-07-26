@@ -7,5 +7,17 @@
 # figuration files.                                                        #
 #                                                                          #
 
+
+TYPO3\Eel\CompilingEvaluator:
+  properties:
+    expressionCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Eel_Expression_Code
+
+
 TYPO3\Eel\EelEvaluatorInterface:
   className: TYPO3\Eel\CompilingEvaluator

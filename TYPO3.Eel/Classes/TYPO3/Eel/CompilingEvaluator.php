@@ -11,13 +11,50 @@ namespace TYPO3\Eel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * An evaluator that compiles expressions down to PHP code
  *
  * This simple implementation will lazily parse and evaluate the generated PHP
  * code into a function with a name built from the hashed expression.
+ *
+ * @Flow\Scope("singleton")
  */
 class CompilingEvaluator implements EelEvaluatorInterface {
+
+	/**
+	 * @var string
+	 */
+	protected $codeToBeCached = '';
+
+	/**
+	 * @Flow\Inject(lazy=false)
+	 * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
+	 */
+	protected $expressionCache;
+
+	/**
+	 * @var boolean
+	 */
+	protected $cachedCodeHasChanged = FALSE;
+
+	/**
+	 * Initialize the Evaluator
+	 */
+	public function initializeObject() {
+		$this->codeToBeCached = $this->expressionCache->get('cachedExpressionClosures');
+		$this->expressionCache->requireOnce('cachedExpressionClosures');
+	}
+
+	/**
+	 * Shutdown the Evaluator
+	 */
+	public function shutdownObject() {
+		if ($this->cachedCodeHasChanged === TRUE) {
+			$this->persistCodeCache();
+		}
+	}
 
 	/**
 	 * Evaluate an expression under a given context
@@ -33,6 +70,7 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 		if (!function_exists($functionName)) {
 			$code = $this->generateEvaluatorCode($expression);
 			$functionDeclaration = 'function ' . $functionName . '($context){return ' . $code . ';}';
+			$this->addToCodeCache($functionDeclaration);
 			eval($functionDeclaration);
 		}
 
@@ -65,6 +103,30 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 			throw new ParserException(sprintf('Parser error, no code in result %s ', json_encode($res)), 1334491498);
 		}
 		return $res['code'];
+	}
+
+	/**
+	 * Add a new expression closure to the code cache
+	 *
+	 * @param string $code
+	 */
+	protected function addToCodeCache($code) {
+		$this->codeToBeCached .= $code . chr(10);
+		$this->cachedCodeHasChanged = TRUE;
+	}
+
+	/**
+	 * Persists all compiled EEL expressions in one cache entry.
+	 */
+	protected function persistCodeCache() {
+		$this->expressionCache->set('cachedExpressionClosures', $this->codeToBeCached);
+	}
+
+	/**
+	 * Requires the cached expressions so that they are available for execution.
+	 */
+	protected function requireCachedCodeCache() {
+		$this->expressionCache->requireOnce('cachedExpressionClosures');
 	}
 
 }
