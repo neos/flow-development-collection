@@ -50,6 +50,14 @@ class Service {
 	protected $environment;
 
 	/**
+	 * @return void
+	 */
+	protected function initializeObject() {
+		$connection = $this->entityManager->getConnection();
+		$connection->getDatabasePlatform()->registerDoctrineTypeMapping('array', 'objectarray');
+	}
+
+	/**
 	 * Validates the metadata mapping for Doctrine, using the SchemaValidator
 	 * of Doctrine.
 	 *
