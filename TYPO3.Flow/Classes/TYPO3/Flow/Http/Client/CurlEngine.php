@@ -67,7 +67,6 @@ class CurlEngine implements RequestEngineInterface {
 			// If the content is a stream resource, use cURL's INFILE feature to stream it
 		$content = $request->getContent();
 		if (is_resource($content)) {
-			rewind($content);
 			curl_setopt_array($curlHandle,
 				array(
 					CURLOPT_INFILE => $content,
