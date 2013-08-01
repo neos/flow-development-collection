@@ -218,9 +218,6 @@ class Request extends Message {
 	 * @api
 	 */
 	public function setMethod($method) {
-		if (!in_array($method, array('CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'))) {
-			throw new \InvalidArgumentException(sprintf('Invalid method "%s".', $method), 1326445656);
-		}
 		$this->method = $method;
 	}
 

@@ -134,15 +134,6 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @expectedException InvalidArgumentException
-	 * @test
-	 */
-	public function createRejectsInvalidMethods() {
-		$uri = new Uri('http://flow.typo3.org/foo/bar?baz=1&quux=true#at-the-very-bottom');
-		Request::create($uri, 'STEAL');
-	}
-
-	/**
 	 * @return array
 	 */
 	public function methodCanBeOverriddenDataProvider() {
@@ -203,15 +194,6 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @expectedException InvalidArgumentException
-	 * @test
-	 */
-	public function overriddenMethodMustBeValid() {
-		$uri = new Uri('http://flow.typo3.org');
-		$request = Request::create($uri, 'POST', array('__method' => 'INVALID'));
-	}
-
-	/**
 	 * HTML 2.0 and up
 	 * (see also HTML5, section 4.10.22.5 "URL-encoded form data")
 	 *
@@ -246,29 +228,6 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$subRequest = $request->createActionRequest();
 		$this->assertEquals('bar', $subRequest->getArgument('foo'));
 		$this->assertEquals('quux', $subRequest->getInternalArgument('__baz'));
-	}
-
-	/**
-	 * @return array
-	 */
-	public function invalidMethods() {
-		return array(
-			array('get'),
-			array('mett'),
-			array('post'),
-		);
-	}
-
-	/**
-	 * RFC 2616 / 5.1.1
-	 *
-	 * @test
-	 * @dataProvider invalidMethods
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setMethodDoesNotAcceptInvalidRequestMethods($invalidMethod) {
-		$request = Request::create(new Uri('http://flow.typo3.org'));
-		$request->setMethod($invalidMethod);
 	}
 
 	/**
