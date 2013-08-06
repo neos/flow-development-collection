@@ -2,7 +2,6 @@
     "name": "typo3/eel",
     "type": "typo3-flow-package",
     "description": "",
-    "version": "",
     "require": {
         "typo3/flow": "*"
     },
