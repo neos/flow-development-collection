@@ -51,9 +51,10 @@ model. After that, it is quickly explained how TYPO3 Flow enables
 Domain-Driven Design, such that the reader gets a more practical
 understanding of it.
 
-We do not explain all details of Domain-Driven Design in this
-work, as only parts of it are important for the general understanding
-needed for this work. More information can be found at [Evans].
+.. note::
+ We do not explain all details of Domain-Driven Design in this
+ work, as only parts of it are important for the general understanding
+ needed for this work. More information can be found at [Evans].
 
 Creating a Ubiquitous Language
 -------------------------------
