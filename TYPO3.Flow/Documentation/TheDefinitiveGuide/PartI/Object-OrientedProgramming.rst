@@ -92,7 +92,7 @@ PHP Code::
 
 	?>
 
-.. tip::
+.. note::
 	In this piece of code we kept noting the necessary PHP tags at the
 	beginning and end. We will spare them in the following examples to make the
 	listings a bit shorter.
@@ -123,7 +123,7 @@ properties, all important somehow – for our our abstraction these few will be
 sufficient though. We'll focus on why every property is marked with the key
 word ``public`` further down.
 
-.. tip::
+.. note::
 	For methods and properties we use a notation called **lowerCamelCase**: The
 	first letter is lower case and all other parts are added without blank or
 	underscore in upper case. This is a convention used in TYPO3 Flow.
@@ -547,7 +547,7 @@ dependent properties. This preserves consistency of the object. If you set
 cabins to 1000 and classification to ``NORMAL`` - and our ship would end up
 being inconsistent.
 
-.. tip::
+.. note::
 	In TYPO3 Flow you'll find getter and setter methods all over. No property in
 	TYPO3 Flow is set to ``public``.
 
@@ -679,7 +679,7 @@ multiple instances when using Prototype. Each class annotated with
 ``@Flow\Scope("prototype")`` is of type **Prototype**. Since this is the default
 scope, you can safely leave this one out.
 
-.. tip::
+.. note::
 	Originally for the design pattern **Prototype** is specified, that a new
 	object is to be created by cloning an object prototype. We use Prototype as
 	counterpart to Singleton, without a concrete pattern implementation in the
