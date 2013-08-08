@@ -620,10 +620,10 @@ The general syntax of a view configuration looks like this:
 .. code-block:: yaml
 
 	-
-		requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
-		viewObjectName: 'TYPO3\TypoScript\View\TypoScriptView'
-		options:
-			typoScriptPathPattern: 'resource://My.Package/Private/TypoScripts'
+	  requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
+	  viewObjectName: 'TYPO3\TypoScript\View\TypoScriptView'
+	  options:
+	    typoScriptPathPattern: 'resource://My.Package/Private/TypoScripts'
 
 The requestFilter is based on TYPO3.Eel allowing you to match arbitrary requests
 so that you can override View configuration for various scenarios.
@@ -641,7 +641,7 @@ All Eel matchers above can be used with the parentRequest or mainRequest as well
 
 * parentRequest.isPackage("TYPO3.Neos")
 * parentRequest.isController("Standard")
-* maintRequest.isController("Standard")
+* mainRequest.isController("Standard")
 * ...
 
 You can combine any of these matchers with boolean operators:
@@ -731,16 +731,16 @@ Error Handling
 The argument mapping step based on the validation rules mentioned earlier makes
 sure that an action method is only called if its arguments are valid. In the reverse
 it means that the action specified by the request will not be called if a mapping
-or validation error ocurred. In order to deal with these errors and provide a
+or validation error occurred. In order to deal with these errors and provide a
 meaningful error message to the user, a special action is called instead of the
 originally intended action.
 
 The default implementation of the ``errorAction()`` method will redirect the browser
 to the URI it came from, for example to redisplay the originally submitted form.
 
-Any errors or warnings which ocurred during the argument mapping process are stored
+Any errors or warnings which occurred during the argument mapping process are stored
 in a special object, the *mapping results*. These mapping results can be
-conviently access through a Fluid view helper in order to display warnings and
+conveniently access through a Fluid view helper in order to display warnings and
 errors along the submitted form or on top of it::
 
 	<f:form.validationResults>
