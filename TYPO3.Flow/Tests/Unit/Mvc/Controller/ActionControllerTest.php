@@ -33,6 +33,11 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockObjectManager;
 
 	/**
+	 * @var \TYPO3\Flow\Mvc\ViewConfigurationManager
+	 */
+	protected $mockViewConfigurationManager;
+
+	/**
 	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
 	 */
 	protected $mockControllerContext;
@@ -46,13 +51,16 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue('theFormat'));
 		$this->mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue('TheController'));
 		$this->mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue('theAction'));
-		$this->actionController->_set('request', $this->mockRequest);
+		$this->inject($this->actionController, 'request', $this->mockRequest);
 
 		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$this->actionController->_set('objectManager', $this->mockObjectManager);
+		$this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
 
 		$this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
-		$this->actionController->_set('controllerContext', $this->mockControllerContext);
+		$this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
+
+		$this->mockViewConfigurationManager = $this->getMock('TYPO3\Flow\Mvc\ViewConfigurationManager');
+		$this->inject($this->actionController, 'viewConfigurationManager', $this->mockViewConfigurationManager);
 	}
 
 	/**
@@ -89,7 +97,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function resolveViewReturnsViewResolvedByResolveViewObjectName() {
-		$this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
+		$this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
 
 		$mockView = $this->getMock('TYPO3\Flow\Mvc\View\ViewInterface');
 		$this->mockObjectManager->expects($this->once())->method('get')->with('ResolvedObjectName')->will($this->returnValue($mockView));
@@ -113,14 +121,57 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function resolveViewInjectsControllerContextToView() {
-		$this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will($this->returnValue('ResolvedObjectName'));
+	public function processRequestInjectsControllerContextToView() {
+		$this->actionController = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\ActionController', array('resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController'));
+
+		$this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
+		$this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
+		$this->inject($this->actionController, 'request', $this->mockRequest);
+
+		$this->inject($this->actionController, 'arguments', new \TYPO3\Flow\Mvc\Controller\Arguments(array()));
+
+		$mockMvcPropertyMappingConfigurationService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService');
+		$this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+		$this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
+
+		$mockResponse = $this->getMock('TYPO3\Flow\Http\Response');
 
 		$mockView = $this->getMock('TYPO3\Flow\Mvc\View\ViewInterface');
 		$mockView->expects($this->once())->method('setControllerContext')->with($this->mockControllerContext);
-		$this->mockObjectManager->expects($this->once())->method('get')->with('ResolvedObjectName')->will($this->returnValue($mockView));
+		$this->actionController->expects($this->once())->method('resolveView')->will($this->returnValue($mockView));
 
-		$this->actionController->_call('resolveView');
+		$this->actionController->processRequest($this->mockRequest, $mockResponse);
+	}
+
+	/**
+	 * @test
+	 */
+	public function processRequestInjectsSettingsToView() {
+		$this->actionController = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\ActionController', array('resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod'));
+
+		$this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
+		$this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
+
+		$mockSettings = array('foo', 'bar');
+		$this->inject($this->actionController, 'settings', $mockSettings);
+
+		$mockMvcPropertyMappingConfigurationService = $this->getMock('TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService');
+		$this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->any())->method('getNegotiatedMediaType')->will($this->returnValue('*/*'));
+		$this->mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
+
+		$mockResponse = $this->getMock('TYPO3\Flow\Http\Response');
+
+		$mockView = $this->getMock('TYPO3\Flow\Mvc\View\ViewInterface');
+		$mockView->expects($this->once())->method('assign')->with('settings', $mockSettings);
+		$this->actionController->expects($this->once())->method('resolveView')->will($this->returnValue($mockView));
+
+		$this->actionController->processRequest($this->mockRequest, $mockResponse);
 	}
 
 	/**

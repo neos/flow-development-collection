@@ -159,6 +159,15 @@ TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect:
           1:
             value: Flow_Mvc_Routing_Resolve
 
+TYPO3\Flow\Mvc\ViewConfigurationManager:
+  properties:
+    cache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Mvc_ViewConfigurations
 #                                                                          #
 # Object                                                                   #
 #                                                                          #

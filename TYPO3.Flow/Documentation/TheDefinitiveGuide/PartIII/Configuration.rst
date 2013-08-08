@@ -76,6 +76,10 @@ defined in their own dedicated file:
   from mechanisms such as automatic flushing by the File Monitor. See the chapter about
   the :ref:`ch-caching` for details.
 
+``Views.yaml``
+  Contains configurations for Views, for example the lookup paths for templates.
+  See the :ref:`_ch-model-view-controller` chapter for details.
+
 Defining Configuration
 ======================
 

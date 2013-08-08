@@ -266,6 +266,7 @@ class CacheManager {
 		$caches = array(
 			'/Policy\.yaml/' => array('Flow_Security_Policy'),
 			'/Routes([^\/]*)\.yaml/' => array('Flow_Mvc_Routing_FindMatchResults', 'Flow_Mvc_Routing_Resolve'),
+			'/Views\.yaml/' => array('Flow_Mvc_ViewConfigurations'),
 		);
 		$cachesToFlush = array();
 		foreach (array_keys($changedFiles) as $pathAndFilename) {

@@ -68,6 +68,10 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', 'TYPO3\Flow\Cache\CacheManager', 'flushSystemCachesByChangedFiles');
 
 		$dispatcher->connect('TYPO3\Flow\Tests\FunctionalTestCase', 'functionalTestTearDown', 'TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect', 'flushCaches');
+
+		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function($configurationManager){
+			$configurationManager->registerConfigurationType('Views');
+		});
 	}
 }
 

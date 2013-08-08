@@ -15,6 +15,7 @@
 
         "typo3/fluid": "*",
         "typo3/party": "*",
+        "typo3/eel": "*",
 
         "doctrine/orm": "2.3.*",
         "doctrine/migrations": "dev-master",

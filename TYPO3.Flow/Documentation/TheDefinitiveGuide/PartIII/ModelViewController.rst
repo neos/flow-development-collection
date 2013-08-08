@@ -1,3 +1,5 @@
+.. _ch-model-view-controller
+
 Model View Controller
 =====================
 
@@ -604,6 +606,72 @@ all methods defined in the ``TYPO3\Flow\Mvc\View\ViewInterface``.
 An Action Controller can be configured to use a custom view through the
 ``$defaultViewObjectName`` and ``$viewFormatToObjectNameMap`` properties, as
 explained in the section about JSON View.
+
+Configuring Views through Views.yaml
+------------------------------------
+
+If you want to change Templates, Partials, Layouts or the whole ViewClass for
+a foreign package without modifying it directly, and thus breaking updatability,
+you can create a ``Views.yaml``in your configuration folder and override all options
+the view supports.
+
+The general syntax of a view configuration looks like this:
+
+.. code-block:: yaml
+
+	-
+		requestFilter: 'isPackage("Foreign.Package") && isController("Standard")'
+		viewObjectName: 'TYPO3\TypoScript\View\TypoScriptView'
+		options:
+			typoScriptPathPattern: 'resource://My.Package/Private/TypoScripts'
+
+The requestFilter is based on TYPO3.Eel allowing you to match arbitrary requests
+so that you can override View configuration for various scenarios.
+You can combine any of these matchers to filter as specific as you need:
+
+* isPackage("Package.Key")
+* isSubPackage("SubPackage")
+* isController("Standard")
+* isAction("index")
+* isFormat("html")
+
+There are additional helpers to get the parentRequest or mainRequest of the current request,
+which you can use to limit some configuration to only take effect inside a specific subRequest.
+All Eel matchers above can be used with the parentRequest or mainRequest as well:
+
+* parentRequest.isPackage("TYPO3.Neos")
+* parentRequest.isController("Standard")
+* maintRequest.isController("Standard")
+* ...
+
+You can combine any of these matchers with boolean operators:
+
+	(isPackage("My.Foo") || isPackage('My.Bar')) && isFormat("html")
+
+The order of the configurations is in most cases unimportant. Each matcher has a
+specific weight similar to CSS specifity (ID, class, inline, important) to determine
+which configuration outweighs the other. For each match resulting matcher the weight
+will be increased by a certain value.
+
++----------------------------+------------+
+| Method                     | Weight     |
++============================+============+
+| isPackage("Package.Key")   |          1 |
++----------------------------+------------+
+| isSubPackage("SubPackage") |         10 |
++----------------------------+------------+
+| isController("Standard")   |        100 |
++----------------------------+------------+
+| isAction("index")          |       1000 |
++----------------------------+------------+
+| isFormat("html")           |      10000 |
++----------------------------+------------+
+| mainRequest()              |     100000 |
++----------------------------+------------+
+| parentRequest()            |    1000000 |
++----------------------------+------------+
+
+If the package is "My.Foo" and the Format is "html" the result will be 10001
 
 Controller Context
 ~~~~~~~~~~~~~~~~~~
