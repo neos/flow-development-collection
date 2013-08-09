@@ -2,16 +2,13 @@
 namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
- * This script is part of the TYPO3 project - inspiring people to share!  *
+ * This script belongs to the TYPO3 Flow framework.                       *
  *                                                                        *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by  *
- * the Free Software Foundation.                                          *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License, either version 3   *
+ * of the License, or (at your option) any later version.                 *
  *                                                                        *
- * This script is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
- * Public License for more details.                                       *
+ * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
 use TYPO3\Flow\Monitor\FileMonitor;
