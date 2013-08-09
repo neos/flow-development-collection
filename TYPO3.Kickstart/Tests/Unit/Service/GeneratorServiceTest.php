@@ -47,15 +47,16 @@ class GeneratorServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespace() {
+	public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespaceIfNeeded() {
+		$uniqueClassName = uniqid('Class');
 		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
 		$fieldDefinitions = array(
 			'field' => array(
-				'type' => 'Foo'
+				'type' => $uniqueClassName
 			)
 		);
 		$normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions, 'TYPO3\Testing\Domain\Model');
-		$this->assertEquals('\TYPO3\Testing\Domain\Model\Foo', $normalizedFieldDefinitions['field']['type']);
+		$this->assertEquals('\TYPO3\Testing\Domain\Model\\' . $uniqueClassName, $normalizedFieldDefinitions['field']['type']);
 	}
 }
 ?>
