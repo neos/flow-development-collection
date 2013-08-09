@@ -1,7 +1,8 @@
 {
     "name": "typo3/eel",
-    "type": "typo3-flow-package",
-    "description": "",
+    "type": "typo3-flow-framework",
+    "license": ["LGPL-3.0+"],
+    "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
     "require": {
         "typo3/flow": "*"
     },
