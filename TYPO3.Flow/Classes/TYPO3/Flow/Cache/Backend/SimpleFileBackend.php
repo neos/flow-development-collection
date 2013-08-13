@@ -301,7 +301,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			$this->rewind();
 		}
 		$this->cacheFilesIterator->next();
-		while ($this->cacheFilesIterator->isDot() && $this->cacheFilesIterator->valid()) {
+		while (strpos($this->cacheFilesIterator->getBasename(), '.') === 0 && $this->cacheFilesIterator->valid()) {
 			$this->cacheFilesIterator->next();
 		}
 	}
