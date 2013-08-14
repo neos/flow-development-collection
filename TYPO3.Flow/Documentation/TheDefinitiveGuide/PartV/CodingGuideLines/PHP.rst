@@ -108,9 +108,9 @@ Here's a code snippet which shows the correct usage of tabs and spaces.
 
 There seem to be very passionate opinions about whether TABs or spaces should be used for
 indentation of code blocks in the scripts. If you'd like to read more about this religious
-discussion, you find some nice arguments in the `Joels on Software`_ forum.
+discussion, you find some nice arguments in the `Joel on Software`_ forum.
 
-.. _`Joels on Software`: http://discuss.fogcreek.com/joelonsoftware/default.asp?cmd=show&ixPost=3978
+.. _`Joel on Software`: http://discuss.fogcreek.com/joelonsoftware/default.asp?cmd=show&ixPost=3978
 
 Naming
 ------
