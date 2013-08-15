@@ -96,9 +96,21 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getPropertyTriesToCallABooleanGetterMethodIfItExists() {
+	public function getPropertyTriesToCallABooleanIsGetterMethodIfItExists() {
 		$property = ObjectAccess::getProperty($this->dummyObject, 'booleanProperty');
 		$this->assertSame('method called 1', $property);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyTriesToCallABooleanHasGetterMethodIfItExists() {
+		$property = ObjectAccess::getProperty($this->dummyObject, 'anotherBooleanProperty');
+		$this->assertSame(FALSE, $property);
+
+		$this->dummyObject->setAnotherBooleanProperty(TRUE);
+		$property = ObjectAccess::getProperty($this->dummyObject, 'anotherBooleanProperty');
+		$this->assertSame(TRUE, $property);
 	}
 
 	/**
@@ -286,7 +298,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
-		$expectedPropertyNames = array('anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
+		$expectedPropertyNames = array('anotherBooleanProperty', 'anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
 		$actualPropertyNames = ObjectAccess::getGettablePropertyNames($this->dummyObject);
 		$this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
 	}
@@ -295,7 +307,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getSettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
-		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2', 'writeOnlyMagicProperty');
+		$expectedPropertyNames = array('anotherBooleanProperty', 'anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2', 'writeOnlyMagicProperty');
 		$actualPropertyNames = ObjectAccess::getSettablePropertyNames($this->dummyObject);
 		$this->assertEquals($expectedPropertyNames, $actualPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
 	}
@@ -318,6 +330,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getGettablePropertiesReturnsTheCorrectValuesForAllProperties() {
 		$expectedProperties = array(
+			'anotherBooleanProperty' => FALSE,
 			'anotherProperty' => 42,
 			'booleanProperty' => 'method called 1',
 			'property' => 'string1',
@@ -375,6 +388,7 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
 		$this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'property'));
 		$this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'booleanProperty'));
+		$this->assertTrue(ObjectAccess::isPropertyGettable($this->dummyObject, 'anotherBooleanProperty'));
 
 		$this->assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
 		$this->assertFalse(ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));

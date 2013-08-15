@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
+
 /**
  * Provides methods to call appropriate getter/setter on an object given the
  * property name. It does this following these rules:
@@ -58,7 +60,7 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess Directly access property using reflection(!)
 	 * @return mixed Value of the property
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
-	 * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
+	 * @throws PropertyNotAccessibleException if the property was not accessible
 	 */
 	static public function getProperty($subject, $propertyName, $forceDirectAccess = FALSE) {
 		if (!is_object($subject) && !is_array($subject)) {
@@ -73,7 +75,7 @@ class ObjectAccess {
 		if ($propertyExists === TRUE) {
 			return $propertyValue;
 		}
-		throw new \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
+		throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
 	}
 
 	/**
@@ -86,7 +88,7 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
 	 * @return mixed Value of the property
-	 * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+	 * @throws PropertyNotAccessibleException
 	 * @see getProperty()
 	 */
 	static protected function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
@@ -107,12 +109,12 @@ class ObjectAccess {
 
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
-				$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				$propertyReflection = new PropertyReflection(get_class($subject), $propertyName);
 				return $propertyReflection->getValue($subject);
 			} elseif (property_exists($subject, $propertyName)) {
 				return $subject->$propertyName;
 			} else {
-				throw new \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
+				throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
 			}
 		}
 
@@ -126,28 +128,13 @@ class ObjectAccess {
 		}
 
 		$class = get_class($subject);
-		$identifier = $class . '|' . $propertyName;
-		if (!isset(self::$propertyGetterCache[$identifier])) {
-			self::$propertyGetterCache[$identifier] = array();
-			$getterMethodName = 'get' . ucfirst($propertyName);
-			if (is_callable(array($subject, $getterMethodName))) {
-				self::$propertyGetterCache[$identifier]['accessorMethod'] = $getterMethodName;
-			} else {
-				$getterMethodName = 'is' . ucfirst($propertyName);
-				if (is_callable(array($subject, $getterMethodName))) {
-					self::$propertyGetterCache[$identifier]['accessorMethod'] = $getterMethodName;
-				} else {
-					if (!($subject instanceof \ArrayAccess) && array_key_exists($propertyName, get_object_vars($subject))) {
-						self::$propertyGetterCache[$identifier]['publicProperty'] = $propertyName;
-					}
-				}
-			}
-		}
+		$cacheIdentifier = $class . '|' . $propertyName;
+		self::initializePropertyGetterCache($cacheIdentifier, $subject, $propertyName);
 
-		if (isset(self::$propertyGetterCache[$identifier]['accessorMethod'])) {
-			$method = self::$propertyGetterCache[$identifier]['accessorMethod'];
+		if (isset(self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'])) {
+			$method = self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'];
 			return $subject->$method();
-		} elseif (isset(self::$propertyGetterCache[$identifier]['publicProperty'])) {
+		} elseif (isset(self::$propertyGetterCache[$cacheIdentifier]['publicProperty'])) {
 			return $subject->$propertyName;
 		}
 
@@ -159,6 +146,33 @@ class ObjectAccess {
 
 		$propertyExists = FALSE;
 		return NULL;
+	}
+
+	/**
+	 * @param string $cacheIdentifier
+	 * @param mixed $subject
+	 * @param string $propertyName
+	 * @return void
+	 */
+	static protected function initializePropertyGetterCache($cacheIdentifier, $subject, $propertyName) {
+		if (isset(self::$propertyGetterCache[$cacheIdentifier])) {
+			return;
+		}
+		self::$propertyGetterCache[$cacheIdentifier] = array();
+		$uppercasePropertyName = ucfirst($propertyName);
+		$getterMethodNames = array('get' . $uppercasePropertyName, 'is' . $uppercasePropertyName, 'has' . $uppercasePropertyName);
+		foreach ($getterMethodNames as $getterMethodName) {
+			if (is_callable(array($subject, $getterMethodName))) {
+				self::$propertyGetterCache[$cacheIdentifier]['accessorMethod'] = $getterMethodName;
+				return;
+			}
+		}
+		if ($subject instanceof \ArrayAccess) {
+			return;
+		}
+		if (array_key_exists($propertyName, get_object_vars($subject))) {
+			self::$propertyGetterCache[$cacheIdentifier]['publicProperty'] = $propertyName;
+		}
 	}
 
 	/**
@@ -220,7 +234,7 @@ class ObjectAccess {
 
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
-				$propertyReflection = new \TYPO3\Flow\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				$propertyReflection = new PropertyReflection(get_class($subject), $propertyName);
 				$propertyReflection->setValue($subject, $propertyValue);
 			} else {
 				$subject->$propertyName = $propertyValue;
@@ -268,6 +282,9 @@ class ObjectAccess {
 						$declaredPropertyNames[] = lcfirst(substr($methodName, 2));
 					}
 					if (substr($methodName, 0, 3) === 'get') {
+						$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+					}
+					if (substr($methodName, 0, 3) === 'has') {
 						$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
 					}
 				}
@@ -349,10 +366,14 @@ class ObjectAccess {
 		} elseif ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
 			return TRUE;
 		}
-		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) {
+		$uppercasePropertyName = ucfirst($propertyName);
+		if (is_callable(array($object, 'get' . $uppercasePropertyName))) {
 			return TRUE;
 		}
-		if (is_callable(array($object, 'is' . ucfirst($propertyName)))) {
+		if (is_callable(array($object, 'is' . $uppercasePropertyName))) {
+			return TRUE;
+		}
+		if (is_callable(array($object, 'has' . $uppercasePropertyName))) {
 			return TRUE;
 		}
 		return (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE);
