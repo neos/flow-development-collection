@@ -19,7 +19,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfOneVoterReturnsADenyVote() {
 		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
@@ -41,7 +41,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
 		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
@@ -82,6 +82,9 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$voterManager->_set('securityContext', $mockContext);
 
 		$voterManager->decideOnJoinPoint($mockJoinPoint);
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -103,11 +106,14 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$voterManager->_set('securityContext', $mockContext);
 
 		$voterManager->decideOnJoinPoint($mockJoinPoint);
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function decideOnResourceThrowsAnExceptionIfOneVoterReturnsADenyVote() {
 		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
@@ -128,7 +134,7 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\Flow\Security\Exception\AccessDeniedException
 	 */
 	public function decideOnResourceThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
 		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
@@ -167,6 +173,9 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$voterManager->_set('securityContext', $mockContext);
 
 		$voterManager->decideOnResource('myResource');
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -187,6 +196,9 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$voterManager->_set('securityContext', $mockContext);
 
 		$voterManager->decideOnResource('myResource');
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 }
 ?>

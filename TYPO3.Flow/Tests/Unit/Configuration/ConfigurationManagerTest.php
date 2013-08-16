@@ -600,6 +600,17 @@ EOD;
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
 
 		$configurationManager->_call('loadConfiguration', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array());
+
+		$actualConfigurations = $configurationManager->_get('configurations');
+		$expectedConfiguration = array(
+			'TYPO3' => array(
+				'Flow' => array(
+					'foo' => 'bar',
+					'core' => array('context' => 'Testing')
+				)
+			)
+		);
+		$this->assertEquals($expectedConfiguration, $actualConfigurations[\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
 	}
 
 	/**

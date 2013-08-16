@@ -26,16 +26,22 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @var \TYPO3\Flow\Reflection\MethodReflection
 	 */
-	protected $mockMethodReflection;
+	protected $methodReflection;
 
 	/**
 	 * @return void
 	 */
 	public function setUp() {
 		$this->command = $this->getAccessibleMock('TYPO3\Flow\Cli\Command', array('getCommandMethodReflection'), array(), '', FALSE);
-		$this->mockMethodReflection = $this->getMock('TYPO3\Flow\Reflection\MethodReflection', array(), array(), '', FALSE);
-		$this->command->expects($this->any())->method('getCommandMethodReflection')->will($this->returnValue($this->mockMethodReflection));
+		$this->methodReflection = $this->getMock('TYPO3\Flow\Reflection\MethodReflection', array(), array(__CLASS__, 'dummyMethod'));
+		$this->command->expects($this->any())->method('getCommandMethodReflection')->will($this->returnValue($this->methodReflection));
 	}
+
+	/**
+	 * Method used to construct some test objects locally
+	 * @param string $arg
+	 */
+	public function dummyMethod($arg) {}
 
 	/**
 	 * @return array
@@ -61,7 +67,7 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function hasArgumentsReturnsFalseIfCommandExpectsNoArguments() {
-		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
+		$this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
 		$this->assertFalse($this->command->hasArguments());
 	}
 
@@ -69,8 +75,8 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function hasArgumentsReturnsTrueIfCommandExpectsArguments() {
-		$mockParameterReflection = $this->getMock('TYPO3\Flow\Reflection\ParameterReflection', array(), array(), '', FALSE);
-		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($mockParameterReflection)));
+		$parameterReflection = $this->getMock('TYPO3\Flow\Reflection\ParameterReflection', array(), array(array(__CLASS__, 'dummyMethod'), 'arg'));
+		$this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($parameterReflection)));
 		$this->assertTrue($this->command->hasArguments());
 	}
 
@@ -78,7 +84,7 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getArgumentDefinitionsReturnsEmptyArrayIfCommandExpectsNoArguments() {
-		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
+		$this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
 		$this->assertSame(array(), $this->command->getArgumentDefinitions());
 	}
 
@@ -86,13 +92,13 @@ class CommandTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments() {
-		$mockParameterReflection = $this->getMock('TYPO3\Flow\Reflection\ParameterReflection', array(), array(), '', FALSE);
+		$parameterReflection = $this->getMock('TYPO3\Flow\Reflection\ParameterReflection', array(), array(array(__CLASS__, 'dummyMethod'), 'arg'));
 		$mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
 		$mockMethodParameters = array('argument1' => array('optional' => FALSE), 'argument2' => array('optional' => TRUE));
 		$mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($mockMethodParameters));
 		$this->command->injectReflectionService($mockReflectionService);
-		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($mockParameterReflection)));
-		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getTagsValues')->will($this->returnValue(array('param' => array('@param $argument1 argument1 description', '@param $argument2 argument2 description'))));
+		$this->methodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($parameterReflection)));
+		$this->methodReflection->expects($this->atLeastOnce())->method('getTagsValues')->will($this->returnValue(array('param' => array('@param $argument1 argument1 description', '@param $argument2 argument2 description'))));
 
 		$expectedResult = array(
 			new \TYPO3\Flow\Cli\CommandArgumentDefinition('argument1', TRUE, 'argument1 description'),

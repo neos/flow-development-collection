@@ -154,6 +154,9 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitT
 
 		$requestHashService = new \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 		$requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**

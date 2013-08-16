@@ -62,12 +62,6 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function initializeUsesPackageStatesConfigurationForActivePackages() {
-	}
-
-	/**
-	 * @test
-	 */
 	public function getPackageReturnsTheSpecifiedPackage() {
 		$this->packageManager->createPackage('TYPO3.Flow');
 
