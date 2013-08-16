@@ -378,6 +378,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$propertyMapper->_set('typeConverters', $typeConverters);
 
 		$propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipProperties('secondProperty'));
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -399,6 +402,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$propertyMapper->_set('typeConverters', $typeConverters);
 
 		$propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipUnknownProperties());
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 }
 ?>

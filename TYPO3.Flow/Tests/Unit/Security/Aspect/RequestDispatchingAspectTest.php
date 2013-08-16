@@ -132,10 +132,10 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockToken = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$mockEntryPoint = $this->getMock('TYPO3\Flow\Security\Authentication\EntryPointInterface', array(), array(), '', FALSE);
 
-		$mockException = $this->getMock('TYPO3\Flow\Security\Exception\AuthenticationRequiredException', array(), array(), '', FALSE);
+		$authenticationRequiredException = new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException();
 
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($mockException));
+		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($authenticationRequiredException));
 
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
@@ -174,10 +174,10 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
 		$mockToken = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 
-		$mockException = $this->getMock('TYPO3\Flow\Security\Exception\AuthenticationRequiredException', array(), array(), '', FALSE);
+		$authenticationRequiredException = new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException();
 
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($mockException));
+		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($authenticationRequiredException));
 
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
