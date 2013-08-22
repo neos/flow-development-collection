@@ -179,7 +179,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 				$this->outputLine('  Subpackage: ' . (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : '-'));
 				$this->outputLine('  Controller: ' . (isset($routeValues['@controller']) ? $routeValues['@controller'] : '-'));
 				$this->outputLine('  Action: ' . (isset($routeValues['@action']) ? $routeValues['@action'] : '-'));
-				$this->outputLine('  Format: ' . (isset($routeValues['@format']) ? isset($routeValues['@format']) : '-'));
+				$this->outputLine('  Format: ' . (isset($routeValues['@format']) ? $routeValues['@format'] : '-'));
 
 				$controllerObjectName = $this->router->getControllerObjectName($routeValues['@package'], (isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : NULL), $routeValues['@controller']);
 				if ($controllerObjectName === NULL) {
