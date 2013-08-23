@@ -134,6 +134,7 @@ class Dispatcher {
 				if ($request->getControllerSubpackageKey() !== NULL) {
 					$exceptionMessage .= sprintf(', SubPackage key: "%s"', $request->getControllerSubpackageKey());
 				}
+				$exceptionMessage .= sprintf('. (%s %s)', $request->getHttpRequest()->getMethod(), $request->getHttpRequest()->getUri());
 			}
 			throw new \TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException($exceptionMessage, 1303209195, NULL, $request);
 		}
