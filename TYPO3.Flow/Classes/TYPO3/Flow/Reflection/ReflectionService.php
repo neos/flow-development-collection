@@ -1326,7 +1326,11 @@ class ReflectionService {
 			foreach ($property->getTagsValues() as $tag => $values) {
 				if (array_search($tag, $this->settings['reflection']['ignoredTags']) === FALSE) {
 					if ($tag === 'var' && isset($values[0])) {
-						$values[0] = $this->expandType($class, $values[0]);
+						if ($property->getDeclaringClass()->getName() !== $className && isset($this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag])) {
+							$values = $this->classReflectionData[$property->getDeclaringClass()->getName()][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag];
+						} else {
+							$values[0] = $this->expandType($class, $values[0]);
+						}
 					}
 					$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] = $values;
 				}
@@ -1392,7 +1396,7 @@ class ReflectionService {
 	 */
 	protected function expandType(ClassReflection $class, $type) {
 		// skip simple types and types with fully qualified namespaces
-		if (substr($type, 0, 1) === '\\' || TypeHandling::isSimpleType($type)) {
+		if (substr($type, 0, 1) === '\\' || TypeHandling::isSimpleType($type) || $type === 'mixed') {
 			return $type;
 		}
 
@@ -1415,9 +1419,9 @@ class ReflectionService {
 		if (isset($useStatementsForClass[strtolower($typeParts[0])])) {
 			$typeParts[0] = $useStatementsForClass[strtolower($typeParts[0])];
 			return implode('\\', $typeParts);
-		} else {
-			return $type;
 		}
+
+		return $type;
 	}
 
 	/**

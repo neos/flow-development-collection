@@ -11,27 +11,23 @@ namespace TYPO3\Flow\Tests\Functional\Reflection\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity;
 
 /**
- * An annotated class with use statements
+ * An abstract annotated class with use statements
  */
-class AnnotatedClassWithUseStatements extends AbstractAnnotatedClassWithUseStatements {
+abstract class AbstractAnnotatedClassWithUseStatements {
 
 	/**
-	 * @var ReflectionService
+	 * @var Model\SubSubEntity
 	 */
-	protected $reflectionService;
+	protected $subSubEntity;
 
 	/**
-	 * @var AnnotatedClass
+	 * @var SuperEntity
 	 */
-	protected $annotatedClass;
+	protected $superEntity;
 
-	/**
-	 * @var Model\SubEntity
-	 */
-	protected $subEntity;
 }
 
 ?>
