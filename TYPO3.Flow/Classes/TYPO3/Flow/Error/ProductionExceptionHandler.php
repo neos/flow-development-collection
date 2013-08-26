@@ -37,11 +37,15 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 			header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
 		}
 
-		$renderingOptions = $this->resolveCustomRenderingOptions($exception);
-		if (isset($renderingOptions['templatePathAndFilename'])) {
-			echo $this->buildCustomFluidView($exception, $renderingOptions)->render();
-		} else {
-			echo $this->renderStatically($statusCode, $referenceCode);
+		try {
+			$renderingOptions = $this->resolveCustomRenderingOptions($exception);
+			if (isset($renderingOptions['templatePathAndFilename'])) {
+				echo $this->buildCustomFluidView($exception, $renderingOptions)->render();
+			} else {
+				echo $this->renderStatically($statusCode, $referenceCode);
+			}
+		} catch (\Exception $innerException) {
+			$this->systemLogger->logException($innerException);
 		}
 	}
 
