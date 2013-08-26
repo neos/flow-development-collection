@@ -108,11 +108,21 @@ class PersistentObjectConverter extends ObjectConverter {
 		}
 
 		$schema = $this->reflectionService->getClassSchema($targetType);
-		if (!$schema->hasProperty($propertyName)) {
+		$setterMethodName = \TYPO3\Flow\Reflection\ObjectAccess::buildSetterMethodName($propertyName);
+		if ($schema->hasProperty($propertyName)) {
+			$propertyInformation = $schema->getProperty($propertyName);
+			return $propertyInformation['type'] . ($propertyInformation['elementType'] !== NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
+		} elseif ($this->reflectionService->hasMethod($targetType, $setterMethodName)) {
+			$methodParameters = $this->reflectionService->getMethodParameters($targetType, $setterMethodName);
+			$methodParameter = current($methodParameters);
+			if (!isset($methodParameter['type'])) {
+				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
+			} else {
+				return $methodParameter['type'];
+			}
+		} else {
 			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
 		}
-		$propertyInformation = $schema->getProperty($propertyName);
-		return $propertyInformation['type'] . ($propertyInformation['elementType'] !== NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
 	}
 
 	/**

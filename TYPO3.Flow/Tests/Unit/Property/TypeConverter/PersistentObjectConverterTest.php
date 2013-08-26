@@ -120,6 +120,24 @@ class PersistentObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getTypeOfChildPropertyShouldConsiderSetters() {
+		$mockSchema = $this->getMockBuilder('TYPO3\Flow\Reflection\ClassSchema')->disableOriginalConstructor()->getMock();
+		$this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will($this->returnValue($mockSchema));
+
+		$mockSchema->expects($this->any())->method('hasProperty')->with('virtualPropertyName')->will($this->returnValue(FALSE));
+
+		$this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(TRUE));
+		$this->mockReflectionService->expects($this->any())->method('getMethodParameters')->with('TheTargetType', 'setVirtualPropertyName')->will($this->returnValue(array(
+			array('type' => 'TheTypeOfSubObject')
+		)));
+
+		$configuration = $this->buildConfiguration(array());
+		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'virtualPropertyName', $configuration));
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertFromShouldFetchObjectFromPersistenceIfUuidStringIsGiven() {
 		$identifier = '550e8400-e29b-11d4-a716-446655440000';
 		$object = new \stdClass();
