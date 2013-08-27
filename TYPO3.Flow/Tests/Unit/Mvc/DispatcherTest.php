@@ -188,10 +188,10 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Controller\Exception\InvalidControllerException
 	 */
 	public function resolveControllerThrowsAnInvalidControllerExceptionIfTheResolvedControllerDoesNotExist() {
-		$mockController = $this->getMock('TYPO3\Flow\Mvc\Controller\NotFoundControllerInterface');
-
-		$mockRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$mockHttpRequest = $this->getMock('TYPO3\Flow\Http\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName', 'getHttpRequest'), array(), '', FALSE);
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
+		$mockRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
 
 		$dispatcher = $this->getAccessibleMock('TYPO3\Flow\Mvc\Dispatcher', array('dummy'));
 
