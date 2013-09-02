@@ -293,6 +293,21 @@ class ConfigurationManager {
 	}
 
 	/**
+	 * Warms up the complete configuration cache, i.e. fetching every configured configuration type
+	 * in order to be able to store it into the cache, if configured to do so.
+	 *
+	 * @see \TYPO3\Flow\Configuration\ConfigurationManager::shutdown
+	 * @return void
+	 */
+	public function warmup() {
+		if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['TYPO3']['Flow']['configuration']['compileConfigurationFiles'] === TRUE) {
+			foreach ($this->getAvailableConfigurationTypes() as $configurationType) {
+				$this->getConfiguration($configurationType);
+			}
+		}
+	}
+
+	/**
 	 * Loads special configuration defined in the specified packages and merges them with
 	 * those potentially existing in the global configuration folders. The result is stored
 	 * in the configuration manager's configuration registry and can be retrieved with the
