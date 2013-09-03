@@ -180,6 +180,9 @@ class AspectContainer {
 		foreach ($this->interfaceIntroductions as $interfaceIntroduction) {
 			$result->applyUnion($interfaceIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
 		}
+		foreach ($this->propertyIntroductions as $propertyIntroduction) {
+			$result->applyUnion($propertyIntroduction->getPointcut()->reduceTargetClassNames($classNameIndex));
+		}
 		$this->cachedTargetClassNameCandidates = $result;
 		return $result;
 	}

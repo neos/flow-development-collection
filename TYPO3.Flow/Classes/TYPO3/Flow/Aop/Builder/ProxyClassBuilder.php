@@ -364,7 +364,7 @@ class ProxyClassBuilder {
 			if ($introduceAnnotation->interfaceName === NULL) {
 				throw new \TYPO3\Flow\Aop\Exception('The interface introduction in class "' . $aspectClassName . '" does not contain the required interface name).', 1172694761);
 			}
-			$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, 'TYPO3\Flow\Annotations\Introduce'));
+			$pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $introduceAnnotation->interfaceName, 'TYPO3\Flow\Annotations\Introduce'));
 			$pointcut = new \TYPO3\Flow\Aop\Pointcut\Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 			$introduction = new \TYPO3\Flow\Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
 			$aspectContainer->addInterfaceIntroduction($introduction);
@@ -379,7 +379,10 @@ class ProxyClassBuilder {
 				$aspectContainer->addPropertyIntroduction($introduction);
 			}
 		}
-		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getInterfaceIntroductions()) < 1) {
+		if (count($aspectContainer->getAdvisors()) < 1 &&
+			count($aspectContainer->getPointcuts()) < 1 &&
+			count($aspectContainer->getInterfaceIntroductions()) < 1 &&
+			count($aspectContainer->getPropertyIntroductions()) < 1) {
 			throw new \TYPO3\Flow\Aop\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
 		}
 		return $aspectContainer;
@@ -405,7 +408,7 @@ class ProxyClassBuilder {
 		$this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
 		$this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
-		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1) {
+		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1 && count($propertyIntroductions) < 1) {
 			return FALSE;
 		}
 
