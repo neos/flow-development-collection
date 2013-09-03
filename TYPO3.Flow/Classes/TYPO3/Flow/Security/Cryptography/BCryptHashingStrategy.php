@@ -17,8 +17,8 @@ namespace TYPO3\Flow\Security\Cryptography;
 class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\PasswordHashingStrategyInterface {
 
 	/**
-	 * Number of rounds to use with BCrypt (04 - 31), must be two digit
-	 * @var string
+	 * Number of rounds to use with BCrypt for hashing passwords, must be between 4 and 31
+	 * @var integer
 	 */
 	protected $cost;
 
@@ -30,7 +30,7 @@ class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
 	 */
 	public function __construct($cost) {
 		if ($cost < 4 || $cost > 31) {
-			throw new \InvalidArgumentException('BCrypt cost must be between 04 and 31.', 1318447710);
+			throw new \InvalidArgumentException('BCrypt cost must be between 4 and 31.', 1318447710);
 		}
 
 		$this->cost = sprintf('%02d', $cost);
@@ -49,8 +49,10 @@ class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
 	}
 
 	/**
-	 * Validate a password against a derived key (hashed password) and salt using BCrypt.
-	 * Provides a fallback if the stored credentialsSource was created using PBKDF2.
+	 * Validate a password against a derived key (hashed password) and salt using BCrypt
+	 *
+	 * Passwords hashed with a different cost can be validated by using the cost parameter of the
+	 * hashed password and salt.
 	 *
 	 * @param string $password The cleartext password
 	 * @param string $hashedPasswordAndSalt The derived key and salt in as returned by crypt() for verification
@@ -58,7 +60,11 @@ class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
 	 * @return boolean TRUE if the given password matches the hashed password
 	 */
 	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL) {
-		$cryptSalt = '$2a$' . $this->cost . '$' . substr($hashedPasswordAndSalt, 7, 29);
+		if (strlen($hashedPasswordAndSalt) < 29 || strpos($hashedPasswordAndSalt, '$2a$') !== 0) {
+			return FALSE;
+		}
+
+		$cryptSalt = '$2a$' . substr($hashedPasswordAndSalt, 4, 26);
 		return crypt($password, $cryptSalt) === $hashedPasswordAndSalt;
 	}
 
