@@ -132,8 +132,20 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		} catch (\Doctrine\ORM\ORMException $ormException) {
 			$this->systemLogger->logException($ormException);
 			return array();
+		} catch (\Doctrine\DBAL\DBALException $dbalException) {
+			$message = 'An error occurred in the Database Abstraction Layer.';
+			if (strpos($dbalException->getMessage(), 'No database selected') !== FALSE) {
+				$message = 'No database name was specified in the configuration.';
+			}
+			throw new DatabaseConnectionException($message, $dbalException->getCode());
 		} catch (\PDOException $pdoException) {
-			throw new DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
+			$message = 'An error occurred while using the PDO Driver.';
+			if (strpos($pdoException->getMessage(), 'Unknown database') !== FALSE) {
+				$message = 'The database which was specified in the configuration does not exist.';
+			} elseif (strpos($pdoException->getMessage(), 'Access denied') !== FALSE) {
+				$message = 'The database username / password specified in the configuration seem to be wrong.';
+			}
+			throw new DatabaseConnectionException($message, $pdoException->getCode());
 		}
 	}
 
