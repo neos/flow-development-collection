@@ -1551,7 +1551,7 @@ class ReflectionService {
 	 */
 	protected function makeChildClassesAggregateRoot(ClassSchema $classSchema) {
 		foreach ($this->getAllSubClassNamesForClass($classSchema->getClassName()) as $childClassName) {
-			if ($this->classSchemata[$childClassName]->isAggregateRoot()) {
+			if (!isset($this->classSchemata[$childClassName]) || $this->classSchemata[$childClassName]->isAggregateRoot()) {
 				continue;
 			} else {
 				$this->classSchemata[$childClassName]->setRepositoryClassName($classSchema->getRepositoryClassName());
