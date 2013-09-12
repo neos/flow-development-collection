@@ -472,8 +472,7 @@ class Bootstrap {
 				}
 			}
 			if ($rootPath !== FALSE) {
-				$rootPathWithPossibleSymlinks = str_replace('//', '/', \TYPO3\Flow\Utility\Files::getUnixStylePath($rootPath) . '/');
-				$rootPath = realpath($rootPathWithPossibleSymlinks) . '/';
+				$rootPath = \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
 				$testPath = \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath(\TYPO3\Flow\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3.Flow')))) . '/';
 				$expectedPath = \TYPO3\Flow\Utility\Files::getUnixStylePath(realpath(FLOW_PATH_FLOW)) . '/';
 				if ($testPath !== $expectedPath) {
@@ -506,7 +505,7 @@ class Bootstrap {
 		}
 
 		define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');
-		define('FLOW_PATH_DATA', (isset($rootPathWithPossibleSymlinks) ? $rootPathWithPossibleSymlinks : FLOW_PATH_ROOT) . 'Data/');
+		define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
 		define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
 		define('FLOW_VERSION_BRANCH', 'dev-master');
