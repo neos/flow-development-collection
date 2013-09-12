@@ -134,9 +134,9 @@ class PrivateResourcesPublishingAspect {
 							continue;
 						}
 						unlink($publishingPath . $role);
-						symlink($roleDirectory, \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $role)));
+						\TYPO3\Flow\Utility\Files::createRelativeSymlink($roleDirectory, \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $role)));
 					} else {
-						symlink($roleDirectory, \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $role)));
+						\TYPO3\Flow\Utility\Files::createRelativeSymlink($roleDirectory, \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $role)));
 					}
 				}
 				$publishingPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($publishingPath, $allowedRoles[0])) . '/';

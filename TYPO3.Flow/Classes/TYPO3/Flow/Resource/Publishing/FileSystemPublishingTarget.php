@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Resource\Publishing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Publishing target for a file system.
@@ -72,7 +73,7 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 		}
 
 		if (!is_writable($this->resourcesPublishingPath)) {
-			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath);
+			Files::createDirectoryRecursively($this->resourcesPublishingPath);
 		}
 		if (!is_dir($this->resourcesPublishingPath) && !is_link($this->resourcesPublishingPath)) {
 			throw new \TYPO3\Flow\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" does not exist.', 1207124538);
@@ -81,7 +82,7 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 			throw new \TYPO3\Flow\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" is not writable.', 1207124546);
 		}
 		if (!is_dir($this->resourcesPublishingPath . 'Persistent') && !is_link($this->resourcesPublishingPath . 'Persistent')) {
-			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath . 'Persistent');
+			Files::createDirectoryRecursively($this->resourcesPublishingPath . 'Persistent');
 		}
 		if (!is_writable($this->resourcesPublishingPath . 'Persistent')) {
 			throw new \TYPO3\Flow\Resource\Exception('The directory "' . $this->resourcesPublishingPath . 'Persistent" is not writable.', 1260527881);
@@ -100,26 +101,26 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 		if (!is_dir($sourcePath)) {
 			return FALSE;
 		}
-		$sourcePath = rtrim(\TYPO3\Flow\Utility\Files::getUnixStylePath($this->realpath($sourcePath)), '/');
-		$targetPath = rtrim(\TYPO3\Flow\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
+		$sourcePath = rtrim(Files::getUnixStylePath($this->realpath($sourcePath)), '/');
+		$targetPath = rtrim(Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
 
 		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') {
-			if (\TYPO3\Flow\Utility\Files::is_link($targetPath) && (rtrim(\TYPO3\Flow\Utility\Files::getUnixStylePath($this->realpath($targetPath)), '/') === $sourcePath)) {
+			if (Files::is_link($targetPath) && (rtrim(Files::getUnixStylePath($this->realpath($targetPath)), '/') === $sourcePath)) {
 				return TRUE;
 			} elseif (is_dir($targetPath)) {
-				\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($targetPath);
+				Files::removeDirectoryRecursively($targetPath);
 			} elseif (is_link($targetPath)) {
 				unlink($targetPath);
 			} else {
-				\TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($targetPath));
+				Files::createDirectoryRecursively(dirname($targetPath));
 			}
-			symlink($sourcePath, $targetPath);
+			Files::createRelativeSymlink($sourcePath, $targetPath);
 		} else {
-			foreach (\TYPO3\Flow\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
+			foreach (Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
 				if (substr(strtolower($sourcePathAndFilename), -4, 4) === '.php') {
 					continue;
 				}
-				$targetPathAndFilename = \TYPO3\Flow\Utility\Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
+				$targetPathAndFilename = Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
 				if (!file_exists($targetPathAndFilename) || filemtime($sourcePathAndFilename) > filemtime($targetPathAndFilename)) {
 					$this->mirrorFile($sourcePathAndFilename, $targetPathAndFilename, TRUE);
 				}
@@ -233,7 +234,7 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 	 */
 	protected function mirrorFile($sourcePathAndFilename, $targetPathAndFilename, $createDirectoriesIfNecessary = FALSE) {
 		if ($createDirectoriesIfNecessary === TRUE) {
-			\TYPO3\Flow\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+			Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
 
 		switch ($this->settings['resource']['publishing']['fileSystem']['mirrorMode']) {
@@ -243,14 +244,12 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 				break;
 			case 'link' :
 				if (file_exists($targetPathAndFilename)) {
-					if (\TYPO3\Flow\Utility\Files::is_link($targetPathAndFilename) && ($this->realpath($targetPathAndFilename) === $this->realpath($sourcePathAndFilename))) {
+					if (Files::is_link($targetPathAndFilename) && ($this->realpath($targetPathAndFilename) === $this->realpath($sourcePathAndFilename))) {
 						break;
 					}
 					unlink($targetPathAndFilename);
-					symlink($sourcePathAndFilename, $targetPathAndFilename);
-				} else {
-					symlink($sourcePathAndFilename, $targetPathAndFilename);
 				}
+				Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
 				break;
 			default :
 				throw new \TYPO3\Flow\Resource\Exception('An invalid mirror mode (' . $this->settings['resource']['publishing']['fileSystem']['mirrorMode'] . ') has been configured.', 1256133400);
