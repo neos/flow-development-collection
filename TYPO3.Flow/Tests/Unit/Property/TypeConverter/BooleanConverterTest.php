@@ -41,7 +41,7 @@ class BooleanConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function convertFromDoesNotModifyTheBooleanSource() {
 		$source = TRUE;
-		$this->assertEquals($source, $this->converter->convertFrom($source, 'boolean'));
+		$this->assertSame($source, $this->converter->convertFrom($source, 'boolean'));
 	}
 
 	/**
@@ -49,7 +49,7 @@ class BooleanConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function convertFromCastsSourceStringToBoolean() {
 		$source = 'true';
-		$this->assertSame(TRUE, $this->converter->convertFrom($source, 'boolean'));
+		$this->assertTrue($this->converter->convertFrom($source, 'boolean'));
 	}
 
 	/**
@@ -57,7 +57,37 @@ class BooleanConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function convertFromCastsNumericSourceStringToBoolean() {
 		$source = '1';
-		$this->assertSame(TRUE, $this->converter->convertFrom($source, 'boolean'));
+		$this->assertTrue($this->converter->convertFrom($source, 'boolean'));
+	}
+
+	public function convertFromDataProvider() {
+		return array(
+			array('source' => '', 'expected' => FALSE),
+			array('source' => '0', 'expected' => FALSE),
+			array('source' => '1', 'expected' => TRUE),
+			array('source' => 'false', 'expected' => FALSE),
+			array('source' => 'true', 'expected' => TRUE),
+			array('source' => 'some string', 'expected' => TRUE),
+			array('source' => 'FaLsE', 'expected' => FALSE),
+			array('source' => 'tRuE', 'expected' => TRUE),
+			array('source' => 'tRuE', 'expected' => TRUE),
+			array('source' => 'off', 'expected' => FALSE),
+			array('source' => 'N', 'expected' => FALSE),
+			array('source' => 'no', 'expected' => FALSE),
+			array('source' => 'not no', 'expected' => TRUE),
+			array('source' => TRUE, 'expected' => TRUE),
+			array('source' => FALSE, 'expected' => FALSE),
+		);
+	}
+
+	/**
+	 * @test
+	 * @param mixed $source
+	 * @param boolean $expected
+	 * @dataProvider convertFromDataProvider
+	 */
+	public function convertFromTests($source, $expected) {
+		$this->assertSame($expected, $this->converter->convertFrom($source, 'boolean'));
 	}
 }
 ?>

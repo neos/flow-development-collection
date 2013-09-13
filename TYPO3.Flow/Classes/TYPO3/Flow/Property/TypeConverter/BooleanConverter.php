@@ -47,7 +47,10 @@ class BooleanConverter extends AbstractTypeConverter {
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return (boolean)$source;
+		if (is_bool($source)) {
+			return $source;
+		}
+		return (!empty($source) && !in_array(strtolower($source), array('off', 'n', 'no', 'false')));
 	}
 }
 ?>
