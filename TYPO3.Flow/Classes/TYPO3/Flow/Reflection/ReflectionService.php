@@ -653,6 +653,30 @@ class ReflectionService {
 	}
 
 	/**
+	 * Tells if the class is unconfigurable or not
+	 *
+	 * @param string $className Name of the class to analyze
+	 * @return boolean return TRUE if class not could not be automatically configured, otherwise FALSE
+	 * @api
+	 */
+	public function isClassUnconfigurable($className) {
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		return $this->classReflectionData[$className] === array();
+	}
+
+	/**
+	 * Mark class as unconfigurable, allowing automatic configuration to ignore it.
+	 *
+	 * @param string $className Name of the class to mark unconfigurable
+	 * @return void
+	 */
+	protected function markClassUnconfigurable($className) {
+		$this->classReflectionData[$className] = array();
+	}
+
+	/**
 	 * Returns all class names of classes containing at least one method annotated
 	 * with the given annotation class
 	 *
@@ -1213,12 +1237,7 @@ class ReflectionService {
 			$count = 0;
 			foreach ($newClassNames as $className) {
 				$count++;
-				try {
-					$this->reflectClass($className);
-				} catch (Exception\ClassLoadingForReflectionFailedException $exception) {
-					$this->systemLogger->log('Could not reflect "' . $className . '" because the class could not be loaded.', LOG_DEBUG);
-					continue;
-				}
+				$this->reflectClass($className);
 				if ($this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\Flow\Annotations\ValueObject')) {
 					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\Flow\Annotations\Scope');
 					if ($scopeAnnotation !== NULL && $scopeAnnotation->value !== 'prototype') {
@@ -1251,8 +1270,13 @@ class ReflectionService {
 				// see bug http://forge.typo3.org/issues/29449 for details.
 				throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
 		}
-
-		$class = new ClassReflection($className);
+		try {
+			$class = new ClassReflection($className);
+		} catch (Exception\ClassLoadingForReflectionFailedException $exception) {
+			$this->markClassUnconfigurable($className);
+			$this->log('Could not reflect "' . $className . '" because the class could not be loaded.', LOG_DEBUG);
+			return;
+		}
 
 		if (!isset($this->classReflectionData[$className])) {
 			$this->classReflectionData[$className] = array();
