@@ -164,6 +164,28 @@ class CacheCommandController extends CommandController {
 	}
 
 	/**
+	 * Flushes a particular cache by its identifier
+	 *
+	 * Given a cache identifier, this flushes just that one cache. To find
+	 * the cache identifiers, you can use the configuration:show command with
+	 * the type set to "Caches".
+	 *
+	 * Note that this does not have a force-flush option since it's not
+	 * meant to remove temporary code data, resulting into a broken state if
+	 * code files lack.
+	 *
+	 * @param string $identifier Cache identifier to flush cache for
+	 * @return void
+	 * @see typo3.flow:cache:flush
+	 * @see typo3.flow:configuration:show
+	 */
+	public function flushOneCommand($identifier) {
+		$this->cacheManager->getCache($identifier)->flush();
+		$this->outputLine('Flushed "%s" cache for "%s" context.', array($identifier, $this->bootstrap->getContext()));
+		$this->sendAndExit(0);
+	}
+
+	/**
 	 * Warm up caches
 	 *
 	 * The warm up caches command initializes and fills – as far as possible – all
