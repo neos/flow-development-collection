@@ -62,11 +62,15 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
-			$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
+			$moreInformationLink = ($exceptionCodeNumber != '') ? '<p><a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a></p>' : '';
 			$createIssueLink = $this->getCreateIssueLink($exception);
-			$exceptionHeader .= '
-				<strong style="color: #BE0027;">' . $exceptionCodeNumber . htmlspecialchars($exception->getMessage()) . '</strong> ' . $moreInformationLink . '<br />
-				<br />
+			$exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
+
+			$exceptionHeader .= '<h2 class="ExceptionSubject">' . $exceptionCodeNumber . htmlspecialchars($exceptionMessageParts['subject']) . '</h2>';
+			if ($exceptionMessageParts['body'] !== '') {
+				$exceptionHeader .= '<p class="ExceptionBody">' . nl2br(htmlspecialchars($exceptionMessageParts['body'])) . '</p>';
+			}
+			$exceptionHeader .= $moreInformationLink . '
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
@@ -91,6 +95,18 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				<title>' . $statusCode . ' ' . $statusMessage . '</title>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				<style>
+					.ExceptionSubject {
+						margin: 0;
+						padding: 0;
+						font-size: 15px;
+						color: #BE0027;
+					}
+					.ExceptionBody {
+						padding: 10px;
+						margin: 10px;
+						color: black;
+						background: #DDD;
+					}
 					.ExceptionProperty {
 						color: #101010;
 					}
@@ -204,6 +220,39 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 				chr(10) . 'Please include more helpful information!'
 			) .
 			'&issue[category_id]=554&issue[priority_id]=7';
+	}
+
+	/**
+	 * Splits the given string into subject and body according to following rules:
+	 * - If the string is empty or does not contain more than one sentence nor line breaks, the subject will be equal to the string and body will be an empty string
+	 * - Otherwise the subject is everything until the first line break or end of sentence, the body contains the rest
+	 *
+	 * @param string $exceptionMessage
+	 * @return array in the format array('subject' => '<subject>', 'body' => '<body>');
+	 */
+	protected function splitExceptionMessage($exceptionMessage) {
+		$subject = '';
+		$body = '';
+		$pattern = '/
+			(?<=                # Begin positive lookbehind.
+			  [.!?]\s           # Either an end of sentence punct,
+			| \n                # or line break
+			)
+			(?<!                # Begin negative lookbehind.
+			  i\.E\.\s          # Skip "i.E."
+			)                   # End negative lookbehind.
+			/ix';
+		$sentences = preg_split($pattern, $exceptionMessage, 2, PREG_SPLIT_NO_EMPTY);
+		if (!isset($sentences[1])) {
+			$subject = $exceptionMessage;
+		} else {
+			$subject = trim($sentences[0]);
+			$body = trim($sentences[1]);
+		}
+		return array(
+			'subject' => $subject,
+			'body' => $body
+		);
 	}
 }
 ?>
