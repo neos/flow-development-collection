@@ -12,16 +12,19 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Dynamic Route Part
  *
  * @api
  */
-class DynamicRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface {
+class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInterface {
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @var PersistenceManagerInterface
 	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
@@ -108,7 +111,7 @@ class DynamicRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart impleme
 		if ($value === NULL || $value === '') {
 			return FALSE;
 		}
-		$this->value = $value;
+		$this->value = urldecode($value);
 		return TRUE;
 	}
 
@@ -143,10 +146,7 @@ class DynamicRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart impleme
 		if (!$this->resolveValue($valueToResolve)) {
 			return FALSE;
 		}
-		if ($this->lowerCase) {
-			$this->value = strtolower($this->value);
-		}
-		$routeValues = \TYPO3\Flow\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
+		$routeValues = Arrays::unsetValueByPath($routeValues, $this->name);
 		return TRUE;
 	}
 
@@ -159,7 +159,7 @@ class DynamicRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart impleme
 	 * @api
 	 */
 	protected function findValueToResolve(array $routeValues) {
-		return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($routeValues, $this->name);
+		return ObjectAccess::getPropertyPath($routeValues, $this->name);
 	}
 
 	/**
@@ -181,7 +181,7 @@ class DynamicRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart impleme
 				return FALSE;
 			}
 		}
-		$this->value = (string)$value;
+		$this->value = urlencode($value);
 		if ($this->lowerCase) {
 			$this->value = strtolower($this->value);
 		}

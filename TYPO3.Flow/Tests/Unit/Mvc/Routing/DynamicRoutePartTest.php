@@ -90,6 +90,20 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function valueIsUrlDecodedAfterSuccessfulMatch() {
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setDefaultValue('bar');
+		$this->dynamicRoutPart->setSplitString('/');
+
+		$routePath = 'some+%5c+special+%c3%b6%c3%a4%c3%bc%c3%9f/secondSegment';
+		$this->dynamicRoutPart->match($routePath);
+
+		$this->assertEquals('some \ special öäüß', $this->dynamicRoutPart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
+	}
+
+	/**
+	 * @test
+	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {
 		$this->dynamicRoutPart->setName('foo');
 		$this->dynamicRoutPart->setSplitString('/');
@@ -208,6 +222,17 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
 		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should resolve if an element with the same name exists in $routeValues.');
+	}
+
+	/**
+	 * @test
+	 */
+	public function dynamicRoutePartUrlEncodesValues() {
+		$this->dynamicRoutPart->setName('foo');
+		$routeValues = array('foo' => 'some \ special öäüß');
+
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+		$this->assertEquals('some+%5c+special+%c3%b6%c3%a4%c3%bc%c3%9f', $this->dynamicRoutPart->getValue());
 	}
 
 	/**
