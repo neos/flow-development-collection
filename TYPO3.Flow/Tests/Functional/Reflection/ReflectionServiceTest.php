@@ -81,6 +81,24 @@ class ReflectionServiceTest extends FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function propertyTypesFromAbstractBaseClassAreExpandedWithRelativeNamespaces() {
+		$varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'subSubEntity', 'var');
+		$expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity');
+		$this->assertSame($expected, $varTagValues);
+	}
+
+	/**
+	 * @test
+	 */
+	public function propertyTypesFromAbstractBaseClassAreExpandedWithUseStatements() {
+		$varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'superEntity', 'var');
+		$expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity');
+		$this->assertSame($expected, $varTagValues);
+	}
+
+	/**
+	 * @test
+	 */
 	public function propertyTypesFromSameSubpackageAreRetrievedCorrectly() {
 		$varTagValues = $this->reflectionService->getPropertyTagValues('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements', 'annotatedClass', 'var');
 		$expected = array('TYPO3\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass');
