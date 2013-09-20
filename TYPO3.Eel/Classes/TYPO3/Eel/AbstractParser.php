@@ -238,11 +238,11 @@ function match_BooleanLiteral ($stack = array()) {
 }
 
 
-/* Identifier: / [a-zA-Z_] [a-zA-Z0-9_]* / */
+/* Identifier: / [a-zA-Z_] [a-zA-Z0-9_\-]* / */
 protected $match_Identifier_typestack = array('Identifier');
 function match_Identifier ($stack = array()) {
 	$matchrule = "Identifier"; $result = $this->construct($matchrule, $matchrule, null);
-	if (( $subres = $this->rx( '/ [a-zA-Z_] [a-zA-Z0-9_]* /' ) ) !== FALSE) {
+	if (( $subres = $this->rx( '/ [a-zA-Z_] [a-zA-Z0-9_\-]* /' ) ) !== FALSE) {
 		$result["text"] .= $subres;
 		return $this->finalise($result);
 	}

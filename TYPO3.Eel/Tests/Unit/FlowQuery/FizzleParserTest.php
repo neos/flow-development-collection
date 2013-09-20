@@ -41,6 +41,7 @@ class FizzleParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser = new \PhpPeg\ParserTestWrapper($this, 'TYPO3\Eel\FlowQuery\FizzleParser');
 		$parser->assertDoesntMatch('Filter', '*', 'Universal selector not matched');
 		$parser->assertMatches('Filter', 'foo');
+		$parser->assertMatches('Filter', 'foo-bar');
 		$parser->assertMatches('Filter', 'foo[baz]');
 		$parser->assertMatches('Filter', 'foo[baz][bar]');
 		$parser->assertMatches('Filter', 'foo[baz]');
