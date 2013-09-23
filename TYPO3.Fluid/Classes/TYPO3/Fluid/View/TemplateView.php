@@ -194,7 +194,7 @@ class TemplateView extends \TYPO3\Fluid\View\AbstractTemplateView {
 			// These tokens are replaced by the Backporter for the graceful fallback in version 4.
 			// TOKEN-1
 			$templatePathAndFilename = str_replace('@action', $actionName, $templatePathAndFilename);
-			if (file_exists($templatePathAndFilename)) {
+			if (is_file($templatePathAndFilename)) {
 				// TOKEN-2
 				return $templatePathAndFilename;
 			} // TOKEN-3
@@ -259,11 +259,11 @@ class TemplateView extends \TYPO3\Fluid\View\AbstractTemplateView {
 			// These tokens are replaced by the Backporter for the graceful fallback in version 4.
 			// TOKEN-LAYOUT-1
 			$layoutPathAndFilename = str_replace('@layout', $layoutName, $layoutPathAndFilename);
-			if (file_exists($layoutPathAndFilename)) {
+			if (is_file($layoutPathAndFilename)) {
 				return $layoutPathAndFilename;
 			} // TOKEN-LAYOUT-3
 		}
-		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('The template files "' . implode('", "', $paths) . '" could not be loaded.', 1225709595);
+		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('The layout files "' . implode('", "', $paths) . '" could not be loaded.', 1225709595);
 	}
 
 	/**
@@ -306,11 +306,11 @@ class TemplateView extends \TYPO3\Fluid\View\AbstractTemplateView {
 		$paths = $this->expandGenericPathPattern($this->partialPathAndFilenamePattern, TRUE, TRUE);
 		foreach ($paths as &$partialPathAndFilename) {
 			$partialPathAndFilename = str_replace('@partial', $partialName, $partialPathAndFilename);
-			if (file_exists($partialPathAndFilename)) {
+			if (is_file($partialPathAndFilename)) {
 				return $partialPathAndFilename;
 			}
 		}
-		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('The template files "' . implode('", "', $paths) . '" could not be loaded.', 1225709595);
+		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('The partial files "' . implode('", "', $paths) . '" could not be loaded.', 1225709595);
 	}
 
 	/**

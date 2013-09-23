@@ -191,7 +191,42 @@ class TemplateViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$templateView->setLayoutRootPath('MyLayouts');
 
 		$this->assertSame('contentsOfMyCoolAction', $templateView->_call('getTemplateSource', 'myCoolAction'));
+	}
 
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
+	 */
+	public function getTemplatePathAndFilenameThrowsExceptionIfNoPathCanBeResolved() {
+		vfsStreamWrapper::register();
+		$paths = array(
+			'vfs://NonExistentDir/UnknownFile.html',
+			'vfs://NonExistentDir/AnotherUnknownFile.html',
+		);
+
+		$templateView = $this->getAccessibleMock('TYPO3\Fluid\View\TemplateView', array('expandGenericPathPattern'));
+		$templateView->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', FALSE, FALSE)->will($this->returnValue($paths));
+
+		$templateView->_call('getTemplatePathAndFilename', 'myCoolAction');
+	}
+
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
+	 */
+	public function getTemplatePathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory() {
+		vfsStreamWrapper::register();
+		mkdir('vfs://MyTemplates/NotAFile');
+		$paths = array(
+			'vfs://NonExistentDir/UnknownFile.html',
+			'vfs://MyTemplates/NotAFile'
+		);
+
+		$templateView = $this->getAccessibleMock('TYPO3\Fluid\View\TemplateView', array('expandGenericPathPattern'));
+		$templateView->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', FALSE, FALSE)->will($this->returnValue($paths));
+
+		$templateView->_call('getTemplatePathAndFilename', 'myCoolAction');
 	}
 
 	/**
