@@ -36,13 +36,13 @@ class Resource {
 
 	/**
 	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "maximum"=100 })
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $filename = '';
 
 	/**
 	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "maximum"=100 })
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $fileExtension = '';
 

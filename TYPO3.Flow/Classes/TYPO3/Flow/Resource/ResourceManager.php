@@ -125,7 +125,7 @@ class ResourceManager {
 	 * newly imported persistent resource.
 	 *
 	 * @param string $uri An URI (can also be a path and filename) pointing to the resource to import
-	 * @return mixed A resource object representing the imported resource or FALSE if an error occurred.
+	 * @return \TYPO3\Flow\Resource\Resource A resource object representing the imported resource or FALSE if an error occurred.
 	 * @api
 	 */
 	public function importResource($uri) {
