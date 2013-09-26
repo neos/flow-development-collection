@@ -39,6 +39,14 @@ class UuidValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
 	/**
 	 * @test
 	 */
+	public function tooLongButValidUUIDIsRejected() {
+		$this->assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1-3990f07dd3f1')->hasErrors());
+		$this->assertTrue($this->validator->validate('abcde-533548ca-8914-4a19-9404-ef390a6ce387-xyz')->hasErrors());
+	}
+
+	/**
+	 * @test
+	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
 		$this->assertTrue($this->validator->validate('e104e469-9030-4g98-babf-3990f07dd3f1')->hasErrors());
 	}
