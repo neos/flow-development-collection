@@ -24,6 +24,7 @@ class SuperEntity {
 
 	/**
 	 * @var string
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $content;
 
