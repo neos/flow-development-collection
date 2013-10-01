@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPoint;
 
 /**
  * Command controller for tasks related to security
@@ -21,10 +22,43 @@ use TYPO3\Flow\Annotations as Flow;
 class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 */
+	protected $objectManager;
+
+	/**
+	 * @var \TYPO3\Flow\Reflection\ReflectionService
+	 * @Flow\Inject
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @var \TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp
 	 * @Flow\Inject
 	 */
 	protected $rsaWalletService;
+
+	/**
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 * @Flow\Inject
+	 */
+	protected $policyService;
+
+	/**
+	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 */
+	protected $policyCache;
+
+	/**
+	 * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
+	 *
+	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
+	 * @return void
+	 */
+	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
+		$this->policyCache = $cacheManager->getCache('Flow_Security_Policy');
+	}
 
 	/**
 	 * Import a public key
@@ -72,6 +106,170 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$uuid = $this->rsaWalletService->registerKeyPairFromPrivateKeyString($keyData, $usedForPasswords);
 
 		$this->outputLine('The keypair has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
+	}
+
+	/**
+	 * Shows the effective policy rules currently active in the system
+	 *
+	 * @param boolean $grantsOnly Only list methods effectively granted to the given roles
+	 * @return void
+	 * @see typo3.flow:security:showeffectivepolicy
+	 */
+	public function showEffectivePolicyCommand($grantsOnly = FALSE) {
+		$roles = array();
+		$roleIdentifiers = $this->request->getExceedingArguments();
+
+		if (empty($roleIdentifiers) === TRUE) {
+			$this->outputLine('Please specify at leas one role, to calculate the effective privileges for!');
+			$this->quit(1);
+		}
+
+		foreach ($roleIdentifiers as $roleIdentifier) {
+			if ($this->policyService->hasRole($roleIdentifier)) {
+				$currentRole = $this->policyService->getRole($roleIdentifier);
+				$roles[$roleIdentifier] = $currentRole;
+				foreach ($this->policyService->getAllParentRoles($currentRole) as $parentRoleIdentifier => $parentRole) {
+					if (!isset($roles[$parentRoleIdentifier])) {
+						$roles[$parentRoleIdentifier] = $parentRole;
+					}
+				}
+			}
+		}
+
+		if (count($roles) === 0) {
+			$this->outputLine('The specified role(s) do not exist.');
+			$this->quit(1);
+		}
+
+		$this->outputLine(PHP_EOL . 'The following roles will be used for calculating the effective privileges (retrieved from the configured roles hierarchy):' . PHP_EOL);
+		foreach($roles as $roleIdentifier => $role) {
+			$this->outputLine($roleIdentifier);
+		}
+
+		$dummySecurityContext = new \TYPO3\Flow\Security\DummyContext();
+		$dummySecurityContext->setRoles($roles);
+		$accessDecisionManager = new \TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager($this->objectManager, $dummySecurityContext);
+
+		if ($this->policyCache->has('acls')) {
+			$classes = array();
+			$acls = $this->policyCache->get('acls');
+			foreach($acls as $classAndMethodName => $aclEntry) {
+				if (strpos($classAndMethodName, '->') === FALSE) {
+					continue;
+				}
+				list($className, $methodName) = explode('->', $classAndMethodName);
+				$className = $this->objectManager->getCaseSensitiveObjectName($className);
+				foreach (get_class_methods($className) as $casSensitiveMethodName) {
+					if ($methodName === strtolower($casSensitiveMethodName)) {
+						$methodName = $casSensitiveMethodName;
+						break;
+					}
+				}
+				foreach($aclEntry as $role => $resources) {
+					if (in_array($role, $roles) === FALSE) {
+						continue;
+					}
+
+					if (!isset($classes[$className])) {
+						$classes[$className] = array();
+					}
+					if (!isset($classes[$className][$methodName])) {
+						$classes[$className][$methodName] = array();
+						$classes[$className][$methodName]['resources'] = array();
+					}
+
+					foreach($resources as $resourceName => $privilege) {
+						$classes[$className][$methodName]['resources'][$resourceName] = $privilege;
+					}
+				}
+				try {
+					$accessDecisionManager->decideOnJoinPoint(new \TYPO3\Flow\Aop\JoinPoint(NULL, $className, $methodName, array()));
+				} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
+					$classes[$className][$methodName]['effectivePrivilege'] = $e->getMessage();
+				}
+				if (!isset($classes[$className][$methodName]['effectivePrivilege'])) {
+					$classes[$className][$methodName]['effectivePrivilege'] = 'Access granted';
+				}
+			}
+
+			foreach ($classes as $className => $methods) {
+				$classNamePrinted = FALSE;
+				foreach ($methods as $methodName => $resources) {
+					if ($grantsOnly === TRUE && $resources['effectivePrivilege'] !== 'Access granted') {
+						continue;
+					}
+					if ($classNamePrinted === FALSE) {
+						$this->outputLine(PHP_EOL . PHP_EOL . ' <b>' . $className . '</b>');
+						$classNamePrinted = TRUE;
+					}
+
+					$this->outputLine(PHP_EOL . '  ' . $methodName);
+					$runtimeEvaluationsInPlace = FALSE;
+					if (isset($resources['resources']) === TRUE && is_array($resources['resources']) === TRUE) {
+						foreach ($resources['resources'] as $resourceName => $privilege) {
+							switch ($privilege['privilege']) {
+								case \TYPO3\Flow\Security\Policy\PolicyService::PRIVILEGE_GRANT:
+									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Access granted');
+									break;
+								case \TYPO3\Flow\Security\Policy\PolicyService::PRIVILEGE_DENY:
+									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Access denied');
+									break;
+								case \TYPO3\Flow\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN:
+									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Vote abstained (no acl entry for given roles)');
+									break;
+							}
+							if ($privilege['runtimeEvaluationsClosureCode'] !== FALSE) {
+								$runtimeEvaluationsInPlace = TRUE;
+							}
+						}
+					}
+					if ($runtimeEvaluationsInPlace === TRUE) {
+						$this->outputLine('   Caution: Runtime evaluations in place!');
+					}
+					$this->outputLine('   <b>Effective privilege for given roles: ' . $resources['effectivePrivilege'] . '</b>');
+				}
+			}
+		} else {
+			$this->outputLine('We could not find any policy entries, please warmup caches...');
+		}
+	}
+
+	/**
+	 * Lists all public controller actions not covered by the active security policy
+	 *
+	 * @return void
+	 */
+	public function showUnprotectedActionsCommand() {
+		$controllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Flow\Mvc\Controller\AbstractController');
+
+		$allActionsAreProtected = TRUE;
+		foreach ($controllerClassNames as $controllerClassName) {
+			if ($this->reflectionService->isClassAbstract($controllerClassName)) {
+				continue;
+			}
+
+			$methodNames = get_class_methods($controllerClassName);
+
+			$foundUnprotectedAction = FALSE;
+			foreach ($methodNames as $methodName) {
+				if (preg_match('/.*Action$/', $methodName) === 0 || $this->reflectionService->isMethodPublic($controllerClassName, $methodName) === FALSE) {
+					continue;
+				}
+
+				if ($this->policyService->hasPolicyEntryForMethod($controllerClassName, $methodName) === FALSE) {
+					if ($foundUnprotectedAction === FALSE) {
+						$this->outputLine(PHP_EOL . '<b>' . $controllerClassName . '</b>');
+						$foundUnprotectedAction = TRUE;
+						$allActionsAreProtected = FALSE;
+					}
+					$this->outputLine('  ' . $methodName);
+				}
+			}
+		}
+
+		if ($allActionsAreProtected === TRUE) {
+			$this->outputLine('All public controller actions are covered by your security policy. Good job!');
+		}
 	}
 }
 
