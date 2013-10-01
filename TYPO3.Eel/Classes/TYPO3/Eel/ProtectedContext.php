@@ -47,6 +47,12 @@ class ProtectedContext extends Context {
 	 * @return \TYPO3\Eel\Context The wrapped value
 	 */
 	public function getAndWrap($path = NULL) {
+		// There are some cases where the $path is a ProtectedContext, especially when doing s.th. like
+		// foo()[myOffset]. In this case we need to unwrap it.
+		if ($path instanceof ProtectedContext) {
+			$path = $path->unwrap();
+		}
+
 		$context = parent::getAndWrap($path);
 		if ($context instanceof ProtectedContext && isset($this->whitelist[$path]) && is_array($this->whitelist[$path])) {
 			$context->whitelist = $this->whitelist[$path];

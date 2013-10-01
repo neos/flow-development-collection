@@ -265,7 +265,7 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function methodCallExpressions() {
 		// Wrap an array with functions inside a context
-		$c = new Context(array(
+		$contextArray = array(
 			'count' => function($array) {
 				return count($array);
 			},
@@ -277,8 +277,17 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					return array_map(function($item) { return $item * 2; }, $array);
 				}
 			),
-			'arr' => array('a' => 1, 'b' => 2, 'c' => 3)
-		));
+			'foo' => function() {
+				return array('a' => 'a1', 'b' => 'b1');
+			},
+
+			'arr' => array('a' => 1, 'b' => 2, 'c' => 3),
+			'someVariable' => 'b'
+		);
+		$c = new Context($contextArray);
+
+		$protectedContext = new \TYPO3\Eel\ProtectedContext($contextArray);
+		$protectedContext->whitelist('*');
 		return array(
 			// Call first-level method
 			array('count(arr)', $c, 3),
@@ -290,6 +299,12 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('pow(2, count(arr) + 1)', $c, 16),
 			// Nest method calls and object paths
 			array('funcs.dup(arr).b', $c, 4),
+
+			// Nest method calls and array access
+			array('funcs.dup(arr)[someVariable]', $c, 4),
+			array('foo()[someVariable]', $c, 'b1'),
+			// Nest method calls and array access with protected context
+			array('foo()[someVariable]', $protectedContext, 'b1'),
 			// Method call on NULL value returns NULL
 			array('unknwn.func()', $c, NULL),
 		);
