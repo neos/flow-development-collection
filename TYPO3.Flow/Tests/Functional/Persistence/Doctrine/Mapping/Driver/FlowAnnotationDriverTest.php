@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 
 /**
  * Testcase for ORM annotation driver
@@ -32,7 +33,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lifecycleEventAnnotationsAreDetected() {
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 		$this->assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
@@ -42,7 +43,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacks() {
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Comment', $classMetadata);
 		$this->assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
@@ -52,7 +53,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function inheritanceTypeIsNotChangedIfNoSubclassesOfNonAbstractClassExist() {
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 		$this->assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_JOINED, $classMetadata->inheritanceType);
@@ -62,7 +63,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function inheritanceTypeIsSetToNoneIfNoSubclassesOfAbstractClassExist() {
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AbstractEntity');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AbstractEntity');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\AbstractEntity', $classMetadata);
 		$this->assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE, $classMetadata->inheritanceType);
@@ -124,7 +125,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			),
 		);
 
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 
@@ -183,7 +184,7 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'related_post_id' => 'persistence_object_identifier',
 			),
 		);
-		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
 		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post', $classMetadata);
 
@@ -214,4 +215,17 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals('sorting', $relatedAssociationMapping['indexBy']);
 	}
 
+	/**
+	 * @test
+	 */
+	public function introducedPropertiesAreObservedCorrectly() {
+		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04', $classMetadata);
+
+		$fieldNames = $classMetadata->getFieldNames();
+		$this->assertContains('introducedProtectedProperty', $fieldNames);
+		$this->assertContains('introducedPublicProperty', $fieldNames);
+		$this->assertNotContains('introducedTransientProperty', $fieldNames);
+	}
 }

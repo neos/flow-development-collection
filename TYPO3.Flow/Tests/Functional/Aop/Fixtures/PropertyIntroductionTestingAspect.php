@@ -32,4 +32,11 @@ class PropertyIntroductionTestingAspect {
 	 */
 	public $introducedPublicProperty;
 
+	/**
+	 * @Flow\Introduce("class(TYPO3\Flow\Tests\Functional\Aop\Fixtures\TargetClass04)")
+	 * @Flow\Transient
+	 * @var string
+	 */
+	protected $introducedTransientProperty;
+
 }
