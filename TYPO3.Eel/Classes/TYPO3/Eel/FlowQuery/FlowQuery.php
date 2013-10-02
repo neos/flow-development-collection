@@ -89,7 +89,7 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Eel\FlowQuery\OperationResolver
+	 * @var \TYPO3\Eel\FlowQuery\OperationResolverInterface
 	 */
 	protected $operationResolver;
 
@@ -111,9 +111,9 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 	 * Setter for setting the operation resolver from the outside, only needed
 	 * to successfully run unit tests (hacky!)
 	 *
-	 * @param OperationResolver $operationResolver
+	 * @param OperationResolverInterface $operationResolver
 	 */
-	public function setOperationResolver(OperationResolver $operationResolver) {
+	public function setOperationResolver(OperationResolverInterface $operationResolver) {
 		$this->operationResolver = $operationResolver;
 	}
 

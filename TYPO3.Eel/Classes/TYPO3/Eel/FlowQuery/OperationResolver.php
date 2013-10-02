@@ -18,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class OperationResolver {
+class OperationResolver implements OperationResolverInterface {
 
 	/**
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
@@ -53,6 +53,7 @@ class OperationResolver {
 	 */
 	public function initializeObject() {
 		$operationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Eel\FlowQuery\OperationInterface');
+		/** @var $operationClassName OperationInterface */
 		foreach ($operationClassNames as $operationClassName) {
 			$shortOperationName = $operationClassName::getShortName();
 			$operationPriority = $operationClassName::getPriority();
@@ -88,8 +89,9 @@ class OperationResolver {
 	/**
 	 * Resolve an operation, taking runtime constraints into account.
 	 *
-	 * @param string $operationName
+	 * @param string      $operationName
 	 * @param array|mixed $context
+	 * @throws FlowQueryException
 	 * @return OperationInterface the resolved operation
 	 */
 	public function resolveOperation($operationName, $context) {

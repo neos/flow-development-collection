@@ -21,3 +21,6 @@ TYPO3\Eel\CompilingEvaluator:
 
 TYPO3\Eel\EelEvaluatorInterface:
   className: TYPO3\Eel\CompilingEvaluator
+
+TYPO3\Eel\FlowQuery\OperationResolverInterface:
+  className: TYPO3\Eel\FlowQuery\OperationResolver
