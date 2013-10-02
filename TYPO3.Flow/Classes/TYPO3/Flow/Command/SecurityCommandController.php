@@ -113,7 +113,6 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 *
 	 * @param boolean $grantsOnly Only list methods effectively granted to the given roles
 	 * @return void
-	 * @see typo3.flow:security:showeffectivepolicy
 	 */
 	public function showEffectivePolicyCommand($grantsOnly = FALSE) {
 		$roles = array();
@@ -230,7 +229,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 				}
 			}
 		} else {
-			$this->outputLine('We could not find any policy entries, please warmup caches...');
+			$this->outputLine('Could not find any policy entries, please warmup caches...');
 		}
 	}
 
@@ -269,6 +268,52 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		if ($allActionsAreProtected === TRUE) {
 			$this->outputLine('All public controller actions are covered by your security policy. Good job!');
+		}
+	}
+
+	/**
+	 * Shows the methods represented by the given security resource
+	 *
+	 * @param string $resourceName The name of the resource as stated in the policy
+	 * @return void
+	 */
+	public function showMethodsForResourceCommand($resourceName) {
+		if ($this->policyCache->has('acls')) {
+			$classes = array();
+			$acls = $this->policyCache->get('acls');
+			foreach($acls as $classAndMethodName => $aclEntry) {
+				if (strpos($classAndMethodName, '->') === FALSE) {
+					continue;
+				}
+				list($className, $methodName) = explode('->', $classAndMethodName);
+				$className = $this->objectManager->getCaseSensitiveObjectName($className);
+				foreach (get_class_methods($className) as $casSensitiveMethodName) {
+					if ($methodName === strtolower($casSensitiveMethodName)) {
+						$methodName = $casSensitiveMethodName;
+						break;
+					}
+				}
+				foreach($aclEntry as $resources) {
+					if (array_key_exists($resourceName, $resources)) {
+						$classes[$className][$methodName] = $methodName;
+						break;
+					}
+				}
+			}
+
+			if (count($classes) === 0) {
+				$this->outputLine('The given Resource did not match any method or is unknown.');
+				$this->quit(1);
+			}
+
+			foreach ($classes as $className => $methods) {
+				$this->outputLine(PHP_EOL . $className);
+				foreach ($methods as $methodName) {
+					$this->outputLine('  ' . $methodName);
+				}
+			}
+		} else {
+			$this->outputLine('Could not find any policy entries, please warmup caches!');
 		}
 	}
 }
