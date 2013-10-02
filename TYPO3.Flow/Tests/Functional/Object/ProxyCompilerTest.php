@@ -95,5 +95,22 @@ class ProxyCompilerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($singletonE, $singletonE2);
 	}
 
+	/**
+	 * @test
+	 */
+	public function transientPropertiesAreNotSerializedOnSleep() {
+		$prototypeF = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassF');
+		$prototypeF->setTransientProperty('foo');
+		$prototypeF->setNonTransientProperty('bar');
+
+		$serializedObject = serialize($prototypeF);
+		$prototypeF = NULL;
+
+		$prototypeF = unserialize($serializedObject);
+		$this->assertSame($prototypeF->getNonTransientProperty(), 'bar');
+		$this->assertSame($prototypeF->getTransientProperty(), NULL);
+
+	}
+
 }
 ?>
