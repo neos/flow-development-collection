@@ -11,8 +11,10 @@ namespace TYPO3\Eel\Tests\Unit;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\Helper\DateHelper;
+
 /**
- * Test for DateHelper
+ * Tests for DateHelper
  */
 class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -30,7 +32,7 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider parseExamples
 	 */
 	public function parseWorks($string, $format, $expected) {
-		$helper = new \TYPO3\Eel\Helper\DateHelper();
+		$helper = new DateHelper();
 		$result = $helper->parse($string, $format);
 		$this->assertInstanceOf('DateTime', $result);
 		$this->assertEquals($expected->format('U'), $result->format('U'), 'Timestamps should match', 60);
@@ -52,7 +54,7 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider formatExamples
 	 */
 	public function formatWorks($dateOrString, $format, $expected) {
-		$helper = new \TYPO3\Eel\Helper\DateHelper();
+		$helper = new DateHelper();
 		$result = $helper->format($dateOrString, $format);
 		$this->assertSame($expected, $result);
 	}
@@ -61,10 +63,21 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function nowWorks() {
-		$helper = new \TYPO3\Eel\Helper\DateHelper();
+		$helper = new DateHelper();
 		$result = $helper->now();
 		$this->assertInstanceOf('DateTime', $result);
 		$this->assertEquals(time(), (integer)$result->format('U'), 'Now should be now', 1);
+	}
+
+	/**
+	 * @test
+	 */
+	public function todayWorks() {
+		$helper = new DateHelper();
+		$result = $helper->today();
+		$this->assertInstanceOf('DateTime', $result);
+		$today = new \DateTime('today');
+		$this->assertEquals($today->getTimestamp(), $result->getTimestamp(), 'Today should be today', 1);
 	}
 
 	public function calculationExamples() {
@@ -84,7 +97,7 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function calculationWorks($method, $dateTime, $interval, $expected) {
 		$timestamp = $dateTime->getTimestamp();
 
-		$helper = new \TYPO3\Eel\Helper\DateHelper();
+		$helper = new DateHelper();
 		$result = $helper->$method($dateTime, $interval);
 
 		$this->assertEquals($timestamp, $dateTime->getTimeStamp(), 'DateTime should not be modified');
@@ -98,11 +111,27 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$earlierTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
 		$futureTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-10 12:33:56');
 
-		$helper = new \TYPO3\Eel\Helper\DateHelper();
+		$helper = new DateHelper();
 		$result = $helper->diff($earlierTime, $futureTime);
 		$this->assertEquals(6, $result->d);
 		$this->assertEquals(23, $result->h);
 		$this->assertEquals(59, $result->i);
+	}
+
+	/**
+	 * @test
+	 */
+	public function dateAccessorsWork() {
+		$helper = new DateHelper();
+		$date = new \DateTime('2013-10-16 14:59:27');
+
+		$this->assertSame(2013, $helper->year($date));
+		$this->assertSame(10, $helper->month($date));
+		$this->assertSame(16, $helper->dayOfMonth($date));
+
+		$this->assertSame(14, $helper->hour($date));
+		$this->assertSame(59, $helper->minute($date));
+		$this->assertSame(27, $helper->second($date));
 	}
 
 }

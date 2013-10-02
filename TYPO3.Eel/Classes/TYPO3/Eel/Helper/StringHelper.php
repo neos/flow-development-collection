@@ -396,6 +396,16 @@ class StringHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Calculates the MD5 checksum of the given string
+	 *
+	 * @param string $string
+	 * @return string
+	 */
+	public function md5($string) {
+		return md5($string);
+	}
+
+	/**
 	 * All methods are considered safe
 	 *
 	 * @param string $methodName

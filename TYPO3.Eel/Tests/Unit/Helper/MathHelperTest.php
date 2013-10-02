@@ -11,36 +11,30 @@ namespace TYPO3\Eel\Tests\Unit;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\Context;
-use TYPO3\Eel\InterpretedEvaluator;
+use TYPO3\Eel\Helper\MathHelper;
 
 /**
- * A benchmark to test the interpreting evaluator
- *
- * @group benchmark
+ * Tests for MathHelper
  */
-class InterpretedEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class MathHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
+
+	public function roundExamples() {
+		return array(
+			'round with default precision' => array(123.4567, NULL, 123),
+			'round with 2 digit precision' => array(123.4567, 2, 123.46),
+			'round with negative precision' => array(123.4567, -1, 120),
+			'round with integer' => array(1234, NULL, 1234)
+		);
+	}
 
 	/**
 	 * @test
+	 * @dataProvider roundExamples
 	 */
-	public function loopedExpressions() {
-		$this->markTestSkipped('Enable for benchmark');
-
-		$evaluator = new InterpretedEvaluator();
-		$expression = 'foo.bar=="Test"||foo.baz=="Test"||reverse(foo).bar=="Test"';
-		$context = new Context(array(
-			'foo' => array(
-				'bar' => 'Test1',
-				'baz' => 'Test2'
-			),
-			'reverse' => function($array) {
-				return array_reverse($array, TRUE);
-			}
-		));
-		for ($i = 0; $i < 10000; $i++) {
-			$evaluator->evaluate($expression, $context);
-		}
+	public function roundWorks($value, $precision, $expected) {
+		$helper = new MathHelper();
+		$result = $helper->round($value, $precision);
+		$this->assertEquals($expected, $result, 'Rounded value did not match', 0.0001);
 	}
 
 }

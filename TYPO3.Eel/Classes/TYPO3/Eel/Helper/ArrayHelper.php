@@ -144,6 +144,171 @@ class ArrayHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Picks a random element from the array
+	 *
+	 * @param array $array
+	 * @return mixed A random entry or NULL if the array is empty
+	 */
+	public function random(array $array) {
+		if ($array === array()) {
+			return NULL;
+		}
+		$randomIndex = array_rand($array);
+		return $array[$randomIndex];
+	}
+
+	/**
+	 * Sorts an array
+	 *
+	 * The sorting is done first by numbers, then by characters.
+	 *
+	 * Internally natsort() is used as it most closely resembles javascript's sort().
+	 * Because there are no real associative arrays in Javascript, keys of the array will be preserved.
+	 *
+	 * @param array $array
+	 * @return array The sorted array
+	 */
+	public function sort(array $array) {
+		if ($array === array()) {
+			return $array;
+		}
+		natsort($array);
+		$i = 0;
+		$newArray = array();
+		foreach ($array as $key => $value) {
+			if (is_string($key)) {
+				$newArray[$key] = $value;
+			} else {
+				$newArray[$i] = $value;
+				$i++;
+			}
+		}
+		return $newArray;
+	}
+
+	/**
+	 * Shuffle an array
+	 *
+	 * Randomizes entries an array with the option to preserve the existing keys.
+	 * When this option is set to FALSE, all keys will be replaced
+	 *
+	 * @param array $array
+	 * @param boolean $preserveKeys Wether to preserve the keys when shuffling the array
+	 * @return array The shuffled array
+	 */
+	public function shuffle(array $array, $preserveKeys = TRUE) {
+		if ($array === array()) {
+			return $array;
+		}
+		if ($preserveKeys) {
+			$keys = array_keys($array);
+			shuffle($keys);
+			$shuffledArray = array();
+			foreach ($keys as $key) {
+				$shuffledArray[$key] = $array[$key];
+			}
+			$array = $shuffledArray;
+		} else {
+			shuffle($array);
+		}
+		return $array;
+	}
+
+	/**
+	 * Removes the last element from an array
+	 *
+	 * Note: This differs from the JavaScript behavior of Array.pop which will return the popped element.
+	 *
+	 * An empty array will result in an empty array again.
+	 *
+	 * @param array $array
+	 * @return array The array without the last element
+	 */
+	public function pop(array $array) {
+		if ($array === array()) {
+			return $array;
+		}
+		array_pop($array);
+		return $array;
+	}
+
+	/**
+	 * Insert one or more elements at the end of an array
+	 *
+	 * Allows to push multiple elements at once:
+	 *
+	 *     Array.push(array, e1, e2)
+	 *
+	 * @param array $array
+	 * @param mixed $element
+	 * @return array The array with the inserted elements
+	 */
+	public function push(array $array, $element) {
+		$elements = func_get_args();
+		array_shift($elements);
+		foreach ($elements as $element) {
+			array_push($array, $element);
+		}
+		return $array;
+	}
+
+	/**
+	 * Remove the first element of an array
+	 *
+	 * Note: This differs from the JavaScript behavior of Array.shift which will return the shifted element.
+	 *
+	 * An empty array will result in an empty array again.
+	 *
+	 * @param array $array
+	 * @return array The array without the first element
+	 */
+	public function shift(array $array) {
+		array_shift($array);
+		return $array;
+	}
+
+	/**
+	 * Insert one or more elements at the beginning of an array
+	 *
+	 * Allows to insert multiple elements at once:
+	 *
+	 *     Array.unshift(array, e1, e2)
+	 *
+	 * @param array $array
+	 * @param mixed $element
+	 * @return array The array with the inserted elements
+	 */
+	public function unshift(array $array, $element) {
+		// get all elements that are supposed to be added
+		$elements = func_get_args();
+		array_shift($elements);
+		foreach($elements as $element) {
+			array_unshift($array, $element);
+		}
+		return $array;
+	}
+
+	/**
+	 * Replaces a range of an array by the given replacements
+	 *
+	 * Allows to give multiple replacements at once:
+	 *
+	 *     Array.splice(array, 3, 2, 'a', 'b')
+	 *
+	 * @param array $array
+	 * @param integer $offset Index of the first element to remove
+	 * @param integer $length Number of elements to remove
+	 * @param mixed $replacements Elements to insert instead of the removed range
+	 * @return array The array with removed and replaced elements
+	 */
+	public function splice(array $array, $offset, $length = 1, $replacements = NULL) {
+		$arguments = func_get_args();
+		$replacements = array_slice($arguments, 3);
+		array_splice($array, $offset, $length, $replacements);
+		return $array;
+	}
+
+	/**
 	 * All methods are considered safe
 	 *
 	 * @param string $methodName

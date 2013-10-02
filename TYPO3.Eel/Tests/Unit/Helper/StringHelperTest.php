@@ -11,8 +11,10 @@ namespace TYPO3\Eel\Tests\Unit;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\Helper\StringHelper;
+
 /**
- *
+ * Tests for StringHelper
  */
 class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -35,7 +37,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider substrExamples
 	 */
 	public function substrWorks($string, $start, $length, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->substr($string, $start, $length);
 		$this->assertSame($expected, $result);
 	}
@@ -58,7 +60,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider substringExamples
 	 */
 	public function substringWorks($string, $start, $end, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->substring($string, $start, $end);
 		$this->assertSame($expected, $result);
 	}
@@ -77,7 +79,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider charAtExamples
 	 */
 	public function charAtWorks($string, $index, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->charAt($string, $index);
 		$this->assertSame($expected, $result);
 	}
@@ -96,7 +98,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider endsWithExamples
 	 */
 	public function endsWithWorks($string, $search, $position, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->endsWith($string, $search, $position);
 		$this->assertSame($expected, $result);
 	}
@@ -121,7 +123,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider indexOfExamples
 	 */
 	public function indexOfWorks($string, $search, $fromIndex, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->indexOf($string, $search, $fromIndex);
 		$this->assertSame($expected, $result);
 	}
@@ -141,7 +143,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider lastIndexOfExamples
 	 */
 	public function lastIndexOfWorks($string, $search, $fromIndex, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->lastIndexOf($string, $search, $fromIndex);
 		$this->assertSame($expected, $result);
 	}
@@ -157,7 +159,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider matchExamples
 	 */
 	public function matchWorks($string, $pattern, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->match($string, $pattern);
 		$this->assertSame($expected, $result);
 	}
@@ -175,7 +177,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider replaceExamples
 	 */
 	public function replaceWorks($string, $search, $replace, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->replace($string, $search, $replace);
 		$this->assertSame($expected, $result);
 	}
@@ -194,7 +196,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider splitExamples
 	 */
 	public function splitWorks($string, $separator, $limit, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->split($string, $separator, $limit);
 		$this->assertSame($expected, $result);
 	}
@@ -213,7 +215,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider startsWithExamples
 	 */
 	public function startsWithWorks($string, $search, $position, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->startsWith($string, $search, $position);
 		$this->assertSame($expected, $result);
 	}
@@ -229,7 +231,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider toLowerCaseExamples
 	 */
 	public function toLowerCaseWorks($string, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->toLowerCase($string);
 		$this->assertSame($expected, $result);
 	}
@@ -245,7 +247,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider toUpperCaseExamples
 	 */
 	public function toUpperCaseWorks($string, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->toUpperCase($string);
 		$this->assertSame($expected, $result);
 	}
@@ -264,7 +266,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider isBlankExamples
 	 */
 	public function isBlankWorks($string, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->isBlank($string);
 		$this->assertSame($expected, $result);
 	}
@@ -283,7 +285,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider trimExamples
 	 */
 	public function trimWorks($string, $charlist, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->trim($string, $charlist);
 		$this->assertSame($expected, $result);
 	}
@@ -311,7 +313,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider typeConversionExamples
 	 */
 	public function typeConversionWorks($method, $string, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->$method($string);
 		$this->assertSame($expected, $result);
 	}
@@ -327,7 +329,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider stripTagsExamples
 	 */
 	public function stripTagsWorks($string, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->stripTags($string);
 		$this->assertSame($expected, $result);
 	}
@@ -336,7 +338,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function rawUrlEncodeWorks() {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->rawUrlEncode('&foo|bar');
 		$this->assertSame('%26foo%7Cbar', $result);
 	}
@@ -353,7 +355,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider htmlSpecialCharsExamples
 	 */
 	public function htmlSpecialCharsWorks($string, $preserveEntities, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->htmlSpecialChars($string, $preserveEntities);
 		$this->assertSame($expected, $result);
 	}
@@ -403,8 +405,18 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider cropExamples
 	 */
 	public function cropWorks($methodName, $maximumCharacters, $suffixString, $text, $expected) {
-		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$helper = new StringHelper();
 		$result = $helper->$methodName($text, $maximumCharacters, $suffixString);
 		$this->assertSame($expected, $result);
 	}
+
+	/**
+	 * @test
+	 */
+	public function md5Works() {
+		$helper = new StringHelper();
+		$result = $helper->md5('joh316');
+		$this->assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
+	}
+
 }

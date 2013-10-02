@@ -66,6 +66,15 @@ class DateHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Get the current date
+	 *
+	 * @return \DateTime
+	 */
+	public function today() {
+		return new \DateTime('today');
+	}
+
+	/**
 	 * Add an interval to a date and return a new DateTime object
 	 *
 	 * @param \DateTime $date
@@ -107,6 +116,66 @@ class DateHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Get the day of month of a date
+	 *
+	 * @param \DateTime $dateTime
+	 * @return integer The day of month of the given date
+	 */
+	public function dayOfMonth(\DateTime $dateTime) {
+		return (integer)$dateTime->format('d');
+	}
+
+	/**
+	 * Get the month of a date
+	 *
+	 * @param \DateTime $dateTime
+	 * @return integer The month of the given date
+	 */
+	public function month(\DateTime $dateTime) {
+		return (integer)$dateTime->format('m');
+	}
+
+	/**
+	 * Get the year of a date
+	 *
+	 * @param \DateTime $dateTime
+	 * @return integer The year of the given date
+	 */
+	public function year(\DateTime $dateTime) {
+		return (integer)$dateTime->format('Y');
+	}
+
+	/**
+	 * Get the hour of a date (24 hour format)
+	 *
+	 * @param \DateTime $dateTime
+	 * @return integer The hour of the given date
+	 */
+	public function hour(\DateTime $dateTime) {
+		return (integer)$dateTime->format('H');
+	}
+
+	/**
+	 * Get the minute of a date
+	 *
+	 * @param \DateTime $dateTime
+	 * @return integer The minute of the given date
+	 */
+	public function minute(\DateTime $dateTime) {
+		return (integer)$dateTime->format('i');
+	}
+
+	/**
+	 * Get the second of a date
+	 *
+	 * @param \DateTime $dateTime
+	 * @return integer The second of the given date
+	 */
+	public function second(\DateTime $dateTime) {
+		return (integer)$dateTime->format('s');
+	}
+
+	/**
 	 * All methods are considered safe
 	 *
 	 * @param string $methodName
@@ -115,5 +184,4 @@ class DateHelper implements ProtectedContextAwareInterface {
 	public function allowsCallOfMethod($methodName) {
 		return TRUE;
 	}
-
 }
