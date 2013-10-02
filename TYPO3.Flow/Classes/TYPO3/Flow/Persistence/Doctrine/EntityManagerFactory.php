@@ -87,6 +87,9 @@ class EntityManagerFactory {
 
 		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config, $eventManager);
 		$flowAnnotationDriver->setEntityManager($entityManager);
+
+		\Doctrine\DBAL\Types\Type::addType('objectarray', 'TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray');
+
 		return $entityManager;
 	}
 
