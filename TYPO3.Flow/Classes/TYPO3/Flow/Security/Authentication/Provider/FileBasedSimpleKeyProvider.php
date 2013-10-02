@@ -46,6 +46,12 @@ class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Pro
 	protected $fileBasedSimpleKeyService;
 
 	/**
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 * @Flow\Inject
+	 */
+	protected $policyService;
+
+	/**
 	 * Returns the class names of the tokens this provider can authenticate.
 	 *
 	 * @return array
@@ -70,6 +76,13 @@ class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Pro
 		if (is_array($credentials) && isset($credentials['password'])) {
 			if ($this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
 				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				$account = new \TYPO3\Flow\Security\Account();
+				$roles = array();
+				foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
+					$roles[] = $this->policyService->getRole($roleIdentifier);
+				}
+				$account->setRoles($roles);
+				$authenticationToken->setAccount($account);
 			} else {
 				$authenticationToken->setAuthenticationStatus(\TYPO3\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 			}
