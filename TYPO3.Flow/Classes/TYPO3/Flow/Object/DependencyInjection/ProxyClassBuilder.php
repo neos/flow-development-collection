@@ -239,7 +239,7 @@ class ProxyClassBuilder {
 	foreach (\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'Flow_Aop_Proxy_groupedAdviceChains', 'Flow_Aop_Proxy_methodIsInAdviceMode'))) continue;
-		if (\$reflectionService->isPropertyTaggedWith('" . $className . "', \$propertyName, 'transient')) continue;
+		if (\$reflectionService->isPropertyAnnotatedWith('" . $className . "', \$propertyName, 'TYPO3\\Flow\\Annotations\\Transient')) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
 			foreach (\$this->\$propertyName as \$key => \$value) {
 				\$this->searchForEntitiesAndStoreIdentifierArray((string)\$key, \$value, \$propertyName);
