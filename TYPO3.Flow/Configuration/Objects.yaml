@@ -142,7 +142,7 @@ TYPO3\Flow\Monitor\FileMonitor:
 # MVC                                                                      #
 #                                                                          #
 
-TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect:
+TYPO3\Flow\Mvc\Routing\RouterCachingService:
   properties:
     findMatchResultsCache:
       object:
