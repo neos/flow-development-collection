@@ -11,6 +11,7 @@ namespace TYPO3\Eel\FlowQuery;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\Exception;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -73,7 +74,7 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 	/**
 	 * the objects this FlowQuery object wraps
 	 *
-	 * @var array|Traversable
+	 * @var array|\Traversable
 	 */
 	protected $context;
 
@@ -98,11 +99,15 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 	 *
 	 * Only the $context parameter belongs to the public API!
 	 *
-	 * @param array $context
-	 * @param array $operations
+	 * @param array|\Traversable $context
+	 * @param array              $operations
+	 * @throws Exception
 	 * @api
 	 */
-	public function __construct(array $context, array $operations = array()) {
+	public function __construct($context, array $operations = array()) {
+		if(!(is_array($context) || $context instanceof \Traversable)) {
+			throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
+		}
 		$this->context = $context;
 		$this->operations = $operations;
 	}
