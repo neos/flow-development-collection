@@ -200,5 +200,19 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
+
+	/**
+	 * @test
+	 */
+	public function hasAccessToResourceCorrectlyInterpretsTheAccessDecisionMadeByDecideOnResource() {
+		$voterManager = $this->getAccessibleMock('TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager', array('decideOnResource'), array(), '', FALSE);
+
+		$voterManager->expects($this->at(0))->method('decideOnResource')->with('testResource');
+		$voterManager->expects($this->at(1))->method('decideOnResource')->with('testResource')->will($this->throwException(new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied', 123456789)));
+
+		$this->assertTrue($voterManager->hasAccessToResource('testResource'));
+		$this->assertFalse($voterManager->hasAccessToResource('testResource'));
+	}
 }
+
 ?>
