@@ -140,6 +140,9 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 				}
 			}
 			$this->persistenceManager = $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		} else {
+			$accessDecisionManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface');
+			$accessDecisionManager->setOverrideDecision(TRUE);
 		}
 
 			// HTTP must be initialized before Session and Security because they rely
