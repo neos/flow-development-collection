@@ -359,6 +359,7 @@ class Context {
 			if ($this->authenticationManager->isAuthenticated() === FALSE) {
 				$this->roles['Anonymous'] = $this->policyService->getRole('Anonymous');
 			} else {
+				$this->roles['AuthenticatedUser'] = $this->policyService->getRole('AuthenticatedUser');
 				/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 				foreach ($this->getAuthenticationTokens() as $token) {
 					if ($token->isAuthenticated() === TRUE) {
@@ -399,6 +400,9 @@ class Context {
 		}
 		if ($roleIdentifier === 'Anonymous') {
 			return (!$this->authenticationManager->isAuthenticated());
+		}
+		if ($roleIdentifier === 'AuthenticatedUser') {
+			return ($this->authenticationManager->isAuthenticated());
 		}
 
 		$roles = $this->getRoles();

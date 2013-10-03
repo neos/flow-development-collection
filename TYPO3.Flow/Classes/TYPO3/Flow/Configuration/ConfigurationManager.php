@@ -445,7 +445,7 @@ class ConfigurationManager {
 			$localRoles = array_keys($configuration['roles']);
 			foreach ($configuration['roles'] as $roleIdentifier => $parentRoles) {
 				$packageKey = $packageKeyOfCurrentPackage;
-				if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous') {
+				if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous' || $roleIdentifier === 'AuthenticatedUser') {
 					throw new InvalidConfigurationException('You must not redefine the built-in "' . $roleIdentifier . '" role. Please check the configuration of package "' . $packageKeyOfCurrentPackage . '" ('. $pathAndFilename . ').', 1352986475);
 				}
 				if (strpos($roleIdentifier, '.') !== FALSE || strpos($roleIdentifier, ':') !== FALSE) {
@@ -455,7 +455,7 @@ class ConfigurationManager {
 					// Add packageKey to parentRoles
 				if ($parentRoles !== array()) {
 					$parentRoles = array_map(function($roleIdentifier) use ($packageKey, $localRoles) {
-						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous') {
+						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous'|| $roleIdentifier === 'AuthenticatedUser') {
 							return $roleIdentifier;
 						}
 						if (strpos($roleIdentifier, '.') === FALSE && strpos($roleIdentifier, ':') === FALSE && in_array($roleIdentifier, $localRoles)) {
@@ -473,7 +473,7 @@ class ConfigurationManager {
 			// Read acls
 		if (isset($configuration['acls']) && is_array($configuration['acls'])) {
 			foreach ($configuration['acls'] as $aclIndex => $aclConfiguration) {
-				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous'
+				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous'|| $aclIndex === 'AuthenticatedUser'
 					|| preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1) {
 						$roleIdentifier = $aclIndex;
 				} elseif (preg_match('/^[\w]+$/', $aclIndex) === 1) {
