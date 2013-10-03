@@ -27,7 +27,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  *
  * *Using default locale*::
  *
- *  public function initializeCreateAction() {
+ *  protected function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
  *  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', TRUE
  *  	);
@@ -39,7 +39,7 @@ use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
  *
  * *Using arbitrary locale*::
  *
- *  public function initializeCreateAction() {
+ *  protected function initializeCreateAction() {
  *  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
  *  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'fr'
  *  	);

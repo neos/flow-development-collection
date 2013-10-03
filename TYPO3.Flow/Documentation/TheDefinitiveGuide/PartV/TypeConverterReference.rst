@@ -108,7 +108,7 @@ deviating decimal separators.
 
 *Using default locale*::
 
- public function initializeCreateAction() {
+ protected function initializeCreateAction() {
  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', TRUE
  	);
@@ -120,7 +120,7 @@ for Germany for example, where a comma is used as decimal separator, the mention
 
 *Using arbitrary locale*::
 
- public function initializeCreateAction() {
+ protected function initializeCreateAction() {
  	$this->arguments['newBid']->getPropertyMappingConfiguration()->forProperty('price')->setTypeConverterOption(
  		'TYPO3\Flow\Property\TypeConverter\FloatConverter', 'locale', 'fr'
  	);
