@@ -69,7 +69,7 @@ TYPO3:
                 errorDescription: 'Sorry, the page you requested was not found.'
 
           databaseConnectionExceptions:
-            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
             options:
               templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
               variables:
