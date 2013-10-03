@@ -240,7 +240,7 @@ the path syntax supports an asterisk as a placeholder::
 
 	.. code-block:: php
 
-		public function initializeUpdateAction() {
+		protected function initializeUpdateAction() {
 			$commentConfiguration = $this->arguments['comment']->getPropertyMappingConfiguration();
 			$commentConfiguration->allowAllProperties();
 			$commentConfiguration
@@ -266,7 +266,7 @@ the path syntax supports an asterisk as a placeholder::
 
 		.. code-block:: php
 
-			public function initializeUpdateAction() {
+			protected function initializeUpdateAction() {
 				$commentConfiguration = $this->arguments->getArgument('comment')->getPropertyMappingConfiguration();
 				…
 
