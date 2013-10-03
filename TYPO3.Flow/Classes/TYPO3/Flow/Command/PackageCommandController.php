@@ -119,6 +119,11 @@ class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:package:deactivate
 	 */
 	public function activateCommand($packageKey) {
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			$this->outputLine('The package "%s" does not exist.', array($packageKey));
+			$this->quit(1);
+		}
+
 		if ($this->packageManager->isPackageActive($packageKey)) {
 			$this->outputLine('Package "%s" is already active.', array($packageKey));
 			$this->quit(1);
@@ -141,6 +146,11 @@ class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:package:activate
 	 */
 	public function deactivateCommand($packageKey) {
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			$this->outputLine('The package "%s" does not exist.', array($packageKey));
+			$this->quit(1);
+		}
+
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			$this->outputLine('Package "%s" was not active.', array($packageKey));
 			$this->quit(1);
