@@ -52,10 +52,10 @@ Flow_Monitor:
 # These caches contain request patterns and their matches and the opposite direction –
 # action request patterns and their resolved URL.
 Flow_Mvc_Routing_FindMatchResults:
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
 Flow_Mvc_Routing_Resolve:
   frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  backend: TYPO3\Flow\Cache\Backend\FileBackend
 
 ##
 # Cache for RequestFiltered ViewConfigurations

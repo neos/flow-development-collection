@@ -10,12 +10,13 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the Router Caching Service
  *
  */
-class RouterCachingServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class RouterCachingServiceTest extends UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\Routing\RouterCachingService
@@ -138,6 +139,23 @@ class RouterCachingServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function storeMatchExtractsUuidsToCacheTags() {
+		$uuid1 = '550e8400-e29b-11d4-a716-446655440000';
+		$uuid2 = '302abe9c-7d07-4200-a868-478586019290';
+		$matchResults = array('some' => array('matchResults' => array('uuid', $uuid1)), 'foo' => $uuid2);
+
+		$routerCachingService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\RouterCachingService', array('buildFindMatchResultsCacheIdentifier'));
+		$routerCachingService->expects($this->atLeastOnce())->method('buildFindMatchResultsCacheIdentifier')->with($this->mockHttpRequest)->will($this->returnValue('cacheIdentifier'));
+		$this->inject($routerCachingService, 'findMatchResultsCache', $this->mockFindMatchResultsCache);
+
+		$this->mockFindMatchResultsCache->expects($this->once())->method('set')->with('cacheIdentifier', $matchResults, array($uuid1, $uuid2));
+
+		$routerCachingService->storeMatchResults($this->mockHttpRequest, $matchResults);
+	}
+
+	/**
+	 * @test
+	 */
 	public function getCachedResolvedUriPathReturnsCachedResolvedUriPathIfFoundInCache() {
 		$routeValues = array('b' => 'route values', 'a' => 'Some more values');
 		$cacheIdentifier = '88a1c4366ca37b55e53905d61e184d08';
@@ -163,6 +181,24 @@ class RouterCachingServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockResolveCache->expects($this->once())->method('set')->with($cacheIdentifier, $matchingUriPath);
 
 		$this->routerCachingService->storeResolvedUriPath($matchingUriPath, $routeValues);
+	}
+
+	/**
+	 * @test
+	 */
+	public function storeResolvedUriPathExtractsUuidsToCacheTags() {
+		$resolvedUriPath = 'some/request/path';
+		$uuid1 = '550e8400-e29b-11d4-a716-446655440000';
+		$uuid2 = '302abe9c-7d07-4200-a868-478586019290';
+		$routeValues = array('some' => array('routeValues' => array('uuid', $uuid1)), 'foo' => $uuid2);
+
+		$routerCachingService = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\RouterCachingService', array('buildResolveCacheIdentifier'));
+		$routerCachingService->expects($this->atLeastOnce())->method('buildResolveCacheIdentifier')->with($routeValues)->will($this->returnValue('cacheIdentifier'));
+		$this->inject($routerCachingService, 'resolveCache', $this->mockResolveCache);
+
+		$this->mockResolveCache->expects($this->once())->method('set')->with('cacheIdentifier', $resolvedUriPath, array($uuid1, $uuid2));
+
+		$routerCachingService->storeResolvedUriPath($resolvedUriPath, $routeValues);
 	}
 
 	/**
