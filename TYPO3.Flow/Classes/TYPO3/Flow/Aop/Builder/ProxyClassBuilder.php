@@ -422,7 +422,6 @@ class ProxyClassBuilder {
 
 		$proxyClass->addInterfaces($introducedInterfaces);
 
-		/** @var $propertyIntroduction PropertyIntroduction */
 		foreach ($propertyIntroductions as $propertyIntroduction) {
 			$propertyName = $propertyIntroduction->getPropertyName();
 			$declaringAspectClassName = $propertyIntroduction->getDeclaringAspectClassName();
@@ -437,7 +436,7 @@ class ProxyClassBuilder {
 			$propertyReflection->setIsAopIntroduced(TRUE);
 			$this->reflectionService->reflectClassProperty($targetClassName, $propertyReflection, new ClassReflection($declaringAspectClassName));
 
-			$proxyClass->addProperty($propertyName, 'NULL', $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
+			$proxyClass->addProperty($propertyName, var_export($propertyIntroduction->getInitialValue(), TRUE), $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
 		}
 
 		$proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (method_exists(get_parent_class(\$this), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
@@ -686,7 +685,7 @@ EOT;
 	 *
 	 * @param array &$aspectContainers All aspects to take into consideration
 	 * @param string $targetClassName Name of the class the pointcut should match with
-	 * @return array array of property introductions
+	 * @return array|PropertyIntroduction[] array of property introductions
 	 */
 	protected function getMatchingPropertyIntroductions(array &$aspectContainers, $targetClassName) {
 		$introductions = array();

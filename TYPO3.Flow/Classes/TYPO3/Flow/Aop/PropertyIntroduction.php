@@ -37,6 +37,12 @@ class PropertyIntroduction {
 	protected $propertyVisibility;
 
 	/**
+	 * The initial value of the property
+	 * @var mixed
+	 */
+	protected $initialValue;
+
+	/**
 	 * DocComment of the introduced property
 	 * @var string
 	 */
@@ -61,6 +67,10 @@ class PropertyIntroduction {
 		$this->pointcut = $pointcut;
 
 		$propertyReflection = new \ReflectionProperty($declaringAspectClassName, $propertyName);
+		$classReflection = new \ReflectionClass($declaringAspectClassName);
+		$defaultProperties = $classReflection->getDefaultProperties();
+		$this->initialValue = $defaultProperties[$propertyName];
+
 		if ($propertyReflection->isPrivate()) {
 			$this->propertyVisibility = 'private';
 		} elseif ($propertyReflection->isProtected()) {
@@ -87,6 +97,13 @@ class PropertyIntroduction {
 	 */
 	public function getPropertyVisibility() {
 		return $this->propertyVisibility;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getInitialValue() {
+		return $this->initialValue;
 	}
 
 	/**

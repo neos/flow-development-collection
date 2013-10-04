@@ -207,4 +207,15 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$result = $targetClass->greet('Andi');
 		$this->assertEquals('Hello, Robert', $result, 'The method argument "name" has not been changed as expected by the "changeNameArgumentAdvice".');
 	}
+
+	/**
+	 * @test
+	 */
+	public function introducedPropertiesCanHaveADefaultValue() {
+		$targetClass = new Fixtures\TargetClass03();
+
+		$this->assertSame(NULL, $targetClass->introducedPublicProperty);
+		$this->assertSame('thisIsADefaultValueBelieveItOrNot', $targetClass->introducedProtectedPropertyWithDefaultValue);
+	}
+
 }
