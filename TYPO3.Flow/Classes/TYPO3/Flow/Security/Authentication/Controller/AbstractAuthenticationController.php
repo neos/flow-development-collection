@@ -65,6 +65,7 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
 	 * onAuthenticationFailure()).
 	 *
 	 * @return string
+	 * @Flow\SkipCsrfProtection
 	 */
 	public function authenticateAction() {
 		$authenticationException = NULL;
