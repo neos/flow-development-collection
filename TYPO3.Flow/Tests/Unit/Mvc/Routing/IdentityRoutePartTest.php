@@ -130,6 +130,22 @@ class IdentityRoutePartTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function matchValueSetsTheRouteValueToTheUrlDecodedPathSegmentIfNoUriPatternIsSpecified() {
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('The Identifier', 'stdClass')->will($this->returnValue(new \stdClass()));
+
+		$this->mockObjectPathMappingRepository->expects($this->never())->method('findOneByObjectTypeUriPatternAndPathSegment');
+
+		$this->identityRoutePart->setObjectType('stdClass');
+
+		$this->assertTrue($this->identityRoutePart->_call('matchValue', 'The+Identifier'));
+		$expectedResult = array('__identity' => 'The Identifier');
+		$actualResult = $this->identityRoutePart->getValue();
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 */
 	public function matchValueSetsCaseSensitiveFlagIfLowerCaseIsFalse() {
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('SomeObjectType', 'SomeUriPattern', 'TheRoutePath', TRUE);
 		$this->identityRoutePart->setObjectType('SomeObjectType');
@@ -219,6 +235,19 @@ class IdentityRoutePartTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function resolveValueSetsTheRouteValueToTheUrlEncodedIdentifierIfNoUriPatternIsSpecified() {
+		$value = array('__identity' => 'Some Identifier');
+		$this->mockObjectPathMappingRepository->expects($this->never())->method('findOneByObjectTypeUriPatternAndIdentifier');
+
+		$this->identityRoutePart->setObjectType('stdClass');
+
+		$this->identityRoutePart->_call('resolveValue', $value);
+		$this->assertSame('Some+Identifier', $this->identityRoutePart->getValue());
+	}
+
+	/**
+	 * @test
+	 */
 	public function resolveValueConvertsCaseOfResolvedPathSegmentIfLowerCaseIsTrue() {
 		$value = array('__identity' => 'SomeIdentifier');
 		$mockObjectPathMapping = $this->getMock('TYPO3\Flow\Mvc\Routing\ObjectPathMapping');
@@ -279,7 +308,8 @@ class IdentityRoutePartTest extends UnitTestCase {
 	 */
 	public function resolveValueCreatesAndStoresANewObjectPathMappingIfNoMatchingObjectPathMappingWasFound() {
 		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getObjectByIdentifier')->with('TheIdentifier')->will($this->returnValue($object));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
 		$this->identityRoutePart->expects($this->once())->method('createPathSegmentForObject')->with($object)->will($this->returnValue('The/Path/Segment'));
@@ -304,7 +334,8 @@ class IdentityRoutePartTest extends UnitTestCase {
 	 */
 	public function resolveValueAppendsCounterIfNoMatchingObjectPathMappingWasFoundAndCreatedPathSegmentIsNotUnique() {
 		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getObjectByIdentifier')->with('TheIdentifier')->will($this->returnValue($object));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
 		$existingObjectPathMapping = new ObjectPathMapping();
@@ -337,7 +368,8 @@ class IdentityRoutePartTest extends UnitTestCase {
 	 */
 	public function resolveValueSetsCaseSensitiveFlagIfLowerCaseIsFalse() {
 		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getObjectByIdentifier')->with('TheIdentifier')->will($this->returnValue($object));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
 		$existingObjectPathMapping = new ObjectPathMapping();
@@ -370,7 +402,8 @@ class IdentityRoutePartTest extends UnitTestCase {
 	 */
 	public function resolveValueAppendsCounterIfCreatedPathSegmentIsEmpty() {
 		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getObjectByIdentifier')->with('TheIdentifier')->will($this->returnValue($object));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
 		$this->identityRoutePart->expects($this->once())->method('createPathSegmentForObject')->with($object)->will($this->returnValue(''));
@@ -396,7 +429,8 @@ class IdentityRoutePartTest extends UnitTestCase {
 	 */
 	public function resolveValueThrowsInfiniteLoopExceptionIfNoUniquePathSegmentCantBeFound() {
 		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockPersistenceManager->expects($this->atLeastOnce())->method('getObjectByIdentifier')->with('TheIdentifier')->will($this->returnValue($object));
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
 
 		$existingObjectPathMapping = new ObjectPathMapping();
@@ -411,21 +445,6 @@ class IdentityRoutePartTest extends UnitTestCase {
 		$this->identityRoutePart->setObjectType('stdClass');
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
 		$this->identityRoutePart->_call('resolveValue', $object);
-	}
-
-	/**
-	 * @test
-	 */
-	public function createPathSegmentForObjectReturnsTheCleanedUpObjectIdentifierIfUriPatternIsEmpty() {
-		$identityRoutePart = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\IdentityRoutePart', array('dummy'));
-		$identityRoutePart->_set('persistenceManager', $this->mockPersistenceManager);
-		$identityRoutePart->setUriPattern('');
-
-		$object = new \stdClass();
-		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('Objäct--Identifüer/---'));
-
-		$actualResult = $identityRoutePart->_call('createPathSegmentForObject', $object);
-		$this->assertSame('Objaect-Identifueer', $actualResult);
 	}
 
 	/**

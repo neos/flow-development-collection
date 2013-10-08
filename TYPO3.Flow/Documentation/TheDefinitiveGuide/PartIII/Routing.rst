@@ -227,9 +227,10 @@ The route part URI pattern can contain all properties of the object or it's rela
 
 .. note::
 
-	Mappings from an object to it's URI representation are stored in the
-	``ObjectPathMappingRepository`` in order to make sure, that existing links work even
-	after a property has changed.
+	If an ``uriPattern`` is set or the ``objectType`` contains identity properties, mappings from an object to it's
+	URI representation are stored in the ``ObjectPathMappingRepository`` in order to make sure that existing links
+	work even after a property has changed!
+	This mapping is not required if no uriPattern is set because in this case the mapping is ubiquitous.
 
 Internally the above is handled by the so called ``IdentityRoutePart`` that gives you a lot of power and flexibility
 when working with entities. If you have more specialized requirements or want to use routing for objects that are not

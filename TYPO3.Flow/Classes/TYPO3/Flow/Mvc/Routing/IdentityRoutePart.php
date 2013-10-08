@@ -121,17 +121,41 @@ class IdentityRoutePart extends DynamicRoutePart {
 		if ($value === NULL || $value === '') {
 			return FALSE;
 		}
-		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $value, !$this->lowerCase);
-		if ($objectPathMapping === NULL) {
+		$identifier = $this->getObjectIdentifierFromPathSegment($value);
+		if ($identifier === NULL) {
 			return FALSE;
 		}
-		$this->value = array('__identity' => $objectPathMapping->getIdentifier());
+		$this->value = array('__identity' => $identifier);
 		return TRUE;
 	}
 
 	/**
+	 * Retrieves the object identifier from the given $pathSegment.
+	 * If no UriPattern is set, the $pathSegment is expected to be the (URL-encoded) identifier otherwise a matching ObjectPathMapping fetched from persistence
+	 * If no matching ObjectPathMapping was found or the given $pathSegment is no valid identifier NULL is returned.
+	 *
+	 * @param string $pathSegment the query path segment to convert
+	 * @return string the technical identifier of the object or NULL if it couldn't be found
+	 */
+	protected function getObjectIdentifierFromPathSegment($pathSegment) {
+		if ($this->getUriPattern() === '') {
+			$identifier = urldecode($pathSegment);
+			$object = $this->persistenceManager->getObjectByIdentifier($identifier, $this->objectType);
+			if ($object !== NULL) {
+				return $identifier;
+			}
+		} else {
+			$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $pathSegment, !$this->lowerCase);
+			if ($objectPathMapping !== NULL) {
+				return $objectPathMapping->getIdentifier();
+			}
+		}
+		return NULL;
+	}
+
+	/**
 	 * Returns the first part of $routePath that should be evaluated in matchValue().
-	 * If not split string is set (route part is the last in the routes uriPattern), the complete $routePart is returned.
+	 * If no split string is set (route part is the last in the routes uriPattern), the complete $routePart is returned.
 	 * Otherwise the part is returned that matches the specified uriPattern of this route part.
 	 *
 	 * @param string $routePath The request path to be matched
@@ -143,7 +167,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 			return '';
 		}
 		if ($this->getUriPattern() === '') {
-			return '';
+			return parent::findValueToMatch($routePath);
 		}
 		$regexPattern = preg_quote($this->getUriPattern(), '/');
 		$regexPattern = preg_replace('/\\\\{[^}]+\\\\}/', '[^\/]+', $regexPattern);
@@ -160,26 +184,46 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 *
 	 * @param mixed $value
 	 * @return boolean TRUE if the object could be resolved and stored in $this->value, otherwise FALSE.
-	 * @throws InfiniteLoopException if no unique path segment could be found after 100 iterations
 	 */
 	protected function resolveValue($value) {
+		$identifier = NULL;
 		if (is_array($value) && isset($value['__identity'])) {
 			$identifier = $value['__identity'];
 		} elseif ($value instanceof $this->objectType) {
 			$identifier = $this->persistenceManager->getIdentifierByObject($value);
-		} else {
+		}
+		if ($identifier === NULL) {
 			return FALSE;
+		}
+		$pathSegment = $this->getPathSegmentByIdentifier($identifier);
+		if ($pathSegment === NULL) {
+			return FALSE;
+		}
+		$this->value = $pathSegment;
+		return TRUE;
+	}
+
+	/**
+	 * Generates a unique string for the given identifier according to $this->uriPattern.
+	 * If no UriPattern is set, the path segment is equal to the (URL-encoded) $identifier - otherwise a matching
+	 * ObjectPathMapping is fetched from persistence.
+	 * If no ObjectPathMapping exists for the given identifier, a new ObjectPathMapping is created.
+	 *
+	 * @param string $identifier the technical identifier of the object
+	 * @return string the resolved path segment(s)
+	 * @throws InfiniteLoopException if no unique path segment could be found after 100 iterations
+	 */
+	protected function getPathSegmentByIdentifier($identifier) {
+		if ($this->getUriPattern() === '') {
+			return urlencode($identifier);
 		}
 
 		$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndIdentifier($this->objectType, $this->getUriPattern(), $identifier);
 		if ($objectPathMapping !== NULL) {
-			$this->value = $objectPathMapping->getPathSegment();
-			if ($this->lowerCase) {
-				$this->value = strtolower($this->value);
-			}
-			return TRUE;
+			return $this->lowerCase ? strtolower($objectPathMapping->getPathSegment()) : $objectPathMapping->getPathSegment();
 		}
-		$pathSegment = $uniquePathSegment = $this->createPathSegmentForObject($value);
+		$object = $this->persistenceManager->getObjectByIdentifier($identifier, $this->objectType);
+		$pathSegment = $uniquePathSegment = $this->createPathSegmentForObject($object);
 		$pathSegmentLoopCount = 0;
 		do {
 			if ($pathSegmentLoopCount++ > 99) {
@@ -195,11 +239,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 			$uniquePathSegment = sprintf('%s-%d', $pathSegment, $pathSegmentLoopCount);
 		} while (TRUE);
 
-		$this->value = $uniquePathSegment;
-		if ($this->lowerCase) {
-			$this->value = strtolower($this->value);
-		}
-		return TRUE;
+		return $this->lowerCase ? strtolower($uniquePathSegment) : $uniquePathSegment;
 	}
 
 	/**
@@ -210,9 +250,6 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 * @throws InvalidUriPatternException
 	 */
 	protected function createPathSegmentForObject($object) {
-		if ($this->getUriPattern() === '') {
-			return $this->rewriteForUri($this->persistenceManager->getIdentifierByObject($object));
-		}
 		$matches = array();
 		preg_match_all('/(?P<dynamic>{?)(?P<content>[^}{]+)}?/', $this->getUriPattern(), $matches, PREG_SET_ORDER);
 		$pathSegment = '';
