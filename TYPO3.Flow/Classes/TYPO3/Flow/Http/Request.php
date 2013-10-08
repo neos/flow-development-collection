@@ -438,6 +438,15 @@ class Request extends Message {
 	}
 
 	/**
+	 * Returns the request's path relative to the $baseUri
+	 *
+	 * @return string
+	 */
+	public function getRelativePath() {
+		return substr($this->getUri()->getPath(), strlen($this->getBaseUri()->getPath()));
+	}
+
+	/**
 	 * Tries to detect the base URI of request.
 	 *
 	 * @return void

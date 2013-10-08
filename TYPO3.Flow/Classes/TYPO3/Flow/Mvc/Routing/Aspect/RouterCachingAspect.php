@@ -53,9 +53,9 @@ class RouterCachingAspect {
 		$matchedRoute = $joinPoint->getProxy()->getLastMatchedRoute();
 
 		if ($matchedRoute !== NULL) {
-			$this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $matchedRoute->getName(), $this->routerCachingService->getRoutePath($httpRequest)), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $matchedRoute->getName(), $httpRequest->getRelativePath()), LOG_DEBUG);
 		} else {
-			$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $this->routerCachingService->getRoutePath($httpRequest)), LOG_NOTICE);
+			$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
 		}
 		$this->routerCachingService->createCacheMatching($httpRequest, $matchResults);
 		return $matchResults;

@@ -72,14 +72,7 @@ class RouterCachingServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$this->mockHttpRequest->expects($this->any())->method('getMethod')->will($this->returnValue('GET'));
-
-		$this->mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$this->mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/some/route/path'));
-		$this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockUri));
-
-		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
-		$this->mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+		$this->mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue('some/route/path'));
 	}
 
 	/**

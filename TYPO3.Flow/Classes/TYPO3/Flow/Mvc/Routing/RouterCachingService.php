@@ -53,7 +53,7 @@ class RouterCachingService {
 	public function getCacheMatching($httpRequest) {
 		$cachedResult = $this->findMatchResultsCache->get($this->getCacheMatchingIdentifier($httpRequest));
 		if ($cachedResult !== FALSE) {
-			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $this->getCacheMatchingIdentifier($httpRequest), $this->getRoutePath($httpRequest)), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $this->getCacheMatchingIdentifier($httpRequest), $httpRequest->getRelativePath()), LOG_DEBUG);
 		}
 
 		return $cachedResult;
@@ -162,7 +162,7 @@ class RouterCachingService {
 	 * @return string
 	 */
 	protected function getCacheMatchingIdentifier(\TYPO3\Flow\Http\Request $httpRequest) {
-		return md5($this->getRoutePath($httpRequest)) . '_' . $httpRequest->getMethod();
+		return md5($httpRequest->getRelativePath()) . '_' . $httpRequest->getMethod();
 	}
 
 	/**
@@ -174,16 +174,6 @@ class RouterCachingService {
 	protected function getCacheResolveIdentifier(array $routeValues) {
 		\TYPO3\Flow\Utility\Arrays::sortKeysRecursively($routeValues);
 		return md5(http_build_query($routeValues));
-	}
-
-	/**
-	 * Returns the route path for the given Request
-	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
-	 * @return string
-	 */
-	public function getRoutePath(\TYPO3\Flow\Http\Request $httpRequest) {
-		return substr($httpRequest->getUri()->getPath(), strlen($httpRequest->getBaseUri()->getPath()));
 	}
 
 }

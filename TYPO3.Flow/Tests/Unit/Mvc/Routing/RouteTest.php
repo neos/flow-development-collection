@@ -64,14 +64,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	protected function routeMatchesPath($routePath) {
 		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-
-		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/' . $routePath));
-		$mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
-
-		$mockBaseUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
-		$mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
-		$mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+		$mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
 
 		return $this->route->matches($mockHttpRequest);
 	}
