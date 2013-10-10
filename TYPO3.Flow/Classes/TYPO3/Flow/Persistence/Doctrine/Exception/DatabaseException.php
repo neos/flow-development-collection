@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Persistence\Doctrine;
+namespace TYPO3\Flow\Persistence\Doctrine\Exception;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  *                                                                        */
 
 /**
- * An database connection exception
+ * An generic database exception
  *
  * @api
  */
-class DatabaseConnectionException extends \TYPO3\Flow\Persistence\Exception {
+class DatabaseException extends \TYPO3\Flow\Persistence\Exception {
 }
 ?>

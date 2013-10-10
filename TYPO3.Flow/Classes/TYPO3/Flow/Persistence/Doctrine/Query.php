@@ -124,7 +124,9 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 * This should only ever be executed from the QueryResult class.
 	 *
 	 * @return array result set
-	 * @throws \TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
 	 */
 	public function getResult() {
 		try {
@@ -133,19 +135,35 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 			$this->systemLogger->logException($ormException);
 			return array();
 		} catch (\Doctrine\DBAL\DBALException $dbalException) {
-			$message = 'An error occurred in the Database Abstraction Layer.';
-			if (strpos($dbalException->getMessage(), 'No database selected') !== FALSE) {
+			$this->systemLogger->logException($dbalException);
+
+			if (stripos($dbalException->getMessage(), 'no database selected') !== FALSE) {
 				$message = 'No database name was specified in the configuration.';
+				$exception = new Exception\DatabaseConnectionException($message, $dbalException->getCode());
+			} elseif (stripos($dbalException->getMessage(), 'table') !== FALSE && stripos($dbalException->getMessage(), 'not') !== FALSE && stripos($dbalException->getMessage(), 'exist') !== FALSE) {
+				$message = 'A table or view seems to be missing from the database.';
+				$exception = new Exception\DatabaseStructureException($message, $dbalException->getCode());
+			} else {
+				$message = 'An error occurred in the Database Abstraction Layer.';
+				$exception = new Exception\DatabaseException($message, $dbalException->getCode());
 			}
-			throw new DatabaseConnectionException($message, $dbalException->getCode());
+
+			throw $exception;
 		} catch (\PDOException $pdoException) {
+			$this->systemLogger->logException($pdoException);
+
 			$message = 'An error occurred while using the PDO Driver.';
-			if (strpos($pdoException->getMessage(), 'Unknown database') !== FALSE) {
+			if (stripos($pdoException->getMessage(), 'unknown database') !== FALSE
+				|| (stripos($pdoException->getMessage(), 'database') !== FALSE && strpos($pdoException->getMessage(), 'not') !== FALSE && strpos($pdoException->getMessage(), 'exist') !== FALSE)) {
 				$message = 'The database which was specified in the configuration does not exist.';
-			} elseif (strpos($pdoException->getMessage(), 'Access denied') !== FALSE) {
+				$exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
+			} elseif (stripos($pdoException->getMessage(), 'access denied') !== FALSE
+				|| stripos($pdoException->getMessage(), 'connection refused') !== FALSE) {
 				$message = 'The database username / password specified in the configuration seem to be wrong.';
+				$exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
 			}
-			throw new DatabaseConnectionException($message, $pdoException->getCode());
+
+			throw $exception;
 		}
 	}
 
@@ -153,7 +171,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 * Returns the query result count
 	 *
 	 * @return integer The query result count
-	 * @throws \TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException
+	 * @throws \TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
 	 * @api
 	 */
 	public function count() {
