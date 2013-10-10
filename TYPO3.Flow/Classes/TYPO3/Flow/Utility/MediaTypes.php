@@ -1800,7 +1800,7 @@ class MediaTypes {
 	 * @api
 	 */
 	static public function getMediaTypeFromFilename($filename) {
-		$pathinfo = pathinfo($filename);
+		$pathinfo = pathinfo(strtolower($filename));
 		if (!isset($pathinfo['extension'])) {
 			return 'application/octet-stream';
 		} else {

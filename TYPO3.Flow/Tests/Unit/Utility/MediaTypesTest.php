@@ -28,6 +28,10 @@ class MediaTypesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('foo.bar', 'application/octet-stream'),
 			array('index.html', 'text/html'),
 			array('video.mov', 'video/quicktime'),
+			array('image.jpeg', 'image/jpeg'),
+			array('image.jpg', 'image/jpeg'),
+			array('image.JPG', 'image/jpeg'),
+			array('image.JPEG', 'image/jpeg'),
 		);
 	}
 
