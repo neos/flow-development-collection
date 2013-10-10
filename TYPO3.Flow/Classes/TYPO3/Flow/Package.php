@@ -27,17 +27,17 @@ class Package extends BasePackage {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
-		$bootstrap->registerRequestHandler(new \TYPO3\Flow\Cli\SlaveRequestHandler($bootstrap));
-		$bootstrap->registerRequestHandler(new \TYPO3\Flow\Cli\CommandRequestHandler($bootstrap));
-		$bootstrap->registerRequestHandler(new \TYPO3\Flow\Http\RequestHandler($bootstrap));
+	public function boot(Core\Bootstrap $bootstrap) {
+		$bootstrap->registerRequestHandler(new Cli\SlaveRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new Cli\CommandRequestHandler($bootstrap));
+		$bootstrap->registerRequestHandler(new Http\RequestHandler($bootstrap));
 
 		if ($bootstrap->getContext()->isTesting()) {
 			$bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
-			$bootstrap->registerRequestHandler(new \TYPO3\Flow\Tests\FunctionalTestRequestHandler($bootstrap));
+			$bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
 		}
 
 		$bootstrap->registerCompiletimeCommand('typo3.flow:core:*');
@@ -45,7 +45,7 @@ class Package extends BasePackage {
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', function($request) use($bootstrap) {
-			if (!$request instanceof \TYPO3\Flow\Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== TRUE) {
+			if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== TRUE) {
 				$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
 			}
 		});
@@ -69,8 +69,8 @@ class Package extends BasePackage {
 
 		$dispatcher->connect('TYPO3\Flow\Tests\FunctionalTestCase', 'functionalTestTearDown', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
 
-		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function($configurationManager){
-			$configurationManager->registerConfigurationType('Views');
+		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function(Configuration\ConfigurationManager $configurationManager) {
+			$configurationManager->registerConfigurationType('Views', Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
 		});
 		$dispatcher->connect('TYPO3\Flow\Command\CacheCommandController', 'warmupCaches', 'TYPO3\Flow\Configuration\ConfigurationManager', 'warmup');
 	}
