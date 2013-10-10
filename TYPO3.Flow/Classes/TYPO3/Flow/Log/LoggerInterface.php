@@ -66,10 +66,11 @@ interface LoggerInterface {
 	 * Writes information about the given exception into the log.
 	 *
 	 * @param \Exception $exception The exception to log
+	 * @param array $additionalData Additional data to log
 	 * @return void
 	 * @api
 	 */
-	public function logException(\Exception $exception);
+	public function logException(\Exception $exception, array $additionalData = array());
 
 }
 ?>
