@@ -165,6 +165,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 						break;
 					}
 				}
+				$runtimeEvaluationsInPlace = FALSE;
 				foreach($aclEntry as $role => $resources) {
 					if (in_array($role, $roles) === FALSE) {
 						continue;
@@ -180,15 +181,23 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 					foreach($resources as $resourceName => $privilege) {
 						$classes[$className][$methodName]['resources'][$resourceName] = $privilege;
+						if ($privilege['runtimeEvaluationsClosureCode'] !== FALSE) {
+							$runtimeEvaluationsInPlace = TRUE;
+						}
 					}
 				}
-				try {
-					$accessDecisionManager->decideOnJoinPoint(new \TYPO3\Flow\Aop\JoinPoint(NULL, $className, $methodName, array()));
-				} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
-					$classes[$className][$methodName]['effectivePrivilege'] = $e->getMessage();
-				}
-				if (!isset($classes[$className][$methodName]['effectivePrivilege'])) {
-					$classes[$className][$methodName]['effectivePrivilege'] = 'Access granted';
+
+				if ($runtimeEvaluationsInPlace === FALSE) {
+					try {
+						$accessDecisionManager->decideOnJoinPoint(new \TYPO3\Flow\Aop\JoinPoint(NULL, $className, $methodName, array()));
+					} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
+						$classes[$className][$methodName]['effectivePrivilege'] = $e->getMessage();
+					}
+					if (!isset($classes[$className][$methodName]['effectivePrivilege'])) {
+						$classes[$className][$methodName]['effectivePrivilege'] = 'Access granted';
+					}
+				} else {
+					$classes[$className][$methodName]['effectivePrivilege'] = 'Could not be calculated. Runtime evaluations in place!';
 				}
 			}
 
@@ -204,7 +213,6 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 					}
 
 					$this->outputLine(PHP_EOL . '  ' . $methodName);
-					$runtimeEvaluationsInPlace = FALSE;
 					if (isset($resources['resources']) === TRUE && is_array($resources['resources']) === TRUE) {
 						foreach ($resources['resources'] as $resourceName => $privilege) {
 							switch ($privilege['privilege']) {
@@ -218,13 +226,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Vote abstained (no acl entry for given roles)');
 									break;
 							}
-							if ($privilege['runtimeEvaluationsClosureCode'] !== FALSE) {
-								$runtimeEvaluationsInPlace = TRUE;
-							}
 						}
-					}
-					if ($runtimeEvaluationsInPlace === TRUE) {
-						$this->outputLine('   Caution: Runtime evaluations in place!');
 					}
 					$this->outputLine('   <b>Effective privilege for given roles: ' . $resources['effectivePrivilege'] . '</b>');
 				}
