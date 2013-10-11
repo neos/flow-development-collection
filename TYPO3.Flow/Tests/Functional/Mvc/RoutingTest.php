@@ -259,43 +259,43 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			array(
 				'routeValues' => array_merge($defaults, array('dynamic' => 'DynamicDefault')),
 				'expectedResolvedRouteName' => 'dynamic part without default',
-				'expectedMatchingUri' => 'typo3/flow/test/dynamic/part/without/default/dynamicdefault'
+				'expectedResolvedUriPath' => 'typo3/flow/test/dynamic/part/without/default/dynamicdefault'
 			),
 			array(
 				'routeValues' => array_merge($defaults, array('dynamic' => 'OverwrittenDynamicValue')),
 				'expectedResolvedRouteName' => 'dynamic part without default',
-				'expectedMatchingUri' => 'typo3/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
+				'expectedResolvedUriPath' => 'typo3/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
 			),
 
 				// if route value is omitted, only routes with a default value resolve
 			array(
 				'routeValues' => $defaults,
 				'expectedResolvedRouteName' => 'dynamic part with default',
-				'expectedMatchingUri' => 'typo3/flow/test/dynamic/part/with/default/DynamicDefault'
+				'expectedResolvedUriPath' => 'typo3/flow/test/dynamic/part/with/default/DynamicDefault'
 			),
 			array(
 				'routeValues' => array_merge($defaults, array('optionalDynamic' => 'OptionalDynamicDefault')),
 				'expectedResolvedRouteName' => 'optional dynamic part with default',
-				'expectedMatchingUri' => 'typo3/flow/test/optional/dynamic/part/with/default'
+				'expectedResolvedUriPath' => 'typo3/flow/test/optional/dynamic/part/with/default'
 			),
 
 				// toLowerCase has an effect on generated URIs
 			array(
 				'routeValues' => array_merge($defaults, array('dynamic1' => 'DynamicRouteValue1', 'dynamic2' => 'DynamicRouteValue2')),
 				'expectedResolvedRouteName' => 'dynamic part case',
-				'expectedMatchingUri' => 'typo3/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
+				'expectedResolvedUriPath' => 'typo3/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
 			),
 
 				// exceeding arguments are appended to resolved URI if appendExceedingArguments is set
 			array(
 				'routeValues' => array_merge($defaults, array('@action' => 'test1', 'dynamic' => 'DynamicDefault', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar')),
 				'expectedResolvedRouteName' => 'exceeding arguments 01',
-				'expectedMatchingUri' => 'typo3/flow/test/exceeding/arguments1?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
+				'expectedResolvedUriPath' => 'typo3/flow/test/exceeding/arguments1?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
 			),
 			array(
 				'routeValues' => array_merge($defaults, array('@action' => 'test1', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar', 'dynamic' => 'DynamicOther')),
 				'expectedResolvedRouteName' => 'exceeding arguments 02',
-				'expectedMatchingUri' => 'typo3/flow/test/exceeding/arguments2/dynamicother?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
+				'expectedResolvedUriPath' => 'typo3/flow/test/exceeding/arguments2/dynamicother?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
 			),
 		);
 	}
@@ -303,12 +303,12 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @param array $routeValues route values to resolve
 	 * @param string $expectedResolvedRouteName expected route
-	 * @param string $expectedMatchingUri expected matching URI
+	 * @param string $expectedResolvedUriPath expected matching URI
 	 * @test
 	 * @dataProvider resolveTestsDataProvider
 	 */
-	public function resolveTests(array $routeValues, $expectedResolvedRouteName, $expectedMatchingUri = NULL) {
-		$matchingUri = $this->router->resolve($routeValues);
+	public function resolveTests(array $routeValues, $expectedResolvedRouteName, $expectedResolvedUriPath = NULL) {
+		$resolvedUriPath = $this->router->resolve($routeValues);
 		$resolvedRoute = $this->router->getLastResolvedRoute();
 		if ($expectedResolvedRouteName === NULL) {
 			if ($resolvedRoute !== NULL) {
@@ -321,7 +321,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				$this->assertEquals('Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
 			}
 		}
-		$this->assertEquals($expectedMatchingUri, $matchingUri);
+		$this->assertEquals($expectedResolvedUriPath, $resolvedUriPath);
 	}
 
 }

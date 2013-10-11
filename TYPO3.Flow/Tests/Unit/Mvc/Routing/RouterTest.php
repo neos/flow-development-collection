@@ -28,7 +28,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			// not saying anything, but seems better than to expect the exception we'd get otherwise
 		$mockRoute = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
 		$mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
-		$mockRoute->expects($this->once())->method('getMatchingUri')->will($this->returnValue('foobar'));
+		$mockRoute->expects($this->once())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
 		$router->_set('routes', array($mockRoute));
 
 			// this we actually want to know
@@ -97,15 +97,15 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function resolveIteratesOverTheRegisteredRoutesAndReturnsTheMatchingUriIfAny() {
+	public function resolveIteratesOverTheRegisteredRoutesAndReturnsTheResolvedUriPathIfAny() {
 		$routeValues = array('foo' => 'bar');
 
 		$route1 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves'), array(), '', FALSE);
 		$route1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
 
-		$route2 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves', 'getMatchingUri'), array(), '', FALSE);
+		$route2 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves', 'getResolvedUriPath'), array(), '', FALSE);
 		$route2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
-		$route2->expects($this->once())->method('getMatchingUri')->will($this->returnValue('route2'));
+		$route2->expects($this->once())->method('getResolvedUriPath')->will($this->returnValue('route2'));
 
 		$route3 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves'), array(), '', FALSE);
 
@@ -115,8 +115,8 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$router->expects($this->once())->method('createRoutesFromConfiguration');
 		$router->_set('routes', $mockRoutes);
 
-		$matchingUri = $router->resolve($routeValues);
-		$this->assertSame('route2', $matchingUri);
+		$matchingUriPath = $router->resolve($routeValues);
+		$this->assertSame('route2', $matchingUriPath);
 	}
 
 	/**

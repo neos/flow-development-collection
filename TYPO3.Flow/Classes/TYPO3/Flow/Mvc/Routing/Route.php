@@ -77,7 +77,7 @@ class Route {
 	 *
 	 * @var string
 	 */
-	protected $matchingUri;
+	protected $resolvedUriPath;
 
 	/**
 	 * Contains associative array of Route Part options
@@ -298,12 +298,20 @@ class Route {
 	}
 
 	/**
-	 * Returns the uri which corresponds to this Route.
+	 * @return string
+	 * @deprecated since Flow 2.1. Use getMatchingRequestPath() instead
+	 */
+	public function getMatchingUri() {
+		return $this->getResolvedUriPath();
+	}
+
+	/**
+	 * Returns the URI path which corresponds to this Route.
 	 *
 	 * @return string A string containing the corresponding uri (excluding protocol and host)
 	 */
-	public function getMatchingUri() {
-		return $this->matchingUri;
+	public function getResolvedUriPath() {
+		return $this->resolvedUriPath;
 	}
 
 	/**
@@ -386,7 +394,7 @@ class Route {
 	 * @see getMatchingUri()
 	 */
 	public function resolves(array $routeValues) {
-		$this->matchingUri = NULL;
+		$this->resolvedUriPath = NULL;
 		if ($this->uriPattern === NULL) {
 			return FALSE;
 		}
@@ -394,7 +402,7 @@ class Route {
 			$this->parse();
 		}
 
-		$matchingUri = '';
+		$resolvedUriPath = '';
 		$mergedRouteValues = Arrays::arrayMergeRecursiveOverrule($this->defaults, $routeValues);
 		$remainingDefaults = $this->defaults;
 		$requireOptionalRouteParts = FALSE;
@@ -421,7 +429,7 @@ class Route {
 				throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
 			}
 			if (!$routePart->isOptional()) {
-				$matchingUri .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
+				$resolvedUriPath .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
 				$requireOptionalRouteParts = FALSE;
 				continue;
 			}
@@ -432,7 +440,7 @@ class Route {
 				$matchingOptionalUriPortion .= $routePartDefaultValue;
 			}
 			if ($requireOptionalRouteParts) {
-				$matchingUri .= $matchingOptionalUriPortion;
+				$resolvedUriPath .= $matchingOptionalUriPortion;
 				$matchingOptionalUriPortion = '';
 			}
 		}
@@ -459,10 +467,10 @@ class Route {
 			}
 			$queryString = http_build_query($routeValues, NULL, '&');
 			if ($queryString !== '') {
-				$matchingUri .= strpos($matchingUri, '?') !== FALSE ? '&' . $queryString : '?' . $queryString;
+				$resolvedUriPath .= strpos($resolvedUriPath, '?') !== FALSE ? '&' . $queryString : '?' . $queryString;
 			}
 		}
-		$this->matchingUri = $matchingUri;
+		$this->resolvedUriPath = $resolvedUriPath;
 		return TRUE;
 	}
 

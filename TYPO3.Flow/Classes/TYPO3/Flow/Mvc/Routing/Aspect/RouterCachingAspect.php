@@ -39,14 +39,14 @@ class RouterCachingAspect {
 	 *
 	 * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\Router->findMatchResults())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
-	 * @return array Result of the target method
+	 * @return array the $routeValues returned from Router::findMatchResults() or the cached results if existent
 	 */
 	public function cacheMatchingCall(JoinPointInterface $joinPoint) {
 		/** @var $httpRequest \TYPO3\Flow\Http\Request */
 		$httpRequest = $joinPoint->getMethodArgument('httpRequest');
-		$cachedResult = $this->routerCachingService->getCacheMatching($httpRequest);
-		if ($cachedResult !== FALSE) {
-			return $cachedResult;
+		$cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
+		if ($cachedMatchResults !== FALSE) {
+			return $cachedMatchResults;
 		}
 
 		$matchResults = $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -57,7 +57,9 @@ class RouterCachingAspect {
 		} else {
 			$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
 		}
-		$this->routerCachingService->createCacheMatching($httpRequest, $matchResults);
+		if ($matchResults !== NULL) {
+			$this->routerCachingService->storeMatchResults($httpRequest, $matchResults);
+		}
 		return $matchResults;
 	}
 
@@ -66,18 +68,20 @@ class RouterCachingAspect {
 	 *
 	 * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\Router->resolve())")
 	 * @param JoinPointInterface $joinPoint The current join point
-	 * @return string Result of the target method
+	 * @return string the request path returned by Router::resolve() or the cached result if existent
 	 */
 	public function cacheResolveCall(JoinPointInterface $joinPoint) {
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
-		$cachedResult = $this->routerCachingService->getCacheResolve($routeValues);
-		if ($cachedResult) {
-			return $cachedResult;
+		$cachedResolvedUriPath = $this->routerCachingService->getCachedResolvedUriPath($routeValues);
+		if ($cachedResolvedUriPath !== FALSE) {
+			return $cachedResolvedUriPath;
 		}
 
-		$matchingUri = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		$this->routerCachingService->createCacheResolve($matchingUri, $routeValues);
-		return $matchingUri;
+		$matchingUriPath = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		if ($matchingUriPath !== NULL) {
+			$this->routerCachingService->storeResolvedUriPath($matchingUriPath, $routeValues);
+		}
+		return $matchingUriPath;
 	}
 
 }

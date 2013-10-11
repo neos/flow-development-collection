@@ -194,7 +194,7 @@ class Router implements RouterInterface {
 		foreach ($this->routes as $route) {
 			if ($route->resolves($routeValues)) {
 				$this->lastResolvedRoute = $route;
-				return $route->getMatchingUri();
+				return $route->getResolvedUriPath();
 			}
 		}
 		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
