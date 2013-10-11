@@ -29,6 +29,11 @@ class PrototypeClassD {
 	public $injectionRuns = 0;
 
 	/**
+	 * @var boolean
+	 */
+	public $injectedPropertyWasUnavailable = FALSE;
+
+	/**
 	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
 	 * @return void
 	 */
@@ -42,6 +47,15 @@ class PrototypeClassD {
 	 */
 	public function __construct() {
 
+	}
+
+	/**
+	 *
+	 */
+	public function initializeObject() {
+		if (!is_object($this->objectB)) {
+			$this->injectedPropertyWasUnavailable = TRUE;
+		}
 	}
 
 }
