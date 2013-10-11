@@ -158,6 +158,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	public function __construct() {
 		$this->systemRoles['Anonymous'] = new Role('Anonymous', Role::SOURCE_SYSTEM);
 		$this->systemRoles['Everybody'] = new Role('Everybody', Role::SOURCE_SYSTEM);
+		$this->systemRoles['AuthenticatedUser'] = new Role('AuthenticatedUser', Role::SOURCE_SYSTEM);
 	}
 
 	/**
@@ -676,6 +677,9 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 			}
 			if ($this->roleRepository->findByIdentifier('Everybody') === NULL) {
 				$this->roleRepository->add($this->systemRoles['Everybody']);
+			}
+			if ($this->roleRepository->findByIdentifier('AuthenticatedUser') === NULL) {
+				$this->roleRepository->add($this->systemRoles['AuthenticatedUser']);
 			}
 
 			if (isset($this->policy['roles']) && is_array($this->policy['roles'])) {

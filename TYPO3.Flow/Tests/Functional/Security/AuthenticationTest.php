@@ -132,7 +132,7 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$request = Request::create($uri);
 		$request->setHeader('Authorization', 'Basic ' . base64_encode('functional_test_account:a_very_secure_long_password'));
 		$response = $this->browser->sendRequest($request);
-		$this->assertSame($response->getContent(), 'HttpBasicTestController success!' . chr(10) . 'Everybody' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
+		$this->assertSame($response->getContent(), 'HttpBasicTestController success!' . chr(10) . 'Everybody' . chr(10) . 'AuthenticatedUser' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
 	}
 
 	/**
@@ -144,7 +144,7 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
 		$response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
-		$this->assertSame($response->getContent(), 'UsernamePasswordTestController success!' . chr(10) . 'Everybody' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
+		$this->assertSame($response->getContent(), 'UsernamePasswordTestController success!' . chr(10) . 'Everybody' . chr(10) . 'AuthenticatedUser' . chr(10) . 'TYPO3.Flow:Administrator' . chr(10));
 	}
 
 	/**

@@ -344,6 +344,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getRolesReturnsTheCorrectRoles() {
 		$everybodyRole = new Role('Everybody', Role::SOURCE_SYSTEM);
+		$authenticatedUserRole = new Role('AuthenticatedUser', Role::SOURCE_SYSTEM);
 		$testRole = new Role('Acme.Demo:TestRole');
 
 		$account = new \TYPO3\Flow\Security\Account();
@@ -357,7 +358,16 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockToken->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($account));
 
 		$mockPolicyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('getRole', 'initializeRolesFromPolicy'));
-		$mockPolicyService->expects($this->any())->method('getRole')->with('Everybody')->will($this->returnValue($everybodyRole));
+		$mockPolicyService->expects($this->atLeastOnce())->method('getRole')->will($this->returnCallback(
+			function ($roleIdentifier) use ($everybodyRole, $authenticatedUserRole) {
+				switch ($roleIdentifier) {
+					case 'Everybody':
+						return $everybodyRole;
+					case 'AuthenticatedUser':
+						return $authenticatedUserRole;
+				}
+			}
+		));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
 		$securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));
@@ -365,7 +375,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$securityContext->_set('policyService', $mockPolicyService);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 
-		$expectedResult = array('Everybody' => $everybodyRole, 'Acme.Demo:TestRole' => $testRole);
+		$expectedResult = array('Everybody' => $everybodyRole, 'AuthenticatedUser' => $authenticatedUserRole, 'Acme.Demo:TestRole' => $testRole);
 		$this->assertEquals($expectedResult, $securityContext->getRoles());
 	}
 
@@ -374,6 +384,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getRolesTakesInheritanceOfRolesIntoAccount() {
 		$everybodyRole = new Role('Everybody', Role::SOURCE_SYSTEM);
+		$authenticatedUserRole = new Role('AuthenticatedUser', Role::SOURCE_SYSTEM);
 		$testRole1 = new Role('Acme.Demo:TestRole1');
 		$testRole2 = new Role('Acme.Demo:TestRole2');
 		$testRole3 = new Role('Acme.Demo:TestRole3');
@@ -398,7 +409,16 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockToken->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($account));
 
 		$mockPolicyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('getRole', 'initializeRolesFromPolicy'));
-		$mockPolicyService->expects($this->any())->method('getRole')->with('Everybody')->will($this->returnValue($everybodyRole));
+		$mockPolicyService->expects($this->atLeastOnce())->method('getRole')->will($this->returnCallback(
+			function ($roleIdentifier) use ($everybodyRole, $authenticatedUserRole) {
+				switch ($roleIdentifier) {
+					case 'Everybody':
+						return $everybodyRole;
+					case 'AuthenticatedUser':
+						return $authenticatedUserRole;
+				}
+			}
+		));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
 		$securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));
@@ -414,7 +434,9 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'Acme.Demo:TestRole5' => $testRole5,
 			'Acme.Demo:TestRole6' => $testRole6,
 			'Acme.Demo:TestRole7' => $testRole7,
-			'Everybody' => $everybodyRole);
+			'Everybody' => $everybodyRole,
+			'AuthenticatedUser' => $authenticatedUserRole
+		);
 		$result = $securityContext->getRoles();
 
 		ksort($expectedResult);
@@ -463,6 +485,27 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$result = $securityContext->getRoles();
 		$this->assertInstanceOf('TYPO3\Flow\Security\Policy\Role', $result['Anonymous']);
 		$this->assertEquals('Anonymous', (string)($result['Anonymous']));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getRolesReturnsTheAuthenticatedUserRoleIfATokenIsAuthenticated() {
+		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$everybodyRole = new Role('Everybody', Role::SOURCE_SYSTEM);
+		$authenticatedUserRole = new Role('AuthenticatedUser', Role::SOURCE_SYSTEM);
+		$mockPolicyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('getRole'));
+		$mockPolicyService->expects($this->any())->method('getRole')->will($this->returnValueMap(array(array('AuthenticatedUser', $authenticatedUserRole), array('Everybody', $everybodyRole))));
+
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
+		$securityContext->_set('policyService', $mockPolicyService);
+		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
+
+		$result = $securityContext->getRoles();
+		$this->assertInstanceOf('TYPO3\Flow\Security\Policy\Role', $result['AuthenticatedUser']);
+		$this->assertEquals('AuthenticatedUser', (string)($result['AuthenticatedUser']));
 	}
 
 	/**
@@ -518,7 +561,14 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockToken->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($account));
 
 		$mockPolicyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('getRole', 'initializeRolesFromPolicy'));
-		$mockPolicyService->expects($this->any())->method('getRole')->with('Everybody')->will($this->returnValue($everybodyRole));
+		$mockPolicyService->expects($this->atLeastOnce())->method('getRole')->will($this->returnCallback(
+			function ($roleIdentifier) use ($everybodyRole) {
+				switch ($roleIdentifier) {
+					case 'Everybody':
+						return $everybodyRole;
+				}
+			}
+		));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'getAccount'));
 		$securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));
@@ -552,7 +602,14 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockToken->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($account));
 
 		$mockPolicyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('getRole', 'initializeRolesFromPolicy'));
-		$mockPolicyService->expects($this->any())->method('getRole')->with('Everybody')->will($this->returnValue($everybodyRole));
+		$mockPolicyService->expects($this->atLeastOnce())->method('getRole')->will($this->returnCallback(
+			function ($roleIdentifier) use ($everybodyRole) {
+				switch ($roleIdentifier) {
+					case 'Everybody':
+						return $everybodyRole;
+				}
+			}
+		));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize', 'getAccount'));
 		$securityContext->expects($this->any())->method('getAccount')->will($this->returnValue($account));

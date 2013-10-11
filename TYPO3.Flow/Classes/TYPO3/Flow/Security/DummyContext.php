@@ -156,6 +156,9 @@ class DummyContext extends Context {
 		if ($roleIdentifier === 'Anonymous') {
 			return (!empty($this->roles));
 		}
+		if ($roleIdentifier === 'AuthenticatedUser') {
+			return (empty($this->roles));
+		}
 
 		return isset($this->roles[$roleIdentifier]);
 	}
