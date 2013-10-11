@@ -18,6 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  * A role. These roles can be structured in a tree.
  *
  * @Flow\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Role {
 
@@ -205,8 +206,10 @@ class Role {
 	 * Sets name and packageKey from the identifier.
 	 *
 	 * @return void
+	 * @ORM\PostLoad
+	 * @todo: Remove PostLoad as soon as #47975 is solved
 	 */
-	protected function setNameAndPackageKey() {
+	public function setNameAndPackageKey() {
 		if (preg_match('/^([\w]+(?:\.[\w]+)*)\:([\w]+)+$/', $this->identifier, $matches) === 1) {
 			$this->packageKey = $matches[1];
 			$this->name = $matches[2];
