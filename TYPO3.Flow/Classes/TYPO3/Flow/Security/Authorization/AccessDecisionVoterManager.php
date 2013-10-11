@@ -158,6 +158,21 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	}
 
 	/**
+	 * Returns TRUE if access is granted on the given resource in the current security context
+	 *
+	 * @param string $resource The resource to decide on
+	 * @return boolean TRUE if access is granted, FALSE otherwise
+	 */
+	public function hasAccessToResource($resource) {
+		try {
+			$this->decideOnResource($resource);
+		} catch(\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
 	 * Creates and sets the configured access decision voters
 	 *
 	 * @param array $voterClassNames Array of access decision voter class names

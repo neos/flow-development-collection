@@ -34,6 +34,14 @@ interface AccessDecisionManagerInterface {
 	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function decideOnResource($resource);
+
+	/**
+	 * Returns TRUE if access is granted on the given resource in the current security context
+	 *
+	 * @param string $resource The resource to decide on
+	 * @return boolean TRUE if access is granted, FALSE otherwise
+	 */
+	public function hasAccessToResource($resource);
 }
 
 ?>
