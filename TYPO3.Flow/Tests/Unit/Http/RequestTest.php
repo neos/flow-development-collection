@@ -984,6 +984,16 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedValues, $actualValues);
 	}
 
+	/**
+	 * @test
+	 */
+	public function getRelativePathCorrectlyTrimsBaseUri() {
+		$request = Request::create(new Uri('http://dev.blog.rob/amnesia/spray'), 'GET');
+		$relativePath = $request->getRelativePath();
+
+		$this->assertSame($relativePath, 'amnesia/spray');
+	}
+
 }
 
 ?>

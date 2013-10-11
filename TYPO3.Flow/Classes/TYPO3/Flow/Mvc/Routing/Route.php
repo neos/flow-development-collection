@@ -318,11 +318,8 @@ class Route {
 	 * @see getMatchResults()
 	 */
 	public function matches(Request $httpRequest) {
-		$routePath = substr($httpRequest->getUri()->getPath(), strlen($httpRequest->getBaseUri()->getPath()));
+		$routePath = $httpRequest->getRelativePath();
 		$this->matchResults = NULL;
-		if ($routePath === NULL) {
-			return FALSE;
-		}
 		if ($this->uriPattern === NULL) {
 			return FALSE;
 		}
