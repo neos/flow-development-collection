@@ -158,9 +158,10 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 				}
 				list($className, $methodName) = explode('->', $classAndMethodName);
 				$className = $this->objectManager->getCaseSensitiveObjectName($className);
-				foreach (get_class_methods($className) as $casSensitiveMethodName) {
-					if ($methodName === strtolower($casSensitiveMethodName)) {
-						$methodName = $casSensitiveMethodName;
+				$reflectionClass = new \ReflectionClass($className);
+				foreach ($reflectionClass->getMethods() as $casSensitiveMethodName) {
+					if ($methodName === strtolower($casSensitiveMethodName->getName())) {
+						$methodName = $casSensitiveMethodName->getName();
 						break;
 					}
 				}
@@ -287,9 +288,10 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 				}
 				list($className, $methodName) = explode('->', $classAndMethodName);
 				$className = $this->objectManager->getCaseSensitiveObjectName($className);
-				foreach (get_class_methods($className) as $casSensitiveMethodName) {
-					if ($methodName === strtolower($casSensitiveMethodName)) {
-						$methodName = $casSensitiveMethodName;
+				$reflectionClass = new \ReflectionClass($className);
+				foreach ($reflectionClass->getMethods() as $casSensitiveMethodName) {
+					if ($methodName === strtolower($casSensitiveMethodName->getName())) {
+						$methodName = $casSensitiveMethodName->getName();
 						break;
 					}
 				}
