@@ -12,28 +12,61 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Mvc\Routing\Router;
+use TYPO3\Flow\Mvc\Routing\RouterCachingService;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the MVC Web Router
  *
  */
-class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class RouterTest extends UnitTestCase {
+
+	/**
+	 * @var Router
+	 */
+	protected $router;
+
+	/**
+	 * @var SystemLoggerInterface
+	 */
+	protected $mockSystemLogger;
+
+	/**
+	 * @var RouterCachingService
+	 */
+	protected $mockRouterCachingService;
+
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		$this->router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
+
+		$this->mockSystemLogger = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
+		$this->router->_set('systemLogger', $this->mockSystemLogger);
+
+		$this->mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$this->mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriPath')->will($this->returnValue(FALSE));
+		$this->mockRouterCachingService->expects($this->any())->method('getCachedMatchResults')->will($this->returnValue(FALSE));
+		$this->router->_set('routerCachingService', $this->mockRouterCachingService);
+	}
 
 	/**
 	 * @test
 	 */
 	public function resolveCallsCreateRoutesFromConfiguration() {
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
-
 			// not saying anything, but seems better than to expect the exception we'd get otherwise
 		$mockRoute = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
 		$mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
-		$mockRoute->expects($this->once())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
-		$router->_set('routes', array($mockRoute));
+		$mockRoute->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
+
+		$this->router->_set('routes', array($mockRoute));
 
 			// this we actually want to know
-		$router->expects($this->once())->method('createRoutesFromConfiguration');
-		$router->resolve(array());
+		$this->router->expects($this->once())->method('createRoutesFromConfiguration');
+		$this->router->resolve(array());
 	}
 
 	/**
@@ -105,18 +138,17 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$route2 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves', 'getResolvedUriPath'), array(), '', FALSE);
 		$route2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
-		$route2->expects($this->once())->method('getResolvedUriPath')->will($this->returnValue('route2'));
+		$route2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('route2'));
 
 		$route3 = $this->getMock('TYPO3\Flow\Mvc\Routing\Route', array('resolves'), array(), '', FALSE);
 
 		$mockRoutes = array($route1, $route2, $route3);
 
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'), array(), '', FALSE);
-		$router->expects($this->once())->method('createRoutesFromConfiguration');
-		$router->_set('routes', $mockRoutes);
+		$this->router->expects($this->once())->method('createRoutesFromConfiguration');
+		$this->router->_set('routes', $mockRoutes);
 
-		$matchingUriPath = $router->resolve($routeValues);
-		$this->assertSame('route2', $matchingUriPath);
+		$matchingRequestPath = $this->router->resolve($routeValues);
+		$this->assertSame('route2', $matchingRequestPath);
 	}
 
 	/**
@@ -132,19 +164,16 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockRoutes = array($route1, $route2);
 
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
-		$router->_set('routes', $mockRoutes);
-		$mockSystemLogger  = $this->getMockBuilder('TYPO3\Flow\Log\SystemLoggerInterface')->getMock();
-		$router->_set('systemLogger', $mockSystemLogger);
+		$this->router->_set('routes', $mockRoutes);
 
-		$router->resolve(array());
+		$this->router->resolve(array());
 	}
 
 	/**
 	 * @test
 	 */
 	public function getLastResolvedRouteReturnsNullByDefault() {
-		$router = new \TYPO3\Flow\Mvc\Routing\Router();
+		$router = new Router();
 		$this->assertNull($router->getLastResolvedRoute());
 	}
 
@@ -158,12 +187,64 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
 		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
 
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
-		$router->_set('routes', array($mockRoute1, $mockRoute2));
+		$this->router->_set('routes', array($mockRoute1, $mockRoute2));
 
-		$router->resolve($routeValues);
+		$this->router->resolve($routeValues);
 
-		$this->assertSame($mockRoute2, $router->getLastResolvedRoute());
+		$this->assertSame($mockRoute2, $this->router->getLastResolvedRoute());
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveReturnsCachedResolvedUriPathIfFoundInCache() {
+		$routeValues = array('some' => 'route values');
+		$cachedResolvedUriPath = 'some/cached/Request/Path';
+
+		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$mockRouterCachingService->expects($this->any())->method('getCachedResolvedUriPath')->with($routeValues)->will($this->returnValue($cachedResolvedUriPath));
+		$this->router->_set('routerCachingService', $mockRouterCachingService);
+
+		$this->router->expects($this->never())->method('createRoutesFromConfiguration');
+		$this->assertSame($cachedResolvedUriPath, $this->router->resolve($routeValues));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveStoresResolvedUriPathInCacheIfNotFoundInCache() {
+		$routeValues = array('some' => 'route values');
+		$resolvedUriPath = 'some/resolved/Request/Path';
+
+		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
+		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
+		$mockRoute2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue($resolvedUriPath));
+		$this->router->_set('routes', array($mockRoute1, $mockRoute2));
+
+		$this->mockRouterCachingService->expects($this->once())->method('storeResolvedUriPath')->with($resolvedUriPath, $routeValues);
+
+		$this->assertSame($resolvedUriPath, $this->router->resolve($routeValues));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveDoesNotStoreResolvedUriPathInCacheIfItsNull() {
+		$routeValues = array('some' => 'route values');
+		$resolvedUriPath = NULL;
+
+		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
+		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
+		$mockRoute2->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue($resolvedUriPath));
+		$this->router->_set('routes', array($mockRoute1, $mockRoute2));
+
+		$this->mockRouterCachingService->expects($this->never())->method('storeResolvedUriPath');
+
+		$this->assertSame($resolvedUriPath, $this->router->resolve($routeValues));
 	}
 
 	/**
@@ -175,7 +256,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->with($this->equalTo('testpackage\Controller\fooController'))
 			->will($this->returnValue('TestPackage\Controller\FooController'));
 
-		$router = new \TYPO3\Flow\Mvc\Routing\Router();
+		$router = new Router();
 		$this->inject($router, 'objectManager', $mockObjectManager);
 		$this->assertEquals('TestPackage\Controller\FooController', $router->getControllerObjectName('testpackage', '', 'foo'));
 	}
@@ -189,7 +270,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->with($this->equalTo('testpackage\bar\baz\Controller\fooController'))
 			->will($this->returnValue('TestPackage\Bar\Baz\Controller\FooController'));
 
-		$router = new \TYPO3\Flow\Mvc\Routing\Router();
+		$router = new Router();
 		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$this->assertEquals('TestPackage\Bar\Baz\Controller\FooController', $router->getControllerObjectName('testpackage', 'bar\baz', 'foo'));
@@ -251,8 +332,81 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function routeReturnsCachedMatchResultsIfFoundInCache() {
+		$cachedMatchResults = array('some' => 'cached results');
+
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
+
+		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($mockHttpRequest)->will($this->returnValue($cachedMatchResults));
+		$this->router->_set('routerCachingService', $mockRouterCachingService);
+
+		$this->router->expects($this->never())->method('createRoutesFromConfiguration');
+
+		$this->assertSame($mockActionRequest, $this->router->route($mockHttpRequest));
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeStoresMatchResultsInCacheIfNotFoundInCache() {
+		$matchResults = array('some' => 'match results');
+
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
+
+		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
+		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
+		$mockRoute2->expects($this->once())->method('getMatchResults')->will($this->returnValue($matchResults));
+
+		$this->router->_set('routes', array($mockRoute1, $mockRoute2));
+
+		$this->mockRouterCachingService->expects($this->once())->method('storeMatchResults')->with($mockHttpRequest, $matchResults);
+
+		$this->assertSame($mockActionRequest, $this->router->route($mockHttpRequest));
+	}
+
+	/**
+	 * @test
+	 */
+	public function routeDoesNotStoresMatchResultsInCacheIfTheyAreNull() {
+		$matchResults = NULL;
+
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->once())->method('createActionRequest')->will($this->returnValue($mockActionRequest));
+
+		$mockRoute1 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute1->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(FALSE));
+		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
+		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
+		$mockRoute2->expects($this->once())->method('getMatchResults')->will($this->returnValue($matchResults));
+
+		$this->router->_set('routes', array($mockRoute1, $mockRoute2));
+
+		$mockRouterCachingService = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\RouterCachingService')->getMock();
+		$mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($mockHttpRequest)->will($this->returnValue(FALSE));
+		$mockRouterCachingService->expects($this->never())->method('storeMatchResults');
+		$this->router->_set('routerCachingService', $mockRouterCachingService);
+
+		$this->router->route($mockHttpRequest);
+	}
+
+	/**
+	 * @test
+	 */
 	public function getLastMatchedRouteReturnsNullByDefault() {
-		$router = new \TYPO3\Flow\Mvc\Routing\Router();
+		$router = new Router();
 		$this->assertNull($router->getLastMatchedRoute());
 	}
 
@@ -267,12 +421,11 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockRoute2 = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\Route')->getMock();
 		$mockRoute2->expects($this->once())->method('matches')->with($mockHttpRequest)->will($this->returnValue(TRUE));
 
-		$router = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\Router', array('createRoutesFromConfiguration'));
-		$router->_set('routes', array($mockRoute1, $mockRoute2));
+		$this->router->_set('routes', array($mockRoute1, $mockRoute2));
 
-		$router->_call('findMatchResults', $mockHttpRequest);
+		$this->router->_call('findMatchResults', $mockHttpRequest);
 
-		$this->assertSame($mockRoute2, $router->getLastMatchedRoute());
+		$this->assertSame($mockRoute2, $this->router->getLastMatchedRoute());
 	}
 
 	/**
@@ -284,7 +437,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->with($this->equalTo('testpackage\Controller\fooController'))
 			->will($this->returnValue(FALSE));
 
-		$router = new \TYPO3\Flow\Mvc\Routing\Router();
+		$router = new Router();
 		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$this->assertEquals('', $router->getControllerObjectName('testpackage', '', 'foo'));
@@ -311,7 +464,7 @@ class RouterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnArgument(0));
 
-		$router = new \TYPO3\Flow\Mvc\Routing\Router();
+		$router = new Router();
 		$this->inject($router, 'objectManager', $mockObjectManager);
 
 		$this->assertEquals($expectedObjectName, $router->getControllerObjectName($packageKey, $subpackageKey, $controllerName));
