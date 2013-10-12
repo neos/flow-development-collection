@@ -46,4 +46,3 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('typo3.flow:beer:drink', $command->getCommandIdentifier());
 	}
 }
-?>

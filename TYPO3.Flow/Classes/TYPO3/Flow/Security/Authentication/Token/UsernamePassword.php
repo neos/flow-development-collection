@@ -63,4 +63,3 @@ class UsernamePassword extends \TYPO3\Flow\Security\Authentication\Token\Abstrac
 	}
 
 }
-?>

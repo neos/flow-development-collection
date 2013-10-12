@@ -110,5 +110,3 @@ class ResourceTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 		}
 	}
 }
-
-?>

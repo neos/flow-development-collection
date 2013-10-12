@@ -49,4 +49,3 @@ class BootstrapTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Reflection\Exception;
  */
 class ClassLoadingForReflectionFailedException extends \TYPO3\Flow\Reflection\Exception {
 }
-
-?>

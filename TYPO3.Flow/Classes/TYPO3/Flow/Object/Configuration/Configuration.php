@@ -390,5 +390,3 @@ class Configuration {
 		return $this->configurationSourceHint;
 	}
 }
-
-?>

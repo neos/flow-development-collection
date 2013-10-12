@@ -54,5 +54,3 @@ interface PointcutFilterInterface {
 	 */
 	public function reduceTargetClassNames(\TYPO3\Flow\Aop\Builder\ClassNameIndex $classNameIndex);
 }
-
-?>

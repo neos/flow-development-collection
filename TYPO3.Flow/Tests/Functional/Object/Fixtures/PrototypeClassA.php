@@ -62,4 +62,3 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 		return $this->someProperty;
 	}
 }
-?>

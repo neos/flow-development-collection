@@ -1212,4 +1212,3 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -26,4 +26,3 @@ class Error extends Message {
 	protected $severity = self::SEVERITY_ERROR;
 
 }
-?>

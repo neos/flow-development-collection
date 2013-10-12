@@ -558,5 +558,3 @@ class ActionController extends AbstractController {
 		return new \TYPO3\Flow\Error\Error('An error occurred while trying to call %1$s->%2$s()', NULL, array(get_class($this), $this->actionMethodName));
 	}
 }
-
-?>

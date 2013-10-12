@@ -358,5 +358,3 @@ class CldrModel {
 		return $data;
 	}
 }
-
-?>

@@ -30,5 +30,3 @@ interface RequestEngineInterface {
 	public function sendRequest(Request $request);
 
 }
-
-?>

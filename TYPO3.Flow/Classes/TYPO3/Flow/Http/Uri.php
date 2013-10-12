@@ -356,5 +356,3 @@ class Uri {
 		return $uriString;
 	}
 }
-
-?>

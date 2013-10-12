@@ -97,4 +97,3 @@ class PointcutClassNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

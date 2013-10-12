@@ -108,4 +108,3 @@ class ModificationTimeStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame(\TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
 	}
 }
-?>

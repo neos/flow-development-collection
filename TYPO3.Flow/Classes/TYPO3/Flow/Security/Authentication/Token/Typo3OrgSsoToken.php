@@ -73,4 +73,3 @@ class Typo3OrgSsoToken extends \TYPO3\Flow\Security\Authentication\Token\Abstrac
 	}
 
 }
-?>

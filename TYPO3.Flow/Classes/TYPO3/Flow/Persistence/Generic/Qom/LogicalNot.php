@@ -45,4 +45,3 @@ class LogicalNot extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
 	}
 
 }
-?>

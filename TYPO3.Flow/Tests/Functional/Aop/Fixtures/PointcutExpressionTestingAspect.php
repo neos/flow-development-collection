@@ -30,4 +30,3 @@ class PointcutExpressionTestingAspect {
 		return 'pointcutExpressionSettingFilterOptionA on';
 	}
 }
-?>

@@ -403,5 +403,3 @@ class NumbersReader {
 		return $parsedFormat;
 	}
 }
-
-?>

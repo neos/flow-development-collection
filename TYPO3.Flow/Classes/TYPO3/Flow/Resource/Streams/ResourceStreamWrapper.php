@@ -477,5 +477,3 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 		return FALSE;
 	}
 }
-
-?>

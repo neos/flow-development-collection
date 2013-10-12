@@ -59,4 +59,3 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('someValue', $backend->getSomeOption());
 	}
 }
-?>

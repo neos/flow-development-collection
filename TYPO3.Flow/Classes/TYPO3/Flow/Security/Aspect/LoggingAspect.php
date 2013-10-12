@@ -136,5 +136,3 @@ class LoggingAspect {
 		throw $exception;
 	}
 }
-
-?>

@@ -173,4 +173,3 @@ class PositionalArraySorterTest extends UnitTestCase {
 		$this->assertSame($expectedKeyOrder, $result, $message);
 	}
 }
-?>

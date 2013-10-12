@@ -788,4 +788,3 @@ EOT;
 		return sprintf('%s::%s (%s advice)', $aspectClassName, $methodName, $tagName);
 	}
 }
-?>

@@ -145,4 +145,3 @@ abstract class AbstractAuthenticationController extends \TYPO3\Flow\Mvc\Controll
 		return new \TYPO3\Flow\Error\Error('Wrong credentials.', NULL, array(), $this->actionMethodName);
 	}
 }
-?>

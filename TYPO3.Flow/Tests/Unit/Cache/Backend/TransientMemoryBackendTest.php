@@ -179,4 +179,3 @@ class TransientMemoryBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse($backend->has('TransientMemoryBackendTest3'), 'TransientMemoryBackendTest3');
 	}
 }
-?>

@@ -88,4 +88,3 @@ class CountValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abs
 		$this->assertTrue($this->validator->validate($nonCountable)->hasErrors());
 	}
 }
-?>

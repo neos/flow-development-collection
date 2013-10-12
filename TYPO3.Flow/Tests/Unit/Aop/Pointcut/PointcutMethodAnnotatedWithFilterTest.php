@@ -77,4 +77,3 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCa
 		$this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
 	}
 }
-?>

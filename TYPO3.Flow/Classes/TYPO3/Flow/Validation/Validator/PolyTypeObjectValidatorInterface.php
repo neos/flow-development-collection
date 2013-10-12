@@ -39,4 +39,3 @@ interface PolyTypeObjectValidatorInterface extends ObjectValidatorInterface {
 	public function getPriority();
 
 }
-?>

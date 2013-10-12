@@ -27,4 +27,3 @@ class MockRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 		return TRUE;
 	}
 }
-?>

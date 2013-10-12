@@ -172,5 +172,3 @@ class ClassLoader {
 		$this->considerTestsNamespace = $flag;
 	}
 }
-
-?>

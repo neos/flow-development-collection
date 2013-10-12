@@ -58,4 +58,3 @@ class DocumentationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('DocBook', $documentationFormats['DocBook']->getFormatName());
 	}
 }
-?>

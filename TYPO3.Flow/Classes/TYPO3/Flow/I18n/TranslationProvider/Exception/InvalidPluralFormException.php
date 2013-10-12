@@ -23,5 +23,3 @@ namespace TYPO3\Flow\I18n\TranslationProvider\Exception;
 class InvalidPluralFormException extends \TYPO3\Flow\I18n\Exception {
 
 }
-
-?>

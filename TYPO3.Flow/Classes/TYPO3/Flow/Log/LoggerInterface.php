@@ -73,4 +73,3 @@ interface LoggerInterface {
 	public function logException(\Exception $exception, array $additionalData = array());
 
 }
-?>

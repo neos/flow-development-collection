@@ -101,4 +101,3 @@ class Documentation {
 		return $documentationFormats;
 	}
 }
-?>

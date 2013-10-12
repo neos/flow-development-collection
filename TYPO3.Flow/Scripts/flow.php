@@ -54,5 +54,3 @@ if (isset($argv[1]) && ($argv[1] === 'typo3.flow:core:setfilepermissions' || $ar
 	$bootstrap = new \TYPO3\Flow\Core\Bootstrap($context);
 	$bootstrap->run();
 }
-
-?>

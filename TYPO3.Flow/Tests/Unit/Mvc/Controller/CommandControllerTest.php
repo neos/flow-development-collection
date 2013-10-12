@@ -76,4 +76,3 @@ class CommandControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->commandController->_call('quit', 123);
 	}
 }
-?>

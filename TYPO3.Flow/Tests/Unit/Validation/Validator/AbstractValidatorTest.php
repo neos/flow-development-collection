@@ -50,5 +50,3 @@ class AbstractValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

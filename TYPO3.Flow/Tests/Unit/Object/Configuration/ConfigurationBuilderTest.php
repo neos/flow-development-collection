@@ -173,4 +173,3 @@ class ConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configurationBuilder->_call('autowireProperties', array($dummyObjectConfiguration));
 	}
 }
-?>

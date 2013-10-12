@@ -130,5 +130,3 @@ class CsrfProtection implements RequestPatternInterface {
 		return FALSE;
 	}
 }
-
-?>

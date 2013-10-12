@@ -184,4 +184,3 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 }
-?>

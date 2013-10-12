@@ -52,5 +52,3 @@ class UriTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeCo
 		}
 	}
 }
-
-?>

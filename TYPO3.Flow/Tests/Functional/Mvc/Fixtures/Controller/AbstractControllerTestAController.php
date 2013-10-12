@@ -72,4 +72,3 @@ class AbstractControllerTestAController extends ActionController {
 		return "fourthAction-$nonObject1-$nonObject2-" . (isset($internalArguments['__object1']) ? get_class($internalArguments['__object1']) : 'x');
 	}
 }
-?>

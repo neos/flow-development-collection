@@ -218,4 +218,3 @@ class StaticRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

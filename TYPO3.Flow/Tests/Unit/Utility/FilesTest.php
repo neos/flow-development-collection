@@ -401,4 +401,3 @@ class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
 	}
 }
-?>

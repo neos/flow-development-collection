@@ -89,5 +89,3 @@ class FloatValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abs
 	}
 
 }
-
-?>

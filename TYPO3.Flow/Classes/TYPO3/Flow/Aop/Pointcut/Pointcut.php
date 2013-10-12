@@ -166,4 +166,3 @@ class Pointcut implements PointcutFilterInterface {
 		return $this->pointcutFilterComposite->reduceTargetClassNames($classNameIndex);
 	}
 }
-?>

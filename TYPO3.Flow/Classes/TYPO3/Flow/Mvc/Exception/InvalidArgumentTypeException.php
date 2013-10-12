@@ -20,4 +20,3 @@ namespace TYPO3\Flow\Mvc\Exception;
 class InvalidArgumentTypeException extends \TYPO3\Flow\Mvc\Exception {
 
 }
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Persistence;
  */
 class Exception extends \TYPO3\Flow\Exception {
 }
-
-?>

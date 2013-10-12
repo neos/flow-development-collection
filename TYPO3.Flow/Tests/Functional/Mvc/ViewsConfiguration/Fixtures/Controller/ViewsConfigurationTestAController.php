@@ -49,4 +49,3 @@ class ViewsConfigurationTestAController extends ActionController {
 	 */
 	public function widgetAction() {}
 }
-?>

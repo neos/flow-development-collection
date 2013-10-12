@@ -418,4 +418,3 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue(TRUE);
 	}
 }
-?>

@@ -80,4 +80,3 @@ class CollectionConverter extends AbstractTypeConverter {
 		return $parsedTargetType['elementType'];
 	}
 }
-?>

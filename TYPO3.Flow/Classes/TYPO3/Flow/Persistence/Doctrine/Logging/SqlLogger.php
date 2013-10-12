@@ -44,5 +44,3 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 	public function stopQuery() {}
 
 }
-
-?>

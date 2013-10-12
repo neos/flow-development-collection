@@ -206,5 +206,3 @@ class ClassSchemaTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

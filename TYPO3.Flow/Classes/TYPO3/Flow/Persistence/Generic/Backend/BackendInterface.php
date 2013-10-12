@@ -98,4 +98,3 @@ interface BackendInterface {
 	public function getObjectDataByIdentifier($identifier, $objectType = NULL);
 
 }
-?>

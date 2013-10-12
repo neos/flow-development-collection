@@ -1015,5 +1015,3 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 		return $classNameIndex;
 	}
 }
-
-?>

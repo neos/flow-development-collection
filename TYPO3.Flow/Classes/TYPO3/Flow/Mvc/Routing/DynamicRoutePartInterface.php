@@ -29,4 +29,3 @@ interface DynamicRoutePartInterface extends \TYPO3\Flow\Mvc\Routing\RoutePartInt
 	 */
 	public function setSplitString($splitString);
 }
-?>

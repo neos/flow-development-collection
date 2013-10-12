@@ -287,4 +287,3 @@ class CommandController implements ControllerInterface {
 	}
 
 }
-?>

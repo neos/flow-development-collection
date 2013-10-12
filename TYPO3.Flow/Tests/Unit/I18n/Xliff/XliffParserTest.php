@@ -52,5 +52,3 @@ class XliffParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

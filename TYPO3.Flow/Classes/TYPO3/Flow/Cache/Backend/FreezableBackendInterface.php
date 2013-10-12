@@ -40,4 +40,3 @@ interface FreezableBackendInterface extends BackendInterface {
 	public function isFrozen();
 
 }
-?>

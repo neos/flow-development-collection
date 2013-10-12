@@ -128,4 +128,3 @@ class ApplicationContext {
 		return $this->parentContext;
 	}
 }
-?>

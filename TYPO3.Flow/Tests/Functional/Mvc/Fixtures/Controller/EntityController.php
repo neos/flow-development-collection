@@ -71,4 +71,3 @@ class EntityController extends ActionController {
 		return $message;
 	}
 }
-?>

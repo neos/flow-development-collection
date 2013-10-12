@@ -53,5 +53,3 @@ class ControllerObjectName implements \TYPO3\Flow\Security\RequestPatternInterfa
 		return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->controllerObjectNamePattern) . '$/', $request->getControllerObjectName());
 	}
 }
-
-?>

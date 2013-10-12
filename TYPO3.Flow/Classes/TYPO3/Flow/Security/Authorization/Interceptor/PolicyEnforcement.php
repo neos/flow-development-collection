@@ -89,5 +89,3 @@ class PolicyEnforcement implements \TYPO3\Flow\Security\Authorization\Intercepto
 		$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
 	}
 }
-
-?>

@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Security\Exception;
 class InvalidAuthenticationProviderException extends \TYPO3\Flow\Security\Exception {
 
 }
-
-?>

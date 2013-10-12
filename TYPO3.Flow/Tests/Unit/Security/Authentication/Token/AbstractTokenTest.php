@@ -112,4 +112,3 @@ class AbstractTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

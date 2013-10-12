@@ -51,4 +51,3 @@ class AuthenticationControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$authenticationController->logoutAction();
 	}
 }
-?>

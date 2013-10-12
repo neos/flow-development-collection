@@ -281,5 +281,3 @@ class RepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-
-?>

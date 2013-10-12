@@ -150,4 +150,3 @@ class BrowserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

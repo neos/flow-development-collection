@@ -43,4 +43,3 @@ class SubEntity extends SuperEntity {
 	}
 
 }
-?>

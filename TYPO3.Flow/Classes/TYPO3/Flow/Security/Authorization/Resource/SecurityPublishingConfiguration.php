@@ -44,5 +44,3 @@ class SecurityPublishingConfiguration extends \TYPO3\Flow\Resource\Publishing\Ab
 		return $this->allowedRoles;
 	}
 }
-
-?>

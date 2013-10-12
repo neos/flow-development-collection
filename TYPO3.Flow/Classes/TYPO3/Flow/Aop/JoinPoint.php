@@ -210,5 +210,3 @@ class JoinPoint implements \TYPO3\Flow\Aop\JoinPointInterface {
 		return $this->result;
 	}
 }
-
-?>

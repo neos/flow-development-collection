@@ -428,5 +428,3 @@ class ValidatorResolver {
 		return $type;
 	}
 }
-
-?>

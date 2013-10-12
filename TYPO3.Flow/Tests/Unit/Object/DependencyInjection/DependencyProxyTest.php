@@ -27,5 +27,3 @@ class DependencyProxyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

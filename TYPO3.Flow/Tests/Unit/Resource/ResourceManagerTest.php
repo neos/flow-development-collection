@@ -236,4 +236,3 @@ class ResourceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFileEquals('vfs://Foo/bar', 'vfs://Foo/Persistent/Resources/' . $hash);
 	}
 }
-?>

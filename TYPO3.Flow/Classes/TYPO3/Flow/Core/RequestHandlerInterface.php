@@ -45,5 +45,3 @@ interface RequestHandlerInterface {
 	public function getPriority();
 
 }
-
-?>

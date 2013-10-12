@@ -69,4 +69,3 @@ class SchemaGeneratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($schema, $expectedSchema);
 	}
 }
-?>

@@ -164,5 +164,3 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 		exit($this->response->getExitCode());
 	}
 }
-
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Mvc\Exception;
  */
 class RequiredArgumentMissingException extends \TYPO3\Flow\Mvc\Exception {
 }
-
-?>

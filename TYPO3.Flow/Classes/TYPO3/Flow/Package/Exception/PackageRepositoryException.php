@@ -18,4 +18,3 @@ namespace TYPO3\Flow\Package\Exception;
 class PackageRepositoryException extends \TYPO3\Flow\Package\Exception {
 
 }
-?>

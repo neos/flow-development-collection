@@ -104,4 +104,3 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Pointcu
 		return $classNameIndex;
 	}
 }
-?>

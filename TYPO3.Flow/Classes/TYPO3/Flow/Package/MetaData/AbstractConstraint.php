@@ -63,4 +63,3 @@ abstract class AbstractConstraint {
 	 */
 	abstract public function getConstraintScope();
 }
-?>

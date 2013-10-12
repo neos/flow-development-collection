@@ -201,4 +201,3 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->actionController->_call('resolveView');
 	}
 }
-?>

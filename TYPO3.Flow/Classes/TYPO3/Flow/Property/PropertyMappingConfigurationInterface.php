@@ -84,5 +84,3 @@ interface PropertyMappingConfigurationInterface {
 	 */
 	public function getTypeConverter();
 }
-
-?>

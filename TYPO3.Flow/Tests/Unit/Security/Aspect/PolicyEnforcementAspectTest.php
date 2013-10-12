@@ -151,4 +151,3 @@ class PolicyEnforcementAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
 	}
 }
-?>

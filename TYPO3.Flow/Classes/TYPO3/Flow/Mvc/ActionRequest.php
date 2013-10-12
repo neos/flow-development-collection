@@ -635,4 +635,3 @@ class ActionRequest implements RequestInterface {
 	}
 
 }
-?>

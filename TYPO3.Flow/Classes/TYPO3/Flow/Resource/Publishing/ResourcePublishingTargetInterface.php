@@ -59,5 +59,3 @@ interface ResourcePublishingTargetInterface {
 	 */
 	public function getPersistentResourceWebUri(\TYPO3\Flow\Resource\Resource $resource);
 }
-
-?>

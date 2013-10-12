@@ -399,5 +399,3 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 		}
 	}
 }
-
-?>

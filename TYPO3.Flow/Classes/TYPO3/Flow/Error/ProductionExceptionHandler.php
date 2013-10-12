@@ -159,4 +159,3 @@ class ProductionExceptionHandler extends AbstractExceptionHandler {
 		exit(1);
 	}
 }
-?>

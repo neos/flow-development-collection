@@ -82,5 +82,3 @@ class AbstractPersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

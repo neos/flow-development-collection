@@ -299,5 +299,3 @@ class FileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\Abstrac
 		return realpath($path);
 	}
 }
-
-?>

@@ -106,4 +106,3 @@ class PackageFactory {
 		return $packageKey;
 	}
 }
-?>

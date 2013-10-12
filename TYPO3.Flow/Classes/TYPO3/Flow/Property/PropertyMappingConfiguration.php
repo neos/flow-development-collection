@@ -374,4 +374,3 @@ class PropertyMappingConfiguration implements \TYPO3\Flow\Property\PropertyMappi
 		return $this;
 	}
 }
-?>

@@ -54,5 +54,3 @@ $classCode = file_get_contents($mediaTypesClassPathAndFilename);
 $classCode = preg_replace('/(extensionToMediaType = array\(\n)([^\)]+)(\t\);)/', '$1' . $fileExtensionsToMediaTypeCode . "\t);", $classCode);
 $classCode = preg_replace('/(mediaTypeToFileExtension = array\(\n)([^\;]+)(;)/', '$1' . $mediaTypesToFileExtensionsCode . "\t);", $classCode);
 file_put_contents($mediaTypesClassPathAndFilename, $classCode);
-
-?>

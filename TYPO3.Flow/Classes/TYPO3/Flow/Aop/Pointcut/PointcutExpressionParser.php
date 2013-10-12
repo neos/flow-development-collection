@@ -471,4 +471,3 @@ class PointcutExpressionParser {
 		return $runtimeEvaluationConditions;
 	}
 }
-?>

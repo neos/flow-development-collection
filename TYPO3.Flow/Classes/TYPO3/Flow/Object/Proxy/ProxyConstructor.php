@@ -76,4 +76,3 @@ class ProxyConstructor extends \TYPO3\Flow\Object\Proxy\ProxyMethod {
 	}
 
 }
-?>

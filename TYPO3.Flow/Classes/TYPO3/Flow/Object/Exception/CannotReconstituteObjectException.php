@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Object\Exception;
 class CannotReconstituteObjectException extends \TYPO3\Flow\Object\Exception {
 
 }
-
-?>

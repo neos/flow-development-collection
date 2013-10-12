@@ -49,4 +49,3 @@ class ClassWithSetters {
 		return $this->property2;
 	}
 }
-?>

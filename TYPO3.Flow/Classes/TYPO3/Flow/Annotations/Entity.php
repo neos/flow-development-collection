@@ -35,5 +35,3 @@ final class Entity {
 	public $readOnly = FALSE;
 
 }
-
-?>

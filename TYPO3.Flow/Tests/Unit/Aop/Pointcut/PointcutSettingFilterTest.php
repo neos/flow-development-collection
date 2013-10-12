@@ -142,4 +142,3 @@ class PointcutSettingFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$filter->injectConfigurationManager($mockConfigurationManager);
 	}
 }
-?>

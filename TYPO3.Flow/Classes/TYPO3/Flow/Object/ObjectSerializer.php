@@ -385,5 +385,3 @@ class ObjectSerializer {
 		return $this->persistenceManager->getObjectByIdentifier($uuid, $className);
 	}
 }
-
-?>

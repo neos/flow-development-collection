@@ -69,5 +69,3 @@ class StaticRoutePart extends \TYPO3\Flow\Mvc\Routing\AbstractRoutePart {
 		return TRUE;
 	}
 }
-
-?>

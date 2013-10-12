@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class NoSuchRoleException extends \TYPO3\Flow\Security\Exception {
 }
-
-?>

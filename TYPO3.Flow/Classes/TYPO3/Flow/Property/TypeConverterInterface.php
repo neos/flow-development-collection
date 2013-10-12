@@ -110,4 +110,3 @@ interface TypeConverterInterface {
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL);
 }
-?>

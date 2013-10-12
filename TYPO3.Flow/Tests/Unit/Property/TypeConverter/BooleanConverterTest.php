@@ -90,4 +90,3 @@ class BooleanConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expected, $this->converter->convertFrom($source, 'boolean'));
 	}
 }
-?>

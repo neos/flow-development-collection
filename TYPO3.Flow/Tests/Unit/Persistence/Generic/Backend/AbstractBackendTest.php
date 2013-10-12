@@ -143,4 +143,3 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -28,4 +28,3 @@ interface QueryFactoryInterface {
 	public function create($className);
 
 }
-?>

@@ -28,5 +28,3 @@ class SuperEntity extends AbstractSuperEntity {
 	protected $someString;
 
 }
-
-?>

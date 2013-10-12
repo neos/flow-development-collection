@@ -120,5 +120,3 @@ class DateTimeRangeValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

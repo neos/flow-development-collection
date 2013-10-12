@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Cache;
 class Exception extends \TYPO3\Flow\Exception {
 
 }
-?>

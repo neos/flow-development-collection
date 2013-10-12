@@ -29,5 +29,3 @@ class Version20120429225205 extends AbstractMigration {
 		$this->addSql("DROP INDEX flow3_identity_typo3_flow3_security_account");
 	}
 }
-
-?>

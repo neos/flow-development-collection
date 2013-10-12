@@ -116,4 +116,3 @@ class YamlSource {
 		return $header;
 	}
 }
-?>

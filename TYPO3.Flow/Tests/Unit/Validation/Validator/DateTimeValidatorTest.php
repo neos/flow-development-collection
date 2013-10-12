@@ -92,4 +92,3 @@ class DateTimeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\
 		$this->assertFalse($this->validator->validate($sampleValidDateTime)->hasErrors());
 	}
 }
-?>

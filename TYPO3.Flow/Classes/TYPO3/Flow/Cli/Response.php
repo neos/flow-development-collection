@@ -161,5 +161,3 @@ class Response extends \TYPO3\Flow\Mvc\Response {
 	}
 
 }
-
-?>

@@ -41,4 +41,3 @@ class HttpBasicTestController extends \TYPO3\Flow\Security\Authentication\Contro
 		throw new \TYPO3\Flow\Exception('Failure Method Exception', 42);
 	}
 }
-?>

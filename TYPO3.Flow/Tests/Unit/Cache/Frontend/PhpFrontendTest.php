@@ -65,4 +65,3 @@ class PhpFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('hello world!', $result);
 	}
 }
-?>

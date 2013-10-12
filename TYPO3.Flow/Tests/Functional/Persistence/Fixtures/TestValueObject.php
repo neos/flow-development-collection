@@ -34,4 +34,3 @@ class TestValueObject {
 		$this->value = $value;
 	}
 }
-?>

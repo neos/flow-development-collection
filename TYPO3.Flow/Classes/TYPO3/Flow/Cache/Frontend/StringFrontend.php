@@ -85,4 +85,3 @@ class StringFrontend extends \TYPO3\Flow\Cache\Frontend\AbstractFrontend {
 	}
 
 }
-?>

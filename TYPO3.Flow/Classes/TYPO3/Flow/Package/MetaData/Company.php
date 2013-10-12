@@ -27,4 +27,3 @@ class Company extends \TYPO3\Flow\Package\MetaData\AbstractParty {
 		return \TYPO3\Flow\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
 	}
 }
-?>

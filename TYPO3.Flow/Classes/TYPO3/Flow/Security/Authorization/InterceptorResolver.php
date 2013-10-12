@@ -55,4 +55,3 @@ class InterceptorResolver {
 		throw new \TYPO3\Flow\Security\Exception\NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
-?>

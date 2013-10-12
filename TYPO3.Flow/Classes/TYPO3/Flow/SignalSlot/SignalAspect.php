@@ -39,4 +39,3 @@ class SignalAspect {
 		$this->dispatcher->dispatch($joinPoint->getClassName(), $signalName, $joinPoint->getMethodArguments());
 	}
 }
-?>

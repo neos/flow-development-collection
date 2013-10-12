@@ -23,5 +23,3 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  */
 abstract class AbstractSuperEntity {}
-
-?>

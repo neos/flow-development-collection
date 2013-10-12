@@ -59,5 +59,3 @@ class UuidValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
 		$this->assertEquals($expected, $this->validator->validate('e104e469-9030-4b98-babf-3990f07')->getErrors());
 	}
 }
-
-?>

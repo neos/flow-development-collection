@@ -19,5 +19,3 @@ namespace TYPO3\Flow\I18n\Exception;
 class InvalidLocaleIdentifierException extends \TYPO3\Flow\I18n\Exception {
 
 }
-
-?>

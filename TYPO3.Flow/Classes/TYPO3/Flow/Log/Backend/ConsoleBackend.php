@@ -103,4 +103,3 @@ class ConsoleBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 	public function close() {}
 
 }
-?>

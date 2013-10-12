@@ -24,4 +24,3 @@ class SampleFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface {
 		return $value . '+Formatted42';
 	}
 }
-?>

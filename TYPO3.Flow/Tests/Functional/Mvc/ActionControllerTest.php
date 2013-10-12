@@ -298,4 +298,3 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

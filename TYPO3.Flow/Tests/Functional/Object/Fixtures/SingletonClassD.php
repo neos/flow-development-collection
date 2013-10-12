@@ -33,4 +33,3 @@ class SingletonClassD {
 	public $prototypeClassA;
 
 }
-?>

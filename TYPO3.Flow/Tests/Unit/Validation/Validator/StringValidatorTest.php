@@ -66,5 +66,3 @@ class StringValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Ab
 	}
 
 }
-
-?>

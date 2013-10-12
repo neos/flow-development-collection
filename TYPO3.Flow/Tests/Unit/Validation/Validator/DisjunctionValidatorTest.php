@@ -62,5 +62,3 @@ class DisjunctionValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array($error1, $error2), $validatorDisjunction->validate('some subject')->getErrors());
 	}
 }
-
-?>

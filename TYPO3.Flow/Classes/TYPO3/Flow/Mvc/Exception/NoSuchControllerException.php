@@ -23,5 +23,3 @@ class NoSuchControllerException extends \TYPO3\Flow\Mvc\Exception {
 	protected $statusCode = 404;
 
 }
-
-?>

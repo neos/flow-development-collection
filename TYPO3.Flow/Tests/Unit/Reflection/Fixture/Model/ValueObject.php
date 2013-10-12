@@ -30,5 +30,3 @@ class ValueObject {
 	protected $propertyWithoutAnnotation;
 
 }
-
-?>

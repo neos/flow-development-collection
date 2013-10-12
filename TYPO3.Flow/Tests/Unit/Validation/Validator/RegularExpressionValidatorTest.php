@@ -71,5 +71,3 @@ class RegularExpressionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\V
 		$this->assertEquals(array(new \TYPO3\Flow\Validation\Error('The given subject did not match the pattern. Got: %1$s', 1221565130, array($subject))), $errors);
 	}
 }
-
-?>

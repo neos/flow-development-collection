@@ -43,5 +43,3 @@ interface EntryPointInterface {
 	 */
 	public function startAuthentication(Request $request, Response $response);
 }
-
-?>

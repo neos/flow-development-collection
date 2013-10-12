@@ -50,4 +50,3 @@ class LowerCase extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand {
 	}
 
 }
-?>

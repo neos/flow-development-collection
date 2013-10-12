@@ -71,4 +71,3 @@ class PasswordTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array('password' => ''), $token->getCredentials());
 	}
 }
-?>

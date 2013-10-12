@@ -438,4 +438,3 @@ class ArraysTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expected, $actual);
 	}
 }
-?>

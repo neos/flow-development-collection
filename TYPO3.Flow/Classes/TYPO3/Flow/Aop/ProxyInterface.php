@@ -26,5 +26,3 @@ interface ProxyInterface extends \TYPO3\Flow\Object\Proxy\ProxyInterface {
 	public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint);
 
 }
-
-?>

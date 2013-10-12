@@ -58,5 +58,3 @@ class ResourcePointer {
 		return $this->hash;
 	}
 }
-
-?>

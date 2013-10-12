@@ -218,5 +218,3 @@ abstract class Repository implements \TYPO3\Flow\Persistence\RepositoryInterface
 	}
 
 }
-
-?>

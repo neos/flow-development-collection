@@ -23,4 +23,3 @@ class ProxyOfImplementationOfDummyInterface1 extends ImplementationOfDummyInterf
 	public function __wakeup() {}
 
 }
-?>

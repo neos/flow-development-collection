@@ -196,4 +196,3 @@ abstract class AbstractToken implements \TYPO3\Flow\Security\Authentication\Toke
 	}
 
 }
-?>

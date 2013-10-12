@@ -471,4 +471,3 @@ class RouterTest extends UnitTestCase {
 	}
 
 }
-?>

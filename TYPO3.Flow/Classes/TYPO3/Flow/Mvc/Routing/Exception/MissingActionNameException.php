@@ -17,5 +17,3 @@ namespace TYPO3\Flow\Mvc\Routing\Exception;
  */
 class MissingActionNameException extends \TYPO3\Flow\Mvc\Exception {
 }
-
-?>

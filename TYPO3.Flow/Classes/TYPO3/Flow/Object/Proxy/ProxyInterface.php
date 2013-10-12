@@ -27,5 +27,3 @@ interface ProxyInterface {
 	public function __wakeup();
 
 }
-
-?>

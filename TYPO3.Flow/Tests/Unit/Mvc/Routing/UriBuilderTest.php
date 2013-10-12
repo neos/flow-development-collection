@@ -724,4 +724,3 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 
 }
-?>

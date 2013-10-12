@@ -256,4 +256,3 @@ class ProxyClass {
 		return $code;
 	}
 }
-?>

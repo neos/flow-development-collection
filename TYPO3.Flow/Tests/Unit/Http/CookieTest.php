@@ -401,4 +401,3 @@ class CookieTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

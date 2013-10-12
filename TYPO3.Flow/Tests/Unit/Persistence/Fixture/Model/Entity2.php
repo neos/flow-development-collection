@@ -58,4 +58,3 @@ class Entity2 implements \TYPO3\Flow\Aop\ProxyInterface {
 	public function __wakeup() {}
 
 }
-?>

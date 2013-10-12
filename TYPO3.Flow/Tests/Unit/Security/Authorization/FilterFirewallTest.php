@@ -128,4 +128,3 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$firewall->blockIllegalRequests($request);
 	}
 }
-?>

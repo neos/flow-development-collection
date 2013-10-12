@@ -42,4 +42,3 @@ class PropertyMappingConfigurationBuilderTest extends \TYPO3\Flow\Tests\UnitTest
 		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 	}
 }
-?>

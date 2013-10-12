@@ -23,4 +23,3 @@ class RestrictableEntityRepository extends \TYPO3\Flow\Persistence\Repository {
 	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity';
 
 }
-?>

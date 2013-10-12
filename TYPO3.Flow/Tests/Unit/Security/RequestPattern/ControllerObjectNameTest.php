@@ -31,4 +31,3 @@ class ControllerObjectNameTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('TYPO3\Flow\Security\.*', $requestPattern->getPattern());
 	}
 }
-?>

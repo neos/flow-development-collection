@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Cache\Exception;
 class ClassAlreadyLoadedException extends \TYPO3\Flow\Cache\Exception {
 
 }
-?>

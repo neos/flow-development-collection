@@ -152,4 +152,3 @@ interface ObjectManagerInterface {
 	public function shutdown();
 
 }
-?>

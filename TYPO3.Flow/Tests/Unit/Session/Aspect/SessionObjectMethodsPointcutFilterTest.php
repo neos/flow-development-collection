@@ -50,6 +50,3 @@ class SessionObjectMethodsPointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestC
 		$this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
 	}
 }
-
-
-?>

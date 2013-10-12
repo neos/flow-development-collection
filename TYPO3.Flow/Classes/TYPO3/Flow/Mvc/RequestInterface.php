@@ -66,4 +66,3 @@ interface RequestInterface {
 	public function isMainRequest();
 
 }
-?>

@@ -186,5 +186,3 @@ class AuthenticationTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEmpty($response->getCookies());
 	}
 }
-
-?>

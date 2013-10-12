@@ -279,4 +279,3 @@ class Arrays {
 		return $result;
 	}
 }
-?>

@@ -89,5 +89,3 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 		return $parsedData;
 	}
 }
-
-?>

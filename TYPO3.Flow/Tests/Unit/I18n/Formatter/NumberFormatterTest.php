@@ -215,5 +215,3 @@ class NumberFormatterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedResult, $result);
 	}
 }
-
-?>

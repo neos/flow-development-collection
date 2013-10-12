@@ -160,4 +160,3 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 		}
 	}
 }
-?>

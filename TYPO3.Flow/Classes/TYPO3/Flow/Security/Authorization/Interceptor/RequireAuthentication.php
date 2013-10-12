@@ -44,5 +44,3 @@ class RequireAuthentication implements \TYPO3\Flow\Security\Authorization\Interc
 		$this->authenticationManager->authenticate();
 	}
 }
-
-?>

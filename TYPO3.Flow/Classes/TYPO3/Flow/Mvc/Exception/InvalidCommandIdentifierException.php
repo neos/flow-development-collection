@@ -17,5 +17,3 @@ namespace TYPO3\Flow\Mvc\Exception;
 class InvalidCommandIdentifierException extends \TYPO3\Flow\Mvc\Exception {
 
 }
-
-?>

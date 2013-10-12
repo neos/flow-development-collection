@@ -99,4 +99,3 @@ class LoggerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$logger->shutdownObject();
 	}
 }
-?>

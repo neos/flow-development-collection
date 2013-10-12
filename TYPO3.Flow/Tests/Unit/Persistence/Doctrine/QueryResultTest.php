@@ -58,4 +58,3 @@ class QueryResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertNull($this->queryResult->offsetGet('foo'));
 	}
 }
-?>

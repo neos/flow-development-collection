@@ -139,5 +139,3 @@ class Tools {
 		return NULL;
 	}
 }
-
-?>

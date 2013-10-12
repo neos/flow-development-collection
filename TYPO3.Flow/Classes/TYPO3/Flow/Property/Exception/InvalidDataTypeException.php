@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Property\Exception;
 class InvalidDataTypeException extends \TYPO3\Flow\Property\Exception {
 
 }
-
-?>

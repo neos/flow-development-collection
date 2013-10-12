@@ -204,4 +204,3 @@ class FunctionsTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(8, \TYPO3\Flow\Utility\Unicode\Functions::strpos($testString, 'tincidunt'), 'strpos() did not return the correct positions for a unicode string.');
 	}
 }
-?>

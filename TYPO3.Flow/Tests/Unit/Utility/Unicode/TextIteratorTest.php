@@ -306,5 +306,3 @@ class TextIteratorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($iterator->preceding(11), 10, 'Wrong offset for the preceding element returned.' . $iterator->preceding(11));
 	}
 }
-
-?>

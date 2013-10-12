@@ -93,5 +93,3 @@ class FooBarAnnotation {
 		$this->value = $value;
 	}
 }
-
-?>

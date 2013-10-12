@@ -465,5 +465,3 @@ class PersistenceQueryRewritingAspect {
 		return ObjectAccess::getPropertyPath($object, $path);
 	}
 }
-
-?>

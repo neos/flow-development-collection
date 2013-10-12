@@ -354,4 +354,3 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	}
 
 }
-?>

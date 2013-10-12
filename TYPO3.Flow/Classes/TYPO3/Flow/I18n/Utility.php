@@ -138,5 +138,3 @@ class Utility {
 		return FALSE;
 	}
 }
-
-?>

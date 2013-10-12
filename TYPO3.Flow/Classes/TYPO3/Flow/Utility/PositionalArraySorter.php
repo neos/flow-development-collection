@@ -319,4 +319,3 @@ class PositionalArraySorter {
 		return $sortedKeysMap;
 	}
 }
-?>

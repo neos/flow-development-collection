@@ -162,5 +162,3 @@ class PrivateResourcesPublishingAspect {
 		return FALSE;
 	}
 }
-
-?>

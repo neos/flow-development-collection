@@ -39,4 +39,3 @@ class HttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array('realm' => 'realm string'), $entryPoint->getOptions());
 	}
 }
-?>

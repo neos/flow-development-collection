@@ -48,5 +48,3 @@ interface SessionManagerInterface {
 	public function getActiveSessions();
 
 }
-
-?>

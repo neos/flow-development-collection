@@ -259,5 +259,3 @@ class RepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$repository->update(new \stdClass());
 	}
 }
-
-?>

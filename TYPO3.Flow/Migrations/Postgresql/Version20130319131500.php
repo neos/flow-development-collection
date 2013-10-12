@@ -172,5 +172,3 @@ class Version20130319131500 extends AbstractMigration {
 		return array_keys($roles);
 	}
 }
-
-?>

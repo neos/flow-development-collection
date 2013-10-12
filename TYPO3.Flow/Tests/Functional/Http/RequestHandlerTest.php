@@ -56,4 +56,3 @@ class RequestHandlerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

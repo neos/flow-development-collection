@@ -49,5 +49,3 @@ class Version20110923125535 extends AbstractMigration {
 		$this->addSql("CREATE INDEX IDX_44D0753B38110E12 ON typo3_flow3_security_account (party_abstractparty)");
 	}
 }
-
-?>

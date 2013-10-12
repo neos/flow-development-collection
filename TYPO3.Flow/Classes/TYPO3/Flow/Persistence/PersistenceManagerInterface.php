@@ -164,5 +164,3 @@ interface PersistenceManagerInterface {
 	public function update($object);
 
 }
-
-?>

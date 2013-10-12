@@ -30,4 +30,3 @@ class TestingFileSystemPublishingTarget extends \TYPO3\Flow\Resource\Publishing\
 		$this->resourcesBaseUri = 'http://baseuri/_Resources/';
 	}
 }
-?>

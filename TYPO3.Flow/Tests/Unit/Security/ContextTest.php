@@ -882,4 +882,3 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse($securityContext->areAuthorizationChecksDisabled());
 	}
 }
-?>

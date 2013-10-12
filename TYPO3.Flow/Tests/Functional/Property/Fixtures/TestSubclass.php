@@ -27,4 +27,3 @@ namespace TYPO3\Flow\Tests\Functional\Property\Fixtures;
 class TestSubclass extends TestClass {
 
 }
-?>

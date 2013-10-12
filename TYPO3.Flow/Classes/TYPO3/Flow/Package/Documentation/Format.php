@@ -86,4 +86,3 @@ class Format {
 		return $languages;
 	}
 }
-?>

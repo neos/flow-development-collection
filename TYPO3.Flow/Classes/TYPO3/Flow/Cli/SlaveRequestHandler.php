@@ -134,5 +134,3 @@ class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 		exit(1);
 	}
 }
-
-?>

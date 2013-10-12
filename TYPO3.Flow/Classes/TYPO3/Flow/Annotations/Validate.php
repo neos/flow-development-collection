@@ -67,5 +67,3 @@ final class Validate {
 	}
 
 }
-
-?>

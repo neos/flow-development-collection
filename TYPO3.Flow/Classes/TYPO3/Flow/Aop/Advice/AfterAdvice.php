@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Aop\Advice;
 class AfterAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface {
 
 }
-
-?>

@@ -2039,4 +2039,3 @@ class ReflectionService {
 		return Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'PrecompiledReflectionData/')) . '/';
 	}
 }
-?>

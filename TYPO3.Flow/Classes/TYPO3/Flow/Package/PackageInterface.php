@@ -157,4 +157,3 @@ interface PackageInterface {
 	public function getPackageDocumentations();
 
 }
-?>

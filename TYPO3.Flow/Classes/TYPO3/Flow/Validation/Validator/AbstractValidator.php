@@ -144,5 +144,3 @@ abstract class AbstractValidator implements ValidatorInterface {
 		return $value === NULL || $value === '';
 	}
 }
-
-?>

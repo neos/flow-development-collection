@@ -90,4 +90,3 @@ class FloatConverterTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));
 	}
 }
-?>

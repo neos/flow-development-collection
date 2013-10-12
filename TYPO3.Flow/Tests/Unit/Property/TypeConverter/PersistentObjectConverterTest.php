@@ -393,4 +393,3 @@ class PersistentObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -40,5 +40,3 @@ class UuidValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

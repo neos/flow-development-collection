@@ -82,5 +82,3 @@ class LocaleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('ar_Arab_AE', (string)$locale);
 	}
 }
-
-?>

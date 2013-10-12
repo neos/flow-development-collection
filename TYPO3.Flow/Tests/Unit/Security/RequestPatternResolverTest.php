@@ -64,4 +64,3 @@ class RequestPatternResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 }
-?>

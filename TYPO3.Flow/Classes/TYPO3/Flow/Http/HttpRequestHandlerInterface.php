@@ -37,5 +37,3 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface {
 	public function getHttpResponse();
 
 }
-
-?>

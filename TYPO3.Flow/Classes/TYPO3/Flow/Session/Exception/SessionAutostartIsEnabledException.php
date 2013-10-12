@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Session\Exception;
  */
 class SessionAutostartIsEnabledException extends \TYPO3\Flow\Session\Exception {
 }
-
-?>

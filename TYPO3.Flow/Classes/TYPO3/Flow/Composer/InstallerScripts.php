@@ -94,5 +94,3 @@ class InstallerScripts {
 		$className::$methodName();
 	}
 }
-
-?>

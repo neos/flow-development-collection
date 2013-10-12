@@ -23,4 +23,3 @@ class PostRepository extends \TYPO3\Flow\Persistence\Doctrine\Repository {
 	const ENTITY_CLASSNAME = 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post';
 
 }
-?>

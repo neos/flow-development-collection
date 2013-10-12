@@ -187,5 +187,3 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse($message->hasCookie('foo'));
 	}
 }
-
-?>

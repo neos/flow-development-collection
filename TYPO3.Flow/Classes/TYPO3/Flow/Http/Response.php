@@ -590,4 +590,3 @@ class Response extends Message implements ResponseInterface {
 	}
 
 }
-?>

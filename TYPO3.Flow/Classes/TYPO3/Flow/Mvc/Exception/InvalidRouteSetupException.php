@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Mvc\Exception;
 class InvalidRouteSetupException extends \TYPO3\Flow\Mvc\Exception {
 
 }
-
-?>

@@ -111,4 +111,3 @@ class ClassReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase implements \TYP
 		$this->assertInstanceOf('TYPO3\Flow\Reflection\ClassReflection', $parentClass);
 	}
 }
-?>

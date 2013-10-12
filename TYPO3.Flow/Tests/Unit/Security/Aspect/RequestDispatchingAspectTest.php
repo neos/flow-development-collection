@@ -189,4 +189,3 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
 	}
 }
-?>

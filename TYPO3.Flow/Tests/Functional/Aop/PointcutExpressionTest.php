@@ -26,4 +26,3 @@ class PointcutExpressionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

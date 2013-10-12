@@ -16,5 +16,3 @@ namespace TYPO3\Flow\Persistence\Aspect;
  *
  */
 interface PersistenceMagicInterface {}
-
-?>

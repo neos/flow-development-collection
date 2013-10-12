@@ -50,4 +50,3 @@ class EventSubscriber implements \Doctrine\Common\EventSubscriber {
 	}
 
 }
-?>

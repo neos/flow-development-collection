@@ -106,5 +106,3 @@ class CldrModelTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(FALSE, $this->model->getAttributeValue($sampleNodeString, 'dateFormatLength'));
 	}
 }
-
-?>

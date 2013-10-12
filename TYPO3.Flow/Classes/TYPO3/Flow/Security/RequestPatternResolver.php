@@ -55,4 +55,3 @@ class RequestPatternResolver {
 		throw new \TYPO3\Flow\Security\Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
-?>

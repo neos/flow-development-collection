@@ -68,4 +68,3 @@ class AdviceChain {
 		$this->adviceIndex = -1;
 	}
 }
-?>

@@ -594,5 +594,3 @@ class Bootstrap {
 		}
 	}
 }
-
-?>

@@ -126,5 +126,3 @@ class XliffTranslationProviderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertAttributeSame($expectedSourcePath, 'sourcePath', $model);
 	}
 }
-
-?>

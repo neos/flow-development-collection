@@ -30,4 +30,3 @@ class TestEntityAspect {
 		return $result . ' Andi!';
 	}
 }
-?>

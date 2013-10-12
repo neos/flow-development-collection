@@ -163,5 +163,3 @@ class ResourceTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actualResult);
 	}
 }
-
-?>

@@ -194,5 +194,3 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-
-?>

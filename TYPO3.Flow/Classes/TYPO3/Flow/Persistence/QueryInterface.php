@@ -343,4 +343,3 @@ interface QueryInterface {
 	public function greaterThanOrEqual($propertyName, $operand);
 
 }
-?>

@@ -136,5 +136,3 @@ Migration: ' . $migrationIdentifier;
 		}
 	}
 }
-
-?>

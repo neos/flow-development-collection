@@ -34,4 +34,3 @@ interface ExceptionHandlerInterface {
 	public function setOptions(array $options);
 
 }
-?>

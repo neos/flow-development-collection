@@ -669,5 +669,3 @@ class Route {
 		$this->isParsed = TRUE;
 	}
 }
-
-?>

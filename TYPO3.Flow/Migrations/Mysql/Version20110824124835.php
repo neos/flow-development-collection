@@ -37,5 +37,3 @@ class Version20110824124835 extends AbstractMigration {
 		$this->addSql("RENAME TABLE typo3_flow3_security_account TO flow3_security_account");
 	}
 }
-
-?>

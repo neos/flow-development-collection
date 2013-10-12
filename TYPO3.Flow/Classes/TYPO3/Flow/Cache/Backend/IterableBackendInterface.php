@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Cache\Backend;
  */
 interface IterableBackendInterface extends BackendInterface, \Iterator {
 }
-
-?>

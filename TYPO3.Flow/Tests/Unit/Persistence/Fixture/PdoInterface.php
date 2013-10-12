@@ -43,4 +43,3 @@ interface PdoInterface {
 	public function rollBack();
 	public function setAttribute($attribute, $value);
 }
-?>

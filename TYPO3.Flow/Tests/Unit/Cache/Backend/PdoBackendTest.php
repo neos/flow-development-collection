@@ -233,4 +233,3 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

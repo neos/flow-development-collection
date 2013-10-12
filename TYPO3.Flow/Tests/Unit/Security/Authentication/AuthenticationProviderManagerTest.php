@@ -361,4 +361,3 @@ class AuthenticationProviderManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->authenticationProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
 	}
 }
-?>

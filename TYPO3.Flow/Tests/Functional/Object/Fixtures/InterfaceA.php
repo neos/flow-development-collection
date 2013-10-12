@@ -17,4 +17,3 @@ namespace TYPO3\Flow\Tests\Functional\Object\Fixtures;
 interface InterfaceA {
 
 }
-?>

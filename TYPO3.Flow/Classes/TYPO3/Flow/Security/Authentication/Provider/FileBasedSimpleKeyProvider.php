@@ -98,4 +98,3 @@ class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Pro
 	}
 
 }
-?>

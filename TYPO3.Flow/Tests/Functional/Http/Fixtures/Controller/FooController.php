@@ -25,4 +25,3 @@ class FooController extends \TYPO3\Flow\Mvc\Controller\AbstractController {
 		$response->appendContent('FooController responded');
 	}
 }
-?>

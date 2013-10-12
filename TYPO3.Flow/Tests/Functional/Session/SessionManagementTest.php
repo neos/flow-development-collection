@@ -102,4 +102,3 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($response->hasCookie('TYPO3_Flow_Session'));
 	}
 }
-?>

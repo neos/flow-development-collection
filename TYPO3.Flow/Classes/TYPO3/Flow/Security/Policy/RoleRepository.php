@@ -121,5 +121,3 @@ class RoleRepository extends \TYPO3\Flow\Persistence\Repository {
 		return $this->entityManager->getConnection()->isConnected();
 	}
 }
-
-?>

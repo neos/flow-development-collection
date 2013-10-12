@@ -58,5 +58,3 @@ class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 	}
 
 }
-
-?>

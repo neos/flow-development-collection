@@ -55,4 +55,3 @@ class FileTypes {
 		return MediaTypes::getMediaTypeFromFilename($filename);
 	}
 }
-?>

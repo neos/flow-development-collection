@@ -29,4 +29,3 @@ interface PhpCapableBackendInterface extends BackendInterface {
 	public function requireOnce($entryIdentifier);
 
 }
-?>

@@ -305,4 +305,3 @@ class Router implements RouterInterface {
 		return ($controllerObjectName !== FALSE) ? $controllerObjectName : NULL;
 	}
 }
-?>

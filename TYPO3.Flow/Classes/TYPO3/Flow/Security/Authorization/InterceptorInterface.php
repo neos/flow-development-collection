@@ -24,5 +24,3 @@ interface InterceptorInterface {
 	 */
 	public function invoke();
 }
-
-?>

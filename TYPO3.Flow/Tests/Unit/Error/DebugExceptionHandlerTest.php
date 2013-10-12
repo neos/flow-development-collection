@@ -104,5 +104,3 @@ Third line'
 		$this->assertSame($expectedResult, $actualResult);
 	}
 }
-
-?>

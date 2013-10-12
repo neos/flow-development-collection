@@ -131,5 +131,3 @@ class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 		return in_array($attributeName, $distinguishingAttributes);
 	}
 }
-
-?>

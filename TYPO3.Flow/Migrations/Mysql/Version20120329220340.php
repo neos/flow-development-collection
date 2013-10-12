@@ -36,5 +36,3 @@ class Version20120329220340 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_flow3_security_authorization_resource_securitypublis_6180a CHANGE allowedroles allowedroles LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'");
 	}
 }
-
-?>

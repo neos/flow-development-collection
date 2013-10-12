@@ -28,5 +28,3 @@ class Error extends \TYPO3\Flow\Error\Error {
 	 */
 	protected $code = 1201447005;
 }
-
-?>

@@ -73,4 +73,3 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
 	}
 }
-?>

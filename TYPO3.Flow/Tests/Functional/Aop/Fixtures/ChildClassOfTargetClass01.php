@@ -38,4 +38,3 @@ class ChildClassOfTargetClass01 extends TargetClass01 {
 	}
 
 }
-?>

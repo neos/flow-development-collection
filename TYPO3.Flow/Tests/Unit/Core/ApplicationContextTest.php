@@ -145,4 +145,3 @@ class ApplicationContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('Production', (string) $rootContext);
 	}
 }
-?>

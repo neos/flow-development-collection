@@ -105,5 +105,3 @@ class SessionManager implements SessionManagerInterface {
 		return $taggedSessions;
 	}
 }
-
-?>

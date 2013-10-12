@@ -28,5 +28,3 @@ class SubSubEntity extends SubEntity {
 	protected $yetAnotherString;
 
 }
-
-?>

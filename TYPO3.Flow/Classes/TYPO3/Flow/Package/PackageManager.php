@@ -1016,5 +1016,3 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		);
 	}
 }
-
-?>

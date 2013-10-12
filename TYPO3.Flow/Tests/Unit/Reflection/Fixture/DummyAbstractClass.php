@@ -18,4 +18,3 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
 abstract class DummyAbstractClass {
 
 }
-?>

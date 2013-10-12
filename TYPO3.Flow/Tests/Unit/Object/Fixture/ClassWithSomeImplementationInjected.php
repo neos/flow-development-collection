@@ -28,4 +28,3 @@ class ClassWithSomeImplementationInjected {
 		$this->optionalSetterArgument = $setterArgument;
 	}
 }
-?>

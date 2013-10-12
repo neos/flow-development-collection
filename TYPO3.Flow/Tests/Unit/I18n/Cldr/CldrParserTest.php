@@ -30,5 +30,3 @@ class CldrParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($sampleParsedData, $result);
 	}
 }
-
-?>

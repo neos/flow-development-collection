@@ -18,4 +18,3 @@ namespace TYPO3\Flow\Mvc\Exception;
  */
 class InvalidActionNameException extends \TYPO3\Flow\Mvc\Exception {
 }
-?>

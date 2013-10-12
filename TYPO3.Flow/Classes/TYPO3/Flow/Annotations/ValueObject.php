@@ -22,5 +22,3 @@ namespace TYPO3\Flow\Annotations;
  * @Target("CLASS")
  */
 final class ValueObject {}
-
-?>

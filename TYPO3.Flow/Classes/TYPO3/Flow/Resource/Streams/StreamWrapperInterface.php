@@ -365,5 +365,3 @@ interface StreamWrapperInterface {
 	public function pathStat($path, $flags);
 
 }
-
-?>

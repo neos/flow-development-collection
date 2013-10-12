@@ -62,4 +62,3 @@ class PersistenceMagicAspectTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($clonedEntity->Flow_Persistence_clone);
 	}
 }
-?>

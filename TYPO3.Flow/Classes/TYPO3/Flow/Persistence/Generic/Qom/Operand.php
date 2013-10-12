@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
 class Operand {
 
 }
-
-?>

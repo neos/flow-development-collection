@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Reflection\Exception;
  */
 class ClassSchemaConstraintViolationException extends \TYPO3\Flow\Reflection\Exception {
 }
-
-?>

@@ -94,4 +94,3 @@ class SessionObjectMethodsPointcutFilter implements \TYPO3\Flow\Aop\Pointcut\Poi
 		return $classNameIndex->intersect($sessionClasses);
 	}
 }
-?>

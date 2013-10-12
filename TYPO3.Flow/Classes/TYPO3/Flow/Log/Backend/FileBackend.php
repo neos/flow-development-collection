@@ -253,4 +253,3 @@ class FileBackend extends \TYPO3\Flow\Log\Backend\AbstractBackend {
 	public function close() {}
 
 }
-?>

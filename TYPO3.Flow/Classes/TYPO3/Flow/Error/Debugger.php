@@ -498,5 +498,3 @@ function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) 
 		echo $output;
 	}
 }
-
-?>

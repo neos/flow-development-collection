@@ -49,5 +49,3 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 		$this->table['name'] = $this->reflClass->getShortName();
 	}
 }
-
-?>

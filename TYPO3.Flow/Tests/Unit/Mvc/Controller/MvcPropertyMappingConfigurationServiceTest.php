@@ -281,4 +281,3 @@ class MvcPropertyMappingConfigurationServiceTest extends \TYPO3\Flow\Tests\UnitT
 		return $arguments;
 	}
 }
-?>

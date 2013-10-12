@@ -77,5 +77,3 @@ class WebRedirect extends AbstractEntryPoint {
 	}
 
 }
-
-?>

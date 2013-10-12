@@ -72,5 +72,3 @@ class RequestFilter {
 		return FALSE;
 	}
 }
-
-?>

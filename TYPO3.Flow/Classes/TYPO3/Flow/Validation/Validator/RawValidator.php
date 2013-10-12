@@ -31,4 +31,3 @@ class RawValidator extends AbstractValidator {
 	public function isValid($value) {
 	}
 }
-?>

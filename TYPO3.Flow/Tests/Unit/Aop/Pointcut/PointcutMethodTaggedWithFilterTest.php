@@ -44,4 +44,3 @@ class PointcutMethodTaggedWithFilterTest extends \TYPO3\Flow\Tests\UnitTestCase 
 		$this->assertFalse($filter->matches(__CLASS__, 'foo', __CLASS__, 1234));
 	}
 }
-?>

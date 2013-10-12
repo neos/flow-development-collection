@@ -139,5 +139,3 @@ class EmptyQueryResult implements  QueryResultInterface {
 		return 0;
 	}
 }
-
-?>

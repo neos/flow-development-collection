@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Aop\Advice;
 class AfterReturningAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice {
 
 }
-?>

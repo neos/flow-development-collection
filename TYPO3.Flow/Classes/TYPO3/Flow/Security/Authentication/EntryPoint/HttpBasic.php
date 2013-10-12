@@ -33,4 +33,3 @@ class HttpBasic extends AbstractEntryPoint {
 	}
 
 }
-?>

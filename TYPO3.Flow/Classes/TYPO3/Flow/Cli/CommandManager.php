@@ -219,4 +219,3 @@ class CommandManager {
 		return $searchedCommandIdentifierParts === $commandIdentifierParts;
 	}
 }
-?>

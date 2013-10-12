@@ -44,5 +44,3 @@ class AccessDeny implements \TYPO3\Flow\Security\Authorization\AccessDecisionVot
 
 	}
 }
-
-?>

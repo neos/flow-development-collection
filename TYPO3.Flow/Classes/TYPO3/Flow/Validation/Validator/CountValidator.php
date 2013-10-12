@@ -47,5 +47,3 @@ class CountValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

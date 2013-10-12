@@ -32,5 +32,3 @@ class AbstractExceptionHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$exceptionHandler->handleException($exception);
 	}
 }
-
-?>

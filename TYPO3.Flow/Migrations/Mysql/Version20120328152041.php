@@ -29,5 +29,3 @@ class Version20120328152041 extends AbstractMigration {
 		$this->addSql("RENAME TABLE typo3_flow3_mvc_routing_objectpathmapping TO typo3_flow3_mvc_web_routing_objectpathmapping");
 	}
 }
-
-?>

@@ -37,5 +37,3 @@ class ErrorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($errorCode, $error->getCode());
 	}
 }
-
-?>

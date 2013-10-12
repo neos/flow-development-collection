@@ -83,5 +83,3 @@ class QueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->query->setOffset(-1);
 	}
 }
-
-?>

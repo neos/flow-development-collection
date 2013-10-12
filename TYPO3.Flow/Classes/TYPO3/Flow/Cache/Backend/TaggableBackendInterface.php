@@ -38,5 +38,3 @@ interface TaggableBackendInterface extends BackendInterface {
 	public function findIdentifiersByTag($tag);
 
 }
-
-?>

@@ -617,4 +617,3 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

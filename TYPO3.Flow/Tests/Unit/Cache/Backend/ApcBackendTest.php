@@ -274,4 +274,3 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

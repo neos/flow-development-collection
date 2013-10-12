@@ -24,5 +24,3 @@ namespace TYPO3\Flow\I18n\TranslationProvider\Exception;
 class UnsupportedTranslationMethodException extends \TYPO3\Flow\I18n\Exception {
 
 }
-
-?>

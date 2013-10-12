@@ -117,4 +117,3 @@ interface RsaWalletServiceInterface {
 	 */
 	public function destroyKeypair($uuid);
 }
-?>

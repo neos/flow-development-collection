@@ -17,5 +17,3 @@ namespace TYPO3\Flow\Mvc\Routing\Exception;
  */
 class InvalidControllerException extends \TYPO3\Flow\Mvc\Exception {
 }
-
-?>

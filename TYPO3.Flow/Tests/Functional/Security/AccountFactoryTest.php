@@ -45,4 +45,3 @@ class AccountFactoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($actualAccount->hasRole($this->policyService->getRole('TYPO3.Flow:Customer')));
 	}
 }
-?>

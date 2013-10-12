@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Object\Exception;
 class UnresolvedDependenciesException extends \TYPO3\Flow\Object\Exception {
 
 }
-
-?>

@@ -96,4 +96,3 @@ class PointcutMethodAnnotatedWithFilter implements \TYPO3\Flow\Aop\Pointcut\Poin
 		return $classNameIndex->intersect($annotatedIndex);
 	}
 }
-?>

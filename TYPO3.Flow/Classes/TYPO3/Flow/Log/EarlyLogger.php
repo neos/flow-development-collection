@@ -119,5 +119,3 @@ class EarlyLogger implements SystemLoggerInterface {
 		return $logger;
 	}
 }
-
-?>

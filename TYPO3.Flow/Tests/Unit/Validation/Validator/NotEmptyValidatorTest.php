@@ -70,5 +70,3 @@ class NotEmptyValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\
 		$this->assertEquals(1, count($this->validator->validate(NULL)->getErrors()));
 	}
 }
-
-?>

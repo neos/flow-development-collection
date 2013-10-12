@@ -88,4 +88,3 @@ class PersistedUsernamePasswordProvider extends AbstractProvider {
 	}
 
 }
-?>

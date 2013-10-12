@@ -48,4 +48,3 @@ class ObjectManagerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($objectByInterface, $objectByClassName);
 	}
 }
-?>

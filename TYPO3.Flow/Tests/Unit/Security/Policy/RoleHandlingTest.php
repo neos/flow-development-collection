@@ -105,5 +105,3 @@ class RoleHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

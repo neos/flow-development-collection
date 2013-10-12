@@ -362,5 +362,3 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
 	}
 
 }
-
-?>

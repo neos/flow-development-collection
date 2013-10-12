@@ -47,5 +47,3 @@ class Version20120412194611 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_flow3_security_policy_role");
 	}
 }
-
-?>

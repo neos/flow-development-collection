@@ -16,4 +16,3 @@ namespace TYPO3\Flow\Security\Authentication\Token;
  */
 interface SessionlessTokenInterface {
 }
-?>

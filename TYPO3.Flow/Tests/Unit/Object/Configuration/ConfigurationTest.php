@@ -129,4 +129,3 @@ class ConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('create', $this->objectConfiguration->getFactoryMethodName());
 	}
 }
-?>

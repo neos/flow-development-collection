@@ -306,5 +306,3 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 		return str_pad($string, $formatLength, '0', \STR_PAD_LEFT);
 	}
 }
-
-?>

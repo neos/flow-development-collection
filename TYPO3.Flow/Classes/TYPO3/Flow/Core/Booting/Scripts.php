@@ -591,5 +591,3 @@ class Scripts {
 		return trim($command);
 	}
 }
-
-?>

@@ -121,4 +121,3 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

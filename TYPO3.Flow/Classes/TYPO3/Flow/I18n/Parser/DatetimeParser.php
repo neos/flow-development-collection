@@ -629,5 +629,3 @@ class DatetimeParser {
 		throw new \TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException('Expected number not found in the string.', 1280498431);
 	}
 }
-
-?>

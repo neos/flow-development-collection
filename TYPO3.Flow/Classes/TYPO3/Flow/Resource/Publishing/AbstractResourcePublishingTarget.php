@@ -39,5 +39,3 @@ abstract class AbstractResourcePublishingTarget implements \TYPO3\Flow\Resource\
 		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
 	}
 }
-
-?>

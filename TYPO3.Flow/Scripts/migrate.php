@@ -107,5 +107,3 @@ function formatVersion($timestamp) {
 		substr($timestamp, 10, 2)
 	);
 }
-
-?>

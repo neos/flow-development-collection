@@ -406,4 +406,3 @@ class RsaWalletServicePhp implements \TYPO3\Flow\Security\Cryptography\RsaWallet
 	}
 
 }
-?>

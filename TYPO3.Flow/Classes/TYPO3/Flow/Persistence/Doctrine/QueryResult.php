@@ -183,5 +183,3 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 	}
 
 }
-
-?>

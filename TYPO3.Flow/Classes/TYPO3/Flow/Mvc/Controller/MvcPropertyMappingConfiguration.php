@@ -70,4 +70,3 @@ class MvcPropertyMappingConfiguration extends \TYPO3\Flow\Property\PropertyMappi
 		return $this;
 	}
 }
-?>

@@ -172,5 +172,3 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 		}
 	}
 }
-
-?>

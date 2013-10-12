@@ -36,5 +36,3 @@ final class Autowiring {
 	}
 
 }
-
-?>

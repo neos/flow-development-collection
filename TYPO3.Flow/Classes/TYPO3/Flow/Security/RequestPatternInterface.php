@@ -40,5 +40,3 @@ interface RequestPatternInterface {
 	 */
 	public function matchRequest(\TYPO3\Flow\Mvc\RequestInterface $request);
 }
-
-?>

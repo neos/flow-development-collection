@@ -142,4 +142,3 @@ interface TokenInterface {
 	public function __toString();
 
 }
-?>

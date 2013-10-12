@@ -207,4 +207,3 @@ class VariableFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
 	}
 }
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Persistence\Exception;
  */
 class KnownObjectException extends \TYPO3\Flow\Persistence\Exception {
 }
-
-?>

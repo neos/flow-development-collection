@@ -56,4 +56,3 @@ class InternalRequestEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

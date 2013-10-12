@@ -571,4 +571,3 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 	}
 }
-?>

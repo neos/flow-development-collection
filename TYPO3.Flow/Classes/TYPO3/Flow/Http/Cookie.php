@@ -382,5 +382,3 @@ class Cookie {
 	}
 
 }
-
-?>

@@ -57,5 +57,3 @@ class Uri implements \TYPO3\Flow\Security\RequestPatternInterface {
 		return (boolean)preg_match('/^' . $this->uriPattern . '$/', $request->getHttpRequest()->getUri()->getPath());
 	}
 }
-
-?>

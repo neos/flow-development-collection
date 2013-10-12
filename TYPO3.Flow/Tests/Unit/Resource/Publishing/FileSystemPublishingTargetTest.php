@@ -377,4 +377,3 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedBaseUri, $actualBaseUri);
 	}
 }
-?>

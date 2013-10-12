@@ -42,5 +42,3 @@ class Version20120625211647 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_flow3_resource_publishing_abstractpublishingconfiguration");
 	}
 }
-
-?>

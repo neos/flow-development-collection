@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Validation;
 class Exception extends \TYPO3\Flow\Exception {
 
 }
-
-?>

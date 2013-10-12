@@ -130,4 +130,3 @@ abstract class AbstractTypeConverter implements \TYPO3\Flow\Property\TypeConvert
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
 	}
 }
-?>

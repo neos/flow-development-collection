@@ -17,4 +17,3 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  */
 class SubClassOfParentClass1 extends ParentClass1 {
 }
-?>

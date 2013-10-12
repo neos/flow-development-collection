@@ -44,4 +44,3 @@ interface ValidatorInterface {
 	public function getOptions();
 
 }
-?>

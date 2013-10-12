@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Http\Client;
 class InfiniteRedirectionException extends \TYPO3\Flow\Exception {
 
 }
-?>

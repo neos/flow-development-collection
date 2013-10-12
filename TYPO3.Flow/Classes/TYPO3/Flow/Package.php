@@ -75,5 +75,3 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Flow\Command\CacheCommandController', 'warmupCaches', 'TYPO3\Flow\Configuration\ConfigurationManager', 'warmup');
 	}
 }
-
-?>

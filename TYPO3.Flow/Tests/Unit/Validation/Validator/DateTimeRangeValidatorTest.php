@@ -196,5 +196,3 @@ class DateTimeRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
 
 
 }
-
-?>

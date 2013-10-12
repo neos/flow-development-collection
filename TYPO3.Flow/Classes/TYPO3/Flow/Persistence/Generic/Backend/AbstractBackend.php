@@ -740,5 +740,3 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 	}
 
 }
-
-?>

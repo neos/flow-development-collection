@@ -31,4 +31,3 @@ class MockBCommandController extends \TYPO3\Flow\Cli\Command {
 	public function bazCommand() {
 	}
 }
-?>

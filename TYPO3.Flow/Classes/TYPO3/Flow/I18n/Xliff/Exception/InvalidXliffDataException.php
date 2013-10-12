@@ -19,5 +19,3 @@ namespace TYPO3\Flow\I18n\Xliff\Exception;
 class InvalidXliffDataException extends \TYPO3\Flow\I18n\Exception\InvalidXmlFileException {
 
 }
-
-?>

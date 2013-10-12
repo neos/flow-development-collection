@@ -219,5 +219,3 @@ class TransientSession implements SessionInterface {
 	}
 
 }
-
-?>

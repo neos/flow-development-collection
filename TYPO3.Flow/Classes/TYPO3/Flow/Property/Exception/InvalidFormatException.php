@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Property\Exception;
 class InvalidFormatException extends \TYPO3\Flow\Property\Exception {
 
 }
-?>

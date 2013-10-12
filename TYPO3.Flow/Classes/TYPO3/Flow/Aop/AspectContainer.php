@@ -194,5 +194,3 @@ class AspectContainer {
 		return $this->cachedTargetClassNameCandidates;
 	}
 }
-
-?>

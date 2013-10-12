@@ -29,5 +29,3 @@ class Version20120412093748 extends AbstractMigration {
 		$this->addSql("RENAME TABLE typo3_flow3_security_authorization_resource_securitypubli_6180a TO typo3_flow3_security_authorization_resource_securitypublis_6180a");
 	}
 }
-
-?>

@@ -282,4 +282,3 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 		return $commandsByPackagesAndControllers;
 	}
 }
-?>

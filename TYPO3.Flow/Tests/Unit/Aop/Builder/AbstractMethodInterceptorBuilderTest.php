@@ -164,4 +164,3 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\Flow\Tests\UnitTestCas
 	}
 
 }
-?>

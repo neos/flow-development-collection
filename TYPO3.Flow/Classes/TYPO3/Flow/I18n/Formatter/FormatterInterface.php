@@ -29,5 +29,3 @@ interface FormatterInterface {
 	 */
 	public function format($value, \TYPO3\Flow\I18n\Locale $locale, array $styleProperties = array());
 }
-
-?>

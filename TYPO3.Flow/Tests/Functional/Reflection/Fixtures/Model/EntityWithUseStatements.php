@@ -62,5 +62,3 @@ class EntityWithUseStatements {
 	public function simpleType($parameter) {
 	}
 }
-
-?>

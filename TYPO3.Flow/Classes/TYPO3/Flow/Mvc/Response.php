@@ -78,4 +78,3 @@ class Response implements \TYPO3\Flow\Mvc\ResponseInterface {
 		return $this->getContent();
 	}
 }
-?>

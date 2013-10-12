@@ -96,4 +96,3 @@ class TestingProvider extends \TYPO3\Flow\Security\Authentication\Provider\Abstr
 	}
 
 }
-?>

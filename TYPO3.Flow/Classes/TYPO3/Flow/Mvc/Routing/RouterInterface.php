@@ -49,4 +49,3 @@ interface RouterInterface {
 	 */
 	public function getControllerObjectName($packageKey, $subPackageKey, $controllerName);
 }
-?>

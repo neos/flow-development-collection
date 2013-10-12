@@ -132,5 +132,3 @@ class FunctionalTestRequestHandler implements \TYPO3\Flow\Http\HttpRequestHandle
 		$this->httpResponse = $response;
 	}
 }
-
-?>

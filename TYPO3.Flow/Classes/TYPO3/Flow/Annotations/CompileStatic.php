@@ -20,5 +20,3 @@ use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
 final class CompileStatic {
 
 }
-
-?>

@@ -21,5 +21,3 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
 class StaticOperand extends \TYPO3\Flow\Persistence\Generic\Qom\Operand {
 
 }
-
-?>

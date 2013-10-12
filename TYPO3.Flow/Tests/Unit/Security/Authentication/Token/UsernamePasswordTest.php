@@ -94,4 +94,3 @@ class UsernamePasswordTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('Username: "TYPO3.Flow"', (string)$token);
 	}
 }
-?>

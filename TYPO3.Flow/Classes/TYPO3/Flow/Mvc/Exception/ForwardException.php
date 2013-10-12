@@ -46,5 +46,3 @@ class ForwardException extends StopActionException {
 	}
 
 }
-
-?>

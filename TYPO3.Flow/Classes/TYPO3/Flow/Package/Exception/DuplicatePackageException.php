@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Package\Exception;
 class DuplicatePackageException extends \TYPO3\Flow\Package\Exception {
 
 }
-?>

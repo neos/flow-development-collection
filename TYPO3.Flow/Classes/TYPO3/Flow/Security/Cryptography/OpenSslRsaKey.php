@@ -57,4 +57,3 @@ class OpenSslRsaKey {
 		return $this->keyString;
 	}
 }
-?>

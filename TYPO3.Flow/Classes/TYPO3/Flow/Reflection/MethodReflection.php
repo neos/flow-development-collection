@@ -102,5 +102,3 @@ class MethodReflection extends \ReflectionMethod {
 		return $this->docCommentParser;
 	}
 }
-
-?>

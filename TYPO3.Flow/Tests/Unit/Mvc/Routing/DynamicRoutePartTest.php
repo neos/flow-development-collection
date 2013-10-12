@@ -379,4 +379,3 @@ class DynamicRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

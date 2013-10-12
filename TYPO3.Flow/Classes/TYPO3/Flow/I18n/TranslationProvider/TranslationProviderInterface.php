@@ -48,5 +48,3 @@ interface TranslationProviderInterface {
 	 */
 	public function getTranslationById($labelId, \TYPO3\Flow\I18n\Locale $locale, $pluralForm = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.Flow');
 }
-
-?>

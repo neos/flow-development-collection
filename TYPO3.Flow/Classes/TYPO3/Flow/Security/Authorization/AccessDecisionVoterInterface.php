@@ -42,5 +42,3 @@ interface AccessDecisionVoterInterface {
 	 */
 	public function voteForResource(\TYPO3\Flow\Security\Context $securityContext, $resource);
 }
-
-?>

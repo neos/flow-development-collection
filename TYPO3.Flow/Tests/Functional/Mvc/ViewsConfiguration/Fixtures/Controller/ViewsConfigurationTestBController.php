@@ -25,4 +25,3 @@ class ViewsConfigurationTestBController extends ActionController {
 	public function firstAction() {
 	}
 }
-?>

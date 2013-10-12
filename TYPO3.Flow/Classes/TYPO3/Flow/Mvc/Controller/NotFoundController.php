@@ -76,5 +76,3 @@ class NotFoundController extends \TYPO3\Flow\Mvc\Controller\AbstractController i
 		}
 	}
 }
-
-?>

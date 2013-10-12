@@ -88,4 +88,3 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -19,5 +19,3 @@ use TYPO3\Flow\Annotations as Flow;
 class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository {
 
 }
-
-?>

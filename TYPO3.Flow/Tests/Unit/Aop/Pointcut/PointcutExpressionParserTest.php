@@ -357,4 +357,3 @@ class PointcutExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($result, $expectedRuntimeEvaluationsDefinition, 'The string has not been parsed correctly.');
 	}
 }
-?>

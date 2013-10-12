@@ -44,5 +44,3 @@ class ResourcePointerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($hash, (string)$resourcePointer);
 	}
 }
-
-?>

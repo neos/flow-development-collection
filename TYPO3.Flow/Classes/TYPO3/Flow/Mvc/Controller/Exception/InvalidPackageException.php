@@ -17,5 +17,3 @@ namespace TYPO3\Flow\Mvc\Controller\Exception;
  */
 class InvalidPackageException extends \TYPO3\Flow\Mvc\Controller\Exception {
 }
-
-?>

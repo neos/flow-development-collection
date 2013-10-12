@@ -37,5 +37,3 @@ abstract class AbstractValidatorTestcase extends \TYPO3\Flow\Tests\UnitTestCase 
 		$this->validator = $this->getValidator($options);
 	}
 }
-
-?>

@@ -29,5 +29,3 @@ abstract class AbstractAnnotatedClassWithUseStatements {
 	protected $superEntity;
 
 }
-
-?>

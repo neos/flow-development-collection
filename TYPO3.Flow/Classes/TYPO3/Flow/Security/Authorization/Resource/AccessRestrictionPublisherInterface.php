@@ -26,5 +26,3 @@ interface AccessRestrictionPublisherInterface {
 	 */
 	public function publishAccessRestrictionsForPath($path);
 }
-
-?>

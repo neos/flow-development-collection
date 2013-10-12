@@ -245,5 +245,3 @@ class Message {
 		$this->headers->removeCookie($name);
 	}
 }
-
-?>

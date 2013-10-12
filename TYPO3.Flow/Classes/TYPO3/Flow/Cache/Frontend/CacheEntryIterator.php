@@ -96,4 +96,3 @@ class CacheEntryIterator implements \Iterator {
 	}
 
 }
-?>

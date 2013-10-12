@@ -20,4 +20,3 @@ namespace TYPO3\Flow\Utility\Exception;
 class InvalidPositionException extends \TYPO3\Flow\Exception {
 
 }
-?>

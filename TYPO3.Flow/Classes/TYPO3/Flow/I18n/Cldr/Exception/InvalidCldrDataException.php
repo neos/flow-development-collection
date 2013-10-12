@@ -21,5 +21,3 @@ namespace TYPO3\Flow\I18n\Cldr\Exception;
 class InvalidCldrDataException extends \TYPO3\Flow\I18n\Exception {
 
 }
-
-?>

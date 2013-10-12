@@ -36,4 +36,3 @@ interface ControllerInterface {
 	public function processRequest(\TYPO3\Flow\Mvc\RequestInterface $request, \TYPO3\Flow\Mvc\ResponseInterface $response);
 
 }
-?>

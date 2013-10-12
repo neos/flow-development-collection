@@ -143,5 +143,3 @@ class TranslatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

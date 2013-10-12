@@ -60,4 +60,3 @@ class Advisor {
 		return $this->pointcut;
 	}
 }
-?>

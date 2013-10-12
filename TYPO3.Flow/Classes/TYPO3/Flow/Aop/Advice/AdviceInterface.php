@@ -41,4 +41,3 @@ interface AdviceInterface {
 	 */
 	public function getAdviceMethodName();
 }
-?>

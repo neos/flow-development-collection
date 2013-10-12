@@ -217,4 +217,3 @@ class FloatConverter extends AbstractTypeConverter {
 		return $keysAndValues;
 	}
 }
-?>

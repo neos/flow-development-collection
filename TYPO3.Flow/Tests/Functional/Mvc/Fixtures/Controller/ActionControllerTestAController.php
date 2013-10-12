@@ -93,4 +93,3 @@ class ActionControllerTestAController extends ActionController {
 	public function b() {
 	}
 }
-?>

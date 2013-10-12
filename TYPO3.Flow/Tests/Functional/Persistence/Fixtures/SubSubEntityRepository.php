@@ -31,5 +31,3 @@ class SubSubEntityRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 }
-
-?>

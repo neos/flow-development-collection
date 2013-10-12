@@ -190,5 +190,3 @@ class GenericObjectValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
 		$this->assertEquals(1, $matcher->getInvocationCount());
 	}
 }
-
-?>

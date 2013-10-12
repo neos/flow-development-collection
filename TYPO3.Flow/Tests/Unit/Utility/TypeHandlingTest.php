@@ -158,4 +158,3 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expected, \TYPO3\Flow\Utility\TypeHandling::isCollectionType($type), 'Failed for ' . $type);
 	}
 }
-?>

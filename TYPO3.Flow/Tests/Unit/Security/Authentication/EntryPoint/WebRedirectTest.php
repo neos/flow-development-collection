@@ -93,4 +93,3 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('http://resolved/redirect/uri', $response->getHeader('Location'));
 	}
 }
-?>

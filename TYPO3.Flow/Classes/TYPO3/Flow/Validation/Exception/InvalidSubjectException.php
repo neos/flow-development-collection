@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Validation\Exception;
 class InvalidSubjectException extends \TYPO3\Flow\Validation\Exception {
 
 }
-
-?>

@@ -437,4 +437,3 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

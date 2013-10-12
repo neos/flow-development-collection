@@ -50,4 +50,3 @@ interface BackendInterface {
 	 */
 	public function close();
 }
-?>

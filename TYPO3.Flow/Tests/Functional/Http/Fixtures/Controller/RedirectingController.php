@@ -36,4 +36,3 @@ class RedirectingController extends ActionController {
 		return 'arrived.';
 	}
 }
-?>

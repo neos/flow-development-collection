@@ -256,4 +256,3 @@ class HashServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($string, $actualResult);
 	}
 }
-?>

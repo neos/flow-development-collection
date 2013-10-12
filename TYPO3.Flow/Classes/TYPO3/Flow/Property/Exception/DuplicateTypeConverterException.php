@@ -18,4 +18,3 @@ namespace TYPO3\Flow\Property\Exception;
 class DuplicateTypeConverterException extends \TYPO3\Flow\Property\Exception {
 
 }
-?>

@@ -25,4 +25,3 @@ class PrototypeClassDsub extends PrototypeClassD {
 	protected $objectD;
 
 }
-?>

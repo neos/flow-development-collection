@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Package\Exception;
 class InvalidPackageKeyException extends \TYPO3\Flow\Package\Exception {
 
 }
-
-?>

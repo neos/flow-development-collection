@@ -226,4 +226,3 @@ class RouterCachingServiceTest extends UnitTestCase {
 	}
 
 }
-?>

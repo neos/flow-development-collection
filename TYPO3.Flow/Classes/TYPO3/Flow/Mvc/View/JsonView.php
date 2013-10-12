@@ -297,5 +297,3 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 		}
 	}
 }
-
-?>

@@ -675,5 +675,3 @@ class Request extends Message {
 		return MediaTypes::trimMediaType($rawMediaType);
 	}
 }
-
-?>

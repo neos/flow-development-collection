@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Mvc\Exception;
 class InvalidRequestTypeException extends \TYPO3\Flow\Mvc\Exception {
 
 }
-?>

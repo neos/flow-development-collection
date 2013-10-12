@@ -236,5 +236,3 @@ class DummyContext extends Context {
 		$this->initialized = FALSE;
 	}
 }
-
-?>

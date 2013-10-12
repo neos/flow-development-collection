@@ -160,4 +160,3 @@ abstract class AbstractFrontend implements FrontendInterface {
 	}
 
 }
-?>

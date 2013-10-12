@@ -116,4 +116,3 @@ class PropertyIntroduction {
 		return $this->declaringAspectClassName;
 	}
 }
-?>

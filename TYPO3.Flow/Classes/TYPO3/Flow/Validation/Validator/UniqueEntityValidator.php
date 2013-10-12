@@ -94,4 +94,3 @@ class UniqueEntityValidator extends AbstractValidator {
 	}
 
 }
-?>

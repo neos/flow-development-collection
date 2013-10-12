@@ -52,5 +52,3 @@ class NotEmptyValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

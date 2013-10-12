@@ -32,4 +32,3 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($requestPattern->matchRequest($request));
 	}
 }
-?>

@@ -97,5 +97,3 @@ class LocaleCollectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertNull($this->localeCollection->getParentLocaleOf($this->locales[0]));
 	}
 }
-
-?>

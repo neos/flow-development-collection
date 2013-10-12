@@ -81,5 +81,3 @@ class NumberValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Ab
 		$this->assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
 	}
 }
-
-?>

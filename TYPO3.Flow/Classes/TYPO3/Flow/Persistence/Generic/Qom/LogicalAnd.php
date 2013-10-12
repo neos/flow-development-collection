@@ -63,4 +63,3 @@ class LogicalAnd extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
 	}
 
 }
-?>

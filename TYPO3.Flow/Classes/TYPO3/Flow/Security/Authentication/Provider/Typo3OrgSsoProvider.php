@@ -94,4 +94,3 @@ class Typo3OrgSsoProvider extends AbstractProvider {
 	}
 
 }
-?>

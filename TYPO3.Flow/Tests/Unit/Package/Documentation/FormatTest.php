@@ -53,4 +53,3 @@ class FormatTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array('en'), $availableLanguages);
 	}
 }
-?>

@@ -24,5 +24,3 @@ class AccessDeniedException extends \TYPO3\Flow\Security\Exception {
 	protected $statusCode = 403;
 
 }
-
-?>

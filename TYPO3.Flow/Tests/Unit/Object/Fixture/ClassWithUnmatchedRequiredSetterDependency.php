@@ -9,4 +9,3 @@ class ClassWithUnmatchedRequiredSetterDependency {
 		$this->requiredSetterArgument = $setterArgument;
 	}
 }
-?>

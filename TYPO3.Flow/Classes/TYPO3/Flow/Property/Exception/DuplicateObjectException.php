@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Property\Exception;
 class DuplicateObjectException extends \TYPO3\Flow\Property\Exception {
 
 }
-?>

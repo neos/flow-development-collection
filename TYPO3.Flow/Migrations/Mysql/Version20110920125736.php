@@ -29,5 +29,3 @@ class Version20110920125736 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_flow3_mvc_web_routing_objectpathmapping");
 	}
 }
-
-?>

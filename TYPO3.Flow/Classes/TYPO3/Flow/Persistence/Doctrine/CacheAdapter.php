@@ -95,5 +95,3 @@ class CacheAdapter implements \Doctrine\Common\Cache\Cache {
 		return NULL;
 	}
 }
-
-?>

@@ -66,5 +66,3 @@ class CommandExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler
 		exit(1);
 	}
 }
-
-?>

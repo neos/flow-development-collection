@@ -123,5 +123,3 @@ class DatetimeParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedParsedDatetime, $result);
 	}
 }
-
-?>

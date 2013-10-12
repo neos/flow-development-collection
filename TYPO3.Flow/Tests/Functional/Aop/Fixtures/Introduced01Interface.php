@@ -26,4 +26,3 @@ interface Introduced01Interface {
 	 */
 	public function introducedMethodWithArguments($someString = "some string");
 }
-?>

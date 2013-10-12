@@ -261,4 +261,3 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array(__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED), $result);
 	}
 }
-?>

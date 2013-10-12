@@ -27,5 +27,3 @@ final class Session {
 	public $autoStart = FALSE;
 
 }
-
-?>

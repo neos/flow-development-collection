@@ -468,5 +468,3 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expected, $dataMapper->_call('mapArray', $arrayValues));
 	}
 }
-
-?>

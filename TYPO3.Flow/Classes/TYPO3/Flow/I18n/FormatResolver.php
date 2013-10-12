@@ -175,5 +175,3 @@ class FormatResolver {
 		return $foundFormatter;
 	}
 }
-
-?>

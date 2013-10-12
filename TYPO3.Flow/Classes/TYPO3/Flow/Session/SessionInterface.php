@@ -135,5 +135,3 @@ interface SessionInterface {
 	public function collectGarbage();
 
 }
-
-?>

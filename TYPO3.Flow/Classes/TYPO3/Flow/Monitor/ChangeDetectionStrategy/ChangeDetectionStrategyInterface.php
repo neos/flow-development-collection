@@ -50,4 +50,3 @@ interface ChangeDetectionStrategyInterface {
 	public function shutdownObject();
 
 }
-?>

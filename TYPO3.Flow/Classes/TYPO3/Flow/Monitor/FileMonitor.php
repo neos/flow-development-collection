@@ -295,4 +295,3 @@ class FileMonitor {
 		$this->changeDetectionStrategy->shutdownObject();
 	}
 }
-?>

@@ -95,4 +95,3 @@ abstract class AbstractParty {
 	 */
 	abstract public function getPartyType();
 }
-?>

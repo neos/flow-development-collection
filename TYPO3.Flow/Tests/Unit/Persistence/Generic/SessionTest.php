@@ -608,4 +608,3 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

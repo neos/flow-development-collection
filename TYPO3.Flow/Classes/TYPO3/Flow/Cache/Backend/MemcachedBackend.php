@@ -400,5 +400,3 @@ class MemcachedBackend extends AbstractBackend implements TaggableBackendInterfa
 	}
 
 }
-
-?>

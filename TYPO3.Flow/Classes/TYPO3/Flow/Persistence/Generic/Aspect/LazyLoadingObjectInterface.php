@@ -37,4 +37,3 @@ interface LazyLoadingObjectInterface {
 	public function Flow_Persistence_LazyLoadingObject_initialize();
 
 }
-?>

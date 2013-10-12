@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Aop\Exception;
 class InvalidConstructorSignatureException extends \TYPO3\Flow\Aop\Exception {
 
 }
-
-?>

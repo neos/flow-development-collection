@@ -45,4 +45,3 @@ class MockBackend extends \TYPO3\Flow\Cache\Backend\NullBackend {
 		return $this->someOption;
 	}
 }
-?>

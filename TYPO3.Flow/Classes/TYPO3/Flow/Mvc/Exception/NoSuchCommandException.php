@@ -18,4 +18,3 @@ namespace TYPO3\Flow\Mvc\Exception;
  */
 class NoSuchCommandException extends CommandException {
 }
-?>

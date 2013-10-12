@@ -33,5 +33,3 @@ class AnnotatedClassWithUseStatements extends AbstractAnnotatedClassWithUseState
 	 */
 	protected $subEntity;
 }
-
-?>

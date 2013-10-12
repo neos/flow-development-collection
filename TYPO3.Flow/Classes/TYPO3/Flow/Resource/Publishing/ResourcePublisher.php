@@ -86,5 +86,3 @@ class ResourcePublisher {
 		return $this->resourcePublishingTarget->getPersistentResourceWebUri($resource);
 	}
 }
-
-?>

@@ -207,4 +207,3 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->router->setRoutesConfiguration($routesConfiguration);
 	}
 }
-?>

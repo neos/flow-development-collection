@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Mvc\Exception;
 class InvalidRoutePartHandlerException extends \TYPO3\Flow\Mvc\Exception {
 
 }
-
-?>

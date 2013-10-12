@@ -57,4 +57,3 @@ class IntegerConverter extends AbstractTypeConverter {
 		return (integer)$source;
 	}
 }
-?>

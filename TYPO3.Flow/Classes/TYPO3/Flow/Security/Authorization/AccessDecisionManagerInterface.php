@@ -43,5 +43,3 @@ interface AccessDecisionManagerInterface {
 	 */
 	public function hasAccessToResource($resource);
 }
-
-?>

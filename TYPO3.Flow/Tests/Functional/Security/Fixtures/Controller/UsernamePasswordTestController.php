@@ -42,4 +42,3 @@ class UsernamePasswordTestController extends AbstractAuthenticationController {
 		throw new \TYPO3\Flow\Exception('UsernamePasswordTestController failure!', 27);
 	}
 }
-?>

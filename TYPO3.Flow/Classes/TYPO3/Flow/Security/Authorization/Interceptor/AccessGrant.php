@@ -29,5 +29,3 @@ class AccessGrant implements \TYPO3\Flow\Security\Authorization\InterceptorInter
 		return TRUE;
 	}
 }
-
-?>

@@ -43,4 +43,3 @@ abstract class AbstractEntryPoint implements \TYPO3\Flow\Security\Authentication
 	}
 
 }
-?>

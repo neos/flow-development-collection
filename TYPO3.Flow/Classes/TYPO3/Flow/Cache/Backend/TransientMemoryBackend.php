@@ -147,4 +147,3 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
 	public function collectGarbage() {
 	}
 }
-?>

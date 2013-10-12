@@ -329,5 +329,3 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	}
 
 }
-
-?>

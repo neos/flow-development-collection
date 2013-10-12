@@ -249,5 +249,3 @@ abstract class AbstractMethodInterceptorBuilder {
 	}
 
 }
-
-?>

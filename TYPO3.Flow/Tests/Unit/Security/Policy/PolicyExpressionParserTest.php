@@ -203,5 +203,3 @@ class PolicyExpressionParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->_call('parseSingleEntityResource', 'ownAccount', $resourcesTree);
 	}
 }
-
-?>

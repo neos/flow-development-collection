@@ -50,5 +50,3 @@ class ParameterReflection extends \ReflectionParameter {
 	}
 
 }
-
-?>

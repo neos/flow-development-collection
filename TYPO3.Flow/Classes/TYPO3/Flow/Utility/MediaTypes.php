@@ -1902,4 +1902,3 @@ class MediaTypes {
 		return trim(sprintf('%s/%s', $pieces['type'], $pieces['subtype']), '/') ?: NULL;
 	}
 }
-?>

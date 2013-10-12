@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Validation\Exception;
 class InvalidTypeHintException extends \TYPO3\Flow\Validation\Exception {
 
 }
-
-?>

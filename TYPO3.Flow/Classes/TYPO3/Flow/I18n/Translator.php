@@ -206,5 +206,3 @@ class Translator {
 		}
 	}
 }
-
-?>

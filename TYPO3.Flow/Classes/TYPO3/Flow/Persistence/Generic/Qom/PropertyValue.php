@@ -69,5 +69,3 @@ class PropertyValue extends \TYPO3\Flow\Persistence\Generic\Qom\DynamicOperand {
 	}
 
 }
-
-?>

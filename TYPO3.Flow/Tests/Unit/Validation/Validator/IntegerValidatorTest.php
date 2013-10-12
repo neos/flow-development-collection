@@ -86,5 +86,3 @@ class IntegerValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\A
 	}
 
 }
-
-?>

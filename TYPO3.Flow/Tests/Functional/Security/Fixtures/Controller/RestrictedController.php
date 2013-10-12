@@ -47,4 +47,3 @@ class RestrictedController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		return 'admin';
 	}
 }
-?>

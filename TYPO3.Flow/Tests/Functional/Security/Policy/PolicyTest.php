@@ -48,4 +48,3 @@ class PolicyTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
 	}
 }
-?>

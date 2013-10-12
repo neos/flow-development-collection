@@ -23,4 +23,3 @@ class TestEntityRepository extends \TYPO3\Flow\Persistence\Repository {
 	protected $defaultOrderings = array('name' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 
 }
-?>

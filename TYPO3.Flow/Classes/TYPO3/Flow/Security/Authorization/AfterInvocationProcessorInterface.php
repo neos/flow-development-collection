@@ -38,5 +38,3 @@ interface AfterInvocationProcessorInterface {
 	 */
 	public function supports($className);
 }
-
-?>

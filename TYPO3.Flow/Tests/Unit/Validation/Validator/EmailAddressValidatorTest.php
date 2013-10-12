@@ -92,4 +92,3 @@ class EmailAddressValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
 		$this->assertEquals(1, count($this->validator->validate('notAValidMail@Address')->getErrors()));
 	}
 }
-?>

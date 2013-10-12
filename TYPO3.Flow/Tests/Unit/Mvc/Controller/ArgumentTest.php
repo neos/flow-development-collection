@@ -231,4 +231,3 @@ class ArgumentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame('integer', $this->simpleValueArgument->getDataType(), 'The got dataType is not the set dataType.');
 	}
 }
-?>

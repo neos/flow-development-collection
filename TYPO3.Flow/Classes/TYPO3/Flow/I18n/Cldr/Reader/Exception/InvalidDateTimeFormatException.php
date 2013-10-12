@@ -22,5 +22,3 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
 class InvalidDateTimeFormatException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException {
 
 }
-
-?>

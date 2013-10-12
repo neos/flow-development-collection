@@ -402,5 +402,3 @@ class PackageCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->sendAndExit(0);
 	}
 }
-
-?>

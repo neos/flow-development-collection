@@ -365,4 +365,3 @@ class Session {
 		$this->reconstitutedEntitiesData = array();
 	}
 }
-?>

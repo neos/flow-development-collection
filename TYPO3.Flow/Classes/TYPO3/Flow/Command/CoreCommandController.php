@@ -381,4 +381,3 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 		return $suggestions;
 	}
 }
-?>

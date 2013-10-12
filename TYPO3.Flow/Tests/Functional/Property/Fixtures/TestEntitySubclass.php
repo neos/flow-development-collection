@@ -31,4 +31,3 @@ use TYPO3\Flow\Annotations as Flow;
 class TestEntitySubclass extends TestEntity {
 
 }
-?>

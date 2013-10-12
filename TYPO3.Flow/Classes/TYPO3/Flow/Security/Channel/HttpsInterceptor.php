@@ -50,5 +50,3 @@ class HttpsInterceptor implements \TYPO3\Flow\Security\Authorization\Interceptor
 
 	}
 }
-
-?>

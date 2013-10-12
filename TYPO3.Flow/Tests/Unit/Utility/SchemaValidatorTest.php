@@ -1041,5 +1041,3 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
 	}
 }
-
-?>

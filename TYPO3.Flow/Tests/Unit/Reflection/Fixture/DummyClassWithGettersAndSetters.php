@@ -71,6 +71,3 @@ class DummyClassWithGettersAndSetters {
 	public function setWriteOnlyMagicProperty($value) {
 	}
 }
-
-
-?>

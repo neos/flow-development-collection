@@ -17,5 +17,3 @@ namespace TYPO3\Flow\Log;
  */
 interface SystemLoggerInterface extends \TYPO3\Flow\Log\LoggerInterface {
 }
-
-?>

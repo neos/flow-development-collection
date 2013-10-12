@@ -35,5 +35,3 @@ class Apache2AccessRestrictionPublisher implements \TYPO3\Flow\Security\Authoriz
 		}
 	}
 }
-
-?>

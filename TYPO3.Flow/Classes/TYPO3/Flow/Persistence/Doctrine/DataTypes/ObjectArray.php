@@ -159,5 +159,3 @@ class ObjectArray extends Types\ArrayType {
 		}
 	}
 }
-
-?>

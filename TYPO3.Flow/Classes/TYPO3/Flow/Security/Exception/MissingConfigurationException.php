@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class MissingConfigurationException extends \TYPO3\Flow\Security\Exception {
 }
-
-?>

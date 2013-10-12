@@ -119,4 +119,3 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue(TRUE);
 	}
 }
-?>

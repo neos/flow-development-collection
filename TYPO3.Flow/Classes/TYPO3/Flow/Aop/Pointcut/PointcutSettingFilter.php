@@ -155,5 +155,3 @@ class PointcutSettingFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterIn
 		return $classNameIndex;
 	}
 }
-
-?>

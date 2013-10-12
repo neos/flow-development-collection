@@ -44,5 +44,3 @@ class AccessGrant implements \TYPO3\Flow\Security\Authorization\AccessDecisionVo
 
 	}
 }
-
-?>

@@ -45,4 +45,3 @@ class ReconstitutableClassWithSimpleProperties implements \TYPO3\Flow\Persistenc
 	public function Flow_Aop_Proxy_declareMethodsAndAdvices() {}
 
 }
-?>

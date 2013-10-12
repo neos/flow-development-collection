@@ -23,5 +23,3 @@ class InvalidControllerException extends \TYPO3\Flow\Mvc\Controller\Exception {
 	protected $statusCode = 404;
 
 }
-
-?>

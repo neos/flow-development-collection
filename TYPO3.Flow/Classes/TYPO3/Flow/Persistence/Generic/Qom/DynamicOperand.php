@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Persistence\Generic\Qom;
 class DynamicOperand extends \TYPO3\Flow\Persistence\Generic\Qom\Operand {
 
 }
-
-?>

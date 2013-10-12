@@ -704,4 +704,3 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\Flow\Tests\UnitTestCas
 		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 	}
 }
-?>

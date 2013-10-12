@@ -180,4 +180,3 @@ class TestEntity {
 		return $this->relatedValueObject;
 	}
 }
-?>

@@ -65,4 +65,3 @@ class LogicalOr extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
 	}
 
 }
-?>

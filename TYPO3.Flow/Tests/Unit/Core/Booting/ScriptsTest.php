@@ -47,4 +47,3 @@ class ScriptsTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertNotContains(' -c ', $actual, $message);
 	}
 }
-?>

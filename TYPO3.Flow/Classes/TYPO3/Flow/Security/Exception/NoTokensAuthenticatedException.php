@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class NoTokensAuthenticatedException extends \TYPO3\Flow\Security\Exception\AuthenticationRequiredException {
 }
-
-?>

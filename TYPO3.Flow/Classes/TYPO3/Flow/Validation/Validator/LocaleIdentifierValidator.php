@@ -35,5 +35,3 @@ class LocaleIdentifierValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

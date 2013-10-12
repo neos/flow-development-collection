@@ -114,5 +114,3 @@ class PointcutClassNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
 		return $classNameIndex->filterByPrefix($prefixFilter);
 	}
 }
-
-?>

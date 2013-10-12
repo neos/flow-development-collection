@@ -92,4 +92,3 @@ class Pbkdf2HashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
 	}
 
 }
-?>

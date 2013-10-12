@@ -91,4 +91,3 @@ class PointcutClassTypeFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
 	}
 }
-?>

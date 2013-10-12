@@ -50,5 +50,3 @@ class EmailAddressValidator extends AbstractValidator {
 		return (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) !== FALSE);
 	}
 }
-
-?>

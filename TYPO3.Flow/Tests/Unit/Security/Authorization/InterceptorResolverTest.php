@@ -65,4 +65,3 @@ class InterceptorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('ExistingInterceptorClass', $interceptorClass, 'The wrong classname has been resolved');
 	}
 }
-?>

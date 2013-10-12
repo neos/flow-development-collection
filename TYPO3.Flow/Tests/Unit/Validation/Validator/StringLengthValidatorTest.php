@@ -187,5 +187,3 @@ class StringLengthValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
 		$this->assertFalse($this->validator->validate('überlang')->hasErrors());
 	}
 }
-
-?>

@@ -30,5 +30,3 @@ class AccessDeny implements \TYPO3\Flow\Security\Authorization\InterceptorInterf
 		throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
 	}
 }
-
-?>

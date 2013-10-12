@@ -204,4 +204,3 @@ class PackageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedClassFilesArray, $actualClassFilesArray);
 	}
 }
-?>

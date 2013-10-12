@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Resource;
 class Exception extends \TYPO3\Flow\Exception {
 
 }
-
-?>

@@ -580,5 +580,3 @@ EOT;
 		return $foreignKeyHandlingSql;
 	}
 }
-
-?>

@@ -152,5 +152,3 @@ class XliffTranslationProvider implements \TYPO3\Flow\I18n\TranslationProvider\T
 		return $this->models[$sourcePath] = new \TYPO3\Flow\I18n\Xliff\XliffModel($sourcePath, $foundLocale);
 	}
 }
-
-?>

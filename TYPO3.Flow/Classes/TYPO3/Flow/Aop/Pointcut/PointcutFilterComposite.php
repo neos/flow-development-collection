@@ -388,4 +388,3 @@ class PointcutFilterComposite implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
 	}
 
 }
-?>

@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Aop\Exception;
 class UnknownPointcutException extends \TYPO3\Flow\Aop\Exception {
 
 }
-?>

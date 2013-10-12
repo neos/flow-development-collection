@@ -104,5 +104,3 @@ interface JoinPointInterface {
 	public function getResult();
 
 }
-
-?>

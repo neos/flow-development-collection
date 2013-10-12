@@ -500,4 +500,3 @@ class IdentityRoutePartTest extends UnitTestCase {
 		$identityRoutePart->_call('createPathSegmentForObject', $object);
 	}
 }
-?>

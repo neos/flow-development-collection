@@ -114,4 +114,3 @@ abstract class AbstractBackend implements \TYPO3\Flow\Log\Backend\BackendInterfa
 	}
 
 }
-?>

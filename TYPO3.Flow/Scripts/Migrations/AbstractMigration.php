@@ -396,5 +396,3 @@ abstract class AbstractMigration {
 	}
 
 }
-
-?>

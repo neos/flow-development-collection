@@ -283,5 +283,3 @@ class StreamWrapperAdapterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($this->streamWrapperAdapter->url_stat($path, $flags));
 	}
 }
-
-?>

@@ -557,4 +557,3 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 		$queue->exec();
 	}
 }
-?>

@@ -100,4 +100,3 @@ class IntegerConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));
 	}
 }
-?>

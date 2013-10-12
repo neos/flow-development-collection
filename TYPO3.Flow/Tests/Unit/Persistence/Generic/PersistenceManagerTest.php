@@ -272,4 +272,3 @@ class PersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

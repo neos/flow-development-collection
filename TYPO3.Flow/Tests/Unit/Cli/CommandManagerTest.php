@@ -238,4 +238,3 @@ class CommandManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -39,5 +39,3 @@ class AbstractXmlParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->getParsedData($mockFilenamePath);
 	}
 }
-
-?>

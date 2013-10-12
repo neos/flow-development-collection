@@ -603,4 +603,3 @@ class SchemaValidator {
 		return array_keys($phpArray) !== range(0, count($phpArray) - 1);
 	}
 }
-?>

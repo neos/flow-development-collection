@@ -85,4 +85,3 @@ final class EmptyView implements ViewInterface {
 	public function __call($methodName, array $arguments) {
 	}
 }
-?>

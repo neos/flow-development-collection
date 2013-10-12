@@ -69,5 +69,3 @@ class CldrRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(NULL, $result);
 	}
 }
-
-?>

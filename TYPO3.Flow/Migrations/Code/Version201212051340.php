@@ -39,5 +39,3 @@ class Version201212051340 extends AbstractMigration {
 	}
 
 }
-
-?>

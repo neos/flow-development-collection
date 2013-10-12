@@ -297,5 +297,3 @@ class NumberParser {
 		return $parsedNumber;
 	}
 }
-
-?>

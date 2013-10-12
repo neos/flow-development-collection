@@ -144,5 +144,3 @@ class CldrRepository {
 		return $filesInHierarchy;
 	}
 }
-
-?>

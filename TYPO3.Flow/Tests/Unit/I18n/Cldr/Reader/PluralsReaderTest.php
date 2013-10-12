@@ -78,5 +78,3 @@ class PluralsReaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($pluralForm, $result);
 	}
 }
-
-?>

@@ -30,4 +30,3 @@ class QueryFactory implements \TYPO3\Flow\Persistence\Generic\QueryFactoryInterf
 	}
 
 }
-?>

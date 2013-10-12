@@ -184,4 +184,3 @@ abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInt
 	}
 
 }
-?>

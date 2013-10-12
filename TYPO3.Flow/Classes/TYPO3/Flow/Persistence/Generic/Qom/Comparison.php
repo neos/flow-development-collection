@@ -119,5 +119,3 @@ class Comparison extends \TYPO3\Flow\Persistence\Generic\Qom\Constraint {
 	}
 
 }
-
-?>

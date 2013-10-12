@@ -187,4 +187,3 @@ class BasicClass {
 		// the last public function I ever wrote
 	}
 }
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class CircularResourceDefinitionDetectedException extends \TYPO3\Flow\Security\Exception {
 }
-
-?>

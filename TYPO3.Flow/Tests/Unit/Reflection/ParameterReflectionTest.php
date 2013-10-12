@@ -39,4 +39,3 @@ class ParameterReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected function fixtureMethod(\ArrayObject $arg1, $arg2 = NULL) {
 	}
 }
-?>

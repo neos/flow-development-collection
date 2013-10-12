@@ -18,4 +18,3 @@ namespace TYPO3\Flow\Persistence\Doctrine\Exception;
  */
 class DatabaseConnectionException extends DatabaseException {
 }
-?>

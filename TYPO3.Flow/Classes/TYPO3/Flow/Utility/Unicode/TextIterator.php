@@ -453,5 +453,3 @@ class TextIterator implements \Iterator {
 		return $this->iteratorCacheIterator->current();
 	}
 }
-
-?>

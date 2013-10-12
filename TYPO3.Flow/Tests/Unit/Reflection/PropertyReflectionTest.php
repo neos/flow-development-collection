@@ -104,4 +104,3 @@ class PropertyReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($this, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the reference to $this.');
 	}
 }
-?>

@@ -29,5 +29,3 @@ class Version20120520211354 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE credentialssource credentialssource VARCHAR(255) NOT NULL");
 	}
 }
-
-?>

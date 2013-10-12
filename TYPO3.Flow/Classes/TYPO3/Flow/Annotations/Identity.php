@@ -24,5 +24,3 @@ namespace TYPO3\Flow\Annotations;
  * @Target("PROPERTY")
  */
 final class Identity {}
-
-?>

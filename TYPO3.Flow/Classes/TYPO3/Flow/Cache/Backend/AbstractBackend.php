@@ -147,4 +147,3 @@ abstract class AbstractBackend implements \TYPO3\Flow\Cache\Backend\BackendInter
 		return $expiryTime;
 	}
 }
-?>

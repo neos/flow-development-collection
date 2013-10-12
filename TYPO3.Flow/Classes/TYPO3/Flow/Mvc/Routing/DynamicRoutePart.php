@@ -188,4 +188,3 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
 		return TRUE;
 	}
 }
-?>

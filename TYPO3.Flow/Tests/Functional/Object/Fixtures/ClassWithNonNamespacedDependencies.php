@@ -44,4 +44,3 @@ class ClassWithNonNamespacedDependencies {
 		return $this->classFromSubNamespace;
 	}
 }
-?>

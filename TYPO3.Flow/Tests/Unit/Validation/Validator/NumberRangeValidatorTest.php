@@ -68,5 +68,3 @@ class NumberRangeValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validat
 		$this->assertTrue($this->validator->validate('not a number')->hasErrors());
 	}
 }
-
-?>

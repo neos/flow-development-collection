@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Http\Client;
 class CurlEngineException extends \TYPO3\Flow\Http\Exception {
 
 }
-?>

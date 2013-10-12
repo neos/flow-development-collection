@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Configuration\Exception;
 class InvalidConfigurationTypeException extends \TYPO3\Flow\Configuration\Exception {
 
 }
-
-?>

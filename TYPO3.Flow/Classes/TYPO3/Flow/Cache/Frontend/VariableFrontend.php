@@ -125,4 +125,3 @@ class VariableFrontend extends AbstractFrontend {
 	}
 
 }
-?>

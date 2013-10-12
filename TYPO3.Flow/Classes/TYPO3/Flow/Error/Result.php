@@ -440,4 +440,3 @@ class Result {
 		$this->propertyResults = array();
 	}
 }
-?>

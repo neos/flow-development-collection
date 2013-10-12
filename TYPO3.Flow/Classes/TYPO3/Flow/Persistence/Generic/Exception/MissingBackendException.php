@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Persistence\Generic\Exception;
  */
 class MissingBackendException extends \TYPO3\Flow\Persistence\Exception {
 }
-
-?>

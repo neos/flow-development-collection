@@ -52,4 +52,3 @@ interface AuthenticationProviderInterface {
 	public function authenticate(\TYPO3\Flow\Security\Authentication\TokenInterface $authenticationToken);
 
 }
-?>

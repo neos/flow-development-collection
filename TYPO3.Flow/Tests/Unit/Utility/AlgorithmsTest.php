@@ -80,4 +80,3 @@ class AlgorithmsTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertRegExp($regularExpression, Algorithms::generateRandomString(64, $charactersClass));
 	}
 }
-?>

@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Aop\Exception;
 class InvalidPointcutExpressionException extends \TYPO3\Flow\Aop\Exception {
 
 }
-
-?>

@@ -89,4 +89,3 @@ class LazyLoadingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals($loadedRelatedEntity->sayHello(), 'Hello Andi!');
 	}
 }
-?>

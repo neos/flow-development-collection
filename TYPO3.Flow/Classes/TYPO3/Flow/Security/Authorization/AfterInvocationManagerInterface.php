@@ -36,5 +36,3 @@ interface AfterInvocationManagerInterface {
 	 */
 	public function supports($className);
 }
-
-?>

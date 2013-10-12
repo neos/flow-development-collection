@@ -42,4 +42,3 @@ class MethodReflectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}
 	}
 }
-?>

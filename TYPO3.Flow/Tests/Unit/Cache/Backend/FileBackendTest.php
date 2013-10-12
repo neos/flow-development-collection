@@ -728,4 +728,3 @@ class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class NoRequestPatternFoundException extends \TYPO3\Flow\Security\Exception {
 }
-
-?>

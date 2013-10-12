@@ -24,5 +24,3 @@ class AuthenticationRequiredException extends \TYPO3\Flow\Security\Exception {
 	protected $statusCode = 401;
 
 }
-
-?>

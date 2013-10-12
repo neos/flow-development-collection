@@ -37,4 +37,3 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
 		}
 	}
 }
-?>

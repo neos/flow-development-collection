@@ -317,4 +317,3 @@ class Argument {
 		return $this->validationResults;
 	}
 }
-?>

@@ -22,4 +22,3 @@ interface SayHelloInterface {
 	public function sayHello();
 
 }
-?>

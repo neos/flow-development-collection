@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class NoEntryInPolicyException extends \TYPO3\Flow\Security\Exception {
 }
-
-?>

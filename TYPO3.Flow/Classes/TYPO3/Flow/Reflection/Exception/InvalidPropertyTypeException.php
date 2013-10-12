@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Reflection\Exception;
  */
 class InvalidPropertyTypeException extends \TYPO3\Flow\Reflection\Exception {
 }
-
-?>

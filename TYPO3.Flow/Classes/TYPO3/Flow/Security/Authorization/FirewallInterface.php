@@ -26,5 +26,3 @@ interface FirewallInterface {
 	 */
 	public function blockIllegalRequests(\TYPO3\Flow\Mvc\ActionRequest $request);
 }
-
-?>

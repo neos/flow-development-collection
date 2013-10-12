@@ -39,4 +39,3 @@ class TestEntitySubclassWithNewField extends TestEntity {
 		return $this->testField;
 	}
 }
-?>

@@ -107,4 +107,3 @@ class PhpFrontend extends \TYPO3\Flow\Cache\Frontend\StringFrontend {
 	}
 
 }
-?>

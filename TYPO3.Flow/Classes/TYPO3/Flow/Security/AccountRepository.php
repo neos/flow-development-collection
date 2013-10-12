@@ -68,5 +68,3 @@ class AccountRepository extends \TYPO3\Flow\Persistence\Repository {
 		)->execute()->getFirst();
 	}
 }
-
-?>

@@ -64,4 +64,3 @@ class LazyDependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

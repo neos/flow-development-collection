@@ -40,4 +40,3 @@ class AbstractClassTestingAspect {
 		return $result . ' adviced';
 	}
 }
-?>

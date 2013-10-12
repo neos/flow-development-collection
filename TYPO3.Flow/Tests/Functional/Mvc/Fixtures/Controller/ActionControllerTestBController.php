@@ -138,4 +138,3 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
 	}
 
 }
-?>

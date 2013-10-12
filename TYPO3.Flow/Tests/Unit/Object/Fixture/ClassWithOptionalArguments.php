@@ -36,4 +36,3 @@ class ClassWithOptionalArguments {
 		$this->argument3 = $argument3;
 	}
 }
-?>

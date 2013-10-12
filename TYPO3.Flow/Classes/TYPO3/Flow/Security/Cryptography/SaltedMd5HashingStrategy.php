@@ -69,4 +69,3 @@ class SaltedMd5HashingStrategy implements \TYPO3\Flow\Security\Cryptography\Pass
 	}
 
 }
-?>

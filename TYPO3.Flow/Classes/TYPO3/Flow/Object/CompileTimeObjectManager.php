@@ -386,4 +386,3 @@ class CompileTimeObjectManager extends ObjectManager {
 		return $object;
 	}
 }
-?>

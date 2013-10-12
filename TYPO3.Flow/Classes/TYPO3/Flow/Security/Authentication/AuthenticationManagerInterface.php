@@ -65,4 +65,3 @@ interface AuthenticationManagerInterface {
 	public function logout();
 
 }
-?>

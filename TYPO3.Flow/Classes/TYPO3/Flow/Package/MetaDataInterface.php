@@ -65,4 +65,3 @@ interface MetaDataInterface {
 	 */
 	public function getConstraints();
 }
-?>

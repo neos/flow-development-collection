@@ -35,4 +35,3 @@ namespace TYPO3\Flow\Persistence\Doctrine\Proxies;
 abstract class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy {
 
 }
-?>

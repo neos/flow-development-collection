@@ -16,5 +16,3 @@ namespace TYPO3\Flow\Session\Aspect;
  */
 interface LazyLoadingProxyInterface {
 }
-
-?>

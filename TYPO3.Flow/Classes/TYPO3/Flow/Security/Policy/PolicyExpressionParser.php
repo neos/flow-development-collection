@@ -146,4 +146,3 @@ class PolicyExpressionParser extends \TYPO3\Flow\Aop\Pointcut\PointcutExpression
 		return $constraints;
 	}
 }
-?>

@@ -137,5 +137,3 @@ class PointcutMethodNameFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
 	}
 }
-
-?>

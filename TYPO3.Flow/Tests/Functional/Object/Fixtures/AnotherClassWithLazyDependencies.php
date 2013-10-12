@@ -37,4 +37,3 @@ class AnotherClassWithLazyDependencies {
 	public $eagerC;
 
 }
-?>

@@ -1098,5 +1098,3 @@ class ObjectSerializerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

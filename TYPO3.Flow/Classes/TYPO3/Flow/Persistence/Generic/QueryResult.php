@@ -226,5 +226,3 @@ class QueryResult implements \TYPO3\Flow\Persistence\QueryResultInterface {
 		return current($this->queryResult) !== FALSE;
 	}
 }
-
-?>

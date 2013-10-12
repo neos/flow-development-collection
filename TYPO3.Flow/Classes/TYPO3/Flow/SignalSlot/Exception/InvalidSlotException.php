@@ -19,5 +19,3 @@ namespace TYPO3\Flow\SignalSlot\Exception;
 class InvalidSlotException extends \TYPO3\Flow\Object\Exception {
 
 }
-
-?>

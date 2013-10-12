@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Mvc;
 class Exception extends \TYPO3\Flow\Exception {
 
 }
-?>

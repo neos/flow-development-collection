@@ -72,5 +72,3 @@ class AfterInvocation implements \TYPO3\Flow\Security\Authorization\InterceptorI
 		return $this->result;
 	}
 }
-
-?>

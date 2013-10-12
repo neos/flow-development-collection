@@ -35,4 +35,3 @@ class DocCommentParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

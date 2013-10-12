@@ -181,5 +181,3 @@ class NumberParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedParsedNumber, $result);
 	}
 }
-
-?>

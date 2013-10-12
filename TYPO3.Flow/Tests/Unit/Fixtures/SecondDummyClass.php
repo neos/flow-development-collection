@@ -13,5 +13,3 @@ namespace TYPO3\Flow\Fixture;
 class SecondDummyClass {
 
 }
-
-?>

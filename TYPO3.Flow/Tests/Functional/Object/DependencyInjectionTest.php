@@ -159,4 +159,3 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($aClassFromSubNamespace, $nonNamespacedDependencies->getClassFromSubNamespace());
 	}
 }
-?>

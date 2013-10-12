@@ -88,4 +88,3 @@ class ArrayConverter extends AbstractTypeConverter {
 	}
 
 }
-?>

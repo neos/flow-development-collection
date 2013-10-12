@@ -131,4 +131,3 @@ class TargetClass01 implements SayHelloInterface {
 		return 'I won\'t take any advice';
 	}
 }
-?>

@@ -64,4 +64,3 @@ class DirtyEntity implements \TYPO3\Flow\Aop\ProxyInterface {
 	public function __wakeup() {}
 
 }
-?>

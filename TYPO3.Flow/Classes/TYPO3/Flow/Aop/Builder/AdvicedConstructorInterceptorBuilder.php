@@ -65,4 +65,3 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\Abstr
 	}
 
 }
-?>

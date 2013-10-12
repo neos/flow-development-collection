@@ -180,4 +180,3 @@ class RequestHandler implements HttpRequestHandlerInterface {
 		$this->securityContext = $objectManager->get('TYPO3\Flow\Security\Context');
 	}
 }
-?>

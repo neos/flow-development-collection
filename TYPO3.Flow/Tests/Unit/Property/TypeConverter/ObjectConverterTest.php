@@ -91,4 +91,3 @@ class ObjectConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

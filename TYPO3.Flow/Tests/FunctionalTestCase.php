@@ -419,4 +419,3 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		self::$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'functionalTestTearDown');
 	}
 }
-?>

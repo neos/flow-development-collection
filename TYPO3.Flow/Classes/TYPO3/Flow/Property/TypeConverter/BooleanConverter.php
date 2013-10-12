@@ -53,4 +53,3 @@ class BooleanConverter extends AbstractTypeConverter {
 		return (!empty($source) && !in_array(strtolower($source), array('off', 'n', 'no', 'false')));
 	}
 }
-?>

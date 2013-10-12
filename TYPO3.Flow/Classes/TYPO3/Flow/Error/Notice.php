@@ -26,4 +26,3 @@ class Notice extends Message {
 	protected $severity = self::SEVERITY_NOTICE;
 
 }
-?>

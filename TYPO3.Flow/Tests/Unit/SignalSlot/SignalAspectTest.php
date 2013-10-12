@@ -35,4 +35,3 @@ class SignalAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$aspect->forwardSignalToDispatcher($mockJoinPoint);
 	}
 }
-?>

@@ -65,4 +65,3 @@ class PasswordToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractTo
 	}
 
 }
-?>

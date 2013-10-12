@@ -460,4 +460,3 @@ class ObjectAccessTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		ObjectAccess::getProperty($object2, 'property');
 	}
 }
-?>

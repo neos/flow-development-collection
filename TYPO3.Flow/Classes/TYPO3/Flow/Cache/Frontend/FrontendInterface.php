@@ -144,4 +144,3 @@ interface FrontendInterface {
 	public function isValidTag($tag);
 
 }
-?>

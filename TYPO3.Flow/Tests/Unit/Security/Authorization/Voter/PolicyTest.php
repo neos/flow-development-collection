@@ -224,5 +224,3 @@ class PolicyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), \TYPO3\Flow\Security\Authorization\Voter\Policy::VOTE_GRANT , 'The wrong vote was returned!');
 	}
 }
-
-?>

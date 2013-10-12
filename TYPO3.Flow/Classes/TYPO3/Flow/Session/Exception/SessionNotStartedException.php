@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Session\Exception;
  */
 class SessionNotStartedException extends \TYPO3\Flow\Session\Exception {
 }
-
-?>

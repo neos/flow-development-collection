@@ -50,4 +50,3 @@ class AuthenticationController extends AbstractAuthenticationController {
 				returns NULL in your login controller.';
 	}
 }
-?>

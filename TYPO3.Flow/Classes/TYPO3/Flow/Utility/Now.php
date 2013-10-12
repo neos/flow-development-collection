@@ -26,5 +26,3 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class Now extends \DateTime {
 }
-
-?>

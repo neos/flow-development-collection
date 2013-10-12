@@ -214,5 +214,3 @@ class Browser {
 		return $this->request($form->getUri(), $form->getMethod(), $form->getPhpValues(), $form->getPhpFiles());
 	}
 }
-
-?>

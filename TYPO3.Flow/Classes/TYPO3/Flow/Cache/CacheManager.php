@@ -348,4 +348,3 @@ class CacheManager {
 		$this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions);
 	}
 }
-?>

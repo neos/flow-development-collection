@@ -76,5 +76,3 @@ class ResourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('fakeSha1', (string) $resource);
 	}
 }
-
-?>

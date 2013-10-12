@@ -92,5 +92,3 @@ class TextIteratorElement {
 	}
 
 }
-
-?>

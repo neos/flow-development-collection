@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Log\Exception;
 class InvalidBackendException extends \TYPO3\Flow\Cache\Exception {
 
 }
-?>

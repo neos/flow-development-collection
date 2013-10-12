@@ -125,5 +125,3 @@ class AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface {
 		$this->dispatcher->dispatch('TYPO3\Flow\Aop\Advice\AbstractAdvice', 'adviceInvoked', array($aspectObject, $methodName, $joinPoint));
 	}
 }
-
-?>

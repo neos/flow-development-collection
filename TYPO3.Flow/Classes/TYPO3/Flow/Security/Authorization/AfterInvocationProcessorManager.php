@@ -48,5 +48,3 @@ class AfterInvocationProcessorManager implements \TYPO3\Flow\Security\Authorizat
 
 	}
 }
-
-?>

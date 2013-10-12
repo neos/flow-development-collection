@@ -91,4 +91,3 @@ class UniqueEntityValidatorTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($validator->validate($sameWatershipDown)->hasErrors());
 	}
 }
-?>

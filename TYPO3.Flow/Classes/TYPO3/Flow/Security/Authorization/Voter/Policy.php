@@ -109,5 +109,3 @@ class Policy implements \TYPO3\Flow\Security\Authorization\AccessDecisionVoterIn
 		return self::VOTE_ABSTAIN;
 	}
 }
-
-?>

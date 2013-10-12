@@ -73,4 +73,3 @@ class CacheFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$factory->create('TYPO3_Flow_Cache_FactoryTest_Cache', 'TYPO3\Flow\Cache\Frontend\VariableFrontend', 'TYPO3\Flow\Cache\Backend\FileBackend');
 	}
 }
-?>

@@ -76,4 +76,3 @@ class ArrayConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -57,4 +57,3 @@ class SystemConstraint extends \TYPO3\Flow\Package\MetaData\AbstractConstraint {
 		return \TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
 	}
 }
-?>

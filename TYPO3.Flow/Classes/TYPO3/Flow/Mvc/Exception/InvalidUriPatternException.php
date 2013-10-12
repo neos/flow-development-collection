@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Mvc\Exception;
 class InvalidUriPatternException extends \TYPO3\Flow\Mvc\Exception {
 
 }
-
-?>

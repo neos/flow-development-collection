@@ -123,5 +123,3 @@ class Detector {
 		return $this->localizationService->getConfiguration()->getDefaultLocale();
 	}
 }
-
-?>

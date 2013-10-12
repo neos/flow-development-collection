@@ -301,4 +301,3 @@ class CacheManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 
 }
-?>

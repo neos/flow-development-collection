@@ -285,4 +285,3 @@ class PdoBackend extends AbstractBackend implements TaggableBackendInterface {
 		}
 	}
 }
-?>

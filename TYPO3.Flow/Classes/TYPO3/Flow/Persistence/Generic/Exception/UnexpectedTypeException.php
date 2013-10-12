@@ -18,6 +18,3 @@ namespace TYPO3\Flow\Persistence\Generic\Exception;
  */
 class UnexpectedTypeException extends \TYPO3\Flow\Persistence\Exception {
 }
-
-
-?>

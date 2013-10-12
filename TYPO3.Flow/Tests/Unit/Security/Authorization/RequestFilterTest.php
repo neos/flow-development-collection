@@ -74,4 +74,3 @@ class RequestFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse($requestFilter->filterRequest($request));
 	}
 }
-?>

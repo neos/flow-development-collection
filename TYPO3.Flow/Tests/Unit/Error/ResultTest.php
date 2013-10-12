@@ -233,5 +233,3 @@ class ResultTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame(array($error1, $error2), $this->result->forProperty('foo')->getErrors());
 	}
 }
-
-?>

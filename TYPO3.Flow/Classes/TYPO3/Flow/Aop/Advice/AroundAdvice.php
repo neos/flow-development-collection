@@ -34,5 +34,3 @@ class AroundAdvice extends \TYPO3\Flow\Aop\Advice\AbstractAdvice implements \TYP
 		return $adviceObject->$methodName($joinPoint);
 	}
 }
-
-?>

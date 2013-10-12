@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Reflection\Exception;
  */
 class InvalidValueObjectException extends \TYPO3\Flow\Reflection\Exception {
 }
-
-?>

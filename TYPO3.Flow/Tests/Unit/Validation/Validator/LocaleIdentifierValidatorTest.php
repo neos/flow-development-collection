@@ -47,5 +47,3 @@ class LocaleIdentifierValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Va
 	}
 
 }
-
-?>

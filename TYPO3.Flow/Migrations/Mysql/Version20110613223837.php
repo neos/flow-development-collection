@@ -39,5 +39,3 @@ class Version20110613223837 extends AbstractMigration {
 		$this->addSql("DROP TABLE flow3_policy_role");
 	}
 }
-
-?>

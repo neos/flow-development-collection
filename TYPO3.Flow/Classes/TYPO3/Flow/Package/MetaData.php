@@ -209,4 +209,3 @@ class MetaData implements \TYPO3\Flow\Package\MetaDataInterface {
 		$this->constraints[$constraint->getConstraintType()][] = $constraint;
 	}
 }
-?>

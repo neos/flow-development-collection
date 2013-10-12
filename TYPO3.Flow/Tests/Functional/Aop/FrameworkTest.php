@@ -208,4 +208,3 @@ class FrameworkTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals('Hello, Robert', $result, 'The method argument "name" has not been changed as expected by the "changeNameArgumentAdvice".');
 	}
 }
-?>

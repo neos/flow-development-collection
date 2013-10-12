@@ -492,4 +492,3 @@ class ObjectManager implements ObjectManagerInterface {
 	}
 
 }
-?>

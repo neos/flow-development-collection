@@ -107,4 +107,3 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 		}
 	}
 }
-?>

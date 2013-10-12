@@ -52,4 +52,3 @@ class EnvironmentTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

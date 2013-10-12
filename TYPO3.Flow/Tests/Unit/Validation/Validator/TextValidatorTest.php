@@ -91,5 +91,3 @@ class TextValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abst
 		$this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
 	}
 }
-
-?>

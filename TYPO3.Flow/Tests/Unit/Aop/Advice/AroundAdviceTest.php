@@ -57,4 +57,3 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
 	}
 }
-?>

@@ -191,4 +191,3 @@ class PointcutMethodNameFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilte
 		return $classNameIndex;
 	}
 }
-?>

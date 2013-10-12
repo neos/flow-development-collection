@@ -141,5 +141,3 @@ class CurlEngine implements RequestEngineInterface {
 	}
 
 }
-
-?>

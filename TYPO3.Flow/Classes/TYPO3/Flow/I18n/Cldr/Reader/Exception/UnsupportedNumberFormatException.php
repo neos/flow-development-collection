@@ -19,5 +19,3 @@ namespace TYPO3\Flow\I18n\Cldr\Reader\Exception;
 class UnsupportedNumberFormatException extends \TYPO3\Flow\I18n\Exception\InvalidArgumentException {
 
 }
-
-?>

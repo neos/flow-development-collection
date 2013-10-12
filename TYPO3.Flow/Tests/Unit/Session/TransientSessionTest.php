@@ -76,6 +76,3 @@ class TransientSessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse($session->hasKey('noKey'));
 	}
 }
-
-
-?>

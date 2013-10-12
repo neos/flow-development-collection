@@ -52,5 +52,3 @@ class AnnotatedClass {
 	 */
 	public function someFlowAnnotations($foo) {}
 }
-
-?>

@@ -158,4 +158,3 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
 }
-?>

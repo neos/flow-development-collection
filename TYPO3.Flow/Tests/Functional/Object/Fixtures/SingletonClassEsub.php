@@ -33,4 +33,3 @@ class SingletonClassEsub extends SingletonClassE {
 	}
 
 }
-?>

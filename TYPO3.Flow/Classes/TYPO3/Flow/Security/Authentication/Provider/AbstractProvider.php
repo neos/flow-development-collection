@@ -54,4 +54,3 @@ abstract class AbstractProvider implements \TYPO3\Flow\Security\Authentication\A
 	}
 
 }
-?>

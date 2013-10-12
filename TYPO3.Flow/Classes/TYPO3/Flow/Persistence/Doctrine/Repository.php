@@ -211,5 +211,3 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	}
 
 }
-
-?>

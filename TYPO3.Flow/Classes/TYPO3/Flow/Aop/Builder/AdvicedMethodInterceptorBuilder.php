@@ -64,5 +64,3 @@ class AdvicedMethodInterceptorBuilder extends \TYPO3\Flow\Aop\Builder\AbstractMe
 		}
 	}
 }
-
-?>

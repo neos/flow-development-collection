@@ -149,4 +149,3 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		new Uri('http:////localhost');
 	}
 }
-?>

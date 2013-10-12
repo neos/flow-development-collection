@@ -77,5 +77,3 @@ class TestingAccessDecisionManager extends \TYPO3\Flow\Security\Authorization\Ac
 		$this->overrideDecision = NULL;
 	}
 }
-
-?>

@@ -19,4 +19,3 @@ namespace TYPO3\Flow\Tests\Functional\Aop\Fixtures;
 class TargetClass04 {
 
 }
-?>

@@ -266,5 +266,3 @@ class Compiler {
 		return '{ ' . implode(', ', $values) . ' }';
 	}
 }
-
-?>

@@ -118,4 +118,3 @@ class ControllerContext {
 		return $this->flashMessageContainer;
 	}
 }
-?>

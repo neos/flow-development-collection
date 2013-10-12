@@ -136,4 +136,3 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\Flow\Tests\UnitTestCa
 	}
 
 }
-?>

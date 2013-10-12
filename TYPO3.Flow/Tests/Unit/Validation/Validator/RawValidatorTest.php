@@ -34,5 +34,3 @@ class RawValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abstr
 		$this->assertFalse($rawValidator->validate(new \ArrayObject())->hasErrors());
 	}
 }
-
-?>

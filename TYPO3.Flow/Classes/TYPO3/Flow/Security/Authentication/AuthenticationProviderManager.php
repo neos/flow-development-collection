@@ -336,4 +336,3 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface {
 	}
 
 }
-?>

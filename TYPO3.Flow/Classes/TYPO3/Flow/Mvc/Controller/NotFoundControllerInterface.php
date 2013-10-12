@@ -27,5 +27,3 @@ interface NotFoundControllerInterface extends ControllerInterface {
 	public function setException(\TYPO3\Flow\Mvc\Controller\Exception $exception);
 
 }
-
-?>

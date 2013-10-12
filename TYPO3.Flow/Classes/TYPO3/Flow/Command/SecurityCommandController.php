@@ -321,5 +321,3 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 	}
 }
-
-?>

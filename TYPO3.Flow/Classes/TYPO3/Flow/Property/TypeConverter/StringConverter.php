@@ -51,4 +51,3 @@ class StringConverter extends AbstractTypeConverter {
 		return (string)$source;
 	}
 }
-?>

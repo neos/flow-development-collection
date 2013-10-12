@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Security\Exception;
  */
 class RoleExistsException extends \TYPO3\Flow\Security\Exception {
 }
-
-?>

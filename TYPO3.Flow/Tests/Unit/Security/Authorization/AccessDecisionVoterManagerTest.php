@@ -214,5 +214,3 @@ class AccessDecisionVoterManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertFalse($voterManager->hasAccessToResource('testResource'));
 	}
 }
-
-?>

@@ -255,4 +255,3 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 		);
 	}
 }
-?>

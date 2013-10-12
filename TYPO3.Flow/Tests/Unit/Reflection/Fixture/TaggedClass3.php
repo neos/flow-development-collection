@@ -23,4 +23,3 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
 class TaggedClass3 {
 
 }
-?>

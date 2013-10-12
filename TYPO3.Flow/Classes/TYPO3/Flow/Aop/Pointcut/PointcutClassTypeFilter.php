@@ -119,5 +119,3 @@ class PointcutClassTypeFilter implements \TYPO3\Flow\Aop\Pointcut\PointcutFilter
 		return $classNameIndex->intersect($filteredIndex);
 	}
 }
-
-?>

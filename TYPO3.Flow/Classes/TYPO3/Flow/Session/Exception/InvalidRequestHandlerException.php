@@ -18,5 +18,3 @@ namespace TYPO3\Flow\Session\Exception;
  */
 class InvalidRequestHandlerException extends \TYPO3\Flow\Session\Exception {
 }
-
-?>

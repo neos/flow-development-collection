@@ -436,5 +436,3 @@ class Package implements PackageInterface {
 		return $classFiles;
 	}
 }
-
-?>

@@ -124,4 +124,3 @@ class PointcutTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('someResult', $pointcut->reduceTargetClassNames($targetClassNameIndex));
 	}
 }
-?>

@@ -21,5 +21,3 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class UnsupportedFeatureException extends \Exception {
 }
-
-?>

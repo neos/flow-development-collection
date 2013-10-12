@@ -17,4 +17,3 @@ namespace TYPO3\Flow\Tests\Reflection\Fixture;
  */
 class ImplementationOfDummyInterface1 implements \TYPO3\Flow\Tests\Reflection\Fixture\DummyInterface1 {
 }
-?>

@@ -85,5 +85,3 @@ class MessageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedResult, $actualResult);
 	}
 }
-
-?>

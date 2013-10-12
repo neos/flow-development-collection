@@ -140,5 +140,3 @@ class NumbersReaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$reader->_call('parseFormat', $format);
 	}
 }
-
-?>

@@ -33,4 +33,3 @@ class TestingProviderTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($session->isStarted(), 'No session was started with authentication');
 	}
 }
-?>

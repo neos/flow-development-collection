@@ -112,5 +112,3 @@ class FilterFirewall implements \TYPO3\Flow\Security\Authorization\FirewallInter
 		}
 	}
 }
-
-?>

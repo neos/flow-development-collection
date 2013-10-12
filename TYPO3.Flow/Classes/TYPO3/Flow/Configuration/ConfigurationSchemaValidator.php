@@ -150,4 +150,3 @@ class ConfigurationSchemaValidator {
 		return $result;
 	}
 }
-?>

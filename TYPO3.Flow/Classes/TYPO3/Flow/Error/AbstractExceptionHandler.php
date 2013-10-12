@@ -177,4 +177,3 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	}
 
 }
-?>

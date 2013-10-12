@@ -408,5 +408,3 @@ class HeadersTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($value, $headers->getCacheControlDirective($name));
 	}
 }
-
-?>

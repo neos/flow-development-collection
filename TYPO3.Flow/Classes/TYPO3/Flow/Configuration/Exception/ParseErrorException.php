@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Configuration\Exception;
 class ParseErrorException extends \TYPO3\Flow\Configuration\Exception {
 
 }
-
-?>

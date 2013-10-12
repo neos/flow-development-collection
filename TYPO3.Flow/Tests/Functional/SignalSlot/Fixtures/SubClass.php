@@ -43,4 +43,3 @@ class SubClass extends AbstractClass {
 		$this->slotWasCalled = TRUE;
 	}
 }
-?>

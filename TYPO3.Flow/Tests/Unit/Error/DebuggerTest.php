@@ -38,5 +38,3 @@ class DebuggerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

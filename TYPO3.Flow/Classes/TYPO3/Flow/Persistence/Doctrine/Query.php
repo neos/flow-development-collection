@@ -582,5 +582,3 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		$this->queryBuilder = clone $this->queryBuilder;
 	}
 }
-
-?>

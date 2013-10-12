@@ -102,5 +102,3 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
 		return $array;
 	}
 }
-
-?>

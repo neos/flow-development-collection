@@ -19,5 +19,3 @@ namespace TYPO3\Flow\Resource\Publishing;
 interface PublishingConfigurationInterface {
 
 }
-
-?>

@@ -830,5 +830,3 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		$this->cache->remove('rolesFromPolicyUpToDate');
 	}
 }
-
-?>

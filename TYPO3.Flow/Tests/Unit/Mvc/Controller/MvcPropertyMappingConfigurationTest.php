@@ -51,4 +51,3 @@ class MvcPropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$this->assertSame($this->mvcPropertyMappingConfiguration, $actualResult);
 	}
 }
-?>

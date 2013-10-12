@@ -201,5 +201,3 @@ class FormatResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('Key foo is bar', $result);
 	}
 }
-
-?>

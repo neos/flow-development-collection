@@ -48,5 +48,3 @@ final class Introduce {
 	}
 
 }
-
-?>

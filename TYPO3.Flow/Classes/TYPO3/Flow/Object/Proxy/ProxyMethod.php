@@ -331,4 +331,3 @@ class ProxyMethod {
 		$this->methodBody = $methodBody;
 	}
 }
-?>

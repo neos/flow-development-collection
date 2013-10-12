@@ -29,5 +29,3 @@ class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory {
 	}
 
 }
-
-?>

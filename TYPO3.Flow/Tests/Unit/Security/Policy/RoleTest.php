@@ -73,4 +73,3 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

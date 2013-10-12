@@ -38,4 +38,3 @@ class TestingToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractTok
 	}
 
 }
-?>

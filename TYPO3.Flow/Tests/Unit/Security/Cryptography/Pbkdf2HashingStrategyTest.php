@@ -44,4 +44,3 @@ class Pbkdf2HashingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -575,5 +575,3 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEmpty($validatorResolver->_get('baseValidatorConjunctions'));
 	}
 }
-
-?>

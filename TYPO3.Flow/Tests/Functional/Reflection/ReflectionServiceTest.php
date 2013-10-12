@@ -178,4 +178,3 @@ class ReflectionServiceTest extends FunctionalTestCase {
 		$this->assertSame($expectedType, $actualType);
 	}
 }
-?>

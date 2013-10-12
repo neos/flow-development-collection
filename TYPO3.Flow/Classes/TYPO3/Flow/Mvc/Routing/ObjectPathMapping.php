@@ -112,4 +112,3 @@ class ObjectPathMapping {
 		return $this->objectType;
 	}
 }
-?>

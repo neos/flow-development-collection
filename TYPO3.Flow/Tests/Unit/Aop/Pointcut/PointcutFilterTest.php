@@ -114,4 +114,3 @@ class PointcutFilterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($inputClassNameIndex, $pointcutFilter->reduceTargetClassNames($inputClassNameIndex));
 	}
 }
-?>

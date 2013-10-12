@@ -37,4 +37,3 @@ interface PasswordHashingStrategyInterface {
 	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL);
 
 }
-?>

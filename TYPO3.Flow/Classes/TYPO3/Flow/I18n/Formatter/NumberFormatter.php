@@ -227,5 +227,3 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface {
 		return $number;
 	}
 }
-
-?>

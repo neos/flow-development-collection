@@ -144,5 +144,3 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
 		return $this->options;
 	}
 }
-
-?>

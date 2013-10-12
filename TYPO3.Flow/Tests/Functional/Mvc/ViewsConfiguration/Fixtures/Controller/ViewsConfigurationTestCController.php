@@ -25,4 +25,3 @@ class ViewsConfigurationTestCController extends ActionController {
 	public function indexAction() {
 	}
 }
-?>

@@ -52,5 +52,3 @@ class NumberRangeValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

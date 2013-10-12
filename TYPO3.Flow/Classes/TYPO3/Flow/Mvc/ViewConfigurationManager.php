@@ -113,4 +113,3 @@ class ViewConfigurationManager {
 		return md5(implode('-', $cacheIdentifiersParts));
 	}
 }
-?>

@@ -905,4 +905,3 @@ class PersistenceQueryRewritingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase
 		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
 	}
 }
-?>

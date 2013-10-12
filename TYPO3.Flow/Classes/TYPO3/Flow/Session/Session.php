@@ -764,5 +764,3 @@ class Session implements SessionInterface {
 		$this->metaDataCache->remove($sessionIdentifier);
 	}
 }
-
-?>

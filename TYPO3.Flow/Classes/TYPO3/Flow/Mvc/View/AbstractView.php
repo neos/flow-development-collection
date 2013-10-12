@@ -169,5 +169,3 @@ abstract class AbstractView implements ViewInterface {
 	}
 
 }
-
-?>

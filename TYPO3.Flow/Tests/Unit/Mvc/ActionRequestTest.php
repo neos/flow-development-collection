@@ -532,5 +532,3 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('Acme.Testpackage', $actionRequest->getControllerPackageKey());
 	}
 }
-
-?>

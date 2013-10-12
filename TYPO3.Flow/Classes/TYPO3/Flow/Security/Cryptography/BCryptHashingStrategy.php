@@ -69,4 +69,3 @@ class BCryptHashingStrategy implements \TYPO3\Flow\Security\Cryptography\Passwor
 	}
 
 }
-?>

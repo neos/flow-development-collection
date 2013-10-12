@@ -325,4 +325,3 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

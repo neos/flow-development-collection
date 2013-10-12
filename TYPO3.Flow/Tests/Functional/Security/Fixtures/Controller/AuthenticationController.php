@@ -37,4 +37,3 @@ class AuthenticationController extends \TYPO3\Flow\Security\Authentication\Contr
 		throw new \TYPO3\Flow\Exception('Failure Method Exception', 42);
 	}
 }
-?>

@@ -76,4 +76,3 @@ class InterfaceIntroduction {
 		return $this->declaringAspectClassName;
 	}
 }
-?>

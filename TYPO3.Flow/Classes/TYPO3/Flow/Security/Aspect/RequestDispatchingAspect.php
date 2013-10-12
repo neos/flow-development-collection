@@ -109,4 +109,3 @@ class RequestDispatchingAspect {
 		return NULL;
 	}
 }
-?>

@@ -25,4 +25,3 @@ namespace TYPO3\Flow\Tests;
 abstract class UnitTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 
 }
-?>

@@ -341,4 +341,3 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->clearState();
 	}
 }
-?>

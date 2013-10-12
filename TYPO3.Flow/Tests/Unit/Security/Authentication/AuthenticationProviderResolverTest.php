@@ -64,4 +64,3 @@ class AuthenticationProviderResolverTest extends \TYPO3\Flow\Tests\UnitTestCase 
 		$this->assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
 	}
 }
-?>
