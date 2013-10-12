@@ -44,4 +44,3 @@ class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 		return $this->inflector->pluralize($content);
 	}
 }
-?>

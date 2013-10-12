@@ -36,4 +36,3 @@ class InflectorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('foos', $inflector->pluralize('foo'));
 	}
 }
-?>

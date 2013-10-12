@@ -165,4 +165,3 @@ class Sho_Inflect
             return $count . " " . self::pluralize($string);
     }
 }
-?>

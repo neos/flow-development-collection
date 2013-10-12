@@ -55,4 +55,3 @@ class Inflector {
 		return preg_replace('/([a-z0-9])([A-Z])/', '$1' . $glue . '$2', $camelCased);
 	}
 }
-?>

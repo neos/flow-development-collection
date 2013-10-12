@@ -59,4 +59,3 @@ class GeneratorServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('\TYPO3\Testing\Domain\Model\\' . $uniqueClassName, $normalizedFieldDefinitions['field']['type']);
 	}
 }
-?>

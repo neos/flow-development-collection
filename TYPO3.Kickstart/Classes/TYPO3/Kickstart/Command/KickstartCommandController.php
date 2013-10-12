@@ -261,4 +261,3 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 }
-?>

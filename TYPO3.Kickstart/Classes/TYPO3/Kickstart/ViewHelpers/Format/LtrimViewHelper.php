@@ -38,4 +38,3 @@ class LtrimViewHelper extends AbstractViewHelper {
 		return ltrim($content, $charlist);
 	}
 }
-?>

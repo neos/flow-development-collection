@@ -39,4 +39,3 @@ class UcfirstViewHelper extends AbstractViewHelper {
 		return ucfirst($content);
 	}
 }
-?>

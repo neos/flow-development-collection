@@ -45,4 +45,3 @@ class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 		return $this->inflector->humanizeCamelCase($content, $lowercase);
 	}
 }
-?>
