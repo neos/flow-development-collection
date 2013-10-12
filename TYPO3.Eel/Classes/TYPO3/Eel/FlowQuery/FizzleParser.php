@@ -626,4 +626,3 @@ function match_ExactMatch ($stack = array()) {
 		}
 	}
 }
-?>

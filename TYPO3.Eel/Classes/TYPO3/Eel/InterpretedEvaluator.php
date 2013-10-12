@@ -47,4 +47,3 @@ class InterpretedEvaluator implements EelEvaluatorInterface {
 	}
 
 }
-?>

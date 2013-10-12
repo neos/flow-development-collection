@@ -22,5 +22,3 @@ class ExampleNonFinalOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractO
 
 	}
 }
-
-?>

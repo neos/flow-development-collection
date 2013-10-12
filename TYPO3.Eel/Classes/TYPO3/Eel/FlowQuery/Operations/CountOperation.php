@@ -50,5 +50,3 @@ class CountOperation extends AbstractOperation {
 		}
 	}
 }
-
-?>

@@ -24,5 +24,3 @@ class ExampleFinalOperationWithHigherPriority extends \TYPO3\Eel\FlowQuery\Opera
 		return 'Priority 100';
 	}
 }
-
-?>

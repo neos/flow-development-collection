@@ -361,4 +361,3 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expected, $result);
 	}
 }
-?>

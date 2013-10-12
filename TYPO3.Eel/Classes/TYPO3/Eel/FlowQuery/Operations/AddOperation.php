@@ -45,5 +45,3 @@ class AddOperation extends AbstractOperation {
 		$flowQuery->setContext($output);
 	}
 }
-
-?>

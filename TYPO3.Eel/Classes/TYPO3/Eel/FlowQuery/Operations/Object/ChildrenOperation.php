@@ -97,4 +97,3 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 		$query->setContext($resultObjects);
 	}
 }
-?>

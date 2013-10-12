@@ -269,4 +269,3 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 	}
 
 }
-?>

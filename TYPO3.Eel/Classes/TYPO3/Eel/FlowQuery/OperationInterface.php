@@ -63,4 +63,3 @@ interface OperationInterface {
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments);
 }
-?>

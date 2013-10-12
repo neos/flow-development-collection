@@ -61,4 +61,3 @@ class GetOperation extends AbstractOperation {
 		}
 	}
 }
-?>

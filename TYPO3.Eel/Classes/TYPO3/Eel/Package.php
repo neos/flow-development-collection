@@ -40,4 +40,3 @@ class Package extends BasePackage {
             )}
 			$/x';
 }
-?>

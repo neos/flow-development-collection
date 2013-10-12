@@ -17,4 +17,3 @@ namespace TYPO3\Eel;
 class NotAllowedException extends EvaluationException {
 
 }
-?>

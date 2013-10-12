@@ -51,4 +51,3 @@ class IsOperation extends AbstractOperation {
 		}
 	}
 }
-?>

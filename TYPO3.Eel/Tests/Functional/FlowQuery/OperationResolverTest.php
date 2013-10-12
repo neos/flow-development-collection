@@ -38,4 +38,3 @@ class OperationResolverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertInstanceOf('TYPO3\Eel\Tests\Functional\FlowQuery\Fixtures\ExampleFinalOperationWithHigherPriority', $this->operationResolver->resolveOperation('exampleFinalOperation', array()));
 	}
 }
-?>

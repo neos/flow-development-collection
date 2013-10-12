@@ -227,4 +227,3 @@ class ArrayHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expected, $result);
 	}
 }
-?>

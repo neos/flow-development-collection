@@ -26,4 +26,3 @@ interface EelEvaluatorInterface {
 	public function evaluate($expression, Context $context);
 
 }
-?>

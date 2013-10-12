@@ -117,4 +117,3 @@ class DateHelper implements ProtectedContextAwareInterface {
 	}
 
 }
-?>

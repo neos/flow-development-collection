@@ -44,4 +44,3 @@ class CompilingEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

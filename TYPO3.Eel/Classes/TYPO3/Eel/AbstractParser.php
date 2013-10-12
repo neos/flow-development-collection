@@ -259,4 +259,3 @@ function match_Identifier ($stack = array()) {
 		$result['val'] = (string)str_replace('\"', '"', substr($sub['text'], 1, -1));
 	}
 }
-?>

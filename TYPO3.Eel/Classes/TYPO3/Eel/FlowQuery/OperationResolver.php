@@ -117,5 +117,3 @@ class OperationResolver implements OperationResolverInterface {
 	}
 
 }
-
-?>

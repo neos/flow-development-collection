@@ -53,4 +53,3 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest {
 	}
 
 }
-?>

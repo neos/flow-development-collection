@@ -98,4 +98,3 @@ class ProtectedContext extends Context {
 	}
 
 }
-?>

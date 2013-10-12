@@ -41,5 +41,3 @@ class FirstOperation extends AbstractOperation {
 		}
 	}
 }
-
-?>

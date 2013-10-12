@@ -41,5 +41,3 @@ class LastOperation extends AbstractOperation {
 		}
 	}
 }
-
-?>

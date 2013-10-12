@@ -25,4 +25,3 @@ interface ProtectedContextAwareInterface {
 	public function allowsCallOfMethod($methodName);
 
 }
-?>

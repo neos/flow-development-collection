@@ -629,4 +629,3 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	abstract protected function createEvaluator();
 
 }
-?>

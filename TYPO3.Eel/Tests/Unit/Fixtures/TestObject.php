@@ -85,4 +85,3 @@ class TestObject implements ProtectedContextAwareInterface {
 	}
 
 }
-?>

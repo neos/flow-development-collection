@@ -24,5 +24,3 @@ class ExampleFinalOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOper
 		return 'Priority 1';
 	}
 }
-
-?>

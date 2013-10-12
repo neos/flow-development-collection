@@ -17,4 +17,3 @@ namespace TYPO3\Eel;
 class ParserException extends \TYPO3\Flow\Exception {
 
 }
-?>

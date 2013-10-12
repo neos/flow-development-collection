@@ -58,4 +58,3 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 		}
 	}
 }
-?>

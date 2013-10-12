@@ -44,4 +44,3 @@ class InterpretedEvaluatorBenchmarkTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

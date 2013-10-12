@@ -154,4 +154,3 @@ class ArrayHelper implements ProtectedContextAwareInterface {
 	}
 
 }
-?>

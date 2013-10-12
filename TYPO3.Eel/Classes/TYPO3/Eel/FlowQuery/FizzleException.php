@@ -13,4 +13,3 @@ namespace TYPO3\Eel\FlowQuery;
 
 class FizzleException extends \TYPO3\Flow\Exception {
 }
-?>

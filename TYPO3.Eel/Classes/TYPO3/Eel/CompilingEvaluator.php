@@ -130,4 +130,3 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 	}
 
 }
-?>
