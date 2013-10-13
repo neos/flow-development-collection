@@ -155,7 +155,7 @@ class DatetimeParser {
 		try {
 			foreach ($parsedFormat as $subformat) {
 				if (is_array($subformat)) {
-						// This is literal string, should match exactly
+					// This is literal string, should match exactly
 					if (\TYPO3\Flow\I18n\Utility::stringBeginsWith($datetimeToParse, $subformat[0])) {
 						$datetimeToParse = substr_replace($datetimeToParse, '', 0, strlen($subformat[0]));
 						continue;
@@ -296,7 +296,7 @@ class DatetimeParser {
 					case 'A':
 					case 'Z':
 					case 'V':
-							// Silently ignore unsupported formats or formats that there is no need to parse
+						// Silently ignore unsupported formats or formats that there is no need to parse
 						break;
 					default:
 						throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965528);
@@ -312,7 +312,7 @@ class DatetimeParser {
 				}
 			}
 		} catch (\TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException $exception) {
-				// Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
+			// Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
 			return FALSE;
 		}
 
@@ -354,7 +354,7 @@ class DatetimeParser {
 		foreach ($parsedFormat as $subformat) {
 			try {
 				if (is_array($subformat)) {
-						// This is literal string, and we ignore them
+					// This is literal string, and we ignore them
 					continue;
 				}
 
@@ -460,7 +460,7 @@ class DatetimeParser {
 										break;
 									}
 								} catch (\TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException $exception) {
-										// Try to match month's name by cases below
+									// Try to match month's name by cases below
 								}
 							case 3:
 								foreach ($localizedLiterals['months'][$typeOfLiteral]['abbreviated'] as $monthId => $monthName) {
@@ -537,7 +537,7 @@ class DatetimeParser {
 					case 'A':
 					case 'Z':
 					case 'V':
-							// Silently ignore unsupported formats or formats that there is no need to parse
+						// Silently ignore unsupported formats or formats that there is no need to parse
 						break;
 					default:
 						throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965529);
@@ -552,7 +552,7 @@ class DatetimeParser {
 					$datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
 				}
 			} catch (\TYPO3\Flow\I18n\Parser\Exception\InvalidParseStringException $exception) {
-					// Matching failed, but in lenient mode we ignore it and try to match next element
+				// Matching failed, but in lenient mode we ignore it and try to match next element
 				continue;
 			}
 		}

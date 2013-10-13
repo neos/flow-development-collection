@@ -92,7 +92,6 @@ class Role {
 	/**
 	 * Initialize the object - sets name and packageKey properties.
 	 *
-	 * @param integer $initializationCause
 	 * @return void
 	 */
 	public function initializeObject() {

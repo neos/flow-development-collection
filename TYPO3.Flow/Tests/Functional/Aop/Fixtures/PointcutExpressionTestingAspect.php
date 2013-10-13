@@ -24,7 +24,7 @@ class PointcutExpressionTestingAspect {
 	 *
 	 * @Flow\Around("method(TYPO3\Flow\Tests\Functional\Aop\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.Flow.tests.functional.aop.pointcutExpressionSettingFilterOptionA)")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
-	 * @return void
+	 * @return string
 	 */
 	public function settingFilterAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		return 'pointcutExpressionSettingFilterOptionA on';

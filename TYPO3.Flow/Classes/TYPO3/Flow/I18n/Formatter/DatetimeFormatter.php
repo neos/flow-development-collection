@@ -157,7 +157,7 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 
 		foreach ($parsedFormat as $subformat) {
 			if (is_array($subformat)) {
-					// This is just a simple string we use literally
+				// This is just a simple string we use literally
 				$formattedDateTime .= $subformat[0];
 			} else {
 				$formattedDateTime .= $this->doFormattingForSubpattern($dateTime, $subformat, $localizedLiterals);
@@ -288,7 +288,7 @@ class DatetimeFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface
 			case 'A':
 			case 'Z':
 			case 'V':
-					// Silently ignore unsupported formats
+				// Silently ignore unsupported formats
 				return '';
 			default:
 				throw new \TYPO3\Flow\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time formatting.', 1276106678);

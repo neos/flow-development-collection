@@ -151,6 +151,7 @@ class Files {
 	 * @return void
 	 * @see removeDirectoryRecursively()
 	 * @api
+	 * @throws Exception
 	 */
 	static public function removeEmptyDirectoriesOnPath($path, $basePath = NULL) {
 		if ($basePath !== NULL) {
@@ -334,7 +335,7 @@ class Files {
 	 * @api
 	 */
 	static public function is_link($pathAndFilename) {
-			// if not on Windows, call PHPs own is_link() function
+		// if not on Windows, call PHPs own is_link() function
 		if (DIRECTORY_SEPARATOR === '/') {
 			return \is_link($pathAndFilename);
 		}
@@ -358,7 +359,7 @@ class Files {
 	 */
 	static public function unlink($pathAndFilename) {
 		try {
-				// if not on Windows, call PHPs own unlink() function
+			// if not on Windows, call PHPs own unlink() function
 			if (DIRECTORY_SEPARATOR === '/' || is_file($pathAndFilename)) {
 				return @\unlink($pathAndFilename);
 			}

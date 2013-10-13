@@ -99,6 +99,7 @@ class Cookie {
 	 * @param boolean $secure If this cookie should only be sent through a "secure" channel by the user agent
 	 * @param boolean $httpOnly If this cookie should only be used through the HTTP protocol
 	 * @api
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($name, $value = NULL, $expires = 0, $maximumAge = NULL,  $domain = NULL, $path = '/', $secure = FALSE, $httpOnly = TRUE) {
 		if (preg_match(self::PATTERN_TOKEN, $name) !== 1) {
@@ -174,9 +175,9 @@ class Cookie {
 						try {
 							$expiresAttribute = new \DateTime($attributeValue);
 						} catch (\Exception $exception) {
-								// as of RFC 6265 Section 5.2.1, a non parsable Expires date should result into
-								// ignoring, but since the Cookie constructor relies on it, we'll
-								// assume a Session cookie with an expiry date of 0.
+							// as of RFC 6265 Section 5.2.1, a non parsable Expires date should result into
+							// ignoring, but since the Cookie constructor relies on it, we'll
+							// assume a Session cookie with an expiry date of 0.
 							$expiresAttribute = 0;
 						}
 					break;

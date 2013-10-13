@@ -183,7 +183,7 @@ class GenericObjectValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valid
 		$validator = $this->getValidator();
 		$validator->addPropertyValidator('integer', $integerValidator);
 
-			// Call the validation twice
+		// Call the validation twice
 		$validator->validate($object);
 		$validator->validate($object);
 

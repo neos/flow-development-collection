@@ -61,7 +61,7 @@ class PolicyEnforcementAspect {
 
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-			// @TODO Once we use the AfterInvocation again, it needs to be invoked here and its result returned instead.
+		// @TODO Once we use the AfterInvocation again, it needs to be invoked here and its result returned instead.
 		return $result;
 	}
 

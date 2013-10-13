@@ -171,7 +171,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 * Returns the query result count
 	 *
 	 * @return integer The query result count
-	 * @throws \TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
+	 * @throws DatabaseConnectionException
 	 * @api
 	 */
 	public function count() {

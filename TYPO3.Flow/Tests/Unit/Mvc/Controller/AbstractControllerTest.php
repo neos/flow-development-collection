@@ -148,7 +148,7 @@ class AbstractControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('theTarget', $nextRequest->getControllerActionName());
 		$this->assertEquals('bar', $nextRequest->getArgument('foo'));
 
-			// all arguments of the current controller must be reset, in case the controller is called again later:
+		// all arguments of the current controller must be reset, in case the controller is called again later:
 		$arguments = $controller->_get('arguments');
 		$this->assertFalse($arguments->hasArgument('foo'));
 	}

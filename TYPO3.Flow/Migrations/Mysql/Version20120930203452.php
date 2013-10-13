@@ -17,7 +17,7 @@ class Version20120930203452 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-			// collect foreign keys pointing to "our" tables
+		// collect foreign keys pointing to "our" tables
 		$tableNames = array(
 			'typo3_flow3_resource_publishing_abstractpublishingconfiguration',
 			'typo3_flow3_resource_resource',
@@ -26,12 +26,12 @@ class Version20120930203452 extends AbstractMigration {
 		);
 		$foreignKeyHandlingSql = Service::getForeignKeyHandlingSql($schema, $this->platform, $tableNames, 'flow3_persistence_identifier', 'persistence_object_identifier');
 
-			// drop FK constraints
+		// drop FK constraints
 		foreach ($foreignKeyHandlingSql['drop'] as $sql) {
 			$this->addSql($sql);
 		}
 
-			// rename identifier fields
+		// rename identifier fields
 		$this->addSql("ALTER TABLE typo3_flow3_resource_publishing_abstractpublishingconfiguration DROP PRIMARY KEY");
 		$this->addSql("ALTER TABLE typo3_flow3_resource_publishing_abstractpublishingconfiguration CHANGE flow3_persistence_identifier persistence_object_identifier VARCHAR(40) NOT NULL");
 		$this->addSql("ALTER TABLE typo3_flow3_resource_publishing_abstractpublishingconfiguration ADD PRIMARY KEY (persistence_object_identifier)");
@@ -45,12 +45,12 @@ class Version20120930203452 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_flow3_security_authorization_resource_securitypubli_6180a CHANGE flow3_persistence_identifier persistence_object_identifier VARCHAR(40) NOT NULL");
 		$this->addSql("ALTER TABLE typo3_flow3_security_authorization_resource_securitypubli_6180a ADD PRIMARY KEY (persistence_object_identifier)");
 
-			// add back FK constraints
+		// add back FK constraints
 		foreach ($foreignKeyHandlingSql['add'] as $sql) {
 			$this->addSql($sql);
 		}
 
-			// rename tables
+		// rename tables
 		$this->addSql("RENAME TABLE typo3_flow3_mvc_routing_objectpathmapping TO typo3_flow_mvc_routing_objectpathmapping");
 		$this->addSql("RENAME TABLE typo3_flow3_resource_publishing_abstractpublishingconfiguration TO typo3_flow_resource_publishing_abstractpublishingconfiguration");
 		$this->addSql("RENAME TABLE typo3_flow3_resource_resource TO typo3_flow_resource_resource");
@@ -67,7 +67,7 @@ class Version20120930203452 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-			// collect foreign keys pointing to "our" tables
+		// collect foreign keys pointing to "our" tables
 		$tableNames = array(
 			'typo3_flow_resource_publishing_abstractpublishingconfiguration',
 			'typo3_flow_resource_resource',
@@ -76,12 +76,12 @@ class Version20120930203452 extends AbstractMigration {
 		);
 		$foreignKeyHandlingSql = \TYPO3\Flow\Persistence\Doctrine\Service::getForeignKeyHandlingSql($schema, $this->platform, $tableNames, 'persistence_object_identifier', 'flow3_persistence_identifier');
 
-			// drop FK constraints
+		// drop FK constraints
 		foreach ($foreignKeyHandlingSql['drop'] as $sql) {
 			$this->addSql($sql);
 		}
 
-			// rename identifier fields
+		// rename identifier fields
 		$this->addSql("ALTER TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration DROP PRIMARY KEY");
 		$this->addSql("ALTER TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration CHANGE persistence_object_identifier flow3_persistence_identifier VARCHAR(40) NOT NULL");
 		$this->addSql("ALTER TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration ADD PRIMARY KEY (flow3_persistence_identifier)");
@@ -95,12 +95,12 @@ class Version20120930203452 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_flow_security_authorization_resource_securitypublis_861cb CHANGE persistence_object_identifier flow3_persistence_identifier VARCHAR(40) NOT NULL");
 		$this->addSql("ALTER TABLE typo3_flow_security_authorization_resource_securitypublis_861cb ADD PRIMARY KEY (flow3_persistence_identifier)");
 
-			// add back FK constraints
+		// add back FK constraints
 		foreach ($foreignKeyHandlingSql['add'] as $sql) {
 			$this->addSql($sql);
 		}
 
-			// rename tables
+		// rename tables
 		$this->addSql("RENAME TABLE typo3_flow_mvc_routing_objectpathmapping TO typo3_flow3_mvc_routing_objectpathmapping");
 		$this->addSql("RENAME TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration TO typo3_flow3_resource_publishing_abstractpublishingconfiguration");
 		$this->addSql("RENAME TABLE typo3_flow_resource_resource TO typo3_flow3_resource_resource");

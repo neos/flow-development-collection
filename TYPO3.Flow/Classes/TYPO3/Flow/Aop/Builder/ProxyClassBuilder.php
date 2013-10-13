@@ -435,9 +435,9 @@ class ProxyClassBuilder {
 			$proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (method_exists(get_parent_class(\$this), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
 		}
 
-			// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
+		// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
 		$proxyClass->getMethod('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies')->addPreParentCallCode($this->fixMethodsAndAdvicesArrayForDoctrineProxiesCode());
-			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
+		// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
 		$proxyClass->getMethod('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies')->addPreParentCallCode($this->fixInjectedPropertiesForDoctrineProxiesCode());
 
 		$this->buildGetAdviceChainsMethodCode($targetClassName);

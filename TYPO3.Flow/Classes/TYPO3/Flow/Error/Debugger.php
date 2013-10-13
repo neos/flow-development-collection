@@ -159,7 +159,7 @@ class Debugger {
 			return self::renderArrayDump(\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
 		}
 
-			// Objects returned from Doctrine's Debug::export function are stdClass with special properties:
+		// Objects returned from Doctrine's Debug::export function are stdClass with special properties:
 		try {
 			$objectIdentifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
 		} catch (\TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException $exception) {

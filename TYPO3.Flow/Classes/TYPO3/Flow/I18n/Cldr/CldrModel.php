@@ -272,7 +272,7 @@ class CldrModel {
 			$parsedFiles[] = $this->cldrParser->getParsedData($sourcePath);
 		}
 
-			// Merge all data starting with most generic file so we get proper inheritance
+		// Merge all data starting with most generic file so we get proper inheritance
 		$parsedData = $parsedFiles[0];
 
 		for ($i = 1; $i < count($parsedFiles); ++$i) {
@@ -329,13 +329,13 @@ class CldrModel {
 		foreach ($data as $nodeString => $nodeChildren) {
 			if (self::getNodeName($nodeString) === 'alias') {
 				if (self::getAttributeValue($nodeString, 'source') !== 'locale') {
-						// Value of source attribute can be 'locale' or particular locale identifier, but we do not support the second mode, ignore it silently
+					// Value of source attribute can be 'locale' or particular locale identifier, but we do not support the second mode, ignore it silently
 					break;
 				}
 
 				$sourcePath = self::getAttributeValue($nodeString, 'path');
 
-					// Change relative path to absolute one
+				// Change relative path to absolute one
 				$sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
 				$sourcePath = str_replace('\'', '"', $sourcePath);
 				$currentPathNodeNames = explode('/', $currentPath);

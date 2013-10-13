@@ -360,7 +360,7 @@ class UriBuilder {
 			while ($subRequest instanceof \TYPO3\Flow\Mvc\ActionRequest) {
 				$requestArguments = (array)$subRequest->getArguments();
 
-					// Reset arguments for the request that is bound to this UriBuilder instance
+				// Reset arguments for the request that is bound to this UriBuilder instance
 				if ($subRequest === $this->request) {
 					if ($this->addQueryString === FALSE) {
 						$requestArguments = array();
@@ -383,7 +383,7 @@ class UriBuilder {
 					}
 				}
 
-					// Merge special arguments (package, subpackage, controller & action) from main request
+				// Merge special arguments (package, subpackage, controller & action) from main request
 				$requestPackageKey = $subRequest->getControllerPackageKey();
 				if (!empty($requestPackageKey)) {
 					$requestArguments['@package'] = $requestPackageKey;

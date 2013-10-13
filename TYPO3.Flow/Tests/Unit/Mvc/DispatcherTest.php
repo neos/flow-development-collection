@@ -113,7 +113,7 @@ class DispatcherTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		));
 		$mockController->expects($this->at(1))->method('processRequest')->will($this->returnCallback(
 			function(ActionRequest $request) use ($nextRequest) {
-					// NOTE: PhpUnit creates a clone of $nextRequest, thus $request is not the same instance as expected.
+				// NOTE: PhpUnit creates a clone of $nextRequest, thus $request is not the same instance as expected.
 				if ($request == $nextRequest) {
 					$nextRequest->setDispatched(TRUE);
 				}

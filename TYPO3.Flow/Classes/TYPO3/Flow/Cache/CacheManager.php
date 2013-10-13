@@ -217,11 +217,11 @@ class CacheManager {
 				}
 				$modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
 
-					// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
+				// If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
 				if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
 					$modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = TRUE;
 				}
-					// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
+				// As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
 				if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
 					$objectClassesCache->remove($classNameWithUnderscores);
 				}

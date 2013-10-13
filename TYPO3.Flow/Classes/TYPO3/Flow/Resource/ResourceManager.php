@@ -99,8 +99,8 @@ class ResourceManager {
 			\TYPO3\Flow\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
 		}
 
-			// For now this URI is hardcoded, but might be manageable in the future
-			// if additional persistent resources storages are supported.
+		// For now this URI is hardcoded, but might be manageable in the future
+		// if additional persistent resources storages are supported.
 		$this->persistentResourcesStorageBaseUri = FLOW_PATH_DATA . 'Persistent/Resources/';
 		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->persistentResourcesStorageBaseUri);
 
@@ -230,7 +230,7 @@ class ResourceManager {
 
 		$openBasedirEnabled = (boolean)ini_get('open_basedir');
 		if ($openBasedirEnabled === TRUE) {
-				// Move uploaded file to a readable folder before trying to read sha1 value of file
+			// Move uploaded file to a readable folder before trying to read sha1 value of file
 			$newTemporaryTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . uniqid();
 			if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === FALSE) {
 				return FALSE;
@@ -286,7 +286,7 @@ class ResourceManager {
 	 * @return boolean
 	 */
 	public function deleteResource($resource) {
-			// instanceof instead of type hinting so it can be used as slot
+		// instanceof instead of type hinting so it can be used as slot
 		if ($resource instanceof \TYPO3\Flow\Resource\Resource) {
 			$this->resourcePublisher->unpublishPersistentResource($resource);
 			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getResourcePointer()->getHash())) {

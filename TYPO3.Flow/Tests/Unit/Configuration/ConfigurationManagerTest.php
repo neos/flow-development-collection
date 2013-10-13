@@ -379,13 +379,13 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function packageObjectsCallback() {
 		$filenameAndPath = func_get_arg(0);
 
-			// We expect the following overriding order:
-			// - $packageObjects
-			// - $globalObjects
-			// - $packageContextObjects
-			// - $globalContextObjects
-			// - $packageSubContextObjects
-			// - $globalSubContextObjects
+		// We expect the following overriding order:
+		// - $packageObjects
+		// - $globalObjects
+		// - $packageContextObjects
+		// - $globalContextObjects
+		// - $packageSubContextObjects
+		// - $globalSubContextObjects
 		$packageObjects = array(
 			'TYPO3\Flow\SomeClass' => array(
 				'className' => 'Foo',
@@ -488,13 +488,13 @@ class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function packageCachesCallback() {
 		$filenameAndPath = func_get_arg(0);
 
-			// We expect the following overriding order:
-			// - $packageCaches
-			// - $globalCaches
-			// - $packageContextCaches
-			// - $globalContextCaches
-			// - $packageSubContextCaches
-			// - $globalSubContextCaches
+		// We expect the following overriding order:
+		// - $packageCaches
+		// - $globalCaches
+		// - $packageContextCaches
+		// - $globalContextCaches
+		// - $packageSubContextCaches
+		// - $globalSubContextCaches
 		$packageCaches = array(
 			'TYPO3_Flow_SomeCache' => array(
 				'configPackageCaches' => 'correct',
@@ -899,6 +899,8 @@ EOD;
 	/**
 	 * Callback for the above test.
 	 * @param string $filenameAndPath
+	 * @return array
+	 * @throws \Exception
 	 */
 	public function packageRoutesCallback($filenameAndPath) {
 
@@ -936,7 +938,6 @@ EOD;
 				'uriPattern' => 'packageRoute2'
 			)
 		);
-
 
 		$globalSubContextRoutes = array(
 			array(
@@ -1032,6 +1033,7 @@ EOD;
 	/**
 	 * Callback for the above test.
 	 * @param string $filenameAndPath
+	 * @return array
 	 */
 	public function packageSubRoutesCallback($filenameAndPath) {
 

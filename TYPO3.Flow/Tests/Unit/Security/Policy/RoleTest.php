@@ -63,9 +63,9 @@ class RoleTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'Acme.Demo:Parent2' => $parentRole2
 		);
 
-			// Internally, parentRoles might contain duplicates which Doctrine will try
-			// to persist - even though getParentRoles() will return an array which
-			// does not contain duplicates:
+		// Internally, parentRoles might contain duplicates which Doctrine will try
+		// to persist - even though getParentRoles() will return an array which
+		// does not contain duplicates:
 		$internalParentRolesCollection = ObjectAccess::getProperty($role, 'parentRoles', TRUE);
 		$this->assertEquals(2, count($internalParentRolesCollection->toArray()));
 

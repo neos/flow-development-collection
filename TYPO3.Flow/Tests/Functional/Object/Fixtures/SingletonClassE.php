@@ -27,7 +27,6 @@ class SingletonClassE {
 
 	/**
 	 * @param \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
-	 * @return void
 	 */
 	public function __construct(\TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassB $objectB) {
 		$this->objectB = $objectB;

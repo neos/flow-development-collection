@@ -616,10 +616,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	/**
 	 * Register a native Flow package
 	 *
-	 * @param string $packageKey The Package to be registered
+	 * @param PackageInterface $package The Package to be registered
 	 * @param boolean $sortAndSave allows for not saving packagestates when used in loops etc.
 	 * @return PackageInterface
-	 * @throws Exception\CorruptPackageException
+	 * @throws Exception\InvalidPackageStateException
 	 */
 	public function registerPackage(PackageInterface $package, $sortAndSave = TRUE) {
 		$packageKey = $package->getPackageKey();
@@ -773,7 +773,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 
 			$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = str_replace($this->packagesBasePath, '', $packagePath);
 
-				// Change this to read the target from Composer or any other source
+			// Change this to read the target from Composer or any other source
 			$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = Package::DIRECTORY_CLASSES;
 		}
 
@@ -923,7 +923,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$fileDescription .= "# This file will be regenerated automatically if it doesn't exist. Deleting this file\n";
 		$fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
 
-			// we do not need the dependencies on disk...
+		// we do not need the dependencies on disk...
 		foreach ($this->packageStatesConfiguration['packages'] as &$packageConfiguration) {
 			if (isset($packageConfiguration['dependencies'])) {
 				unset($packageConfiguration['dependencies']);

@@ -23,6 +23,7 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
 		$actionRequest = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
@@ -51,6 +52,7 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsOnlyInterceptsActionRequests() {
 		$httpRequest = Request::create(new Uri('http://wwwision.de'));
@@ -77,8 +79,9 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
 	}
 
-		/**
+	/**
 	 * @test
+	 * @return void
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsDoesNotBlockRequestsIfAuthorizationChecksAreDisabled() {
 		$request = Request::create(new Uri('http://wwwision.de'))->createActionRequest();
@@ -108,6 +111,7 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
 		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
@@ -117,8 +121,11 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
 
-			if ($args[0] === 'request') return $request;
-			elseif ($args[0] === 'response') return $response;
+			if ($args[0] === 'request') {
+				return $request;
+			} elseif ($args[0] === 'response') {
+				return $response;
+			}
 		};
 
 		$getExceptionCallback = function() use (&$exception) {
@@ -151,6 +158,7 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\Flow\Security\Exception\AuthenticationRequiredException
+	 * @return void
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
 		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
@@ -160,8 +168,11 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
 
-			if ($args[0] === 'request') return $request;
-			elseif ($args[0] === 'response') return $response;
+			if ($args[0] === 'request') {
+				return $request;
+			} elseif ($args[0] === 'response') {
+				return $response;
+			}
 		};
 
 		$getExceptionCallback = function() use (&$exception) {

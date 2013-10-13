@@ -151,10 +151,10 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @api
 	 */
 	public function persistAll() {
-			// hand in only aggregate roots, leaving handling of subobjects to
-			// the underlying storage layer
-			// reconstituted entities must be fetched from the session and checked
-			// for changes by the underlying backend as well!
+		// hand in only aggregate roots, leaving handling of subobjects to
+		// the underlying storage layer
+		// reconstituted entities must be fetched from the session and checked
+		// for changes by the underlying backend as well!
 		$this->backend->setAggregateRootObjects($this->addedObjects);
 		$this->backend->setChangedEntities($this->changedObjects);
 		$this->backend->setDeletedEntities($this->removedObjects);

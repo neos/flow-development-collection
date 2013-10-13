@@ -10,7 +10,7 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-	// if installed through composer, use it's autoloading
+// if installed through composer, use it's autoloading
 if (file_exists(__DIR__ . '/../../../Libraries/autoload.php')) {
 	require (__DIR__ . '/../../../Libraries/autoload.php');
 } else {

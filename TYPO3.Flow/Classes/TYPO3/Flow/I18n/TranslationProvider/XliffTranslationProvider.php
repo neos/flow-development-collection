@@ -86,7 +86,7 @@ class XliffTranslationProvider implements \TYPO3\Flow\I18n\TranslationProvider\T
 			if (!is_array($pluralFormsForProvidedLocale) || !in_array($pluralForm, $pluralFormsForProvidedLocale)) {
 				throw new \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
 			}
-				// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
+			// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
 			$pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
 		} else {
 			$pluralFormIndex = 0;
@@ -117,7 +117,7 @@ class XliffTranslationProvider implements \TYPO3\Flow\I18n\TranslationProvider\T
 			if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
 				throw new \TYPO3\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
 			}
-				// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
+			// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
 			$pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
 		} else {
 			$pluralFormIndex = 0;

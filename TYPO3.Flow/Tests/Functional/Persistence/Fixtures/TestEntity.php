@@ -122,7 +122,8 @@ class TestEntity {
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntities
+	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity
+	 * @return void
 	 */
 	public function setRelatedEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity) {
 		$this->relatedEntity = $relatedEntity;
@@ -144,7 +145,7 @@ class TestEntity {
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $relatedEntity
+	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $subEntity
 	 * @return void
 	 */
 	public function addSubEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $subEntity) {

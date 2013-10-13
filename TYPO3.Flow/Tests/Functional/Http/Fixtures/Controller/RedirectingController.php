@@ -30,7 +30,7 @@ class RedirectingController extends ActionController {
 	}
 
 	/**
-	 * @return void
+	 * @return string
 	 */
 	public function toThereAction() {
 		return 'arrived.';

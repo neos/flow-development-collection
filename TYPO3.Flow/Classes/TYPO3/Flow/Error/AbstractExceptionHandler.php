@@ -64,7 +64,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 * @return void
 	 */
 	public function handleException(\Exception $exception) {
-			// Ignore if the error is suppressed by using the shut-up operator @
+		// Ignore if the error is suppressed by using the shut-up operator @
 		if (error_reporting() === 0) {
 			return;
 		}

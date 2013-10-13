@@ -57,14 +57,14 @@ class RouterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function resolveCallsCreateRoutesFromConfiguration() {
-			// not saying anything, but seems better than to expect the exception we'd get otherwise
+		// not saying anything, but seems better than to expect the exception we'd get otherwise
 		$mockRoute = $this->getMock('TYPO3\Flow\Mvc\Routing\Route');
 		$mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
 		$mockRoute->expects($this->atLeastOnce())->method('getResolvedUriPath')->will($this->returnValue('foobar'));
 
 		$this->router->_set('routes', array($mockRoute));
 
-			// this we actually want to know
+		// this we actually want to know
 		$this->router->expects($this->once())->method('createRoutesFromConfiguration');
 		$this->router->resolve(array());
 	}

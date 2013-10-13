@@ -145,8 +145,8 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 			$accessDecisionManager->setOverrideDecision(TRUE);
 		}
 
-			// HTTP must be initialized before Session and Security because they rely
-			// on an HTTP request being available via the request handler:
+		// HTTP must be initialized before Session and Security because they rely
+		// on an HTTP request being available via the request handler:
 		$this->setupHttp();
 
 		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
@@ -211,10 +211,10 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 
 		$persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-			// Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
-			// has not been called during a test. This makes sure that for example certain repositories can clear
-			// their internal registry in order to avoid side effects in the following test run.
-			// Wrap in try/catch to suppress errors after the actual test is run (e.g. validation)
+		// Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
+		// has not been called during a test. This makes sure that for example certain repositories can clear
+		// their internal registry in order to avoid side effects in the following test run.
+		// Wrap in try/catch to suppress errors after the actual test is run (e.g. validation)
 		try {
 			$persistenceManager->persistAll();
 		} catch (\Exception $exception) {}
@@ -238,7 +238,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		}
 		if ($this->policyService !== NULL) {
 			$this->policyService->reset();
-				// the following should be removed as soon as RoleRepository is cleaned up #43192
+			// the following should be removed as soon as RoleRepository is cleaned up #43192
 			$roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
 			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($roleRepository, 'newRoles', array(), TRUE);
 		}

@@ -22,6 +22,7 @@ class FilterFirewallTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
 	 */
 	public function configuredFiltersAreCreatedCorrectly() {
 		$resolveRequestPatternClassCallback = function() {

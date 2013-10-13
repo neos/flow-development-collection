@@ -373,8 +373,8 @@ class ActionController extends AbstractController {
 				$ignoredArguments = array();
 			}
 
-				// if there exists more errors than in ignoreValidationAnnotations_=> call error method
-				// else => call action method
+			// if there exists more errors than in ignoreValidationAnnotations_=> call error method
+			// else => call action method
 			$shouldCallActionMethod = TRUE;
 			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
 				if (!$subValidationResult->hasErrors()) {

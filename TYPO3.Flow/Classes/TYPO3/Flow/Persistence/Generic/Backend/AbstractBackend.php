@@ -372,8 +372,8 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 		foreach ($properties as $propertyName => $propertyMetaData) {
 			$propertyValue = $this->checkPropertyValue($object, $propertyName, $propertyMetaData);
 
-				// handle all objects now, because even clean ones need to be traversed
-				// as dirty checking is not recursive
+			// handle all objects now, because even clean ones need to be traversed
+			// as dirty checking is not recursive
 			if ($propertyValue instanceof \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface) {
 				if ($this->persistenceSession->isDirty($object, $propertyName)) {
 					$dirty = TRUE;
@@ -610,7 +610,7 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 				$this->removeDeletedArrayEntries($array[$item['index']], $item['value']);
 			} elseif ($this->getTypeName($item['type']) === 'object' && !($item['type'] === 'DateTime' || $item['type'] === 'SplObjectStorage')) {
 				if (!$this->persistenceSession->hasIdentifier($item['value']['identifier'])) {
-						// ingore this identifier, assume it was blocked by security query rewriting
+					// ingore this identifier, assume it was blocked by security query rewriting
 					continue;
 				}
 
@@ -705,10 +705,10 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 	 * @return void
 	 */
 	protected function removeDeletedSplObjectStorageEntries(\SplObjectStorage $splObjectStorage = NULL, array $previousObjectStorage) {
-			// remove objects detached since reconstitution
+		// remove objects detached since reconstitution
 		foreach ($previousObjectStorage as $item) {
 			if ($splObjectStorage instanceof \TYPO3\Flow\Persistence\Generic\LazySplObjectStorage && !$this->persistenceSession->hasIdentifier($item['value']['identifier'])) {
-					// ingore this identifier, assume it was blocked by security query rewriting upon activation
+				// ingore this identifier, assume it was blocked by security query rewriting upon activation
 				continue;
 			}
 

@@ -353,7 +353,7 @@ class SchemaValidator {
 					}
 					$propertyKeysToHandle = array_diff($propertyKeysToHandle, array($propertyName));
 				} else {
-						// is subproperty required
+					// is subproperty required
 					if (is_array($propertySchema) && $this->isSchema($propertySchema) && isset($propertySchema['required']) && $propertySchema['required'] === TRUE) {
 						$result->addError($this->createError('Property ' . $propertyName . ' is required'));
 					}
@@ -452,7 +452,7 @@ class SchemaValidator {
 		if (isset($schema['format'])) {
 			switch ($schema['format']) {
 				case 'date-time':
-						// YYYY-MM-DDThh:mm:ssZ ISO8601
+					// YYYY-MM-DDThh:mm:ssZ ISO8601
 					\DateTime::createFromFormat(\DateTime::ISO8601, $value);
 					$parseErrors = \DateTime::getLastErrors();
 					if ($parseErrors['error_count'] > 0) {
@@ -460,7 +460,7 @@ class SchemaValidator {
 					}
 					break;
 				case 'date':
-						// YYYY-MM-DD
+					// YYYY-MM-DD
 					\DateTime::createFromFormat('Y-m-d', $value);
 					$parseErrors = \DateTime::getLastErrors();
 					if ($parseErrors['error_count'] > 0) {
@@ -468,7 +468,7 @@ class SchemaValidator {
 					}
 					break;
 				case 'time':
-						// hh:mm:ss
+					// hh:mm:ss
 					\DateTime::createFromFormat('H:i:s', $value);
 					$parseErrors = \DateTime::getLastErrors();
 					if ($parseErrors['error_count'] > 0) {
@@ -573,7 +573,7 @@ class SchemaValidator {
 	 * @return boolean
 	 */
 	protected function isSchema(array $phpArray) {
-			// maybe we should validate against a schema here ;-)
+		// maybe we should validate against a schema here ;-)
 		return $this->isDictionary($phpArray);
 	}
 

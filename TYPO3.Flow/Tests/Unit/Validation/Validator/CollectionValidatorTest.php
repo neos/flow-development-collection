@@ -80,12 +80,12 @@ class CollectionValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validato
 		$this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\IntegerValidator()));
 		$this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will($this->returnValue(new \TYPO3\Flow\Validation\Validator\GenericObjectValidator()));
 
-			// Create validators
+		// Create validators
 		$aValidator = new \TYPO3\Flow\Validation\Validator\GenericObjectValidator(array());
 		$this->validator->_set('options', array('elementValidator' => 'Integer'));
 		$integerValidator = new \TYPO3\Flow\Validation\Validator\IntegerValidator(array());
 
-			// Add validators to properties
+		// Add validators to properties
 		$aValidator->addPropertyValidator('b', $this->validator);
 		$aValidator->addPropertyValidator('integer', $integerValidator);
 

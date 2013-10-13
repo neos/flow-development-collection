@@ -125,7 +125,7 @@ class XliffModel {
 			return FALSE;
 		}
 		foreach ($this->xmlParsedData['translationUnits'] as $translationUnit) {
-				// $source is always singular (or only) form, so compare with index 0
+			// $source is always singular (or only) form, so compare with index 0
 			if (!isset($translationUnit[0]) || $translationUnit[0]['source'] !== $source) {
 				continue;
 			}

@@ -1198,7 +1198,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'Acme.Demo:Parent' => array()
 		));
 
-			// using the sequence indexes is clumsy, but, ah, well.
+		// using the sequence indexes is clumsy, but, ah, well.
 		$mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
 		$mockRoleRepository->expects($this->once())->method('isConnected')->will($this->returnValue(TRUE));
 		$mockRoleRepository->expects($this->at(1))->method('findByIdentifier')->with('Anonymous')->will($this->returnValue($anonymousRole));

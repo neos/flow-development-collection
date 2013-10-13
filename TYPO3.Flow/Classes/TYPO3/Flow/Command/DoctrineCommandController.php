@@ -95,8 +95,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrate
 	 */
 	public function createCommand($output = NULL) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->doctrineService->createSchema($output);
 			if ($output === NULL) {
@@ -124,8 +124,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrate
 	 */
 	public function updateCommand($unsafeMode = FALSE, $output = NULL) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->doctrineService->updateSchema(!$unsafeMode, $output);
 			if ($output === NULL) {
@@ -190,8 +190,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @throws \InvalidArgumentException
 	 */
 	public function dqlCommand($depth = 3, $hydrationMode = 'array', $offset = NULL, $limit = NULL) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$dqlStatements = $this->request->getExceedingArguments();
 			$hydrationModeConstant = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationMode));
@@ -222,8 +222,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrationStatusCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->outputLine($this->doctrineService->getMigrationStatus());
 		} else {
@@ -249,8 +249,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE, $quiet = FALSE) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
 			if ($result == '') {
@@ -296,8 +296,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrationExecuteCommand($version, $direction = 'up', $output = NULL, $dryRun = FALSE) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
@@ -323,8 +323,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrationgenerate
 	 */
 	public function migrationVersionCommand($version, $add = FALSE, $delete = FALSE) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			if ($add === FALSE && $delete === FALSE) {
 				throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
@@ -352,8 +352,8 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @see typo3.flow:doctrine:migrationversion
 	 */
 	public function migrationGenerateCommand($diffAgainstCurrent = TRUE) {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$migrationClassPathAndFilename = $this->doctrineService->generateMigration($diffAgainstCurrent);
 			$this->outputLine('<u>Generated new migration class!</u>');

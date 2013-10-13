@@ -111,8 +111,8 @@ class RestController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @api
 	 */
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
-			// the parent method throws the exception, but we need to act afterwards
-			// thus the code in catch - it's the expected state
+		// the parent method throws the exception, but we need to act afterwards
+		// thus the code in catch - it's the expected state
 		try {
 			parent::redirectToUri($uri, $delay, $statusCode);
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $exception) {

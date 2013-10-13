@@ -19,6 +19,7 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
 	 */
 	public function invokeInvokesTheAdviceIfTheRuntimeEvaluatorReturnsTrue() {
 		$mockJoinPoint = $this->getMock('TYPO3\Flow\Aop\JoinPointInterface', array(), array(), '', FALSE);
@@ -37,6 +38,7 @@ class AroundAdviceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
 	 */
 	public function invokeDoesNotInvokeTheAdviceIfTheRuntimeEvaluatorReturnsFalse() {
 		$mockAdviceChain = $this->getMock('TYPO3\Flow\Aop\Advice\AdviceChain', array(), array(), '', FALSE);

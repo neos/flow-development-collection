@@ -265,8 +265,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$theObject = $this->testEntityRepository->findOneByName('Flow');
 		$theObjectIdentifier = $this->persistenceManager->getIdentifierByObject($theObject);
 
-			// Here, we completely reset the persistence manager again and work
-			// only with the Object Identifier
+		// Here, we completely reset the persistence manager again and work
+		// only with the Object Identifier
 		$this->persistenceManager->clearState();
 
 		$entityManager = $this->objectManager->get('Doctrine\Common\Persistence\ObjectManager');
@@ -285,8 +285,8 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 		$testEntity = $this->testEntityRepository->findOneByName('Flow');
 
-			// We now make the TestEntitys Description *invalid*, and still
-			// expect that the saving works without exception.
+		// We now make the TestEntitys Description *invalid*, and still
+		// expect that the saving works without exception.
 		$testEntity->setDescription('');
 		$this->testEntityRepository->update($testEntity);
 		$this->persistenceManager->persistAll();

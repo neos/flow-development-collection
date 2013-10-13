@@ -73,7 +73,7 @@ class LabelValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Validator\Abs
 	 * @dataProvider validLabels
 	 */
 	public function labelValidatorReturnsNoErrorForValidLabels($label) {
-		 $this->assertFalse($this->validator->validate($label)->hasErrors());
+		$this->assertFalse($this->validator->validate($label)->hasErrors());
 	}
 
 	/**

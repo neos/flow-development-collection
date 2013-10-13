@@ -149,7 +149,7 @@ class Package implements PackageInterface {
 			if ($requirements !== NULL) {
 				foreach ($requirements as $requirement => $version) {
 					if ($this->packageRequirementIsComposerPackage($requirement) === FALSE) {
-							// Skip non-package requirements
+						// Skip non-package requirements
 						continue;
 					}
 					$packageKey = $this->packageManager->getPackageKeyFromComposerName($requirement);

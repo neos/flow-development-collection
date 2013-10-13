@@ -41,7 +41,6 @@ class RestrictableEntity {
 	 * Constructor
 	 *
 	 * @param string $name The name of the entity
-	 * @return void
 	 */
 	public function __construct($name) {
 		$this->name = $name;
@@ -88,6 +87,5 @@ class RestrictableEntity {
 	public function getOwnerAccount() {
 		return $this->ownerAccount;
 	}
-
 
 }

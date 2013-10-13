@@ -116,6 +116,7 @@ class VariableFrontend extends AbstractFrontend {
 	 *
 	 * @param integer $chunkSize Determines the number of entries fetched by the backend at once (not supported yet, for future use)
 	 * @return \TYPO3\Flow\Cache\Frontend\CacheEntryIterator
+	 * @throws NotSupportedByBackendException
 	 */
 	public function getIterator($chunkSize = NULL) {
 		if (!$this->backend instanceof IterableBackendInterface) {

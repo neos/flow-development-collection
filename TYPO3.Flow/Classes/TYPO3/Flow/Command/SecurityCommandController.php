@@ -71,7 +71,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 */
 	public function importPublicKeyCommand() {
 		$keyData = '';
-			// no file_get_contents here because it does not work on php://stdin
+		// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen('php://stdin', 'rb');
 		while (!feof($fp)) {
 			$keyData .= fgets($fp, 4096);
@@ -96,7 +96,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 */
 	public function importPrivateKeyCommand($usedForPasswords = FALSE) {
 		$keyData = '';
-			// no file_get_contents here because it does not work on php://stdin
+		// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen('php://stdin', 'rb');
 		while (!feof($fp)) {
 			$keyData .= fgets($fp, 4096);

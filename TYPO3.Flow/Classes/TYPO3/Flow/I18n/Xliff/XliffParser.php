@@ -45,7 +45,7 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 		foreach ($root->file->body->children() as $translationElement) {
 			switch ($translationElement->getName()) {
 				case 'trans-unit':
-						// If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
+					// If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
 					if (!isset($translationElement['restype'])) {
 						if (!isset($translationElement['id'])) {
 							throw new Exception\InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399257);
@@ -61,7 +61,7 @@ class XliffParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 						$parsedTranslationElement = array();
 						foreach ($translationElement->children() as $translationPluralForm) {
 							if ($translationPluralForm->getName() === 'trans-unit') {
-									// When using plural forms, ID looks like this: 1[0], 1[1] etc
+								// When using plural forms, ID looks like this: 1[0], 1[1] etc
 								$formIndex = substr((string)$translationPluralForm['id'], strpos((string)$translationPluralForm['id'], '[') + 1, -1);
 
 								$parsedTranslationElement[(int)$formIndex] = array(

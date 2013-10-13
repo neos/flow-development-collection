@@ -60,12 +60,12 @@ abstract class AbstractValidator implements ValidatorInterface {
 	 * @api
 	 */
 	public function __construct(array $options = array()) {
-			// check for options given but not supported
+		// check for options given but not supported
 		if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== array()) {
 			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('Unsupported validation option(s) found: ' . implode(', ', array_keys($unsupportedOptions)), 1339079393);
 		}
 
-			// check for required options being set
+		// check for required options being set
 		array_walk(
 			$this->supportedOptions,
 			function($supportedOptionData, $supportedOptionName, $options) {
@@ -76,7 +76,7 @@ abstract class AbstractValidator implements ValidatorInterface {
 			$options
 		);
 
-			// merge with default values
+		// merge with default values
 		$this->options = array_merge(
 			array_map(
 				function ($value) {

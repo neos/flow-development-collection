@@ -665,8 +665,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$session->close();
 
-			// Create a new, clean session object to make sure that the tags were really
-			// loaded from the cache:
+		// Create a new, clean session object to make sure that the tags were really
+		// loaded from the cache:
 		$sessionCookie = $this->httpResponse->getCookie($this->settings['session']['name']);
 		$this->httpRequest->setCookie($sessionCookie);
 
@@ -845,7 +845,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($session, 'storageCache', $storageCache);
 		$session->initializeObject();
 
-			// Start a "local" session and store some data:
+		// Start a "local" session and store some data:
 		$session->start();
 		$sessionIdentifier = $session->getId();
 
@@ -853,7 +853,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session->close();
 		$sessionInfo = $metaDataCache->get($sessionIdentifier);
 
-			// Simulate a remote server referring to the same session:
+		// Simulate a remote server referring to the same session:
 		$remoteSession = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
 		$this->inject($remoteSession, 'bootstrap', $this->mockBootstrap);
 		$this->inject($remoteSession, 'objectManager', $this->mockObjectManager);
@@ -862,15 +862,15 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($remoteSession, 'storageCache', $storageCache);
 		$remoteSession->initializeObject();
 
-			// Resume the local session and add more data:
+		// Resume the local session and add more data:
 		$this->assertTrue($metaDataCache->has($sessionIdentifier));
 		$session->resume();
 		$session->putData('baz', 'quux');
 
-			// The remote server destroys the local session in the meantime:
+		// The remote server destroys the local session in the meantime:
 		$remoteSession->destroy();
 
-			// Close the local session – this must not write any data because the session doesn't exist anymore:
+		// Close the local session – this must not write any data because the session doesn't exist anymore:
 		$session->close();
 
 		$this->assertFalse($metaDataCache->has($sessionIdentifier));
@@ -979,7 +979,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sessionInfo['lastActivityTimestamp'] = time() - 4000;
 		$metaDataCache->set($sessionIdentifier, $sessionInfo, array($storageIdentifier, 'session'), 0);
 
-			// canBeResumed implicitly calls autoExpire():
+		// canBeResumed implicitly calls autoExpire():
 		$this->assertFalse($session->canBeResumed(), 'canBeResumed');
 
 		$this->assertFalse($storageCache->has($storageIdentifier . md5('session 1 key 1')));
@@ -997,8 +997,8 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$metaDataCache = $this->createCache('Meta');
 		$storageCache = $this->createCache('Storage');
 
-			// Create a session which first runs fine and then expires by later modifying
-			// the inactivity timeout:
+		// Create a session which first runs fine and then expires by later modifying
+		// the inactivity timeout:
 		$session = new Session();
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
@@ -1022,12 +1022,12 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sessionInfo1['lastActivityTimestamp'] = time() - 4000;
 		$metaDataCache->set($sessionIdentifier1, $sessionInfo1, array('session'), 0);
 
-			// Because we change the timeout post factum, the previously valid session
-			// now expires:
+		// Because we change the timeout post factum, the previously valid session
+		// now expires:
 		$settings['session']['inactivityTimeout'] = 3000;
 
-			// Create a second session which should remove the first expired session
-			// implicitly by calling autoExpire()
+		// Create a second session which should remove the first expired session
+		// implicitly by calling autoExpire()
 		$session = $this->getAccessibleMock('TYPO3\Flow\Session\Session', array('dummy'));
 		$this->inject($session, 'bootstrap', $this->mockBootstrap);
 		$this->inject($session, 'objectManager', $this->mockObjectManager);
@@ -1042,12 +1042,12 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session->putData('session 2 key 2', 'session 1 value 2');
 		$session->close();
 
-			// Calls autoExpire() internally:
+		// Calls autoExpire() internally:
 		$session->resume();
 
 		$sessionInfo2 = $metaDataCache->get($sessionIdentifier2);
 
-			// Check how the cache looks like - data of session 1 should be gone:
+		// Check how the cache looks like - data of session 1 should be gone:
 		$this->assertFalse($metaDataCache->has($sessionIdentifier1), 'session 1 meta entry still there');
 		$this->assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 1')), 'session 1 key 1 still there');
 		$this->assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
@@ -1095,12 +1095,12 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$session->injectSettings($settings);
 		$session->initializeObject();
 
-			// No sessions need to be removed:
+		// No sessions need to be removed:
 		$this->assertSame(0, $session->collectGarbage());
 
 		$metaDataCache->set('_garbage-collection-running', TRUE, array(), 120);
 
-			// Session garbage collection is omitted:
+		// Session garbage collection is omitted:
 		$this->assertFalse($session->collectGarbage());
 	}
 

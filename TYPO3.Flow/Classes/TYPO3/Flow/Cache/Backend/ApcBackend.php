@@ -239,14 +239,14 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
-				// Update tag-to-identifier index
+			// Update tag-to-identifier index
 			$identifiers = $this->findIdentifiersByTag($tag);
 			if (array_search($entryIdentifier, $identifiers) === FALSE) {
 				$identifiers[] = $entryIdentifier;
 				apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
 			}
 
-				// Update identifier-to-tag index
+			// Update identifier-to-tag index
 			$existingTags = $this->findTagsByIdentifier($entryIdentifier);
 			if (array_search($entryIdentifier, $existingTags) === FALSE) {
 				apc_store($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
@@ -261,16 +261,16 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
 	 * @return void
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
-			// Get tags for this identifier
+		// Get tags for this identifier
 		$tags = $this->findTagsByIdentifier($entryIdentifier);
-			// Deassociate tags with this identifier
+		// Deassociate tags with this identifier
 		foreach ($tags as $tag) {
 			$identifiers = $this->findIdentifiersByTag($tag);
-				// Formally array_search() below should never return false due to
-				// the behavior of findTagsByIdentifier(). But if reverse index is
-				// corrupted, we still can get 'false' from array_search(). This is
-				// not a problem because we are removing this identifier from
-				// anywhere.
+			// Formally array_search() below should never return false due to
+			// the behavior of findTagsByIdentifier(). But if reverse index is
+			// corrupted, we still can get 'false' from array_search(). This is
+			// not a problem because we are removing this identifier from
+			// anywhere.
 			if (($key = array_search($entryIdentifier, $identifiers)) !== FALSE) {
 				unset($identifiers[$key]);
 				if (count($identifiers)) {
@@ -280,7 +280,7 @@ class ApcBackend extends AbstractBackend implements TaggableBackendInterface, It
 				}
 			}
 		}
-			// Clear reverse tag index for this identifier
+		// Clear reverse tag index for this identifier
 		apc_delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
 	}
 

@@ -114,7 +114,7 @@ class ClassSchemaTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function addPropertyAcceptsValidPropertyTypes($propertyType) {
 		$classSchema = new \TYPO3\Flow\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', $propertyType);
-			// dummy assertion to avoid incomplete  test detection
+		// dummy assertion to avoid incomplete  test detection
 		$this->assertNull(NULL);
 	}
 

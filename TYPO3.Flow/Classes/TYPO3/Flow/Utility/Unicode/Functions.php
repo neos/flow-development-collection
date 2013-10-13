@@ -42,9 +42,9 @@ class Functions {
 	/**
 	 * PHP6 variant of substr()
 	 *
-	 * @param  string $string The string to crop
-	 * @param  integer $start Position of the left boundary
-	 * @param  integer $length (optional) Length of the returned string
+	 * @param string $string The string to crop
+	 * @param integer $start Position of the left boundary
+	 * @param integer $length (optional) Length of the returned string
 	 * @return string The processed string
 	 * @api
 	 */
@@ -53,13 +53,13 @@ class Functions {
 			return '';
 		}
 
-			// Cannot omit $len, when specifying charset
+		// Cannot omit $length, when specifying charset
 		if ($length === NULL) {
-				// save internal encoding
+			// save internal encoding
 			$enc = mb_internal_encoding();
 			mb_internal_encoding('UTF-8');
 			$str = mb_substr($string, $start);
-				// restore internal encoding
+			// restore internal encoding
 			mb_internal_encoding($enc);
 
 			return $str;

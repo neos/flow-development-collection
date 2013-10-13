@@ -59,12 +59,12 @@ abstract class AbstractView implements ViewInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception
 	 */
 	public function __construct(array $options = array()) {
-			// check for options given but not supported
+		// check for options given but not supported
 		if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== array()) {
 			throw new \TYPO3\Flow\Mvc\Exception(sprintf('The view options "%s" you\'re trying to set don\'t exist in class "%s".', implode(',', array_keys($unsupportedOptions)), get_class($this)), 1359625876);
 		}
 
-			// check for required options being set
+		// check for required options being set
 		array_walk(
 			$this->supportedOptions,
 			function($supportedOptionData, $supportedOptionName, $options) {
@@ -75,7 +75,7 @@ abstract class AbstractView implements ViewInterface {
 			$options
 		);
 
-			// merge with default values
+		// merge with default values
 		$this->options = array_merge(
 			array_map(
 				function ($value) {
@@ -92,6 +92,7 @@ abstract class AbstractView implements ViewInterface {
 	 *
 	 * @param string $optionName
 	 * @return mixed
+	 * @throws \TYPO3\Flow\Mvc\Exception
 	 */
 	public function getOption($optionName) {
 		if (!array_key_exists($optionName, $this->supportedOptions)) {
@@ -107,6 +108,7 @@ abstract class AbstractView implements ViewInterface {
 	 * @param string $optionName
 	 * @param mixed $value
 	 * @return void
+	 * @throws \TYPO3\Flow\Mvc\Exception
 	 */
 	public function setOption($optionName, $value) {
 		if (!array_key_exists($optionName, $this->supportedOptions)) {

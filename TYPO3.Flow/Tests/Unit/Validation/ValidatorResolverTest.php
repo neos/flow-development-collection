@@ -159,7 +159,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function createValidatorResolvesAndReturnsAValidatorAndPassesTheGivenOptions() {
 		$className = 'Test' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $className . ' implements \TYPO3\Flow\Validation\Validator\ValidatorInterface {' . '
+		eval('class ' . $className . ' implements \TYPO3\Flow\Validation\Validator\ValidatorInterface {
 				protected $options = array();
 				public function __construct(array $options = array()) {
 					$this->options = $options;
@@ -182,7 +182,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createValidatorReturnsNullIfAValidatorCouldNotBeResolved() {
-		$validatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver',array('resolveValidatorObjectName'), array(), '', FALSE);
+		$validatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver', array('resolveValidatorObjectName'), array(), '', FALSE);
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('Foo')->will($this->returnValue(FALSE));
 		$validator = $validatorResolver->createValidator('Foo', array('foo' => 'bar'));
 		$this->assertNull($validator);
@@ -398,7 +398,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function addCustomValidatorsAddsExpectedPolyTypeValidatorToTheConjunction() {
 		$highPriorityValidatorClassName = 'RandomHighPrio' . md5(uniqid(mt_rand(), TRUE)) . 'PolyTypeValidator';
 		$lowPriorityValidatorClassName = 'RandomLowPrio' . md5(uniqid(mt_rand(), TRUE)) . 'PolyTypeValidator';
-		$modelClassName = 'Acme\Test\Content\\' . 'Page' . md5(uniqid(mt_rand(), TRUE));
+		$modelClassName = 'Acme\Test\Content\Page' . md5(uniqid(mt_rand(), TRUE));
 
 		$mockLowPriorityValidator = $this->getMock('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface', array(), array(), $lowPriorityValidatorClassName);
 		$mockLowPriorityValidator->expects($this->atLeastOnce())->method('canValidate')->with($modelClassName)->will($this->returnValue(TRUE));
@@ -528,7 +528,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('TYPO3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('TYPO3\Flow\Validation\Validator\CollectionValidator', array('elementType' => 'TYPO3\TestPackage\Quux', 'validationGroups' => array('Default')))->will($this->returnValue($mockObjectValidator));
 
-		$validatorResolver->_call('buildBaseValidatorConjunction', $className . 'Default',  $className, array('Default'));
+		$validatorResolver->_call('buildBaseValidatorConjunction', $className . 'Default', $className, array('Default'));
 		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
 		$this->assertInstanceOf('TYPO3\Flow\Validation\Validator\ConjunctionValidator', $builtValidators[$className . 'Default']);
 	}

@@ -121,7 +121,7 @@ class TypeHandling {
 				}
 			}
 
-				// is_subclasss_of does not check for interfaces in PHP < 5.3.7
+			// is_subclasss_of does not check for interfaces in PHP < 5.3.7
 			if (version_compare(PHP_VERSION, '5.3.7', '<') === TRUE) {
 				foreach (self::$collectionTypes as $collectionType) {
 					if (in_array($collectionType, class_implements($type)) === TRUE) {

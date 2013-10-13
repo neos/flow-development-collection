@@ -23,7 +23,7 @@ class TestEntityAspect {
 	/**
 	 * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity->sayHello())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
-	 * @return void
+	 * @return string
 	 */
 	public function concreteMethodInAbstractClassAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);

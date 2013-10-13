@@ -219,7 +219,7 @@ class DatesReader {
 		$model = $this->cldrRepository->getModelForLocale($locale);
 
 		if ($formatLength === 'default') {
-				// the default thing only has an attribute. ugly fetch code. was a nice three-liner before 2011-11-21
+			// the default thing only has an attribute. ugly fetch code. was a nice three-liner before 2011-11-21
 			$formats = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats');
 			foreach (array_keys($formats) as $k) {
 				$realFormatLength = \TYPO3\Flow\I18n\Cldr\CldrModel::getAttributeValue($k, 'choice');
@@ -238,7 +238,7 @@ class DatesReader {
 		}
 
 		if ($formatType === 'dateTime') {
-				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time
+			// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time
 			$parsedFormat = $this->prepareDateAndTimeFormat($format, $locale, $formatLength);
 		} else {
 			$parsedFormat = $this->parseFormat($format);
@@ -336,9 +336,9 @@ class DatesReader {
 
 			if ($subformatSymbol === '\'') {
 				if ($i < $formatLengthOfFormat - 1 && $format[$i + 1] === '\'') {
-						// Two apostrophes means that one apostrophe is escaped
+					// Two apostrophes means that one apostrophe is escaped
 					if ($duringCompletionOfLiteral) {
-							// We are already reading some literal, save it and continue
+						// We are already reading some literal, save it and continue
 						$parsedFormat[] = array($literal);
 						$literal = '';
 					}
@@ -355,7 +355,7 @@ class DatesReader {
 			} elseif ($duringCompletionOfLiteral) {
 				$literal .= $subformatSymbol;
 			} else {
-					// Count the length of subformat
+				// Count the length of subformat
 				for ($j = $i + 1; $j < $formatLengthOfFormat; ++$j) {
 					if ($format[$j] !== $subformatSymbol) {
 						break;
@@ -475,21 +475,21 @@ class DatesReader {
 		$parsedFormat = array();
 
 		if ($positionOfFirstPlaceholder !== 0) {
-				// Add everything before placeholder as literal
+			// Add everything before placeholder as literal
 			$parsedFormat[] = array(substr($format, 0, $positionOfFirstPlaceholder));
 		}
 
 		$parsedFormat = array_merge($parsedFormat, $firstParsedFormat);
 
 		if ($positionOfSecondPlaceholder - $positionOfFirstPlaceholder > 3) {
-				// There is something between the placeholders
+			// There is something between the placeholders
 			$parsedFormat[] = array(substr($format, $positionOfFirstPlaceholder + 3, $positionOfSecondPlaceholder - ($positionOfFirstPlaceholder + 3)));
 		}
 
 		$parsedFormat = array_merge($parsedFormat, $secondParsedFormat);
 
 		if ($positionOfSecondPlaceholder !== strlen($format) - 1) {
-				// Add everything before placeholder as literal
+			// Add everything before placeholder as literal
 			$parsedFormat[] = array(substr($format, $positionOfSecondPlaceholder + 3));
 		}
 

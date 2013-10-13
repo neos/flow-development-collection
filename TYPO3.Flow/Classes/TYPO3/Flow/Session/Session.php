@@ -268,6 +268,7 @@ class Session implements SessionInterface {
 	 *
 	 * @return void
 	 * @api
+	 * @throws \TYPO3\Flow\Session\Exception\InvalidRequestHandlerException
 	 */
 	public function start() {
 		if ($this->request === NULL) {
@@ -343,8 +344,8 @@ class Session implements SessionInterface {
 					}
 				}
 			} else {
-					// Fallback for some malformed session data, if it is no array but something else.
-					// In this case, we reset all session objects (graceful degradation).
+				// Fallback for some malformed session data, if it is no array but something else.
+				// In this case, we reset all session objects (graceful degradation).
 				$this->storageCache->set($this->storageIdentifier . md5('TYPO3_Flow_Object_ObjectManager'), array(), array($this->storageIdentifier), 0);
 			}
 
@@ -527,8 +528,8 @@ class Session implements SessionInterface {
 			throw new \TYPO3\Flow\Session\Exception\SessionNotStartedException('Tried to touch a session, but the session has not been started yet.', 1354284318);
 		}
 
-			// Only makes sense for remote sessions because the currently active session
-			// will be updated on shutdown anyway:
+		// Only makes sense for remote sessions because the currently active session
+		// will be updated on shutdown anyway:
 		if ($this->remote === TRUE) {
 			$this->lastActivityTimestamp = $this->now;
 			$this->writeSessionMetaDataCacheEntry();
@@ -633,8 +634,8 @@ class Session implements SessionInterface {
 		if ($this->started === TRUE && $this->remote === FALSE) {
 
 			if ($this->metaDataCache->has($this->sessionIdentifier)) {
-					// Security context can't be injected and must be retrieved manually
-					// because it relies on this very session object:
+				// Security context can't be injected and must be retrieved manually
+				// because it relies on this very session object:
 				$securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
 				if ($securityContext->isInitialized()) {
 					$this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
@@ -676,6 +677,7 @@ class Session implements SessionInterface {
 	 *
 	 * @param \TYPO3\Flow\Http\HttpRequestHandlerInterface $requestHandler
 	 * @return void
+	 * @throws \TYPO3\Flow\Session\Exception\InvalidRequestResponseException
 	 */
 	protected function initializeHttpAndCookie(HttpRequestHandlerInterface $requestHandler) {
 		$this->request = $requestHandler->getHttpRequest();

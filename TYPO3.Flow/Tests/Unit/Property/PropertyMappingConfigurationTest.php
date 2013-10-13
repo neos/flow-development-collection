@@ -208,7 +208,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function forPropertyWithAsteriskAllowsArbitraryPropertyNamesWithGetConfigurationFor() {
-			// using stdClass so that class_parents() in getTypeConvertersWithParentClasses() is happy
+		// using stdClass so that class_parents() in getTypeConvertersWithParentClasses() is happy
 		$this->propertyMappingConfiguration->forProperty('items.*')->setTypeConverterOptions('stdClass', array('k1' => 'v1'));
 
 		$configuration = $this->propertyMappingConfiguration->getConfigurationFor('items')->getConfigurationFor('6');
@@ -219,7 +219,7 @@ class PropertyMappingConfigurationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function forPropertyWithAsteriskAllowsArbitraryPropertyNamesWithForProperty() {
-			// using stdClass so that class_parents() in getTypeConvertersWithParentClasses() is happy
+		// using stdClass so that class_parents() in getTypeConvertersWithParentClasses() is happy
 		$this->propertyMappingConfiguration->forProperty('items.*.foo')->setTypeConverterOptions('stdClass', array('k1' => 'v1'));
 
 		$configuration = $this->propertyMappingConfiguration->forProperty('items.6.foo');

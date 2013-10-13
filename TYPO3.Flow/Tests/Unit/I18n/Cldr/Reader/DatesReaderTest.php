@@ -110,7 +110,7 @@ class DatesReaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$mockDatesCldrData = require(__DIR__ . '/../../Fixtures/MockDatesParsedCldrData.php');
 
 			$lastPartOfPath = substr($args[0], strrpos($args[0], '/') + 1);
-				// Eras have different XML structure than other literals so they have to be handled differently
+			// Eras have different XML structure than other literals so they have to be handled differently
 			if ($lastPartOfPath === 'eras') {
 				return $mockDatesCldrData['eras'];
 			} else {

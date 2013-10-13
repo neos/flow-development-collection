@@ -60,7 +60,7 @@ class ObjectArray extends Types\ArrayType {
 	 * Converts a value from its database representation to its PHP representation
 	 * of this type.
 	 *
-	 * @param mixed $array The value to convert.
+	 * @param mixed $value The value to convert.
 	 * @param AbstractPlatform $platform The currently used database platform.
 	 * @return array The PHP representation of the value.
 	 */
@@ -77,7 +77,7 @@ class ObjectArray extends Types\ArrayType {
 	 * Converts a value from its PHP representation to its database representation
 	 * of this type.
 	 *
-	 * @param array $value The value to convert.
+	 * @param array $array The value to convert.
 	 * @param AbstractPlatform $platform The currently used database platform.
 	 * @return mixed The database representation of the value.
 	 */

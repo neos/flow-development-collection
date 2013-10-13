@@ -40,7 +40,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function publicActionIsGrantedForEverybody() {
 		$this->restrictedController->publicAction();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 
@@ -50,7 +50,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function publicActionIsGrantedForCustomer() {
 		$this->authenticateRoles(array('TYPO3.Flow:Customer'));
 		$this->restrictedController->publicAction();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 
@@ -60,7 +60,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function publicActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
 		$this->restrictedController->publicAction();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 
@@ -78,7 +78,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function customerActionIsGrantedForCustomer() {
 		$this->authenticateRoles(array('TYPO3.Flow:Customer'));
 		$this->restrictedController->customerAction();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 
@@ -88,7 +88,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function customerActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
 		$this->restrictedController->customerAction();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 
@@ -115,7 +115,7 @@ class MethodSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function adminActionIsGrantedForAdministrator() {
 		$this->authenticateRoles(array('TYPO3.Flow:Administrator'));
 		$this->restrictedController->adminAction();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 }

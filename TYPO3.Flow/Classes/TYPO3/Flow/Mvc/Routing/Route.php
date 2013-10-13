@@ -454,7 +454,7 @@ class Route {
 
 		$this->throwExceptionIfTargetControllerDoesNotExist($mergedRouteValues);
 
-			// add query string
+		// add query string
 		if (count($routeValues) > 0) {
 			$routeValues = Arrays::removeEmptyElementsRecursively($routeValues);
 			$routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);

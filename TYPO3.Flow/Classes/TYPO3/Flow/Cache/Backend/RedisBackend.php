@@ -495,7 +495,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 		$identifierToTagsKeys = $this->redis->getKeys(self::IDENTIFIER_TAGS_PREFIX . '*');
 		foreach ($identifierToTagsKeys as $identifierToTagsKey) {
 			list(,$identifier) = explode(':', $identifierToTagsKey);
-				// Check if the data entry still exists
+			// Check if the data entry still exists
 			if (!$this->redis->exists(self::IDENTIFIER_DATA_PREFIX . $identifier)) {
 				$tagsToRemoveIdentifierFrom = $this->redis->sMembers($identifierToTagsKey);
 				$queue = $this->redis->multi(\Redis::PIPELINE);
@@ -520,8 +520,8 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * @return void
 	 */
 	protected function removeIdentifierEntriesAndRelations(array $identifiers, array $tags) {
-			// Set an temporary entry which holds all identifiers that need to be removed from
-			// the tag to identifiers sets
+		// Set an temporary entry which holds all identifiers that need to be removed from
+		// the tag to identifiers sets
 		$uniqueTempKey = 'temp:' . uniqId();
 		$prefixedKeysToDelete = array($uniqueTempKey);
 
@@ -536,11 +536,11 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 
 		$tagToIdentifiersSetsToRemoveIdentifiersFrom = $this->redis->sUnion($prefixedIdentifierToTagsKeysToDelete);
 
-			// Remove the tag to identifier set of the given tags, they will be removed anyway
+		// Remove the tag to identifier set of the given tags, they will be removed anyway
 		$tagToIdentifiersSetsToRemoveIdentifiersFrom = array_diff($tagToIdentifiersSetsToRemoveIdentifiersFrom, $tags);
 
-			// Diff all identifiers that must be removed from tag to identifiers sets off from a
-			// tag to identifiers set and store result in same tag to identifiers set again
+		// Diff all identifiers that must be removed from tag to identifiers sets off from a
+		// tag to identifiers set and store result in same tag to identifiers set again
 		$queue = $this->redis->multi(\Redis::PIPELINE);
 		foreach ($identifiers as $identifier) {
 			$queue->sAdd($uniqueTempKey, $identifier);

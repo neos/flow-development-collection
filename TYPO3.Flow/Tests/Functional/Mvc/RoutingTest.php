@@ -92,7 +92,6 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'@package' => 'TYPO3.Flow',
 			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
 			'@controller' => 'ActionControllerTestA',
-			'@controller' => 'ActionControllerTestA',
 			'@action' => 'second',
 			'@format' =>'html'
 		));
@@ -134,13 +133,13 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function routeTestsDataProvider() {
 		return array(
-				// non existing route is not matched:
+			// non existing route is not matched:
 			array(
 				'requestUri' => 'http://localhost/typo3/flow/test/some/non/existing/route',
 				'expectedMatchingRouteName' => NULL
 			),
 
-				// static route parts are case sensitive:
+			// static route parts are case sensitive:
 			array(
 				'requestUri' => 'http://localhost/typo3/flow/test/Upper/Camel/Case',
 				'expectedMatchingRouteName' => 'static route parts are case sensitive'
@@ -150,7 +149,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'expectedMatchingRouteName' => NULL
 			),
 
-				// dynamic route parts are case insensitive
+			// dynamic route parts are case insensitive
 			array(
 				'requestUri' => 'http://localhost/typo3/flow/test/TYPO3.Flow/ActionControllerTestA/index.html',
 				'expectedMatchingRouteName' => 'controller route parts are case insensitive',
@@ -162,7 +161,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'expectedControllerObjectName' => 'TYPO3\\Flow\\Tests\\Functional\\Mvc\\Fixtures\\Controller\\ActionControllerTestAController'
 			),
 
-				// dynamic route part defaults are overwritten by request path
+			// dynamic route part defaults are overwritten by request path
 			array(
 				'requestUri' => 'http://localhost/typo3/flow/test/dynamic/part/without/default/DynamicOverwritten',
 				'expectedMatchingRouteName' => 'dynamic part without default',
@@ -194,7 +193,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'expectedArguments' => array('optionalDynamic' => 'OptionalDynamicDefault')
 			),
 
-				// toLowerCase has no effect when matching routes
+			// toLowerCase has no effect when matching routes
 			array(
 				'requestUri' => 'http://localhost/typo3/flow/test/dynamic/part/case/Dynamic1Overwritten/Dynamic2Overwritten',
 				'expectedMatchingRouteName' => 'dynamic part case',
@@ -202,7 +201,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'expectedArguments' => array('dynamic1' => 'Dynamic1Overwritten', 'dynamic2' => 'Dynamic2Overwritten')
 			),
 
-				// query arguments are ignored when matching routes
+			// query arguments are ignored when matching routes
 			array(
 				'requestUri' => 'http://localhost/typo3/flow/test/exceeding/arguments2/FromPath?dynamic=FromQuery',
 				'expectedMatchingRouteName' => 'exceeding arguments 02',
@@ -255,7 +254,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function resolveTestsDataProvider() {
 		$defaults = array('@package' => 'TYPO3.Flow', '@subpackage' => 'Tests\Functional\Mvc\Fixtures', '@controller' => 'RoutingTestA');
 		return array(
-				// route resolves no matter if defaults are equal to route values
+			// route resolves no matter if defaults are equal to route values
 			array(
 				'routeValues' => array_merge($defaults, array('dynamic' => 'DynamicDefault')),
 				'expectedResolvedRouteName' => 'dynamic part without default',
@@ -267,7 +266,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'expectedResolvedUriPath' => 'typo3/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
 			),
 
-				// if route value is omitted, only routes with a default value resolve
+			// if route value is omitted, only routes with a default value resolve
 			array(
 				'routeValues' => $defaults,
 				'expectedResolvedRouteName' => 'dynamic part with default',
@@ -279,14 +278,14 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 				'expectedResolvedUriPath' => 'typo3/flow/test/optional/dynamic/part/with/default'
 			),
 
-				// toLowerCase has an effect on generated URIs
+			// toLowerCase has an effect on generated URIs
 			array(
 				'routeValues' => array_merge($defaults, array('dynamic1' => 'DynamicRouteValue1', 'dynamic2' => 'DynamicRouteValue2')),
 				'expectedResolvedRouteName' => 'dynamic part case',
 				'expectedResolvedUriPath' => 'typo3/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
 			),
 
-				// exceeding arguments are appended to resolved URI if appendExceedingArguments is set
+			// exceeding arguments are appended to resolved URI if appendExceedingArguments is set
 			array(
 				'routeValues' => array_merge($defaults, array('@action' => 'test1', 'dynamic' => 'DynamicDefault', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar')),
 				'expectedResolvedRouteName' => 'exceeding arguments 01',

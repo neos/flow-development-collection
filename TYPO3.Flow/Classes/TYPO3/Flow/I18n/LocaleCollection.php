@@ -55,7 +55,7 @@ class LocaleCollection {
 			return FALSE;
 		}
 
-			// We need to invalidate the parent's array as it could be inaccurate
+		// We need to invalidate the parent's array as it could be inaccurate
 		$this->localeParentCollection = array();
 
 		$this->localeCollection[(string)$locale] = $locale;
@@ -92,7 +92,7 @@ class LocaleCollection {
 
 		$parentLocaleIdentifier = $localeIdentifier;
 		do {
-				// Remove the last (most specific) part of the locale tag
+			// Remove the last (most specific) part of the locale tag
 			$parentLocaleIdentifier = substr($parentLocaleIdentifier, 0, (int)strrpos($parentLocaleIdentifier, '_'));
 
 			if (isset($this->localeCollection[$parentLocaleIdentifier])) {
@@ -119,7 +119,7 @@ class LocaleCollection {
 
 		$parentLocaleIdentifier = $localeIdentifier;
 		do {
-				// Remove the last (most specific) part of the locale tag
+			// Remove the last (most specific) part of the locale tag
 			$parentLocaleIdentifier = substr($parentLocaleIdentifier, 0, (int)strrpos($parentLocaleIdentifier, '_'));
 
 			if (isset($this->localeCollection[$parentLocaleIdentifier])) {

@@ -41,8 +41,8 @@ class EmailAddressValidator extends AbstractValidator {
 	 * @return boolean Returns TRUE if the $email address (input string) is valid
 	 */
 	protected function validEmail($emailAddress) {
-			// Enforce maximum length to prevent libpcre recursion crash bug #52929 in PHP
-			// fixed in PHP 5.3.4; length restriction per SMTP RFC 2821
+		// Enforce maximum length to prevent libpcre recursion crash bug #52929 in PHP
+		// fixed in PHP 5.3.4; length restriction per SMTP RFC 2821
 		if (strlen($emailAddress) > 320) {
 			return FALSE;
 		}

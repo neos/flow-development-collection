@@ -82,8 +82,8 @@ class RequestBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function ifCommandCantBeResolvedTheHelpScreenIsShown() {
-			// The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
-			// mocked method ("getObjectNameByClassName") does not exist _if the mock object is not used_.
+		// The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
+		// mocked method ("getObjectNameByClassName") does not exist _if the mock object is not used_.
 		$this->mockObjectManager->getObjectNameByClassName('Acme\Test\Command\DefaultCommandController');
 		$this->mockCommandManager->getCommandByIdentifier('acme.test:default:list');
 

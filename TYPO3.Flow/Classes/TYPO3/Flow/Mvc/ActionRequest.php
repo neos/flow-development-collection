@@ -377,9 +377,9 @@ class ActionRequest implements RequestInterface {
 		$controllerObjectName = $this->getControllerObjectName();
 		if ($controllerObjectName !== '') {
 
-				// Extract the controller name from the controller object name to assure that
-				// the case is correct.
-				// Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
+			// Extract the controller name from the controller object name to assure that
+			// the case is correct.
+			// Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
 			return substr($controllerObjectName, -(strlen($this->controllerName) + 10), - 10);
 		} else {
 			return $this->controllerName;
@@ -614,7 +614,7 @@ class ActionRequest implements RequestInterface {
 	 * The action request is not proxyable, so the signal is dispatched manually here.
 	 * The safeguard allows unit tests without the dispatcher dependency.
 	 *
-	 * @param \TYPO3\Flow\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $request
 	 * @return void
 	 * @Flow\Signal
 	 */

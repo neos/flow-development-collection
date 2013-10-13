@@ -24,7 +24,7 @@ class InstallerScripts {
 	 * Make sure required paths and files are available outside of Package
 	 * Run on every Composer install or update - most be configured in root manifest
 	 *
-	 * @param \Composer\Script\Event $event
+	 * @param CommandEvent $event
 	 * @return void
 	 */
 	static public function postUpdateAndInstall(CommandEvent $event) {

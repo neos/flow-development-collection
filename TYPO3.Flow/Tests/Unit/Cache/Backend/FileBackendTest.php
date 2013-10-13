@@ -54,8 +54,8 @@ class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 
-			// We need to create the directory here because vfs doesn't support touch() which is used by
-			// createDirectoryRecursively() in the setCache method.
+		// We need to create the directory here because vfs doesn't support touch() which is used by
+		// createDirectoryRecursively() in the setCache method.
 		mkdir ('vfs://Foo/Cache');
 
 		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
@@ -73,8 +73,8 @@ class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
 
-			// We need to create the directory here because vfs doesn't support touch() which is used by
-			// createDirectoryRecursively() in the setCache method.
+		// We need to create the directory here because vfs doesn't support touch() which is used by
+		// createDirectoryRecursively() in the setCache method.
 		mkdir ('vfs://Foo/Cache');
 
 		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);

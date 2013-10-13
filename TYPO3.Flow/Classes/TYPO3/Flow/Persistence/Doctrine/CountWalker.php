@@ -53,7 +53,7 @@ class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 			)
 		);
 
-			// ORDER BY is not needed, only increases query execution through unnecessary sorting.
+		// ORDER BY is not needed, only increases query execution through unnecessary sorting.
 		$AST->orderByClause = NULL;
 	}
 

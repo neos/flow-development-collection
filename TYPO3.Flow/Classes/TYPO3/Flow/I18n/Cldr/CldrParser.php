@@ -96,7 +96,7 @@ class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 			}
 
 			if (!isset($parsedNode[$nameOfChild])) {
-					// We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
+				// We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
 				$parsedNode[$nameOfChild] = $parsedChild;
 			}
 		}
@@ -114,18 +114,18 @@ class CldrParser extends \TYPO3\Flow\I18n\AbstractXmlParser {
 	 * @return boolean
 	 */
 	protected function isDistinguishingAttribute($attributeName) {
-			// Taken from SupplementalMetadata and hardcoded for now
+		// Taken from SupplementalMetadata and hardcoded for now
 		$distinguishingAttributes = array ('key', 'request', 'id', '_q', 'registry', 'alt', 'iso4217', 'iso3166', 'mzone', 'from', 'to', 'type');
 
-			// These are not defined as distinguishing in CLDR but we need to preserve them for alias resolving later
+		// These are not defined as distinguishing in CLDR but we need to preserve them for alias resolving later
 		$distinguishingAttributes[] = 'source';
 		$distinguishingAttributes[] = 'path';
 
-			// These are needed for proper plurals handling
+		// These are needed for proper plurals handling
 		$distinguishingAttributes[] = 'locales';
 		$distinguishingAttributes[] = 'count';
 
-			// we need this one for datetime parsing (default[@choice] nodes)
+		// we need this one for datetime parsing (default[@choice] nodes)
 		$distinguishingAttributes[] = 'choice';
 
 		return in_array($attributeName, $distinguishingAttributes);

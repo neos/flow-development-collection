@@ -102,7 +102,7 @@ class FormatResolver {
 			$startOfNextPlaceholder = strpos($textWithPlaceholders, '{', $startOfPlaceholder + 1);
 
 			if ($endOfPlaceholder === FALSE || ($startOfPlaceholder + 1) >= $endOfPlaceholder || ($startOfNextPlaceholder !== FALSE && $startOfNextPlaceholder < $endOfPlaceholder)) {
-					// There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
+				// There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
 				throw new \TYPO3\Flow\I18n\Exception\InvalidFormatPlaceholderException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
 			}
 
@@ -119,7 +119,7 @@ class FormatResolver {
 				$formatter = $this->getFormatter($formatterName);
 				$formattedPlaceholder = $formatter->format($arguments[$valueIndex], $locale, array_slice($placeholderElements, 2));
 			} else {
-					// No formatter defined, just string-cast the value
+				// No formatter defined, just string-cast the value
 				$formattedPlaceholder = (string)($arguments[$valueIndex]);
 			}
 

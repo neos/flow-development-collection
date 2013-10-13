@@ -49,6 +49,8 @@ class CurlEngine implements RequestEngineInterface {
 	 * @param \TYPO3\Flow\Http\Request $request
 	 * @return \TYPO3\Flow\Http\Response The response or FALSE
 	 * @api
+	 * @throws \TYPO3\Flow\Http\Exception
+	 * @throws CurlEngineException
 	 */
 	public function sendRequest(Request $request) {
 		if (!extension_loaded('curl')) {
@@ -60,11 +62,11 @@ class CurlEngine implements RequestEngineInterface {
 
 		curl_setopt_array($curlHandle, $this->options);
 
-			// Send an empty Expect header in order to avoid chunked data transfer (which we can't handle yet).
-			// If we don't set this, cURL will set "Expect: 100-continue" for requests larger than 1024 bytes.
+		// Send an empty Expect header in order to avoid chunked data transfer (which we can't handle yet).
+		// If we don't set this, cURL will set "Expect: 100-continue" for requests larger than 1024 bytes.
 		curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array('Expect:'));
 
-			// If the content is a stream resource, use cURL's INFILE feature to stream it
+		// If the content is a stream resource, use cURL's INFILE feature to stream it
 		$content = $request->getContent();
 		if (is_resource($content)) {
 			curl_setopt_array($curlHandle,
@@ -78,7 +80,7 @@ class CurlEngine implements RequestEngineInterface {
 		switch ($request->getMethod()) {
 			case 'GET' :
 				if ($request->getContent()) {
-						// workaround because else the request would implicitly fall into POST:
+					// workaround because else the request would implicitly fall into POST:
 					curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'GET');
 					if (!is_resource($content)) {
 						curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $content);

@@ -93,7 +93,7 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : NULL;
 			$methodName = isset($backtrace[1]['function']) ? $backtrace[1]['function'] : NULL;
 			$explodedClassName = explode('\\', $className);
-				// FIXME: This is not really the package key:
+			// FIXME: This is not really the package key:
 			$packageKey = isset($explodedClassName[1]) ? $explodedClassName[1] : '';
 		}
 		foreach ($this->backends as $backend) {
@@ -120,7 +120,7 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 		}
 
 		$explodedClassName = explode('\\', $className);
-			// FIXME: This is not really the package key:
+		// FIXME: This is not really the package key:
 		$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
 
 		if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {

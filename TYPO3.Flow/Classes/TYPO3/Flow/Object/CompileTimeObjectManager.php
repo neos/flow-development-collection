@@ -144,7 +144,6 @@ class CompileTimeObjectManager extends ObjectManager {
 		}
 	}
 
-
 	/**
 	 * Returns a list of all class names, grouped by package key,  which were registered by registerClassFiles()
 	 *

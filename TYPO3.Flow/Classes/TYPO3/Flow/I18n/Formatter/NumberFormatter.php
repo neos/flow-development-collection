@@ -199,11 +199,11 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface {
 			$primaryGroupOfIntegerPart = substr($integerPart, - $parsedFormat['primaryGroupingSize']);
 			$restOfIntegerPart = substr($integerPart, 0, - $parsedFormat['primaryGroupingSize']);
 
-				// Pad the numbers with spaces from the left, so the length of the string is a multiply of secondaryGroupingSize (and str_split() can split on equal parts)
+			// Pad the numbers with spaces from the left, so the length of the string is a multiply of secondaryGroupingSize (and str_split() can split on equal parts)
 			$padLengthToGetEvenSize = (int)((strlen($restOfIntegerPart) + $parsedFormat['secondaryGroupingSize'] - 1) / $parsedFormat['secondaryGroupingSize']) * $parsedFormat['secondaryGroupingSize'];
 			$restOfIntegerPart = str_pad($restOfIntegerPart, $padLengthToGetEvenSize, ' ', STR_PAD_LEFT);
 
-				// Insert localized group separators between every secondary groups and primary group (using str_split() and implode())
+			// Insert localized group separators between every secondary groups and primary group (using str_split() and implode())
 			$secondaryGroupsOfIntegerPart = str_split($restOfIntegerPart, $parsedFormat['secondaryGroupingSize']);
 			$integerPart = ltrim(implode($symbols['group'], $secondaryGroupsOfIntegerPart)) . $symbols['group'] . $primaryGroupOfIntegerPart;
 		}
@@ -220,7 +220,7 @@ class NumberFormatter implements \TYPO3\Flow\I18n\Formatter\FormatterInterface {
 
 		$number = str_replace(array('%', '‰', '-'), array($symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']), $number);
 		if ($currency !== NULL) {
-				// @todo When currency is set, min / max DecimalDigits and rounding is overridden with CLDR data
+			// @todo When currency is set, min / max DecimalDigits and rounding is overridden with CLDR data
 			$number = str_replace('¤', $currency, $number);
 		}
 

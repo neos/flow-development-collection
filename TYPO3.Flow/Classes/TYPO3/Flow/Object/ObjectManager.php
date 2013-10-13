@@ -336,6 +336,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * Internally used by the injectProperties method of generated proxy classes.
 	 *
+	 * @param string $hash
 	 * @param mixed &$propertyReferenceVariable Reference of the variable to inject into once the proxy is activated
 	 * @return mixed
 	 */

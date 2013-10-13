@@ -269,8 +269,8 @@ class ResourceStreamWrapper implements \TYPO3\Flow\Resource\Streams\StreamWrappe
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
 	public function open($path, $mode, $options, &$openedPathAndFilename) {
-			// w, a or x should try to create the file
-			// x should fail if file exists - fopen handles that below!
+		// w, a or x should try to create the file
+		// x should fail if file exists - fopen handles that below!
 		if (strpos($mode, 'w') !== FALSE || strpos($mode, 'a') !== FALSE || strpos($mode, 'x') !== FALSE) {
 			$resourcePathAndFilename = $this->evaluateResourcePath($path, FALSE);
 		} else {

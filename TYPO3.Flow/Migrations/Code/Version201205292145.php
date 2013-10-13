@@ -35,7 +35,7 @@ class Version201205292145 extends AbstractMigration {
 		$this->searchAndReplace('FileTypes::getFilenameExtensionFromMimeType', 'MediaTypes::getFilenameExtensionFromMediaType');
 		$this->searchAndReplace('FileTypes::getMediaTypeFromFilename', 'MediaTypes::getMediaTypeFromFilename');
 
-			// Resource has been changed as well.
+		// Resource has been changed as well.
 		$this->searchAndReplace('getMimeType()', 'getMediaType()');
 	}
 

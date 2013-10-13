@@ -78,7 +78,7 @@ class PolicyEnforcement implements \TYPO3\Flow\Security\Authorization\Intercepto
 		} catch (\Doctrine\ORM\EntityNotFoundException $exception) {
 			throw new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
 		} catch (\TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException $noTokensAuthenticatedException) {
-				// We still need to check if the resource is available to "Everybody".
+			// We still need to check if the resource is available to "Everybody".
 			try {
 				$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
 				return;

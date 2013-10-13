@@ -65,7 +65,7 @@ class EntityManagerFactory {
 		$config->setClassMetadataFactoryName('TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
 		$cache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
-			// must use ObjectManager in compile phase...
+		// must use ObjectManager in compile phase...
 		$cache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine'));
 		$config->setMetadataCacheImpl($cache);
 		$config->setQueryCacheImpl($cache);

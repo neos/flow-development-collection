@@ -83,15 +83,15 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$request->setCookie($sessionCookie);
 		$response = $this->browser->sendRequest($request);
 
-			// Expect an exception because no account is authenticated:
+		// Expect an exception because no account is authenticated:
 		$response = $this->browser->request(new Uri('http://localhost/test/security/restricted/customer'), 'POST');
 		   // ...
 
-			// Expect an different exception because although an account is authenticated, the request lacks a CSRF token:
+		// Expect an different exception because although an account is authenticated, the request lacks a CSRF token:
 		$response = $this->browser->request(new Uri('http://localhost/test/security/restricted/customer'), 'POST', $arguments);
 		   // ...
 
-			// Expect that it works after you logged in
+		// Expect that it works after you logged in
 		$csrfToken = $this->securityContext->getCsrfProtectionToken();
 		$request = Request::create(new Uri('http://localhost/test/security/restricted/customer'), 'POST');
 		   // ...

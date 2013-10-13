@@ -110,9 +110,9 @@ class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 */
 	public function flushCommand($force = FALSE) {
 
-			// Internal note: the $force option is evaluated early in the Flow
-			// bootstrap in order to reliably flush the temporary data before any
-			// other code can cause fatal errors.
+		// Internal note: the $force option is evaluated early in the Flow
+		// bootstrap in order to reliably flush the temporary data before any
+		// other code can cause fatal errors.
 
 		$this->cacheManager->flushCaches();
 		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context.');

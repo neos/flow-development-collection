@@ -76,8 +76,10 @@ class PackageFactory {
 	 * Else the composer name will be used with the slash replaced by a dot
 	 *
 	 * @param object $manifest
+	 * @param string $packagePath
 	 * @param string $packagesBasePath
 	 * @return string
+	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException
 	 */
 	public static function getPackageKeyFromManifest($manifest, $packagePath, $packagesBasePath) {
 		if (!is_object($manifest)) {

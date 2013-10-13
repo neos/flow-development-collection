@@ -92,7 +92,7 @@ class ConfigurationSchemaValidator {
 
 		$configuration = $this->configurationManager->getConfiguration($configurationType);
 
-			// find schema files for the given type and path
+		// find schema files for the given type and path
 		$schemaFileInfos = array();
 		$activePackages = $this->packageManager->getActivePackages();
 		foreach ($activePackages as $package) {

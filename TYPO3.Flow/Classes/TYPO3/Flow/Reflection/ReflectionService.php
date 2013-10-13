@@ -60,15 +60,15 @@ class ReflectionService {
 		VISIBILITY_PRIVATE = 1,
 		VISIBILITY_PROTECTED = 2,
 		VISIBILITY_PUBLIC = 3,
-			// Implementations of an interface
+		// Implementations of an interface
 		DATA_INTERFACE_IMPLEMENTATIONS = 1,
-			// Implemented interfaces of a class
+		// Implemented interfaces of a class
 		DATA_CLASS_INTERFACES = 2,
-			// Subclasses of a class
+		// Subclasses of a class
 		DATA_CLASS_SUBCLASSES = 3,
-			// Class tag values
+		// Class tag values
 		DATA_CLASS_TAGS_VALUES = 4,
-			// Class annotations
+		// Class annotations
 		DATA_CLASS_ANNOTATIONS = 5,
 		DATA_CLASS_ABSTRACT = 6,
 		DATA_CLASS_FINAL = 7,
@@ -1379,9 +1379,9 @@ class ReflectionService {
 				}
 			}
 		}
-			// Sort reflection data so that the cache data is deterministic. This is
-			// important for comparisons when checking if classes have changed in a
-			// Development context.
+		// Sort reflection data so that the cache data is deterministic. This is
+		// important for comparisons when checking if classes have changed in a
+		// Development context.
 		ksort($this->classReflectionData);
 
 		$this->updatedReflectionData[$className] = TRUE;
@@ -1487,7 +1487,7 @@ class ReflectionService {
 	 */
 	protected function addPropertiesToClassSchema(ClassSchema $classSchema) {
 
-			// those are added as property even if not tagged with entity/valueobject
+		// those are added as property even if not tagged with entity/valueobject
 		$propertyTypeWhiteList = array(
 			'DateTime',
 			'SplObjectStorage',
@@ -1549,8 +1549,8 @@ class ReflectionService {
 	 */
 	protected function completeRepositoryAssignments() {
 		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\Flow\Persistence\RepositoryInterface') as $repositoryClassName) {
-				// need to be extra careful because this code could be called
-				// during a cache:flush run with corrupted reflection cache
+			// need to be extra careful because this code could be called
+			// during a cache:flush run with corrupted reflection cache
 			if (class_exists($repositoryClassName) && !$this->isClassAbstract($repositoryClassName)) {
 				if (!$this->isClassAnnotatedWith($repositoryClassName, 'TYPO3\Flow\Annotations\Scope') || $this->getClassAnnotation($repositoryClassName, 'TYPO3\Flow\Annotations\Scope')->value !== 'singleton') {
 					throw new ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);

@@ -134,7 +134,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 		$classSchema = $this->getClassSchema($class->getName());
 		$classAnnotations = $this->reader->getClassAnnotations($class);
 
-			// Evaluate Entity annotation
+		// Evaluate Entity annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'])) {
 			$mappedSuperclassAnnotation = $classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'];
 			if ($mappedSuperclassAnnotation->repositoryClass !== NULL) {
@@ -154,13 +154,13 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 				$metadata->markReadOnly();
 			}
 		} elseif ($classSchema->getModelType() === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
-				// also ok... but we make it read-only
+			// also ok... but we make it read-only
 			$metadata->markReadOnly();
 		} else {
 			throw \Doctrine\ORM\Mapping\MappingException::classIsNotAValidEntityOrMappedSuperClass($className);
 		}
 
-			// Evaluate Table annotation
+		// Evaluate Table annotation
 		$primaryTable = array();
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\Table'])) {
 			$tableAnnotation = $classAnnotations['Doctrine\ORM\Mapping\Table'];
@@ -198,7 +198,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			$primaryTable['name'] = $this->inferTableNameFromClassName($className);
 		}
 
-			// Evaluate NamedNativeQueries annotation
+		// Evaluate NamedNativeQueries annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\NamedNativeQueries'])) {
 			$namedNativeQueriesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\NamedNativeQueries'];
 
@@ -212,7 +212,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			}
 		}
 
-			// Evaluate SqlResultSetMappings annotation
+		// Evaluate SqlResultSetMappings annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\SqlResultSetMappings'])) {
 			$sqlResultSetMappingsAnnotation = $classAnnotations['Doctrine\ORM\Mapping\SqlResultSetMappings'];
 
@@ -250,7 +250,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			}
 		}
 
-			// Evaluate NamedQueries annotation
+		// Evaluate NamedQueries annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\NamedQueries'])) {
 			$namedQueriesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\NamedQueries'];
 
@@ -269,14 +269,14 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			}
 		}
 
-			// Evaluate InheritanceType annotation
+		// Evaluate InheritanceType annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\InheritanceType'])) {
 			$inheritanceTypeAnnotation = $classAnnotations['Doctrine\ORM\Mapping\InheritanceType'];
 			$inheritanceType = constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . strtoupper($inheritanceTypeAnnotation->value));
 
 			if ($inheritanceType !== \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE) {
 
-					// Evaluate DiscriminatorColumn annotation
+				// Evaluate DiscriminatorColumn annotation
 				if (isset($classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'])) {
 					$discriminatorColumnAnnotation = $classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'];
 					$discriminatorColumn = array(
@@ -291,7 +291,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 					);
 				}
 
-					// Evaluate DiscriminatorMap annotation
+				// Evaluate DiscriminatorMap annotation
 				if (isset($classAnnotations['Doctrine\ORM\Mapping\DiscriminatorMap'])) {
 					$discriminatorMapAnnotation = $classAnnotations['Doctrine\ORM\Mapping\DiscriminatorMap'];
 					$discriminatorMap = $discriminatorMapAnnotation->value;
@@ -319,21 +319,21 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			$metadata->setInheritanceType($inheritanceType);
 		}
 
-			// Evaluate DoctrineChangeTrackingPolicy annotation
+		// Evaluate DoctrineChangeTrackingPolicy annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\ChangeTrackingPolicy'])) {
 			$changeTrackingAnnotation = $classAnnotations['Doctrine\ORM\Mapping\ChangeTrackingPolicy'];
 			$metadata->setChangeTrackingPolicy(constant('Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_' . strtoupper($changeTrackingAnnotation->value)));
 		} else {
 			$metadata->setChangeTrackingPolicy(\Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_DEFERRED_EXPLICIT);
 		}
-			// Evaluate annotations on properties/fields
+		// Evaluate annotations on properties/fields
 		try {
 			$this->evaluatePropertyAnnotations($metadata);
 		} catch (\Doctrine\ORM\Mapping\MappingException $exception) {
 			throw new \Doctrine\ORM\Mapping\MappingException(sprintf('Failure while evaluating property annotations for class "%s": %s', $metadata->getName(), $exception->getMessage()), 1382003497, $exception);
 		}
 
-			// build unique index for table
+		// build unique index for table
 		if (!isset($primaryTable['uniqueConstraints'])) {
 			$idProperties = array_keys($classSchema->getIdentityProperties());
 			if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== array()) {
@@ -346,10 +346,10 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 
 		$metadata->setPrimaryTable($primaryTable);
 
-			// Evaluate AssociationOverrides annotation
+		// Evaluate AssociationOverrides annotation
 		$this->evaluateOverridesAnnotations($classAnnotations, $metadata);
 
-			// Evaluate @HasLifecycleCallbacks annotation
+		// Evaluate @HasLifecycleCallbacks annotation
 		$this->evaluateLifeCycleAnnotations($class, $metadata);
 	}
 
@@ -393,11 +393,11 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 		$prefix = $this->inferTableNameFromClassName($className);
 		$suffix = '_' . strtolower($propertyName . '_join');
 
-			// In order to keep backwards compatibility with earlier versions, truncate the table name in two steps:
+		// In order to keep backwards compatibility with earlier versions, truncate the table name in two steps:
 		if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
 			$prefix = $this->inferTableNameFromClassName($className, $this->getMaxIdentifierLength() - strlen($suffix));
 		}
-			// Truncate a second time if the property name was too long as well:
+		// Truncate a second time if the property name was too long as well:
 		if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
 			return $this->truncateIdentifier($prefix . $suffix, $this->getMaxIdentifierLength());
 		} else {
@@ -493,8 +493,8 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 
 			$joinColumns = $this->evaluateJoinColumnAnnotations($property);
 
-				// Field can only be annotated with one of:
-				// @OneToOne, @OneToMany, @ManyToOne, @ManyToMany, @Column (optional)
+			// Field can only be annotated with one of:
+			// @OneToOne, @OneToMany, @ManyToOne, @ManyToMany, @Column (optional)
 			if ($oneToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToOne')) {
 				if ($oneToOneAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToOneAnnotation->targetEntity;
@@ -639,7 +639,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 
 				$metadata->mapField($mapping);
 
-					// Check for SequenceGenerator/TableGenerator definition
+				// Check for SequenceGenerator/TableGenerator definition
 				if ($seqGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\SequenceGenerator')) {
 					$metadata->setSequenceGeneratorDefinition(array(
 						'sequenceName' => $seqGeneratorAnnotation->sequenceName,
@@ -746,7 +746,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 				$override = array();
 				$fieldName = $associationOverride->name;
 
-					// Check for JoinColummn/JoinColumns annotations
+				// Check for JoinColummn/JoinColumns annotations
 				if ($associationOverride->joinColumns) {
 					$joinColumns = array();
 					foreach ($associationOverride->joinColumns as $joinColumn) {
@@ -755,7 +755,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 					$override['joinColumns'] = $joinColumns;
 				}
 
-					// Check for JoinTable annotations
+				// Check for JoinTable annotations
 				if ($associationOverride->joinTable) {
 					$joinTable = NULL;
 					$joinTableAnnotation = $associationOverride->joinTable;
@@ -779,7 +779,7 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			}
 		}
 
-			// Evaluate AttributeOverrides annotation
+		// Evaluate AttributeOverrides annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\AttributeOverrides'])) {
 			$attributeOverridesAnnotation = $classAnnotations['Doctrine\ORM\Mapping\AttributeOverrides'];
 			foreach ($attributeOverridesAnnotation->value as $attributeOverrideAnnotation) {
@@ -835,9 +835,9 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 			}
 		}
 
-			// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
+		// FIXME this can be removed again once Doctrine is fixed (see fixMethodsAndAdvicesArrayForDoctrineProxiesCode())
 		$metadata->addLifecycleCallback('Flow_Aop_Proxy_fixMethodsAndAdvicesArrayForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
-			// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
+		// FIXME this can be removed again once Doctrine is fixed (see fixInjectedPropertiesForDoctrineProxiesCode())
 		$metadata->addLifecycleCallback('Flow_Aop_Proxy_fixInjectedPropertiesForDoctrineProxies', \Doctrine\ORM\Events::postLoad);
 	}
 

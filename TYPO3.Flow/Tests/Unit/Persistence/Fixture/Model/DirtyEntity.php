@@ -35,7 +35,7 @@ class DirtyEntity implements \TYPO3\Flow\Aop\ProxyInterface {
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface: The join point
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
 	public function Flow_Aop_Proxy_invokeJoinPoint(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
@@ -53,6 +53,7 @@ class DirtyEntity implements \TYPO3\Flow\Aop\ProxyInterface {
 
 	/**
 	 * Dummy method for mock creation
+	 * @param string $propertyName
 	 * @return void
 	 */
 	public function Flow_Persistence_memorizeCleanState($propertyName = NULL) {}

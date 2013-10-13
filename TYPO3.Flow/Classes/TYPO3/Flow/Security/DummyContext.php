@@ -83,7 +83,7 @@ class DummyContext extends Context {
 	 * Sets the \TYPO3\Flow\Security\Authentication\Tokens of the security context which should be active.
 	 *
 	 * @param array<\TYPO3\Flow\Security\Authentication\TokenInterface> $tokens Array of set tokens
-	 * @return void
+	 * @return array
 	 */
 	public function setAuthenticationTokens(array $tokens) {
 		return $this->tokens = $tokens;
@@ -164,7 +164,7 @@ class DummyContext extends Context {
 	}
 
 	/**
-	 * @param string $csrfProtectionTokens
+	 * @param string $csrfProtectionToken
 	 * @return void
 	 */
 	public function setCsrfProtectionToken($csrfProtectionToken) {

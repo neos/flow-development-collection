@@ -109,7 +109,7 @@ class RequestHandler implements HttpRequestHandlerInterface {
 	 * @return void
 	 */
 	public function handleRequest() {
-			// Create the request very early so the Resource Management has a chance to grab it:
+		// Create the request very early so the Resource Management has a chance to grab it:
 		$this->request = Request::createFromEnvironment();
 		$this->response = new Response();
 

@@ -71,6 +71,7 @@ class TargetClass01 implements SayHelloInterface {
 	/**
 	 * @param boolean $throwException
 	 * @return string
+	 * @throws \Exception
 	 */
 	public function sayHelloAndThrow($throwException) {
 		if ($throwException) {
@@ -125,7 +126,7 @@ class TargetClass01 implements SayHelloInterface {
 	}
 
 	/**
-	 * @return void
+	 * @return string
 	 */
 	static public function someStaticMethod() {
 		return 'I won\'t take any advice';

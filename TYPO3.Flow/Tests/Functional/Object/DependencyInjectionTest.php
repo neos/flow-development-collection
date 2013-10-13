@@ -33,7 +33,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments() {
 		$objectC = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC');
 
-			// Note: The "requiredArgument" and "thirdOptionalArgument" are defined in the Objects.yaml of the Flow package (testing context)
+		// Note: The "requiredArgument" and "thirdOptionalArgument" are defined in the Objects.yaml of the Flow package (testing context)
 		$this->assertSame('this is required', $objectC->requiredArgument);
 		$this->assertEquals(array('thisIs' => array('anArray' => 'asProperty')), $objectC->thirdOptionalArgument);
 	}
@@ -44,7 +44,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function propertiesOfVariousPrimitiveTypeAreSetInSingletonPropertiesIfConfigured() {
 		$objectC = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC');
 
-			// Note: The arguments are defined in the Objects.yaml of the Flow package (testing context)
+		// Note: The arguments are defined in the Objects.yaml of the Flow package (testing context)
 		$this->assertSame('a defined string', $objectC->getProtectedStringPropertySetViaObjectsYaml());
 		$this->assertSame(42.101010, $objectC->getProtectedFloatPropertySetViaObjectsYaml());
 		$this->assertSame(array('iAm' => array('aConfigured' => 'arrayValue')), $objectC->getProtectedArrayPropertySetViaObjectsYaml());
@@ -80,7 +80,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings() {
 		$objectC = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassC');
 
-			// Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
+		// Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
 		$this->assertSame('setting injected singleton value', $objectC->settingsArgument);
 	}
 
@@ -90,7 +90,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function singletonCanHandleInjectedPrototypeWithSettingArgument() {
 		$objectD = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD');
 
-			// Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
+		// Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
 		$this->assertSame('setting injected property value', $objectD->prototypeClassC->settingsArgument);
 	}
 
@@ -100,7 +100,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function singletonCanHandleInjectedPrototypeWithCustomFactory() {
 		$objectD = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassD');
 
-			// Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
+		// Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
 		$this->assertNotNull($objectD->prototypeClassA);
 		$this->assertSame('value defined in Objects.yaml', $objectD->prototypeClassA->getSomeProperty());
 	}

@@ -265,7 +265,7 @@ class DataMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$dataMapper->injectReflectionService($mockReflectionService);
 		$dataMapper->_call('thawProperties', $object, 1234, $objectData);
 
-			// the order of setting those is important, but cannot be tested for now (static setProperty)
+		// the order of setting those is important, but cannot be tested for now (static setProperty)
 		$this->assertAttributeEquals('secondValue', 'secondProperty', $object);
 		$this->assertAttributeEquals('firstValue', 'firstProperty', $object);
 		$this->assertAttributeEquals('thirdValue', 'thirdProperty', $object);

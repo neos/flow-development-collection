@@ -23,7 +23,7 @@ class AbstractClassTestingAspect {
 	/**
 	 * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\SubClassOfAbstractClass->abstractMethod())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
-	 * @return void
+	 * @return string
 	 */
 	public function abstractMethodInSubClassAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -33,7 +33,7 @@ class AbstractClassTestingAspect {
 	/**
 	 * @Flow\Around("method(public TYPO3\Flow\Tests\Functional\Aop\Fixtures\AbstractClass->concreteMethod())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint
-	 * @return void
+	 * @return string
 	 */
 	public function concreteMethodInAbstractClassAdvice(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);

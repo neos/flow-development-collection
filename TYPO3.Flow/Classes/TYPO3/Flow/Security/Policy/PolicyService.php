@@ -266,7 +266,8 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 *
 	 * @param string $roleIdentifier
 	 * @return \TYPO3\Flow\Security\Policy\Role
-	 * @throws \TYPO3\Flow\Security\Exception\RoleExistsException
+	 * @throws RoleExistsException
+	 * @throws \InvalidArgumentException
 	 */
 	public function createRole($roleIdentifier) {
 		$this->initializeRolesFromPolicy();
@@ -415,7 +416,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 		$privileges = array();
 		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
 			if ($privilegeConfiguration['runtimeEvaluationsClosureCode'] !== FALSE) {
-					// Make object manager usable as closure variable
+				// Make object manager usable as closure variable
 				$objectManager = $this->objectManager;
 				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode'] . ';');
 				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) {
@@ -666,7 +667,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 	 * @throws \TYPO3\Flow\Security\Exception\NoSuchRoleException
 	 */
 	public function initializeRolesFromPolicy() {
-			// for compile time the repository needs to be inject manually:
+		// for compile time the repository needs to be inject manually:
 		if ($this->roleRepository === NULL) {
 			$this->roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
 		}
@@ -694,7 +695,7 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 					}
 				}
 
-					// Add parent roles
+				// Add parent roles
 				foreach ($this->policy['roles'] as $roleIdentifier => $parentRoleIdentifiers) {
 					$parentRoles = array();
 					foreach ($parentRoleIdentifiers as $parentRoleIdentifier) {

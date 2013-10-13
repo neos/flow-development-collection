@@ -76,7 +76,7 @@ class ClassNameIndexTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function filterByPrefixWork() {
 		$index1 = new \TYPO3\Flow\Aop\Builder\ClassNameIndex();
 		$index1->setClassNames(array('\Foo\Bar', '\Foo\Baz', '\Bar\Baz', '\Foo\Blubb'));
-			// We need to call sort manually!
+		// We need to call sort manually!
 		$index1->sort();
 
 		$filteredIndex = $index1->filterByPrefix('\Foo');

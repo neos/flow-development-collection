@@ -21,7 +21,7 @@ class ClassWithSomeImplementationInjected {
 	/**
 	 * A setter for dependency injection
 	 *
-	 * @param  \TYPO3\Flow\TestPackage\SomeInterface $setterArgument
+	 * @param \TYPO3\Flow\Tests\Object\Fixture\SomeInterface $setterArgument
 	 * @return void
 	 */
 	public function injectOptionalSetterArgument(\TYPO3\Flow\Tests\Object\Fixture\SomeInterface $setterArgument) {

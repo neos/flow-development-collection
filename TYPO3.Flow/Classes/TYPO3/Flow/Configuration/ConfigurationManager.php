@@ -339,7 +339,7 @@ class ConfigurationManager {
 		switch ($configurationProcessingType) {
 			case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
 
-					// Make sure that the Flow package is the first item of the packages array:
+				// Make sure that the Flow package is the first item of the packages array:
 				if (isset($packages['TYPO3.Flow'])) {
 					$flowPackage = $packages['TYPO3.Flow'];
 					unset($packages['TYPO3.Flow']);
@@ -426,14 +426,14 @@ class ConfigurationManager {
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
-					// load main routes
+				// load main routes
 				$this->configurations[$configurationType] = array();
 				foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
 					$this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
 				}
 				$this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
 
-					// Merge routes with SubRoutes recursively
+				// Merge routes with SubRoutes recursively
 				$this->mergeRoutesWithSubRoutes($this->configurations[$configurationType]);
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
@@ -471,7 +471,7 @@ class ConfigurationManager {
 
 		$configuration = $this->configurationSource->load($pathAndFilename);
 
-			// Read roles
+		// Read roles
 		if (isset($configuration['roles']) && is_array($configuration['roles'])) {
 			$localRoles = array_keys($configuration['roles']);
 			foreach ($configuration['roles'] as $roleIdentifier => $parentRoles) {
@@ -483,7 +483,7 @@ class ConfigurationManager {
 					throw new InvalidConfigurationException('Roles defined in a package policy must not be qualified (that is, using the dot notation), but the role "' . $roleIdentifier . '" is (in package "' . $packageKeyOfCurrentPackage . '"). Please use the short notation with only the role name (for example "Administrator").', 1365447412);
 				}
 
-					// Add packageKey to parentRoles
+				// Add packageKey to parentRoles
 				if ($parentRoles !== array()) {
 					$parentRoles = array_map(function($roleIdentifier) use ($packageKey, $localRoles) {
 						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous'|| $roleIdentifier === 'AuthenticatedUser') {
@@ -501,7 +501,7 @@ class ConfigurationManager {
 			}
 		}
 
-			// Read acls
+		// Read acls
 		if (isset($configuration['acls']) && is_array($configuration['acls'])) {
 			foreach ($configuration['acls'] as $aclIndex => $aclConfiguration) {
 				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous'|| $aclIndex === 'AuthenticatedUser'
@@ -611,10 +611,10 @@ EOD;
 					foreach ($matches[1] as $match) {
 						if (defined($match)) {
 							if ($configurations[$key] === '%' . $match . '%') {
-									// the constant expression spans the complete directive, assign directly to keep type
+								// the constant expression spans the complete directive, assign directly to keep type
 								$configurations[$key] = constant($match);
 							} else {
-									// the constant is only a substring of the directive, replace that part accordingly
+								// the constant is only a substring of the directive, replace that part accordingly
 								$configurations[$key] = str_replace('%' . $match . '%', constant($match), $configurations[$key]);
 							}
 						}

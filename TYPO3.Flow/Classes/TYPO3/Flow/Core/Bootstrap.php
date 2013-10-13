@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-	// Those are needed before the autoloader is active
+// Those are needed before the autoloader is active
 require_once(__DIR__ . '/ApplicationContext.php');
 require_once(__DIR__ . '/../Exception.php');
 require_once(__DIR__ . '/../Utility/Files.php');

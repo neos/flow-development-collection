@@ -222,7 +222,7 @@ class Scripts {
 		$configurationManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Configuration\ConfigurationManager');
 		$settings = $configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
 
-			// The compile sub command will only be run if the code cache is completely empty:
+		// The compile sub command will only be run if the code cache is completely empty:
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			self::executeCommand('typo3.flow:core:compile', $settings);
 			if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === TRUE) {
@@ -230,7 +230,7 @@ class Scripts {
 			}
 		}
 
-			// Check if code was updated, if not something went wrong
+		// Check if code was updated, if not something went wrong
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			if (DIRECTORY_SEPARATOR === '/') {
 				$phpBinaryPathAndFilename = '"' . escapeshellcmd(\TYPO3\Flow\Utility\Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';
@@ -415,8 +415,8 @@ class Scripts {
 	static protected function createFileMonitor($monitorIdentifier, Bootstrap $bootstrap) {
 		$fileMonitorCache = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Monitor');
 
-			// The change detector needs to be instantiated and registered manually because
-			// it has a complex dependency (cache) but still needs to be a singleton.
+		// The change detector needs to be instantiated and registered manually because
+		// it has a complex dependency (cache) but still needs to be a singleton.
 		$fileChangeDetector = new \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
 		$fileChangeDetector->injectCache($fileMonitorCache);
 		$bootstrap->getObjectManager()->registerShutdownObject($fileChangeDetector, 'shutdownObject');

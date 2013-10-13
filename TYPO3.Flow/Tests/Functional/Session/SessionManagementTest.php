@@ -83,7 +83,7 @@ class SessionManagementTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function aSessionCanBeStartedInAFunctionalTest() {
 		$session = $this->objectManager->get('TYPO3\Flow\Session\SessionInterface');
 		$session->start();
-			// dummy assertion to avoid PHPUnit warning
+		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);
 	}
 

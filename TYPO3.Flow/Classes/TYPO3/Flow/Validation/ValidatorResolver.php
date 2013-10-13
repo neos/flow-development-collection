@@ -269,7 +269,7 @@ class ValidatorResolver {
 		$conjunctionValidator = new ConjunctionValidator();
 		$this->baseValidatorConjunctions[$indexKey] = $conjunctionValidator;
 		if (class_exists($targetClassName)) {
-				// Model based validator
+			// Model based validator
 			$objectValidator = new GenericObjectValidator(array());
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
@@ -296,7 +296,7 @@ class ValidatorResolver {
 				$validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, 'TYPO3\Flow\Annotations\Validate');
 				foreach ($validateAnnotations as $validateAnnotation) {
 					if (count(array_intersect($validateAnnotation->validationGroups, $validationGroups)) === 0) {
-						// In this case, the validation groups for the property do not match current validation context
+					// In this case, the validation groups for the property do not match current validation context
 						continue;
 					}
 					$newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
@@ -329,7 +329,7 @@ class ValidatorResolver {
 	 * @return NULL|Validator\ObjectValidatorInterface
 	 */
 	protected function addCustomValidators($targetClassName, ConjunctionValidator &$conjunctionValidator) {
-			// Custom validator for the class
+		// Custom validator for the class
 		$addedValidatorClassName = NULL;
 		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $targetClassName) . 'Validator';
 		$customValidator = $this->createValidator($possibleValidatorClassName);
@@ -338,12 +338,12 @@ class ValidatorResolver {
 			$addedValidatorClassName = get_class($customValidator);
 		}
 
-			// find polytype validator for class
+		// find polytype validator for class
 		$acceptablePolyTypeValidators = array();
 		$objectValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface');
 		foreach ($objectValidatorImplementationClassNames as $validatorImplementationClassName) {
 			$acceptablePolyTypeValidator = $this->createValidator($validatorImplementationClassName);
-				// skip custom validator already added above
+			// skip custom validator already added above
 			if ($addedValidatorClassName === get_class($acceptablePolyTypeValidator)) {
 				continue;
 			}

@@ -263,6 +263,7 @@ abstract class AbstractMigration {
 	 *
 	 * @param string $configurationType One of ConfigurationManager::CONFIGURATION_TYPE_*
 	 * @param \Closure $processor
+	 * @param boolean $saveResult
 	 * @return void
 	 */
 	protected function processConfiguration($configurationType, \Closure $processor, $saveResult = FALSE) {

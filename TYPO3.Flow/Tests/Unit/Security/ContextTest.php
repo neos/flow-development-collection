@@ -393,7 +393,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$testRole6 = new Role('Acme.Demo:TestRole6');
 		$testRole7 = new Role('Acme.Demo:TestRole7');
 
-			// Set parents
+		// Set parents
 		$testRole1->setParentRoles(array($testRole2, $testRole3));
 		$testRole2->setParentRoles(array($testRole4, $testRole5));
 		$testRole3->setParentRoles(array($testRole6, $testRole7));
@@ -588,7 +588,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$testRole1 = new Role('Acme.Demo:TestRole1');
 		$testRole2 = new Role('Acme.Demo:TestRole2');
 
-			// Set parents
+		// Set parents
 		$testRole1->setParentRoles(array($testRole2));
 
 		$account = new \TYPO3\Flow\Security\Account();

@@ -126,7 +126,7 @@ class CsrfProtection implements RequestPatternInterface {
 			return TRUE;
 		}
 
-			// the CSRF token was necessary and is valid
+		// the CSRF token was necessary and is valid
 		return FALSE;
 	}
 }

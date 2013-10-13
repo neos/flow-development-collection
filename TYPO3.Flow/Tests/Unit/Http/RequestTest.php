@@ -162,14 +162,14 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'server' => array(),
 				'expectedMethod' => 'PUT'
 			),
-				// __method argument overrules HTTP_X_HTTP_METHOD_* headers
+			// __method argument overrules HTTP_X_HTTP_METHOD_* headers
 			array(
 				'originalMethod' => 'POST',
 				'arguments' => array('__method' => 'DELETE'),
 				'server' => array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
 				'expectedMethod' => 'DELETE'
 			),
-				// HTTP_X_HTTP_METHOD_OVERRIDE header overrules HTTP_X_HTTP_METHOD header
+			// HTTP_X_HTTP_METHOD_OVERRIDE header overrules HTTP_X_HTTP_METHOD header
 			array(
 				'originalMethod' => 'POST',
 				'arguments' => array(),

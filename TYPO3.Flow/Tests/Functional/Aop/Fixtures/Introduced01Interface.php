@@ -22,6 +22,7 @@ interface Introduced01Interface {
 	public function introducedMethod01();
 
 	/**
+	 * @param string $someString
 	 * @return string
 	 */
 	public function introducedMethodWithArguments($someString = "some string");

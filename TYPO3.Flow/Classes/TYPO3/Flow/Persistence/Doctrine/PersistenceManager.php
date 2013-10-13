@@ -279,8 +279,8 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @return boolean
 	 */
 	public function compile() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
 			if ($this->settings['backendOptions']['driver'] === 'pdo_sqlite') {
@@ -306,8 +306,8 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @return void
 	 */
 	public function tearDown() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
+		// "driver" is used only for Doctrine, thus we (mis-)use it here
+		// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->entityManager->clear();
 

@@ -121,10 +121,11 @@ class BasicClass {
 	/**
 	 * Throws an exception ...
 	 *
-	 * @param  string $exceptionType Class name of the exception to throw
-	 * @param  mixed $parameter1 First parameter to pass to the exception constructor
-	 * @param  mixed $parameter2 Second parameter to pass to the exception constructor
+	 * @param string $exceptionType Class name of the exception to throw
+	 * @param mixed $parameter1 First parameter to pass to the exception constructor
+	 * @param mixed $parameter2 Second parameter to pass to the exception constructor
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function throwAnException($exceptionType, $parameter1 = NULL, $parameter2 = NULL) {
 		throw new $exceptionType($parameter1, $parameter2);

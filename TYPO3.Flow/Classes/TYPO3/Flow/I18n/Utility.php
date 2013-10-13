@@ -64,7 +64,7 @@ class Utility {
 
 				if (strlen($language) >= 2 && strlen($language) <= 3) {
 					if ($region === NULL || strlen($region) >= 2 && strlen($region) <= 3) {
-							// Note: there are 3 chars in the region code only if they are all digits, but we don't check it above
+						// Note: there are 3 chars in the region code only if they are all digits, but we don't check it above
 						$matchingLanguages[] = $localeIdentifier;
 					}
 				}

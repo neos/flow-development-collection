@@ -103,10 +103,10 @@ class DateTimeRangeValidator extends AbstractValidator {
 		$referenceDateParts = explode('/', $referenceDateString, 2);
 
 		if (count($referenceDateParts) === 1) {
-				// assume a valid Date/Time string
+			// assume a valid Date/Time string
 			return new \DateTime($referenceDateParts[0]);
 		}
-			// check if the period (the interval) is the first or second item:
+		// check if the period (the interval) is the first or second item:
 		if (strpos($referenceDateParts[0], 'P') === 0) {
 			$interval = new \DateInterval($referenceDateParts[0]);
 			$date = new \DateTime($referenceDateParts[1]);

@@ -131,7 +131,7 @@ class RsaWalletServicePhpTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->rsaWalletService->initializeObject();
 		$this->rsaWalletService->getPublicKey($keyPairUuid);
 
-			// Hack: remove the file so we can actually detect if shutdown() would write it:
+		// Hack: remove the file so we can actually detect if shutdown() would write it:
 		unlink('vfs://Foo/EncryptionKey');
 
 		$this->rsaWalletService->shutdownObject();
