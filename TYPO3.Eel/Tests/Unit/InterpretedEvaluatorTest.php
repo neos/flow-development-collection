@@ -11,7 +11,6 @@ namespace TYPO3\Eel\Tests\Unit;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\Context;
 use TYPO3\Eel\InterpretedEvaluator;
 
 /**
