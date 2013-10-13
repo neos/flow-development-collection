@@ -97,7 +97,7 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function NotExpression_exp(&$result, $sub) {
-		$result['code'] = '(!' .$this->unwrapExpression($sub['code']) . ')';
+		$result['code'] = '(!' . $this->unwrapExpression($sub['code']) . ')';
 	}
 
 	public function ArrayLiteral_Expression(&$result, $sub) {

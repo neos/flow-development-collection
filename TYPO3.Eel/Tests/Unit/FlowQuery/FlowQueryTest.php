@@ -124,33 +124,33 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			),
 
 			'Instanceof test works (with test for integer)' => array(
-				'sourceObjects' => array(42, "42", 400, 'foo'),
+				'sourceObjects' => array(42, '42', 400, 'foo'),
 				'filter' => '[  instanceof integer  ]',
 				'expectedResult' => array(42, 400)
 			),
 
 			'Instanceof test works (with test for integer 2)' => array(
-				'sourceObjects' => array(42, "42", 400, 'foo'),
+				'sourceObjects' => array(42, '42', 400, 'foo'),
 				'filter' => '[  instanceof int  ]',
 				'expectedResult' => array(42, 400)
 			),
 
 			'Instanceof test works (with test for boolean)' => array(
-				'sourceObjects' => array(false, '', true),
+				'sourceObjects' => array(FALSE, '', TRUE),
 				'filter' => '[  instanceof boolean  ]',
-				'expectedResult' => array(false, true)
+				'expectedResult' => array(FALSE, TRUE)
 			),
 
 			'Instanceof test works (with test for float)' => array(
-				'sourceObjects' => array(false, 42, 42.5, true),
+				'sourceObjects' => array(FALSE, 42, 42.5, TRUE),
 				'filter' => '[  instanceof float  ]',
 				'expectedResult' => array(42.5)
 			),
 
 			'Instanceof test works (with test for array)' => array(
-				'sourceObjects' => array(false, 42, 42.5, true, array("foo")),
+				'sourceObjects' => array(FALSE, 42, 42.5, TRUE, array('foo')),
 				'filter' => '[  instanceof array  ]',
-				'expectedResult' => array(array("foo"))
+				'expectedResult' => array(array('foo'))
 			),
 
 			'Begin query match' => array(
@@ -367,7 +367,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$objectManager->expects($this->any())->method('get')->will($this->returnCallback(function($className) use($mockPersistenceManager) {
 			$instance = new $className;
-				// Special case to inject the mock persistence manager into the filter operation
+			// Special case to inject the mock persistence manager into the filter operation
 			if ($className === 'TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation') {
 				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, TRUE);
 			}

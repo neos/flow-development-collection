@@ -153,6 +153,7 @@ class StringHelper implements ProtectedContextAwareInterface {
 	 * @param string $string
 	 * @param string $pattern
 	 * @return array The matches as array or NULL if not matched
+	 * @throws \TYPO3\Eel\EvaluationException
 	 */
 	public function match($string, $pattern) {
 		$number = preg_match($pattern, $string, $matches);

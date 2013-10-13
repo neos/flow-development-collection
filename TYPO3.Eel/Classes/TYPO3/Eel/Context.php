@@ -41,6 +41,7 @@ class Context {
 	 *
 	 * @param string|integer|Context $path The path as string or Context value, will be unwrapped for convenience
 	 * @return mixed The value
+	 * @throws EvaluationException
 	 */
 	public function get($path) {
 		if ($path instanceof Context) {
@@ -170,6 +171,7 @@ class Context {
 	 * @param mixed $value
 	 * @param string $key
 	 * @return \TYPO3\Eel\Context
+	 * @throws EvaluationException
 	 */
 	public function push($value, $key = NULL) {
 		if (!is_array($this->value)) {

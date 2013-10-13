@@ -58,7 +58,6 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 		} elseif (count($parsedFilter['Filters']) === 1) {
 			$filter = $parsedFilter['Filters'][0];
 
-
 			if (isset($filter['PropertyNameFilter'])) {
 				$this->evaluatePropertyNameFilter($flowQuery, $filter['PropertyNameFilter']);
 				if (isset($filter['AttributeFilters'])) {

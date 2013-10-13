@@ -64,6 +64,7 @@ abstract class AbstractOperation implements \TYPO3\Eel\FlowQuery\OperationInterf
 	/**
 	 * @return string the short name of the operation
 	 * @api
+	 * @throws \TYPO3\Eel\FlowQuery\FlowQueryException
 	 */
 	static public function getShortName() {
 		if (!is_string(static::$shortName)) {

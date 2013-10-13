@@ -30,6 +30,7 @@ class ProtectedContext extends Context {
 	 * @param string $method
 	 * @param array $arguments
 	 * @return mixed|void
+	 * @throws NotAllowedException
 	 */
 	public function call($method, array $arguments = array()) {
 		if (isset($this->whitelist[$method]) || isset($this->whitelist['*']) || ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod($method))) {

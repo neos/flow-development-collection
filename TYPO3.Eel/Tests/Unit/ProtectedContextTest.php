@@ -146,7 +146,7 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function chainedCallsArePossibleWithExplicitContextWrapping() {
 		$context = new ProtectedContext(array(
-				// Simulate something like FlowQuery
+			// Simulate something like FlowQuery
 			'q' => function($value) {
 				$context = new ProtectedContext(array('count' => function() use($value) {
 					return count($value);
