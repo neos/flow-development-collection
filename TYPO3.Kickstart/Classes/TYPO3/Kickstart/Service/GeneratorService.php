@@ -348,7 +348,7 @@ class GeneratorService {
 				$fieldDefinition['type'] = 'boolean';
 			} elseif ($fieldDefinition['type'] == 'int') {
 				$fieldDefinition['type'] = 'integer';
-			} else if (preg_match('/^[A-Z]/', $fieldDefinition['type'])) {
+			} elseif (preg_match('/^[A-Z]/', $fieldDefinition['type'])) {
 				if (class_exists($fieldDefinition['type'])) {
 					$fieldDefinition['type'] = '\\' . $fieldDefinition['type'];
 				} else {
