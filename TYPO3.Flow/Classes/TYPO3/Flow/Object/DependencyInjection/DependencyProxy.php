@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Object\DependencyInjection;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * A Proxy Class Builder which integrates Dependency Injection.

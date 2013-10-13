@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPoint;
 
 /**
  * Command controller for tasks related to security

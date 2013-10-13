@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Configuration;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Error\Result;
 
 /**

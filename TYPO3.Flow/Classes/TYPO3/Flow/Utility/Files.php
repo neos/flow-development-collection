@@ -10,7 +10,6 @@ namespace TYPO3\Flow\Utility;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * File and directory functions

@@ -13,8 +13,6 @@ namespace TYPO3\Flow\Object;
 
 use TYPO3\Flow\Object\Configuration\Configuration;
 use TYPO3\Flow\Object\Configuration\ConfigurationProperty as Property;
-use TYPO3\Flow\Reflection\ObjectAccess;
-
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 

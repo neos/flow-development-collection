@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Cli;
  *                                                                        */
 
 use TYPO3\Flow\Mvc\RequestInterface;
-use TYPO3\Flow\Cli\Command;
 
 /**
  * Represents a CLI request.

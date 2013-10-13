@@ -12,9 +12,7 @@ namespace TYPO3\Flow\Security;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * This is dummy implementation of a security context, which holds

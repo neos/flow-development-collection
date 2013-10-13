@@ -11,9 +11,6 @@ namespace TYPO3\Flow\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Package\Package;
-use TYPO3\Flow\Package\PackageFactory;
-use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 

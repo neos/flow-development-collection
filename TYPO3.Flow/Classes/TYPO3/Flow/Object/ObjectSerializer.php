@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Object;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
 
 /**
  * The object serializer. This serializer traverses an object tree and transforms

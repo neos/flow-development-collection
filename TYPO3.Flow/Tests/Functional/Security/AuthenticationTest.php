@@ -14,9 +14,6 @@ namespace TYPO3\Flow\Tests\Functional\Security;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\Routing\Route;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
-use TYPO3\Flow\Security\Authentication\TokenInterface;
 
 /**
  * Testcase for Authentication

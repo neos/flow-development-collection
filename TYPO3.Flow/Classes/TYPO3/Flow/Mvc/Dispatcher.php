@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Mvc;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ControllerInterface;
-use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Mvc\Exception\ForwardException;
 

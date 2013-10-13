@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
  *                                                                        */
 
 use TYPO3\Flow\Security\Authentication\TokenInterface;
-use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
 use TYPO3\Flow\Security\RequestPattern\Uri as UriRequestPattern;
 
 /**

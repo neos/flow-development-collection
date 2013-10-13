@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Tests\Unit\Http;
  *                                                                        */
 
 use TYPO3\Flow\Http\Message;
-use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Cookie;
 
 /**

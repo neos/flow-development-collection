@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Error\Notice;
 use TYPO3\Flow\Error\Warning;
-use TYPO3\Flow\Error\Error;
 
 /**
  * Testcase for the Flash Messages Container

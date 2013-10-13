@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Cache\CacheManager;
-
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 

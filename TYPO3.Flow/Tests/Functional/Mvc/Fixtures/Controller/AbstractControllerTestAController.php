@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Error\Message;
 

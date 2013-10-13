@@ -17,7 +17,6 @@ use TYPO3\Flow\Http\Request as HttpRequest;
 use TYPO3\Flow\Http\Response as HttpResponse;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
-use TYPO3\Flow\Error\Message;
 
 /**
  * Testcase for the MVC Abstract Controller

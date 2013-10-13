@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Tests\Unit\Security\Aspect;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\ActionRequest;
 
 /**
  * Testcase for the request dispatching aspect

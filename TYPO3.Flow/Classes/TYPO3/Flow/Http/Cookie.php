@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Http;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Represents a HTTP Cookie as of RFC 6265

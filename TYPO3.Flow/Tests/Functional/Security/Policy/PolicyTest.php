@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Security\Policy\Role;
-
 /**
  * Testcase for the security policy behavior
  */

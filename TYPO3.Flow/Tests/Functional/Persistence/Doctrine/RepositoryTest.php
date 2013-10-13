@@ -11,14 +11,10 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post,
-	TYPO3\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
-
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntity,
-	TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository,
-	TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity,
-	TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity,
-	TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SuperEntity;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity;
 
 /**
  * Testcase for basic repository operations

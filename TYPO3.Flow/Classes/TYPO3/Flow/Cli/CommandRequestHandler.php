@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Cli;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Cli\Response;
 
 /**
  * A request handler which can handle command line requests.

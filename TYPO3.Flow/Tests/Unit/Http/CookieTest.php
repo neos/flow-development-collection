@@ -11,10 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Http;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Cookie;
 
 /**

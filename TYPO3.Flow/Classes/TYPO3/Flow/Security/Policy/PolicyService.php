@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Security\Policy;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Exception\RoleExistsException;
 
 /**

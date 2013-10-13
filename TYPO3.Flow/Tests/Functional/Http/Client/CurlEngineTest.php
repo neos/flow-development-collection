@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Http\Client;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Mvc\Routing\Route;
-
 /**
  * Functional tests for the HTTP client internal request engine
  */

@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 

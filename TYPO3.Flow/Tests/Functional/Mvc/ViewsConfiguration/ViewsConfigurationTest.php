@@ -11,12 +11,6 @@ namespace TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Client\Browser;
-use TYPO3\Flow\Mvc\Routing\Route;
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Uri;
-
 /**
  * Functional tests for the ActionController
  */

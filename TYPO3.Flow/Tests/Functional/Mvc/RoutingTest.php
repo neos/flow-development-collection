@@ -13,9 +13,7 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
 
 use TYPO3\Flow\Http\Client;
 use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\Router;
 

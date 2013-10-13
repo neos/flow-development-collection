@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Utility;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
 
 /**
  * Abstraction methods which return system environment variables.

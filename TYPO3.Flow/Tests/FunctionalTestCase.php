@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Tests;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\Route;
 

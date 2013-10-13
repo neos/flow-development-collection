@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Http\Client;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Client\InfiniteRedirectionException;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 

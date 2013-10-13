@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Core\Booting;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Http\Uri;
 
 /**
  * Initialization scripts for modules of the Flow package

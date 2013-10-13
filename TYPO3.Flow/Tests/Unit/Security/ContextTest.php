@@ -14,7 +14,6 @@ namespace TYPO3\Flow\Tests\Unit\Security;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Security\Policy\Role;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Testcase for the security context

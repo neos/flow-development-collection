@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\Response;
-use TYPO3\Flow\Utility\Files;
 
 /**
  * Command controller for managing caches

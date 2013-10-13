@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use Doctrine\ORM\Events;
 
 /**
  * A sample event subscriber

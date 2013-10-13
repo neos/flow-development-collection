@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Aop\Builder;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Annotations as Flow;
 
 /**

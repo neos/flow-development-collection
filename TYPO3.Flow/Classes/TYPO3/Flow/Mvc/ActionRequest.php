@@ -12,7 +12,6 @@ namespace TYPO3\Flow\Mvc;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request as HttpRequest;
 
 /**

@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Utility\Files;
-
 /**
  * Check for globally defined role identifiers in Policy.yaml files
  */

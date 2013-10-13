@@ -11,7 +11,6 @@ namespace TYPO3\Flow\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Security\Policy\Role;
 use org\bovigo\vfs\vfsStream;
 

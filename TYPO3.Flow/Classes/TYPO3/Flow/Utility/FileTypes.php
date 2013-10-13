@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Utility\MediaTypes;
-
 /**
  * Functions for determining the mime and media types from filenames
  *

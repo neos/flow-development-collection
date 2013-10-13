@@ -12,8 +12,6 @@ namespace TYPO3\Flow\Http;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Http\Cookie;
 
 /**
  * Represents a HTTP message

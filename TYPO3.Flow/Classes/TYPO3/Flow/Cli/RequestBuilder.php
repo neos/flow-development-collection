@@ -11,9 +11,6 @@ namespace TYPO3\Flow\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Cli\Command;
-use TYPO3\Flow\Cli\CommandManager;
-
 use TYPO3\Flow\Annotations as Flow;
 
 /**

@@ -13,7 +13,6 @@ namespace TYPO3\Flow\Mvc;
 
 use TYPO3\Eel\Context;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\RequestMatcher;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
