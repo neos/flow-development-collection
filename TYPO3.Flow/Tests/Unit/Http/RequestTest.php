@@ -173,7 +173,7 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array(
 				'originalMethod' => 'POST',
 				'arguments' => array(),
-				'server' => array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'DELETE', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
+				'server' => array('HTTP_X_HTTP_METHOD' => 'DELETE', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'),
 				'expectedMethod' => 'PUT'
 			),
 		);
