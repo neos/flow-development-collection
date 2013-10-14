@@ -1166,6 +1166,7 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		));
 
 		$mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
+		$mockRoleRepository->expects($this->any())->method('isConnected')->will($this->returnValue(TRUE));
 
 		/** @var $policyService \TYPO3\Flow\Security\Policy\PolicyService */
 		$policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('dummy'));
@@ -1199,15 +1200,16 @@ class PolicyServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 			// using the sequence indexes is clumsy, but, ah, well.
 		$mockRoleRepository = $this->getMock('TYPO3\Flow\Security\Policy\RoleRepository');
-		$mockRoleRepository->expects($this->at(0))->method('findByIdentifier')->with('Anonymous')->will($this->returnValue($anonymousRole));
-		$mockRoleRepository->expects($this->at(1))->method('findByIdentifier')->with('Everybody')->will($this->returnValue($everybodyRole));
-		$mockRoleRepository->expects($this->at(2))->method('findByIdentifier')->with('AuthenticatedUser')->will($this->returnValue($authenticatedUserRole));
-		$mockRoleRepository->expects($this->at(3))->method('findByIdentifier')->with('Acme.Demo:Test')->will($this->returnValue(NULL));
-		$mockRoleRepository->expects($this->at(4))->method('add');
-		$mockRoleRepository->expects($this->at(5))->method('findByIdentifier')->with('Acme.Demo:Parent')->will($this->returnValue(NULL));
-		$mockRoleRepository->expects($this->at(6))->method('add');
-		$mockRoleRepository->expects($this->at(7))->method('findByIdentifier')->with('Acme.Demo:Parent')->will($this->returnValue($parentRole));
-		$mockRoleRepository->expects($this->at(8))->method('findByIdentifier')->with('Acme.Demo:Test')->will($this->returnValue($testRole));
+		$mockRoleRepository->expects($this->once())->method('isConnected')->will($this->returnValue(TRUE));
+		$mockRoleRepository->expects($this->at(1))->method('findByIdentifier')->with('Anonymous')->will($this->returnValue($anonymousRole));
+		$mockRoleRepository->expects($this->at(2))->method('findByIdentifier')->with('Everybody')->will($this->returnValue($everybodyRole));
+		$mockRoleRepository->expects($this->at(3))->method('findByIdentifier')->with('AuthenticatedUser')->will($this->returnValue($authenticatedUserRole));
+		$mockRoleRepository->expects($this->at(4))->method('findByIdentifier')->with('Acme.Demo:Test')->will($this->returnValue(NULL));
+		$mockRoleRepository->expects($this->at(5))->method('add');
+		$mockRoleRepository->expects($this->at(6))->method('findByIdentifier')->with('Acme.Demo:Parent')->will($this->returnValue(NULL));
+		$mockRoleRepository->expects($this->at(7))->method('add');
+		$mockRoleRepository->expects($this->at(8))->method('findByIdentifier')->with('Acme.Demo:Parent')->will($this->returnValue($parentRole));
+		$mockRoleRepository->expects($this->at(9))->method('findByIdentifier')->with('Acme.Demo:Test')->will($this->returnValue($testRole));
 
 		/** @var $policyService \TYPO3\Flow\Security\Policy\PolicyService */
 		$policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('dummy'));

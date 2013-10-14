@@ -12,12 +12,17 @@ namespace TYPO3\Flow\Security\Authentication\Provider;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Policy\Role;
 
 /**
  * An authentication provider that authenticates
  * TYPO3\Flow\Security\Authentication\Token\PasswordToken tokens.
  * The passwords are stored as encrypted files in persisted data and
  * are fetched using the file based simple key service.
+ *
+ * The roles set in authenticateRoles will be added to the authenticated
+ * token, but will not be persisted in the database as this provider is
+ * used for situations in which no database connection might be present.
  *
  * = Example =
  *
@@ -30,6 +35,7 @@ use TYPO3\Flow\Annotations as Flow;
  *             provider: FileBasedSimpleKeyProvider
  *             providerOptions:
  *               keyName: AdminKey
+ *               authenticateRoles: ['TYPO3.Flow.SomeRole']
  */
 class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Provider\AbstractProvider {
 
@@ -79,7 +85,7 @@ class FileBasedSimpleKeyProvider extends \TYPO3\Flow\Security\Authentication\Pro
 				$account = new \TYPO3\Flow\Security\Account();
 				$roles = array();
 				foreach ($this->options['authenticateRoles'] as $roleIdentifier) {
-					$roles[] = $this->policyService->getRole($roleIdentifier);
+					$roles[] = new Role($roleIdentifier, Role::SOURCE_SYSTEM);
 				}
 				$account->setRoles($roles);
 				$authenticationToken->setAccount($account);

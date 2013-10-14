@@ -57,11 +57,6 @@ class FileBasedSimpleKeyProviderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function authenticationAddsAnAccountHoldingTheConfiguredRoles() {
-		$someRole = new \TYPO3\Flow\Security\Policy\Role('TestRoleIdentifier');
-
-		$mockPolicyService = $this->getMock('TYPO3\Flow\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->once())->method('getRole')->with('TestRoleIdentifier')->will($this->returnValue($someRole));
-
 		$mockHashService = $this->getMock('TYPO3\Flow\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('validatePassword')->will($this->returnValue(TRUE));
 
@@ -72,11 +67,11 @@ class FileBasedSimpleKeyProviderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$authenticationProvider = $this->getAccessibleMock('TYPO3\Flow\Security\Authentication\Provider\FileBasedSimpleKeyProvider', array('dummy'), array('myProvider', array('keyName' => 'testKey', 'authenticateRoles' => array('TestRoleIdentifier'))));
 		$authenticationProvider->_set('hashService', $mockHashService);
 		$authenticationProvider->_set('fileBasedSimpleKeyService', $mockFileBasedSimpleKeyService);
-		$authenticationProvider->_set('policyService', $mockPolicyService);
 
 		$authenticationProvider->authenticate($mockToken);
 
-		$this->assertTrue($mockToken->getAccount()->hasRole($someRole));
+		$authenticatedRoles = $mockToken->getAccount()->getRoles();
+		$this->assertTrue(in_array('TestRoleIdentifier', array_keys($authenticatedRoles)));
 	}
 
 	/**

@@ -671,6 +671,11 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 			$this->roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
 		}
 
+		if (!$this->roleRepository->isConnected()) {
+			// Skip synchronization if no database connection on the roleRepository
+			return;
+		}
+
 		if ($this->initializedRoles !== TRUE && !$this->cache->has('rolesFromPolicyUpToDate')) {
 			if ($this->roleRepository->findByIdentifier('Anonymous') === NULL) {
 				$this->roleRepository->add($this->systemRoles['Anonymous']);
