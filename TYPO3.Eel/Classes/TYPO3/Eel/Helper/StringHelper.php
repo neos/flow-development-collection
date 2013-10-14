@@ -13,6 +13,8 @@ namespace TYPO3\Eel\Helper;
 
 use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\Flow\Utility\Unicode\TextIterator;
 
 /**
  * String helpers for Eel contexts
@@ -336,6 +338,61 @@ class StringHelper implements ProtectedContextAwareInterface {
 	 */
 	public function htmlSpecialChars($string, $preserveEntities = FALSE) {
 		return htmlspecialchars($string, NULL, NULL, !$preserveEntities);
+	}
+
+	/**
+	 * Crop a string to $maximumCharacters length, optionally appending $suffix if cropping was necessary.
+	 *
+	 * @param string $string the input string
+	 * @param integer $maximumCharacters number of characters where cropping should happen
+	 * @param string $suffix optional suffix to be appended if cropping was necessary
+	 * @return string the cropped string
+	 */
+	public function crop($string, $maximumCharacters, $suffix = '') {
+		if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
+			$string = UnicodeFunctions::substr($string, 0, $maximumCharacters);
+			$string .= $suffix;
+		}
+
+		return $string;
+	}
+
+	/**
+	 * Crop a string to $maximumCharacters length, taking words into account,
+	 * optionally appending $suffix if cropping was necessary.
+	 *
+	 * @param string $string the input string
+	 * @param integer $maximumCharacters number of characters where cropping should happen
+	 * @param string $suffix optional suffix to be appended if cropping was necessary
+	 * @return string the cropped string
+	 */
+	public function cropAtWord($string, $maximumCharacters, $suffix = '') {
+		if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
+			$iterator = new TextIterator($string, TextIterator::WORD);
+			$string = UnicodeFunctions::substr($string, 0, $iterator->preceding($maximumCharacters));
+			$string .= $suffix;
+		}
+
+		return $string;
+	}
+
+	/**
+	 * Crop a string to $maximumCharacters length, taking sentences into account,
+	 * optionally appending $suffix if cropping was necessary.
+	 *
+	 * @param string $string the input string
+	 * @param integer $maximumCharacters number of characters where cropping should happen
+	 * @param string $suffix optional suffix to be appended if cropping was necessary
+	 * @return string the cropped string
+	 */
+	public function cropAtSentence($string, $maximumCharacters, $suffix = '') {
+		if (UnicodeFunctions::strlen($string) > $maximumCharacters) {
+			$iterator = new TextIterator($string, TextIterator::SENTENCE);
+			$string = UnicodeFunctions::substr($string, 0, $iterator->preceding($maximumCharacters));
+			$string .= $suffix;
+		}
+
+		return $string;
 	}
 
 	/**

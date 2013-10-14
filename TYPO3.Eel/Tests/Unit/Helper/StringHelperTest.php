@@ -360,4 +360,54 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$result = $helper->htmlSpecialChars($string, $preserveEntities);
 		$this->assertSame($expected, $result);
 	}
+
+	public function cropExamples() {
+		return array(
+			'standard options' => array(
+				'methodName' => 'crop',
+				'maximumCharacters' => 18,
+				'suffixString' => '...',
+				'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+				'expected' => 'Kasper Skårhøj imp...'
+			),
+			'crop at word' => array(
+				'methodName' => 'cropAtWord',
+				'maximumCharacters' => 18,
+				'suffixString' => '...',
+				'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+				'expected' => 'Kasper Skårhøj ...'
+			),
+			'crop at sentence' => array(
+				'methodName' => 'cropAtSentence',
+				'maximumCharacters' => 80,
+				'suffixString' => '...',
+				'text' => 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.',
+				'expected' => 'Kasper Skårhøj implemented the original version of the crop function. ...'
+			),
+			'prefixCanBeChanged' => array(
+				'methodName' => 'crop',
+				'maximumCharacters' => 15,
+				'suffixString' => '!',
+				'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+				'expected' => 'Kasper Skårhøj !'
+			),
+			'subject is not modified if run without options' => array(
+				'methodName' => 'crop',
+				'maximumCharacters' => NULL,
+				'suffixString' => NULL,
+				'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+				'expected' => 'Kasper Skårhøj implemented the original version of the crop function.'
+			)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider cropExamples
+	 */
+	public function cropWorks($methodName, $maximumCharacters, $suffixString, $text, $expected) {
+		$helper = new \TYPO3\Eel\Helper\StringHelper();
+		$result = $helper->$methodName($text, $maximumCharacters, $suffixString);
+		$this->assertSame($expected, $result);
+	}
 }
