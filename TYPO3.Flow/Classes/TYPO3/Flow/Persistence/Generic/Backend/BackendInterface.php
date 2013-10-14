@@ -97,5 +97,14 @@ interface BackendInterface {
 	 */
 	public function getObjectDataByIdentifier($identifier, $objectType = NULL);
 
+	/**
+	 * Returns TRUE, if an active connection to the persistence
+	 * backend has been established, e.g. entities can be persisted.
+	 *
+	 * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+	 * @api
+	 */
+	public function isConnected();
+
 }
 ?>

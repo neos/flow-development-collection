@@ -671,8 +671,8 @@ class PolicyService implements \TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface 
 			$this->roleRepository = $this->objectManager->get('TYPO3\Flow\Security\Policy\RoleRepository');
 		}
 
-		if (!$this->roleRepository->isConnected()) {
-			// Skip synchronization if no database connection on the roleRepository
+		if (!$this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->isConnected()) {
+			// Skip synchronization if no connection on the persistence manager is available
 			return;
 		}
 

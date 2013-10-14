@@ -219,6 +219,17 @@ abstract class AbstractBackend implements \TYPO3\Flow\Persistence\Generic\Backen
 	}
 
 	/**
+	 * Returns TRUE, if an active connection to the persistence
+	 * backend has been established, e.g. entities can be persisted.
+	 *
+	 * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+	 * @api
+	 */
+	public function isConnected() {
+		return FALSE;
+	}
+
+	/**
 	 * First persist new objects, then check reconstituted entities.
 	 *
 	 * @return void

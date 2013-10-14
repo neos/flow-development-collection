@@ -110,16 +110,6 @@ class RoleRepository extends \TYPO3\Flow\Persistence\Repository {
 	 */
 	protected function emitRepositoryObjectsPersisted() {}
 
-	/**
-	 * Returns TRUE, if an active connection to the persistence
-	 * backend has been established, e.g. entities can be persisted.
-	 *
-	 * @todo: Remove depending on outcome of #52846
-	 * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
-	 */
-	public function isConnected() {
-		return $this->entityManager->getConnection()->isConnected();
-	}
 }
 
 ?>
