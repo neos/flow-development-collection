@@ -171,7 +171,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 * Returns the query result count
 	 *
 	 * @return integer The query result count
-	 * @throws DatabaseConnectionException
+	 * @throws Exception\DatabaseConnectionException
 	 * @api
 	 */
 	public function count() {
@@ -197,7 +197,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 			$this->systemLogger->logException($ormException);
 			return 0;
 		} catch (\PDOException $pdoException) {
-			throw new DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
+			throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
 		}
 	}
 
