@@ -331,6 +331,17 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Flow\Security\Exception
+	 */
+	public function convertDoesNotCatchSecurityExceptions() {
+		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('doMapping'));
+		$propertyMapper->expects($this->once())->method('doMapping')->with('sourceType', 'targetType', $this->mockConfiguration)->will($this->throwException(new \TYPO3\Flow\Security\Exception()));
+
+		$propertyMapper->convert('sourceType', 'targetType', $this->mockConfiguration);
+	}
+
+	/**
+	 * @test
 	 */
 	public function findFirstEligibleTypeConverterInObjectHierarchyShouldReturnNullIfSourceTypeIsUnknown() {
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));

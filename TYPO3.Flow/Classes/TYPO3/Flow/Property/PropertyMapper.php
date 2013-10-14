@@ -111,8 +111,10 @@ class PropertyMapper {
 			}
 
 			return $result;
-		} catch (\Exception $e) {
-			throw new \TYPO3\Flow\Property\Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $e->getMessage(), 1297759968, $e);
+		} catch (\TYPO3\Flow\Security\Exception $exception) {
+			throw $exception;
+		} catch (\Exception $exception) {
+			throw new \TYPO3\Flow\Property\Exception('Exception while property mapping for target type "' . $targetType . '", at property path "' . implode('.', $currentPropertyPath) . '": ' . $exception->getMessage(), 1297759968, $exception);
 		}
 	}
 
