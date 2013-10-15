@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\Repository;
 
 /**
  * Repository for object path mapping objects
@@ -19,7 +21,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class ObjectPathMappingRepository extends \TYPO3\Flow\Persistence\Repository {
+class ObjectPathMappingRepository extends Repository {
 
 	/**
 	 * @var string
@@ -30,23 +32,24 @@ class ObjectPathMappingRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
-		'objectType' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING,
-		'uriPattern' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING
+		'objectType' => QueryInterface::ORDER_ASCENDING,
+		'uriPattern' => QueryInterface::ORDER_ASCENDING
 	);
 
 	/**
 	 * @param string $objectType the object type of the ObjectPathMapping object
 	 * @param string $uriPattern the URI pattern of the ObjectPathMapping object
 	 * @param string $pathSegment the URI path segment of the ObjectPathMapping object
+	 * @param boolean $caseSensitive whether the path segment lookup should be done case-sensitive
 	 * @return \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
 	 */
-	public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment) {
+	public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment, $caseSensitive = FALSE) {
 		$query = $this->createQuery();
 		return $query->matching(
 			$query->logicalAnd(
 				$query->equals('objectType', $objectType),
 				$query->equals('uriPattern', $uriPattern),
-				$query->equals('pathSegment', $pathSegment)
+				$query->equals('pathSegment', $pathSegment, $caseSensitive)
 			)
 		)
 		->execute()
