@@ -58,6 +58,24 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function sliceReturnsSlicedObject() {
+		$myObject = new \stdClass();
+		$myObject2 = new \stdClass();
+		$myObject3 = new \stdClass();
+
+		$query = $this->createFlowQuery(array($myObject, $myObject2, $myObject3));
+		$this->assertInstanceOf('TYPO3\Eel\FlowQuery\FlowQuery', $query->slice());
+		$this->assertSame(array($myObject, $myObject2, $myObject3), $query->slice()->get());
+		$this->assertSame(array($myObject, $myObject2, $myObject3), iterator_to_array($query->slice()));
+		$this->assertSame(array($myObject, $myObject2), $query->slice(0,2)->get());
+		$this->assertSame(array($myObject, $myObject2), iterator_to_array($query->slice(0,2)));
+		$this->assertSame(array($myObject3), $query->slice(2)->get());
+		$this->assertSame(array($myObject3), iterator_to_array($query->slice(2)));
+	}
+
+	/**
 	 * @return array
 	 */
 	public function dataProviderForFilter() {
@@ -398,6 +416,7 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'count' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\CountOperation'),
 			'first' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\FirstOperation'),
 			'last' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\LastOperation'),
+			'slice' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\SliceOperation'),
 			'get' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\GetOperation'),
 			'is' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\IsOperation'),
 			'filter' => array(300 => 'TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation'),
