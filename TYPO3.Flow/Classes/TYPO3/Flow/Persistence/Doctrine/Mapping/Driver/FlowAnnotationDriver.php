@@ -326,9 +326,12 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 		} else {
 			$metadata->setChangeTrackingPolicy(\Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_DEFERRED_EXPLICIT);
 		}
-
 			// Evaluate annotations on properties/fields
-		$this->evaluatePropertyAnnotations($metadata);
+		try {
+			$this->evaluatePropertyAnnotations($metadata);
+		} catch (\Doctrine\ORM\Mapping\MappingException $exception) {
+			throw new \Doctrine\ORM\Mapping\MappingException(sprintf('Failure while evaluating property annotations for class "%s": %s', $metadata->getName(), $exception->getMessage()), 1382003497, $exception);
+		}
 
 			// build unique index for table
 		if (!isset($primaryTable['uniqueConstraints'])) {
