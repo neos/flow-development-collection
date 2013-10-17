@@ -443,7 +443,11 @@ class Request extends Message {
 	 * @return string
 	 */
 	public function getRelativePath() {
-		return substr($this->getUri()->getPath(), strlen($this->getBaseUri()->getPath()));
+		$baseUriLength = strlen($this->getBaseUri()->getPath());
+		if ($baseUriLength >= strlen($this->getUri()->getPath())) {
+			return '';
+		}
+		return substr($this->getUri()->getPath(), $baseUriLength);
 	}
 
 	/**
