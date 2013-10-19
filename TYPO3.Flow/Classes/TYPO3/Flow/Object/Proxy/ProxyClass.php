@@ -192,9 +192,7 @@ class ProxyClass {
 		if ($methodsCode . $constantsCode === '') {
 			return '';
 		}
-		$classCode =
-			"namespace $namespace;\n" .
-			"\n" .
+		$classCode = ($namespace !== '' ? "namespace $namespace;\n\n" : '') .
 			"use Doctrine\\ORM\\Mapping as ORM;\n" .
 			"use TYPO3\\Flow\\Annotations as Flow;\n" .
 			"\n" .
