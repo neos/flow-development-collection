@@ -43,6 +43,12 @@ class Router implements RouterInterface {
 	protected $objectManager;
 
 	/**
+	 * @var \TYPO3\Flow\Mvc\Routing\RouterCachingService
+	 * @Flow\Inject
+	 */
+	protected $routerCachingService;
+
+	/**
 	 * Array containing the configuration for all routes.
 	 * @var array
 	 */
@@ -156,13 +162,16 @@ class Router implements RouterInterface {
 	 * Iterates through all configured routes and calls matches() on them.
 	 * Returns the matchResults of the matching route or NULL if no matching
 	 * route could be found.
-	 * Note: calls of this message are cached by RouterCachingAspect
 	 *
 	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 * @return array results of the matching route
 	 * @see route()
 	 */
 	protected function findMatchResults(Request $httpRequest) {
+		$cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
+		if ($cachedMatchResults !== FALSE) {
+			return $cachedMatchResults;
+		}
 		$this->lastMatchedRoute = NULL;
 		$this->createRoutesFromConfiguration();
 
@@ -170,9 +179,16 @@ class Router implements RouterInterface {
 		foreach ($this->routes as $route) {
 			if ($route->matches($httpRequest) === TRUE) {
 				$this->lastMatchedRoute = $route;
-				return $route->getMatchResults();
+				$matchResults = $route->getMatchResults();
+				$this->systemLogger->log(sprintf('Router route(): Route "%s" matched the path "%s".', $route->getName(), $httpRequest->getRelativePath()), LOG_DEBUG);
+				if ($matchResults !== NULL) {
+					$this->routerCachingService->storeMatchResults($httpRequest, $matchResults);
+				}
+				return $matchResults;
 			}
 		}
+
+		$this->systemLogger->log(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()), LOG_NOTICE);
 		return NULL;
 	}
 
@@ -187,6 +203,11 @@ class Router implements RouterInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception\NoMatchingRouteException
 	 */
 	public function resolve(array $routeValues) {
+		$cachedResolvedUriPath = $this->routerCachingService->getCachedResolvedUriPath($routeValues);
+		if ($cachedResolvedUriPath !== FALSE) {
+			return $cachedResolvedUriPath;
+		}
+
 		$this->lastResolvedRoute = NULL;
 		$this->createRoutesFromConfiguration();
 
@@ -194,7 +215,11 @@ class Router implements RouterInterface {
 		foreach ($this->routes as $route) {
 			if ($route->resolves($routeValues)) {
 				$this->lastResolvedRoute = $route;
-				return $route->getResolvedUriPath();
+				$resolvedUriPath = $route->getResolvedUriPath();
+				if ($resolvedUriPath !== NULL) {
+					$this->routerCachingService->storeResolvedUriPath($resolvedUriPath, $routeValues);
+				}
+				return $resolvedUriPath;
 			}
 		}
 		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
