@@ -179,11 +179,6 @@ class CacheManager {
 	 * @return void
 	 */
 	public function flushSystemCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
-		$modifiedClassNamesWithUnderscores = array();
-
-		$objectClassesCache = $this->getCache('Flow_Object_Classes');
-		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
-
 		switch ($fileMonitorIdentifier) {
 			case 'Flow_ClassFiles' :
 				$this->flushClassCachesByChangedFiles($changedFiles);
@@ -212,7 +207,8 @@ class CacheManager {
 		foreach ($changedFiles as $pathAndFilename => $status) {
 			$pathAndFilename = str_replace(FLOW_PATH_PACKAGES, '', $pathAndFilename);
 			$matches = array();
-			if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches) === 1) {
+			// safeguard against projects having illegal filenames below "Classes" (like phpexcel/phpexcel, see https://phpexcel.codeplex.com/workitem/20336)
+			if (preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/([^.]+)\.php/', $pathAndFilename, $matches) === 1) {
 				if ($matches[2] === 'Classes') {
 					$classNameWithUnderscores = str_replace('/', '_', $matches[3]);
 				} else {
