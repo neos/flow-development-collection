@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Mvc\Routing;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -72,7 +73,7 @@ class RouterCachingService {
 		if ($this->containsObject($matchResults)) {
 			return;
 		}
-		$this->findMatchResultsCache->set($this->buildFindMatchResultsCacheIdentifier($httpRequest), $matchResults);
+		$this->findMatchResultsCache->set($this->buildFindMatchResultsCacheIdentifier($httpRequest), $matchResults, $this->extractUuids($matchResults));
 	}
 
 	/**
@@ -105,7 +106,7 @@ class RouterCachingService {
 		}
 		$cacheIdentifier = $this->buildResolveCacheIdentifier($routeValues);
 		if ($cacheIdentifier !== NULL) {
-			$this->resolveCache->set($cacheIdentifier, $uriPath);
+			$this->resolveCache->set($cacheIdentifier, $uriPath, $this->extractUuids($routeValues));
 		}
 	}
 
@@ -117,6 +118,17 @@ class RouterCachingService {
 	public function flushCaches() {
 		$this->findMatchResultsCache->flush();
 		$this->resolveCache->flush();
+	}
+
+	/**
+	 * Flushes 'findMatchResults' and 'resolve' caches for the given $tag
+	 *
+	 * @param string $tag
+	 * @return void
+	 */
+	public function flushCachesByTag($tag) {
+		$this->findMatchResultsCache->flushByTag($tag);
+		$this->resolveCache->flushByTag($tag);
 	}
 
 	/**
@@ -181,6 +193,27 @@ class RouterCachingService {
 	protected function buildResolveCacheIdentifier(array $routeValues) {
 		Arrays::sortKeysRecursively($routeValues);
 		return md5(http_build_query($routeValues));
+	}
+
+	/**
+	 * Helper method to generate tags by taking all UUIDs contained
+	 * in the given $routeValues or $matchResults
+	 *
+	 * @param array $values
+	 * @return array
+	 */
+	protected function extractUuids(array $values) {
+		$uuids = array();
+		foreach ($values as $value) {
+			if (is_string($value)) {
+				if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
+					$uuids[] = $value;
+				}
+			} elseif (is_array($value)) {
+				$uuids = array_merge($uuids, $this->extractUuids($value));
+			}
+		}
+		return $uuids;
 	}
 
 }
