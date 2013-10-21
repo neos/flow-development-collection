@@ -8,6 +8,11 @@
 				<target>Nur Buchstaben a-z und Ziffern sind erlaubt</target>
 			</trans-unit>
 
+			<!-- BooleanValueValidator -->
+			<trans-unit id="1361044943" xml:space="preserve">
+				<source>The given value is expected to be {0}.</source>
+			</trans-unit>
+
 			<!-- CollectionValidator -->
 			<trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
