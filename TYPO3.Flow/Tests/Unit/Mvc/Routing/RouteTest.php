@@ -35,6 +35,11 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $route;
 
 	/**
+	 * @var array
+	 */
+	protected $routeValues;
+
+	/**
 	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
 	 */
 	protected $mockRouter;
@@ -755,7 +760,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml', $this->route->getMatchingUri());
+		$this->assertEquals('value1-value2/value3.value4.xml', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -778,7 +783,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '__someInternalArgument' => 'someValue');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue', $this->route->getMatchingUri());
+		$this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -790,7 +795,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '--subRequest' => array('__someInternalArgument' => 'someValue'));
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', $this->route->getMatchingUri());
+		$this->assertEquals('value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -814,7 +819,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->setAppendExceedingArguments(TRUE);
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', $this->route->getMatchingUri());
+		$this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -837,32 +842,32 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->routeValues = array('key1' => array('key1a' => 'key1aValue', 'key1b' => 'key1bValue'), 'key2' => array('key2a' => 'key2aValue'));
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('key2bValue', $this->route->getMatchingUri());
+		$this->assertEquals('key2bValue', $this->route->getResolvedUriPath());
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolvesAppendsDefaultValuesOfOptionalUriPartsToMatchingUri() {
+	public function resolvesAppendsDefaultValuesOfOptionalUriPartsToResolvedUriPath() {
 		$this->route->setUriPattern('foo(/{bar}/{baz})');
 		$this->route->setDefaults(array('bar' => 'barDefaultValue', 'baz' => 'bazDefaultValue'));
 		$this->routeValues = array('baz' => 'bazValue');
 
 		$this->route->resolves($this->routeValues);
 		$expectedResult = 'foo/barDefaultValue/bazvalue';
-		$actualResult = $this->route->getMatchingUri();
+		$actualResult = $this->route->getResolvedUriPath();
 		$this->assertSame($expectedResult, $actualResult);
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolvesLowerCasesMatchingUriByDefault() {
+	public function resolvesLowerCasesResolvedUriPathByDefault() {
 		$this->route->setUriPattern('CamelCase/{someKey}');
 		$this->routeValues = array('someKey' => 'CamelCase');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('camelcase/camelcase', $this->route->getMatchingUri());
+		$this->assertEquals('camelcase/camelcase', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -874,7 +879,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->routeValues = array('someKey' => 'CamelCase');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('CamelCase/CamelCase', $this->route->getMatchingUri());
+		$this->assertEquals('CamelCase/CamelCase', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -892,7 +897,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 * @todo mock object factory
 	 */
-	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
+	public function resolvedUriPathIsNullAfterUnsuccessfulResolve() {
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$this->route = new \TYPO3\Flow\Mvc\Routing\Route($this->mockObjectManager, $mockObjectManager);
 		$this->inject($this->route, 'router', $this->mockRouter);
@@ -903,7 +908,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->routeValues = array('differentKey' => 'value1');
 		$this->assertFalse($this->route->resolves($this->routeValues));
-		$this->assertNull($this->route->getMatchingUri());
+		$this->assertNull($this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -923,7 +928,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockObjectManager->expects($this->once())->method('get')->with('TYPO3\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 		$this->route->resolves($this->routeValues);
 
-		$this->assertEquals('_resolve_invoked_/value2', $this->route->getMatchingUri());
+		$this->assertEquals('_resolve_invoked_/value2', $this->route->getResolvedUriPath());
 	}
 
 	/**
@@ -939,14 +944,14 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function resolvesAppendsRemainingRouteValuesToMatchingUriIfAppendExceedingArgumentsIsTrue() {
+	public function resolvesAppendsRemainingRouteValuesToResolvedUriPathIfAppendExceedingArgumentsIsTrue() {
 		$this->route->setUriPattern('foo');
 		$this->route->setAppendExceedingArguments(TRUE);
 		$this->route->_set('isParsed', TRUE);
 		$routeValues = array('foo' => 'bar', 'baz' => array('foo2' => 'bar2'));
 		$this->route->resolves($routeValues);
 
-		$actualResult = $this->route->getMatchingUri();
+		$actualResult = $this->route->getResolvedUriPath();
 		$expectedResult = '?foo=bar&baz%5Bfoo2%5D=bar2';
 
 		$this->assertEquals($expectedResult, $actualResult);
@@ -973,7 +978,7 @@ class RouteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->route->_set('isParsed', TRUE);
 		$this->route->resolves($originalArray);
 
-		$actualResult = $this->route->getMatchingUri();
+		$actualResult = $this->route->getResolvedUriPath();
 		$expectedResult = '?foo=bar&someObject%5B__identity%5D=x&baz%5BsomeOtherObject%5D%5B__identity%5D=y';
 
 		$this->assertEquals($expectedResult, $actualResult);

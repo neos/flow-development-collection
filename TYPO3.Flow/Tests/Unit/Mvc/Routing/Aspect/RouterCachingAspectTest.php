@@ -90,7 +90,7 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function cacheMatchingCallReturnsCachedMatchResultsIfFoundInCache() {
 		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$expectedResult = array('cached' => 'route values');
-		$this->mockRouterCachingService->expects($this->once())->method('getCacheMatching')->with($this->mockHttpRequest)->will($this->returnValue($expectedResult));
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($this->mockHttpRequest)->will($this->returnValue($expectedResult));
 
 		$actualResult = $this->routerCachingAspect->cacheMatchingCall($this->mockJoinPoint);
 		$this->assertEquals($expectedResult, $actualResult);
@@ -102,7 +102,7 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function cacheMatchingCallReturnsOriginalMatchResultsIfNotFoundInCache() {
 		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$expectedResult = array('uncached' => 'route values');
-		$this->mockRouterCachingService->expects($this->once())->method('getCacheMatching')->with($this->mockHttpRequest)->will($this->returnValue(FALSE));
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($this->mockHttpRequest)->will($this->returnValue(FALSE));
 
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($expectedResult));
 
@@ -119,8 +119,8 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchResults));
 
-		$this->mockRouterCachingService->expects($this->once())->method('getCacheMatching')->with($this->mockHttpRequest)->will($this->returnValue(FALSE));
-		$this->mockRouterCachingService->expects($this->once())->method('createCacheMatching')->with($this->mockHttpRequest, $matchResults);
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($this->mockHttpRequest)->will($this->returnValue(FALSE));
+		$this->mockRouterCachingService->expects($this->once())->method('storeMatchResults')->with($this->mockHttpRequest, $matchResults);
 
 		$this->routerCachingAspect->cacheMatchingCall($this->mockJoinPoint);
 	}
@@ -128,13 +128,28 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function cacheResolveCallReturnsCachedMatchingUriIfFoundInCache() {
+	public function cacheMatchingDoesNotStoreMatchResultsInCacheIfMatchResultsAreNull() {
+		$this->mockJoinPoint->expects($this->any())->method('getMethodArgument')->with('httpRequest')->will($this->returnValue($this->mockHttpRequest));
+		$matchResults = NULL;
+		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
+		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchResults));
+
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedMatchResults')->with($this->mockHttpRequest)->will($this->returnValue(FALSE));
+		$this->mockRouterCachingService->expects($this->never())->method('storeMatchResults');
+
+		$this->routerCachingAspect->cacheMatchingCall($this->mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function cacheResolveCallReturnsCachedResolvedUriPathIfFoundInCache() {
 		$routeValues = array('b' => 'route values', 'a' => 'Some more values');
 		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routeValues')->will($this->returnValue($routeValues));
 
 		$expectedResult = 'cached/matching/uri';
-		$this->mockRouterCachingService->expects($this->once())->method('getCacheResolve')->with($routeValues)->will($this->returnValue($expectedResult));
-		$this->mockRouterCachingService->expects($this->never())->method('createCacheResolve');
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedResolvedUriPath')->with($routeValues)->will($this->returnValue($expectedResult));
+		$this->mockRouterCachingService->expects($this->never())->method('storeResolvedUriPath');
 
 		$actualResult = $this->routerCachingAspect->cacheResolveCall($this->mockJoinPoint);
 		$this->assertEquals($expectedResult, $actualResult);
@@ -143,11 +158,11 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function cacheResolveCallReturnsOriginalMatchingUriIfNotFoundInCache() {
+	public function cacheResolveCallReturnsOriginalResolvedUriPathIfNotFoundInCache() {
 		$routeValues = array('b' => 'route values', 'a' => 'Some more values');
 		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routeValues')->will($this->returnValue($routeValues));
 
-		$this->mockRouterCachingService->expects($this->once())->method('getCacheResolve')->with($routeValues)->will($this->returnValue(FALSE));
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedResolvedUriPath')->with($routeValues)->will($this->returnValue(FALSE));
 
 		$expectedResult = 'uncached/matching/uri';
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($expectedResult));
@@ -159,16 +174,33 @@ class RouterCachingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function cacheResolveCallStoresMatchingUriInCacheIfNotFoundInCache() {
+	public function cacheResolveCallStoresResolvedUriPathInCacheIfNotFoundInCache() {
 		$routeValues = array('b' => 'route values', 'a' => 'Some more values');
 		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routeValues')->will($this->returnValue($routeValues));
 
-		$this->mockRouterCachingService->expects($this->once())->method('getCacheResolve')->with($routeValues)->will($this->returnValue(FALSE));
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedResolvedUriPath')->with($routeValues)->will($this->returnValue(FALSE));
 
 		$matchingUri = 'uncached/matching/uri';
 		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchingUri));
 
-		$this->mockRouterCachingService->expects($this->once())->method('createCacheResolve')->with($matchingUri, $routeValues);
+		$this->mockRouterCachingService->expects($this->once())->method('storeResolvedUriPath')->with($matchingUri, $routeValues);
+
+		$this->routerCachingAspect->cacheResolveCall($this->mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function cacheResolveCallDoesNotStoreResolvedUriPathInCacheIfItsNull() {
+		$routeValues = array('b' => 'route values', 'a' => 'Some more values');
+		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('routeValues')->will($this->returnValue($routeValues));
+
+		$this->mockRouterCachingService->expects($this->once())->method('getCachedResolvedUriPath')->with($routeValues)->will($this->returnValue(FALSE));
+
+		$matchingUri = NULL;
+		$this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint)->will($this->returnValue($matchingUri));
+
+		$this->mockRouterCachingService->expects($this->never())->method('storeResolvedUriPath');
 
 		$this->routerCachingAspect->cacheResolveCall($this->mockJoinPoint);
 	}

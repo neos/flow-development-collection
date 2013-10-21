@@ -114,6 +114,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->outputLine('  Action: ' . $routeValues['@action']);
 		$this->outputLine('  Format: ' . $routeValues['@format']);
 
+		/** @var $route \TYPO3\Flow\Mvc\Routing\Route */
 		foreach ($this->router->getRoutes() as $route) {
 			try {
 				$resolves = $route->resolves($routeValues);
@@ -128,7 +129,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 				$this->outputLine('  Pattern: ' . $route->getUriPattern());
 
 				$this->outputLine('<b>Generated Path:</b>');
-				$this->outputLine('  ' . $route->getMatchingUri());
+				$this->outputLine('  ' . $route->getResolvedUriPath());
 
 				if ($controllerObjectName !== NULL) {
 					$this->outputLine('<b>Controller:</b>');

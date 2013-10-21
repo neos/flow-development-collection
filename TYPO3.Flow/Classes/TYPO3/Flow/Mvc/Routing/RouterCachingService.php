@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
@@ -47,13 +49,13 @@ class RouterCachingService {
 	/**
 	 * Checks the cache for the route path given in the Request and returns the result
 	 *
-	 * @param $httpRequest \TYPO3\Flow\Http\Request
-	 * @return mixed
+	 * @param Request $httpRequest
+	 * @return array|boolean the cached route values or FALSE if no cache entry was found
 	 */
-	public function getCacheMatching($httpRequest) {
-		$cachedResult = $this->findMatchResultsCache->get($this->getCacheMatchingIdentifier($httpRequest));
+	public function getCachedMatchResults(Request $httpRequest) {
+		$cachedResult = $this->findMatchResultsCache->get($this->buildFindMatchResultsCacheIdentifier($httpRequest));
 		if ($cachedResult !== FALSE) {
-			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $this->getCacheMatchingIdentifier($httpRequest), $httpRequest->getRelativePath()), LOG_DEBUG);
+			$this->systemLogger->log(sprintf('Router route(): A cached Route with the cache identifier "%s" matched the path "%s".', $this->buildFindMatchResultsCacheIdentifier($httpRequest), $httpRequest->getRelativePath()), LOG_DEBUG);
 		}
 
 		return $cachedResult;
@@ -62,44 +64,48 @@ class RouterCachingService {
 	/**
 	 * Stores the $matchResults in the cache
 	 *
-	 * @param $httpRequest \TYPO3\Flow\Http\Request
-	 * @param mixed $matchResults
+	 * @param Request $httpRequest
+	 * @param array $matchResults
 	 * @return void
 	 */
-	public function createCacheMatching(\TYPO3\Flow\Http\Request $httpRequest, $matchResults) {
-		if ($matchResults !== NULL && $this->containsObject($matchResults) === FALSE) {
-			$this->findMatchResultsCache->set($this->getCacheMatchingIdentifier($httpRequest), $matchResults);
+	public function storeMatchResults(Request $httpRequest, array $matchResults) {
+		if ($this->containsObject($matchResults)) {
+			return;
+		}
+		$this->findMatchResultsCache->set($this->buildFindMatchResultsCacheIdentifier($httpRequest), $matchResults);
+	}
+
+	/**
+	 * Checks the cache for the given route values and returns the cached resolvedUriPath if a cache entry is found
+	 *
+	 * @param array $routeValues
+	 * @return string|boolean the cached request path or FALSE if no cache entry was found
+	 */
+	public function getCachedResolvedUriPath(array $routeValues) {
+		try {
+			$routeValues = $this->convertObjectsToHashes($routeValues);
+			return $this->resolveCache->get($this->buildResolveCacheIdentifier($routeValues));
+		} catch (\InvalidArgumentException $exception) {
+			return FALSE;
 		}
 	}
 
 	/**
-	 * Checks the cache for the given route values and returns the result
+	 * Stores the $uriPath in the cache together with the $routeValues
 	 *
-	 * @param array $routeValues
-	 * @return string
-	 */
-	public function getCacheResolve(array $routeValues) {
-		$routeValues = $this->convertObjectsToHashes($routeValues);
-		if ($routeValues !== NULL) {
-			$cachedResult = $this->resolveCache->get($this->getCacheResolveIdentifier($routeValues));
-			return $cachedResult;
-		}
-	}
-
-	/**
-	 * Stores the $matchingUri in the cache
-	 *
-	 * @param string $matchingUri
+	 * @param string $uriPath
 	 * @param array $routeValues
 	 * @return void
 	 */
-	public function createCacheResolve($matchingUri, array $routeValues) {
-		$routeValues = $this->convertObjectsToHashes($routeValues);
-		if ($routeValues !== NULL) {
-			$cacheIdentifier = $this->getCacheResolveIdentifier($routeValues);
-			if ($matchingUri !== NULL && $cacheIdentifier !== NULL) {
-				$this->resolveCache->set($cacheIdentifier, $matchingUri);
-			}
+	public function storeResolvedUriPath($uriPath, array $routeValues) {
+		try {
+			$routeValues = $this->convertObjectsToHashes($routeValues);
+		} catch (\InvalidArgumentException $exception) {
+			return;
+		}
+		$cacheIdentifier = $this->buildResolveCacheIdentifier($routeValues);
+		if ($cacheIdentifier !== NULL) {
+			$this->resolveCache->set($cacheIdentifier, $uriPath);
 		}
 	}
 
@@ -117,7 +123,7 @@ class RouterCachingService {
 	 * Checks if the given subject contains an object
 	 *
 	 * @param mixed $subject
-	 * @return boolean If it contains an object or not
+	 * @return boolean TRUE if $subject contains an object, otherwise FALSE
 	 */
 	protected function containsObject($subject) {
 		if (is_object($subject)) {
@@ -138,14 +144,15 @@ class RouterCachingService {
 	 * Recursively converts objects in an array to their identifiers
 	 *
 	 * @param array $routeValues the array to be processed
-	 * @return array|NULL the modified array or NULL if $routeValues contain an object and its identifier could not be determined
+	 * @return array the modified array or NULL if $routeValues contain an object and its identifier could not be determined
+	 * @throws \InvalidArgumentException if $routeValues contain an object and its identifier could not be determine
 	 */
 	protected function convertObjectsToHashes(array $routeValues) {
 		foreach ($routeValues as &$value) {
 			if (is_object($value)) {
 				$identifier = $this->persistenceManager->getIdentifierByObject($value);
 				if ($identifier === NULL) {
-					return NULL;
+					throw new \InvalidArgumentException(sprintf('The identifier of an object of type "%s" could not be determined', get_class($value)), 1340102526);
 				}
 				$value = $identifier;
 			} elseif (is_array($value)) {
@@ -158,10 +165,10 @@ class RouterCachingService {
 	/**
 	 * Generates the Matching cache identifier for the given Request
 	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
+	 * @param Request $httpRequest
 	 * @return string
 	 */
-	protected function getCacheMatchingIdentifier(\TYPO3\Flow\Http\Request $httpRequest) {
+	protected function buildFindMatchResultsCacheIdentifier(Request $httpRequest) {
 		return md5($httpRequest->getRelativePath()) . '_' . $httpRequest->getMethod();
 	}
 
@@ -171,8 +178,8 @@ class RouterCachingService {
 	 * @param array $routeValues
 	 * @return string
 	 */
-	protected function getCacheResolveIdentifier(array $routeValues) {
-		\TYPO3\Flow\Utility\Arrays::sortKeysRecursively($routeValues);
+	protected function buildResolveCacheIdentifier(array $routeValues) {
+		Arrays::sortKeysRecursively($routeValues);
 		return md5(http_build_query($routeValues));
 	}
 
