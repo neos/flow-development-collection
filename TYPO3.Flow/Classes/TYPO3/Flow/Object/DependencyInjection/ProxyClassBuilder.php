@@ -605,7 +605,11 @@ class ProxyClassBuilder {
 		if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleInitializationMethodName)) {
 			return '';
 		}
-		return "\n" . '		$this->' . $lifecycleInitializationMethodName . '(' . $cause . ');' . "\n";
+		$className = $objectConfiguration->getClassName();
+		$code = "\n". '		if (get_class($this) === \'' . $className . '\') {' . "\n";
+		$code .= '			$this->' . $lifecycleInitializationMethodName . '(' . $cause . ');' . "\n";
+		$code .= '		}' . "\n";
+		return $code;
 	}
 
 	/**
@@ -619,7 +623,11 @@ class ProxyClassBuilder {
 		if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
 			return '';
 		}
-		return "\n" . '		\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->registerShutdownObject($this, \'' . $lifecycleShutdownMethodName . '\');' . PHP_EOL;
+		$className = $objectConfiguration->getClassName();
+		$code = "\n". '		if (get_class($this) === \'' . $className . '\') {' . "\n";
+		$code .= '		\TYPO3\Flow\Core\Bootstrap::$staticObjectManager->registerShutdownObject($this, \'' . $lifecycleShutdownMethodName . '\');' . PHP_EOL;
+		$code .= '		}' . "\n";
+		return $code;
 	}
 
 	/**
