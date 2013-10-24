@@ -52,7 +52,7 @@ General considerations
 ----------------------
 
 * Almost every PHP file in TYPO3 Flow contains exactly one class and does not output anything
-  if it is called directly. Therefore you start your file with a ``<?php`` tag and end it
+  if it is called directly. Therefore you start your file with a ``<?php`` tag and must not end it
   with the closing ``?>``.
 * Every file must contain a header stating namespace and licensing information
 
@@ -842,7 +842,7 @@ PHP in General
 
 * Make use of `type-hinting`_ wherever possible
 * Always use ``<?php`` as opening tags (never only ``<?``)
-* Always use the closing tag ``?>`` at the end of a file, don't leave it out (this ain't no Zend Framework, dude)
+* Never use the closing tag ``?>`` at the end of a file, leave it out
 * Never use the shut-up operator ``@`` to suppress error messages. It makes debugging
   harder, is dirty style and slow as hell
 * Prefer strict comparisons whenever possible, to avoid problems with truthy and falsy
