@@ -24,6 +24,16 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function constructWithFlowQueryIsIdempotent() {
+		$flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery(array('a', 'b', 'c'));
+		$wrappedQuery = new \TYPO3\Eel\FlowQuery\FlowQuery($flowQuery);
+
+		$this->assertEquals($flowQuery->getContext(), $wrappedQuery->getContext());
+	}
+
+	/**
+	 * @test
+	 */
 	public function firstReturnsFirstObject() {
 		$myObject = new \stdClass();
 		$myObject2 = new \stdClass();

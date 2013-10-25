@@ -99,7 +99,9 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 	 *
 	 * Only the $context parameter belongs to the public API!
 	 *
-	 * @param array|\Traversable $context
+	 * If a FlowQuery is given as the $context we unwrap its context to assert q(q(context)) == q(context).
+	 *
+	 * @param array|\Traversable $context The initial context (wrapped objects) for this FlowQuery
 	 * @param array              $operations
 	 * @throws Exception
 	 * @api
@@ -108,7 +110,11 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 		if(!(is_array($context) || $context instanceof \Traversable)) {
 			throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
 		}
-		$this->context = $context;
+		if ($context instanceof FlowQuery) {
+			$this->context = $context->getContext();
+		} else {
+			$this->context = $context;
+		}
 		$this->operations = $operations;
 	}
 
