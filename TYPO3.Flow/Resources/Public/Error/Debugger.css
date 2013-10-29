@@ -42,7 +42,18 @@
 }
 
 .Flow-Error-Debugger-VarDump-Center {
-	background: #b9b9b9 url("/_Resources/Static/Packages/TYPO3.Flow/Error/LinesBackground.png") 0 18px repeat;
+	-webkit-background-size: 36px 36px;
+	-moz-background-size: 36px 36px;
+	background-size: 36px 36px;
+	background-position: 0 -18px;
+	background-color: #cfe1cd;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, 1)), color-stop(.5, transparent), to(transparent));
+	background-image: -webkit-linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
+	background-image: -moz-linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
+	background-image: -ms-linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
+	background-image: -o-linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
+	background-image: linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
+
 	font: normal normal 11px/18px Monospaced, "Lucida Console", monospace;
 	padding: 18px 10px;
 }

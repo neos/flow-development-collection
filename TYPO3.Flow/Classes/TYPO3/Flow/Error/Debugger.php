@@ -473,7 +473,7 @@ function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) 
 	\TYPO3\Flow\Error\Debugger::clearState();
 
 	if (!$plaintext && \TYPO3\Flow\Error\Debugger::$stylesheetEchoed === FALSE) {
-		echo '<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/TYPO3.Flow/Error/Debugger.css" />';
+		echo '<style type="text/css">' . file_get_contents('resource://TYPO3.Flow/Public/Error/Debugger.css') . '</style>';
 		\TYPO3\Flow\Error\Debugger::$stylesheetEchoed = TRUE;
 	}
 
