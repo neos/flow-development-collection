@@ -79,7 +79,7 @@ class Environment {
 	}
 
 	/**
-	 * Retrieves the maximum path lenght that is valid in the current environment.
+	 * Retrieves the maximum path length that is valid in the current environment.
 	 *
 	 * @return integer The maximum available path length
 	 */
