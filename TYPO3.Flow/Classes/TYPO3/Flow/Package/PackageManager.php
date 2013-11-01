@@ -925,6 +925,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * PackageStates.php file.
 	 *
 	 * @return void
+	 * @throws Exception\PackageStatesFileNotWritableException
 	 */
 	protected function sortAndSavePackageStates() {
 		$this->sortAvailablePackagesByDependencies();
@@ -940,7 +941,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
 
 		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . ';';
-		@file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
+		$result = @file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
+		if ($result === FALSE) {
+			throw new Exception\PackageStatesFileNotWritableException(sprintf('Flow could not update the list of installed packages because the file %s is not writable. Please, check the file system permissions and make sure that the web server can write to it.', $this->packageStatesPathAndFilename), 1382449759);
+		}
 	}
 
 	/**
