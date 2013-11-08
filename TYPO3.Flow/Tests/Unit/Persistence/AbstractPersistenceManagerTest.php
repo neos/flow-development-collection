@@ -23,7 +23,7 @@ class AbstractPersistenceManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $abstractPersistenceManager;
 
 	public function setUp() {
-		$this->abstractPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\AbstractPersistenceManager', array('initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState'));
+		$this->abstractPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\AbstractPersistenceManager', array('initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState', 'isConnected'));
 	}
 
 	/**

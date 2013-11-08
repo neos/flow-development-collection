@@ -274,6 +274,17 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	}
 
 	/**
+	 * Returns TRUE, if an active connection to the persistence
+	 * backend has been established, e.g. entities can be persisted.
+	 *
+	 * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+	 * @api
+	 */
+	public function isConnected() {
+		return $this->entityManager->getConnection()->isConnected();
+	}
+
+	/**
 	 * Called from functional tests, creates/updates database tables and compiles proxies.
 	 *
 	 * @return boolean

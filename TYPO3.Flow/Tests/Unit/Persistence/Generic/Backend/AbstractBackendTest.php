@@ -21,7 +21,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function commitDelegatesToPersistObjectsAndProcessDeletedObjects() {
-		$backend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
+		$backend = $this->getMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
 		$backend->expects($this->once())->method('persistObjects');
 		$backend->expects($this->once())->method('processDeletedObjects');
 		$backend->commit();
@@ -36,7 +36,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$objects->attach(new \stdClass());
 
 		$mockPersistenceSession = $this->getMock('TYPO3\Flow\Persistence\Generic\Session');
-		$backend = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
+		$backend = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
 
 		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->expects($this->exactly(2))->method('persistObject');
@@ -57,7 +57,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockSession->expects($this->at(1))->method('unregisterReconstitutedEntity')->with($object);
 		$mockSession->expects($this->at(2))->method('unregisterObject')->with($object);
 
-		$backend = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
+		$backend = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->once())->method('removeEntity')->with($object);
 		$backend->setDeletedEntities($objects);
@@ -76,7 +76,7 @@ class AbstractBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(FALSE));
 		$mockSession->expects($this->never())->method('unregisterObject');
 
-		$backend = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
+		$backend = $this->getAccessibleMock('TYPO3\Flow\Persistence\Generic\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->never())->method('removeEntity');
 		$backend->setDeletedEntities($objects);
