@@ -46,6 +46,18 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Flow\Mvc\Dispatcher', 'afterControllerInvocation', function($request) use($bootstrap) {
 			if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== TRUE) {
 				$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
+			} elseif ($bootstrap->getContext()->isDevelopment()) {
+				if ($bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->hasUnpersistedChanges() === TRUE) {
+						$message = 'Detected modified or new objects to be persisted which is not allowed for ' . $request->getHttpRequest()->getMethod() . ' requests
+
+According to the HTTP 1.1 specification, so called "safe request" (usually GET or HEAD requests)
+should not change your data on the server side and should be considered read-only. If you need to add,
+modify or remove data, you should use the respective request methods (POST, PUT, DELETE and PATCH).
+
+If you need to store some data during a safe request (for example, logging some data for your analytics),
+you are still free to call PersistenceManager->persistAll() manually.';
+						throw new \TYPO3\Flow\Persistence\Exception($message, 1377788621);
+				}
 			}
 		});
 		$dispatcher->connect('TYPO3\Flow\Cli\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\Flow\Persistence\PersistenceManagerInterface', 'persistAll');

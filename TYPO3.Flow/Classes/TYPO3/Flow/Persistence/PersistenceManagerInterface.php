@@ -172,4 +172,13 @@ interface PersistenceManagerInterface {
 	 */
 	public function isConnected();
 
+	/**
+	 * Gives feedback if the persistence Manager has unpersisted changes.
+	 *
+	 * This is primarily used to inform the user if he tries to save
+	 * data in an unsafe request.
+	 *
+	 * @return boolean
+	 */
+	public function hasUnpersistedChanges();
 }

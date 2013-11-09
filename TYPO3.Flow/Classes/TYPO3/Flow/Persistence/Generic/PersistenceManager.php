@@ -165,6 +165,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		$this->changedObjects = new \SplObjectStorage();
 
 		$this->emitAllObjectsPersisted();
+		$this->hasUnpersistedChanges = FALSE;
 	}
 
 	/**
@@ -182,6 +183,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		$this->removedObjects = new \SplObjectStorage();
 		$this->changedObjects = new \SplObjectStorage();
 		$this->persistenceSession->destroy();
+		$this->hasUnpersistedChanges = FALSE;
 	}
 
 	/**
@@ -267,6 +269,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @api
 	 */
 	public function add($object) {
+		$this->hasUnpersistedChanges = TRUE;
 		$this->addedObjects->attach($object);
 		$this->removedObjects->detach($object);
 	}
@@ -279,6 +282,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * @api
 	 */
 	public function remove($object) {
+		$this->hasUnpersistedChanges = TRUE;
 		if ($this->addedObjects->contains($object)) {
 			$this->addedObjects->detach($object);
 		} else {
@@ -298,6 +302,7 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		if ($this->isNewObject($object)) {
 			throw new \TYPO3\Flow\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1249479819);
 		}
+		$this->hasUnpersistedChanges = TRUE;
 		$this->changedObjects->attach($object);
 	}
 

@@ -52,6 +52,9 @@ The **sorting of packages is now done with an depth-first algorithm** that makes
 that package settings overrule settings from depending packages. This is a breaking
 change in case you relied on the previous (and sometimes incorrect) sorting of packages.
 
+In case you implemented your own **Persistence Manager**, you must add the **new
+hasUnpersistedChanges()** method, unless you extend the AbstractPersistenceManager.
+
 Fluid
 ^^^^^
 

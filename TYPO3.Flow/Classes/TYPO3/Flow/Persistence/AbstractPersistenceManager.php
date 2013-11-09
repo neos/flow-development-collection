@@ -29,6 +29,11 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
 	protected $newObjects = array();
 
 	/**
+	 * @var boolean
+	 */
+	protected $hasUnpersistedChanges = FALSE;
+
+	/**
 	 * Injects the Flow settings, the persistence part is kept
 	 * for further use.
 	 *
@@ -101,4 +106,17 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
 		}
 		return $array;
 	}
+
+	/**
+	 * Gives feedback if the persistence Manager has unpersisted changes.
+	 *
+	 * This is primarily used to inform the user if he tries to save
+	 * data in an unsafe request.
+	 *
+	 * @return boolean
+	 */
+	public function hasUnpersistedChanges() {
+		return $this->hasUnpersistedChanges;
+	}
+
 }

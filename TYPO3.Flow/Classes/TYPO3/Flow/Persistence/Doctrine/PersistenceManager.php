@@ -339,4 +339,26 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	protected function emitAllObjectsPersisted() {
 	}
 
+	/**
+	 * Gives feedback if the persistence Manager has unpersisted changes.
+	 *
+	 * This is primarily used to inform the user if he tries to save
+	 * data in an unsafe request.
+	 *
+	 * @return boolean
+	 */
+	public function hasUnpersistedChanges() {
+		$unitOfWork = $this->entityManager->getUnitOfWork();
+
+		if ($unitOfWork->getScheduledEntityInsertions() !== array()
+			|| $unitOfWork->getScheduledEntityUpdates() !== array()
+			|| $unitOfWork->getScheduledEntityDeletions() !== array()
+			|| $unitOfWork->getScheduledCollectionDeletions() !== array()
+			|| $unitOfWork->getScheduledCollectionUpdates() !== array()) {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
 }
