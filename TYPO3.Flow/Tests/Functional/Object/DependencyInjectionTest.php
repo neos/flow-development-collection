@@ -158,4 +158,37 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$aClassFromSubNamespace = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\SubNamespace\AnotherClass');
 		$this->assertSame($aClassFromSubNamespace, $nonNamespacedDependencies->getClassFromSubNamespace());
 	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfAllSettings() {
+		$classWithSettings = new Fixtures\ClassWithSettings();
+		$actualSettings = $classWithSettings->getSettings();
+		$this->assertSame($actualSettings['tests']['functional']['settingInjection']['someSetting'], 'injected setting');
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfNonExistingSettings() {
+		$classWithSettings = new Fixtures\ClassWithSettings();
+		$this->assertNull($classWithSettings->getNonExistingSetting());
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfSingleSettings() {
+		$classWithSettings = new Fixtures\ClassWithSettings();
+		$this->assertSame($classWithSettings->getInjectedSettingA(), 'injected setting');
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfSingleSettingsFromSpecificPackage() {
+		$classWithSettings = new Fixtures\ClassWithSettings();
+		$this->assertSame($classWithSettings->getInjectedSettingB(), 'injected setting');
+	}
 }

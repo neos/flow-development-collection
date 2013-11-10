@@ -31,11 +31,31 @@ final class Inject {
 	public $lazy = TRUE;
 
 	/**
+	 * Path of a setting which should be injected into the property
+	 *
+	 * @var string
+	 */
+	public $setting;
+
+	/**
+	 * Package to load the setting from
+	 *
+	 * @var string
+	 */
+	public $package;
+
+	/**
 	 * @param array $values
 	 */
 	public function __construct(array $values) {
 		if (isset($values['lazy'])) {
 			$this->lazy = (boolean)$values['lazy'];
+		}
+		if (isset($values['setting'])) {
+			$this->setting = (string)$values['setting'];
+		}
+		if (isset($values['package'])) {
+			$this->package = (string)$values['package'];
 		}
 	}
 

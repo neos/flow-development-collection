@@ -93,3 +93,5 @@ TYPO3:
         dependencyInjection:
           singletonConstructorArgument: 'setting injected singleton value'
           prototypeConstructorArgument: 'setting injected property value'
+        settingInjection:
+          someSetting: 'injected setting'

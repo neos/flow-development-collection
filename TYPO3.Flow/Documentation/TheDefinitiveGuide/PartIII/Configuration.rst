@@ -278,6 +278,88 @@ of a classes' package and output some option value:
 		}
 	}
 
+.. note::
+  Injecting all settings creates tight coupling to the settings. If you only need
+  a few settings you might want to inject those specifically with the Inject
+  annotation described below.
+
+Injection of single settings into properties
+--------------------------------------------
+
+TYPO3 Flow provides a way to inject specific settings through the Inject annotation directly into your properties.
+The annotation provides two options related to settings injection:
+
+* ``setting`` specifies the path to the setting that should be injected
+* ``package`` is optional and specifies the package to get the setting from. Defaults to the package the current
+  class belongs to.
+
+.. note::
+  As a best-practice for testing and extensibility you should also provide setters for
+  any setting you add to your class, although this is not required for the injection
+  to work.
+
+**Example: single setting injection**
+
+.. code-block:: yaml
+
+	Acme:
+	  Demo:
+	    administrator:
+	      name: 'John Doe'
+	SomeOther:
+	  Package:
+	    email: 'john@doe.com'
+
+
+.. code-block:: php
+
+	namespace Acme\Demo;
+
+	class SomeClass {
+
+		/**
+		 * @var string
+		 * @Flow\Inject(setting="administrator.name")
+		 */
+		protected $name;
+
+		/**
+		 * @var string
+		 * @Flow\Inject(setting="email", package="SomeOther.Package")
+		 */
+		protected $email;
+
+		/**
+		 * Set the name
+		 *
+		 * @param string $name
+		 * @return void
+		 */
+		public function setName($name) {
+			$this->name = $name;
+		}
+
+		/**
+		 * Set the email
+		 *
+		 * @param string $email
+		 * @return void
+		 */
+		public function setEmail($email) {
+			$this->email = $email;
+		}
+
+		/**
+		 * Outputs some settings of the "Demo" package.
+		 *
+		 * @return void
+		 */
+		public function theMethod() {
+			echo $this->name;
+			echo $this->email;
+		}
+	}
+
 Working with other configuration
 --------------------------------
 

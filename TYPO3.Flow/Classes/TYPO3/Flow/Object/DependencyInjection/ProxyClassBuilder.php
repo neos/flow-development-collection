@@ -484,12 +484,24 @@ class ProxyClassBuilder {
 	 */
 	public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, $propertyName, $propertyObjectName) {
 		$className = $objectConfiguration->getClassName();
+		$injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
 
 		if (strpos($propertyObjectName, '.') !== FALSE) {
 			$settingPath = explode('.', $propertyObjectName);
 			$settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
 			$propertyObjectName = Arrays::getValueByPath($settings, $settingPath);
 		}
+
+		if ($injectAnnotation !== NULL && $injectAnnotation->setting !== NULL) {
+			if ($injectAnnotation->package === NULL) {
+				$settingPath = $objectConfiguration->getPackageKey();
+			} else {
+				$settingPath = $injectAnnotation->package;
+			}
+			$settingPath .= '.' . $injectAnnotation->setting;
+			return array('$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $settingPath . '\');');
+		}
+
 		if (!isset($this->objectConfigurations[$propertyObjectName])) {
 			$configurationSource = $objectConfiguration->getConfigurationSourceHint();
 			if (!isset($propertyObjectName[0])) {
@@ -513,8 +525,7 @@ class ProxyClassBuilder {
 			return $result;
 		}
 
-		$annotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
-		if ($annotation->lazy === TRUE && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+		if ($injectAnnotation->lazy === TRUE && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
 			return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
 		} else {
 			return array('$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');
