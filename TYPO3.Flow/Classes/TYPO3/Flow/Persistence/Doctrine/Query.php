@@ -42,6 +42,11 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	protected $entityManager;
 
 	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
 	 * @var mixed
 	 */
 	protected $constraint;
@@ -82,6 +87,11 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	protected $joinAliasCounter = 0;
 
 	/**
+	 * @var bool
+	 */
+	protected $cacheResult = FALSE;
+
+	/**
 	 * @param string $entityClassName
 	 */
 	public function __construct($entityClassName) {
@@ -98,6 +108,17 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	}
 
 	/**
+	 * Injects the Flow settings, the persistence part is kept
+	 * for further use.
+	 *
+	 * @param array $settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings['persistence'];
+	}
+
+	/**
 	 * Returns the type this query cares for.
 	 *
 	 * @return string
@@ -110,10 +131,12 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	/**
 	 * Executes the query and returns the result.
 	 *
+	 * @param bool $cacheResult If the Doctrine result cache should be used
 	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
-	public function execute() {
+	public function execute($cacheResult = FALSE) {
+		$this->cacheResult = $cacheResult;
 		return new \TYPO3\Flow\Persistence\Doctrine\QueryResult($this);
 	}
 
@@ -130,7 +153,11 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 */
 	public function getResult() {
 		try {
-			return $this->queryBuilder->getQuery()->getResult();
+			$query = $this->queryBuilder->getQuery();
+			if ($this->cacheResult === TRUE || $this->settings['cacheAllQueryResults']) {
+				$query->useResultCache(TRUE);
+			}
+			return $query->getResult();
 		} catch (\Doctrine\ORM\ORMException $ormException) {
 			$this->systemLogger->logException($ormException);
 			return array();
@@ -152,7 +179,6 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		} catch (\PDOException $pdoException) {
 			$this->systemLogger->logException($pdoException);
 
-			$message = 'An error occurred while using the PDO Driver.';
 			if (stripos($pdoException->getMessage(), 'unknown database') !== FALSE
 				|| (stripos($pdoException->getMessage(), 'database') !== FALSE && strpos($pdoException->getMessage(), 'not') !== FALSE && strpos($pdoException->getMessage(), 'exist') !== FALSE)) {
 				$message = 'The database which was specified in the configuration does not exist.';
@@ -161,6 +187,9 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 				|| stripos($pdoException->getMessage(), 'connection refused') !== FALSE) {
 				$message = 'The database username / password specified in the configuration seem to be wrong.';
 				$exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
+			} else {
+				$message = 'An error occurred while using the PDO Driver: ' . $pdoException->getMessage();
+				$exception = new Exception\DatabaseException($message, $pdoException->getCode());
 			}
 
 			throw $exception;

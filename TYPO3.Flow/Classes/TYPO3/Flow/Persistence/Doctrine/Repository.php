@@ -183,8 +183,8 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	 * Magic call method for repository methods.
 	 *
 	 * Provides three methods
-	 *  - findBy<PropertyName>($value, $caseSensitive = TRUE)
-	 *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE)
+	 *  - findBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = FALSE)
+	 *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = FALSE)
 	 *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
 	 *
 	 * @param string $method Name of the method
@@ -195,16 +195,17 @@ abstract class Repository extends \Doctrine\ORM\EntityRepository implements \TYP
 	public function __call($method, $arguments) {
 		$query = $this->createQuery();
 		$caseSensitive = isset($arguments[1]) ? (boolean)$arguments[1] : TRUE;
+		$cacheResult = isset($arguments[2]) ? (boolean)$arguments[2] : FALSE;
 
 		if (substr($method, 0, 6) === 'findBy' && strlen($method) > 7) {
 			$propertyName = lcfirst(substr($method, 6));
-			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute();
+			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
 		} elseif (substr($method, 0, 7) === 'countBy' && strlen($method) > 8) {
 			$propertyName = lcfirst(substr($method, 7));
 			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
 		} elseif (substr($method, 0, 9) === 'findOneBy' && strlen($method) > 10) {
 			$propertyName = lcfirst(substr($method, 9));
-			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute()->getFirst();
+			return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult)->getFirst();
 		}
 
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
