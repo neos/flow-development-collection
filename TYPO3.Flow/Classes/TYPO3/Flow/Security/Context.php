@@ -444,7 +444,7 @@ class Context {
 
 		/** @var $token \TYPO3\Flow\Security\Authentication\TokenInterface */
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() === TRUE && $token->getAccount()->getParty() instanceof $className) {
+			if ($token->isAuthenticated() === TRUE && $token->getAccount() instanceof Account && $token->getAccount()->getParty() instanceof $className) {
 				return $token->getAccount()->getParty();
 			}
 		}
