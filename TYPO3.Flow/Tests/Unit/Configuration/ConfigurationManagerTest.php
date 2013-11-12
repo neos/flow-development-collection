@@ -754,7 +754,6 @@ if (FLOW_PATH_ROOT !== 'XXX' || !file_exists('vfs://Flow/TemporaryDirectory/Conf
 	return array();
 }
 return require 'vfs://Flow/TemporaryDirectory/Configuration/FooContextConfigurations.php';
-?>
 EOD;
 		$expectedInclusionCode = str_replace('XXX', FLOW_PATH_ROOT, $expectedInclusionCode);
 		$this->assertTrue(file_exists($temporaryDirectoryPath . 'Configuration'));
