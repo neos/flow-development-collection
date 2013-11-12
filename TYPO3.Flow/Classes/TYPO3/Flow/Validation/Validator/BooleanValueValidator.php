@@ -41,5 +41,3 @@ class BooleanValueValidator extends AbstractValidator {
 		}
 	}
 }
-
-?>

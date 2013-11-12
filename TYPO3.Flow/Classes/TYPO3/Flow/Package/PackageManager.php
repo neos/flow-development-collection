@@ -926,7 +926,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 				unset($packageConfiguration['dependencies']);
 			}
 		}
-		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
+		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . ';';
 		@file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
 	}
 

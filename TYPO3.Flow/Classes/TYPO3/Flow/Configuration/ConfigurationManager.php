@@ -581,9 +581,8 @@ if (FLOW_PATH_ROOT !== '$flowRootPath' || !file_exists('$cachePathAndFilename'))
 	return array();
 }
 return require '$cachePathAndFilename';
-?>
 EOD;
-		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . '?>');
+		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . ';');
 		if (!is_dir(dirname($this->includeCachedConfigurationsPathAndFilename)) && !is_link(dirname($this->includeCachedConfigurationsPathAndFilename))) {
 			Files::createDirectoryRecursively(dirname($this->includeCachedConfigurationsPathAndFilename));
 		}

@@ -53,4 +53,3 @@ class TypeConverterCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 }
-?>
