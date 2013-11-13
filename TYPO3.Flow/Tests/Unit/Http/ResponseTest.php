@@ -570,4 +570,28 @@ class ResponseTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				->setExpires(new \DateTime())
 		);
 	}
+
+	/**
+	 * @return array
+	 */
+	public function contentAndExpectedStringRepresentation() {
+		return array(
+			array('foo bar', 'foo bar'),
+			array(2556, '2556'),
+			array(TRUE, '1'),
+			array(FALSE, ''),
+			array(new \stdClass(), '')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider contentAndExpectedStringRepresentation()
+	 */
+	public function toStringAlwaysReturnsAStringRepresentationOfContent($content, $expectedString) {
+		$response = new Response();
+		$response->setContent($content);
+		$this->assertSame($expectedString, (string)$response);
+
+	}
 }

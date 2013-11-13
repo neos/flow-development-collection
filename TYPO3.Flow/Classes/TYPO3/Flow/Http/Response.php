@@ -582,11 +582,15 @@ class Response extends Message implements ResponseInterface {
 	/**
 	 * Cast the response to a string: return the content part of this response
 	 *
-	 * @return string The same as getContent()
+	 * @return string The same as getContent(), an empty string if getContent() returns a value which can't be cast into a string
 	 * @api
 	 */
 	public function __toString() {
-		return $this->getContent();
+		$output = $this->getContent();
+		if (is_object($output) || is_array($output)) {
+			$output = '';
+		}
+		return (string)$output;
 	}
 
 }

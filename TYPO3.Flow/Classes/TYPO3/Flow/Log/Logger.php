@@ -10,6 +10,10 @@ namespace TYPO3\Flow\Log;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\RequestHandlerInterface;
+use TYPO3\Flow\Http\HttpRequestHandlerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 
 /**
@@ -129,7 +133,7 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 		if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
 			$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
 			$exceptionDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
-			file_put_contents($exceptionDumpPathAndFilename, $message . PHP_EOL . PHP_EOL . \TYPO3\Flow\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE));
+			file_put_contents($exceptionDumpPathAndFilename, $this->renderPostMortemInfo($message, $backTrace));
 			$message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
 		} else {
 			$this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'Flow', __CLASS__, __FUNCTION__);
@@ -147,6 +151,28 @@ class Logger implements \TYPO3\Flow\Log\SystemLoggerInterface, \TYPO3\Flow\Log\S
 		$backTrace = $exception->getTrace();
 		$line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
 		return 'Uncaught exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage();
+	}
+
+	/**
+	 * Renders background information about the circumstances of the exception.
+	 *
+	 * @param array $backTrace
+	 * @return string
+	 */
+	protected function renderPostMortemInfo($message, $backTrace) {
+		$output = $message . PHP_EOL . PHP_EOL . \TYPO3\Flow\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE);
+		if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+			$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+			/* @var Bootstrap $bootstrap */
+			$requestHandler = $bootstrap->getActiveRequestHandler();
+			if ($requestHandler instanceof HttpRequestHandlerInterface) {
+				$request = $requestHandler->getHttpRequest();
+				$response = $requestHandler->getHttpResponse();
+				$output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+				$output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+			}
+		}
+		return $output;
 	}
 
 	/**

@@ -667,6 +667,38 @@ class Request extends Message {
 	}
 
 	/**
+	 * Renders the HTTP headers - including the status header - of this request
+	 *
+	 * @return string The HTTP headers, one per line, separated by \r\n as required by RFC 2616 sec 5
+	 * @api
+	 */
+	public function renderHeaders() {
+		$preparedHeaders = array();
+		$uriPathQueryAndFragment = $this->uri->getPath() .
+			($this->uri->getQuery() ? '?' . $this->uri->getQuery() : '') .
+			($this->uri->getFragment() ? '#' . $this->uri->getFragment() : '');
+		$preparedHeaders[] = sprintf('%s %s HTTP/1.1', $this->method, $uriPathQueryAndFragment);
+
+		foreach ($this->headers->getAll() as $name => $values) {
+			foreach ($values as $value) {
+				$preparedHeaders[] = $name . ': ' . $value;
+			}
+		}
+
+		return implode("\r\n", $preparedHeaders) . "\r\n";
+	}
+
+	/**
+	 * Cast the request to a string: return the content part of this response
+	 *
+	 * @return string The same as getContent()
+	 * @api
+	 */
+	public function __toString() {
+		return $this->renderHeaders() . "\r\n" . $this->getContent();
+	}
+
+	/**
 	 * Parses a RFC 2616 Media Type and returns its parts in an associative array.
 	 * @see \TYPO3\Flow\Utility\MediaTypes::parseMediaType()
 	 *

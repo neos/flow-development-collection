@@ -17,7 +17,7 @@ use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the Http Request class
+ * Test case for the Http Request class
  */
 class RequestTest extends UnitTestCase {
 
@@ -320,6 +320,54 @@ class RequestTest extends UnitTestCase {
 
 		$request->getContent(TRUE);
 		$request->getContent(TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function renderHeadersReturnsRawHttpHeadersAccordingToTheRequestProperties() {
+		$server = array (
+				'HTTP_HOST' => 'dev.blog.rob',
+				'REQUEST_METHOD' => 'GET',
+				'REQUEST_URI' => '/foo/bar',
+				'SCRIPT_NAME' => '/index.php',
+				'PHP_SELF' => '/index.php',
+		);
+
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', array(), array(), $server);
+
+		$expectedHeaders =
+			"PUT /?foo=bar HTTP/1.1\r\n" .
+			"User-Agent: Flow/dev-master.x\r\n" .
+			"Host: dev.blog.rob\r\n" .
+			"Content-Type: application/x-www-form-urlencoded\r\n";
+
+		$this->assertEquals($expectedHeaders, $request->renderHeaders());
+	}
+
+	/**
+	 * @test
+	 */
+	public function toStringReturnsRawHttpRequestAccordingToTheRequestProperties() {
+		$server = array (
+				'HTTP_HOST' => 'dev.blog.rob',
+				'REQUEST_METHOD' => 'GET',
+				'REQUEST_URI' => '/foo/bar',
+				'SCRIPT_NAME' => '/index.php',
+				'PHP_SELF' => '/index.php',
+		);
+
+		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT', array(), array(), $server);
+		$request->setContent('putArgument=first value');
+		$expectedRawRequest =
+			"PUT /?foo=bar HTTP/1.1\r\n" .
+			"User-Agent: Flow/dev-master.x\r\n" .
+			"Host: dev.blog.rob\r\n" .
+			"Content-Type: application/x-www-form-urlencoded\r\n" .
+			"\r\n" .
+			"putArgument=first value";
+
+		$this->assertEquals($expectedRawRequest, (string)$request);
 	}
 
 	/**
