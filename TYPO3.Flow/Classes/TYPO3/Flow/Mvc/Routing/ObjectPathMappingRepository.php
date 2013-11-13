@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
@@ -27,6 +28,14 @@ class ObjectPathMappingRepository extends Repository {
 	 * @var string
 	 */
 	const ENTITY_CLASSNAME = 'TYPO3\Flow\Mvc\Routing\ObjectPathMapping';
+
+	/**
+	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.
+	 *
+	 * @Flow\Inject
+	 * @var ObjectManager
+	 */
+	protected $entityManager;
 
 	/**
 	 * @var array
@@ -78,6 +87,22 @@ class ObjectPathMappingRepository extends Repository {
 		)
 		->execute()
 		->getFirst();
+	}
+
+	/**
+	 * Persists all entities managed by the repository and all cascading dependencies
+	 *
+	 * @return void
+	 */
+	public function persistEntities() {
+		foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
+			if ($className === $this->entityClassName) {
+				foreach ($entities as $entityToPersist) {
+					$this->entityManager->flush($entityToPersist);
+				}
+				return;
+			}
+		}
 	}
 
 }
