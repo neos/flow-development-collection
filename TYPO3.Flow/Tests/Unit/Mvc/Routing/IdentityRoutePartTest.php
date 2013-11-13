@@ -239,7 +239,7 @@ class IdentityRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expectedObjectPathMapping->setPathSegment('The/Path/Segment');
 		$expectedObjectPathMapping->setIdentifier('TheIdentifier');
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('add')->with($expectedObjectPathMapping);
-		$this->mockPersistenceManager->expects($this->once())->method('persistAll');
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('persistEntities');
 
 		$this->identityRoutePart->setObjectType('stdClass');
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
@@ -272,7 +272,7 @@ class IdentityRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expectedObjectPathMapping->setPathSegment('The/Path/Segment-2');
 		$expectedObjectPathMapping->setIdentifier('TheIdentifier');
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('add')->with($expectedObjectPathMapping);
-		$this->mockPersistenceManager->expects($this->once())->method('persistAll');
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('persistEntities');
 
 		$this->identityRoutePart->setObjectType('stdClass');
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
@@ -297,7 +297,7 @@ class IdentityRoutePartTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expectedObjectPathMapping->setPathSegment('-1');
 		$expectedObjectPathMapping->setIdentifier('TheIdentifier');
 		$this->mockObjectPathMappingRepository->expects($this->once())->method('add')->with($expectedObjectPathMapping);
-		$this->mockPersistenceManager->expects($this->once())->method('persistAll');
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('persistEntities');
 
 		$this->identityRoutePart->setObjectType('stdClass');
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');

@@ -27,6 +27,14 @@ class ObjectPathMappingRepository extends \TYPO3\Flow\Persistence\Repository {
 	const ENTITY_CLASSNAME = 'TYPO3\Flow\Mvc\Routing\ObjectPathMapping';
 
 	/**
+	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.
+	 *
+	 * @Flow\Inject
+	 * @var \Doctrine\Common\Persistence\ObjectManager
+	 */
+	protected $entityManager;
+
+	/**
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
@@ -75,6 +83,22 @@ class ObjectPathMappingRepository extends \TYPO3\Flow\Persistence\Repository {
 		)
 		->execute()
 		->getFirst();
+	}
+
+	/**
+	 * Persists all entities managed by the repository and all cascading dependencies
+	 *
+	 * @return void
+	 */
+	public function persistEntities() {
+		foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
+			if ($className === $this->entityClassName) {
+				foreach ($entities as $entityToPersist) {
+					$this->entityManager->flush($entityToPersist);
+				}
+				return;
+			}
+		}
 	}
 
 }
