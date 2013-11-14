@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\ForwardException;
 use TYPO3\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use TYPO3\Flow\Mvc\Exception\NoSuchActionException;
 
@@ -559,33 +560,66 @@ class ActionController extends AbstractController {
 	 * @api
 	 */
 	protected function errorAction() {
+		$this->addErrorFlashMessage();
+		$this->redirectToReferringRequest();
+
+		return $this->getFlattenedValidationErrorMessage();
+	}
+
+	/**
+	 * If information on the request before the current request was sent, this method forwards back
+	 * to the originating request. This effectively ends processing of the current request, so do not
+	 * call this method before you have finished the necessary business logic!
+	 *
+	 * @return void
+	 * @throws ForwardException
+	 */
+	protected function redirectToReferringRequest() {
+		$referringRequest = $this->request->getReferringRequest();
+		if ($referringRequest === NULL) {
+			return;
+		}
+		$packageKey = $referringRequest->getControllerPackageKey();
+		$subpackageKey = $referringRequest->getControllerSubpackageKey();
+		if ($subpackageKey !== NULL) {
+			$packageKey .= '\\' . $subpackageKey;
+		}
+		$argumentsForNextController = $referringRequest->getArguments();
+		$argumentsForNextController['__submittedArguments'] = $this->request->getArguments();
+		$argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
+
+		$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageKey, $argumentsForNextController);
+	}
+
+	/**
+	 * If an error occurred during this request, this adds a flash message describing the error to the flash
+	 * message container.
+	 *
+	 * @return void
+	 */
+	protected function addErrorFlashMessage() {
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
 			$this->flashMessageContainer->addMessage($errorFlashMessage);
 		}
-		$referringRequest = $this->request->getReferringRequest();
-		if ($referringRequest !== NULL) {
-			$subPackageKey = $referringRequest->getControllerSubpackageKey();
-			if ($subPackageKey !== NULL) {
-				rtrim($packageAndSubpackageKey = $referringRequest->getControllerPackageKey() . '\\' . $referringRequest->getControllerSubpackageKey(), '\\');
-			} else {
-				$packageAndSubpackageKey = $referringRequest->getControllerPackageKey();
-			}
-			$argumentsForNextController = $referringRequest->getArguments();
-			$argumentsForNextController['__submittedArguments'] = $this->request->getArguments();
-			$argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
+	}
 
-			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageAndSubpackageKey, $argumentsForNextController);
-		}
-
+	/**
+	 * Returns a string containing all validation errors separated by PHP_EOL.
+	 *
+	 * @return string
+	 */
+	protected function getFlattenedValidationErrorMessage() {
 		$outputMessage = 'Validation failed while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
 		$logMessage = $outputMessage;
+
 		foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
 			foreach ($errors as $error) {
 				$logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
 			}
 		}
 		$this->systemLogger->log($logMessage, LOG_ERR);
+
 		return $outputMessage;
 	}
 
