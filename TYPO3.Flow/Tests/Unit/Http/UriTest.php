@@ -49,7 +49,7 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		return array(
 			array('http://flow.typo3.org/x'),
 			array('http://flow.typo3.org/foo/bar?baz=1&quux=true'),
-			array('https://robert@localhost:443/arabica/coffee.html'),
+			array('https://robert@localhost/arabica/coffee.html'),
 			array('http://127.0.0.1/bar.baz.com/foo.js'),
 			array('http://localhost:8080?foo=bar'),
 			array('http://localhost:443#hashme!x'),
@@ -65,6 +65,19 @@ class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function urisCanBeConvertedForthAndBackWithoutLoss($uriString) {
 		$uri = new Uri($uriString);
 		$this->assertSame($uriString, (string)$uri);
+	}
+
+	/**
+	 * @test
+	 */
+	public function toStringOmitsStandardPorts() {
+		$uri = new Uri('http://flow.typo3.org');
+		$this->assertSame('http://flow.typo3.org', (string)$uri);
+		$this->assertSame(80, $uri->getPort());
+
+		$uri = new Uri('https://flow.typo3.org');
+		$this->assertSame('https://flow.typo3.org', (string)$uri);
+		$this->assertSame(443, $uri->getPort());
 	}
 
 	/**

@@ -84,6 +84,13 @@ class Request extends Message {
 		$this->setMethod($method);
 		$protocol = (isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0))) ? 'https' : 'http';
 		$this->uri = new Uri($protocol . '://' . (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost') . str_replace('/index.php', '', (isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/')));
+
+		if (isset($server['SERVER_PORT'])) {
+			$this->uri->setPort($server['SERVER_PORT']);
+		} elseif ($this->headers->has('X-Forwarded-Port')) {
+			$this->uri->setPort($this->headers->get('X-Forwarded-Port'));
+		}
+
 		$this->server = $server;
 		$this->arguments = $this->buildUnifiedArguments($get, $post, $files);
 	}
@@ -229,6 +236,16 @@ class Request extends Message {
 	 */
 	public function getMethod() {
 		return $this->method;
+	}
+
+	/**
+	 * Returns the port used for this request
+	 *
+	 * @return integer
+	 * @api
+	 */
+	public function getPort() {
+		return $this->uri->getPort();
 	}
 
 	/**

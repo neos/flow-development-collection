@@ -57,7 +57,7 @@ class Uri {
 	 * Port of the locator, if any was specified. Eg. 80
 	 * @var integer
 	 */
-	protected $port;
+	protected $port = 80;
 
 	/**
 	 * The hierarchical part of the URI, eg. /products/acme_soap
@@ -107,6 +107,16 @@ class Uri {
 			$this->password = isset($uriParts['pass']) ? $uriParts['pass'] : NULL;
 			$this->host = isset($uriParts['host']) ? $uriParts['host'] : NULL;
 			$this->port = isset($uriParts['port']) ? $uriParts['port'] : NULL;
+			if ($this->port === NULL) {
+				switch ($this->scheme) {
+					case 'http':
+						$this->port = 80;
+					break;
+					case 'https':
+						$this->port = 443;
+					break;
+				}
+			}
 			$this->path = isset($uriParts['path']) ? $uriParts['path'] : NULL;
 			if (isset($uriParts['query'])) {
 				$this->setQuery ($uriParts['query']);
@@ -241,7 +251,7 @@ class Uri {
 	 */
 	public function setPort($port) {
 		if (preg_match(self::PATTERN_MATCH_PORT, $port) === 1) {
-			$this->port = $port;
+			$this->port = (integer)$port;
 		} else {
 			throw new \InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
 		}
@@ -349,7 +359,16 @@ class Uri {
 			}
 		}
 		$uriString .= $this->host;
-		$uriString .= isset($this->port) ? ':' . $this->port : '';
+		switch ($this->scheme) {
+			case 'http':
+				$uriString .= ($this->port !== 80 ? ':' . $this->port : '');
+			break;
+			case 'https':
+				$uriString .= ($this->port !== 443 ? ':' . $this->port : '');
+			break;
+			default:
+				$uriString .= (isset($this->port) ? ':' . $this->port : '');
+		}
 		$uriString .= isset($this->path) ? $this->path : '';
 		$uriString .= isset($this->query) ? '?' . $this->query : '';
 		$uriString .= isset($this->fragment) ? '#' . $this->fragment : '';

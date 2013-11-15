@@ -529,18 +529,20 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * RFC 2616 / 14.23 (Host)
 	 * @test
 	 */
-	public function standardPortIsNotAddedToHttpHost() {
+	public function standardPortsAreRecognizedCorrectly() {
 		$request = Request::create(new Uri('http://dev.blog.rob:80/foo/bar?baz=quux&coffee=due'));
-		$this->assertNull($request->getUri()->getPort());
+		$this->assertSame(80, $request->getUri()->getPort());
+		$this->assertSame(80, $request->getPort());
 	}
 
 	/**
 	 * RFC 2616 / 14.23 (Host)
 	 * @test
 	 */
-	public function nonStandardPortIsAddedToHttpHost() {
+	public function nonStandardPortIsRecognizedCorrectly() {
 		$request = Request::create(new Uri('http://dev.blog.rob:8080/foo/bar?baz=quux&coffee=due'));
 		$this->assertSame(8080, $request->getUri()->getPort());
+		$this->assertSame(8080, $request->getPort());
 	}
 
 	/**
@@ -568,9 +570,9 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * RFC 2616 / 14.23 (Host)
 	 * @test
 	 */
-	public function standardHttpsPortIsNotAddedToHttpHost() {
-		$request = Request::create(new Uri('https://dev.blog.rob:443/foo/bar?baz=quux&coffee=due'));
-		$this->assertNull($request->getUri()->getPort());
+	public function standardHttpsPortIsRecognizedCorrectly() {
+		$request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'));
+		$this->assertSame(443, $request->getUri()->getPort());
 	}
 
 	/**
@@ -583,6 +585,26 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$reflectedServerProperty->setAccessible(TRUE);
 		$serverValue = $reflectedServerProperty->getValue($request);
 		$this->assertSame(44343, $serverValue['SERVER_PORT']);
+	}
+
+	/**
+	 * RFC 2616 / 14.23 (Host)
+	 * @test
+	 */
+	public function portInProxyHeaderIsAcknowledged() {
+		$_SERVER = array (
+			'HTTP_HOST' => 'dev.blog.rob',
+			'HTTP_X_FORWARDED_PORT' => 2727,
+			'SERVER_NAME' => 'dev.blog.rob',
+			'SERVER_ADDR' => '127.0.0.1',
+			'SERVER_PORT' => '80',
+			'REMOTE_ADDR' => '127.0.0.1',
+			'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
+			'REQUEST_TIME' => 1326472534
+		);
+
+		$request = Request::create(new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), array(), array(), array(), $_SERVER);
+		$this->assertSame(2727, $request->getPort());
 	}
 
 	/**
