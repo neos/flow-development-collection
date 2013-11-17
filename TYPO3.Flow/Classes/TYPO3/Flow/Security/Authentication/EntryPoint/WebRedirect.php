@@ -22,6 +22,7 @@ class WebRedirect extends AbstractEntryPoint {
 
 	/**
 	 * @Flow\Inject(lazy = FALSE)
+	 * @Flow\Transient
 	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
