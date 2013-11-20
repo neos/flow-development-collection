@@ -12,13 +12,49 @@ namespace TYPO3\Flow\Tests\Unit\Mvc;
  *                                                                        */
 
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Http\Request as HttpRequest;
+use TYPO3\Flow\Mvc\Exception\NoSuchArgumentException;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;
+use TYPO3\Flow\Security\Exception\InvalidHashException;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the MVC Request class
+ * Testcase for the MVC ActionRequest class
  */
-class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ActionRequestTest extends UnitTestCase {
+
+	/**
+	 * @var ActionRequest
+	 */
+	protected $actionRequest;
+
+	/**
+	 * @var HttpRequest|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockHttpRequest;
+
+	/**
+	 * @var PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockPropertyMappingConfiguration;
+
+	/**
+	 * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockPropertyMapper;
+
+	public function setUp() {
+		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->actionRequest = new ActionRequest($this->mockHttpRequest);
+
+		$this->mockPropertyMappingConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfiguration')->getMock();
+		$this->inject($this->actionRequest, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
+
+		$this->mockPropertyMapper = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMapper')->getMock();
+		$this->inject($this->actionRequest, 'propertyMapper', $this->mockPropertyMapper);
+	}
 
 	/**
 	 * By design, the root request will always be an HTTP request because it is
@@ -28,17 +64,14 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function anHttpRequestOrActionRequestIsRequiredAsParentRequest() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
+		$this->assertSame($this->mockHttpRequest, $this->actionRequest->getParentRequest());
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$this->assertSame($httpRequest, $actionRequest->getParentRequest());
-
-		$anotherActionRequest = new ActionRequest($actionRequest);
-		$this->assertSame($actionRequest,$anotherActionRequest->getParentRequest());
+		$anotherActionRequest = new ActionRequest($this->actionRequest);
+		$this->assertSame($this->actionRequest, $anotherActionRequest->getParentRequest());
 	}
 
 	/**
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 * @test
 	 */
 	public function constructorThrowsAnExceptionIfNoValidRequestIsPassed() {
@@ -49,40 +82,34 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getHttpRequestReturnsTheHttpRequestWhichIsTheRootOfAllActionRequests() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
-		$anotherActionRequest = new ActionRequest($actionRequest);
+		$anotherActionRequest = new ActionRequest($this->actionRequest);
 		$yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
 
-		$this->assertSame($httpRequest, $actionRequest->getHttpRequest());
-		$this->assertSame($httpRequest, $yetAnotherActionRequest->getHttpRequest());
-		$this->assertSame($httpRequest, $anotherActionRequest->getHttpRequest());
+		$this->assertSame($this->mockHttpRequest, $this->actionRequest->getHttpRequest());
+		$this->assertSame($this->mockHttpRequest, $yetAnotherActionRequest->getHttpRequest());
+		$this->assertSame($this->mockHttpRequest, $anotherActionRequest->getHttpRequest());
 	}
 
 	/**
 	 * @test
 	 */
 	public function getMainRequestReturnsTheTopLevelActionRequestWhoseParentIsTheHttpRequest() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
-		$anotherActionRequest = new ActionRequest($actionRequest);
+		$anotherActionRequest = new ActionRequest($this->actionRequest);
 		$yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
 
-		$this->assertSame($actionRequest, $actionRequest->getMainRequest());
-		$this->assertSame($actionRequest, $yetAnotherActionRequest->getMainRequest());
-		$this->assertSame($actionRequest, $anotherActionRequest->getMainRequest());
+		$this->assertSame($this->actionRequest, $this->actionRequest->getMainRequest());
+		$this->assertSame($this->actionRequest, $yetAnotherActionRequest->getMainRequest());
+		$this->assertSame($this->actionRequest, $anotherActionRequest->getMainRequest());
 	}
 
 	/**
 	 * @test
 	 */
 	public function isMainRequestChecksIfTheParentRequestIsNotAnHttpRequest() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
-		$anotherActionRequest = new ActionRequest($actionRequest);
+		$anotherActionRequest = new ActionRequest($this->actionRequest);
 		$yetAnotherActionRequest = new ActionRequest($anotherActionRequest);
 
-		$this->assertTrue($actionRequest->isMainRequest());
+		$this->assertTrue($this->actionRequest->isMainRequest());
 		$this->assertFalse($anotherActionRequest->isMainRequest());
 		$this->assertFalse($yetAnotherActionRequest->isMainRequest());
 	}
@@ -91,92 +118,59 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function requestIsDispatchable() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
-
 		$mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
 
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
-		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
+		$this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
-		$this->assertFalse($actionRequest->isDispatched());
-		$actionRequest->setDispatched(TRUE);
-		$this->assertTrue($actionRequest->isDispatched());
-		$actionRequest->setDispatched(FALSE);
-		$this->assertFalse($actionRequest->isDispatched());
+		$this->assertFalse($this->actionRequest->isDispatched());
+		$this->actionRequest->setDispatched(TRUE);
+		$this->assertTrue($this->actionRequest->isDispatched());
+		$this->actionRequest->setDispatched(FALSE);
+		$this->assertFalse($this->actionRequest->isDispatched());
 	}
 
 	/**
 	 * @test
 	 */
 	public function getControllerObjectNameReturnsObjectNameDerivedFromPreviouslySetControllerInformation() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
 		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManager');
 		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('somepackage')->will($this->returnValue('SomePackage'));
 
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-				->will($this->returnValue('SomePackage\Some\SubPackage\Controller\SomeControllerController'));
+			->will($this->returnValue('SomePackage\Some\SubPackage\Controller\SomeControllerController'));
 
-		$actionRequest = $httpRequest->createActionRequest();
-		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
-		$this->inject($actionRequest, 'packageManager', $mockPackageManager);
+		$this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
+		$this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
 
-		$actionRequest->setControllerPackageKey('somepackage');
-		$actionRequest->setControllerSubPackageKey('Some\Subpackage');
-		$actionRequest->setControllerName('SomeController');
+		$this->actionRequest->setControllerPackageKey('somepackage');
+		$this->actionRequest->setControllerSubPackageKey('Some\Subpackage');
+		$this->actionRequest->setControllerName('SomeController');
 
-		$this->assertEquals('SomePackage\Some\SubPackage\Controller\SomeControllerController', $actionRequest->getControllerObjectName());
+		$this->assertEquals('SomePackage\Some\SubPackage\Controller\SomeControllerController', $this->actionRequest->getControllerObjectName());
 	}
 
 	/**
 	 * @test
 	 */
 	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
+			->will($this->returnValue(FALSE));
 
 		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManager');
 		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('somepackage')->will($this->returnValue('SomePackage'));
 
-		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-				->will($this->returnValue(FALSE));
+		$this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
+		$this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
 
-		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($httpRequest));
-		$actionRequest->_set('objectManager', $mockObjectManager);
+		$this->actionRequest->setControllerPackageKey('somepackage');
+		$this->actionRequest->setControllerSubPackageKey('Some\Subpackage');
+		$this->actionRequest->setControllerName('SomeController');
 
-		$actionRequest = $httpRequest->createActionRequest();
-		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
-		$this->inject($actionRequest, 'packageManager', $mockPackageManager);
-
-		$actionRequest->setControllerPackageKey('somepackage');
-		$actionRequest->setControllerSubPackageKey('Some\Subpackage');
-		$actionRequest->setControllerName('SomeController');
-
-		$this->assertEquals('', $actionRequest->getControllerObjectName());
-	}
-
-	/**
-	 * @test
-	 * @dataProvider caseSensitiveObjectNames
-	 */
-	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with($objectName)->will($this->returnValue($objectName));
-		$mockObjectManager->expects($this->any())->method('getPackageKeyByObjectName')->with($objectName)->will($this->returnValue($parts['controllerPackageKey']));
-
-		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($httpRequest));
-		$actionRequest->_set('objectManager', $mockObjectManager);
-
-		$actionRequest->setControllerObjectName($objectName);
-		$this->assertSame($parts['controllerPackageKey'], $actionRequest->getControllerPackageKey());
-		$this->assertSame($parts['controllerSubpackageKey'], $actionRequest->getControllerSubpackageKey());
-		$this->assertSame($parts['controllerName'], $actionRequest->getControllerName());
+		$this->assertEquals('', $this->actionRequest->getControllerObjectName());
 	}
 
 	/**
@@ -229,40 +223,56 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Object\Exception\UnknownObjectException
+	 * @dataProvider caseSensitiveObjectNames
+	 */
+	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with($objectName)->will($this->returnValue($objectName));
+		$mockObjectManager->expects($this->any())->method('getPackageKeyByObjectName')->with($objectName)->will($this->returnValue($parts['controllerPackageKey']));
+
+		$this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
+
+		$this->actionRequest->setControllerObjectName($objectName);
+		$this->assertSame($parts['controllerPackageKey'], $this->actionRequest->getControllerPackageKey());
+		$this->assertSame($parts['controllerSubpackageKey'], $this->actionRequest->getControllerSubpackageKey());
+		$this->assertSame($parts['controllerName'], $this->actionRequest->getControllerName());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Object\Exception\UnknownObjectException
 	 */
 	public function setControllerObjectNameThrowsExceptionOnUnknownObjectName() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($httpRequest));
-		$actionRequest->_set('objectManager', $mockObjectManager);
+		$this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
-		$actionRequest->setControllerObjectName('SomeUnknownControllerObjectName');
+		$this->actionRequest->setControllerObjectName('SomeUnknownControllerObjectName');
 	}
 
 	/**
 	 * @test
 	 */
 	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
 
-		$request->setControllerName('foo\bar');
-		$this->assertEquals('Foo\Bar', $request->getControllerName());
+		$actionRequest->setControllerName('foo\bar');
+		$this->assertEquals('Foo\Bar', $actionRequest->getControllerName());
 	}
 
 	/**
 	 * @test
 	 */
 	public function ifNoControllerObjectNameCouldBeDeterminedTheUnknownCasesControllerNameIsReturned() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
-		$request->setControllerName('foo\bar');
-		$this->assertEquals('foo\bar', $request->getControllerName());
+		$actionRequest->setControllerName('foo\bar');
+		$this->assertEquals('foo\bar', $actionRequest->getControllerName());
 	}
 
 	/**
@@ -279,24 +289,22 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidControllerNames
-	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidControllerNameException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException
 	 */
 	public function setControllerNameThrowsExceptionOnInvalidControllerNames($invalidControllerName) {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
-
-		$actionRequest->setControllerName($invalidControllerName);
+		$this->actionRequest->setControllerName($invalidControllerName);
 	}
 
 	/**
 	 * @test
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
-		$request->setControllerActionName('theAction');
-		$this->assertEquals('theAction', $request->getControllerActionName());
+		$actionRequest->setControllerActionName('theAction');
+		$this->assertEquals('theAction', $actionRequest->getControllerActionName());
 	}
 
 	/**
@@ -313,13 +321,10 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidActionNames
-	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidActionNameException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidActionNameException
 	 */
 	public function setControllerActionNameThrowsExceptionOnInvalidActionNames($invalidActionName) {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
-
-		$actionRequest->setControllerActionName($invalidActionName);
+		$this->actionRequest->setControllerActionName($invalidActionName);
 	}
 
 	/**
@@ -340,144 +345,133 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->with('TYPO3\Flow\MyControllerObjectName')
 			->will($this->returnValue(get_class($mockController)));
 
-		$request = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\MyControllerObjectName'));
-		$request->_set('objectManager', $mockObjectManager);
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('getControllerObjectName'), array(), '', FALSE);
+		$actionRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\Flow\MyControllerObjectName'));
+		$actionRequest->_set('objectManager', $mockObjectManager);
 
-		$request->setControllerActionName('somegreat');
-		$this->assertEquals('someGreat', $request->getControllerActionName());
+		$actionRequest->setControllerActionName('somegreat');
+		$this->assertEquals('someGreat', $actionRequest->getControllerActionName());
 	}
 
 	/**
 	 * @test
 	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('someArgumentName', 'theValue');
-		$this->assertEquals('theValue', $actionRequest->getArgument('someArgumentName'));
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+		$this->actionRequest->setArgument('someArgumentName', 'theValue');
+		$this->assertEquals('theValue', $this->actionRequest->getArgument('someArgumentName'));
 	}
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
 	 */
 	public function setArgumentThrowsAnExceptionOnInvalidArgumentNames() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('', 'theValue');
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+		$this->actionRequest->setArgument('', 'theValue');
 	}
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
 	 */
 	public function setArgumentDoesNotAllowObjectValuesForRegularArguments() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('foo', new \stdClass());
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+		$this->actionRequest->setArgument('foo', new \stdClass());
 	}
 
 	/**
 	 * @test
 	 */
 	public function allArgumentsCanBeSetOrRetrievedAtOnce() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
 		$arguments = array(
 			'foo' => 'fooValue',
 			'bar' => 'barValue'
 		);
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArguments($arguments);
-		$this->assertEquals($arguments, $actionRequest->getArguments());
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+
+		$this->actionRequest->setArguments($arguments);
+		$this->assertEquals($arguments, $this->actionRequest->getArguments());
 	}
 
 	/**
 	 * @test
 	 */
 	public function internalArgumentsAreHandledSeparately() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('__someInternalArgument', 'theValue');
+		$this->actionRequest->setArgument('__someInternalArgument', 'theValue');
 
-		$this->assertFalse($actionRequest->hasArgument('__someInternalArgument'));
-		$this->assertEquals('theValue', $actionRequest->getInternalArgument('__someInternalArgument'));
-		$this->assertEquals(array('__someInternalArgument' => 'theValue'), $actionRequest->getInternalArguments());
+		$this->assertFalse($this->actionRequest->hasArgument('__someInternalArgument'));
+		$this->assertEquals('theValue', $this->actionRequest->getInternalArgument('__someInternalArgument'));
+		$this->assertEquals(array('__someInternalArgument' => 'theValue'), $this->actionRequest->getInternalArguments());
 	}
 
 	/**
 	 * @test
 	 */
 	public function internalArgumentsMayHaveObjectValues() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
 
 		$someObject = new \stdClass();
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('__someInternalArgument', $someObject);
+		$this->actionRequest->setArgument('__someInternalArgument', $someObject);
 
-		$this->assertSame($someObject, $actionRequest->getInternalArgument('__someInternalArgument'));
+		$this->assertSame($someObject, $this->actionRequest->getInternalArgument('__someInternalArgument'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function pluginArgumentsAreHandledSeparately() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$actionRequest->setArgument('--typo3-flow-foo-viewhelper-paginate', array('@controller' => 'Foo', 'page' => 5));
+		$this->actionRequest->setArgument('--typo3-flow-foo-viewhelper-paginate', array('@controller' => 'Foo', 'page' => 5));
 
-		$this->assertFalse($actionRequest->hasArgument('--typo3-flow-foo-viewhelper-paginate'));
-		$this->assertEquals(array('typo3-flow-foo-viewhelper-paginate' => array('@controller' => 'Foo', 'page' => 5)), $actionRequest->getPluginArguments());
+		$this->assertFalse($this->actionRequest->hasArgument('--typo3-flow-foo-viewhelper-paginate'));
+		$this->assertEquals(array('typo3-flow-foo-viewhelper-paginate' => array('@controller' => 'Foo', 'page' => 5)), $this->actionRequest->getPluginArguments());
 	}
 
 	/**
 	 * @test
 	 */
 	public function argumentNamespaceCanBeSpecified() {
-		$httpRequest = HttpRequest::create(new Uri('http://localhost'));
-		$actionRequest = new ActionRequest($httpRequest);
-
-		$this->assertSame('', $actionRequest->getArgumentNamespace());
-		$actionRequest->setArgumentNamespace('someArgumentNamespace');
-		$this->assertSame('someArgumentNamespace', $actionRequest->getArgumentNamespace());
+		$this->assertSame('', $this->actionRequest->getArgumentNamespace());
+		$this->actionRequest->setArgumentNamespace('someArgumentNamespace');
+		$this->assertSame('someArgumentNamespace', $this->actionRequest->getArgumentNamespace());
 	}
 
 	/**
 	 * @test
 	 */
 	public function theRepresentationFormatCanBeSetAndRetrieved() {
-		$httpRequest = HttpRequest::create(new Uri('http://foo.com'));
-		$actionRequest = new ActionRequest($httpRequest);
+		$this->actionRequest->setFormat('html');
+		$this->assertEquals('html', $this->actionRequest->getFormat());
 
-		$actionRequest->setFormat('html');
-		$this->assertEquals('html', $actionRequest->getFormat());
+		$this->actionRequest->setFormat('doc');
+		$this->assertEquals('doc', $this->actionRequest->getFormat());
 
-		$actionRequest->setFormat('doc');
-		$this->assertEquals('doc', $actionRequest->getFormat());
-
-		$actionRequest->setFormat('hTmL');
-		$this->assertEquals('html', $actionRequest->getFormat());
+		$this->actionRequest->setFormat('hTmL');
+		$this->assertEquals('html', $this->actionRequest->getFormat());
 	}
 
 	/**
 	 * @test
 	 */
 	public function cloneResetsTheStatusToNotDispatched() {
-		$httpRequest = HttpRequest::create(new Uri('http://foo.com'));
-		$originalRequest = new ActionRequest($httpRequest);
+		$this->actionRequest->setDispatched(TRUE);
+		$cloneRequest = clone $this->actionRequest;
 
-		$originalRequest->setDispatched(TRUE);
-		$cloneRequest = clone $originalRequest;
-
-		$this->assertTrue($originalRequest->isDispatched());
+		$this->assertTrue($this->actionRequest->isDispatched());
 		$this->assertFalse($cloneRequest->isDispatched());
 	}
 
@@ -486,49 +480,250 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid() {
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+
+		$serializedArguments = base64_encode('some manipulated arguments string without valid HMAC');
 		$referrer = array(
 			'@controller' => 'Foo',
 			'@action' => 'bar',
-			'arguments' => base64_encode('some manipulated arguments string without valid HMAC')
+			'arguments' => $serializedArguments
 		);
 
-		$httpRequest = HttpRequest::create(new Uri('http://acme.com', 'GET'));
-		$request = new ActionRequest($httpRequest);
-		$request->setArgument('__referrer', $referrer);
-		$this->inject($request, 'hashService', new \TYPO3\Flow\Security\Cryptography\HashService());
-		$request->getReferringRequest();
+		$mockHashService = $this->getMockBuilder('TYPO3\Flow\Security\Cryptography\HashService')->getMock();
+		$mockHashService->expects($this->once())->method('validateAndStripHmac')->with($serializedArguments)->will($this->throwException(new InvalidHashException()));
+		$this->inject($this->actionRequest, 'hashService', $mockHashService);
+
+		$this->actionRequest->setArgument('__referrer', $referrer);
+
+		$this->actionRequest->getReferringRequest();
 	}
 
 	/**
 	 * @test
 	 */
 	public function setDispatchedEmitsSignalIfDispatched() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-		$actionRequest = new ActionRequest($httpRequest);
 
 		$mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
-		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Mvc\ActionRequest', 'requestDispatched', array($actionRequest));
+		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Mvc\ActionRequest', 'requestDispatched', array($this->actionRequest));
 
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockDispatcher));
-		$this->inject($actionRequest, 'objectManager', $mockObjectManager);
+		$this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
-		$actionRequest->setDispatched(TRUE);
+		$this->actionRequest->setDispatched(TRUE);
 	}
 
 	/**
 	 * @test
 	 */
 	public function setControllerPackageKeyWithLowercasePackageKeyResolvesCorrectly() {
-		$httpRequest = HttpRequest::create(new Uri('http://robertlemke.com/blog'));
-
 		$mockPackageManager = $this->getMock('TYPO3\Flow\Package\PackageManager');
 		$mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('acme.testpackage')->will($this->returnValue('Acme.Testpackage'));
 
-		$actionRequest = new ActionRequest($httpRequest);
-		$this->inject($actionRequest, 'packageManager', $mockPackageManager);
-		$actionRequest->setControllerPackageKey('acme.testpackage');
+		$this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
+		$this->actionRequest->setControllerPackageKey('acme.testpackage');
 
-		$this->assertEquals('Acme.Testpackage', $actionRequest->getControllerPackageKey());
+		$this->assertEquals('Acme.Testpackage', $this->actionRequest->getControllerPackageKey());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getArgumentInitializesArguments() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
+		$actionRequest->expects($this->once())->method('initializeArguments');
+		try {
+			$actionRequest->getArgument('foo');
+		} catch (NoSuchArgumentException $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 */
+	public function getArgumentsInitializesArguments() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
+		$actionRequest->expects($this->once())->method('initializeArguments');
+		$actionRequest->getArguments();
+	}
+
+	/**
+	 * @test
+	 */
+	public function getInternalArgumentInitializesArguments() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
+		$actionRequest->expects($this->once())->method('initializeArguments');
+		try {
+			$actionRequest->getInternalArgument('__foo');
+		} catch (NoSuchArgumentException $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 */
+	public function getInternalArgumentsInitializesArguments() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
+		$actionRequest->expects($this->once())->method('initializeArguments');
+		$actionRequest->getInternalArguments();
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasArgumentInitializesArguments() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
+		$actionRequest->expects($this->once())->method('initializeArguments');
+		$actionRequest->hasArgument('foo');
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getArgumentsTestsDataProvider() {
+		return array(
+			array(
+				'httpRequestArguments' => array(),
+				'httpRequestBodyArguments' => array(),
+				'actionRequestArguments' => array(),
+				'expectedResult' => array()
+			),
+			array(
+				'httpRequestArguments' => array('httpRequest' => 'arguments'),
+				'httpRequestBodyArguments' => array(),
+				'actionRequestArguments' => array(),
+				'expectedResult' => array('httpRequest' => 'arguments')
+			),
+			array(
+				'httpRequestArguments' => array(),
+				'httpRequestBodyArguments' => array('httpRequestBody' => 'arguments'),
+				'actionRequestArguments' => array(),
+				'expectedResult' => array('httpRequestBody' => 'arguments')
+			),
+			array(
+				'httpRequestArguments' => array(),
+				'httpRequestBodyArguments' => array(),
+				'actionRequestArguments' => array('actionRequestBody' => 'arguments'),
+				'expectedResult' => array('actionRequestBody' => 'arguments')
+			),
+			array(
+				'httpRequestArguments' => array('someArgument' => 'from Request'),
+				'httpRequestBodyArguments' => array('someArgument' => 'overridden from body'),
+				'actionRequestArguments' => array(),
+				'expectedResult' => array('someArgument' => 'overridden from body')
+			),
+			array(
+				'httpRequestArguments' => array('someArgument' => 'from Request'),
+				'httpRequestBodyArguments' => array('someArgument' => 'overridden from body'),
+				'actionRequestArguments' => array('someArgument' => 'overridden from ActionRequest'),
+				'expectedResult' => array('someArgument' => 'overridden from ActionRequest')
+			),
+			array(
+				'httpRequestArguments' => array('someHttpRequestArgument' => 'foo', 'otherArgument' => 'quux'),
+				'httpRequestBodyArguments' => array(),
+				'actionRequestArguments' => array('someActionRequestArgument' => 'bar', 'otherArgument' => 'shouldBeOverridden'),
+				'expectedResult' => array('someHttpRequestArgument' => 'foo', 'otherArgument' => 'shouldBeOverridden', 'someActionRequestArgument' => 'bar')
+			),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider getArgumentsTestsDataProvider
+	 */
+	public function getArgumentsTests(array $httpRequestArguments, array $httpRequestBodyArguments, array $actionRequestArguments, array $expectedResult) {
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue($httpRequestBodyArguments));
+		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue($httpRequestArguments));
+		$this->actionRequest->setArguments($actionRequestArguments);
+
+		$this->assertSame($expectedResult, $this->actionRequest->getArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getInternalArgumentReturnsMergedArguments() {
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array('__internalHttpRequestBody' => 'argument')));
+		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('__internalHttpRequest' => 'argument')));
+		$this->actionRequest->setArguments(array('__internalActionRequest' => 'argument'));
+
+		$expectedResult = array('__internalHttpRequest' => 'argument', '__internalHttpRequestBody' => 'argument', '__internalActionRequest' => 'argument');
+		$this->assertSame($expectedResult, $this->actionRequest->getInternalArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function internalArgumentsOfActionRequestOverruleThoseOfTheHttpRequest() {
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('__internalArgument' => 'http request')));
+		$this->actionRequest->setArguments(array('__internalArgument' => 'action request'));
+
+		$expectedResult = array('__internalArgument' => 'action request');
+		$this->assertSame($expectedResult, $this->actionRequest->getInternalArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function pluginArgumentsOfActionRequestOverruleThoseOfTheHttpRequest() {
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
+		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('--pluginArgument' => 'http request')));
+		$this->actionRequest->setArguments(array('--pluginArgument' => 'action request'));
+
+		$expectedResult = array('pluginArgument' => 'action request');
+		$this->assertSame($expectedResult, $this->actionRequest->getPluginArguments());
+	}
+
+	/**
+	 * @test
+	 */
+	public function argumentsAreOnlyInitializedOnce() {
+		$this->mockPropertyMapper->expects($this->once())->method('convert')->will($this->returnValue(array()));
+		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
+		$this->actionRequest->getArguments();
+		$this->actionRequest->getArguments();
+	}
+
+	/**
+	 * @test
+	 */
+	public function initializeArgumentsSetsMediaTypeInTheMediaTypeConverter() {
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
+		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($this->mockHttpRequest));
+
+		$this->inject($actionRequest, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
+		$this->inject($actionRequest, 'propertyMapper', $this->mockPropertyMapper);
+
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getHeader')->with('Content-Type')->will($this->returnValue('some/media-type'));
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue('some content'));
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getArguments')->will($this->returnValue(array()));
+
+		$this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('setTypeConverterOption')->with('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, 'some/media-type');
+
+		$this->mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->with('some content', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array()));
+
+		$actionRequest->_call('initializeArguments');
+	}
+
+	/**
+	 * @test
+	 */
+	public function argumentsAreInitializedOnSerialization() {
+		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('foo' => 'bar', 'bar' => 'baz')));
+		$this->mockHttpRequest->expects($this->any())->method('getContent')->will($this->returnValue('foo=baz&bar=foos'));
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->with('foo=baz&bar=foos')->will($this->returnValue(array('bar' => 'overridden', 'baz' => 'Foos')));
+
+		$serializedActionRequest = serialize($this->actionRequest);
+		$unserializedActionRequest = unserialize($serializedActionRequest);
+
+		$expectedResult = array('foo' => 'bar', 'bar' => 'overridden', 'baz' => 'Foos');
+		$this->assertSame($expectedResult, $unserializedActionRequest->getArguments());
 	}
 }

@@ -13,11 +13,13 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
 
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the ActionRequest
  */
-class ActionRequestTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class ActionRequestTest extends FunctionalTestCase {
 
 	/**
 	 * @test
@@ -25,11 +27,11 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function actionRequestStripsParentHttpRequest() {
 		$httpRequest = Request::create(new Uri('http://typo3.org'));
 
-		$actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
+		$actionRequest = new ActionRequest($httpRequest);
 		$actionRequest->setControllerActionName('foo');
 		$serializedActionRequest = serialize($actionRequest);
 
-		/* @var $unserializedActionRequest \TYPO3\Flow\Mvc\ActionRequest */
+		/* @var $unserializedActionRequest ActionRequest */
 		$unserializedActionRequest = unserialize($serializedActionRequest);
 		$this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
 		$this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
@@ -41,11 +43,11 @@ class ActionRequestTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function actionRequestDoesNotStripParentActionRequest() {
 		$httpRequest = Request::create(new Uri('http://typo3.org'));
 
-		$parentActionRequest = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
-		$actionRequest = new \TYPO3\Flow\Mvc\ActionRequest($parentActionRequest);
+		$parentActionRequest = new ActionRequest($httpRequest);
+		$actionRequest = new ActionRequest($parentActionRequest);
 		$serializedActionRequest = serialize($actionRequest);
 
-		/* @var $unserializedActionRequest \TYPO3\Flow\Mvc\ActionRequest */
+		/* @var $unserializedActionRequest ActionRequest */
 		$unserializedActionRequest = unserialize($serializedActionRequest);
 		$this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
 	}

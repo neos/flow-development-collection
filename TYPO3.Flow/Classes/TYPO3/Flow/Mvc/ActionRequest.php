@@ -13,6 +13,14 @@ namespace TYPO3\Flow\Mvc;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request as HttpRequest;
+use TYPO3\Flow\Object\Exception\UnknownObjectException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;
+use TYPO3\Flow\Security\Cryptography\HashService;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Represents an internal request targeted to a controller action
@@ -23,21 +31,32 @@ class ActionRequest implements RequestInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 * @Flow\Inject
+	 * @var HashService
 	 */
 	protected $hashService;
 
 	/**
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 * @Flow\Inject
+	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
+	 * @var PropertyMappingConfiguration
+	 */
+	protected $propertyMappingConfiguration;
 
 	/**
 	 * Package key of the controller which is supposed to handle this request.
@@ -62,6 +81,12 @@ class ActionRequest implements RequestInterface {
 	 * @var string
 	 */
 	protected $controllerActionName = NULL;
+
+	/**
+	 * Whether or not the arguments of this action request have been initialized
+	 * @var boolean
+	 */
+	protected $argumentsInitialized = FALSE;
 
 	/**
 	 * The arguments for this request. They must be only simple types, no
@@ -119,7 +144,7 @@ class ActionRequest implements RequestInterface {
 
 	/**
 	 * Cached pointer to a request referring to this one (if any)
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
+	 * @var ActionRequest
 	 */
 	protected $referringRequest;
 
@@ -138,6 +163,15 @@ class ActionRequest implements RequestInterface {
 	}
 
 	/**
+	 * @param MediaTypeConverterInterface $mediaTypeConverter
+	 * @return void
+	 */
+	public function injectMediaTypeConverter(MediaTypeConverterInterface $mediaTypeConverter) {
+		$this->propertyMappingConfiguration = new PropertyMappingConfiguration();
+		$this->propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
+	}
+
+	/**
 	 * Returns the parent request
 	 *
 	 * @return ActionRequest|HttpRequest
@@ -150,7 +184,7 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Returns the top level request: the HTTP request object
 	 *
-	 * @return \TYPO3\Flow\Http\Request
+	 * @return HttpRequest
 	 * @api
 	 */
 	public function getHttpRequest() {
@@ -163,7 +197,7 @@ class ActionRequest implements RequestInterface {
 	/**
 	 * Returns the top level ActionRequest: the one just below the HTTP request
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @return ActionRequest
 	 * @api
 	 */
 	public function getMainRequest() {
@@ -188,7 +222,7 @@ class ActionRequest implements RequestInterface {
 	 * explicitly set through the corresponding internal argument "__referrer".
 	 * This mechanism is used by Flow's form and validation mechanisms.
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest the referring request, or NULL if no referrer found
+	 * @return ActionRequest the referring request, or NULL if no referrer found
 	 */
 	public function getReferringRequest() {
 		if ($this->referringRequest !== NULL) {
@@ -200,7 +234,7 @@ class ActionRequest implements RequestInterface {
 		if (is_array($this->internalArguments['__referrer'])) {
 			$referrerArray = $this->internalArguments['__referrer'];
 
-			$referringRequest = $this->getHttpRequest()->createActionRequest();
+			$referringRequest = new ActionRequest($this->getHttpRequest());
 
 			$arguments = array();
 			if (isset($referrerArray['arguments'])) {
@@ -210,7 +244,7 @@ class ActionRequest implements RequestInterface {
 				unset($referrerArray['arguments']);
 			}
 
-			$referringRequest->setArguments(\TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
+			$referringRequest->setArguments(Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
 			return $referringRequest;
 		} else {
 			$this->referringRequest = $this->internalArguments['__referrer'];
@@ -277,7 +311,7 @@ class ActionRequest implements RequestInterface {
 		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
 
 		if ($controllerObjectName === FALSE) {
-			throw new \TYPO3\Flow\Object\Exception\UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
+			throw new UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
 		}
 
 		$this->controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
@@ -357,10 +391,10 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function setControllerName($controllerName) {
 		if (!is_string($controllerName)) {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
+			throw new Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
 		}
 		if (strpos($controllerName, '_') !== FALSE) {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
+			throw new Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
 		}
 		$this->controllerName = $controllerName;
 	}
@@ -396,13 +430,13 @@ class ActionRequest implements RequestInterface {
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+			throw new Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
 		}
 		if ($actionName === '') {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
+			throw new Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
 		}
 		if ($actionName[0] !== strtolower($actionName[0])) {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
+			throw new Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		}
 		$this->controllerActionName = $actionName;
 	}
@@ -438,8 +472,9 @@ class ActionRequest implements RequestInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException if the given argument value is an object
 	 */
 	public function setArgument($argumentName, $value) {
+		$this->initializeArguments();
 		if (!is_string($argumentName) || strlen($argumentName) === 0) {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
+			throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
 		}
 
 		if (substr($argumentName, 0, 2) === '__') {
@@ -448,7 +483,7 @@ class ActionRequest implements RequestInterface {
 		}
 
 		if (is_object($value)) {
-			throw new \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
+			throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
 		}
 
 		if (substr($argumentName, 0, 2) === '--') {
@@ -487,8 +522,9 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getArgument($argumentName) {
+		$this->initializeArguments();
 		if (!isset($this->arguments[$argumentName])) {
-			throw new \TYPO3\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
+			throw new Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
 		}
 		return $this->arguments[$argumentName];
 	}
@@ -501,6 +537,7 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function hasArgument($argumentName) {
+		$this->initializeArguments();
 		return isset($this->arguments[$argumentName]);
 	}
 
@@ -512,8 +549,8 @@ class ActionRequest implements RequestInterface {
 	 *
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
-	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException if an argument name is no string
-	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException if an argument value is an object
+	 * @throws Exception\InvalidArgumentNameException if an argument name is not a string
+	 * @throws Exception\InvalidArgumentTypeException if an argument value is an object
 	 */
 	public function setArguments(array $arguments) {
 		$this->arguments = array();
@@ -529,7 +566,23 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getArguments() {
+		$this->initializeArguments();
 		return $this->arguments;
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function initializeArguments() {
+		if ($this->argumentsInitialized === TRUE) {
+			return;
+		}
+		$this->argumentsInitialized = TRUE;
+		$httpRequest = $this->getHttpRequest();
+		$this->propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
+		$bodyArguments = $this->propertyMapper->convert($httpRequest->getContent(), 'array', $this->propertyMappingConfiguration);
+		$requestArguments = Arrays::arrayMergeRecursiveOverrule($httpRequest->getArguments(), $bodyArguments);
+		$this->setArguments(Arrays::arrayMergeRecursiveOverrule($requestArguments, $this->arguments));
 	}
 
 	/**
@@ -542,6 +595,7 @@ class ActionRequest implements RequestInterface {
 	 * @return string Value of the argument, or NULL if not set.
 	 */
 	public function getInternalArgument($argumentName) {
+		$this->initializeArguments();
 		return (isset($this->internalArguments[$argumentName]) ? $this->internalArguments[$argumentName] : NULL);
 	}
 
@@ -552,6 +606,7 @@ class ActionRequest implements RequestInterface {
 	 * @return array
 	 */
 	public function getInternalArguments() {
+		$this->initializeArguments();
 		return $this->internalArguments;
 	}
 
@@ -613,7 +668,7 @@ class ActionRequest implements RequestInterface {
 	 * The action request is not proxyable, so the signal is dispatched manually here.
 	 * The safeguard allows unit tests without the dispatcher dependency.
 	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $request
+	 * @param ActionRequest $request
 	 * @return void
 	 * @Flow\Signal
 	 */
@@ -640,7 +695,8 @@ class ActionRequest implements RequestInterface {
 	 * @return array
 	 */
 	public function __sleep() {
-		$properties = array('controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched');
+		$this->initializeArguments();
+		$properties = array('controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'argumentsInitialized', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched');
 		if ($this->parentRequest instanceof ActionRequest) {
 			$properties[] = 'parentRequest';
 		}

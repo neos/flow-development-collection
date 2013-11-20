@@ -12,15 +12,43 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
  *                                                                        */
 
 use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
 use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for username/password authentication token
  *
  */
-class UsernamePasswordTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class UsernamePasswordTest extends UnitTestCase {
+
+	/**
+	 * @var UsernamePassword
+	 */
+	protected $token;
+
+	/**
+	 * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockActionRequest;
+
+	/**
+	 * @var Request|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockHttpRequest;
+
+	/**
+	 * Set up this test case
+	 */
+	public function setUp() {
+		$this->token = new UsernamePassword();
+
+		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+	}
 
 	/**
 	 * @test
@@ -30,14 +58,13 @@ class UsernamePasswordTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'johndoe';
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
-		$actionRequest = $request->createActionRequest();
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$token = new UsernamePassword();
-		$token->updateCredentials($actionRequest);
+		$this->token->updateCredentials($this->mockActionRequest);
 
-		$expectedCredentials = array ('username' => 'johndoe', 'password' => 'verysecurepassword');
-		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
+		$expectedCredentials = array('username' => 'johndoe', 'password' => 'verysecurepassword');
+		$this->assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
 	}
 
 	/**
@@ -48,13 +75,12 @@ class UsernamePasswordTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.Flow';
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
-		$actionRequest = $request->createActionRequest();
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$token = new UsernamePassword();
-		$token->updateCredentials($actionRequest);
+		$this->token->updateCredentials($this->mockActionRequest);
 
-		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
 	}
 
 	/**
@@ -65,17 +91,21 @@ class UsernamePasswordTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.Flow';
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
-		$actionRequest = $request->createActionRequest();
-		$token = new UsernamePassword();
-		$token->updateCredentials($actionRequest);
-		$this->assertEquals(array('username' => 'TYPO3.Flow', 'password' => 'verysecurepassword'), $token->getCredentials());
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'GET', $arguments);
-		$actionRequest = $request->createActionRequest();
-		$token = new UsernamePassword();
-		$token->updateCredentials($actionRequest);
-		$this->assertEquals(array('username' => '', 'password' => ''), $token->getCredentials());
+		$this->token->updateCredentials($this->mockActionRequest);
+		$this->assertEquals(array('username' => 'TYPO3.Flow', 'password' => 'verysecurepassword'), $this->token->getCredentials());
+
+		$secondToken = new UsernamePassword();
+		$secondMockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $secondMockActionRequest */
+		$secondMockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
+		$secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
+		$secondToken->updateCredentials($secondMockActionRequest);
+		$this->assertEquals(array('username' => '', 'password' => ''), $secondToken->getCredentials());
 	}
 
 	/**
@@ -86,11 +116,11 @@ class UsernamePasswordTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.Flow';
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
-		$request = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments);
-		$actionRequest = $request->createActionRequest();
-		$token = new UsernamePassword();
-		$token->updateCredentials($actionRequest);
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$this->assertEquals('Username: "TYPO3.Flow"', (string)$token);
+		$this->token->updateCredentials($this->mockActionRequest);
+
+		$this->assertEquals('Username: "TYPO3.Flow"', (string)$this->token);
 	}
 }

@@ -209,7 +209,7 @@ class RequestTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function createSubRequestCreatesAnMvcRequestConnectedToTheParentRequest() {
+	public function createActionRequestCreatesAnMvcRequestConnectedToTheParentRequest() {
 		$uri = new Uri('http://flow.typo3.org');
 		$request = Request::create($uri);
 
@@ -219,35 +219,22 @@ class RequestTest extends UnitTestCase {
 	}
 
 	/**
-	 * @test
-	 */
-	public function createSubRequestMapsTheArgumentsOfTheHttpRequestToTheNewActionRequest() {
-		$uri = new Uri('http://flow.typo3.org/page.html?foo=bar&__baz=quux');
-		$request = Request::create($uri);
-
-		$subRequest = $request->createActionRequest();
-		$this->assertEquals('bar', $subRequest->getArgument('foo'));
-		$this->assertEquals('quux', $subRequest->getInternalArgument('__baz'));
-	}
-
-	/**
 	 * @return array
 	 */
-	public function validMethods() {
+	public function requestMethods() {
 		return array(
 			array('GET'),
 			array('HEAD'),
 			array('POST'),
+			array('Anything')
 		);
 	}
 
 	/**
-	 * RFC 2616 / 5.1.1
-	 *
 	 * @test
-	 * @dataProvider validMethods
+	 * @dataProvider requestMethods
 	 */
-	public function setMethodAcceptsValidRequestMethods($validMethod) {
+	public function setMethodAcceptsAnyRequestMethod($validMethod) {
 		$request = Request::create(new Uri('http://flow.typo3.org'));
 		$request->setMethod($validMethod);
 		$this->assertSame($validMethod, $request->getMethod());
@@ -540,8 +527,8 @@ class RequestTest extends UnitTestCase {
 	public function variousArguments() {
 		return array(
 			array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array(), array(), array('baz' => 'quux', 'coffee' => 'due')),
-			array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('ignore' => 'me'), array(), array('baz' => 'quux', 'coffee' => 'due')),
-			array('POST', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('dontignore' => 'me'), array(), array('baz' => 'quux', 'coffee' => 'due', 'dontignore' => 'me')),
+			array('GET', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('post' => 'var'), array(), array('baz' => 'quux', 'coffee' => 'due', 'post' => 'var')),
+			array('POST', 'http://dev.blog.rob/foo/bar?baz=quux&coffee=due', array('post' => 'var'), array(), array('baz' => 'quux', 'coffee' => 'due', 'post' => 'var')),
 		);
 	}
 
@@ -679,53 +666,6 @@ class RequestTest extends UnitTestCase {
 		$this->assertSame($streamHandler, $request->getContent());
 		$this->assertEquals('application/octet-stream', $request->getHeader('Content-Type'));
 		$this->assertEquals(filesize(__FILE__), $request->getHeader('Content-Length'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function setContentRebuildsUnifiedArgumentsToIntegratePutArguments() {
-		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
-		$request->setContent('putArgument=first value');
-		$this->assertEquals('first value', $request->getArgument('putArgument'));
-		$this->assertEquals('bar', $request->getArgument('foo'));
-	}
-
-	/**
-	 * Data provider
-	 */
-	public function contentTypesBodiesAndExpectedUnifiedArguments() {
-		return array(
-			array('application/json', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
-			array('application/json', 'invalid json source code', array()),
-			array('application/json; charset=UTF-8', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
-			array('application/xml', '<root><xmlArgument>xmlValue</xmlArgument></root>', array('xmlArgument' => 'xmlValue')),
-			array('text/xml', '<root><xmlArgument>xmlValue</xmlArgument><!-- text/xml is, by the way, meant to be readable by "the casual user" --></root>', array('xmlArgument' => 'xmlValue')),
-			array('text/xml', '<invalid xml source code>', array()),
-			array('application/xml;charset=UTF8', '<root><xmlArgument>xmlValue</xmlArgument></root>', array('xmlArgument' => 'xmlValue')),
-
-			// the following media types are wrong (not registered at IANA), but still used by some out there:
-
-			array('application/x-javascript', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
-			array('text/javascript', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
-			array('text/x-javascript', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
-			array('text/x-json', '{"jsonArgument":"jsonValue"}', array('jsonArgument' => 'jsonValue')),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider contentTypesBodiesAndExpectedUnifiedArguments
-	 */
-	public function argumentsInBodyOfPutAndPostRequestsAreDecodedAccordingToContentType($contentType, $requestBody, array $expectedArguments) {
-		$request = Request::create(new Uri('http://dev.blog.rob/?foo=bar'), 'PUT');
-		$request->setHeader('Content-Type', $contentType);
-		$request->setContent($requestBody);
-
-		foreach ($expectedArguments as $name => $value) {
-			$this->assertSame($value, $request->getArgument($name));
-		}
-		$this->assertSame('bar', $request->getArgument('foo'));
 	}
 
 	/**
