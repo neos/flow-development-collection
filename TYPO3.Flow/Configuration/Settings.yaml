@@ -18,6 +18,17 @@ TYPO3:
 
         securityContext: TYPO3\Flow\Security\Context
 
+    compatibility:
+
+      uriBuilder:
+
+        # A compatibility flag that affects the behavior of the UriBuilder when creating relative URIs:
+        # TRUE: The UriBuilder creates relative path like "some/path", a base tag is required in the respective HTML head
+        # FALSE: The UriBuilder prefixes the path with the scripts request path: "/document/root/some/path", no base tag will be required
+        #
+        # NOTE: This flag will be obsolete with version 2.2 and removed in version 3.0 of Flow
+        createRelativePaths: FALSE
+
     configuration:
 
       # Enables the configuration file cache which compiles YAML files into

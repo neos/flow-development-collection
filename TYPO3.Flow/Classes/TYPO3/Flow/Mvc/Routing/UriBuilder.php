@@ -60,6 +60,12 @@ class UriBuilder {
 	protected $createAbsoluteUri = FALSE;
 
 	/**
+	 * @Flow\Inject(setting="compatibility.uriBuilder.createRelativePaths")
+	 * @var boolean
+	 */
+	protected $createRelativePaths = FALSE;
+
+	/**
 	 * @var boolean
 	 */
 	protected $addQueryString = FALSE;
@@ -176,6 +182,27 @@ class UriBuilder {
 	 */
 	public function getCreateAbsoluteUri() {
 		return $this->createAbsoluteUri;
+	}
+
+	/**
+	 * By default relative URIs are prefixed with the current script request path creating absolute paths starting with a slash
+	 * If this is set to FALSE, relative paths are created as it used to be the default behavior before Flow 2.0.
+	 *
+	 * @param boolean $createRelativePaths
+	 * @return \TYPO3\Flow\Mvc\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @api
+	 */
+	public function setCreateRelativePaths($createRelativePaths) {
+		$this->createRelativePaths = $createRelativePaths;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 * @api
+	 */
+	public function getCreateRelativePaths() {
+		return $this->createRelativePaths;
 	}
 
 	/**
@@ -329,8 +356,11 @@ class UriBuilder {
 		if (!$this->environment->isRewriteEnabled()) {
 			$uri = 'index.php/' . $uri;
 		}
+		$httpRequest = $this->request->getHttpRequest();
 		if ($this->createAbsoluteUri === TRUE) {
-			$uri = $this->request->getHttpRequest()->getBaseUri() . $uri;
+			$uri = $httpRequest->getBaseUri() . $uri;
+		} elseif (!$this->createRelativePaths) {
+			$uri = $httpRequest->getScriptRequestPath() . $uri;
 		}
 		if ($this->section !== '') {
 			$uri .= '#' . $this->section;

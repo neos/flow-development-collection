@@ -13,12 +13,13 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
 
 use TYPO3\Flow\Http\Request as HttpRequest;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the URI Helper
  *
  */
-class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class UriBuilderTest extends UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
@@ -28,7 +29,7 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @var \TYPO3\Flow\Http\Request
 	 */
-	protected $httpRequest;
+	protected $mockHttpRequest;
 
 	/**
 	 * @var \TYPO3\Flow\Mvc\ActionRequest
@@ -55,26 +56,26 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		$this->httpRequest = HttpRequest::create(new Uri('http://localhost'));
+		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 
 		$this->mockRouter = $this->getMock('TYPO3\Flow\Mvc\Routing\RouterInterface');
 
-		$this->mockMainRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->httpRequest));
-		$this->mockMainRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
-		$this->mockMainRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->httpRequest));
+		$this->mockMainRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockHttpRequest));
+		$this->mockMainRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+		$this->mockMainRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockHttpRequest));
 		$this->mockMainRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockMainRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(TRUE));
 		$this->mockMainRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
 
 		$this->mockSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockMainRequest));
-		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
+		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
 		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubNamespace'));
 
 		$this->mockSubSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockSubRequest));
-		$this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
+		$this->mockSubSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$this->mockSubSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
 		$this->mockSubSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockSubRequest));
@@ -182,7 +183,7 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function uriForInSubRequestWithExplicitEmptySubpackageKeyDoesNotUseRequestSubpackageKey() {
 		$this->mockSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockMainRequest));
-		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
+		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 		$this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
 		$this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
 		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
@@ -651,11 +652,43 @@ class UriBuilderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildPrependsBaseUriIfCreateAbsoluteUriIsSet() {
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getBaseUri')->will($this->returnValue('http://www.domain.tld/document-root/'));
 		$this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
 
 		$this->uriBuilder->setCreateAbsoluteUri(TRUE);
 
-		$expectedResult = 'http://localhost/resolvedUri';
+		$expectedResult = 'http://www.domain.tld/document-root/resolvedUri';
+		$actualResult = $this->uriBuilder->build();
+
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildPrependsScriptRequestPathByDefaultIfCreateAbsoluteUriIsFalse() {
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getScriptRequestPath')->will($this->returnValue('/document-root/'));
+		$this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
+
+		$this->uriBuilder->setCreateAbsoluteUri(FALSE);
+
+		$expectedResult = '/document-root/resolvedUri';
+		$actualResult = $this->uriBuilder->build();
+
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildDoesNotPrependsScriptRequestPathIfCreateRelativePathsCompatibilityFlagIsTrue() {
+		$this->mockHttpRequest->expects($this->never())->method('getScriptRequestPath');
+		$this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
+
+		$this->uriBuilder->setCreateAbsoluteUri(FALSE);
+		$this->uriBuilder->setCreateRelativePaths(TRUE);
+
+		$expectedResult = 'resolvedUri';
 		$actualResult = $this->uriBuilder->build();
 
 		$this->assertEquals($expectedResult, $actualResult);
