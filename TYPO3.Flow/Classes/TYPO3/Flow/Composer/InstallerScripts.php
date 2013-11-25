@@ -31,8 +31,8 @@ class InstallerScripts {
 		Files::createDirectoryRecursively('Configuration');
 		Files::createDirectoryRecursively('Data');
 
-		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Essentials', '.', FALSE, TRUE);
-		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Defaults', '.', TRUE, TRUE);
+		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Essentials', './', FALSE, TRUE);
+		Files::copyDirectoryRecursively('Packages/Framework/TYPO3.Flow/Resources/Private/Installer/Distribution/Defaults', './', TRUE, TRUE);
 
 		chmod('flow', 0755);
 	}
@@ -65,10 +65,10 @@ class InstallerScripts {
 
 			if (isset($packageExtraConfig['typo3/flow']['manage-resources']) && $packageExtraConfig['typo3/flow']['manage-resources'] === TRUE) {
 				if (is_dir($relativeInstallPath . '/Resources/Private/Installer/Distribution/Essentials')) {
-					Files::copyDirectoryRecursively($relativeInstallPath . '/Resources/Private/Installer/Distribution/Essentials', '.', FALSE, TRUE);
+					Files::copyDirectoryRecursively($relativeInstallPath . '/Resources/Private/Installer/Distribution/Essentials', './', FALSE, TRUE);
 				}
 				if (is_dir($relativeInstallPath . '/Resources/Private/Installer/Distribution/Defaults')) {
-					Files::copyDirectoryRecursively($relativeInstallPath . '/Resources/Private/Installer/Distribution/Defaults', '.', TRUE, TRUE);
+					Files::copyDirectoryRecursively($relativeInstallPath . '/Resources/Private/Installer/Distribution/Defaults', './', TRUE, TRUE);
 				}
 			}
 		}
