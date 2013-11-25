@@ -634,4 +634,17 @@ class ActionRequest implements RequestInterface {
 		$this->dispatched = FALSE;
 	}
 
+	/**
+	 * We provide our own __sleep method, where we serialize all properties *except* the parentRequest if it is
+	 * a HTTP request -- as this one contains $_SERVER etc.
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		$properties = array('controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched');
+		if ($this->parentRequest instanceof ActionRequest) {
+			$properties[] = 'parentRequest';
+		}
+		return $properties;
+	}
 }
