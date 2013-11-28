@@ -112,6 +112,30 @@ you provided valid credentials an account will be authenticated afterwards. [#]_
 	original request, if the authentication process has been triggered due missing privileges
 	while handling this original request.
 
+Visual Overview about the authentication process
+------------------------------------------------
+
+The following diagrams put the user-visible parts of the authentication process into perspective.
+
+.. figure:: Images/Security_AuthenticationProcess_Base.png
+	:alt: Components involved in Authentication Process
+	:class: screenshot-fullsize
+
+	Components involved in authentication process
+
+.. figure:: Images/Security_AuthenticationProcess_RequestToProtectedController.png
+	:alt: Walthrough when calling a protected controller when the user is not yet authenticated
+	:class: screenshot-fullsize
+
+	Walthrough when calling a protected controller when the user is not yet authenticated
+
+.. figure:: Images/Security_AuthenticationProcess_AuthenticationRequest.png
+	:alt: Walthrough of the authentication itself, after the user has entered his credentials
+	:class: screenshot-fullsize
+
+	Walthrough of the authentication itself, after the user has entered his credentials
+
+
 The internal authentication process
 -----------------------------------
 
