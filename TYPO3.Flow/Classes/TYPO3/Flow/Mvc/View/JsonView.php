@@ -21,6 +21,14 @@ use TYPO3\Flow\Annotations as Flow;
 class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 
 	/**
+	 * Supported options
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'jsonEncodingOptions' => array(0, 'Bitmask of supported Encoding options. See http://php.net/manual/en/json.constants.php', 'integer')
+	);
+
+	/**
 	 * Definition for the class name exposure configuration,
 	 * that is, if the class name of an object should also be
 	 * part of the output JSON, if configured.
@@ -191,7 +199,8 @@ class JsonView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	public function render() {
 		$this->controllerContext->getResponse()->setHeader('Content-Type', 'application/json');
 		$propertiesToRender = $this->renderArray();
-		return json_encode($propertiesToRender);
+		$options = $this->getOption('jsonEncodingOptions');
+		return json_encode($propertiesToRender, $options);
 	}
 
 	/**
