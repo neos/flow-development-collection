@@ -289,8 +289,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 		$objectPathMapping->setPathSegment($pathSegment);
 		$objectPathMapping->setIdentifier($identifier);
 		$this->objectPathMappingRepository->add($objectPathMapping);
-		// TODO can be removed, when persistence manager has some memory cache
-		$this->persistenceManager->persistAll();
+		$this->objectPathMappingRepository->persistEntities();
 	}
 
 	/**
