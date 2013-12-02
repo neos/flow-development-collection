@@ -399,6 +399,26 @@ EOD;
 	public function variableName($prefix) {
 		return '$' . $prefix . $this->variableCounter++;
 	}
+
+	/**
+	 * Flush cached templates if a ViewHelper class is changed
+	 *
+	 * @param array $changedFiles An array of changed class files
+	 * @return void
+	 */
+	public function flushTemplatesOnViewHelperChanges(array $changedFiles) {
+		if (!$this->templateCache instanceof \TYPO3\Flow\Cache\Frontend\PhpFrontend) {
+			return;
+		}
+
+		foreach ($changedFiles as $pathAndFilename => $status) {
+			if (strrpos($pathAndFilename, 'ViewHelper.php') !== FALSE) {
+				$this->templateCache->flush();
+				return;
+			}
+		}
+	}
+
 }
 
 ?>
