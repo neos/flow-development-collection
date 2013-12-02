@@ -280,6 +280,16 @@ class StringHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * Convert the given value to a string
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
+	public function toString($value) {
+		return (string)$value;
+	}
+
+	/**
 	 * Convert a string to integer
 	 *
 	 * @param string $string

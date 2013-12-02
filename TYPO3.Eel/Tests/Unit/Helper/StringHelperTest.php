@@ -292,6 +292,10 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	public function typeConversionExamples() {
 		return array(
+			'string numeric value' => array('toString', 42, '42'),
+			'string true boolean value' => array('toString', TRUE, '1'),
+			'string false boolean value' => array('toString', FALSE, ''),
+
 			'integer numeric value' => array('toInteger', '42', 42),
 			'integer empty value' => array('toInteger', '', 0),
 			'integer invalid value' => array('toInteger', 'x12', 0),
