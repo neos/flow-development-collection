@@ -134,6 +134,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 
 		$this->loadPackageStates();
 
+		$this->activePackages = array();
 		foreach ($this->packages as $packageKey => $package) {
 			if ($package->isProtected() || (isset($this->packageStatesConfiguration['packages'][$packageKey]['state']) && $this->packageStatesConfiguration['packages'][$packageKey]['state'] === 'active')) {
 				$this->activePackages[$packageKey] = $package;
@@ -776,7 +777,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 
 		$this->registerPackagesFromConfiguration();
 		if ($this->packageStatesConfiguration != $previousPackageStatesConfiguration) {
-			$this->sortAndsavePackageStates();
+			$this->sortAndSavePackageStates();
 		}
 	}
 
