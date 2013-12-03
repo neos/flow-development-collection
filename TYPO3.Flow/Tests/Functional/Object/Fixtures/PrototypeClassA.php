@@ -22,6 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
 class PrototypeClassA implements PrototypeClassAishInterface {
 
 	/**
+	 * @Flow\Transient
 	 * @var \TYPO3\Flow\Tests\Functional\Object\Fixtures\SingletonClassA
 	 */
 	protected $singletonA;
