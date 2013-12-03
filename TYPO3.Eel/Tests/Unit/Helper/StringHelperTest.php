@@ -148,7 +148,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expected, $result);
 	}
 
-	public function matchExamples() {
+	public function pregMatchExamples() {
 		return array(
 			'matches' => array('For more information, see Chapter 3.4.5.1', '/(chapter \d+(\.\d)*)/i', array('Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1'))
 		);
@@ -156,11 +156,29 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider matchExamples
+	 * @dataProvider pregMatchExamples
 	 */
-	public function matchWorks($string, $pattern, $expected) {
+	public function pregMatchWorks($string, $pattern, $expected) {
 		$helper = new StringHelper();
-		$result = $helper->match($string, $pattern);
+		$result = $helper->pregMatch($string, $pattern);
+		$this->assertSame($expected, $result);
+	}
+
+	public function pregReplaceExamples() {
+		return array(
+			'replace non-alphanumeric characters' => array('Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'),
+			'no match' => array('canal', '/x/', 'y', 'canal'),
+			'unicode replacement' => array('Öaßaü', '/aßa/', 'g', 'Ögü')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider pregReplaceExamples
+	 */
+	public function pregReplaceWorks($string, $pattern, $replace, $expected) {
+		$helper = new StringHelper();
+		$result = $helper->pregReplace($string, $pattern, $replace);
 		$this->assertSame($expected, $result);
 	}
 
@@ -181,6 +199,7 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$result = $helper->replace($string, $search, $replace);
 		$this->assertSame($expected, $result);
 	}
+
 
 	public function splitExamples() {
 		return array(

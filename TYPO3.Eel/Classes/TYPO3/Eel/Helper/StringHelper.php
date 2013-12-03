@@ -11,6 +11,7 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\EvaluationException;
 use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
@@ -150,17 +151,29 @@ class StringHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * This method is deprecated. @see pregMatch()
+	 *
+	 * @param string $string
+	 * @param string $pattern
+	 * @return array The matches as array or NULL if not matched
+	 * @deprecated Use pregMatch() instead
+	 */
+	public function match($string, $pattern) {
+		return $this->pregMatch($string, $pattern);
+	}
+
+	/**
 	 * Match a string with a regular expression (PREG style)
 	 *
 	 * @param string $string
 	 * @param string $pattern
 	 * @return array The matches as array or NULL if not matched
-	 * @throws \TYPO3\Eel\EvaluationException
+	 * @throws EvaluationException
 	 */
-	public function match($string, $pattern) {
+	public function pregMatch($string, $pattern) {
 		$number = preg_match($pattern, $string, $matches);
 		if ($number === FALSE) {
-			throw new \TYPO3\Eel\EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
+			throw new EvaluationException('Error evaluating regular expression ' . $pattern . ': ' . preg_last_error(), 1372793595);
 		}
 		if ($number === 0) {
 			return NULL;
@@ -169,14 +182,26 @@ class StringHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
-	 * Replace occurences of a search string inside the string
+	 * Replace occurrences of a search string inside the string using regular expression matching (PREG style)
 	 *
-	 * Note: this method does not perform regular expression matching.
+	 * @param string $string
+	 * @param string $pattern
+	 * @param string $replace
+	 * @return string The string with all occurrences replaced
+	 */
+	public function pregReplace($string, $pattern, $replace) {
+		return preg_replace($pattern, $replace, $string);
+	}
+
+	/**
+	 * Replace occurrences of a search string inside the string
+	 *
+	 * Note: this method does not perform regular expression matching, @see pregReplace().
 	 *
 	 * @param string $string
 	 * @param string $search
 	 * @param string $replace
-	 * @return string The string with all occurences replaced
+	 * @return string The string with all occurrences replaced
 	 */
 	public function replace($string, $search, $replace) {
 		return str_replace($search, $replace, $string);
