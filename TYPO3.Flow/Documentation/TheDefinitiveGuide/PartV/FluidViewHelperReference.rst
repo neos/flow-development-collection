@@ -1,7 +1,9 @@
+.. _Fluid ViewHelper Reference:
+
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2012-12-12
+This reference was automatically generated from code on 2013-12-04
 
 
 f:alias
@@ -54,9 +56,9 @@ Expected result::
 f:base
 ------
 
-View helper which creates a <base href="..."></base> tag. The Base URI
+View helper which creates a <base href="..." /> tag. The Base URI
 is taken from the current request.
-In Flow, this ViewHelper is no longer required to make the links work.
+In TYPO3 Flow, this ViewHelper is no longer required to make the links work.
 
 
 
@@ -73,6 +75,21 @@ Expected result::
 
 	<base href="http://yourdomain.tld/" />
 	(depending on your domain)
+
+
+
+
+f:case
+------
+
+
+
+
+
+Arguments
+*********
+
+* ``value`` (mixed): 
 
 
 
@@ -126,7 +143,7 @@ This ViewHelper counts elements of the specified array or countable object.
 Arguments
 *********
 
-* ``subject`` (array, *optional*): The array or \Countable to be counted
+* ``subject`` (array|\Countable, *optional*): The array or \Countable to be counted
 
 
 
@@ -214,14 +231,14 @@ Expected result::
 f:debug
 -------
 
-Viewhelper that outputs its childnodes with \TYPO3\var_dump()
+View helper that outputs its child nodes with \TYPO3\Flow\var_dump()
 
 
 
 Arguments
 *********
 
-* ``title`` (string, *optional*):
+* ``title`` (string, *optional*): 
 
 * ``typeOnly`` (boolean, *optional*): Whether only the type should be returned instead of the whole chain.
 
@@ -243,7 +260,7 @@ Expected result::
 
 **only output the type**::
 
-	{object -> f:debug(typeOnly: 1)}
+	{object -> f:debug(typeOnly: true)}
 
 
 Expected result::
@@ -372,7 +389,7 @@ Expected result::
 f:for
 -----
 
-Loop view helper which can be used to interate over array.
+Loop view helper which can be used to iterate over arrays.
 Implements what a basic foreach()-PHP-method does.
 
 
@@ -487,6 +504,8 @@ Arguments
 * ``actionUri`` (string, *optional*): can be used to overwrite the "action" attribute of the form tag
 
 * ``objectName`` (string, *optional*): name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName
+
+* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead ob the current one
 
 * ``enctype`` (string, *optional*): MIME type with which the form is submitted
 
@@ -765,6 +784,8 @@ Arguments
 
 * ``size`` (int, *optional*): The size of the input field
 
+* ``placeholder`` (string, *optional*): The placeholder of the input field
+
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
 * ``class`` (string, *optional*): CSS class(es) for this element
@@ -943,6 +964,67 @@ Arguments
 
 * ``translate`` (array, *optional*): Configures translation of view helper output.
 
+* ``prependOptionLabel`` (string, *optional*): If specified, will provide an option at first position with the specified label.
+
+* ``prependOptionValue`` (string, *optional*): If specified, will provide an option at first position with the specified value. This argument is only respected if prependOptionLabel is set.
+
+
+
+
+Examples
+********
+
+**Basic usage**::
+
+	<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" />
+	</code>
+	
+	= Pre-select a value =
+	
+	To pre-select a value, set "value" to the option key which should be selected.
+	<code title="Default value">
+	<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" value="visa" />
+	</code>
+	Generates a dropdown box like above, except that "VISA Card" is selected.
+	
+	If the select box is a multi-select box (multiple="true"), then "value" can be an array as well.
+	
+	= Usage on domain objects =
+	
+	If you want to output domain objects, you can just pass them as array into the "options" parameter.
+	To define what domain object value should be used as option key, use the "optionValueField" variable. Same goes for optionLabelField.
+	If neither is given, the Identifier (UUID/uid) and the __toString() method are tried as fallbacks.
+	
+	If the optionValueField variable is set, the getter named after that value is used to retrieve the option key.
+	If the optionLabelField variable is set, the getter named after that value is used to retrieve the option value.
+	
+	If the prependOptionLabel variable is set, an option item is added in first position, bearing an empty string
+	or - if specified - the value of the prependOptionValue variable as value.
+	
+	<code title="Domain objects">
+	<f:form.select name="users" options="{userArray}" optionValueField="id" optionLabelField="firstName" />
+	</code>
+	In the above example, the userArray is an array of "User" domain objects, with no array key specified.
+	
+	So, in the above example, the method $user->getId() is called to retrieve the key, and $user->getFirstName() to retrieve the displayed value of each entry.
+	
+	The "value" property now expects a domain object, and tests for object equivalence.
+	
+	<code title="Prepend option">
+	<f:form.select property="salutation" options="{salutations}" prependOptionLabel="- select one -" />
+
+
+Expected result::
+
+	<select name="salutation">
+	  <option value="">- select one -</option>
+	  <option value="Mr">Mr</option>
+	  <option value="Mrs">Mrs</option>
+	  <option value="Ms">Ms</option>
+	  <option value="Dr">Dr</option>
+	</select>
+	(depending on variable "salutations")
+
 
 
 
@@ -1037,6 +1119,10 @@ Arguments
 
 * ``disabled`` (string, *optional*): Specifies that the input element should be disabled when the page loads
 
+* ``placeholder`` (string, *optional*): The placeholder of the textarea
+
+* ``autofocus`` (string, *optional*): Specifies that a text area should automatically get focus when the page loads
+
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
 * ``class`` (string, *optional*): CSS class(es) for this element
@@ -1091,8 +1177,6 @@ Arguments
 
 * ``type`` (string, *optional*): The field type, e.g. "text", "email", "url" etc.
 
-* ``placeholder`` (string, *optional*): A string used as a placeholder for the value to enter
-
 * ``name`` (string, *optional*): Name of input tag
 
 * ``value`` (mixed, *optional*): Value of input tag
@@ -1106,6 +1190,10 @@ Arguments
 * ``readonly`` (string, *optional*): The readonly attribute of the input field
 
 * ``size`` (int, *optional*): The size of the input field
+
+* ``placeholder`` (string, *optional*): The placeholder of the input field
+
+* ``autofocus`` (string, *optional*): Specifies that a input field should automatically get focus when the page loads
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
@@ -1217,7 +1305,7 @@ Expected result::
 Expected result::
 
 	<input type="file" name="formObject[attachments][0][originalResource]">
-	<input type="file" name="formObject[attachments][1][originalResource]">
+	<input type="file" name="formObject[attachments][0][originalResource]">
 
 
 
@@ -1290,6 +1378,71 @@ Expected result::
 
 
 
+f:format.bytes
+--------------
+
+Formats an integer with a byte count into human-readable form.
+
+
+
+Arguments
+*********
+
+* ``value`` (integer, *optional*): The incoming data to convert, or NULL if VH children should be used
+
+* ``decimals`` (integer, *optional*): The number of digits after the decimal point
+
+* ``decimalSeparator`` (string, *optional*): The decimal point character
+
+* ``thousandsSeparator`` (string, *optional*): The character for grouping the thousand digits
+
+
+
+
+Examples
+********
+
+**Defaults**::
+
+	{fileSize -> f:format.bytes()}
+
+
+Expected result::
+
+	123 KB
+	// depending on the value of {fileSize}
+
+
+**Defaults**::
+
+	{fileSize -> f:format.bytes(decimals: 2, decimalSeparator: ',', thousandsSeparator: ',')}
+
+
+Expected result::
+
+	1,023.00 B
+	// depending on the value of {fileSize}
+
+
+
+
+f:format.case
+-------------
+
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): The input value. If not given, the evaluated child nodes will be used
+
+* ``mode`` (string, *optional*): The case to apply, must be one of this' CASE_* constants. Defaults to uppercase application
+
+
+
+
 f:format.crop
 -------------
 
@@ -1303,6 +1456,8 @@ Arguments
 * ``maxCharacters`` (integer): Place where to truncate the string
 
 * ``append`` (string, *optional*): What to append, if truncation happened
+
+* ``value`` (string, *optional*): The input value which should be cropped. If not set, the evaluated contents of the child nodes will be used
 
 
 
@@ -1328,6 +1483,16 @@ Expected result::
 Expected result::
 
 	This is some very [more]
+
+
+**Inline notation**::
+
+	<span title="Location: {user.city -> f:format.crop(maxCharacters: '12')}">John Doe</span>
+
+
+Expected result::
+
+	<span title="Location: Newtownmount...">John Doe</span>
 
 
 
@@ -1527,25 +1692,6 @@ Expected result::
 
 
 
-f:format.htmlentitiesDecode
----------------------------
-
-
-
-
-
-Arguments
-*********
-
-* ``value`` (string, *optional*): string to format
-
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
-
-* ``encoding`` (string, *optional*):
-
-
-
-
 f:format.htmlentities
 ---------------------
 
@@ -1560,9 +1706,28 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*):
+* ``encoding`` (string, *optional*): 
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
+
+
+
+
+f:format.htmlentitiesDecode
+---------------------------
+
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): string to format
+
+* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+
+* ``encoding`` (string, *optional*): 
 
 
 
@@ -1581,7 +1746,7 @@ Arguments
 
 * ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
-* ``encoding`` (string, *optional*):
+* ``encoding`` (string, *optional*): 
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
 
@@ -1646,7 +1811,7 @@ Expected result::
 
 **non-associative array with forced object**::
 
-	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: 1)}
+	{f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: true)}
 
 
 Expected result::
@@ -1931,46 +2096,11 @@ Expected result::
 
 
 
-f:identity.json
----------------
-
-Renders the identity of a persisted object (if it has an identity).
-Useful for using the identity outside of the form view helpers
-(e.g. JavaScript and AJAX).
-
-Deprecated since 1.1.0. Use f:format.identifier and f:format.json
-ViewHelpers instead.
-
-
-
-Arguments
-*********
-
-* ``object`` (object, *optional*): The persisted object
-
-
-
-
-Examples
-********
-
-**Single alias**::
-
-	<f:persistence.identity object="{post.blog}" />
-
-
-Expected result::
-
-	97e7e90a-413c-44ef-b2d0-ddfa4387b5ca
-
-
-
-
 f:if
 ----
 
 This view helper implements an if/else condition.
-Check TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to see how boolean arguments are evaluated
+Check \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to see how boolean arguments are evaluated
 
 **Conditions:**
 
@@ -2110,6 +2240,10 @@ Arguments
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+
+* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one
+
+* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2296,128 +2430,6 @@ Expected result::
 
 
 
-f:widget.link
--------------
-
-widget.link ViewHelper
-This ViewHelper can be used inside widget templates in order to render links pointing to widget actions
-
-
-
-Arguments
-*********
-
-* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
-
-* ``action`` (string, *optional*): Target action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
-
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
-
-* ``class`` (string, *optional*): CSS class(es) for this element
-
-* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
-
-* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
-
-* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
-
-* ``style`` (string, *optional*): Individual CSS styles for this element
-
-* ``title`` (string, *optional*): Tooltip text of element
-
-* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
-
-* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
-
-* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
-
-* ``name`` (string, *optional*): Specifies the name of an anchor
-
-* ``rel`` (string, *optional*): Specifies the relationship between the current document and the linked document
-
-* ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
-
-* ``target`` (string, *optional*): Specifies where to open the linked document
-
-
-
-
-f:link.widget
--------------
-
-
-
-
-
-Arguments
-*********
-
-* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
-
-* ``action`` (string, *optional*): Target action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
-
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
-
-* ``class`` (string, *optional*): CSS class(es) for this element
-
-* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
-
-* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
-
-* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
-
-* ``style`` (string, *optional*): Individual CSS styles for this element
-
-* ``title`` (string, *optional*): Tooltip text of element
-
-* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
-
-* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
-
-* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
-
-* ``name`` (string, *optional*): Specifies the name of an anchor
-
-* ``rel`` (string, *optional*): Specifies the relationship between the current document and the linked document
-
-* ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
-
-* ``target`` (string, *optional*): Specifies where to open the linked document
-
-
-
-
-f:renderChildren
-----------------
-
-
-
-
-
-Arguments
-*********
-
-* ``arguments`` (array, *optional*):
-
-
-
-
 f:render
 --------
 
@@ -2506,6 +2518,21 @@ Expected result::
 
 
 
+f:renderChildren
+----------------
+
+
+
+
+
+Arguments
+*********
+
+* ``arguments`` (array, *optional*): 
+
+
+
+
 f:section
 ---------
 
@@ -2567,6 +2594,17 @@ Expected result::
 
 
 
+f:security.csrfToken
+--------------------
+
+ViewHelper that outputs a CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...).
+
+Note: You won't need this ViewHelper if you use the Form ViewHelper, because that creates a hidden field with
+the CSRF token for unsafe requests automatically. This ViewHelper is mainly useful in conjunction with AJAX.
+
+
+
+
 f:security.ifAccess
 -------------------
 
@@ -2618,6 +2656,42 @@ Arguments
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
 * ``role`` (string): The role
+
+* ``packageKey`` (string, *optional*): PackageKey of the package defining the role
+
+
+
+
+f:switch
+--------
+
+Switch view helper which can be used to render content depending on a value or expression.
+Implements what a basic switch()-PHP-method does.
+
+
+
+Arguments
+*********
+
+* ``expression`` (mixed): 
+
+
+
+
+Examples
+********
+
+**Simple Switch statement**::
+
+	<f:switch expression="{person.gender}">
+	  <f:case value="male">Mr.</f:case>
+	  <f:case value="female">Mrs.</f:case>
+	</f:switch>
+
+
+Expected result::
+
+	Mr. / Mrs. (depending on the value of {person.gender})
 
 
 
@@ -2704,7 +2778,7 @@ Expected result::
 
 **Arguments**::
 
-	<f:translate arguments="{0: 'foo', 1: '99.9'}">Untranslated {0} and {1,number}</f:translate>
+	<f:translate arguments="{0: 'foo', 1: '99.9'}"><![CDATA[Untranslated {0} and {1,number}]]></f:translate>
 
 
 Expected result::
@@ -2755,6 +2829,8 @@ Arguments
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+
+* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one
 
 
 
@@ -2920,6 +2996,104 @@ Expected result::
 
 
 
+f:widget.autocomplete
+---------------------
+
+
+
+
+
+Arguments
+*********
+
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface): 
+
+* ``for`` (string): 
+
+* ``searchProperty`` (string): 
+
+* ``configuration`` (array, *optional*): 
+
+* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+
+
+
+f:widget.link
+-------------
+
+widget.link ViewHelper
+This ViewHelper can be used inside widget templates in order to render links pointing to widget actions
+
+
+
+Arguments
+*********
+
+* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
+
+* ``action`` (string, *optional*): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html
+
+* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+
+* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+
+* ``class`` (string, *optional*): CSS class(es) for this element
+
+* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
+
+* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
+
+* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
+
+* ``style`` (string, *optional*): Individual CSS styles for this element
+
+* ``title`` (string, *optional*): Tooltip text of element
+
+* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
+
+* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
+
+* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+* ``name`` (string, *optional*): Specifies the name of an anchor
+
+* ``rel`` (string, *optional*): Specifies the relationship between the current document and the linked document
+
+* ``rev`` (string, *optional*): Specifies the relationship between the linked document and the current document
+
+* ``target`` (string, *optional*): Specifies where to open the linked document
+
+
+
+
+f:widget.paginate
+-----------------
+
+This ViewHelper renders a Pagination of objects.
+
+
+
+Arguments
+*********
+
+* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface): 
+
+* ``as`` (string): 
+
+* ``configuration`` (array, *optional*): 
+
+* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+
+
+
 f:widget.uri
 ------------
 
@@ -2942,75 +3116,6 @@ Arguments
 * ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
 
 * ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
-
-
-
-
-f:uri.widget
-------------
-
-
-
-
-
-Arguments
-*********
-
-* ``action`` (string, *optional*): Target action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
-
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
-
-
-
-
-f:widget.autocomplete
----------------------
-
-
-
-
-
-Arguments
-*********
-
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface):
-
-* ``for`` (string):
-
-* ``searchProperty`` (string):
-
-* ``configuration`` (array, *optional*):
-
-* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
-
-
-
-
-f:widget.paginate
------------------
-
-This ViewHelper renders a Pagination of objects.
-
-
-
-Arguments
-*********
-
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface):
-
-* ``as`` (string):
-
-* ``configuration`` (array, *optional*):
-
-* ``widgetId`` (string, *optional*): Unique identifier of the widget instance
 
 
 

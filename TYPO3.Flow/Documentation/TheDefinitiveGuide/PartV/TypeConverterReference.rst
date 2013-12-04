@@ -1,18 +1,21 @@
+.. _TYPO3 Flow TypeConverter Reference:
+
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2012-12-12
+This reference was automatically generated from code on 2013-12-04
 
 
 ArrayConverter
 --------------
 
-Converter which transforms arrays to arrays.
+Converter which transforms strings and arrays to arrays.
 
 :Priority: 1
 :Target type: array
-:Source type: array
-
+:Source types:
+ * array
+ * string
 
 
 
