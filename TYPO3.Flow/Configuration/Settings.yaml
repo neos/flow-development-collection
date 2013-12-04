@@ -158,6 +158,8 @@ TYPO3:
       # Exclude classes from object management (Reflection and Configuration building).
       # Sequence of package keys (a * as wildcard as last character is allowed) each
       # with a sequence of regular expressions.
+      # The package key must match the key found in PackageStates.php regarding case,
+      # so it might be needed to add two inclusions (like for Doctrine below).
       # Each regular expression will be tested against the list of fully qualified
       # class names in the package and classes will be excluded if matching.
       excludeClasses:
