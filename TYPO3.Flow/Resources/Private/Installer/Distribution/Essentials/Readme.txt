@@ -1,12 +1,12 @@
 --------------
-TYPO3 Flow 2.0
+TYPO3 Flow 2.1
 --------------
 
 Welcome to TYPO3 Flow!
 
 There are a few things you need to know to get started with TYPO3 Flow.
 All necessary steps are explained in the Getting Started tutorial which
-you find on http://flow.typo3.org/documentation/quickstart.html
+you find on http://docs.typo3.org/flow/TYPO3FlowDocumentation/Quickstart/Index.html
 
 In short here's what you need to do:
 
