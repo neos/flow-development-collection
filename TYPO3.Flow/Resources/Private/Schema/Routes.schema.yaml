@@ -1,0 +1,27 @@
+type: array
+items:
+  type: dictionary
+  additionalProperties: FALSE
+  properties:
+    'name': {type: string, required: TRUE}
+    'uriPattern': {type: string, required: TRUE}
+    'defaults':
+      type: dictionary
+      properties:
+        '@action': {type: string}
+        '@controller': {type: string}
+        '@format': {type: string}
+        '@package': {type: string}
+        '@subpackage': {type: string}
+    'routeParts':
+      type: dictionary
+      additionalAttributes:
+        type: dictionary
+        additionalAttributes: FALSE
+        properties:
+          'handler': {type: string, required: TRUE, format: class-name}
+    'appendExceedingArguments': {type: boolean}
+    'toLowerCase': {type: boolean}
+
+    # subRoutes do not exist here
+    # as they are expanded by the configuration manager
