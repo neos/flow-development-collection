@@ -22,7 +22,7 @@ class CompilingEelParser extends EelParser {
 	/**
 	 * @var integer
 	 */
-	protected $tmpId;
+	protected $tmpId = 0;
 
 	public function NumberLiteral__finalise(&$self) {
 		$self['code'] = $self['text'];
@@ -139,7 +139,9 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function Disjunction_rgt(&$result, $sub) {
-		$result['code'] = '(' . $this->unwrapExpression($result['code']) .  ')||(' . $this->unwrapExpression($sub['code']) . ')';
+		$tmpVarName = '$_' . $this->tmpId++;
+
+		$result['code'] = '((' . $tmpVarName . '=' . $this->unwrapExpression($result['code']) .  ')?' . $tmpVarName . ':' . $this->unwrapExpression($sub['code']) . ')';
 	}
 
 	public function Conjunction_lft(&$result, $sub) {
@@ -147,7 +149,9 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function Conjunction_rgt(&$result, $sub) {
-		$result['code'] = '(' . $this->unwrapExpression($result['code']) . ')&&(' . $this->unwrapExpression($sub['code']) . ')';
+		$tmpVarName = '$_' . $this->tmpId++;
+
+		$result['code'] = '((' . $tmpVarName . '=' . $this->unwrapExpression($result['code']) .  ')?(' . $this->unwrapExpression($sub['code']) . '):' . $tmpVarName .')';
 	}
 
 	public function Comparison_lft(&$result, $sub) {

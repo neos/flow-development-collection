@@ -199,6 +199,15 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('trueVar && TRUE', $c, TRUE),
 			array('falseVar || FALSE', $c, FALSE),
 			array('falseVar && TRUE', $c, FALSE),
+			// JavaScript semantics of boolean operators
+			array('null || "foo"', $c, 'foo'),
+			array('0 || "foo"', $c, 'foo'),
+			array('0 || ""', $c, ''),
+			array('"bar" || "foo"', $c, 'bar'),
+			array('"foo" && "bar"', $c, 'bar'),
+			array('"" && false', $c, ''),
+			array('"Bar" && 0', $c, 0),
+			array('0 && ""', $c, 0),
 		);
 	}
 

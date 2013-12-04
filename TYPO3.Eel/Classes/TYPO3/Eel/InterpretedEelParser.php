@@ -136,7 +136,9 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function Disjunction_rgt(&$result, $sub) {
-		$result['val'] = (boolean)$this->unwrap($result['val']) || (boolean)$this->unwrap($sub['val']);
+		$lft = $this->unwrap($result['val']);
+		$rgt = $this->unwrap($sub['val']);
+		$result['val'] = $lft ? $lft : $rgt;
 	}
 
 	public function Conjunction_lft(&$result, $sub) {
@@ -144,7 +146,9 @@ class InterpretedEelParser extends EelParser {
 	}
 
 	public function Conjunction_rgt(&$result, $sub) {
-		$result['val'] = (boolean)$this->unwrap($result['val']) && (boolean)$this->unwrap($sub['val']);
+		$lft = $this->unwrap($result['val']);
+		$rgt = $this->unwrap($sub['val']);
+		$result['val'] = $lft ? $rgt : $lft;
 	}
 
 	public function Comparison_lft(&$result, $sub) {
