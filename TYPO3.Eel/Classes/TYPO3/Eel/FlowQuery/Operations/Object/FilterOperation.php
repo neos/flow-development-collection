@@ -24,11 +24,13 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * =
  *   Strict equality of value and operand
+ * !=
+ *   Strict no equality of value and operand
  * $=
  *   Value ends with operand (string-based)
  * ^=
  *   Value starts with operand (string-based)
- * \*=
+ * *=
  *   Value contains operand (string-based)
  * instanceof
  *   Checks if the value is an instance of the operand
@@ -195,6 +197,8 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 		switch ($operator) {
 			case '=':
 				return $value === $operand;
+			case '!=':
+				return $value !== $operand;
 			case '$=':
 				return strrpos($value, $operand) === strlen($value) - strlen($operand);
 			case '^=':
@@ -223,7 +227,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation 
 	/**
 	 * @param string $operand
 	 * @param string $value
-	 * @return boolean TRUE if $valus if of type $operand; FALSE otherwise
+	 * @return boolean TRUE if $value is of type $operand; FALSE otherwise
 	 */
 	protected function handleSimpleTypeOperand($operand, $value) {
 		$operand = \TYPO3\Flow\Utility\TypeHandling::normalizeType($operand);

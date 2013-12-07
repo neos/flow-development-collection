@@ -208,6 +208,12 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
 				'filter' => '#object-identifier-A1-B2',
 				'expectedResult' => array($myObject2)
+			),
+
+			'Not equals query match' => array(
+				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
+				'filter' => '[ myProperty != asdf ]',
+				'expectedResult' => array($myObject2, $myObject3, $myObject4)
 			)
 		);
 	}

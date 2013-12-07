@@ -84,6 +84,7 @@ class FizzleParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parser->assertMatches('AttributeFilter', '[foo^="Bar"]');
 		$parser->assertMatches('AttributeFilter', '[foo$="Bar"]');
 		$parser->assertMatches('AttributeFilter', '[foo*="Bar"]');
+		$parser->assertMatches('AttributeFilter', '[_hideInIndex!=0]');
 		$parser->assertMatches('AttributeFilter', '[foo   =   "Bar"   ]');
 		$parser->assertMatches('AttributeFilter', '[foo   =   Bar   ]');
 		$parser->assertMatches('AttributeFilter', '[foo   =   B\\ar   ]');

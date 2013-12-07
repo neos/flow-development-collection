@@ -233,7 +233,7 @@ function match_IdentifierFilter ($stack = array()) {
           ( Operator:'instanceof' S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
           | ( :Identifier S
               (
-                  Operator:( PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch )
+                  Operator:( PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch )
                   S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
               )?
           )
@@ -242,20 +242,20 @@ function match_IdentifierFilter ($stack = array()) {
 protected $match_AttributeFilter_typestack = array('AttributeFilter');
 function match_AttributeFilter ($stack = array()) {
 	$matchrule = "AttributeFilter"; $result = $this->construct($matchrule, $matchrule, null);
-	$_85 = NULL;
+	$_89 = NULL;
 	do {
 		if (substr($this->string,$this->pos,1) == '[') {
 			$this->pos += 1;
 			$result["text"] .= '[';
 		}
-		else { $_85 = FALSE; break; }
+		else { $_89 = FALSE; break; }
 		$matcher = 'match_'.'S'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 		if ($subres !== FALSE) { $this->store( $result, $subres ); }
-		else { $_85 = FALSE; break; }
-		$_81 = NULL;
+		else { $_89 = FALSE; break; }
+		$_85 = NULL;
 		do {
-			$_79 = NULL;
+			$_83 = NULL;
 			do {
 				$res_28 = $result;
 				$pos_28 = $this->pos;
@@ -312,29 +312,29 @@ function match_AttributeFilter ($stack = array()) {
 					$_39 = TRUE; break;
 				}
 				while(0);
-				if( $_39 === TRUE ) { $_79 = TRUE; break; }
+				if( $_39 === TRUE ) { $_83 = TRUE; break; }
 				$result = $res_28;
 				$this->pos = $pos_28;
-				$_77 = NULL;
+				$_81 = NULL;
 				do {
 					$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== FALSE) {
 						$this->store( $result, $subres, "Identifier" );
 					}
-					else { $_77 = FALSE; break; }
+					else { $_81 = FALSE; break; }
 					$matcher = 'match_'.'S'; $key = $matcher; $pos = $this->pos;
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== FALSE) { $this->store( $result, $subres ); }
-					else { $_77 = FALSE; break; }
-					$res_76 = $result;
-					$pos_76 = $this->pos;
-					$_75 = NULL;
+					else { $_81 = FALSE; break; }
+					$res_80 = $result;
+					$pos_80 = $this->pos;
+					$_79 = NULL;
 					do {
 						$stack[] = $result; $result = $this->construct( $matchrule, "Operator" );
-						$_56 = NULL;
+						$_60 = NULL;
 						do {
-							$_54 = NULL;
+							$_58 = NULL;
 							do {
 								$res_43 = $result;
 								$pos_43 = $this->pos;
@@ -342,11 +342,11 @@ function match_AttributeFilter ($stack = array()) {
 								$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 								if ($subres !== FALSE) {
 									$this->store( $result, $subres );
-									$_54 = TRUE; break;
+									$_58 = TRUE; break;
 								}
 								$result = $res_43;
 								$this->pos = $pos_43;
-								$_52 = NULL;
+								$_56 = NULL;
 								do {
 									$res_45 = $result;
 									$pos_45 = $this->pos;
@@ -354,11 +354,11 @@ function match_AttributeFilter ($stack = array()) {
 									$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 									if ($subres !== FALSE) {
 										$this->store( $result, $subres );
-										$_52 = TRUE; break;
+										$_56 = TRUE; break;
 									}
 									$result = $res_45;
 									$this->pos = $pos_45;
-									$_50 = NULL;
+									$_54 = NULL;
 									do {
 										$res_47 = $result;
 										$pos_47 = $this->pos;
@@ -366,160 +366,178 @@ function match_AttributeFilter ($stack = array()) {
 										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 										if ($subres !== FALSE) {
 											$this->store( $result, $subres );
-											$_50 = TRUE; break;
+											$_54 = TRUE; break;
 										}
 										$result = $res_47;
 										$this->pos = $pos_47;
-										$matcher = 'match_'.'ExactMatch'; $key = $matcher; $pos = $this->pos;
-										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-										if ($subres !== FALSE) {
-											$this->store( $result, $subres );
-											$_50 = TRUE; break;
+										$_52 = NULL;
+										do {
+											$res_49 = $result;
+											$pos_49 = $this->pos;
+											$matcher = 'match_'.'ExactMatch'; $key = $matcher; $pos = $this->pos;
+											$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
+											if ($subres !== FALSE) {
+												$this->store( $result, $subres );
+												$_52 = TRUE; break;
+											}
+											$result = $res_49;
+											$this->pos = $pos_49;
+											$matcher = 'match_'.'NotEqualMatch'; $key = $matcher; $pos = $this->pos;
+											$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
+											if ($subres !== FALSE) {
+												$this->store( $result, $subres );
+												$_52 = TRUE; break;
+											}
+											$result = $res_49;
+											$this->pos = $pos_49;
+											$_52 = FALSE; break;
 										}
+										while(0);
+										if( $_52 === TRUE ) { $_54 = TRUE; break; }
 										$result = $res_47;
 										$this->pos = $pos_47;
-										$_50 = FALSE; break;
+										$_54 = FALSE; break;
 									}
 									while(0);
-									if( $_50 === TRUE ) { $_52 = TRUE; break; }
+									if( $_54 === TRUE ) { $_56 = TRUE; break; }
 									$result = $res_45;
 									$this->pos = $pos_45;
-									$_52 = FALSE; break;
+									$_56 = FALSE; break;
 								}
 								while(0);
-								if( $_52 === TRUE ) { $_54 = TRUE; break; }
+								if( $_56 === TRUE ) { $_58 = TRUE; break; }
 								$result = $res_43;
 								$this->pos = $pos_43;
-								$_54 = FALSE; break;
+								$_58 = FALSE; break;
 							}
 							while(0);
-							if( $_54 === FALSE) { $_56 = FALSE; break; }
-							$_56 = TRUE; break;
+							if( $_58 === FALSE) { $_60 = FALSE; break; }
+							$_60 = TRUE; break;
 						}
 						while(0);
-						if( $_56 === TRUE ) {
+						if( $_60 === TRUE ) {
 							$subres = $result; $result = array_pop($stack);
 							$this->store( $result, $subres, 'Operator' );
 						}
-						if( $_56 === FALSE) {
+						if( $_60 === FALSE) {
 							$result = array_pop($stack);
-							$_75 = FALSE; break;
+							$_79 = FALSE; break;
 						}
 						$matcher = 'match_'.'S'; $key = $matcher; $pos = $this->pos;
 						$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 						if ($subres !== FALSE) {
 							$this->store( $result, $subres );
 						}
-						else { $_75 = FALSE; break; }
-						$_72 = NULL;
+						else { $_79 = FALSE; break; }
+						$_76 = NULL;
 						do {
-							$_70 = NULL;
+							$_74 = NULL;
 							do {
-								$res_59 = $result;
-								$pos_59 = $this->pos;
+								$res_63 = $result;
+								$pos_63 = $this->pos;
 								$matcher = 'match_'.'StringLiteral'; $key = $matcher; $pos = $this->pos;
 								$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 								if ($subres !== FALSE) {
 									$this->store( $result, $subres, "Operand" );
-									$_70 = TRUE; break;
+									$_74 = TRUE; break;
 								}
-								$result = $res_59;
-								$this->pos = $pos_59;
-								$_68 = NULL;
+								$result = $res_63;
+								$this->pos = $pos_63;
+								$_72 = NULL;
 								do {
-									$res_61 = $result;
-									$pos_61 = $this->pos;
+									$res_65 = $result;
+									$pos_65 = $this->pos;
 									$matcher = 'match_'.'NumberLiteral'; $key = $matcher; $pos = $this->pos;
 									$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 									if ($subres !== FALSE) {
 										$this->store( $result, $subres, "Operand" );
-										$_68 = TRUE; break;
+										$_72 = TRUE; break;
 									}
-									$result = $res_61;
-									$this->pos = $pos_61;
-									$_66 = NULL;
+									$result = $res_65;
+									$this->pos = $pos_65;
+									$_70 = NULL;
 									do {
-										$res_63 = $result;
-										$pos_63 = $this->pos;
+										$res_67 = $result;
+										$pos_67 = $this->pos;
 										$matcher = 'match_'.'BooleanLiteral'; $key = $matcher; $pos = $this->pos;
 										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 										if ($subres !== FALSE) {
 											$this->store( $result, $subres, "Operand" );
-											$_66 = TRUE; break;
+											$_70 = TRUE; break;
 										}
-										$result = $res_63;
-										$this->pos = $pos_63;
+										$result = $res_67;
+										$this->pos = $pos_67;
 										$matcher = 'match_'.'UnquotedOperand'; $key = $matcher; $pos = $this->pos;
 										$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 										if ($subres !== FALSE) {
 											$this->store( $result, $subres, "Operand" );
-											$_66 = TRUE; break;
+											$_70 = TRUE; break;
 										}
-										$result = $res_63;
-										$this->pos = $pos_63;
-										$_66 = FALSE; break;
+										$result = $res_67;
+										$this->pos = $pos_67;
+										$_70 = FALSE; break;
 									}
 									while(0);
-									if( $_66 === TRUE ) { $_68 = TRUE; break; }
-									$result = $res_61;
-									$this->pos = $pos_61;
-									$_68 = FALSE; break;
+									if( $_70 === TRUE ) { $_72 = TRUE; break; }
+									$result = $res_65;
+									$this->pos = $pos_65;
+									$_72 = FALSE; break;
 								}
 								while(0);
-								if( $_68 === TRUE ) { $_70 = TRUE; break; }
-								$result = $res_59;
-								$this->pos = $pos_59;
-								$_70 = FALSE; break;
+								if( $_72 === TRUE ) { $_74 = TRUE; break; }
+								$result = $res_63;
+								$this->pos = $pos_63;
+								$_74 = FALSE; break;
 							}
 							while(0);
-							if( $_70 === FALSE) { $_72 = FALSE; break; }
-							$_72 = TRUE; break;
+							if( $_74 === FALSE) { $_76 = FALSE; break; }
+							$_76 = TRUE; break;
 						}
 						while(0);
-						if( $_72 === FALSE) { $_75 = FALSE; break; }
+						if( $_76 === FALSE) { $_79 = FALSE; break; }
 						$matcher = 'match_'.'S'; $key = $matcher; $pos = $this->pos;
 						$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 						if ($subres !== FALSE) {
 							$this->store( $result, $subres );
 						}
-						else { $_75 = FALSE; break; }
-						$_75 = TRUE; break;
+						else { $_79 = FALSE; break; }
+						$_79 = TRUE; break;
 					}
 					while(0);
-					if( $_75 === FALSE) {
-						$result = $res_76;
-						$this->pos = $pos_76;
-						unset( $res_76 );
-						unset( $pos_76 );
+					if( $_79 === FALSE) {
+						$result = $res_80;
+						$this->pos = $pos_80;
+						unset( $res_80 );
+						unset( $pos_80 );
 					}
-					$_77 = TRUE; break;
+					$_81 = TRUE; break;
 				}
 				while(0);
-				if( $_77 === TRUE ) { $_79 = TRUE; break; }
+				if( $_81 === TRUE ) { $_83 = TRUE; break; }
 				$result = $res_28;
 				$this->pos = $pos_28;
-				$_79 = FALSE; break;
+				$_83 = FALSE; break;
 			}
 			while(0);
-			if( $_79 === FALSE) { $_81 = FALSE; break; }
-			$_81 = TRUE; break;
+			if( $_83 === FALSE) { $_85 = FALSE; break; }
+			$_85 = TRUE; break;
 		}
 		while(0);
-		if( $_81 === FALSE) { $_85 = FALSE; break; }
+		if( $_85 === FALSE) { $_89 = FALSE; break; }
 		$matcher = 'match_'.'S'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 		if ($subres !== FALSE) { $this->store( $result, $subres ); }
-		else { $_85 = FALSE; break; }
+		else { $_89 = FALSE; break; }
 		if (substr($this->string,$this->pos,1) == ']') {
 			$this->pos += 1;
 			$result["text"] .= ']';
 		}
-		else { $_85 = FALSE; break; }
-		$_85 = TRUE; break;
+		else { $_89 = FALSE; break; }
+		$_89 = TRUE; break;
 	}
 	while(0);
-	if( $_85 === TRUE ) { return $this->finalise($result); }
-	if( $_85 === FALSE) { return FALSE; }
+	if( $_89 === TRUE ) { return $this->finalise($result); }
+	if( $_89 === FALSE) { return FALSE; }
 }
 
 function AttributeFilter__construct (&$result) {
@@ -603,6 +621,18 @@ function match_ExactMatch ($stack = array()) {
 }
 
 
+/* NotEqualMatch: '!=' */
+protected $match_NotEqualMatch_typestack = array('NotEqualMatch');
+function match_NotEqualMatch ($stack = array()) {
+	$matchrule = "NotEqualMatch"; $result = $this->construct($matchrule, $matchrule, null);
+	if (( $subres = $this->literal( '!=' ) ) !== FALSE) {
+		$result["text"] .= $subres;
+		return $this->finalise($result);
+	}
+	else { return FALSE; }
+}
+
+
 
 
 	static public function parseFilterGroup($filter) {
@@ -626,3 +656,4 @@ function match_ExactMatch ($stack = array()) {
 		}
 	}
 }
+?>
