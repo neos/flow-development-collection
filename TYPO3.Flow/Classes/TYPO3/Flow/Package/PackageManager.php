@@ -477,13 +477,26 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$manifest['name'] = strtolower($vendor . '/' . implode('-', $nameParts));
 		if ($packageMetaData !== NULL) {
 			$manifest['type'] = $packageMetaData->getPackageType();
-			$manifest['description'] = $packageMetaData->getDescription();
-			$manifest['version'] = $packageMetaData->getVersion();
+			$manifest['description'] = $packageMetaData->getDescription() ?: 'Add description here';
+			if ($packageMetaData->getVersion()) {
+				$manifest['version'] = $packageMetaData->getVersion();
+			}
+			$manifest['require'] = array();
+			$dependencies = $packageMetaData->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
+			foreach ($dependencies as $dependencyConstraint) {
+				if ($dependencyConstraint instanceof \TYPO3\Flow\Package\MetaData\PackageConstraint) {
+					if (isset($this->packageStatesConfiguration['packages'][$dependencyConstraint->getValue()]['composerName'])) {
+						$manifest['require'][$this->packageStatesConfiguration['packages'][$dependencyConstraint->getValue()]['composerName']] = '*';
+					}
+				}
+			}
 		} else {
 			$manifest['type'] = 'typo3-flow-package';
 			$manifest['description'] = '';
 		}
-		$manifest['require'] = array('typo3/flow' => '*');
+		if (!isset($manifest['require']) || empty($manifest['require'])) {
+			$manifest['require'] = array('typo3/flow' => '*');
+		}
 		$manifest['autoload'] = array('psr-0' => array(str_replace('.', '\\', $packageKey) => 'Classes'));
 
 		if (defined('JSON_PRETTY_PRINT')) {
