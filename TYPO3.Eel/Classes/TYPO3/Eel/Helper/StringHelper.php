@@ -266,6 +266,22 @@ class StringHelper implements ProtectedContextAwareInterface {
 	}
 
 	/**
+	 * @param string $string
+	 * @return string
+	 */
+	public function firstLetterToUpperCase($string) {
+		return UnicodeFunctions::ucfirst($string);
+	}
+
+	/**
+	 * @param string $string
+	 * @return string
+	 */
+	public function firstLetterToLowerCase($string) {
+		return UnicodeFunctions::lcfirst($string);
+	}
+
+	/**
 	 * Strip all tags from the given string
 	 *
 	 * This is a wrapper for the strip_tags() PHP function.

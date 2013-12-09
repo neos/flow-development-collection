@@ -239,6 +239,40 @@ class StringHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+	public function firstLetterToUpperCaseExamples() {
+		return array(
+			'lowercase' => array('foo', 'Foo'),
+			'firstLetterUpperCase' => array('Foo', 'Foo')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider firstLetterToUpperCaseExamples
+	 */
+	public function firstLetterToUpperCaseWorks($string, $expected) {
+		$helper = new StringHelper();
+		$result = $helper->firstLetterToUpperCase($string);
+		$this->assertSame($expected, $result);
+	}
+
+	public function firstLetterToLowerCaseExamples() {
+		return array(
+			'lowercase' => array('foo', 'foo'),
+			'firstLetterUpperCase' => array('Foo', 'foo')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider firstLetterToLowerCaseExamples
+	 */
+	public function firstLetterToLowerCaseWorks($string, $expected) {
+		$helper = new StringHelper();
+		$result = $helper->firstLetterToLowerCase($string);
+		$this->assertSame($expected, $result);
+	}
+
 	public function toLowerCaseExamples() {
 		return array(
 			'lowercase' => array('Foo bAr BaZ', 'foo bar baz')
