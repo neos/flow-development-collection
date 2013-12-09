@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Note: this file has quite a lot of unnecessary information, in order to test if automatic .po - .xlf conversion data is parsed correctly -->
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.1">
+  <file original="foo.po" source-language="en-US" datatype="po">
+    <body>
+      <trans-unit id="1" xml:space="preserve" restype="x-gettext-domain-header" approved="no">
+        <source>Some conversion data</source>
+        <target state="translated">Some conversion data</target>
+        <context-group name="po-entry" purpose="information">
+          <context context-type="x-po-trancomment">Some conversion data</context>
+        </context-group>
+        <note from="po-translator">A note from translator</note>
+      </trans-unit>
+      <trans-unit id="key1" xml:space="preserve">
+        <source>Source string</source>
+        <target>Übersetzte Zeichenkette</target>
+        <context-group name="po-reference1" purpose="location">
+          <context context-type="sourcefile">foo.po</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <context-group name="po-entry1" purpose="information">
+          <context context-type="x-po-autocomment">A comment</context>
+        </context-group>
+      </trans-unit>
+      <group restype="x-gettext-plurals" id="key2" xml:space="preserve">
+        <context-group name="po-entry2" purpose="information">
+          <context context-type="x-po-autocomment">Another comment</context>
+        </context-group>
+        <context-group name="po-reference2" purpose="location">
+          <context context-type="sourcefile">foo.po</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <trans-unit id="key2[0]" xml:space="preserve">
+          <source>Source singular</source>
+          <target>Übersetzte Einzahl</target>
+        </trans-unit>
+        <trans-unit id="key2[1]" xml:space="preserve">
+          <source>Source plural</source>
+          <target>Übersetzte Mehrzahl 1</target>
+        </trans-unit>
+        <trans-unit id="key2[2]" xml:space="preserve">
+          <source>Source plural</source>
+          <target>Übersetzte Mehrzahl 2</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="key3" xml:space="preserve">
+        <source>No target</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

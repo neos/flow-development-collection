@@ -1,0 +1,35 @@
+# A change using almost all available filters
+-
+  requestFilter: 'isPackage("TYPO3.Flow") && isController("ViewsConfigurationTestA") && isAction("first") && isFormat("html")'
+  options:
+    templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnPackageLevel.html
+
+# A change filtered on Package and SubPackage level
+-
+  requestFilter: 'isPackage("TYPO3.Flow") && isSubPackage("Tests\Functional\Mvc\ViewsConfiguration\Fixtures")'
+  options:
+    templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnControllerLevel.html
+
+# Completely change the viewObjectName
+-
+  requestFilter: 'isPackage("TYPO3.Flow") && isController("ViewsConfigurationTestC")'
+  viewObjectName: '\TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView'
+
+# Reset Widget Template because it's changed by the second change
+-
+  requestFilter: 'isPackage("TYPO3.Flow") && isSubPackage("Tests\Functional\Mvc\ViewsConfiguration\Fixtures") && isAction("widget")'
+  options:
+    templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/Widget.html
+
+# Set a custom Template for a Widget, but only if it's executed inside TYPO3.Flow
+-
+  requestFilter: 'parentRequest.isPackage("TYPO3.Flow") && isPackage("TYPO3.Fluid") && isSubPackage("Tests\Functional\Core\Fixtures\ViewHelpers")'
+  options:
+    templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/ChangedOnPackageLevel.html
+
+# The configuration above should take precedence, because parentRequest adds way more specifity
+# than all matchers for the current request combined
+-
+  requestFilter: 'isPackage("TYPO3.Flow") && isSubPackage("Tests\Functional\Mvc\ViewsConfiguration\Fixtures") && isAction("index") && isFormat("html")'
+  options:
+    templatePathAndFilename: resource://TYPO3.Flow/Private/Templates/Tests/Functional/Mvc/Fixtures/ViewsConfigurationTest/Wrong.html

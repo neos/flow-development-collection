@@ -1,0 +1,49 @@
+<?php
+
+// single value
+array(
+	'identifier' => '<identifier>',
+	'classname' => '<classname>',
+	'properties' => array(
+		'<name>' => array(
+			'type' => '<type>',
+			'multivalue' => FALSE,
+			'value' => <value>
+		), ...
+	),
+	'metadata' => array( ... )
+)
+
+// multi value
+array(
+	'identifier' => '<identifier>',
+	'classname' => '<classname>',
+	'properties' => array(
+		'<name>' => array(
+			'type' => '<type>', // for multi values only (array|SplObjectStorage) or 'NULL' for NULL
+			'multivalue' => TRUE,
+			'value' => array(	// NULL for NULL/empty!
+				array(
+					'type' => '<type>',
+					'index' => <index>,
+					'value' => <value>
+				), ...
+			)
+		)
+	),
+	'metadata' => array( ... )
+)
+
+/*
+	<identifier> a uuid (for entities) or sha1 (for value objects)
+	<classname> the AOP proxy target classname, fully qualified
+	<type> the strings string, array, float, integer, boolean, DateTime, SplObjectStorage or a FQCN
+	<value> a literal - string, integer, boolean, float, for datetime the timestamp (based on UTC!) or - for objects - an array with (at least) the identifier
+		if <value> represents an object it can be an array following the format described here
+
+	<vtype> a meta type, one of the strings string, array, float, integer, boolean, datetime, object - used in SQL backend
+
+	metadata is optional and can be used to store backend specific metadata
+
+	lazy loaded objects have only their identifier & classname recorded, properties is an empty array
+*/
