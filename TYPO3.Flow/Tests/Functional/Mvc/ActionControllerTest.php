@@ -170,7 +170,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		);
 		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/requiredobject', 'POST', $arguments);
 
-		$expectedResult = 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredObjectAction().' . PHP_EOL . 'Error for argument.emailAddress:  Please specify a valid email address.' . PHP_EOL;
+		$expectedResult = 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredObjectAction().' . PHP_EOL;
 		$this->assertEquals($expectedResult, $response->getContent());
 	}
 
@@ -186,7 +186,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		);
 		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/optionalobject', 'POST', $arguments);
 
-		$expectedResult = 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalObjectAction().' . PHP_EOL . 'Error for argument.emailAddress:  Please specify a valid email address.' . PHP_EOL;
+		$expectedResult = 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalObjectAction().' . PHP_EOL;
 		$this->assertEquals($expectedResult, $response->getContent());
 	}
 
@@ -228,7 +228,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		);
 		$response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/validatedgroupobject', 'POST', $arguments);
 
-		$expectedResult = 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL . 'Error for argument.emailAddress:  Please specify a valid email address.' . PHP_EOL;
+		$expectedResult = 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->validatedGroupObjectAction().' . PHP_EOL;
 		$this->assertEquals($expectedResult, $response->getContent());
 	}
 
@@ -246,30 +246,30 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'optional string - default'         => array('optionalString', NULL, '\'default\''),
 			'required integer'                  => array('requiredInteger', '234', '234'),
 			'required integer - missing value'  => array('requiredInteger', NULL, $requiredArgumentExceptionText),
-			'required integer - mapping error'  => array('requiredInteger', 'not an integer', 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().' . PHP_EOL . 'Error for argument:  "not an integer" is no integer.'),
+			'required integer - mapping error'  => array('requiredInteger', 'not an integer', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().'),
 			'required integer - empty value'    => array('requiredInteger', '', 'NULL'),
 			'optional integer'                  => array('optionalInteger', 456, '456'),
 			'optional integer - default value'  => array('optionalInteger', NULL, '123'),
-			'optional integer - mapping error'  => array('optionalInteger', 'not an integer', 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().' . PHP_EOL . 'Error for argument:  "not an integer" is no integer.'),
+			'optional integer - mapping error'  => array('optionalInteger', 'not an integer', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().'),
 			'optional integer - empty value'    => array('optionalInteger', '', '123'),
 			'required float'                    => array('requiredFloat', 34.56, '34.56'),
 			'required float - integer'          => array('requiredFloat', 485, '485'),
 			'required float - integer2'         => array('requiredFloat', '888', '888'),
 			'required float - missing value'    => array('requiredFloat', NULL, $requiredArgumentExceptionText),
-			'required float - mapping error'    => array('requiredFloat', 'not a float', 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredFloatAction().' . PHP_EOL . 'Error for argument:  "not a float" cannot be converted to a float value.'),
+			'required float - mapping error'    => array('requiredFloat', 'not a float', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredFloatAction().'),
 			'required float - empty value'      => array('requiredFloat', '', 'NULL'),
 			'optional float'                    => array('optionalFloat', 78.90, '78.9'),
 			'optional float - default value'    => array('optionalFloat', NULL, '12.34'),
-			'optional float - mapping error'    => array('optionalFloat', 'not a float', 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().' . PHP_EOL . 'Error for argument:  "not a float" cannot be converted to a float value.'),
+			'optional float - mapping error'    => array('optionalFloat', 'not a float', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().'),
 			'optional float - empty value'      => array('optionalFloat', '', '12.34'),
 			'required date'                     => array('requiredDate', array('date' => '1980-12-13', 'dateFormat' => 'Y-m-d'), '1980-12-13'),
 			'required date string'              => array('requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'),
 			'required date - missing value'     => array('requiredDate', NULL, $requiredArgumentExceptionText),
-			'required date - mapping error'     => array('requiredDate', 'no date', 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().' . PHP_EOL . 'Error for argument:  The date "no date" was not recognized (for format "Y-m-d\TH:i:sP").'),
+			'required date - mapping error'     => array('requiredDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'),
 			'required date - empty value'       => array('requiredDate', '', 'Uncaught Exception in Flow #1: Catchable Fatal Error: Argument 1 passed to TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'),
 			'optional date string'              => array('optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'),
 			'optional date - default value'     => array('optionalDate', NULL, 'null'),
-			'optional date - mapping error'     => array('optionalDate', 'no date', 'An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().' . PHP_EOL . 'Error for argument:  The date "no date" was not recognized (for format "Y-m-d\TH:i:sP").'),
+			'optional date - mapping error'     => array('optionalDate', 'no date', 'Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'),
 			'optional date - missing value'     => array('optionalDate', NULL, 'null'),
 			'optional date - empty value'       => array('optionalDate', '', 'null'),
 		);
