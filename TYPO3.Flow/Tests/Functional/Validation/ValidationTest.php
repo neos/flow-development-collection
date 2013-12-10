@@ -68,9 +68,7 @@ class ValidationTest extends FunctionalTestCase {
 
 		$invalidArguments = array('entity' => array('__identity' => $entityIdentifier, 'name' => 'xx'));
 		$response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().
-Error for entity.name:  This field must contain at least 3 characters.
-', $response->getContent());
+		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
 	}
 
 	/**
@@ -94,9 +92,7 @@ Error for entity.name:  This field must contain at least 3 characters.
 
 		$invalidArguments = array('entity' => array('__identity' => $entityIdentifier, 'name' => 'long enough name', 'subEntities' => array(array('__identity' => $subEntityIdentifier, 'content' => ''))));
 		$response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().
-Error for entity.subEntities.0.content:  This property is required.
-', $response->getContent());
+		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.subEntities.0.content:  This property is required.' . PHP_EOL, $response->getContent());
 	}
 
 	/**
@@ -130,8 +126,6 @@ Error for entity.subEntities.0.content:  This property is required.
 			)
 		);
 		$response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().
-Error for entity.name:  This field must contain at least 3 characters.
-', $response->getContent());
+		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
 	}
 }
