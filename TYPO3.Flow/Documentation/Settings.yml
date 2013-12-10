@@ -1,0 +1,5 @@
+conf.py:
+  copyright: '2006-2013, respective authors'
+  project: 'TYPO3 Flow (dev)'
+  release: '2.1.0'
+  version: '2.1'
