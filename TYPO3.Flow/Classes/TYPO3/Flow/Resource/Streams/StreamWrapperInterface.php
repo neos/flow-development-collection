@@ -128,7 +128,7 @@ interface StreamWrapperInterface {
 	public function rename($source, $target);
 
 	/**
-	 * Retrieve the underlaying resource.
+	 * Retrieve the underlying resource.
 	 *
 	 * This method is called in response to stream_select().
 	 *

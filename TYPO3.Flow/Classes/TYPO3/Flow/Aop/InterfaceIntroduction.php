@@ -59,7 +59,7 @@ class InterfaceIntroduction {
 	}
 
 	/**
-	 * Returns the poincut this introduction applies to
+	 * Returns the pointcut this introduction applies to
 	 *
 	 * @return \TYPO3\Flow\Aop\Pointcut\Pointcut The pointcut
 	 */

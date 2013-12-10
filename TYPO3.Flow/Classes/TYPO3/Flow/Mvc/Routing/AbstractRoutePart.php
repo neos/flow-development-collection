@@ -167,7 +167,7 @@ abstract class AbstractRoutePart implements \TYPO3\Flow\Mvc\Routing\RoutePartInt
 
 	/**
 	 * Defines options for this Route Part.
-	 * Options can be used to enrich a route part with parameters or settings like case sensivitity.
+	 * Options can be used to enrich a route part with parameters or settings like case sensivity.
 	 *
 	 * @param array $options
 	 * @return void

@@ -306,7 +306,7 @@ class DatesReader {
 	 *
 	 * @param string $formatLength
 	 * @return void
-	 * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is unallowed
+	 * @throws \TYPO3\Flow\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is not allowed
 	 */
 	static public function validateFormatLength($formatLength) {
 		if (!in_array($formatLength, array(self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT))) {
