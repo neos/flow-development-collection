@@ -67,9 +67,7 @@ class ValidationTest extends FunctionalTestCase {
 
 		$invalidArguments = array('entity' => array('__identity' => $entityIdentifier, 'name' => 'xx'));
 		$response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
-		$this->assertSame('An error occurred while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().
-Error for entity.name:  This field must contain at least 3 characters.
-', $response->getContent());
+		$this->assertSame('Validation failed while trying to call TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL, $response->getContent());
 	}
 }
 ?>
