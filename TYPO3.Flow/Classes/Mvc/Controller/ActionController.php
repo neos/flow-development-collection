@@ -115,6 +115,12 @@ class ActionController extends AbstractController {
 	protected $settings;
 
 	/**
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @FLOW3\Inject
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @param array $settings
 	 * @return void
 	 */
@@ -387,14 +393,15 @@ class ActionController extends AbstractController {
 			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageAndSubpackageKey, $argumentsForNextController);
 		}
 
-		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
+		$outputMessage = 'Validation failed while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
+		$logMessage = $outputMessage;
 		foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
 			foreach ($errors as $error) {
-				$message .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
+				$logMessage .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
 			}
 		}
-
-		return $message;
+		$this->systemLogger->log($logMessage, LOG_ERR);
+		return $outputMessage;
 	}
 
 	/**
