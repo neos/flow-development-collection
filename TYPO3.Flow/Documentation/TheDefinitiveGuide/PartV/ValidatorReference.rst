@@ -3,7 +3,7 @@
 TYPO3 Flow Validator Reference
 ==============================
 
-This reference was automatically generated from code on 2013-06-25
+This reference was automatically generated from code on 2013-12-10
 
 
 AlphanumericValidator
@@ -37,11 +37,11 @@ will be skipped.
 Arguments
 *********
 
-* ``elementValidator`` (string, *optional*):   The validator type to use for the collection elements
+* ``elementValidator`` (string, *optional*): The validator type to use for the collection elements
 
-* ``elementType`` (string, *optional*):   The type of the elements in the collection
+* ``elementType`` (string, *optional*): The type of the elements in the collection
 
-* ``validationGroups`` (string, *optional*):   The validation groups to link to
+* ``validationGroups`` (string, *optional*): The validation groups to link to
 
 
 
@@ -60,9 +60,9 @@ The given value is valid if it is an array or \Countable that contains the speci
 Arguments
 *********
 
-* ``minimum`` (integer, *optional*):   The minimum count to accept
+* ``minimum`` (integer, *optional*): The minimum count to accept
 
-* ``maximum`` (integer, *optional*):   The maximum count to accept
+* ``maximum`` (integer, *optional*): The maximum count to accept
 
 
 
@@ -115,9 +115,9 @@ http://en.wikipedia.org/wiki/ISO_8601#Time_intervals (3)
 Arguments
 *********
 
-* ``latestDate`` (string, *optional*):   The latest date to accept
+* ``latestDate`` (string, *optional*): The latest date to accept
 
-* ``earliestDate`` (string, *optional*):   The earliest date to accept
+* ``earliestDate`` (string, *optional*): The earliest date to accept
 
 
 
@@ -136,13 +136,13 @@ Checks if the given value is a valid DateTime object.
 Arguments
 *********
 
-* ``locale`` (string|Locale, *optional*):   The locale to use for date parsing
+* ``locale`` (string|Locale, *optional*): The locale to use for date parsing
 
-* ``strictMode`` (boolean, *optional*):   Use strict mode for date parsing
+* ``strictMode`` (boolean, *optional*): Use strict mode for date parsing
 
-* ``formatLength`` (string, *optional*):   The format length, see DatesReader::FORMAT_LENGTH_*
+* ``formatLength`` (string, *optional*): The format length, see DatesReader::FORMAT_LENGTH_*
 
-* ``formatType`` (string, *optional*):   The format type, see DatesReader::FORMAT_TYPE_*
+* ``formatType`` (string, *optional*): The format type, see DatesReader::FORMAT_TYPE_*
 
 
 
@@ -251,9 +251,9 @@ The given value is valid if it is a number in the specified range.
 Arguments
 *********
 
-* ``minimum`` (integer, *optional*):   The minimum value to accept
+* ``minimum`` (integer, *optional*): The minimum value to accept
 
-* ``maximum`` (integer, *optional*):   The maximum value to accept
+* ``maximum`` (integer, *optional*): The maximum value to accept
 
 
 
@@ -272,13 +272,13 @@ Checks if the given value is a valid number.
 Arguments
 *********
 
-* ``locale`` (string|Locale, *optional*):   The locale to use for number parsing
+* ``locale`` (string|Locale, *optional*): The locale to use for number parsing
 
-* ``strictMode`` (boolean, *optional*):   Use strict mode for number parsing
+* ``strictMode`` (boolean, *optional*): Use strict mode for number parsing
 
-* ``formatLength`` (string, *optional*):   The format length, see NumbersReader::FORMAT_LENGTH_*
+* ``formatLength`` (string, *optional*): The format length, see NumbersReader::FORMAT_LENGTH_*
 
-* ``formatType`` (string, *optional*):   The format type, see NumbersReader::FORMAT_TYPE_*
+* ``formatType`` (string, *optional*): The format type, see NumbersReader::FORMAT_TYPE_*
 
 
 
@@ -309,7 +309,7 @@ Checks if the given value matches the specified regular expression.
 Arguments
 *********
 
-* ``regularExpression`` (string):   The regular expression to use for validation, used as given
+* ``regularExpression`` (string): The regular expression to use for validation, used as given
 
 
 
@@ -330,9 +330,9 @@ specified in the validation options.
 Arguments
 *********
 
-* ``minimum`` (integer, *optional*):   Minimum length for a valid string
+* ``minimum`` (integer, *optional*): Minimum length for a valid string
 
-* ``maximum`` (integer, *optional*):   Maximum length for a valid string
+* ``maximum`` (integer, *optional*): Maximum length for a valid string
 
 
 
@@ -382,7 +382,7 @@ custom configured identity properties.
 Arguments
 *********
 
-* ``identityProperties`` (array, *optional*):   List of custom identity properties.
+* ``identityProperties`` (array, *optional*): List of custom identity properties.
 
 
 
