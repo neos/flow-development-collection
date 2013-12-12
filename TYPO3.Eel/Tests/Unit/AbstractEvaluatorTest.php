@@ -144,7 +144,12 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function calculationExpressions() {
 		$c = new Context(array(
-			'answer' => 42
+			'answer' => 42,
+			'deeply' => array(
+				'nested' => array(
+					'value' => 2
+				)
+			)
 		));
 		return array(
 			// Very basic
@@ -156,6 +161,8 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('(1 + 2) * 3 + 4 / (2 + 2)', $c, 10),
 			// Calculation with variables
 			array('2* answer', $c, 84),
+			// Calculation with nested context
+			array('deeply.nested.value - 1', $c, 1),
 		);
 	}
 

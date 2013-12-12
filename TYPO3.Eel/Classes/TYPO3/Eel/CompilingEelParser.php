@@ -221,7 +221,7 @@ class CompilingEelParser extends EelParser {
 			$result['code'] = '(is_string(' . $xVarName . '=' . $lval . ')|is_string(' . $yVarName . '=' . $rval . '))?(' . $xVarName . ' . ' . $yVarName . '):(' . $xVarName . '+' . $yVarName . ')';
 			break;
 		case '-':
-			$result['code'] = $result['code'] . '-' .  $rval;
+			$result['code'] = $lval . '-' .  $rval;
 			break;
 		default:
 			throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512602);
