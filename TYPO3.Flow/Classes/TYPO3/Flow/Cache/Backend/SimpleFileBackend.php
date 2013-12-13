@@ -147,7 +147,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 			throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756736);
 		}
 
-		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . '.' . $entryIdentifier . '.tmp';
+		$temporaryCacheEntryPathAndFilename = $this->generateTemporaryPathAndFilename($entryIdentifier);
 		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data);
 		if ($result === FALSE) {
 			throw new \TYPO3\Flow\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1334756737);
@@ -351,6 +351,16 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		while (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' && $this->cacheFilesIterator->valid()) {
 			$this->cacheFilesIterator->next();
 		}
+	}
+
+	/**
+	 * Generate a temporary file path based on entryIdentifier, microtime and pid if available.
+	 *
+	 * @param string $entryIdentifier
+	 * @return string
+	 */
+	protected function generateTemporaryPathAndFilename($entryIdentifier) {
+		return $this->cacheDirectory . '.' . $entryIdentifier . '.' . microtime(TRUE) . '-' . (getmypid() ?: 0) . '.tmp';
 	}
 
 }
