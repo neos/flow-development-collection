@@ -24,9 +24,9 @@ use TYPO3\Flow\Annotations as Flow;
 class CompilingEvaluator implements EelEvaluatorInterface {
 
 	/**
-	 * @var array
+	 * @var string
 	 */
-	protected $newExpressions = array();
+	protected $codeToBeCached = '';
 
 	/**
 	 * @Flow\Inject(lazy=false)
@@ -35,9 +35,15 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 	protected $expressionCache;
 
 	/**
+	 * @var boolean
+	 */
+	protected $cachedCodeHasChanged = FALSE;
+
+	/**
 	 * Initialize the Evaluator
 	 */
 	public function initializeObject() {
+		$this->codeToBeCached = $this->expressionCache->get('cachedExpressionClosures');
 		$this->expressionCache->requireOnce('cachedExpressionClosures');
 	}
 
@@ -45,24 +51,8 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 	 * Shutdown the Evaluator
 	 */
 	public function shutdownObject() {
-		if (count($this->newExpressions) > 0) {
-			$changesToPersist = FALSE;
-			$codeToBeCached = $this->expressionCache->get('cachedExpressionClosures');
-			/**
-			 * At this point a race condition could happen, that we try to prevent with an additional check.
-			 * So we compare the evaluated expressions during this request with the methods the cache has at
-			 * this point and only add methods that are not present. Only if we added anything we write the cache.
-			 */
-			foreach ($this->newExpressions as $functionName => $newExpression) {
-				if (strpos($codeToBeCached, $functionName) === FALSE) {
-					$codeToBeCached .= $newExpression . chr(10);
-					$changesToPersist = TRUE;
-				}
-			}
-
-			if ($changesToPersist) {
-				$this->persistCodeCache();
-			}
+		if ($this->cachedCodeHasChanged === TRUE) {
+			$this->persistCodeCache();
 		}
 	}
 
@@ -80,7 +70,7 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 		if (!function_exists($functionName)) {
 			$code = $this->generateEvaluatorCode($expression);
 			$functionDeclaration = 'function ' . $functionName . '($context){return ' . $code . ';}';
-			$this->newExpressions[$functionName] = $functionDeclaration;
+			$this->addToCodeCache($functionDeclaration);
 			eval($functionDeclaration);
 		}
 
@@ -116,6 +106,16 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 	}
 
 	/**
+	 * Add a new expression closure to the code cache
+	 *
+	 * @param string $code
+	 */
+	protected function addToCodeCache($code) {
+		$this->codeToBeCached .= $code . chr(10);
+		$this->cachedCodeHasChanged = TRUE;
+	}
+
+	/**
 	 * Persists all compiled EEL expressions in one cache entry.
 	 */
 	protected function persistCodeCache() {
@@ -128,4 +128,5 @@ class CompilingEvaluator implements EelEvaluatorInterface {
 	protected function requireCachedCodeCache() {
 		$this->expressionCache->requireOnce('cachedExpressionClosures');
 	}
+
 }
