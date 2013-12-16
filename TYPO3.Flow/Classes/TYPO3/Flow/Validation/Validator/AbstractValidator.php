@@ -31,7 +31,12 @@ abstract class AbstractValidator implements ValidatorInterface {
 	protected $acceptsEmptyValues = TRUE;
 
 	/**
-	 * This contains the supported options, their default values, types and descriptions.
+	 * This contains the supported options, each being an array of:
+	 *
+	 * 0 => default value
+	 * 1 => description
+	 * 2 => type
+	 * 3 => required (boolean, optional)
 	 *
 	 * @var array
 	 */
@@ -64,7 +69,7 @@ abstract class AbstractValidator implements ValidatorInterface {
 		array_walk(
 			$this->supportedOptions,
 			function($supportedOptionData, $supportedOptionName, $options) {
-				if (isset($supportedOptionData[3]) && !array_key_exists($supportedOptionName, $options)) {
+				if (array_key_exists(3, $supportedOptionData) && $supportedOptionData[3] === TRUE && !array_key_exists($supportedOptionName, $options)) {
 					throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('Required validation option not set: ' . $supportedOptionName, 1339163902);
 				}
 			},
