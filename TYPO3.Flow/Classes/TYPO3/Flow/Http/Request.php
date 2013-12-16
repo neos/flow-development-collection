@@ -82,8 +82,16 @@ class Request extends Message {
 			}
 		}
 		$this->setMethod($method);
-		$protocol = (isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0))) ? 'https' : 'http';
-		$this->uri = new Uri($protocol . '://' . (isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost') . str_replace('/index.php', '', (isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/')));
+
+		if ($this->headers->has('X-Forwarded-Proto')) {
+			$protocol = $this->headers->get('X-Forwarded-Proto');
+		} else {
+			$protocol = isset($server['SSL_SESSION_ID']) || (isset($server['HTTPS']) && ($server['HTTPS'] === 'on' || strcmp($server['HTTPS'], '1') === 0)) ? 'https' : 'http';
+		}
+		$host = isset($server['HTTP_HOST']) ? $server['HTTP_HOST'] : 'localhost';
+		$requestUri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
+		$requestUri = str_replace('/index.php', '', $requestUri);
+		$this->uri = new Uri($protocol . '://' . $host . $requestUri);
 
 		if ($this->headers->has('X-Forwarded-Port')) {
 			$this->uri->setPort($this->headers->get('X-Forwarded-Port'));
@@ -213,7 +221,7 @@ class Request extends Message {
 	 * @api
 	 */
 	public function isSecure() {
-		return ($this->uri->getScheme() === 'https' || $this->headers->has('X-Forwarded-Proto'));
+		return $this->uri->getScheme() === 'https';
 	}
 
 	/**
