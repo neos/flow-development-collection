@@ -153,18 +153,16 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 		} catch (\PDOException $pdoException) {
 			$this->systemLogger->logException($pdoException);
 
-			$message = 'An error occurred while using the PDO Driver.';
 			if (stripos($pdoException->getMessage(), 'unknown database') !== FALSE
 				|| (stripos($pdoException->getMessage(), 'database') !== FALSE && strpos($pdoException->getMessage(), 'not') !== FALSE && strpos($pdoException->getMessage(), 'exist') !== FALSE)) {
 				$message = 'The database which was specified in the configuration does not exist.';
-				$exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
 			} elseif (stripos($pdoException->getMessage(), 'access denied') !== FALSE
 				|| stripos($pdoException->getMessage(), 'connection refused') !== FALSE) {
 				$message = 'The database username / password specified in the configuration seem to be wrong.';
-				$exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
+			} else {
+				$message = 'An error occurred while using the PDO Driver: ' . $pdoException->getMessage();
 			}
-
-			throw $exception;
+			throw new Exception\DatabaseConnectionException($message, $pdoException->getCode(), $pdoException);
 		}
 	}
 
