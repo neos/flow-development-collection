@@ -14,11 +14,12 @@ namespace TYPO3\Flow\Tests\Unit\Http;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the Http Request class
  */
-class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class RequestTest extends UnitTestCase {
 
 	/**
 	 * @test
@@ -90,7 +91,6 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function constructRecognizesSslSessionIdAsIndicatorForSsl() {
 		$get = array('getKey1' => 'getValue1', 'getKey2' => 'getValue2');
 		$post = array();
-		$cookie = array();
 		$files = array();
 		$server = array (
 			'HTTP_HOST' => 'dev.blog.rob',
@@ -685,22 +685,149 @@ class RequestTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function isSecureReturnsTrueEvenIfTheSchemeIsHttpButTheRequestWasForwardedAndOriginallyWasHttps() {
 		$server = array (
-			'HTTP_HOST' => 'dev.blog.rob',
 			'HTTP_X_FORWARDED_PROTO' => 'https',
-			'SERVER_NAME' => 'dev.blog.rob',
-			'SERVER_ADDR' => '127.0.0.1',
-			'REMOTE_ADDR' => '127.0.0.1',
-			'SERVER_PROTOCOL' => 'HTTP/1.1',
-			'REQUEST_METHOD' => 'GET',
-			'QUERY_STRING' => 'foo=bar',
-			'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
-			'SCRIPT_NAME' => '/index.php',
-			'PHP_SELF' => '/index.php',
+			'HTTP_X_FORWARDED_PORT' => '443',
 		);
 
 		$request = Request::create(new Uri('http://acme.com'), 'GET', array(), array(), $server);
-		$this->assertEquals('http', $request->getUri()->getScheme());
+		$this->assertEquals('https://acme.com', (string)$request->getUri());
+		$this->assertEquals('https', $request->getUri()->getScheme());
 		$this->assertTrue($request->isSecure());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isSecureReturnsFalseIfTheRequestWasForwardedAndOriginallyWasHttp() {
+		$server = array (
+			'HTTP_X_FORWARDED_PROTO' => 'http',
+			'HTTP_X_FORWARDED_PORT' => '80',
+		);
+
+		$request = Request::create(new Uri('https://acme.com'), 'GET', array(), array(), $server);
+		$this->assertEquals('http://acme.com', (string)$request->getUri());
+		$this->assertEquals('http', $request->getUri()->getScheme());
+		$this->assertFalse($request->isSecure());
+	}
+
+	/**
+	 * @return array
+	 */
+	public function forwardHeaderTestsDataProvider() {
+		return array(
+			array(
+				'forwardedProtocol' => NULL,
+				'forwardedPort' => NULL,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'http://acme.com',
+			),
+
+			// forwarded protocol overrules requested protocol
+			array(
+				'forwardedProtocol' => 'https',
+				'forwardedPort' => NULL,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'https://acme.com:80',
+			),
+			array(
+				'forwardedProtocol' => 'https',
+				'forwardedPort' => NULL,
+				'requestUri' => 'https://acme.com',
+				'expectedUri' => 'https://acme.com',
+			),
+			array(
+				'forwardedProtocol' => 'http',
+				'forwardedPort' => NULL,
+				'requestUri' => 'https://acme.com',
+				'expectedUri' => 'http://acme.com:443',
+			),
+			array(
+				'forwardedProtocol' => 'http',
+				'forwardedPort' => NULL,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'http://acme.com',
+			),
+
+			// forwarded port overrules requested port
+			array(
+				'forwardedProtocol' => NULL,
+				'forwardedPort' => 80,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'http://acme.com',
+			),
+			array(
+				'forwardedProtocol' => NULL,
+				'forwardedPort' => '8080',
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'http://acme.com:8080',
+			),
+			array(
+				'forwardedProtocol' => NULL,
+				'forwardedPort' => 8080,
+				'requestUri' => 'http://acme.com:8000',
+				'expectedUri' => 'http://acme.com:8080',
+			),
+			array(
+				'forwardedProtocol' => NULL,
+				'forwardedPort' => '443',
+				'requestUri' => 'https://acme.com',
+				'expectedUri' => 'https://acme.com',
+			),
+
+			// forwarded protocol & port
+			array(
+				'forwardedProtocol' => 'http',
+				'forwardedPort' => 80,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'http://acme.com',
+			),
+			array(
+				'forwardedProtocol' => 'http',
+				'forwardedPort' => 8080,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'http://acme.com:8080',
+			),
+			array(
+				'forwardedProtocol' => 'http',
+				'forwardedPort' => 443,
+				'requestUri' => 'https://acme.com',
+				'expectedUri' => 'http://acme.com:443',
+			),
+			array(
+				'forwardedProtocol' => 'https',
+				'forwardedPort' => 443,
+				'requestUri' => 'http://acme.com',
+				'expectedUri' => 'https://acme.com',
+			),
+			array(
+				'forwardedProtocol' => 'https',
+				'forwardedPort' => 443,
+				'requestUri' => 'https://acme.com',
+				'expectedUri' => 'https://acme.com',
+			),
+			array(
+				'forwardedProtocol' => 'https',
+				'forwardedPort' => 80,
+				'requestUri' => 'https://acme.com',
+				'expectedUri' => 'https://acme.com:80',
+			),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider forwardHeaderTestsDataProvider
+	 */
+	public function forwardHeaderTests($forwardedProtocol, $forwardedPort, $requestUri, $expectedUri) {
+		$server = array ();
+		if ($forwardedProtocol !== NULL) {
+			$server['HTTP_X_FORWARDED_PROTO'] = $forwardedProtocol;
+		}
+		if ($forwardedPort !== NULL) {
+			$server['HTTP_X_FORWARDED_PORT'] = $forwardedPort;
+		}
+		$request = Request::create(new Uri($requestUri), 'GET', array(), array(), $server);
+		$this->assertEquals($expectedUri, (string)$request->getUri());
 	}
 
 	/**
