@@ -37,6 +37,7 @@ class UtilityTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('pl, en-gb;q=0.8, en;q=0.7', array('pl', 'en-gb', 'en')),
 			array('de, *;q=0.8', array('de', '*')),
 			array('sv, wont-accept;q=0.8, en;q=0.5', array('sv', 'en')),
+			array('de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4', array('de-DE', 'de', 'en-US', 'en')),
 		);
 	}
 
