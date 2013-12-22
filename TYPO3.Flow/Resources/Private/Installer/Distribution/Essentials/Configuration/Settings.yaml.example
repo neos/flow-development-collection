@@ -20,5 +20,5 @@ TYPO3:
 
   # You might need to uncomment the following lines and specify
   # the location of the PHP binary manually.
-  #  core:
-  #    phpBinaryPathAndFilename: 'C:/path/to/php.exe'
+#    core:
+#      phpBinaryPathAndFilename: 'C:/path/to/php.exe'
