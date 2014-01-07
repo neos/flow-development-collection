@@ -169,7 +169,7 @@ class ProxyClassBuilder {
 	 * Builds proxy class code which weaves advices into the respective target classes.
 	 *
 	 * The object configurations provided by the Compiler are searched for possible aspect
-	 * annotations. If an aspect class is found, the poincut expressions are parsed and
+	 * annotations. If an aspect class is found, the pointcut expressions are parsed and
 	 * a new aspect with one or more advisors is added to the aspect registry of the AOP framework.
 	 * Finally all advices are woven into their target classes by generating proxy classes.
 	 *

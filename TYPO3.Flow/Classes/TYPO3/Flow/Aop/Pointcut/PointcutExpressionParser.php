@@ -268,7 +268,7 @@ class PointcutExpressionParser {
 	}
 
 	/**
-	 * Adds a class type filter to the poincut filter composite
+	 * Adds a class type filter to the pointcut filter composite
 	 *
 	 * @param string $operator
 	 * @param string $signaturePattern The pattern expression defining the class type
@@ -303,7 +303,7 @@ class PointcutExpressionParser {
 	}
 
 	/**
-	 * Adds a custom filter to the poincut filter composite
+	 * Adds a custom filter to the pointcut filter composite
 	 *
 	 * @param string $operator The operator
 	 * @param string $filterObjectName Object Name of the custom filter (value of the designator)

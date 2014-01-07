@@ -32,7 +32,7 @@ class AbstractAdvice implements \TYPO3\Flow\Aop\Advice\AdviceInterface {
 	protected $adviceMethodName;
 
 	/**
-	 * A reference to the SingalSlot Dispatcher
+	 * A reference to the SignalSlot Dispatcher
 	 * @var \TYPO3\Flow\SignalSlot\Dispatcher
 	 */
 	protected $dispatcher;

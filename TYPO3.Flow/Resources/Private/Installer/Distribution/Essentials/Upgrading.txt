@@ -10,7 +10,7 @@ What has changed
 Security related
 ^^^^^^^^^^^^^^^^
 
-The method **"hasAccessToResource" was adedd to the access decision manager**.
+The method **"hasAccessToResource" was added to the access decision manager**.
 
 Breaking only for those who implemented ``AccessDecisionManagerInterface`` on their own.
 
@@ -32,7 +32,7 @@ created by the ``UriBuilder``.
 
 If you expect the rendered HTML to contain URLs in the form
 "some/path.html" (that is: without leading slash) you might need to
-adjust your code or set the compatibilty flag that is introduced with
+adjust your code or set the compatibility flag that is introduced with
 this change::
 
  TYPO3:

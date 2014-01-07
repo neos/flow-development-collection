@@ -159,7 +159,7 @@ class AspectContainer {
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The poincut to add
+	 * @param \TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut The pointcut to add
 	 * @return void
 	 */
 	public function addPointcut(\TYPO3\Flow\Aop\Pointcut\Pointcut $pointcut) {

@@ -16,7 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * The pointcut defines the set of join points (ie. "situations") in which certain
  * code associated with the pointcut (ie. advices) should be executed. This set of
- * join points is defined by a poincut expression which is matched against class
+ * join points is defined by a pointcut expression which is matched against class
  * and method signatures.
  *
  * @Flow\Proxy(false)
