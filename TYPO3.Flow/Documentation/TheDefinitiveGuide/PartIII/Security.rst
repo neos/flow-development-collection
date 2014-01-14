@@ -458,14 +458,14 @@ controllers will be authenticated by the default username/password provider.
 :title:`Available request patterns`
 
 +----------------------+------------------------+------------------------------------------+
-+ Request Pattern      + Match criteria         + Configuration options                    +
+| Request Pattern      | Match criteria         | Configuration options                    |
 +======================+========================+==========================================+
-+ controllerObjectName + Matches on the object  + Expects one regular expression, to       +
-+                      + name of the controller + match on the object name.                +
-+                      + that has been resolved +                                          +
-+                      + by the MVC dispatcher  + For example.:                            +
-+                      + for the current .      +                                          +
-+                      + request                + ``My\Application\AdministrationArea\.*`` +
+| controllerObjectName | Matches on the object  | Expects one regular expression, to       |
+|                      | name of the controller | match on the object name.                |
+|                      | that has been resolved |                                          |
+|                      | by the MVC dispatcher  | For example.:                            |
+|                      | for the current .      |                                          |
+|                      | request                | ``My\Application\AdministrationArea\.*`` |
 +----------------------+------------------------+------------------------------------------+
 
 Authentication entry points
@@ -520,27 +520,27 @@ example, that redirects to a login page (Using the ``WebRedirect`` entry point).
 :title:`Available authentication entry points`
 
 +--------------+---------------------------+---------------------------------------------+
-+ Entry Point  + Description               + Configuration options                       +
+| Entry Point  | Description               | Configuration options                       |
 +==============+===========================+=============================================+
-+ WebRedirect  + Triggers an HTTP redirect + Expects an associative array with           +
-+              + to a given uri or action. + either an entry ``uri`` (obsolete, see Note +
-+              +                           + above), or an array ``routeValues``; for    +
-+              +                           + example::                                   +
-+              +                           +                                             +
-+              +                           +   uri: login/                               +
-+              +                           +                                             +
-+              +                           + or ::                                       +
-+              +                           +                                             +
-+              +                           +   routeValues:                              +
-+              +                           +     '@package': 'Your.Package'              +
-+              +                           +     '@controller': 'Authenticate'           +
-+              +                           +     '@action': 'login'                      +
+| WebRedirect  | Triggers an HTTP redirect | Expects an associative array with           |
+|              | to a given uri or action. | either an entry ``uri`` (obsolete, see Note |
+|              |                           | above), or an array ``routeValues``; for    |
+|              |                           | example::                                   |
+|              |                           |                                             |
+|              |                           |   uri: login/                               |
+|              |                           |                                             |
+|              |                           | or ::                                       |
+|              |                           |                                             |
+|              |                           |   routeValues:                              |
+|              |                           |     '@package': 'Your.Package'              |
+|              |                           |     '@controller': 'Authenticate'           |
+|              |                           |     '@action': 'login'                      |
 +--------------+---------------------------+---------------------------------------------+
-+ HttpBasic    + Adds a WWW-Authenticate   + Optionally takes an option realm, which     +
-+              + header to the response,   + will be displayed in the authentication     +
-+              + which will trigger the    + prompt.                                     +
-+              + browsers authentication   +                                             +
-+              + form.                     +                                             +
+| HttpBasic    | Adds a WWW-Authenticate   | Optionally takes an option realm, which     |
+|              | header to the response,   | will be displayed in the authentication     |
+|              | which will trigger the    | prompt.                                     |
+|              | browsers authentication   |                                             |
+|              | form.                     |                                             |
 +--------------+---------------------------+---------------------------------------------+
 
 .. _Authentication mechanisms shipped with TYPO3 Flow:
@@ -808,14 +808,14 @@ available interceptors, shipped with TYPO3 Flow:
 :title:`TYPO3 Flow's built-in security interceptors`
 
 +-----------------------+---------------------------------------+
-+ Security interceptor  + Invocation action                     +
+| Security interceptor  | Invocation action                     |
 +=======================+=======================================+
-+ PolicyEnforcement     + Triggers the authorization process as +
-+                       + described one section above.          +
+| PolicyEnforcement     | Triggers the authorization process as |
+|                       | described one section above.          |
 +-----------------------+---------------------------------------+
-+ RequireAuthentication + Calls the authentication manager to   +
-+                       + authenticate all active tokens for    +
-+                       + the current request.                  +
+| RequireAuthentication | Calls the authentication manager to   |
+|                       | authenticate all active tokens for    |
+|                       | the current request.                  |
 +-----------------------+---------------------------------------+
 
 Of course you are able to configure as many request filters as

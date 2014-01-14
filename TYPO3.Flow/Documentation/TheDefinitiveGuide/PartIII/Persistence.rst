@@ -334,41 +334,41 @@ with their name, scope and meaning:
 :title:`Persistence-related code annotations`
 
 +------------------+----------+----------------------------------------------------------+
-+ Annotation       + Scope    + Meaning                                                  +
+| Annotation       | Scope    | Meaning                                                  |
 +==================+==========+==========================================================+
-+ ``Entity``       + Class    + Declares a class as an Entity.                           +
+| ``Entity``       | Class    | Declares a class as an Entity.                           |
 +------------------+----------+----------------------------------------------------------+
-+ ``ValueObject``  + Class    + Declares a class as a Value Object, allowing the         +
-+                  +          + persistence framework to reuse an existing object if one +
-+                  +          + exists.                                                  +
+| ``ValueObject``  | Class    | Declares a class as a Value Object, allowing the         |
+|                  |          | persistence framework to reuse an existing object if one |
+|                  |          | exists.                                                  |
 +------------------+----------+----------------------------------------------------------+
-+ ``Column``       + Variable + Allows to take influence on the column actually          +
-+                  +          + generated for this property in the database.             +
-+                  +          + Particularly useful with string properties to limit the  +
-+                  +          + space used or to enable storage of more than 255         +
-+                  +          + characters.                                              +
+| ``Column``       | Variable | Allows to take influence on the column actually          |
+|                  |          | generated for this property in the database.             |
+|                  |          | Particularly useful with string properties to limit the  |
+|                  |          | space used or to enable storage of more than 255         |
+|                  |          | characters.                                              |
 +------------------+----------+----------------------------------------------------------+
-+ ``ManyToOne``,   + Variable + Defines the type of object associations, refer to the    +
-+ ``OneToMany``,   +          + Doctrine 2 documentation for details. The most obvious   +
-+ ``ManyToMany``,  +          + difference to plain Doctrine 2 is that the               +
-+ ``OneToOne``     +          + ``targetEntity`` parameter can be omitted, it is taken   +
-+                  +          + from the ``@var`` annotation.                            +
-+                  +          +                                                          +
-+                  +          + The ``cascade`` attribute is set to cascade all          +
-+                  +          + operations on associations within aggregate boundaries.  +
-+                  +          + In that case orphanRemoval is turned on as well.         +
+| ``ManyToOne``,   | Variable | Defines the type of object associations, refer to the    |
+| ``OneToMany``,   |          | Doctrine 2 documentation for details. The most obvious   |
+| ``ManyToMany``,  |          | difference to plain Doctrine 2 is that the               |
+| ``OneToOne``     |          | ``targetEntity`` parameter can be omitted, it is taken   |
+|                  |          | from the ``@var`` annotation.                            |
+|                  |          |                                                          |
+|                  |          | The ``cascade`` attribute is set to cascade all          |
+|                  |          | operations on associations within aggregate boundaries.  |
+|                  |          | In that case orphanRemoval is turned on as well.         |
 +------------------+----------+----------------------------------------------------------+
-+ ``@var``         + Variable + Is used to detect the type a variable has. For           +
-+                  +          + collections, the type is given in angle brackets.        +
+| ``@var``         | Variable | Is used to detect the type a variable has. For           |
+|                  |          | collections, the type is given in angle brackets.        |
 +------------------+----------+----------------------------------------------------------+
-+ ``Transient``    + Variable + Makes the persistence framework ignore the variable.     +
-+                  +          + Neither will it's value be persisted, nor will it be     +
-+                  +          + touched during reconstitution.                           +
+| ``Transient``    | Variable | Makes the persistence framework ignore the variable.     |
+|                  |          | Neither will it's value be persisted, nor will it be     |
+|                  |          | touched during reconstitution.                           |
 +------------------+----------+----------------------------------------------------------+
-+ ``Identity``     + Variable + Marks the variable as being relevant for determining     +
-+                  +          + the identity of an object in the domain. For all class   +
-+                  +          + properties marked with this, a (compound) unique index   +
-+                  +          + will be created in the database.                         +
+| ``Identity``     | Variable | Marks the variable as being relevant for determining     |
+|                  |          | the identity of an object in the domain. For all class   |
+|                  |          | properties marked with this, a (compound) unique index   |
+|                  |          | will be created in the database.                         |
 +------------------+----------+----------------------------------------------------------+
 
 Doctrine supports many more annotations, for a full reference please consult the Doctrine
@@ -967,28 +967,28 @@ scope and meaning:
 :title:`Persistence-related code annotations`
 
 +------------------+----------+----------------------------------------------------------+
-+ Annotation       + Scope    + Meaning                                                  +
+| Annotation       | Scope    | Meaning                                                  |
 +==================+==========+==========================================================+
-+ ``Entity``       + Class    + Declares a class as an Entity.                           +
+| ``Entity``       | Class    | Declares a class as an Entity.                           |
 +------------------+----------+----------------------------------------------------------+
-+ ``ValueObject``  + Class    + Declares a class as a Value Object, allowing the         +
-+                  +          + persistence framework to reuse an existing object if one +
-+                  +          + exists.                                                  +
+| ``ValueObject``  | Class    | Declares a class as a Value Object, allowing the         |
+|                  |          | persistence framework to reuse an existing object if one |
+|                  |          | exists.                                                  |
 +------------------+----------+----------------------------------------------------------+
-+ ``@var``         + Variable + Is used to detect the type a variable has.               +
+| ``@var``         | Variable | Is used to detect the type a variable has.               |
 +------------------+----------+----------------------------------------------------------+
-+ ``Transient``    + Variable + Makes the persistence framework ignore the variable.     +
-+                  +          + Neither will it's value be persisted, nor will it be     +
-+                  +          + touched during reconstitution.                           +
+| ``Transient``    | Variable | Makes the persistence framework ignore the variable.     |
+|                  |          | Neither will it's value be persisted, nor will it be     |
+|                  |          | touched during reconstitution.                           |
 +------------------+----------+----------------------------------------------------------+
-+ ``Identity``     + Variable + Marks the variable as being relevant for determining     +
-+                  +          + the identity of an object in the domain.                 +
+| ``Identity``     | Variable | Marks the variable as being relevant for determining     |
+|                  |          | the identity of an object in the domain.                 |
 +------------------+----------+----------------------------------------------------------+
-+ ``Lazy``         + Class,   + When reconstituting the value of this property will be   +
-+                  + Variable + loaded only when the property is used. Note: This is only+
-+                  +          + supported for properties of type ``\SplObjectStorage``   +
-+                  +          + and objects (marked with ``Lazy`` in their source code,  +
-+                  +          + see below).                                              +
+| ``Lazy``         | Class,   | When reconstituting the value of this property will be   |
+|                  | Variable | loaded only when the property is used. Note: This is only|
+|                  |          | supported for properties of type ``\SplObjectStorage``   |
+|                  |          | and objects (marked with ``Lazy`` in their source code,  |
+|                  |          | see below).                                              |
 +------------------+----------+----------------------------------------------------------+
 
 Enabling Lazy Loading
@@ -1009,23 +1009,23 @@ for that object and the object properties will be thawed when the object is actu
 :title:`How @lazy annotations interact`
 
 +-----------+-----------+----------------------------------------------------------------+
-+ Class     + Property  + Effect                                                         +
+| Class     | Property  | Effect                                                         |
 +===========+===========+================================================================+
-+ ``Lazy``  + ``Lazy``  + The class' instances will be lazy loadable, and properties of  +
-+           +           + that type will be populated with a lazy loading proxy.         +
+| ``Lazy``  | ``Lazy``  | The class' instances will be lazy loadable, and properties of  |
+|           |           | that type will be populated with a lazy loading proxy.         |
 +-----------+-----------+----------------------------------------------------------------+
-+ ``Lazy``  + *none*    + The class' instances will be lazy loadable, but that           +
-+           +           + possibility will not be used.                                  +
+| ``Lazy``  | *none*    | The class' instances will be lazy loadable, but that           |
+|           |           | possibility will not be used.                                  |
 +-----------+-----------+----------------------------------------------------------------+
-+ *none*    + ``Lazy``  + ``\SplObjectStorage`` will be reconstituted as a lazy loading  +
-+           +           + proxy, for other types nothing happens.                        +
-+           +           +                                                                +
-+           +           + Properties of type ``\SplObjectStorage`` can always be         +
-+           +           + lazy-loaded by adding the ``Lazy`` annotation on the property  +
-+           +           + only.                                                          +
-+           +           +                                                                +
-+           +           + How and if lazy-loading is handled by alternative backends is  +
-+           +           + up to the implementation.                                      +
+| *none*    | ``Lazy``  | ``\SplObjectStorage`` will be reconstituted as a lazy loading  |
+|           |           | proxy, for other types nothing happens.                        |
+|           |           |                                                                |
+|           |           | Properties of type ``\SplObjectStorage`` can always be         |
+|           |           | lazy-loaded by adding the ``Lazy`` annotation on the property  |
+|           |           | only.                                                          |
+|           |           |                                                                |
+|           |           | How and if lazy-loading is handled by alternative backends is  |
+|           |           | up to the implementation.                                      |
 +-----------+-----------+----------------------------------------------------------------+
 
 Schema management
