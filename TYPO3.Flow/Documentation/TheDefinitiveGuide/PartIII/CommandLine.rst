@@ -368,17 +368,17 @@ A limited number of tags are supported for brushing up the output in
 OUTPUTFORMAT_STYLED mode. They have the following meaning:
 
 +------------------------+---------------------------------------------------------------------------+
-+ Tag                    + Meaning                                                                   +
+| Tag                    | Meaning                                                                   |
 +========================+===========================================================================+
-+ ``<b>…</b>``           + Render the text in a bold / bright style                                  +
+| ``<b>…</b>``           | Render the text in a bold / bright style                                  |
 +------------------------+---------------------------------------------------------------------------+
-+ ``<i>…</i>``           + Render the text in a italics                                              +
+| ``<i>…</i>``           | Render the text in a italics                                              |
 +------------------------+---------------------------------------------------------------------------+
-+ ``<u>…</u>``           + Underline the given text                                                  +
+| ``<u>…</u>``           | Underline the given text                                                  |
 +------------------------+---------------------------------------------------------------------------+
-+ ``<em>…</em>``         + Emphasize the text, usually by inverting foreground and background colors +
+| ``<em>…</em>``         | Emphasize the text, usually by inverting foreground and background colors |
 +------------------------+---------------------------------------------------------------------------+
-+ ``<strike>…</strike>`` + Display the text struck through                                           +
+| ``<strike>…</strike>`` | Display the text struck through                                           |
 +------------------------+---------------------------------------------------------------------------+
 
 The respective styles are only rendered correctly if the console

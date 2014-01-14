@@ -51,18 +51,18 @@ Object Scopes
 Objects live in a specific scope. The most commonly used are *prototype* and *singleton*:
 
 +---------------------+------------------------------------------------------------------+
-+ Scope               + Description                                                      +
+| Scope               | Description                                                      |
 +=====================+==================================================================+
-+ singleton           + The object instance is unique during one request - each          +
-+                     + injection by the Object Manager or explicit call of              +
-+                     + ``get()`` returns the same instance. A request can be an         +
-+                     + HTTP request or a run initiated from the command line.           +
+| singleton           | The object instance is unique during one request - each          |
+|                     | injection by the Object Manager or explicit call of              |
+|                     | ``get()`` returns the same instance. A request can be an         |
+|                     | HTTP request or a run initiated from the command line.           |
 +---------------------+------------------------------------------------------------------+
-+ prototype (default) + The object instance is not unique - each injection or call of    +
-+                     + the Object Factory's ``create`` method returns a fresh instance. +
+| prototype (default) | The object instance is not unique - each injection or call of    |
+|                     | the Object Factory's ``create`` method returns a fresh instance. |
 +---------------------+------------------------------------------------------------------+
-+ session             + The object instance is unique during the whole user session -    +
-+                     + each injection or ``get()`` call returns the same instance.      +
+| session             | The object instance is unique during the whole user session -    |
+|                     | each injection or ``get()`` call returns the same instance.      |
 +---------------------+------------------------------------------------------------------+
 
 
@@ -879,8 +879,8 @@ the class code of another object you might find the following lines.
 
 *Example: Using the Greeter object type* ::
 
-	   // Use setter injection for fetching an instance
-	   // of \MyCompany\MyPackage\GreeterInterface:
+	// Use setter injection for fetching an instance
+	// of \MyCompany\MyPackage\GreeterInterface:
 	public function injectGreeter(\MyCompany\MyPackage\GreeterInterface $greeter) {
 		$this->greeter = $greeter;
 	}
