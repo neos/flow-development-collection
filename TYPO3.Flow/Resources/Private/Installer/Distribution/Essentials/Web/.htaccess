@@ -35,7 +35,7 @@
 	RewriteRule .* - [L]
 
 	# Perform rewriting of persistent private resources
-	RewriteRule ^(_Resources/Persistent/[a-z0-9]+/(.+/)?[a-f0-9]{40})/.+(\..+) $1$3 [L]
+	RewriteRule ^(_Resources/Persistent/[a-zA-Z0-9]+/(.+/)?[a-f0-9]{40})/.+(\..+) $1$3 [L]
 
 	# Perform rewriting of persistent resource files
 	RewriteRule ^(_Resources/Persistent/.{40})/.+(\..+) $1$2 [L]
