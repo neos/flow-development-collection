@@ -9,3 +9,6 @@ properties:
   'inactiveByDefault':
     type: array
     items: { type: string }
+  'packagesPathByType':
+    type: dictionary
+    additionalProperties: { type: string }
