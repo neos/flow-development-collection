@@ -257,12 +257,12 @@ Common Options
 :title:`Common cache backend options`
 
 +-----------------+--------------------------------------+-----------+---------+---------+
-+ Options         + Description                          + Mandatory + Type    + Default +
+| Options         | Description                          | Mandatory | Type    | Default |
 +=================+======================================+===========+=========+=========+
-+ defaultLifeTime + Default lifetime in seconds of a     + No        + integer + 3600    +
-+                 + cache entry if it is                 +           +         +         +
-+                 + not specified for a specific entry   +           +         +         +
-+                 + on set()                             +           +         +         +
+| defaultLifeTime | Default lifetime in seconds of a     | No        | integer | 3600    |
+|                 | cache entry if it is                 |           |         |         |
+|                 | not specified for a specific entry   |           |         |         |
+|                 | on set()                             |           |         |         |
 +-----------------+--------------------------------------+-----------+---------+---------+
 
 TYPO3\\Flow\\Cache\\Backend\\FileBackend
@@ -316,22 +316,22 @@ Options
 ~~~~~~~
 
 +----------------+----------------------------------------+-----------+--------+---------+
-+ Option         + Description                            + Mandatory + Type   + Default +
+| Option         | Description                            | Mandatory | Type   | Default |
 +================+========================================+===========+========+=========+
-+ dataSourceName + Data source name for connecting to the + Yes       + string +         +
-+                + database.                              +           +        +         +
-+                +                                        +           +        +         +
-+                + :title:`Examples:`                     +           +        +         +
-+                +                                        +           +        +         +
-+                + * mysql:host=localhost;dbname=test     +           +        +         +
-+                + * sqlite:/path/to/sqlite.db            +           +        +         +
-+                + * sqlite::memory:                      +           +        +         +
+| dataSourceName | Data source name for connecting to the | Yes       | string |         |
+|                | database.                              |           |        |         |
+|                |                                        |           |        |         |
+|                | :title:`Examples:`                     |           |        |         |
+|                |                                        |           |        |         |
+|                | * mysql:host=localhost;dbname=test     |           |        |         |
+|                | * sqlite:/path/to/sqlite.db            |           |        |         |
+|                | * sqlite::memory:                      |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
-+ username       + Username to use for the database       + No        +        +         +
-+                + connection                             +           +        +         +
+| username       | Username to use for the database       | No        |        |         |
+|                | connection                             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
-+ password       + Password to use for the database       + No        +        +         +
-+                + connection                             +           +        +         +
+| password       | Password to use for the database       | No        |        |         |
+|                | connection                             |           |        |         |
 +----------------+----------------------------------------+-----------+--------+---------+
 
 TYPO3\\Flow\\Cache\\Backend\\RedisBackend
@@ -375,36 +375,35 @@ system. It is recommended to build this from the git repository. Currently redis
 Options
 ~~~~~~~
 +------------------+---------------------------------+-----------+-----------+-----------+
-+ Option           + Description                     + Mandatory + Type      + Default   +
+| Option           | Description                     | Mandatory | Type      | Default   |
 +==================+=================================+===========+===========+===========+
+| host             | IP address or name of redis     | No        | string    | 127.0.0.1 |
+|                  | server to connect to            |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
-+ host             + IP address or name of redis     + No        + string    + 127.0.0.1 +
-+                  + server to connect to            +           +           +           +
+| port             | Port of the Redis server.       | Yes       | integer   | 6379      |
 +------------------+---------------------------------+-----------+-----------+-----------+
-+ port             + Port of the Redis server.       + Yes       + integer   + 6379      +
+| database         | Number of the database to store | No        | integer   | 0         |
+|                  | entries. Each cache should use  |           |           |           |
+|                  | its own database, otherwise all |           |           |           |
+|                  | caches sharing a database are   |           |           |           |
+|                  | flushed if the flush operation  |           |           |           |
+|                  | is issued to one of them.       |           |           |           |
+|                  | Database numbers 0 and 1 are    |           |           |           |
+|                  | used and flushed by the core    |           |           |           |
+|                  | unit tests and should not be    |           |           |           |
+|                  | used if possible.               |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
-+ database         + Number of the database to store + No        + integer   + 0         +
-+                  + entries. Each cache should use  +           +           +           +
-+                  + its own database, otherwise all +           +           +           +
-+                  + caches sharing a database are   +           +           +           +
-+                  + flushed if the flush operation  +           +           +           +
-+                  + is issued to one of them.       +           +           +           +
-+                  + Database numbers 0 and 1 are    +           +           +           +
-+                  + used and flushed by the core    +           +           +           +
-+                  + unit tests and should not be    +           +           +           +
-+                  + used if possible.               +           +           +           +
+| password         | Password used to connect to the | No        | string    |           |
+|                  | redis instance if the redis     |           |           |           |
+|                  | server needs authentication.    |           |           |           |
+|                  | Warning: The password is sent   |           |           |           |
+|                  | to the redis server in plain    |           |           |           |
+|                  | text.                           |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
-+ password         + Password used to connect to the + No        + string    +           +
-+                  + redis instance if the redis     +           +           +           +
-+                  + server needs authentication.    +           +           +           +
-+                  + Warning: The password is sent   +           +           +           +
-+                  + to the redis server in plain    +           +           +           +
-+                  + text.                           +           +           +           +
-+------------------+---------------------------------+-----------+-----------+-----------+
-+ compressionLevel + Set gzip compression level to a + No        + integer   + -1        +
-+                  + specific value. The default     +           + (-1 to 9) +           +
-+                  + compression level is usually    +           +           +           +
-+                  + sufficient.                     +           +           +           +
+| compressionLevel | Set gzip compression level to a | No        | integer   | -1        |
+|                  | specific value. The default     |           | (-1 to 9) |           |
+|                  | compression level is usually    |           |           |           |
+|                  | sufficient.                     |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
 TYPO3\\Flow\\Cache\\Backend\\MemcachedBackend
@@ -463,33 +462,33 @@ all.
 Options
 ~~~~~~~
 +-------------+------------------------------------------+-----------+---------+---------+
-+ Option      + Description                              + Mandatory + Type    + Default +
+| Option      | Description                              | Mandatory | Type    | Default |
 +=============+==========================================+===========+=========+=========+
-+ servers     + Array of used memcached servers, at      + Yes       + array   +         +
-+             +                                          +           +         +         +
-+             + least one server must be defined. Each   +           +         +         +
-+             + server definition is a string, allowed   +           +         +         +
-+             + syntaxes:                                +           +         +         +
-+             +                                          +           +         +         +
-+             + * **host**                               +           +         +         +
-+             +     TCP connect to host on memcached     +           +         +         +
-+             +     default port (usually 11211, defined +           +         +         +
-+             +     by PHP ini                           +           +         +         +
-+             +     variable memcache.default_port       +           +         +         +
-+             + * **host:port**                          +           +         +         +
-+             +     TCP connect to host on port          +           +         +         +
-+             + * **tcp://hostname:port**                +           +         +         +
-+             +     Same as above                        +           +         +         +
-+             + * **unix:///path/to/memcached.sock**     +           +         +         +
-+             +     Connect to memcached server using    +           +         +         +
-+             +     unix sockets                         +           +         +         +
+| servers     | Array of used memcached servers, at      | Yes       | array   |         |
+|             |                                          |           |         |         |
+|             | least one server must be defined. Each   |           |         |         |
+|             | server definition is a string, allowed   |           |         |         |
+|             | syntaxes:                                |           |         |         |
+|             |                                          |           |         |         |
+|             | * **host**                               |           |         |         |
+|             |     TCP connect to host on memcached     |           |         |         |
+|             |     default port (usually 11211, defined |           |         |         |
+|             |     by PHP ini                           |           |         |         |
+|             |     variable memcache.default_port       |           |         |         |
+|             | * **host:port**                          |           |         |         |
+|             |     TCP connect to host on port          |           |         |         |
+|             | * **tcp://hostname:port**                |           |         |         |
+|             |     Same as above                        |           |         |         |
+|             | * **unix:///path/to/memcached.sock**     |           |         |         |
+|             |     Connect to memcached server using    |           |         |         |
+|             |     unix sockets                         |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
-+ compression + Enable memcached internal data           + No        + boolean + FALSE   +
-+             + compression. Can be used to reduce       +           +         +         +
-+             + memcached memory consumption but adds    +           +         +         +
-+             + additional compression / decompression   +           +         +         +
-+             + CPU overhead on the according memcached  +           +         +         +
-+             + servers.                                 +           +         +         +
+| compression | Enable memcached internal data           | No        | boolean | FALSE   |
+|             | compression. Can be used to reduce       |           |         |         |
+|             | memcached memory consumption but adds    |           |         |         |
+|             | additional compression / decompression   |           |         |         |
+|             | CPU overhead on the according memcached  |           |         |         |
+|             | servers.                                 |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
 
 TYPO3\\Flow\\Cache\\Backend\\ApcBackend
