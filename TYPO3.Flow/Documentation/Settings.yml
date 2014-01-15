@@ -1,7 +1,8 @@
 conf.py:
   copyright: '2006-2014, respective authors'
   project: 'TYPO3 Flow'
-  version: '2.2-dev'
+  version: 'master'
+  release: 'master'
   latex_documents:
   - - Index
     - typo3.flow.tex
