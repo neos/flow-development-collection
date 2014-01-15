@@ -83,7 +83,7 @@ defined in their own dedicated file:
 
 ``Views.yaml``
   Contains configurations for Views, for example the lookup paths for templates.
-  See the :ref:`_ch-model-view-controller` chapter for details.
+  See the :ref:`ch-model-view-controller` chapter for details.
 
 Defining Configuration
 ======================
@@ -430,16 +430,6 @@ See the command help for details on how to use the validation.
 Writing Schemata
 ----------------
 
-.. warning::
-
- While the `configuration:validate` command will stay like it is, the inner workings
- of the schema validation are still subject to change. The location of schema files
- and the syntax might be adjusted in the future, as we (and you) gather real-world
- experience with this.
-
- With that out of the way: feel free to create custom schemata and let us know
- of any issues you find or suggestion you have!
-
 The schema format is adapted from the `JSON Schema standard <http://json-schema.org>`_;
 currently the Parts 5.1 to 5.25 of the json-schema specification are implemented,
 with the following deviations from the specification:
@@ -452,6 +442,17 @@ with the following deviations from the specification:
 * The "dependencies" constraint of the spec is not implemented.
 * Similar to "patternProperties" "formatProperties" can be specified specified
   for dictionaries
+
+.. warning::
+
+ While the `configuration:validate` command will stay like it is, the inner workings
+ of the schema validation are still subject to change. The location of schema files
+ and the syntax might be adjusted in the future, as we (and you) gather real-world
+ experience with this.
+
+ With that out of the way: feel free to create custom schemata and let us know
+ of any issues you find or suggestion you have!
+
 
 The schemas are searched in the path *Resources/Private/Schema* of all active
 Packages. The schema-filenames must match the pattern

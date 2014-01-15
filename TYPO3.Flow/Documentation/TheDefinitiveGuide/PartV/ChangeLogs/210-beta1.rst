@@ -710,7 +710,7 @@ behavior, it just adds some additional methods to the PackageManager.
 [BUGFIX] FileBasedSimpleKeyProvider has to authenticate an account with roles
 -----------------------------------------------------------------------------------------
 
-To be able to use real role based authorization with the 
+To be able to use real role based authorization with the
 FileBasedSimpleKeyProvider, we have to authenticate an
 account which holds existing roles.
 
@@ -1584,7 +1584,7 @@ is fixed with this change.
 [BUGFIX] remove obsolete PackageManagerControllerTest
 -----------------------------------------------------------------------------------------
 
-… the original has been removed at I3f7e287d4dca234f77a727ec113960b3fd215b33 
+… the original has been removed at I3f7e287d4dca234f77a727ec113960b3fd215b33
 -- breaking the unit tests
 
 * Commit: `2ac620e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2ac620e6e10f1cef33d7d3eda66ffdfaaf24f30b>`_
@@ -2876,10 +2876,10 @@ This change adjusts the tests accordingly.
 -----------------------------------------------------------------------------------------
 
 * Add new trans-unit id and new target-language fr translation
-for ValidationErrors.xlf
+  for ValidationErrors.xlf
 
 * Add new file and new target-language fr for translation
-for Main.xlf
+  for Main.xlf
 
 * Resolves: `#45279 <http://forge.typo3.org/issues/45279>`_
 * Commit: `f35d572 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f35d572f2462377403090835a52091bc6a67ed36>`_
@@ -2911,22 +2911,22 @@ The syntax is the same as before with two additions:
     a different file than the default ``Routes.yaml``
 2. You can set ``variables`` that will be replaced in the merged SubRoutes
 
-Usage:
+Usage::
 
--
-  name: 'Product'
-  uriPattern: 'products/<EntitySubroutes>'
-  defaults:
-    '@package':    'My.Package'
-    '@controller': 'Product'
-  subRoutes:
-    'EntitySubroutes':
-      package: 'MyPackage.RestTest'
-       # load SubRoutes from My.Package/Configuration/Routes.Entity.yaml
-      suffix:  'Entity'
-       # replace placeholder "<entityName>" with "product":
-      variables:
-        'entityName': 'product'
+  -
+    name: 'Product'
+    uriPattern: 'products/<EntitySubroutes>'
+    defaults:
+      '@package':    'My.Package'
+      '@controller': 'Product'
+    subRoutes:
+      'EntitySubroutes':
+        package: 'MyPackage.RestTest'
+         # load SubRoutes from My.Package/Configuration/Routes.Entity.yaml
+        suffix:  'Entity'
+         # replace placeholder "<entityName>" with "product":
+        variables:
+          'entityName': 'product'
 
 * Resolves: `#43966 <http://forge.typo3.org/issues/43966>`_
 * Commit: `15788c4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/15788c42ed75d02ed48f277a58fb8f4748ff3677>`_
@@ -3919,12 +3919,12 @@ Simple view helper that allows you to render content depending
 on a given value or expression.
 It bahaves similar to a basic switch statement in PHP.
 
-Usage:
+Usage::
 
-<f:switch expression="{person.gender}">
-  <f:case case="male">Mr.</f:case>
-  <f:case case="female">Mrs.</f:case>
-</f:switch>
+  <f:switch expression="{person.gender}">
+    <f:case case="male">Mr.</f:case>
+    <f:case case="female">Mrs.</f:case>
+  </f:switch>
 
 * Resolves: `#33817 <http://forge.typo3.org/issues/33817>`_
 * Commit: `4fd6714 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/4fd6714dd228e34fe2603dd1920ea2684c602eef>`_
@@ -3954,6 +3954,7 @@ declared in the class.
 
 With I9d667aa451a7510cf12ab13be745fed1f7ca477e CSRF tokens
 are not added to URIs any longer.
+
 Therefore you need to add the token yourself for "unsafe" requests
 (POST, PUT, DELETE, ...).
 
@@ -3961,12 +3962,12 @@ This is not true for fluid forms where the token is added automatically
 if the form does not have method="get" set
 (see Ic600a9e591d047ca9bbd39d352c4f337bcfaa6a9).
 
-For other forms or AJAX requests the ViewHelper can be used like this:
+For other forms or AJAX requests the ViewHelper can be used like this::
 
-<form action="<someAction>" method="post">
-  ...
-  <input type="hidden" name="__csrfToken" value="{f:security.csrfToken()}" />
-</form>
+  <form action="<someAction>" method="post">
+    ...
+    <input type="hidden" name="__csrfToken" value="{f:security.csrfToken()}" />
+  </form>
 
 * Related: `#47252 <http://forge.typo3.org/issues/47252>`_
 * Commit: `480bbef <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/480bbefbe7d77233e9e2df821b4a55d266b6665d>`_

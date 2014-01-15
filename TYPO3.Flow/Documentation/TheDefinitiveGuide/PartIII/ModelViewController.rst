@@ -1,4 +1,4 @@
-.. _ch-model-view-controller
+.. _ch-model-view-controller:
 
 Model View Controller
 =====================
@@ -612,7 +612,7 @@ Configuring Views through Views.yaml
 
 If you want to change Templates, Partials, Layouts or the whole ViewClass for
 a foreign package without modifying it directly, and thus breaking updatability,
-you can create a ``Views.yaml``in your configuration folder and override all options
+you can create a ``Views.yaml`` in your configuration folder and override all options
 the view supports.
 
 The general syntax of a view configuration looks like this:

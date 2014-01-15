@@ -315,6 +315,8 @@ to clean up hard disk space or memory.
 Options
 ~~~~~~~
 
+:title:`Pdo cache backend options`
+
 +----------------+----------------------------------------+-----------+--------+---------+
 | Option         | Description                            | Mandatory | Type   | Default |
 +================+========================================+===========+========+=========+
@@ -374,6 +376,9 @@ system. It is recommended to build this from the git repository. Currently redis
 
 Options
 ~~~~~~~
+
+:title:`Redis cache backend options`
+
 +------------------+---------------------------------+-----------+-----------+-----------+
 | Option           | Description                     | Mandatory | Type      | Default   |
 +==================+=================================+===========+===========+===========+
@@ -461,6 +466,9 @@ all.
 
 Options
 ~~~~~~~
+
+:title:`Memcached cache backend options`
+
 +-------------+------------------------------------------+-----------+---------+---------+
 | Option      | Description                              | Mandatory | Type    | Default |
 +=============+==========================================+===========+=========+=========+
@@ -581,7 +589,7 @@ Retrieve and Use a Cache
 ------------------------
 
 Using dependency injection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A cache is usually retrieved through dependency injection, either constructor or setter
 injection. Which is chosen depends on when you need the cache to be available. Keep in
