@@ -782,7 +782,7 @@ TYPO3.Party
 The usage property has no default value and thus should be
 nullable to make "any" usage possible.
 
-Adds a functional test (thanks Adrian Föder) as well.
+Adds a functional test (thanks Adrian Föder) as well.
 
 * Related: `#35059 <http://forge.typo3.org/issues/35059>`_
 * Commit: `735ccef <http://git.typo3.org/Flow/Packages/TYPO3.Party.git?a=commit;h=735ccefcaf41c46f60cc2327a7ca259e22f34d6b>`_

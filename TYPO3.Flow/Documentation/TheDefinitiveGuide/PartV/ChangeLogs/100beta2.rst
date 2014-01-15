@@ -179,7 +179,7 @@ of the method being in advice mode or not.
 [FEATURE] Serialization can handle entities in arrays
 -----------------------------------------------------------------------------------------
 
-* Authored on Tue Sep 6 16:17:17 2011 +0200 by Andreas Förthner
+* Authored on Tue Sep 6 16:17:17 2011 +0200 by Andreas Förthner
 * Committed on Thu Sep 8 14:20:54 2011 +0200 by Andreas Förthner
 * Commit: `2e39bf1 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=2e39bf1491f141ebe548a4db936a3733760d34ed>`_
 
@@ -193,7 +193,7 @@ of the method being in advice mode or not.
 [TASK] Arrays::setValueByPath works with \ArrayAccess
 -----------------------------------------------------------------------------------------
 
-* Authored on Wed May 25 17:29:09 2011 +0200 by Andreas Förthner
+* Authored on Wed May 25 17:29:09 2011 +0200 by Andreas Förthner
 * Committed on Thu Sep 8 14:19:59 2011 +0200 by Andreas Förthner
 * Commit: `5fdd10a <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=5fdd10aff7bcc561dcd8df94004299c41cb26dcc>`_
 
@@ -351,7 +351,7 @@ should work again.
 [TASK] Enable lazy loading for session entities
 -----------------------------------------------------------------------------------------
 
-* Authored on Fri Jun 17 09:55:13 2011 +0200 by Andreas Förthner
+* Authored on Fri Jun 17 09:55:13 2011 +0200 by Andreas Förthner
 * Committed on Tue Sep 6 11:23:04 2011 +0200 by Andreas Förthner
 * Commit: `6c490de <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=6c490dec7bdd261a867dabd58bf855bebdbb25b4>`_
 
@@ -370,7 +370,7 @@ to serializing the original entities.
 [FEATURE] Make lazy loading possible for getObjectByIdentifier
 -----------------------------------------------------------------------------------------
 
-* Authored on Fri Jun 17 09:54:04 2011 +0200 by Andreas Förthner
+* Authored on Fri Jun 17 09:54:04 2011 +0200 by Andreas Förthner
 * Committed on Tue Sep 6 11:22:53 2011 +0200 by Andreas Förthner
 * Commit: `ba3a473 <http://git.typo3.org/Flow/Packages/TYPO3.Flow.git?a=commit;h=ba3a4738cc1dad2b2fef2e17cc5e097834e650e0>`_
 
