@@ -13,33 +13,50 @@ TYPO3 Flow Documentation
 	Help is always greatly appreciated, read :ref:`ch-contributing` to find out how
 	you can improve TYPO3 Flow.
 
-Quickstart
-----------
 
-Get a first overview and a working example within 15 minutes: :doc:`Quickstart
-<Quickstart/Index>`
+.. only:: html
+
+	Quickstart
+	----------
+
+	Get a first overview and a working example within 15 minutes: :doc:`Quickstart <Quickstart/Index>`
+
+
+	The Definitive Guide
+	--------------------
+
+	The Hitchhiker's Guide to TYPO3 Flow and comprehensive almanac:
+
+	- :doc:`TheDefinitiveGuide/Index`
+
+	  - :doc:`TheDefinitiveGuide/PartI/Index`
+	  - :doc:`TheDefinitiveGuide/PartII/Index`
+	  - :doc:`TheDefinitiveGuide/PartIII/Index`
+	  - :doc:`TheDefinitiveGuide/PartIV/Index`
+	  - :doc:`TheDefinitiveGuide/PartV/Index`
+	  - :doc:`TheDefinitiveGuide/Contributors`
+
+
+	TYPO3 Publication Style Guide
+	-----------------------------
+
+	A style guide giving advice on how to write for the TYPO3 project:
+
+	- :doc:`StyleGuide/Index`
+
+	  - :doc:`StyleGuide/About`
+	  - :doc:`StyleGuide/StyleAndUsage`
+	  - :doc:`StyleGuide/FontConventions`
+
+	|
+
+	|
+
+	**Table of Contents**
 
 .. toctree::
-	:hidden:
+	:maxdepth: 2
 
 	Quickstart/Index
-
-The Definitive Guide
---------------------
-
-The Hitchhiker's Guide to TYPO3 Flow and comprehensive almanac:
-
-.. toctree::
-	:maxdepth: 2
-
 	TheDefinitiveGuide/Index
-
-TYPO3 Publication Style Guide
------------------------------
-
-A style guide giving advice on how to write for the TYPO3 project.
-
-.. toctree::
-	:maxdepth: 2
-
 	StyleGuide/Index
