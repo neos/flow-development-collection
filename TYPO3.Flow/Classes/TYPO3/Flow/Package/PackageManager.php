@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -199,12 +200,10 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 
 	/**
 	 * Finds a package by a given object of that package; if no such package
-	 * could be found, NULL is returned. This basically works with comparing the package class' location
-	 * against the given class' location. In order to not being satisfied with a shorter package's root path,
-	 * the packages to check are sorted by the length of their root path descending.
-	 *
-	 * Please note that the class itself must be existing anyways, else PHP's generic "class not found"
-	 * exception will be thrown.
+	 * could be found, NULL is returned. This basically works with comparing the package class' namespace
+	 * against the fully qualified class name of the given $object.
+	 * In order to not being satisfied with a shorter package's namespace, the packages to check are sorted
+	 * by the length of their namespace descending.
 	 *
 	 * @param object $object The object to find the possessing package of
 	 * @return \TYPO3\Flow\Package\PackageInterface The package the given object belongs to or NULL if it could not be found
@@ -212,16 +211,16 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	public function getPackageOfObject($object) {
 		$sortedAvailablePackages = $this->getAvailablePackages();
 		usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
-			return strlen($packageTwo->getPackagePath()) - strlen($packageOne->getPackagePath());
+			return strlen($packageTwo->getNamespace()) - strlen($packageOne->getNamespace());
 		});
 
-		$className = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService')->getClassNameByObject($object);
-		$reflectedClass = new \ReflectionClass($className);
-		$fileName = Files::getUnixStylePath($reflectedClass->getFileName());
+		/** @var $reflectionService ReflectionService */
+		$reflectionService = $this->bootstrap->getObjectManager()->get('TYPO3\Flow\Reflection\ReflectionService');
+		$className = $reflectionService->getClassNameByObject($object);
 
+		/** @var $package PackageInterface */
 		foreach ($sortedAvailablePackages as $package) {
-			$packagePath = Files::getUnixStylePath($package->getPackagePath());
-			if (strpos($fileName, $packagePath) === 0) {
+			if (strpos($className, $package->getNamespace()) === 0) {
 				return $package;
 			}
 		}
