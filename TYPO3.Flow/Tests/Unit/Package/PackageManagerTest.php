@@ -96,7 +96,7 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		eval('namespace Doctrine\ORM\Proxy; interface Proxy {}');
 		mkdir('vfs://Test/Somewhere/For/DoctrineProxies', 0700, TRUE);
-		$dummyProxyClassName = 'Proxy_' . get_class($dummyObject);
+		$dummyProxyClassName = 'Proxy_' . str_replace('\\', '_', get_class($dummyObject));
 		$dummyProxyClassPath = 'vfs://Test/Somewhere/For/DoctrineProxies/' . $dummyProxyClassName . '.php';
 		file_put_contents($dummyProxyClassPath, '<?php class ' . $dummyProxyClassName . ' extends ' . get_class($dummyObject) . ' implements \Doctrine\ORM\Proxy\Proxy {} ?>');
 		require $dummyProxyClassPath;
@@ -127,14 +127,15 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	protected function createDummyObjectForPackage(PackageInterface $package) {
 		$dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), TRUE));
+		$fullyQualifiedClassName = '\\' . $package->getNamespace() . '\\' . $dummyClassName;
 		$dummyClassFilePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
 			$package->getPackagePath(),
 			PackageInterface::DIRECTORY_CLASSES,
 			$dummyClassName . '.php'
 		));
-		file_put_contents($dummyClassFilePath, '<?php class ' . $dummyClassName . ' {} ?>');
+		file_put_contents($dummyClassFilePath, '<?php namespace ' . $package->getNamespace() . '; class ' . $dummyClassName . ' {}');
 		require $dummyClassFilePath;
-		return new $dummyClassName();
+		return new $fullyQualifiedClassName();
 	}
 
 	/**
