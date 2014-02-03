@@ -44,6 +44,14 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'@controller' => 'ActionControllerTestB',
 			'@format' =>'html'
 		));
+
+		$this->registerRoute('testc', 'test/mvc/actioncontrollertestc/{entity}', array(
+			'@package' => 'TYPO3.Flow',
+			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+			'@controller' => 'Entity',
+			'@action' => 'show',
+			'@format' =>'html'
+		));
 	}
 
 	/**
@@ -104,6 +112,19 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$response = $this->browser->sendRequest($request);
 		$this->assertEquals('putAction-first value-getValue', $response->getContent());
 	}
+
+	/**
+	 * RFC 2616 / 10.4.5 (404 Not Found)
+	 *
+	 * @test
+	 */
+	public function notFoundStatusIsReturnedIfASpecifiedObjectCantBeFound() {
+		$request = Request::create(new Uri('http://localhost/test/mvc/actioncontrollertestc/non-existing-id'), 'GET');
+
+		$response = $this->browser->sendRequest($request);
+		$this->assertSame(404, $response->getStatusCode());
+	}
+
 
 	/**
 	 * RFC 2616 / 10.4.7 (406 Not Acceptable)

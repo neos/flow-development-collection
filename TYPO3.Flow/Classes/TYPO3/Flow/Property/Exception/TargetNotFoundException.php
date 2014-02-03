@@ -18,4 +18,9 @@ namespace TYPO3\Flow\Property\Exception;
  */
 class TargetNotFoundException extends \TYPO3\Flow\Property\Exception {
 
+	/**
+	 * @var integer
+	 */
+	protected $statusCode = 404;
+
 }
