@@ -447,139 +447,334 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider packagesAndDependenciesOrder
+	 * @param array $packages
+	 * @param array $expectedPackageOrder
 	 */
-	public function getDependencyArrayForPackageReturnsCorrectResult() {
-		$mockFlowMetadata = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
-		$mockFlowMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
-			new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', 'TYPO3.Fluid'),
-			new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', 'Doctrine.ORM')
-		)));
-		$mockFlowPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockFlowPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockFlowMetadata));
-
-		$mockFluidMetadata = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
-		$mockFluidMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
-			new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', 'TYPO3.Flow')
-		)));
-		$mockFluidPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockFluidPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockFluidMetadata));
-
-		$mockOrmMetadata = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
-		$mockOrmMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
-			new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', 'Doctrine.DBAL')
-		)));
-		$mockOrmPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockOrmPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockOrmMetadata));
-
-		$mockDbalMetadata = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
-		$mockDbalMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
-			new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', 'Doctrine.Common')
-		)));
-		$mockDbalPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockDbalPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockDbalMetadata));
-
-		$mockCommonMetadata = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
-		$mockCommonMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array()));
-		$mockCommonPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
-		$mockCommonPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockCommonMetadata));
-
-		$packages = array(
-			'TYPO3.Flow' => $mockFlowPackage,
-			'TYPO3.Fluid' => $mockFluidPackage,
-			'Doctrine.ORM' => $mockOrmPackage,
-			'Doctrine.DBAL' => $mockDbalPackage,
-			'Doctrine.Common' => $mockCommonPackage
-		);
+	public function availablePackagesAreSortedAfterTheirDependencies($packages, $expectedPackageOrder) {
+		$unsortedPackages = array();
+		foreach ($packages as $packageKey => $package) {
+			$mockPackageConstraints = array();
+			foreach ($package['dependencies'] as $dependency) {
+				$mockPackageConstraints[] = new \TYPO3\Flow\Package\MetaData\PackageConstraint('depends', $dependency);
+			}
+			$mockMetaData = $this->getMock('TYPO3\Flow\Package\MetaDataInterface');
+			$mockMetaData->expects($this->any())->method('getConstraintsByType')->will($this->returnValue($mockPackageConstraints));
+			$mockPackage = $this->getMock('TYPO3\Flow\Package\PackageInterface');
+			$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue($packageKey));
+			$mockPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockMetaData));
+			$unsortedPackages[$packageKey] = $mockPackage;
+		}
 
 		$packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('dummy'));
-		$packageManager->_set('packages', $packages);
-		$dependencyArray = $packageManager->_call('getDependencyArrayForPackage', 'TYPO3.Flow');
-
-		$this->assertEquals(array('Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM', 'TYPO3.Fluid'), $dependencyArray);
-	}
-
-	/**
-	 * @test
-	 */
-	public function sortAvailablePackagesByDependenciesMakesSureThatDependantPackagesAreStandingBeforeAPackageInTheInternalPackagesAndPackagesConfigurationArrays() {
-		$doctrineCommon = $this->getMock('\TYPO3\Flow\Package\PackageInterface');
-		$doctrineCommon->expects($this->any())->method('getPackageKey')->will($this->returnValue('Doctrine.Common'));
-
-		$doctrineDbal = $this->getMock('\TYPO3\Flow\Package\PackageInterface');
-		$doctrineDbal->expects($this->any())->method('getPackageKey')->will($this->returnValue('Doctrine.DBAL'));
-
-		$doctrineOrm = $this->getMock('\TYPO3\Flow\Package\PackageInterface');
-		$doctrineOrm->expects($this->any())->method('getPackageKey')->will($this->returnValue('Doctrine.ORM'));
-
-		$typo3Flow = $this->getMock('\TYPO3\Flow\Package\PackageInterface');
-		$typo3Flow->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
-
-		$symfonyComponentYaml = $this->getMock('\TYPO3\Flow\Package\PackageInterface');
-		$symfonyComponentYaml->expects($this->any())->method('getPackageKey')->will($this->returnValue('Symfony.Component.Yaml'));
-
-		$unsortedPackageStatesConfiguration = array('packages' =>
-			array(
-				'Doctrine.ORM' => array(
-					'dependencies' => array('Doctrine.Common', 'Doctrine.DBAL')
-				),
-				'Symfony.Component.Yaml' => array(
-					'dependencies' => array()
-				),
-				'TYPO3.Flow' => array(
-					'dependencies' => array('Symfony.Component.Yaml', 'Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM')
-				),
-				'Doctrine.Common' => array(
-					'dependencies' => array()
-				),
-				'Doctrine.DBAL' => array(
-					'dependencies' => array('Doctrine.Common')
-				)
-			)
-		);
-
-		$unsortedPackages = array(
-			'Doctrine.ORM' => $doctrineOrm,
-			'Symfony.Component.Yaml' => $symfonyComponentYaml,
-			'TYPO3.Flow' => $typo3Flow,
-			'Doctrine.Common' => $doctrineCommon,
-			'Doctrine.DBAL' => $doctrineDbal
-		);
-
-		$packageManager = $this->getAccessibleMock('\TYPO3\Flow\Package\PackageManager', array('resolvePackageDependencies'));
 		$packageManager->_set('packages', $unsortedPackages);
-		$packageManager->_set('packageStatesConfiguration', $unsortedPackageStatesConfiguration);
+		$packageManager->_set('packageStatesConfiguration', array('packages' => $packages));
 		$packageManager->_call('sortAvailablePackagesByDependencies');
 
-		$expectedSortedPackageKeys = array(
-			'Doctrine.Common',
-			'Doctrine.DBAL',
-			'Doctrine.ORM',
-			'Symfony.Component.Yaml',
-			'TYPO3.Flow'
-		);
+		/*
+		// There are many "correct" orders of packages. A order is correct if all dependent
+		// packages are ordered before a given package (except for cyclic dependencies).
+		// The following can be used to check that order (but due to cyclic dependencies between
+		// e.g. Flow and Fluid this can not be asserted by default).
+		$newPackageOrder = array_keys($packageManager->_get('packages'));
+		foreach ($packages as $packageKey => $package) {
+			$packagePosition = array_search($packageKey, $newPackageOrder);
+			foreach ($package['dependencies'] as $dependency) {
+				$dependencyPosition = array_search($dependency, $newPackageOrder);
+				if ($dependencyPosition > $packagePosition) {
+					echo "$packageKey->$dependency";
+				}
+			}
+		}
+		*/
 
-		$expectedSortedPackageStatesConfiguration = array('packages' =>
+		$actualPackages = $packageManager->_get('packages');
+		$actualPackageStatesConfiguration = $packageManager->_get('packageStatesConfiguration');
+
+		$this->assertEquals($expectedPackageOrder, array_keys($actualPackages), 'The packages have not been ordered according to their dependencies!');
+		$this->assertEquals($expectedPackageOrder, array_keys($actualPackageStatesConfiguration['packages']), 'The package states configurations have not been ordered according to their dependencies!');
+	}
+
+	public function packagesAndDependenciesOrder() {
+		return array(
 			array(
-				'Doctrine.Common' => array(
-					'dependencies' => array()
+				array(
+					'Doctrine.ORM' => array(
+						'dependencies' => array('Doctrine.DBAL'),
+					),
+					'Symfony.Component.Yaml' => array(
+						'dependencies' => array(),
+					),
+					'TYPO3.Flow' => array(
+						'dependencies' => array('Symfony.Component.Yaml', 'Doctrine.ORM'),
+					),
+					'Doctrine.Common' => array(
+						'dependencies' => array(),
+					),
+					'Doctrine.DBAL' => array(
+						'dependencies' => array('Doctrine.Common'),
+					),
 				),
-				'Doctrine.DBAL' => array(
-					'dependencies' => array('Doctrine.Common')
+				array(
+					'Doctrine.Common',
+					'Doctrine.DBAL',
+					'Doctrine.ORM',
+					'Symfony.Component.Yaml',
+					'TYPO3.Flow'
 				),
-				'Doctrine.ORM' => array(
-					'dependencies' => array('Doctrine.Common', 'Doctrine.DBAL')
+			),
+			array(
+				array(
+					'TYPO3.NeosDemoTypo3Org' => array(
+						'dependencies' => array(
+							'TYPO3.Neos',
+						),
+					),
+					'Flowpack.Behat' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Imagine' => array(
+						'dependencies' => array(
+							'imagine.imagine',
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.TYPO3CR' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Neos' => array(
+						'dependencies' => array(
+							'TYPO3.TYPO3CR',
+							'TYPO3.Twitter.Bootstrap',
+							'TYPO3.Setup',
+							'TYPO3.TypoScript',
+							'TYPO3.Neos.NodeTypes',
+							'TYPO3.Media',
+							'TYPO3.ExtJS',
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Setup' => array(
+						'dependencies' => array(
+							'TYPO3.Twitter.Bootstrap',
+							'TYPO3.Form',
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Media' => array(
+						'dependencies' => array(
+							'imagine.imagine',
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.ExtJS' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Neos.NodeTypes' => array(
+						'dependencies' => array(
+							'TYPO3.TypoScript',
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.TypoScript' => array(
+						'dependencies' => array(
+							'TYPO3.Eel',
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Form' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Twitter.Bootstrap' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.SiteKickstarter' => array(
+						'dependencies' => array(
+							'TYPO3.Kickstart',
+							'TYPO3.Flow',
+						),
+					),
+					'imagine.imagine' => array(
+						'dependencies' => array(),
+					),
+					'mikey179.vfsStream' => array(
+						'dependencies' => array(),
+					),
+					'Composer.Installers' => array(
+						'dependencies' => array(),
+					),
+					'symfony.console' => array(
+						'dependencies' => array(),
+					),
+					'symfony.domcrawler' => array(
+						'dependencies' => array(),
+					),
+					'symfony.yaml' => array(
+						'dependencies' => array(),
+					),
+					'doctrine.annotations' => array(
+						'dependencies' => array(
+							0 => 'doctrine.lexer',
+						),
+					),
+					'doctrine.cache' => array(
+						'dependencies' => array(),
+					),
+					'doctrine.collections' => array(
+						'dependencies' => array(),
+					),
+					'Doctrine.Common' => array(
+						'dependencies' => array(
+							'doctrine.annotations',
+							'doctrine.lexer',
+							'doctrine.collections',
+							'doctrine.cache',
+							'doctrine.inflector',
+						),
+					),
+					'Doctrine.DBAL' => array(
+						'dependencies' => array(
+							'Doctrine.Common',
+						),
+					),
+					'doctrine.inflector' => array(
+						'dependencies' => array(),
+					),
+					'doctrine.lexer' => array(
+						'dependencies' => array(),
+					),
+					'doctrine.migrations' => array(
+						'dependencies' => array(
+							'Doctrine.DBAL',
+						),
+					),
+					'Doctrine.ORM' => array(
+						'dependencies' => array(
+							'symfony.console',
+							'Doctrine.DBAL',
+						),
+					),
+					'phpunit.phpcodecoverage' => array(
+						'dependencies' => array(
+							'phpunit.phptexttemplate',
+							'phpunit.phptokenstream',
+							'phpunit.phpfileiterator',
+						),
+					),
+					'phpunit.phpfileiterator' => array(
+						'dependencies' => array(),
+					),
+					'phpunit.phptexttemplate' => array(
+						'dependencies' => array(),
+					),
+					'phpunit.phptimer' => array(
+						'dependencies' => array(),
+					),
+					'phpunit.phptokenstream' => array(
+						'dependencies' => array(),
+					),
+					'phpunit.phpunitmockobjects' => array(
+						'dependencies' => array(
+							'phpunit.phptexttemplate',
+						),
+					),
+					'phpunit.phpunit' => array(
+						'dependencies' => array(
+							'symfony.yaml',
+							'phpunit.phpunitmockobjects',
+							'phpunit.phptimer',
+							'phpunit.phpcodecoverage',
+							'phpunit.phptexttemplate',
+							'phpunit.phpfileiterator',
+						),
+					),
+					'TYPO3.Party' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Flow' => array(
+						'dependencies' => array(
+							'Composer.Installers',
+							'symfony.domcrawler',
+							'symfony.yaml',
+							'doctrine.migrations',
+							'Doctrine.ORM',
+							'TYPO3.Eel',
+							'TYPO3.Party',
+							'TYPO3.Fluid',
+						),
+					),
+					'TYPO3.Eel' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Kickstart' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
+					'TYPO3.Fluid' => array(
+						'dependencies' => array(
+							'TYPO3.Flow',
+						),
+					),
 				),
-				'Symfony.Component.Yaml' => array(
-					'dependencies' => array()
+				array(
+					'Composer.Installers',
+					'symfony.domcrawler',
+					'symfony.yaml',
+					'doctrine.lexer',
+					'doctrine.annotations',
+					'doctrine.collections',
+					'doctrine.cache',
+					'doctrine.inflector',
+					'Doctrine.Common',
+					'Doctrine.DBAL',
+					'doctrine.migrations',
+					'symfony.console',
+					'Doctrine.ORM',
+					'TYPO3.Eel',
+					'TYPO3.Party',
+					'TYPO3.Fluid',
+					'TYPO3.Flow',
+					'TYPO3.TYPO3CR',
+					'TYPO3.Twitter.Bootstrap',
+					'TYPO3.Form',
+					'TYPO3.Setup',
+					'TYPO3.TypoScript',
+					'TYPO3.Neos.NodeTypes',
+					'imagine.imagine',
+					'TYPO3.Media',
+					'TYPO3.ExtJS',
+					'TYPO3.Neos',
+					'TYPO3.NeosDemoTypo3Org',
+					'Flowpack.Behat',
+					'TYPO3.Imagine',
+					'TYPO3.Kickstart',
+					'TYPO3.SiteKickstarter',
+					'mikey179.vfsStream',
+					'phpunit.phptexttemplate',
+					'phpunit.phptokenstream',
+					'phpunit.phpfileiterator',
+					'phpunit.phpcodecoverage',
+					'phpunit.phptimer',
+					'phpunit.phpunitmockobjects',
+					'phpunit.phpunit',
 				),
-				'TYPO3.Flow' => array(
-					'dependencies' => array('Symfony.Component.Yaml', 'Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM')
-				)
-			)
+			),
 		);
-
-		$this->assertEquals($expectedSortedPackageKeys, array_keys($packageManager->_get('packages')), 'The packages have not been ordered according to their dependencies!');
-		$this->assertEquals($expectedSortedPackageStatesConfiguration, $packageManager->_get('packageStatesConfiguration'), 'The package states configurations have not been ordered according to their dependencies!');
 	}
 
 	/**

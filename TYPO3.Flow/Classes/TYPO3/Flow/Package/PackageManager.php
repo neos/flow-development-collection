@@ -942,59 +942,8 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 		$fileDescription .= "# This file will be regenerated automatically if it doesn't exist. Deleting this file\n";
 		$fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
 
-		// we do not need the dependencies on disk...
-		foreach ($this->packageStatesConfiguration['packages'] as &$packageConfiguration) {
-			if (isset($packageConfiguration['dependencies'])) {
-				unset($packageConfiguration['dependencies']);
-			}
-		}
 		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . ';';
 		@file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
-	}
-
-	/**
-	 * Resolves the dependent packages from the meta data of all packages recursively. The
-	 * resolved direct or indirect dependencies of each package will put into the package
-	 * states configuration array.
-	 *
-	 * @return void
-	 */
-	protected function resolvePackageDependencies() {
-		foreach ($this->packages as $packageKey => $package) {
-			$this->packageStatesConfiguration['packages'][$packageKey]['dependencies'] = $this->getDependencyArrayForPackage($packageKey);
-		}
-	}
-
-	/**
-	 * Returns an array of dependent package keys for the given package. It will
-	 * do this recursively, so dependencies of dependant packages will also be
-	 * in the result.
-	 *
-	 * @param string $packageKey The package key to fetch the dependencies for
-	 * @param array $dependentPackageKeys
-	 * @param array $trace An array of already visited package keys, to detect circular dependencies
-	 * @return array|NULL An array of direct or indirect dependant packages
-	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidPackageKeyException
-	 */
-	protected function getDependencyArrayForPackage($packageKey, array &$dependentPackageKeys = array(), array $trace = array()) {
-		if (!isset($this->packages[$packageKey])) {
-			return NULL;
-		}
-		if (in_array($packageKey, $trace) !== FALSE) {
-			return $dependentPackageKeys;
-		}
-		$trace[] = $packageKey;
-		$dependentPackageConstraints = $this->packages[$packageKey]->getPackageMetaData()->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
-		foreach ($dependentPackageConstraints as $constraint) {
-			if ($constraint instanceof \TYPO3\Flow\Package\MetaData\PackageConstraint) {
-				$dependentPackageKey = $constraint->getValue();
-				if (in_array($dependentPackageKey, $dependentPackageKeys) === FALSE && in_array($dependentPackageKey, $trace) === FALSE) {
-					$dependentPackageKeys[] = $dependentPackageKey;
-				}
-				$this->getDependencyArrayForPackage($dependentPackageKey, $dependentPackageKeys, $trace);
-			}
-		}
-		return array_reverse($dependentPackageKeys);
 	}
 
 	/**
@@ -1005,33 +954,47 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @return void
 	 */
 	protected function sortAvailablePackagesByDependencies() {
-		$this->resolvePackageDependencies();
+		$sortedPackages = array();
+		$unsortedPackages = array_fill_keys(array_keys($this->packages), 0);
 
-		$packageStatesConfiguration = $this->packageStatesConfiguration['packages'];
+		while (!empty($unsortedPackages)) {
+			reset($unsortedPackages);
+			$this->sortPackagesByDependencies(key($unsortedPackages), $sortedPackages, $unsortedPackages);
+		}
 
-		$comparator = function ($firstPackageKey, $secondPackageKey) use ($packageStatesConfiguration) {
-			if (isset($packageStatesConfiguration[$firstPackageKey]['dependencies'])
-					&& (in_array($secondPackageKey, $packageStatesConfiguration[$firstPackageKey]['dependencies'])
-						&& !in_array($firstPackageKey, $packageStatesConfiguration[$secondPackageKey]['dependencies']))) {
-				return 1;
-			} elseif (isset($packageStatesConfiguration[$secondPackageKey]['dependencies'])
-				&& (in_array($firstPackageKey, $packageStatesConfiguration[$secondPackageKey]['dependencies'])
-					&& !in_array($secondPackageKey, $packageStatesConfiguration[$firstPackageKey]['dependencies']))) {
-				return -1;
+		$this->packages = $sortedPackages;
+
+		$packageStatesConfiguration = array();
+		foreach ($sortedPackages as $packageKey => $package) {
+			$packageStatesConfiguration[$packageKey] = $this->packageStatesConfiguration['packages'][$packageKey];
+		}
+		$this->packageStatesConfiguration['packages'] = $packageStatesConfiguration;
+	}
+
+	/**
+	 * Recursively sort dependencies of a package. This is a depth-first approach that recursively
+	 * adds all dependent packages to the sorted list before adding the given package. Visited
+	 * packages are flagged to break up cyclic dependencies.
+	 *
+	 * @param string $packageKey Package key to process
+	 * @param array $sortedPackages Array to sort packages into
+	 * @param array $unsortedPackages Array with state information of still unsorted packages
+	 */
+	protected function sortPackagesByDependencies($packageKey, array &$sortedPackages, array &$unsortedPackages) {
+		if ($unsortedPackages[$packageKey] === 0) {
+			$package = $this->packages[$packageKey];
+			$unsortedPackages[$packageKey] = 1;
+			$dependentPackageConstraints = $package->getPackageMetaData()->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
+			foreach ($dependentPackageConstraints as $constraint) {
+				if ($constraint instanceof \TYPO3\Flow\Package\MetaData\PackageConstraint) {
+					$dependentPackageKey = $constraint->getValue();
+					if (isset($unsortedPackages[$dependentPackageKey])) {
+						$this->sortPackagesByDependencies($dependentPackageKey, $sortedPackages, $unsortedPackages);
+					}
+				}
 			}
-			return strcmp($firstPackageKey, $secondPackageKey);
-		};
-
-		uasort($this->packages,
-			function (PackageInterface $firstPackage, PackageInterface $secondPackage) use ($comparator) {
-				return $comparator($firstPackage->getPackageKey(), $secondPackage->getPackageKey());
-			}
-		);
-
-		uksort($this->packageStatesConfiguration['packages'],
-			function ($firstPackageKey, $secondPackageKey) use ($comparator) {
-				return $comparator($firstPackageKey, $secondPackageKey);
-			}
-		);
+			unset($unsortedPackages[$packageKey]);
+			$sortedPackages[$packageKey] = $package;
+		}
 	}
 }
