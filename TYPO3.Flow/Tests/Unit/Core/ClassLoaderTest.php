@@ -45,8 +45,10 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$package2 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
 
 		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
-		$this->inject($this->classLoader, 'packagesPath', 'vfs://Test/Packages/');
 		$this->classLoader->setPackages(array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2));
+		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/Classes/');
+		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Psr4');
+		$this->classLoader->createNamespaceMapEntry('Acme\\MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/');
 	}
 
 	/**

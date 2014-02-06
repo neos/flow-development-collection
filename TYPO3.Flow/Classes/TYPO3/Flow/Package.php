@@ -36,7 +36,6 @@ class Package extends BasePackage {
 		$bootstrap->registerRequestHandler(new Http\RequestHandler($bootstrap));
 
 		if ($bootstrap->getContext()->isTesting()) {
-			$bootstrap->getEarlyInstance('TYPO3\Flow\Core\ClassLoader')->setConsiderTestsNamespace(TRUE);
 			$bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
 		}
 

@@ -89,11 +89,6 @@ class Bootstrap {
 		$this->ensureRequiredEnvironment();
 
 		$this->context = new ApplicationContext($context);
-		if ($this->context->isTesting()) {
-			$this->requireAutoloaderForPhpUnit();
-			require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
-			require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
-		}
 		$this->earlyInstances[__CLASS__] = $this;
 	}
 
@@ -570,27 +565,6 @@ class Bootstrap {
 				echo('Flow could not create the directory "' . FLOW_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)');
 				exit(1);
 			}
-		}
-	}
-
-	/**
-	 * Include the PHPUnit autoloader.
-	 *
-	 * @return void
-	 */
-	protected function requireAutoloaderForPhpUnit() {
-		if (class_exists('PHPUnit_Framework_TestCase')) {
-			return;
-		}
-		$composerAutoloader = __DIR__ . '/../../../../../../Libraries/autoload.php';
-		$phpUnitInstallationFolder = __DIR__ . '/../../../../../../Libraries/phpunit/phpunit/';
-		if (file_exists($composerAutoloader) && is_dir($phpUnitInstallationFolder)) {
-			require_once($composerAutoloader);
-		} elseif (stream_resolve_include_path('PHPUnit/Autoload.php') !== FALSE) {
-			require_once('PHPUnit/Autoload.php');
-		} else {
-			echo PHP_EOL . 'TYPO3 Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" and "' . $composerAutoloader . '" without success.';
-			exit(1);
 		}
 	}
 }

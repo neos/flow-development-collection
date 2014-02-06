@@ -33,6 +33,11 @@ class Scripts {
 		$classLoader = new \TYPO3\Flow\Core\ClassLoader();
 		spl_autoload_register(array($classLoader, 'loadClass'), TRUE, TRUE);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Core\ClassLoader', $classLoader);
+		if ($bootstrap->getContext()->isTesting()) {
+			$classLoader->setConsiderTestsNamespace(TRUE);
+			require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
+			require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
+		}
 	}
 
 	/**
