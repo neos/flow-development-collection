@@ -11,7 +11,9 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\DBAL\Migrations\Version;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Utility\Files;
 
 /**
@@ -261,14 +263,26 @@ class Service {
 	 * Tries to find out a package key which the Version belongs to. If no
 	 * package could be found, an empty string is returned.
 	 *
-	 * @param \Doctrine\DBAL\Migrations\Version $version
+	 * @param Version $version
 	 * @return string
 	 */
-	protected function getPackageKeyFromMigrationVersion(\Doctrine\DBAL\Migrations\Version $version) {
-		$possiblePackage = $this->packageManager->getPackageOfObject($version->getMigration());
-		if ($possiblePackage !== NULL) {
-			return $possiblePackage->getPackageKey();
+	protected function getPackageKeyFromMigrationVersion(Version $version) {
+		$sortedAvailablePackages = $this->packageManager->getAvailablePackages();
+		usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
+			return strlen($packageTwo->getPackagePath()) - strlen($packageOne->getPackagePath());
+		});
+
+		$reflectedClass = new \ReflectionClass($version->getMigration());
+		$classPathAndFilename = Files::getUnixStylePath($reflectedClass->getFileName());
+
+		/** @var $package PackageInterface */
+		foreach ($sortedAvailablePackages as $package) {
+			$packagePath = Files::getUnixStylePath($package->getPackagePath());
+			if (strpos($classPathAndFilename, $packagePath) === 0) {
+				return $package->getPackageKey();
+			}
 		}
+
 		return '';
 	}
 
