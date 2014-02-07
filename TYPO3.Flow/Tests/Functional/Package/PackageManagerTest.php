@@ -44,6 +44,15 @@ class PackageManagerTest extends FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function getPackageOfObjectReturnsCorrectPackageForAnExistingProxyObject() {
+		$account = new \TYPO3\Flow\Security\Account();
+		$package = $this->packageManager->getPackageOfObject($account);
+		$this->assertSame('TYPO3.Flow', $package->getPackageKey());
+	}
+
+	/**
+	 * @test
+	 */
 	public function getPackageOfObjectReturnsNullForObjectsThatDontBelongToAPackage() {
 		$genericObject = new \stdClass();
 		$this->assertNull($this->packageManager->getPackageOfObject($genericObject));
