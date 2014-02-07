@@ -223,7 +223,10 @@ class ReflectionService {
 	 */
 	public function setStatusCache(StringFrontend $cache) {
 		$this->statusCache = $cache;
-		$this->statusCache->getBackend()->initializeObject();
+		$backend = $this->statusCache->getBackend();
+		if (is_callable(array('initializeObject', $backend))) {
+			$backend->initializeObject();
+		}
 	}
 
 	/**
@@ -1064,7 +1067,7 @@ class ReflectionService {
 		$this->loadOrReflectClassIfNecessary($className);
 
 		return (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY])
-				&& $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] === self::VISIBILITY_PRIVATE);
+			&& $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] === self::VISIBILITY_PRIVATE);
 	}
 
 	/**
@@ -1266,9 +1269,9 @@ class ReflectionService {
 
 		$className = trim($className, '\\');
 		if (strpos($className, 'TYPO3\Flow\Persistence\Doctrine\Proxies') === 0 && array_search('Doctrine\ORM\Proxy\Proxy', class_implements($className))) {
-				// Somebody tried to reflect a doctrine proxy, which will have severe side effects.
-				// see bug http://forge.typo3.org/issues/29449 for details.
-				throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
+			// Somebody tried to reflect a doctrine proxy, which will have severe side effects.
+			// see bug http://forge.typo3.org/issues/29449 for details.
+			throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
 		}
 		try {
 			$class = new ClassReflection($className);
@@ -1525,8 +1528,9 @@ class ReflectionService {
 				}
 
 				if (!in_array($parsedType['type'], $propertyTypeWhiteList)
-						&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
-						&& !($this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\Flow\Annotations\ValueObject'))) {
+					&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
+					&& !($this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\Flow\Annotations\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\Flow\Annotations\ValueObject'))
+				) {
 					continue;
 				}
 
