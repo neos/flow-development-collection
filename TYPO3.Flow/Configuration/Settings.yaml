@@ -91,7 +91,7 @@ TYPO3:
         # Defines which errors should result in an exception thrown - all other error
         # levels will be silently ignored. Only errors that can be handled in an
         # user-defined error handler are affected, of course.
-        exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
+        exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%']
 
     http:
       # Defines an explicit base URI that should be used. This affects
@@ -109,9 +109,9 @@ TYPO3:
         logger: TYPO3\Flow\Log\Logger
         backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
-           logFileURL: %FLOW_PATH_DATA%Logs/System.log
+           logFileURL: '%FLOW_PATH_DATA%Logs/System.log'
            createParentDirectories: TRUE
-           severityThreshold: %LOG_INFO%
+           severityThreshold: '%LOG_INFO%'
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
            logMessageOrigin: FALSE
@@ -119,9 +119,9 @@ TYPO3:
       securityLogger:
         backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
-           logFileURL: %FLOW_PATH_DATA%Logs/Security.log
+           logFileURL: '%FLOW_PATH_DATA%Logs/Security.log'
            createParentDirectories: TRUE
-           severityThreshold: %LOG_INFO%
+           severityThreshold: '%LOG_INFO%'
            maximumLogFileSize: 10485760
            logFilesToKeep: 1
            logIpAddress: TRUE
@@ -129,9 +129,9 @@ TYPO3:
       sqlLogger:
         backend: TYPO3\Flow\Log\Backend\FileBackend
         backendOptions:
-          logFileURL: %FLOW_PATH_DATA%Logs/Query.log
+          logFileURL: '%FLOW_PATH_DATA%Logs/Query.log'
           createParentDirectories: TRUE
-          severityThreshold: %LOG_INFO%
+          severityThreshold: '%LOG_INFO%'
           maximumLogFileSize: 10485760
           logFilesToKeep: 1
 
@@ -353,7 +353,7 @@ TYPO3:
 
           # Path to the file where RSA keys shall be stored
           # Note: This file must not be accessible by the public!
-          keystorePath: %FLOW_PATH_DATA%Persistent/RsaWalletData
+          keystorePath: '%FLOW_PATH_DATA%Persistent/RsaWalletData'
 
           # Defines the openSSL configuration used for key handling.
           # See the PHP openSSL documentation for possible settings.
@@ -419,4 +419,4 @@ TYPO3:
         # of temporary files.
         # The directory must be writable and Flow will automatically create a sub
         # directory (named after the context) which will contain the actual temporary files.
-        temporaryDirectoryBase: %FLOW_PATH_DATA%Temporary/
+        temporaryDirectoryBase: '%FLOW_PATH_DATA%Temporary/'
