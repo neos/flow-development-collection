@@ -278,7 +278,7 @@ class Session implements SessionInterface {
 		if ($this->started === FALSE) {
 			$this->sessionIdentifier = Algorithms::generateRandomString(32);
 			$this->storageIdentifier = Algorithms::generateUUID();
-			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
+			$this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 			$this->response->setCookie($this->sessionCookie);
 			$this->lastActivityTimestamp = $this->now;
 			$this->started = TRUE;
@@ -689,7 +689,7 @@ class Session implements SessionInterface {
 
 		if ($this->request->hasCookie($this->sessionCookieName)) {
 			$sessionIdentifier = $this->request->getCookie($this->sessionCookieName)->getValue();
-			$this->sessionCookie = new Cookie($this->sessionCookieName, $sessionIdentifier, $this->sessionCookieLifetime, NULL, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
+			$this->sessionCookie = new Cookie($this->sessionCookieName, $sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
 		}
 	}
 

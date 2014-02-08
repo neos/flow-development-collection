@@ -274,6 +274,7 @@ class CookieTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array(new Cookie('foo', 'bar', 0, NULL, 'flow.typo3.org', '/about'), 'foo=bar; Domain=flow.typo3.org; Path=/about; HttpOnly'),
 			array(new Cookie('foo', 'bar', 0, NULL, 'typo3.org', '/', TRUE), 'foo=bar; Domain=typo3.org; Path=/; Secure; HttpOnly'),
 			array(new Cookie('foo', 'bar', 0, NULL, 'typo3.org', '/', TRUE, FALSE), 'foo=bar; Domain=typo3.org; Path=/; Secure'),
+			array(new Cookie('foo', 'bar', 0, 3600), 'foo=bar; Max-Age=3600; Path=/; HttpOnly'),
 			array($expiredCookie, 'foo=bar; Expires=Thu, 27-May-1976 12:00:00 GMT; Path=/; HttpOnly')
 		);
 	}

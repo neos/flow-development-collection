@@ -133,7 +133,7 @@ class Cookie {
 	/**
 	 * Creates a cookie (an instance of this class) by a provided
 	 * raw header string like "foo=507d9f20317a5; path=/; domain=.example.org"
-	 * This is is an implementatin of the algorithm explained in RFC 6265, Section 5.2
+	 * This is is an implementation of the algorithm explained in RFC 6265, Section 5.2
 	 * A basic statement of this algorithm is to "ignore the set-cookie-string entirely"
 	 * in case a required condition is not met. In these cases this function will return NULL
 	 * rather than the created cookie.
@@ -333,13 +333,14 @@ class Cookie {
 	 */
 	public function expire() {
 		$this->expiresTimestamp = 202046400;
+		$this->maximumAge = 0;
 	}
 
 	/**
 	 * Tells if this cookie is expired and will be removed in the user agent when it
 	 * received the response containing this cookie.
 	 *
-	 * @return boolean True if this cookie will is expired
+	 * @return boolean True if this cookie is expired
 	 */
 	public function isExpired() {
 		return ($this->expiresTimestamp !== 0 && $this->expiresTimestamp < time());
@@ -362,6 +363,10 @@ class Cookie {
 
 		if ($this->expiresTimestamp !== 0) {
 			$attributes .= '; Expires=' . gmdate('D, d-M-Y H:i:s T', $this->expiresTimestamp);
+		}
+
+		if ($this->maximumAge !== NULL && $this->maximumAge > 0) {
+			$attributes .= '; Max-Age=' . $this->maximumAge;
 		}
 
 		if ($this->domain !== NULL) {
