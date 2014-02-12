@@ -200,4 +200,61 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->actionController->_call('resolveView');
 	}
+
+	public function ignoredValidationArgumentsProvider() {
+		return array(
+			array(FALSE, FALSE),
+			array(TRUE, TRUE)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider ignoredValidationArgumentsProvider
+	 */
+	public function initializeActionMethodValidatorsDoesNotAddValidatorForIgnoredArgumentsWithoutEvaluation($evaluateIgnoredValidationArgument, $setValidatorShouldBeCalled) {
+		$this->actionController = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\ActionController', array('getActionValidationGroups', 'getActionMethodParameters', 'getActionValidateAnnotationData', 'getActionIgnoredValidationArguments'));
+
+		$mockArgument = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\Argument')->disableOriginalConstructor()->getMock();
+		$mockArgument->expects($this->any())->method('getName')->will($this->returnValue('node'));
+		$arguments = new \TYPO3\Flow\Mvc\Controller\Arguments();
+		$arguments['node'] = $mockArgument;
+
+		$ignoredValidationArguments = array(
+			'showAction' => array(
+				'node' => array(
+					'evaluate' => $evaluateIgnoredValidationArgument
+				)
+			)
+		);
+
+		$mockValidator = $this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface');
+
+		$parameterValidators = array(
+			'node' => $mockValidator
+		);
+
+		$this->actionController->staticExpects($this->any())->method('getActionValidationGroups')->will($this->returnValue(array()));
+		$this->actionController->staticExpects($this->any())->method('getActionMethodParameters')->will($this->returnValue(array()));
+		$this->actionController->staticExpects($this->any())->method('getActionValidateAnnotationData')->will($this->returnValue(array()));
+		$this->actionController->staticExpects($this->any())->method('getActionIgnoredValidationArguments')->will($this->returnValue($ignoredValidationArguments));
+
+		$this->inject($this->actionController, 'actionMethodName', 'showAction');
+		$this->inject($this->actionController, 'arguments', $arguments);
+
+		$this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
+
+		$mockValidatorResolver = $this->getMock('TYPO3\Flow\Validation\ValidatorResolver');
+		$mockValidatorResolver->expects($this->any())->method('buildMethodArgumentsValidatorConjunctions')->will($this->returnValue($parameterValidators));
+		$this->inject($this->actionController, 'validatorResolver', $mockValidatorResolver);
+
+		if ($setValidatorShouldBeCalled) {
+			$mockArgument->expects($this->once())->method('setValidator');
+		} else {
+			$mockArgument->expects($this->never())->method('setValidator');
+		}
+
+		$this->actionController->_call('initializeActionMethodValidators');
+	}
+
 }

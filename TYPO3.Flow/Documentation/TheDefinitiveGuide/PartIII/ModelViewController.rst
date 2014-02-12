@@ -722,6 +722,20 @@ will be ignored::
 			# …
 		}
 
+By default the validation for an argument annotated with ``IgnoreValidation``
+will not be executed. If the result is needed for further processing in the
+action method, the ``evaluate`` flag can be enabled::
+
+		/**
+		 * @param \Acme\Demo\Domain\Model\Customer $customer
+		 * @Flow\IgnoreValidation("$customer", evaluate=true)
+		 */
+		public function signUpAction(Customer $customer) {
+			if ($this->arguments['customer']->getValidationResults()->hasErrors()) {
+				# …
+			}
+		}
+
 The next section explains how to get a hold of the validation results and react
 on warnings or errors which occurred during the mapping and validation step.
 

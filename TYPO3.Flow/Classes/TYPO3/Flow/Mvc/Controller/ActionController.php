@@ -167,7 +167,6 @@ class ActionController extends AbstractController {
 		}
 
 		$this->callActionMethod();
-
 	}
 
 	/**
@@ -273,8 +272,20 @@ class ActionController extends AbstractController {
 		}
 		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations);
 
+		$actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
+		if (isset($actionIgnoredArguments[$this->actionMethodName])) {
+			$ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
+		} else {
+			$ignoredArguments = array();
+		}
+
 		foreach ($this->arguments as $argument) {
-			$validator = $parameterValidators[$argument->getName()];
+			$argumentName = $argument->getName();
+			if (isset($ignoredArguments[$argumentName]) && !$ignoredArguments[$argumentName]['evaluate']) {
+				continue;
+			}
+
+			$validator = $parameterValidators[$argumentName];
 
 			$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType(), $validationGroups);
 			if (count($baseValidatorConjunction) > 0) {
@@ -387,7 +398,7 @@ class ActionController extends AbstractController {
 					continue;
 				}
 
-				if (array_search($argumentName, $ignoredArguments) !== FALSE) {
+				if (isset($ignoredArguments[$argumentName])) {
 					continue;
 				}
 
@@ -412,7 +423,7 @@ class ActionController extends AbstractController {
 
 	/**
 	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
-	 * @return array Array of arguments ignored for validation by action method name
+	 * @return array Array of argument names as key by action method name
 	 * @Flow\CompileStatic
 	 */
 	static public function getActionIgnoredValidationArguments($objectManager) {
@@ -425,17 +436,14 @@ class ActionController extends AbstractController {
 		foreach ($methodNames as $methodName) {
 			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
 				$ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\IgnoreValidation');
-				$ignoredArguments = array_map(
-					function($annotation) {
-						if (!isset($annotation->argumentName)) {
-							throw new \InvalidArgumentException('An IgnoreValidation annotation on a method must be given an argument name.', 1318456607);
-						}
-						return $annotation->argumentName;
-					},
-					$ignoreValidationAnnotations
-				);
-				if ($ignoredArguments !== array()) {
-					$result[$methodName] = $ignoredArguments;
+				/** @var Flow\IgnoreValidation $ignoreValidationAnnotation */
+				foreach ($ignoreValidationAnnotations as $ignoreValidationAnnotation) {
+					if (!isset($ignoreValidationAnnotation->argumentName)) {
+						throw new \InvalidArgumentException('An IgnoreValidation annotation on a method must be given an argument name.', 1318456607);
+					}
+					$result[$methodName][$ignoreValidationAnnotation->argumentName] = array(
+						'evaluate' => $ignoreValidationAnnotation->evaluate
+					);
 				}
 			}
 		}
