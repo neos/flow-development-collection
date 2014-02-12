@@ -32,13 +32,6 @@ class ShuffleOperation extends AbstractOperation {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @var boolean
-	 */
-	static protected $final = TRUE;
-
-	/**
-	 * {@inheritdoc}
-	 *
 	 * @param FlowQuery $flowQuery the FlowQuery object
 	 * @param array $arguments the arguments for this operation
 	 * @return mixed
