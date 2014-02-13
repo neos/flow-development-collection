@@ -22,6 +22,8 @@ items:
           'handler': {type: string, required: TRUE, format: class-name}
     'appendExceedingArguments': {type: boolean}
     'toLowerCase': {type: boolean}
+    'httpMethods':
+      type: array
 
     # subRoutes do not exist here
     # as they are expanded by the configuration manager
