@@ -314,6 +314,44 @@ class ArraysTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				)
 			),
 
+			'nested array with recursion' => array(
+				'inputArray1' => array(
+					'k1' => 'v1',
+					'k2' => array(
+						'k2.1' => 'v2.1',
+						'k2.2' => 'v2.2',
+						'k2.4' => array(
+							'k2.4.1' => 'v2.4.1'
+						)
+					),
+				),
+				'inputArray2' => array(
+					'k2' => array(
+						'k2.2' => 'v2.2a',
+						'k2.3' => 'v2.3',
+						'k2.4' => array(
+							'k2.4.2' => 'v2.4.2'
+						)
+					),
+					'k3' => 'v3'
+				),
+				'dontAddNewKeys' => FALSE, // default
+				'emptyValuesOverride' => TRUE, // default
+				'expected' => array(
+					'k1' => 'v1',
+					'k2' => array(
+						'k2.1' => 'v2.1',
+						'k2.2' => 'v2.2a',
+						'k2.4' => array(
+							'k2.4.1' => 'v2.4.1',
+							'k2.4.2' => 'v2.4.2'
+						),
+						'k2.3' => 'v2.3'
+					),
+					'k3' => 'v3'
+				)
+			),
+
 			'simple type should override array (k2)' => array(
 				'inputArray1' => array(
 					'k1' => 'v1',

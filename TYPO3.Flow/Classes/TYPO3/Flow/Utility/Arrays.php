@@ -70,26 +70,32 @@ class Arrays {
 	 * @return array Resulting array where $secondArray values has overruled $firstArray values
 	 */
 	static public function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = FALSE, $emptyValuesOverride = TRUE) {
-		reset($secondArray);
-		while (list($key, $value) = each($secondArray)) {
-			if (array_key_exists($key, $firstArray) && is_array($firstArray[$key])) {
-				if (is_array($secondArray[$key]) && (!$emptyValuesOverride || $secondArray[$key] !== array())) {
-					$firstArray[$key] = self::arrayMergeRecursiveOverrule($firstArray[$key], $secondArray[$key], $dontAddNewKeys, $emptyValuesOverride);
-				} else {
-					$firstArray[$key] = $secondArray[$key];
-				}
-			} else {
-				if ($dontAddNewKeys) {
-					if (array_key_exists($key, $firstArray)) {
-						if ($emptyValuesOverride || !empty($value)) {
-							$firstArray[$key] = $value;
-						}
+		$data = array(&$firstArray, $secondArray);
+		$entryCount = 1;
+		for ($i = 0; $i < $entryCount; $i++) {
+			$firstArrayInner = &$data[$i * 2];
+			$secondArrayInner = $data[$i * 2 + 1];
+			foreach ($secondArrayInner as $key => $value) {
+				$keyInFirstArray = array_key_exists($key, $firstArrayInner);
+				if ($keyInFirstArray && is_array($firstArrayInner[$key])) {
+					if ((!$emptyValuesOverride || $value !== array()) && is_array($value)) {
+						$data[] = &$firstArrayInner[$key];
+						$data[] = $value;
+						$entryCount++;
+					} else {
+						$firstArrayInner[$key] = $value;
 					}
 				} else {
-					if ($emptyValuesOverride || !empty($value)) {
-						$firstArray[$key] = $value;
-					} elseif ($value === array() && !array_key_exists($key, $firstArray)) {
-						$firstArray[$key] = $value;
+					if ($dontAddNewKeys) {
+						if ($keyInFirstArray && ($emptyValuesOverride || !empty($value))) {
+							$firstArrayInner[$key] = $value;
+						}
+					} else {
+						if ($emptyValuesOverride || !empty($value)) {
+							$firstArrayInner[$key] = $value;
+						} elseif (!$keyInFirstArray && $value === array()) {
+							$firstArrayInner[$key] = $value;
+						}
 					}
 				}
 			}
