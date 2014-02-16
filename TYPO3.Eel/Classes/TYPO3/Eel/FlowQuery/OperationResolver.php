@@ -52,30 +52,47 @@ class OperationResolver implements OperationResolverInterface {
 	 * Initializer, building up $this->operations and $this->finalOperationNames
 	 */
 	public function initializeObject() {
-		$operationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Eel\FlowQuery\OperationInterface');
+		$operationsAndFinalOperationNames = static::buildOperationsAndFinalOperationNames($this->objectManager);
+		$this->operations = $operationsAndFinalOperationNames[0];
+		$this->finalOperationNames = $operationsAndFinalOperationNames[1];
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of sorted operations and array of final operation names
+	 * @Flow\CompileStatic
+	 */
+	static public function buildOperationsAndFinalOperationNames($objectManager) {
+		$operations = array();
+		$finalOperationNames = array();
+
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+		$operationClassNames = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Eel\FlowQuery\OperationInterface');
 		/** @var $operationClassName OperationInterface */
 		foreach ($operationClassNames as $operationClassName) {
 			$shortOperationName = $operationClassName::getShortName();
 			$operationPriority = $operationClassName::getPriority();
 			$isFinalOperation = $operationClassName::isFinal();
 
-			if (!isset($this->operations[$shortOperationName])) {
-				$this->operations[$shortOperationName] = array();
+			if (!isset($operations[$shortOperationName])) {
+				$operations[$shortOperationName] = array();
 			}
 
-			if (isset($this->operations[$shortOperationName][$operationPriority])) {
-				throw new FlowQueryException(sprintf('Operation with name "%s" and priority %s is already defined in class %s, and the class %s has the same priority and name.', $shortOperationName, $operationPriority, $this->operations[$shortOperationName][$operationPriority], $operationClassName), 1332491678);
+			if (isset($operations[$shortOperationName][$operationPriority])) {
+				throw new FlowQueryException(sprintf('Operation with name "%s" and priority %s is already defined in class %s, and the class %s has the same priority and name.', $shortOperationName, $operationPriority, $operations[$shortOperationName][$operationPriority], $operationClassName), 1332491678);
 			}
-			$this->operations[$shortOperationName][$operationPriority] = $operationClassName;
+			$operations[$shortOperationName][$operationPriority] = $operationClassName;
 
 			if ($isFinalOperation) {
-				$this->finalOperationNames[$shortOperationName] = $shortOperationName;
+				$finalOperationNames[$shortOperationName] = $shortOperationName;
 			}
 		}
 
-		foreach ($this->operations as &$operation) {
+		foreach ($operations as &$operation) {
 			krsort($operation, SORT_NUMERIC);
 		}
+
+		return array($operations, $finalOperationNames);
 	}
 
 	/**
