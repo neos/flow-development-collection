@@ -79,6 +79,16 @@ class Context {
 	protected $tokens = array();
 
 	/**
+	 * @var array
+	 */
+	protected $tokenStatusLabels = array(
+		1 => 'no credentials given',
+		2 => 'wrong credentials',
+		3 => 'authentication successful',
+		4 => 'authentication needed'
+	);
+
+	/**
 	 * Array of tokens currently active
 	 * @var array
 	 * @Flow\Transient
@@ -108,6 +118,18 @@ class Context {
 	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Session\SessionManager
+	 */
+	protected $sessionManager;
+
+	/**
+	 * @var \TYPO3\Flow\Log\SecurityLoggerInterface
+	 * @Flow\Inject
+	 */
+	protected $securityLogger;
 
 	/**
 	 * @var \TYPO3\Flow\Security\Policy\PolicyService
@@ -641,6 +663,17 @@ class Context {
 			/** @var $sessionToken \TYPO3\Flow\Security\Authentication\TokenInterface */
 			foreach ($sessionTokens as $sessionToken) {
 				if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
+					$session = $this->sessionManager->getCurrentSession();
+					$this->securityLogger->log(
+						sprintf(
+							'Session %s contains auth token %s for provider %s. Status: %s',
+							$session->getId(),
+							get_class($sessionToken),
+							$sessionToken->getAuthenticationProviderName(),
+							$this->tokenStatusLabels[$sessionToken->getAuthenticationStatus()]
+						), LOG_INFO, NULL, 'Flow'
+					);
+
 					$resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;
 					$noCorrespondingSessionTokenFound = FALSE;
 				}

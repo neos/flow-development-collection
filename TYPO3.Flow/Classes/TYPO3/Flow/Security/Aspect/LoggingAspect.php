@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Security\Aspect;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Exception\NoTokensAuthenticatedException;
 
 /**
  * An aspect which centralizes the logging of security relevant actions.
@@ -43,7 +44,9 @@ class LoggingAspect {
 	public function logManagerAuthenticate(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		if ($joinPoint->hasException()) {
 			$exception = $joinPoint->getException();
-			$this->securityLogger->log('Authentication failed: "' . $exception->getMessage() . '" #' . $exception->getCode(), LOG_NOTICE);
+			if (!$exception instanceof NoTokensAuthenticatedException) {
+				$this->securityLogger->log('Authentication failed: "' . $exception->getMessage() . '" #' . $exception->getCode(), LOG_NOTICE);
+			}
 			throw $exception;
 		} elseif ($this->alreadyLoggedAuthenticateCall === FALSE) {
 			if ($joinPoint->getProxy()->getSecurityContext()->getAccount() !== NULL) {

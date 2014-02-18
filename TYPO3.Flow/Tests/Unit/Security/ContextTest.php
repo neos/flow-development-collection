@@ -122,34 +122,46 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$token1->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token1->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($matchingRequestPattern)));
 		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
+		$token1->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token2->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(FALSE));
 		$token2->expects($this->never())->method('getRequestPatterns');
 		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
+		$token2->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$token3 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token3->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token3->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern)));
 		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
+		$token3->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$token4 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token4->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token4->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array()));
 		$token4->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token4Provider'));
+		$token4->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$token5 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token5->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token5->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern, $matchingRequestPattern)));
 		$token5->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token5Provider'));
+		$token5->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($token1, $token2, $token3, $token4, $token5)));
+
+		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface');
+		$mockSessionManager = $this->getMock('TYPO3\Flow\Session\SessionManagerInterface');
+		$mockSessionManager->expects($this->any())->method('getCurrentSession')->will($this->returnValue($mockSession));
+		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface');
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
 		$securityContext->injectSettings($settings);
 		$securityContext->setRequest($request);
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
+		$securityContext->_set('sessionManager', $mockSessionManager);
+		$securityContext->_set('securityLogger', $mockSecurityLogger);
 		$securityContext->_set('tokens', array($token1, $token3, $token4));
 
 		$securityContext->_call('initialize');
@@ -187,11 +199,13 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
 		$token1Clone = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token1Clone->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
+		$token1Clone->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$token2 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
 		$token2Clone = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token2Clone->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
+		$token2Clone->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\TYPO3\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$token3 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
 		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
@@ -201,10 +215,17 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue($tokensFromTheManager));
 
+		$mockSession = $this->getMock('TYPO3\Flow\Session\SessionInterface');
+		$mockSessionManager = $this->getMock('TYPO3\Flow\Session\SessionManagerInterface');
+		$mockSessionManager->expects($this->any())->method('getCurrentSession')->will($this->returnValue($mockSession));
+		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface');
+
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
 		$securityContext->setRequest($request);
 		$securityContext->_set('tokens', $tokensFromTheSession);
+		$securityContext->_set('sessionManager', $mockSessionManager);
+		$securityContext->_set('securityLogger', $mockSecurityLogger);
 
 		$securityContext->_call('initialize');
 

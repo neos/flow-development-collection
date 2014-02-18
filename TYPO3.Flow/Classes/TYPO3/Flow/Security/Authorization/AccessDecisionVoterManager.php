@@ -80,7 +80,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 * It iterates over all available \TYPO3\Flow\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The join point to decide on
 	 * @return void
 	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
 	 */
@@ -122,10 +122,22 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
 	 * @param string $resource The resource to decide on
-	 * @return void
 	 * @throws \TYPO3\Flow\Security\Exception\AccessDeniedException If access is not granted
+	 * @return void
 	 */
 	public function decideOnResource($resource) {
+		if (!$this->hasAccessToResource($resource)) {
+			throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied', 1283175927);
+		}
+	}
+
+	/**
+	 * Returns TRUE if access is granted on the given resource in the current security context
+	 *
+	 * @param string $resource The resource to decide on
+	 * @return boolean TRUE if access is granted, FALSE otherwise
+	 */
+	public function hasAccessToResource($resource) {
 		$denyVotes = 0;
 		$grantVotes = 0;
 		$abstainVotes = 0;
@@ -147,29 +159,12 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		}
 
 		if ($denyVotes === 0 && $grantVotes > 0) {
-			return;
+			return TRUE;
 		}
 		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) {
-			return;
+			return TRUE;
 		}
-
-		$votes = sprintf('(%d denied, %d granted, %d abstained)', $denyVotes, $grantVotes, $abstainVotes);
-		throw new \TYPO3\Flow\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1283175927);
-	}
-
-	/**
-	 * Returns TRUE if access is granted on the given resource in the current security context
-	 *
-	 * @param string $resource The resource to decide on
-	 * @return boolean TRUE if access is granted, FALSE otherwise
-	 */
-	public function hasAccessToResource($resource) {
-		try {
-			$this->decideOnResource($resource);
-		} catch(\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
-			return FALSE;
-		}
-		return TRUE;
+		return FALSE;
 	}
 
 	/**
