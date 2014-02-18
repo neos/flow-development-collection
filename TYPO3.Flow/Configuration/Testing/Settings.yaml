@@ -23,21 +23,21 @@ TYPO3:
       exceptionHandler:
         className: 'TYPO3\Flow\Error\DebugExceptionHandler'
       errorHandler:
-        exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
+        exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%', '%E_WARNING%', '%E_NOTICE%', '%E_USER_WARNING%', '%E_USER_NOTICE%', '%E_STRICT%']
 
     log:
       systemLogger:
         backendOptions:
-          logFileURL: %FLOW_PATH_DATA%Logs/System_Testing.log
-          severityThreshold: %LOG_DEBUG%
+          logFileURL: '%FLOW_PATH_DATA%Logs/System_Testing.log'
+          severityThreshold: '%LOG_DEBUG%'
       securityLogger:
         backendOptions:
-          logFileURL: %FLOW_PATH_DATA%Logs/Security_Testing.log
-          severityThreshold: %LOG_DEBUG%
+          logFileURL: '%FLOW_PATH_DATA%Logs/Security_Testing.log'
+          severityThreshold: '%LOG_DEBUG%'
       sqlLogger:
         backendOptions:
-          logFileURL: %FLOW_PATH_DATA%Logs/Query_Testing.log
-          severityThreshold: %LOG_DEBUG%
+          logFileURL: '%FLOW_PATH_DATA%Logs/Query_Testing.log'
+          severityThreshold: '%LOG_DEBUG%'
 
     object:
       registerFunctionalTestClasses: true

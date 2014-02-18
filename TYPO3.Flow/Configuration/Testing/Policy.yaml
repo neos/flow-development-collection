@@ -23,9 +23,9 @@ roles:
   Customer: []
   Administrator: []
   User: []
-  ContentEditor: [ User ]
-  ContentManager: [ ContentEditor ]
-  Manager: [ ContentEditor, Customer ]
+  ContentEditor: [ 'User' ]
+  ContentManager: [ 'ContentEditor' ]
+  Manager: [ 'ContentEditor', 'Customer' ]
 
 
 acls:

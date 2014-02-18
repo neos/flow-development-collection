@@ -24,6 +24,21 @@ use TYPO3\Flow\Utility\Arrays;
 class YamlSource {
 
 	/**
+	 * Will be set if the PHP YAML Extension is installed.
+	 * Having this installed massively improves YAML parsing performance.
+	 *
+	 * @var boolean
+	 * @see http://pecl.php.net/package/yaml
+	 */
+	protected $usePhpYamlExtension = FALSE;
+
+	public function __construct() {
+		if (extension_loaded('yaml')) {
+			$this->usePhpYamlExtension = TRUE;
+		}
+	}
+
+	/**
 	 * Checks for the specified configuration file and returns TRUE if it exists.
 	 *
 	 * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
@@ -67,7 +82,15 @@ class YamlSource {
 		foreach ($pathsAndFileNames as $pathAndFilename) {
 			if (file_exists($pathAndFilename)) {
 				try {
-					$loadedConfiguration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename);
+					if ($this->usePhpYamlExtension) {
+						$loadedConfiguration = @yaml_parse_file($pathAndFilename);
+						if ($loadedConfiguration === FALSE) {
+							throw new \TYPO3\Flow\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
+						}
+					} else {
+						$loadedConfiguration = \Symfony\Component\Yaml\Yaml::parse($pathAndFilename);
+					}
+
 					if (is_array($loadedConfiguration)) {
 						$configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $loadedConfiguration);
 					}
