@@ -110,11 +110,12 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	/**
 	 * Executes the query and returns the result
 	 *
+	 * @param bool $cacheResult If the result cache should be used
 	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
-	public function execute() {
-		return new \TYPO3\Flow\Persistence\Generic\QueryResult($this);
+	public function execute($cacheResult = FALSE) {
+		return new \TYPO3\Flow\Persistence\Generic\QueryResult($this, $cacheResult);
 	}
 
 	/**

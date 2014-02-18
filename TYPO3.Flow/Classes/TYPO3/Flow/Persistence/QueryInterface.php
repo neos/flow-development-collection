@@ -108,10 +108,11 @@ interface QueryInterface {
 	/**
 	 * Executes the query and returns the result.
 	 *
+	 * @param bool $cacheResult If the result cache should be used
 	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
-	public function execute();
+	public function execute($cacheResult = FALSE);
 
 	/**
 	 * Returns the query result count.

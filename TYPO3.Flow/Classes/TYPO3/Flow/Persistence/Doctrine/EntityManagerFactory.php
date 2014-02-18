@@ -70,6 +70,11 @@ class EntityManagerFactory {
 		$config->setMetadataCacheImpl($cache);
 		$config->setQueryCacheImpl($cache);
 
+		$resultCache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
+		// must use ObjectManager in compile phase...
+		$resultCache->setCache($this->objectManager->get('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Persistence_Doctrine_Results'));
+		$config->setResultCacheImpl($resultCache);
+
 		if (class_exists($this->settings['doctrine']['sqlLogger'])) {
 			$config->setSQLLogger(new $this->settings['doctrine']['sqlLogger']());
 		}

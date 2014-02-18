@@ -192,6 +192,7 @@ TYPO3:
         user: NULL
         password: NULL
         charset: 'utf8'
+      cacheAllQueryResults: FALSE
       doctrine:
         # By default Doctrine proxy compilation is done in the Flow bootstrap
         enable: TRUE
