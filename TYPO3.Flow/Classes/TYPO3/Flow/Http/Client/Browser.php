@@ -58,11 +58,6 @@ class Browser {
 	protected $redirectionStack = array();
 
 	/**
-	 * @var array
-	 */
-	protected $cookies = array();
-
-	/**
 	 * @var \TYPO3\Flow\Http\Client\RequestEngineInterface
 	 */
 	protected $requestEngine;
@@ -101,7 +96,8 @@ class Browser {
 			throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
 		}
 
-		$request = Request::create($uri, $method, $arguments, $this->cookies, $files, $server);
+		$request = Request::create($uri, $method, $arguments, $files, $server);
+
 		if ($content !== NULL) {
 			$request->setContent($content);
 		}
