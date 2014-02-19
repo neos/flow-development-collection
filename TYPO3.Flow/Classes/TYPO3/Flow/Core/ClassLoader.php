@@ -165,12 +165,11 @@ class ClassLoader {
 		foreach ($possiblePaths as $possiblePathData) {
 			$pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
 			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packagenamespacePartCount);
-			try {
-				$result = @include($possibleFilePath);
+			if (!$this->considerTestsNamespace || file_exists($possibleFilePath)) {
+				$result = include($possibleFilePath);
 				if ($result !== FALSE) {
 					return TRUE;
 				}
-			} catch (\Exception $e) {
 			}
 		}
 
@@ -256,64 +255,73 @@ class ClassLoader {
 	 * @return void
 	 */
 	protected function initializeComposerAutoloadInformation($composerPath) {
-		$classMap = @include($composerPath . 'autoload_classmap.php');
-		if ($classMap !== FALSE) {
-			$this->classMap = $classMap;
-		}
-
-		$namespaceMap = @include($composerPath . 'autoload_namespaces.php');
-		if ($namespaceMap !== FALSE) {
-			foreach ($namespaceMap as $namespace => $paths) {
-				if (is_array($paths)) {
-					foreach ($paths as $path) {
-						if ($namespace === '') {
-							$this->fallbackClassPaths[] = $path;
-						} else {
-							$this->createNamespaceMapEntry($namespace, $path);
-						}
-					}
-				} else {
-					if ($namespace === '') {
-						$this->fallbackClassPaths[] = $paths;
-					} else {
-						$this->createNamespaceMapEntry($namespace, $paths);
-					}
-				}
-
+		if (file_exists($composerPath . 'autoload_classmap.php')) {
+			$classMap = include($composerPath . 'autoload_classmap.php');
+			if ($classMap !== FALSE) {
+				$this->classMap = $classMap;
 			}
 		}
 
-		$psr4Map = @include($composerPath . 'autoload_psr4.php');
-		if ($psr4Map !== FALSE) {
-			foreach ($psr4Map as $namespace => $possibleClassPaths) {
-				if (is_array($possibleClassPaths)) {
-					foreach ($possibleClassPaths as $possibleClassPath) {
-						if ($namespace === '') {
-							$this->fallbackClassPaths[] = $possibleClassPath;
-						} else {
-							$this->createNamespaceMapEntry($namespace, $possibleClassPath, 'Psr4');
+		if (file_exists($composerPath . 'autoload_namespaces.php')) {
+			$namespaceMap = include($composerPath . 'autoload_namespaces.php');
+			if ($namespaceMap !== FALSE) {
+				foreach ($namespaceMap as $namespace => $paths) {
+					if (is_array($paths)) {
+						foreach ($paths as $path) {
+							if ($namespace === '') {
+								$this->fallbackClassPaths[] = $path;
+							} else {
+								$this->createNamespaceMapEntry($namespace, $path);
+							}
 						}
-					}
-				} else {
-					if ($namespace === '') {
-						$this->fallbackClassPaths[] = $possibleClassPaths;
 					} else {
-						$this->createNamespaceMapEntry($namespace, $possibleClassPaths, 'Psr4');
+						if ($namespace === '') {
+							$this->fallbackClassPaths[] = $paths;
+						} else {
+							$this->createNamespaceMapEntry($namespace, $paths);
+						}
 					}
 				}
 			}
 		}
 
-		$includePaths = @include($composerPath . 'include_paths.php');
-		if ($includePaths !== FALSE) {
-			array_push($includePaths, get_include_path());
-			set_include_path(join(PATH_SEPARATOR, $includePaths));
+		if (file_exists($composerPath . 'autoload_psr4.php')) {
+			$psr4Map = include($composerPath . 'autoload_psr4.php');
+			if ($psr4Map !== FALSE) {
+				foreach ($psr4Map as $namespace => $possibleClassPaths) {
+					if (is_array($possibleClassPaths)) {
+						foreach ($possibleClassPaths as $possibleClassPath) {
+							if ($namespace === '') {
+								$this->fallbackClassPaths[] = $possibleClassPath;
+							} else {
+								$this->createNamespaceMapEntry($namespace, $possibleClassPath, 'Psr4');
+							}
+						}
+					} else {
+						if ($namespace === '') {
+							$this->fallbackClassPaths[] = $possibleClassPaths;
+						} else {
+							$this->createNamespaceMapEntry($namespace, $possibleClassPaths, 'Psr4');
+						}
+					}
+				}
+			}
 		}
 
-		$includeFiles = @include($composerPath . 'autoload_files.php');
-		if ($includeFiles !== FALSE) {
-			foreach ($includeFiles as $file) {
-				require_once($file);
+		if (file_exists($composerPath . 'include_paths.php')) {
+			$includePaths = include($composerPath . 'include_paths.php');
+			if ($includePaths !== FALSE) {
+				array_push($includePaths, get_include_path());
+				set_include_path(join(PATH_SEPARATOR, $includePaths));
+			}
+		}
+
+		if (file_exists($composerPath . 'autoload_files.php')) {
+			$includeFiles = include($composerPath . 'autoload_files.php');
+			if ($includeFiles !== FALSE) {
+				foreach ($includeFiles as $file) {
+					require_once($file);
+				}
 			}
 		}
 	}
