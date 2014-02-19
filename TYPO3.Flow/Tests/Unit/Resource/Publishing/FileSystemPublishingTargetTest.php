@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Utility\Files;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 
@@ -98,12 +99,12 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishStaticResourcesLinksTheSpecifiedDirectoryIfMirrorModeIsLink() {
-		$sourcePath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestSource'));
-		$targetRootPath =  \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestTarget'));
-		$targetPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array($targetRootPath, '_Resources'));
+		$sourcePath = Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestSource'));
+		$targetRootPath =  Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestTarget'));
+		$targetPath = Files::concatenatePaths(array($targetRootPath, '_Resources'));
 
 		mkdir($sourcePath);
-		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($targetPath);
+		Files::createDirectoryRecursively($targetPath);
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
@@ -114,10 +115,10 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$publishingTarget->expects($this->never())->method('mirrorFile');
 
 		$this->assertTrue($publishingTarget->publishStaticResources($sourcePath, 'Bar'));
-		$this->assertTrue(\TYPO3\Flow\Utility\Files::is_link(\TYPO3\Flow\Utility\Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
+		$this->assertTrue(Files::is_link(Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
 
-		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($targetRootPath);
-		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($sourcePath);
+		Files::removeDirectoryRecursively($targetRootPath);
+		Files::removeDirectoryRecursively($sourcePath);
 	}
 
 	/**
@@ -130,7 +131,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		file_put_contents('vfs://Foo/Sources/file2.txt', 1);
 		file_put_contents('vfs://Foo/Sources/file3.txt', 1);
 
-		\TYPO3\Flow\Utility\Files::createDirectoryRecursively('vfs://Foo/Web/_Resources/Static/Bar');
+		Files::createDirectoryRecursively('vfs://Foo/Web/_Resources/Static/Bar');
 
 		file_put_contents('vfs://Foo/Web/_Resources/Static/Bar/file2.txt', 1);
 		vfsStreamWrapper::getRoot()->getChild('Web/_Resources/Static/Bar/file2.txt')->lastModified(time() - 5);
@@ -246,8 +247,9 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function unpublishPersistentResourceMirrorsTheGivenResource() {
-		$this->marktestSkipped('It seems glob() does not work on vfsStream...');
+	public function unpublishPersistentResourceRemovesTheResourceMirrorAndNoOtherFiles() {
+		$temporaryDirectory =  Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileSystemPublishingTargetTestTarget')) . '/';
+		Files::createDirectoryRecursively($temporaryDirectory);
 
 		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
@@ -255,16 +257,25 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array(), array(), '', FALSE);
 		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
-		mkdir('vfs://Foo/Web');
-		mkdir('vfs://Foo/Web/Persistent');
-		file_put_contents('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', 'some data');
+		mkdir($temporaryDirectory . 'Persistent');
+		file_put_contents($temporaryDirectory . 'Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', 'some data for deletion');
+		file_put_contents($temporaryDirectory . 'Persistent/92cfceb39d57d914ed8b14d0e37643de0797ae56.jpg', 'must not be deleted');
+		file_put_contents($temporaryDirectory . 'Persistent/186cd74009911bf433778c1fafff6ce90dd47b69.jpg', 'must not be deleted, too');
 
-		$publishingTarget = $this->getAccessibleMock('TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
-		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
+		$publishingTarget = new \TYPO3\Flow\Resource\Publishing\FileSystemPublishingTarget();
+		$this->inject($publishingTarget, 'resourcesPublishingPath', $temporaryDirectory);
 
-		$this->assertTrue(file_exists('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
+		$this->assertTrue(file_exists($temporaryDirectory . 'Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
+		$this->assertTrue(file_exists($temporaryDirectory . 'Persistent/92cfceb39d57d914ed8b14d0e37643de0797ae56.jpg'));
+		$this->assertTrue(file_exists($temporaryDirectory . 'Persistent/186cd74009911bf433778c1fafff6ce90dd47b69.jpg'));
+
 		$this->assertTrue($publishingTarget->unpublishPersistentResource($mockResource));
-		$this->assertFalse(file_exists('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
+
+		$this->assertFalse(file_exists($temporaryDirectory . 'Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
+		$this->assertTrue(file_exists($temporaryDirectory . 'Persistent/92cfceb39d57d914ed8b14d0e37643de0797ae56.jpg'));
+		$this->assertTrue(file_exists($temporaryDirectory . 'Persistent/186cd74009911bf433778c1fafff6ce90dd47b69.jpg'));
+
+		Files::removeDirectoryRecursively($temporaryDirectory);
 	}
 
 	/**
@@ -335,7 +346,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$publishingTarget->_call('mirrorFile', $sourcePathAndFilename, $targetPathAndFilename, TRUE);
 		$this->assertFileEquals($sourcePathAndFilename, $targetPathAndFilename);
-		$this->assertTrue(\TYPO3\Flow\Utility\Files::is_link($targetPathAndFilename));
+		$this->assertTrue(Files::is_link($targetPathAndFilename));
 
 		unlink($sourcePathAndFilename);
 		unlink($targetPathAndFilename);
