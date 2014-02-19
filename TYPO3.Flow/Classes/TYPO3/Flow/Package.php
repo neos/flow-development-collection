@@ -56,6 +56,8 @@ class Package extends BasePackage {
 
 		$dispatcher->connect('TYPO3\Flow\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\Flow\Security\Policy\PolicyService', 'savePolicyCache');
 
+		$dispatcher->connect('TYPO3\Flow\Command\DoctrineCommandController', 'afterDatabaseMigration', 'TYPO3\Flow\Security\Policy\PolicyService', 'initializeRolesFromPolicy');
+
 		$dispatcher->connect('TYPO3\Flow\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', function() use($bootstrap) {
 			$session = $bootstrap->getObjectManager()->get('TYPO3\Flow\Session\SessionInterface');
 			if ($session->isStarted()) {
