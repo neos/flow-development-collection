@@ -20,6 +20,7 @@ use TYPO3\Flow\Utility\Arrays;
  * A general purpose configuration manager
  *
  * @Flow\Scope("singleton")
+ * @Flow\Proxy(FALSE)
  * @api
  */
 class ConfigurationManager {
