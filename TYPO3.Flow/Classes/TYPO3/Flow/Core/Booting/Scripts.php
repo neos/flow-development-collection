@@ -34,9 +34,27 @@ class Scripts {
 		spl_autoload_register(array($classLoader, 'loadClass'), TRUE, TRUE);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Core\ClassLoader', $classLoader);
 		if ($bootstrap->getContext()->isTesting()) {
+			self::requireAutoloaderForPhpUnit();
 			$classLoader->setConsiderTestsNamespace(TRUE);
 			require_once(FLOW_PATH_FLOW . 'Tests/BaseTestCase.php');
 			require_once(FLOW_PATH_FLOW . 'Tests/FunctionalTestCase.php');
+		}
+	}
+
+	/**
+	 * Include the PHPUnit autoloader if PHPUnit is installed via PEAR.
+	 *
+	 * @return void
+	 */
+	static protected function requireAutoloaderForPhpUnit() {
+		if (class_exists('PHPUnit_Framework_TestCase')) {
+			return;
+		}
+		if (stream_resolve_include_path('PHPUnit/Autoload.php') !== FALSE) {
+			require_once('PHPUnit/Autoload.php');
+		} else {
+			echo PHP_EOL . 'TYPO3 Flow Bootstrap Error: The Testing context requires PHPUnit. Looked for "PHPUnit/Autoload.php" without success.';
+			exit(1);
 		}
 	}
 
