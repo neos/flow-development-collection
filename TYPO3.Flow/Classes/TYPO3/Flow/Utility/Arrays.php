@@ -76,8 +76,7 @@ class Arrays {
 			$firstArrayInner = &$data[$i * 2];
 			$secondArrayInner = $data[$i * 2 + 1];
 			foreach ($secondArrayInner as $key => $value) {
-				$keyInFirstArray = array_key_exists($key, $firstArrayInner);
-				if ($keyInFirstArray && is_array($firstArrayInner[$key])) {
+				if (isset($firstArrayInner[$key]) && is_array($firstArrayInner[$key])) {
 					if ((!$emptyValuesOverride || $value !== array()) && is_array($value)) {
 						$data[] = &$firstArrayInner[$key];
 						$data[] = $value;
@@ -87,13 +86,13 @@ class Arrays {
 					}
 				} else {
 					if ($dontAddNewKeys) {
-						if ($keyInFirstArray && ($emptyValuesOverride || !empty($value))) {
+						if (array_key_exists($key, $firstArrayInner) && ($emptyValuesOverride || !empty($value))) {
 							$firstArrayInner[$key] = $value;
 						}
 					} else {
 						if ($emptyValuesOverride || !empty($value)) {
 							$firstArrayInner[$key] = $value;
-						} elseif (!$keyInFirstArray && $value === array()) {
+						} elseif (!isset($firstArrayInner[$key]) && $value === array()) {
 							$firstArrayInner[$key] = $value;
 						}
 					}
