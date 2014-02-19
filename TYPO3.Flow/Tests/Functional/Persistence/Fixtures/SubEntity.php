@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 class SubEntity extends SuperEntity {
 
 	/**
-	 * @var TestEntity
+	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
 	 * @ORM\OneToOne
 	 */
 	protected $parentEntity;
