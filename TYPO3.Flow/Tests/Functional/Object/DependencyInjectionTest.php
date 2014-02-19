@@ -114,6 +114,16 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * See http://forge.typo3.org/issues/43659
+	 *
+	 * @test
+	 */
+	public function injectedPropertiesAreAvailableInInitializeObjectEvenIfTheClassHasBeenExtended() {
+		$prototypeDsub = $this->objectManager->get('TYPO3\Flow\Tests\Functional\Object\Fixtures\PrototypeClassDsub');
+		$this->assertFalse($prototypeDsub->injectedPropertyWasUnavailable);
+	}
+
+	/**
 	 * @test
 	 */
 	public function constructorsOfSingletonObjectsAcceptNullArguments() {
