@@ -345,8 +345,8 @@ class ValidatorResolver {
 
 		// find polytype validator for class
 		$acceptablePolyTypeValidators = array();
-		$objectValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface');
-		foreach ($objectValidatorImplementationClassNames as $validatorImplementationClassName) {
+		$polyTypeObjectValidatorImplementationClassNames = static::getPolyTypeObjectValidatorImplementationClassNames($this->objectManager);
+		foreach ($polyTypeObjectValidatorImplementationClassNames as $validatorImplementationClassName) {
 			$acceptablePolyTypeValidator = $this->createValidator($validatorImplementationClassName);
 			// skip custom validator already added above
 			if ($addedValidatorClassName === get_class($acceptablePolyTypeValidator)) {
@@ -360,6 +360,19 @@ class ValidatorResolver {
 			ksort($acceptablePolyTypeValidators);
 			$conjunctionValidator->addValidator(array_pop($acceptablePolyTypeValidators));
 		}
+	}
+
+	/**
+	 * Returns a map of object validator class names.
+	 *
+	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @return array Array of object validator class names
+	 * @Flow\CompileStatic
+	 */
+	static public function getPolyTypeObjectValidatorImplementationClassNames($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+		$result = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface');
+		return $result;
 	}
 
 	/**
