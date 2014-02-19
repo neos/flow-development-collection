@@ -11,7 +11,7 @@ namespace TYPO3\Flow\Monitor\ChangeDetectionStrategy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Monitor\FileMonitor;
 
 use TYPO3\Flow\Annotations as Flow;
@@ -27,7 +27,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	protected $fileMonitor;
 
 	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
 	 */
 	protected $cache;
 
@@ -45,10 +45,10 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	/**
 	 * Injects the Flow_Monitor cache
 	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(VariableFrontend $cache) {
+	public function injectCache(StringFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -60,7 +60,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	 */
 	public function setFileMonitor(FileMonitor $fileMonitor) {
 		$this->fileMonitor = $fileMonitor;
-		$this->filesAndModificationTimes = $this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes');
+		$this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes'), TRUE);
 	}
 
 	/**
@@ -103,7 +103,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface {
 	 */
 	public function shutdownObject() {
 		if ($this->modificationTimesChanged === TRUE) {
-			$this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', $this->filesAndModificationTimes);
+			$this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes));
 		}
 	}
 }

@@ -48,10 +48,10 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function fileMonitorCachesTheListOfKnownDirectoriesAndFiles() {
-		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\StringFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with('Flow_Test_directoriesAndFiles')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->once())->method('get')->with('Flow_Test_directoriesAndFiles')->will($this->returnValue(array('foo' => 'bar')));
-		$mockCache->expects($this->once())->method('set')->with('Flow_Test_directoriesAndFiles', array('baz' => 'quux'));
+		$mockCache->expects($this->once())->method('get')->with('Flow_Test_directoriesAndFiles')->will($this->returnValue(json_encode(array('foo' => 'bar'))));
+		$mockCache->expects($this->once())->method('set')->with('Flow_Test_directoriesAndFiles', json_encode(array('baz' => 'quux'), TRUE));
 
 		$mockStrategy = $this->getMock('TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
 		$mockStrategy->expects($this->once())->method('shutdownObject');
