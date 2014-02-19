@@ -26,9 +26,9 @@ class Files {
 	 */
 	static public function getUnixStylePath($path) {
 		if (strpos($path, ':') === FALSE) {
-			return str_replace('//', '/', str_replace('\\', '/', $path));
+			return str_replace(array('//', '\\'), '/', $path);
 		} else {
-			return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace('//', '/', str_replace('\\', '/', $path)));
+			return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(array('//', '\\'), '/', $path));
 		}
 	}
 
