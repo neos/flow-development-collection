@@ -149,7 +149,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 
 		$this->remove($entryIdentifier);
 
-		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . '.' . $entryIdentifier . '.tmp';
+		$temporaryCacheEntryPathAndFilename = $this->generateTemporaryPathAndFilename($entryIdentifier);
 		$lifetime = $lifetime === NULL ? $this->defaultLifetime : $lifetime;
 		$expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
 		$metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
