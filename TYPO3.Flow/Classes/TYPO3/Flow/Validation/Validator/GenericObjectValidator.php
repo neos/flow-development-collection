@@ -67,11 +67,15 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 	 * @api
 	 */
 	protected function isValid($object) {
+		$messages = new \TYPO3\Flow\Error\Result();
 		foreach ($this->propertyValidators as $propertyName => $validators) {
 			$propertyValue = $this->getPropertyValue($object, $propertyName);
-			$this->checkProperty($propertyValue, $validators, $propertyName);
+			$result = $this->checkProperty($propertyValue, $validators);
+			if ($result !== NULL) {
+				$messages->forProperty($propertyName)->merge($result);
+			}
 		}
-		return;
+		$this->result = $messages;
 	}
 
 	/**
@@ -117,10 +121,9 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 	 *
 	 * @param mixed $value The value to be validated
 	 * @param array $validators The validators to be called on the value
-	 * @param string $propertyName Name of ther property to check
-	 * @return void
+	 * @return NULL|\TYPO3\Flow\Error\Result
 	 */
-	protected function checkProperty($value, $validators, $propertyName) {
+	protected function checkProperty($value, $validators) {
 		$result = NULL;
 		foreach ($validators as $validator) {
 			if ($validator instanceof ObjectValidatorInterface) {
@@ -128,18 +131,15 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
 			}
 			$currentResult = $validator->validate($value);
 			if ($currentResult->hasMessages()) {
-				if ($result == NULL) {
+				if ($result === NULL) {
 					$result = $currentResult;
 				} else {
 					$result->merge($currentResult);
 				}
 			}
 		}
-		if ($result !== NULL) {
-			$this->result->forProperty($propertyName)->merge($result);
-		}
+		return $result;
 	}
-
 
 	/**
 	 * Checks the given object can be validated by the validator implementation

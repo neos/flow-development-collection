@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A sample entity for tests
@@ -19,6 +20,27 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  */
 class SubEntity extends SuperEntity {
+
+	/**
+	 * @var TestEntity
+	 * @ORM\OneToOne
+	 */
+	protected $parentEntity;
+
+	/**
+	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $parentEntity
+	 * @return void
+	 */
+	public function setParentEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $parentEntity) {
+		$this->parentEntity = $parentEntity;
+	}
+
+	/**
+	 * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
+	 */
+	public function getParentEntity() {
+		return $this->parentEntity;
+	}
 
 }
 ?>

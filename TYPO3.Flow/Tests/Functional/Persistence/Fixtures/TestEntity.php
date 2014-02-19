@@ -29,22 +29,28 @@ class TestEntity {
 	protected $objectManager;
 
 	/**
+	 * @var string
+	 * @Flow\Validate(type="StringLength", options={"minimum"=3})
+	 */
+	protected $name = '';
+
+	/**
 	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
 	 * @ORM\ManyToOne
 	 */
 	protected $relatedEntity;
 
 	/**
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity>
+	 * @ORM\OneToMany(mappedBy="parentEntity")
+	 */
+	protected $subEntities;
+
+	/**
 	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject
 	 * @ORM\ManyToOne
 	 */
 	protected $relatedValueObject;
-
-	/**
-	 * @var string
-	 * @Flow\Validate(type="StringLength", options={"minimum"=3})
-	 */
-	protected $name = '';
 
 	/**
 	 * @var string
@@ -56,6 +62,13 @@ class TestEntity {
 	 * @var array
 	 */
 	protected $arrayProperty = array();
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->subEntities = new \Doctrine\Common\Collections\ArrayCollection();
+	}
 
 	/**
 	 * @return string
@@ -120,6 +133,29 @@ class TestEntity {
 	 */
 	public function getRelatedEntity() {
 		return $this->relatedEntity;
+	}
+
+	/**
+	 * @param \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity> $subEntities
+	 * @return void
+	 */
+	public function setSubEntities(\Doctrine\Common\Collections\Collection $subEntities) {
+		$this->subEntities = $subEntities;
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $relatedEntity
+	 * @return void
+	 */
+	public function addSubEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $subEntity) {
+		$this->subEntities->add($subEntity);
+	}
+
+	/**
+	 * @return \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity>
+	 */
+	public function getRelatedEntities() {
+		return $this->subEntities;
 	}
 
 	/**

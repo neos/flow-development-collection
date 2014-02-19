@@ -39,9 +39,11 @@ class EntityController extends ActionController {
 	 * @return void
 	 */
 	protected function initializeUpdateAction() {
-		/** @var \TYPO3\Flow\Mvc\Controller\MvcPropertyMappingConfiguration $propertyMappingConfiguration */
-		$propertyMappingConfiguration = $this->arguments['entity']->getPropertyMappingConfiguration();
-		$propertyMappingConfiguration
+		$this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+			->allowAllProperties()
+			->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+		$this->arguments->getArgument('entity')->getPropertyMappingConfiguration()
+			->forProperty('subEntities.*')
 			->allowAllProperties()
 			->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 	}
@@ -55,6 +57,18 @@ class EntityController extends ActionController {
 		return sprintf('Entity "%s" updated', $entity->getName());
 	}
 
+	/**
+	 * @return string
+	 */
+	public function errorAction() {
+		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
+		foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
+			foreach ($errors as $error) {
+				$message .= 'Error for ' . $propertyPath . ':  ' . $error->render() . PHP_EOL;
+			}
+		}
 
+		return $message;
+	}
 }
 ?>
