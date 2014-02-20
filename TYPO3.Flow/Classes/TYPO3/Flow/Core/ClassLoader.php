@@ -63,6 +63,9 @@ class ClassLoader {
 		'license' => TRUE,
 		'author' => TRUE,
 		'test' => TRUE,
+		'deprecated' => TRUE,
+		'internal' => TRUE,
+		'since' => TRUE,
 	);
 
 	/**
@@ -76,6 +79,15 @@ class ClassLoader {
 	 * @var array
 	 */
 	protected $fallbackClassPaths = array();
+
+	/**
+	 * Cache classNames that were not found in this class loader in order
+	 * to save time in resolving those non existent classes.
+	 * Usually these will be annotations that have no class.
+	 *
+	 * @var array
+	 */
+	protected $nonExistentClasses = array();
 
 	/**
 	 *
@@ -112,7 +124,7 @@ class ClassLoader {
 		$namespaceParts = explode('\\', $className);
 
 		// Workaround for Doctrine's annotation parser which does a class_exists() for annotations like "@param" and so on:
-		if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[end($namespaceParts)])) {
+		if (isset($this->ignoredClassNames[$className]) || isset($this->ignoredClassNames[end($namespaceParts)]) || isset($this->nonExistentClasses[$className])) {
 			return FALSE;
 		}
 
@@ -165,7 +177,7 @@ class ClassLoader {
 		foreach ($possiblePaths as $possiblePathData) {
 			$pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
 			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packagenamespacePartCount);
-			if (!$this->considerTestsNamespace || file_exists($possibleFilePath)) {
+			if (file_exists($possibleFilePath)) {
 				$result = include($possibleFilePath);
 				if ($result !== FALSE) {
 					return TRUE;
@@ -173,6 +185,7 @@ class ClassLoader {
 			}
 		}
 
+		$this->nonExistentClasses[$className] = TRUE;
 		return FALSE;
 	}
 
