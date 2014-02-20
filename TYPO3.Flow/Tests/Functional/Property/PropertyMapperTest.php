@@ -351,4 +351,26 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals($roles, array_keys($account->getRoles()));
 	}
 
+	/**
+	 * @test
+	 */
+	public function persistentEntityCanBeSerializedToIdentifierUsingObjectSource() {
+		$entity = new Fixtures\TestEntity();
+		$entity->setName('Egon Olsen');
+		$entity->setAge(42);
+		$entity->setAverageNumberOfKids(3.5);
+		$this->persistenceManager->add($entity);
+
+		$entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
+
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$source = $entity;
+
+		$result = $this->propertyMapper->convert($source, 'string');
+
+		$this->assertSame($entityIdentifier, $result);
+	}
+
 }

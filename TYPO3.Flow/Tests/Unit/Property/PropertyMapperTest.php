@@ -39,11 +39,12 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validSourceTypes() {
 		return array(
-			array('someString', 'string'),
-			array(42, 'integer'),
-			array(3.5, 'float'),
-			array(TRUE, 'boolean'),
-			array(array(), 'array')
+			array('someString', array('string')),
+			array(42, array('integer')),
+			array(3.5, array('float')),
+			array(TRUE, array('boolean')),
+			array(array(), array('array')),
+			array(new \stdClass(), array('stdClass', 'object'))
 		);
 	}
 
@@ -51,9 +52,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider validSourceTypes
 	 */
-	public function sourceTypeCanBeCorrectlyDetermined($source, $sourceType) {
+	public function sourceTypeCanBeCorrectlyDetermined($source, $sourceTypes) {
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
-		$this->assertEquals($sourceType, $propertyMapper->_call('determineSourceType', $source));
+		$this->assertEquals($sourceTypes, $propertyMapper->_call('determineSourceTypes', $source));
 	}
 
 	/**
@@ -61,9 +62,7 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function invalidSourceTypes() {
 		return array(
-			array(NULL),
-			array(new \stdClass()),
-			array(new \ArrayObject())
+			array(NULL)
 		);
 	}
 
@@ -72,9 +71,9 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider invalidSourceTypes
 	 * @expectedException \TYPO3\Flow\Property\Exception\InvalidSourceException
 	 */
-	public function sourceWhichIsNoSimpleTypeThrowsException($source) {
+	public function sourceWhichIsNoSimpleTypeOrObjectThrowsException($source) {
 		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
-		$propertyMapper->_call('determineSourceType', $source);
+		$propertyMapper->_call('determineSourceTypes', $source);
 	}
 
 	/**
