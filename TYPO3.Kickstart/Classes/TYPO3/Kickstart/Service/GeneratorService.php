@@ -248,7 +248,7 @@ class GeneratorService {
 	 */
 	public function generateModel($packageKey, $modelName, array $fieldDefinitions, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
-		$namespace = str_replace('.', '\\', $packageKey) .  '\\Domain\\Model';
+		$namespace = str_replace('.', '\\', $packageKey) . '\\Domain\\Model';
 		$fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
@@ -282,7 +282,7 @@ class GeneratorService {
 	 */
 	public function generateTestsForModel($packageKey, $modelName, $overwrite = FALSE) {
 		$testName = ucfirst($modelName) . 'Test';
-		$namespace = str_replace('.', '\\', $packageKey) .  '\\Tests\\Unit\\Domain\\Model';
+		$namespace = str_replace('.', '\\', $packageKey) . '\\Tests\\Unit\\Domain\\Model';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Tests/Unit/Model/EntityTestTemplate.php.tmpl';
 
@@ -314,7 +314,7 @@ class GeneratorService {
 	public function generateRepository($packageKey, $modelName, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
 		$repositoryClassName = $modelName . 'Repository';
-		$namespace = str_replace('.', '\\', $packageKey) .  '\\Domain\\Repository';
+		$namespace = str_replace('.', '\\', $packageKey) . '\\Domain\\Repository';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
 
