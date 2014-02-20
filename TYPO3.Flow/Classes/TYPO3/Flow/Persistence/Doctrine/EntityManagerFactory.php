@@ -99,6 +99,13 @@ class EntityManagerFactory {
 
 		\Doctrine\DBAL\Types\Type::addType('objectarray', 'TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray');
 
+		if (isset($this->settings['doctrine']['filters']) && is_array($this->settings['doctrine']['filters'])) {
+			foreach ($this->settings['doctrine']['filters'] as $filterName => $filterClass) {
+				$config->addFilter($filterName, $filterClass);
+				$entityManager->getFilters()->enable($filterName);
+			}
+		}
+
 		return $entityManager;
 	}
 
