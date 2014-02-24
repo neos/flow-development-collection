@@ -339,7 +339,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function renewIdThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -353,7 +353,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\OperationNotSupportedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\OperationNotSupportedException
 	 */
 	public function renewIdThrowsExceptionIfCalledOnRemoteSession() {
 		$storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
@@ -502,7 +502,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function hasKeyThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -541,7 +541,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getLastActivityTimestampThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -577,7 +577,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function addTagThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -586,7 +586,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function addTagThrowsExceptionIfTagIsNotValid() {
 		$taggedSession = new Session();
@@ -685,7 +685,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function getTagsThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -694,7 +694,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function removeTagThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -727,7 +727,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\Flow\Session\Exception\SessionNotStartedException
+	 * @expectedException \TYPO3\Flow\Session\Exception\SessionNotStartedException
 	 */
 	public function touchThrowsExceptionIfCalledOnNonStartedSession() {
 		$session = new Session();
@@ -1135,6 +1135,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$metaDataCache->set($sessionIdentifier, $sessionInfo, array('session'), 0);
 		}
 
+		$this->inject($session, 'systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface'));
 		$this->assertEquals(5, $session->collectGarbage());
 	}
 
