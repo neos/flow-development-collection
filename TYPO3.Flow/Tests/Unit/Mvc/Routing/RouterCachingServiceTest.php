@@ -74,6 +74,9 @@ class RouterCachingServiceTest extends UnitTestCase {
 		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$this->mockHttpRequest->expects($this->any())->method('getMethod')->will($this->returnValue('GET'));
 		$this->mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue('some/route/path'));
+		$this->mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$this->mockUri->expects($this->any())->method('getHost')->will($this->returnValue('subdomain.domain.com'));
+		$this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockUri));
 	}
 
 	/**
@@ -106,7 +109,7 @@ class RouterCachingServiceTest extends UnitTestCase {
 	 */
 	public function getCachedMatchResultsReturnsCachedMatchResultsIfFoundInCache() {
 		$expectedResult = array('cached' => 'route values');
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
+		$cacheIdentifier = '89dcfa70030cbdf762b727b5ba41c7bb';
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue($expectedResult));
 
 		$actualResult = $this->routerCachingService->getCachedMatchResults($this->mockHttpRequest);
@@ -118,7 +121,7 @@ class RouterCachingServiceTest extends UnitTestCase {
 	 */
 	public function getCachedMatchResultsReturnsFalseIfNotFoundInCache() {
 		$expectedResult = FALSE;
-		$cacheIdentifier = 'e6e764c779e0b77420701a0943dd898f_GET';
+		$cacheIdentifier = '89dcfa70030cbdf762b727b5ba41c7bb';
 		$this->mockFindMatchResultsCache->expects($this->once())->method('get')->with($cacheIdentifier)->will($this->returnValue(FALSE));
 
 		$actualResult = $this->routerCachingService->getCachedMatchResults($this->mockHttpRequest);
