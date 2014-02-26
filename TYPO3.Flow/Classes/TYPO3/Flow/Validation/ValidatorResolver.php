@@ -282,6 +282,11 @@ class ValidatorResolver {
 				} catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744, $exception);
 				}
+
+				if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, 'TYPO3\Flow\Annotations\IgnoreValidation')) {
+					continue;
+				}
+
 				$propertyTargetClassName = $parsedType['type'];
 				if (\TYPO3\Flow\Utility\TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
 					$collectionValidator = $this->createValidator('TYPO3\Flow\Validation\Validator\CollectionValidator', array('elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups));
