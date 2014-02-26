@@ -209,8 +209,6 @@ class PropertyMapper {
 			return $configuration->getTypeConverter();
 		}
 
-		$sourceType = $this->determineSourceType($source);
-
 		if (!is_string($targetType)) {
 			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
 		}
@@ -218,19 +216,23 @@ class PropertyMapper {
 		$normalizedTargetType = TypeHandling::normalizeType($targetType);
 		$converter = NULL;
 
-		if (TypeHandling::isSimpleType($normalizedTargetType)) {
-			if (isset($this->typeConverters[$sourceType][$normalizedTargetType])) {
-				$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$normalizedTargetType], $source, $normalizedTargetType);
+		$sourceTypes = $this->determineSourceTypes($source);
+
+		foreach ($sourceTypes as $sourceType) {
+			if (TypeHandling::isSimpleType($normalizedTargetType)) {
+				if (isset($this->typeConverters[$sourceType][$normalizedTargetType])) {
+					$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$normalizedTargetType], $source, $normalizedTargetType);
+				}
+			} else {
+				$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
 			}
-		} else {
-			$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
+
+			if ($converter !== NULL) {
+				return $converter;
+			}
 		}
 
-		if ($converter === NULL) {
-			throw new \TYPO3\Flow\Property\Exception\TypeConverterException('No converter found which can be used to convert from "' . $sourceType . '" to "' . $normalizedTargetType . '".');
-		}
-
-		return $converter;
+		throw new \TYPO3\Flow\Property\Exception\TypeConverterException('No converter found which can be used to convert from "' . implode('" or "', $sourceTypes) . '" to "' . $normalizedTargetType . '".');
 	}
 
 	/**
@@ -328,22 +330,27 @@ class PropertyMapper {
 	 * Determine the type of the source data, or throw an exception if source was an unsupported format.
 	 *
 	 * @param mixed $source
-	 * @return string the type of $source
+	 * @return array Possible source types (single value for simple typed source, multiple values for object source)
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidSourceException
 	 */
-	protected function determineSourceType($source) {
+	protected function determineSourceTypes($source) {
 		if (is_string($source)) {
-			return 'string';
+			return array('string');
 		} elseif (is_array($source)) {
-			return 'array';
+			return array('array');
 		} elseif (is_float($source)) {
-			return 'float';
+			return array('float');
 		} elseif (is_integer($source)) {
-			return 'integer';
+			return array('integer');
 		} elseif (is_bool($source)) {
-			return 'boolean';
+			return array('boolean');
+		} elseif (is_object($source)) {
+			$class = get_class($source);
+			$parentClasses = class_parents($class);
+			$interfaces = class_implements($class);
+			return array_merge(array($class), $parentClasses, $interfaces, array('object'));
 		} else {
-			throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The source is not of type string, array, float, integer or boolean, but of type "' . gettype($source) . '"', 1297773150);
+			throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The source is not of type string, array, float, integer, boolean or object, but of type "' . gettype($source) . '"', 1297773150);
 		}
 	}
 
