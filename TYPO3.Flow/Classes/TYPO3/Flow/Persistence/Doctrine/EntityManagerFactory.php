@@ -50,9 +50,13 @@ class EntityManagerFactory {
 	 *
 	 * @param array $settings
 	 * @return void
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings['persistence'];
+		if (!isset($this->settings['doctrine'])) {
+			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException('The configuration TYPO3.Flow.persistence.doctrine is NULL, please check your settings.', 1392800005);
+		}
 	}
 
 	/**
