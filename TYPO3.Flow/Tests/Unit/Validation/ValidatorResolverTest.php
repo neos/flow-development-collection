@@ -441,14 +441,36 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface')->will($this->returnValue(array()));
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array('entityProperty', 'otherProperty')));
 		$mockReflectionService->expects($this->at(1))->method('getPropertyTagsValues')->with($modelClassName, 'entityProperty')->will($this->returnValue(array('var' => array($entityClassName))));
-		$mockReflectionService->expects($this->at(2))->method('getPropertyAnnotations')->with($modelClassName, 'entityProperty', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue(array()));
-		$mockReflectionService->expects($this->at(3))->method('getPropertyTagsValues')->with($modelClassName, 'otherProperty')->will($this->returnValue(array('var' => array($otherClassName))));
-		$mockReflectionService->expects($this->at(4))->method('getPropertyAnnotations')->with($modelClassName, 'otherProperty', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->at(2))->method('isPropertyAnnotatedWith')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(3))->method('getPropertyAnnotations')->with($modelClassName, 'entityProperty', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->at(4))->method('getPropertyTagsValues')->with($modelClassName, 'otherProperty')->will($this->returnValue(array('var' => array($otherClassName))));
+		$mockReflectionService->expects($this->at(5))->method('isPropertyAnnotatedWith')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(6))->method('getPropertyAnnotations')->with($modelClassName, 'otherProperty', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue(array()));
 
 		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator', 'getBaseValidatorConjunction'));
 		$validatorResolver->_set('objectManager', $mockObjectManager);
 		$validatorResolver->_set('reflectionService', $mockReflectionService);
 		$validatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->will($this->returnValue($this->getMock('TYPO3\Flow\Validation\Validator\ValidatorInterface')));
+
+		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, array('Default'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function buildBaseValidatorConjunctionSkipsPropertiesAnnotatedWithIgnoreValidation() {
+		$modelClassName = 'Model' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $modelClassName . '{}');
+
+		$mockReflectionService = $this->getMock('\TYPO3\Flow\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->will($this->returnValue(array('entityProperty')));
+		$mockReflectionService->expects($this->at(1))->method('getPropertyTagsValues')->with($modelClassName, 'entityProperty')->will($this->returnValue(array('var' => array('ToBeIgnored'))));
+		$mockReflectionService->expects($this->at(2))->method('isPropertyAnnotatedWith')->with($modelClassName, 'entityProperty', 'TYPO3\Flow\Annotations\IgnoreValidation')->will($this->returnValue(TRUE));
+
+		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator', 'getBaseValidatorConjunction'));
+		$validatorResolver->_set('reflectionService', $mockReflectionService);
+		$validatorResolver->expects($this->never())->method('getBaseValidatorConjunction');
 
 		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, array('Default'));
 	}
@@ -511,11 +533,14 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\Flow\Validation\Validator\PolyTypeObjectValidatorInterface')->will($this->returnValue(array()));
 		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('foo', 'bar', 'baz')));
 		$mockReflectionService->expects($this->at(1))->method('getPropertyTagsValues')->with($className, 'foo')->will($this->returnValue($propertyTagsValues['foo']));
-		$mockReflectionService->expects($this->at(2))->method('getPropertyAnnotations')->with(get_class($mockObject), 'foo', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue($validateAnnotations['foo']));
-		$mockReflectionService->expects($this->at(3))->method('getPropertyTagsValues')->with($className, 'bar')->will($this->returnValue($propertyTagsValues['bar']));
-		$mockReflectionService->expects($this->at(4))->method('getPropertyAnnotations')->with(get_class($mockObject), 'bar', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue($validateAnnotations['bar']));
-		$mockReflectionService->expects($this->at(5))->method('getPropertyTagsValues')->with($className, 'baz')->will($this->returnValue($propertyTagsValues['baz']));
-		$mockReflectionService->expects($this->at(6))->method('getPropertyAnnotations')->with(get_class($mockObject), 'baz', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->at(2))->method('isPropertyAnnotatedWith')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(3))->method('getPropertyAnnotations')->with(get_class($mockObject), 'foo', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue($validateAnnotations['foo']));
+		$mockReflectionService->expects($this->at(4))->method('getPropertyTagsValues')->with($className, 'bar')->will($this->returnValue($propertyTagsValues['bar']));
+		$mockReflectionService->expects($this->at(5))->method('isPropertyAnnotatedWith')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(6))->method('getPropertyAnnotations')->with(get_class($mockObject), 'bar', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue($validateAnnotations['bar']));
+		$mockReflectionService->expects($this->at(7))->method('getPropertyTagsValues')->with($className, 'baz')->will($this->returnValue($propertyTagsValues['baz']));
+		$mockReflectionService->expects($this->at(8))->method('isPropertyAnnotatedWith')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(9))->method('getPropertyAnnotations')->with(get_class($mockObject), 'baz', 'TYPO3\Flow\Annotations\Validate')->will($this->returnValue(array()));
 
 		$mockObjectValidator = $this->getMock('TYPO3\Flow\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE);
 

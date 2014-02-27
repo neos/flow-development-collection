@@ -425,7 +425,15 @@ class ActionController extends AbstractController {
 		foreach ($methodNames as $methodName) {
 			if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== FALSE) {
 				$ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\Flow\Annotations\IgnoreValidation');
-				$ignoredArguments = array_map(function($annotation) { return $annotation->argumentName; }, $ignoreValidationAnnotations);
+				$ignoredArguments = array_map(
+					function($annotation) {
+						if (!isset($annotation->argumentName)) {
+							throw new \InvalidArgumentException('An IgnoreValidation annotation on a method must be given an argument name.', 1318456607);
+						}
+						return $annotation->argumentName;
+					},
+					$ignoreValidationAnnotations
+				);
 				if ($ignoredArguments !== array()) {
 					$result[$methodName] = $ignoredArguments;
 				}

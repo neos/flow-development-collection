@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Annotations;
  *                                                                        */
 
 /**
- * Used to ignore validation on a specific method argument.
+ * Used to ignore validation on a specific method argument or class property.
  *
  * @Annotation
- * @Target("METHOD")
+ * @Target({"METHOD", "PROPERTY"})
  */
 final class IgnoreValidation {
 
@@ -30,10 +30,9 @@ final class IgnoreValidation {
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(array $values) {
-		if (!isset($values['value']) && !isset($values['argumentName'])) {
-			throw new \InvalidArgumentException('An IgnoreValidation annotation must be given an argument name.', 1318456607);
+		if (isset($values['value']) || isset($values['argumentName'])) {
+			$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
 		}
-		$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
 	}
 
 }
