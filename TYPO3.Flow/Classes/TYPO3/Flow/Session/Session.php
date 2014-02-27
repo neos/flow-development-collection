@@ -51,6 +51,12 @@ class Session implements SessionInterface {
 	protected $objectManager;
 
 	/**
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Meta data cache for this session
 	 *
 	 * @Flow\Inject
@@ -571,12 +577,6 @@ class Session implements SessionInterface {
 		$this->tags = array();
 		$this->request = NULL;
 	}
-
-	/**
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
-	 * @Flow\Inject
-	 */
-	protected $systemLogger;
 
 	/**
 	 * Iterates over all existing sessions and removes their data if the inactivity
