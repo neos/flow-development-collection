@@ -462,7 +462,7 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 	 * Scales O(n^2) with number of tag entries
 	 *
 	 * @param string $tag Tag the entries must have
-	 * @return void
+	 * @return integer The number of entries which have been affected by this flush
 	 * @throws \InvalidArgumentException if identifier is not a string
 	 * @api
 	 */
@@ -478,6 +478,8 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface {
 				$this->removeIdentifierEntriesAndRelations($identifiers, array($tag));
 			}
 		}
+
+		return count($identifiers);
 	}
 
 	/**

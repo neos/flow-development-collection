@@ -128,7 +128,7 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
 	 * Removes all cache entries of this cache which are tagged by the specified tag.
 	 *
 	 * @param string $tag The tag the entries must have
-	 * @return void
+	 * @return integer The number of entries which have been affected by this flush
 	 * @api
 	 */
 	public function flushByTag($tag) {
@@ -136,6 +136,7 @@ class TransientMemoryBackend extends AbstractBackend implements TaggableBackendI
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
 		}
+		return count($identifiers);
 	}
 
 	/**

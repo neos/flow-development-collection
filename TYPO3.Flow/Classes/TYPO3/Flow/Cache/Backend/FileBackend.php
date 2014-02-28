@@ -297,18 +297,19 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
 	 * Removes all cache entries of this cache which are tagged by the specified tag.
 	 *
 	 * @param string $tag The tag the entries must have
-	 * @return void
+	 * @return integer The number of entries which have been affected by this flush
 	 * @api
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
 		if (count($identifiers) === 0) {
-			return;
+			return 0;
 		}
 
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
+		return count($identifiers);
 	}
 
 	/**
