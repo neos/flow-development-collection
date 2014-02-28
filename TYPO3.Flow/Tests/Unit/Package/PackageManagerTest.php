@@ -56,7 +56,9 @@ class PackageManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->packageManager->injectClassLoader($mockClassLoader);
 		$this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
-		$this->packageManager->initialize($mockBootstrap, 'vfs://Test/Packages/', 'vfs://Test/Configuration/PackageStates.php');
+		$this->inject($this->packageManager, 'packagesBasePath', 'vfs://Test/Packages/');
+		$this->inject($this->packageManager, 'packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
+		$this->packageManager->initialize($mockBootstrap);
 	}
 
 	/**
