@@ -23,6 +23,16 @@ use TYPO3\Flow\Annotations as Flow;
 class ClassLoader {
 
 	/**
+	 * @var string
+	 */
+	const MAPPING_TYPE_PSR0 = 'Psr0';
+
+	/**
+	 * @var string
+	 */
+	const MAPPING_TYPE_PSR4 = 'Psr4';
+
+	/**
 	 * @var \TYPO3\Flow\Cache\Frontend\PhpFrontend
 	 */
 	protected $classesCache;
@@ -135,6 +145,7 @@ class ClassLoader {
 
 		if (isset($this->classMap[$className])) {
 			include($this->classMap[$className]);
+
 			return TRUE;
 		}
 
@@ -148,6 +159,7 @@ class ClassLoader {
 		if ($this->packageNamespaces === array()) {
 			if ($namespaceParts[0] === 'TYPO3' && $namespaceParts[1] === 'Flow') {
 				require(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/' . implode('/', array_slice($namespaceParts, 2)) . '.php');
+
 				return TRUE;
 			} else {
 				return FALSE;
@@ -173,7 +185,6 @@ class ClassLoader {
 			$possiblePaths = $this->fallbackClassPaths;
 		}
 
-
 		foreach ($possiblePaths as $possiblePathData) {
 			$pathConstructor = 'buildClassPathWith' . $possiblePathData['mappingType'];
 			$possibleFilePath = $this->$pathConstructor($namespaceParts, $possiblePathData['path'], $packagenamespacePartCount);
@@ -186,20 +197,30 @@ class ClassLoader {
 		}
 
 		$this->nonExistentClasses[$className] = TRUE;
+
 		return FALSE;
 	}
 
 	/**
 	 * Sets the available packages
 	 *
-	 * @param array $packages An array of \TYPO3\Flow\Package\Package objects
+	 * @param array $allPackages An array of \TYPO3\Flow\Package\Package objects
+	 * @param array $activePackages An array of \TYPO3\Flow\Package\Package objects
 	 * @return void
 	 */
-	public function setPackages(array $packages) {
-		foreach ($packages as $package) {
-			$this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
-			if ($this->considerTestsNamespace) {
-				$this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), 'Psr4');
+	public function setPackages(array $allPackages, array $activePackages) {
+		foreach ($allPackages as $packageKey => $package) {
+			if (isset($activePackages[$packageKey])) {
+				$this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
+				if ($this->considerTestsNamespace) {
+					$this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
+				}
+			} else {
+				// Remove entries coming from composer for inactive packages.
+				$this->removeNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
+				if ($this->considerTestsNamespace) {
+					$this->removeNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
+				}
 			}
 		}
 	}
@@ -209,20 +230,14 @@ class ClassLoader {
 	 *
 	 * @param string $namespace A namespace to map to a class path.
 	 * @param string $classPath The class path to be mapped.
-	 * @param string $mappingType The mapping type for this mapping entry. Currently one of "Psr0" or "Psr4" will work. Defaults to "Psr4"
+	 * @param string $mappingType The mapping type for this mapping entry. Currently one of self::MAPPING_TYPE_PSR0 or self::MAPPING_TYPE_PSR4 will work. Defaults to self::MAPPING_TYPE_PSR0
 	 * @return void
 	 */
-	public function createNamespaceMapEntry($namespace, $classPath, $mappingType = 'Psr0') {
-		$namespaceParts = explode('\\', $namespace);
-		// Doctrine has a backslash at the end of their package namespace.
-		if (end($namespaceParts) === '') {
-			array_pop($namespaceParts);
-		}
-
-		$unifiedClassPath = ((substr($classPath, -1, 1) === DIRECTORY_SEPARATOR) ? $classPath : $classPath . '/');
+	public function createNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0) {
+		$unifiedClassPath = ((substr($classPath, -1, 1) === '/') ? $classPath : $classPath . '/');
 
 		$currentArray = & $this->packageNamespaces;
-		foreach ($namespaceParts as $namespacePart) {
+		foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
 			if (!isset($currentArray[$namespacePart])) {
 				$currentArray[$namespacePart] = array();
 			}
@@ -232,10 +247,40 @@ class ClassLoader {
 			$currentArray['_pathData'] = array();
 		}
 
-		$currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)] = array (
+		$currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)] = array(
 			'mappingType' => $mappingType,
 			'path' => $unifiedClassPath
 		);
+	}
+
+	/**
+	 * Tries to remove a possibly existing namespace to class path map entry.
+	 *
+	 * @param string $namespace A namespace mapped to a class path.
+	 * @param string $classPath The class path to be removed.
+	 * @param string $mappingType The mapping type for this mapping entry. Currently one of self::MAPPING_TYPE_PSR0 or self::MAPPING_TYPE_PSR4 will work. Defaults to self::MAPPING_TYPE_PSR0
+	 * @return void
+	 */
+	protected function removeNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0) {
+		$unifiedClassPath = ((substr($classPath, -1, 1) === '/') ? $classPath : $classPath . '/');
+
+		$currentArray = & $this->packageNamespaces;
+		foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
+			if (!isset($currentArray[$namespacePart])) {
+				return;
+			}
+			$currentArray = & $currentArray[$namespacePart];
+		}
+		if (!isset($currentArray['_pathData'])) {
+			return;
+		}
+
+		if (isset($currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)])) {
+			unset ($currentArray['_pathData'][md5($unifiedClassPath . '-' . $mappingType)]);
+			if (empty($currentArray['_pathData'])) {
+				unset($currentArray['_pathData']);
+			}
+		}
 	}
 
 	/**
@@ -247,6 +292,7 @@ class ClassLoader {
 	 */
 	protected function buildClassPathWithPsr0($classNameParts, $classPath) {
 		$fileName = implode('/', $classNameParts) . '.php';
+
 		return $classPath . $fileName;
 	}
 
@@ -260,6 +306,7 @@ class ClassLoader {
 	 */
 	protected function buildClassPathWithPsr4($classNameParts, $classPath, $packageNamespacePartCount) {
 		$fileName = implode('/', array_slice($classNameParts, $packageNamespacePartCount)) . '.php';
+
 		return $classPath . $fileName;
 	}
 
@@ -307,14 +354,14 @@ class ClassLoader {
 							if ($namespace === '') {
 								$this->fallbackClassPaths[] = $possibleClassPath;
 							} else {
-								$this->createNamespaceMapEntry($namespace, $possibleClassPath, 'Psr4');
+								$this->createNamespaceMapEntry($namespace, $possibleClassPath, self::MAPPING_TYPE_PSR4);
 							}
 						}
 					} else {
 						if ($namespace === '') {
 							$this->fallbackClassPaths[] = $possibleClassPaths;
 						} else {
-							$this->createNamespaceMapEntry($namespace, $possibleClassPaths, 'Psr4');
+							$this->createNamespaceMapEntry($namespace, $possibleClassPaths, self::MAPPING_TYPE_PSR4);
 						}
 					}
 				}

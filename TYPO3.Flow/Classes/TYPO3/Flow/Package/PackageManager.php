@@ -142,7 +142,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			}
 		}
 
-		$this->classLoader->setPackages($this->activePackages);
+		$this->classLoader->setPackages($this->packages, $this->activePackages);
 
 		foreach ($this->activePackages as $package) {
 			$package->boot($bootstrap);

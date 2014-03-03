@@ -45,9 +45,10 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$package2 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
 
 		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
-		$this->classLoader->setPackages(array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2));
+		$allPackages = array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2);
+		$this->classLoader->setPackages($allPackages, $allPackages);
 		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/Classes/');
-		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Psr4');
+		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', \TYPO3\Flow\Core\ClassLoader::MAPPING_TYPE_PSR4);
 		$this->classLoader->createNamespaceMapEntry('Acme\\MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/');
 	}
 
@@ -158,5 +159,24 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('\Acme\MyApp\Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
+	}
+
+	/**
+	 * @test
+	 */
+	public function classesFromInactivePackagesAreNotLoaded() {
+		$package1 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
+		$package2 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
+
+		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
+		$allPackages = array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2);
+		$activePackages = array('Acme.MyApp' => $package1);
+		$this->classLoader->setPackages($allPackages, $activePackages);
+		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+
+		self::$testClassWasLoaded = FALSE;
+		$this->classLoader->loadClass('Acme\MyAppAddon\Class');
+		$this->assertFalse(self::$testClassWasLoaded);
 	}
 }
