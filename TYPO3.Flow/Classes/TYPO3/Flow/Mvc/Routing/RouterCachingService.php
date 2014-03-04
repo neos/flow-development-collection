@@ -181,7 +181,7 @@ class RouterCachingService {
 	 * @return string
 	 */
 	protected function buildFindMatchResultsCacheIdentifier(Request $httpRequest) {
-		return md5($httpRequest->getRelativePath()) . '_' . $httpRequest->getMethod();
+		return md5(sprintf('%s_%s_%s', $httpRequest->getUri()->getHost(), $httpRequest->getRelativePath(), $httpRequest->getMethod()));
 	}
 
 	/**
