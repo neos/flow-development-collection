@@ -60,6 +60,13 @@ class Compiler {
 	protected $blacklistedSubPackages = array('TYPO3\Flow\Aop', 'TYPO3\Flow\Cor', 'TYPO3\Flow\Obj', 'TYPO3\Flow\Pac', 'TYPO3\Flow\Ref', 'TYPO3\Flow\Uti');
 
 	/**
+	 * The final map of proxy classes that end up in the cache.
+	 *
+	 * @var array
+	 */
+	protected $storedProxyClasses = array();
+
+	/**
 	 * Injects the Flow settings
 	 *
 	 * @param array $settings The settings
@@ -168,12 +175,31 @@ class Compiler {
 						$class = new \ReflectionClass($fullOriginalClassName);
 						$classPathAndFilename = $class->getFileName();
 						$this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
+						$this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = TRUE;
 						$classCount ++;
+					}
+				} else {
+					if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
+						$this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = TRUE;
 					}
 				}
 			}
 		}
 		return $classCount;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStoredProxyClassMap() {
+		$return = "<?php
+/**
+ * This is a cached list of all proxy classes. Only classes in this array will
+ * actually be loaded from the proxy class cache in the ClassLoader.
+ */
+return " . var_export($this->storedProxyClasses, TRUE) . ";";
+
+		return $return;
 	}
 
 	/**

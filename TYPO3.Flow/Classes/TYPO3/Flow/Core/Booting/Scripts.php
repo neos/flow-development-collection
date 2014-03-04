@@ -30,7 +30,7 @@ class Scripts {
 	 */
 	static public function initializeClassLoader(Bootstrap $bootstrap) {
 		require_once(FLOW_PATH_FLOW . 'Classes/TYPO3/Flow/Core/ClassLoader.php');
-		$classLoader = new \TYPO3\Flow\Core\ClassLoader();
+		$classLoader = new \TYPO3\Flow\Core\ClassLoader($bootstrap->getContext());
 		spl_autoload_register(array($classLoader, 'loadClass'), TRUE, TRUE);
 		$bootstrap->setEarlyInstance('TYPO3\Flow\Core\ClassLoader', $classLoader);
 		if ($bootstrap->getContext()->isTesting()) {

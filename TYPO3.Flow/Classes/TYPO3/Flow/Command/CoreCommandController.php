@@ -156,6 +156,10 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$classCount = $this->proxyClassCompiler->compile();
 
+		$dataTemporaryPath = FLOW_PATH_DATA . 'Temporary/' . (string)$this->bootstrap->getContext();
+		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($dataTemporaryPath);
+		file_put_contents($dataTemporaryPath . '/AvailableProxyClasses.php', $this->proxyClassCompiler->getStoredProxyClassMap());
+
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE);
 
 		$classesCacheBackend = $classesCache->getBackend();

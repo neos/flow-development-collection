@@ -114,6 +114,7 @@ class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 		// other code can cause fatal errors.
 
 		$this->cacheManager->flushCaches();
+		\TYPO3\Flow\Utility\Files::unlink(FLOW_PATH_DATA . 'Temporary/' . (string)$this->bootstrap->getContext() . '/AvailableProxyClasses.php');
 		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context.');
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();

@@ -96,17 +96,23 @@ class ClassLoader {
 	 * Usually these will be annotations that have no class.
 	 *
 	 * @var array
+	 *
 	 */
 	protected $nonExistentClasses = array();
 
 	/**
-	 *
+	 * @var array
 	 */
-	public function __construct() {
+	protected $availableProxyClasses;
+
+	/**
+	 * @param ApplicationContext $context
+	 */
+	public function __construct(ApplicationContext $context = NULL) {
 		$distributionComposerManifest = json_decode(file_get_contents(FLOW_PATH_ROOT . 'composer.json'));
 		$this->defaultVendorDirectory = $distributionComposerManifest->config->{"vendor-dir"};
 		$composerPath = FLOW_PATH_ROOT . $this->defaultVendorDirectory . '/composer/';
-		$this->initializeComposerAutoloadInformation($composerPath);
+		$this->initializeAutoloadInformation($composerPath, $context);
 	}
 
 	/**
@@ -139,7 +145,7 @@ class ClassLoader {
 		}
 
 		// Loads any known proxied class:
-		if ($this->classesCache !== NULL && $this->classesCache->requireOnce(implode('_', $namespaceParts)) !== FALSE) {
+		if ($this->classesCache !== NULL && ($this->availableProxyClasses === NULL || isset($this->availableProxyClasses[implode('_', $namespaceParts)])) && $this->classesCache->requireOnce(implode('_', $namespaceParts)) !== FALSE) {
 			return TRUE;
 		}
 
@@ -312,9 +318,9 @@ class ClassLoader {
 
 	/**
 	 * @param string $composerPath Path to the composer directory (with trailing slash).
-	 * @return void
+	 * @param ApplicationContext $context
 	 */
-	protected function initializeComposerAutoloadInformation($composerPath) {
+	protected function initializeAutoloadInformation($composerPath, ApplicationContext $context = NULL) {
 		if (file_exists($composerPath . 'autoload_classmap.php')) {
 			$classMap = include($composerPath . 'autoload_classmap.php');
 			if ($classMap !== FALSE) {
@@ -382,6 +388,13 @@ class ClassLoader {
 				foreach ($includeFiles as $file) {
 					require_once($file);
 				}
+			}
+		}
+
+		if ($context !== NULL) {
+			$proxyClasses = @include(FLOW_PATH_DATA . 'Temporary/' . (string)$context . '/AvailableProxyClasses.php');
+			if ($proxyClasses !== FALSE) {
+				$this->availableProxyClasses = $proxyClasses;
 			}
 		}
 	}
