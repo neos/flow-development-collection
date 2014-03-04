@@ -14,6 +14,9 @@ namespace TYPO3\Flow\Annotations;
 /**
  * Used to ignore validation on a specific method argument or class property.
  *
+ * By default no validation will be executed for the given argument. To gather validation results for further
+ * processing, the "evaluate" option can be set to true (while still ignoring any validation error).
+ *
  * @Annotation
  * @Target({"METHOD", "PROPERTY"})
  */
@@ -26,12 +29,22 @@ final class IgnoreValidation {
 	public $argumentName;
 
 	/**
+	 * Whether to evaluate the validation results of the argument
+	 * @var boolean
+	 */
+	public $evaluate = FALSE;
+
+	/**
 	 * @param array $values
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(array $values) {
 		if (isset($values['value']) || isset($values['argumentName'])) {
 			$this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
+		}
+
+		if (isset($values['evaluate'])) {
+			$this->evaluate = (boolean)$values['evaluate'];
 		}
 	}
 
