@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-12-10
+The following reference was automatically generated from code on 2014-03-04
 
 
 Package *TYPO3.FLOW*
@@ -111,6 +111,19 @@ Options
 
 
 
+``typo3.flow:configuration:listtypes``
+**************************************
+
+**List registered configuration types**
+
+
+
+
+
+
+
+
+
 ``typo3.flow:configuration:show``
 *********************************
 
@@ -140,15 +153,14 @@ Options
 
 **Validate the given configuration**
 
+**Validate all configuration**
+./flow configuration:validate
+
+**Validate configuration at a certain subtype**
 ./flow configuration:validate --type Settings --path TYPO3.Flow.persistence
 
-The schemas are searched in the path "Resources/Private/Schema" of all
-active Packages. The schema-filenames must match the pattern
-__type__.__path__.schema.yaml. The type and/or the path can also be
-expressed as subdirectories of Resources/Private/Schema. So
-Settings/TYPO3/Flow.persistence.schema.yaml will match the same pathes
-like Settings.TYPO3.Flow.persistence.schema.yaml or
-Settings/TYPO3.Flow/persistence.schema.yaml
+You can retrieve the available configuration types with:
+./flow configuration:listtypes
 
 
 
@@ -159,6 +171,8 @@ Options
   Configuration type to validate
 ``--path``
   path to the subconfiguration separated by "." like "TYPO3.Flow
+``--verbose``
+  if TRUE, output more verbose information on the schema files which were used
 
 
 
