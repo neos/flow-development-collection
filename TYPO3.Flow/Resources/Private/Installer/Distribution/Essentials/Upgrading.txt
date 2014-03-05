@@ -1,64 +1,68 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 2.0 based
-applications to TYPO3 Flow 2.1.
+This file contains instructions for upgrading your Flow 2.1 based
+applications to TYPO3 Flow 2.2.
 
 What has changed
 ----------------
 
-Security related
-^^^^^^^^^^^^^^^^
-
-The method **"hasAccessToResource" was added to the access decision manager**.
-
-Breaking only for those who implemented ``AccessDecisionManagerInterface`` on their own.
-
-MVC
+Eel
 ^^^
 
-The **base tag has been deprecated**.
+The handling of the **boolean short circuit operators** for disjunction and
+conjunction has been adjusted to the JavaScript semantics of returning
+one of the left or right side values instead of a boolean.
 
-The ``UriBuilder`` created relative URLs with relative paths in the
-form "some/path.html" by default. It was adjusted to prefix URLs with
-the scripts request path (usually "/" or "/document-root/").
+This is only breaking if the code using Eel relied on the exact type
+e.g. by using a strict comparison.
 
-This makes the ``<base />`` tag redundant for most scenarios, even
-when working with relative URLs.
+Flow
+^^^^
 
-This is not a breaking change per se, because using the base tag
-doesn't break the behavior. But it has an impact on all relative URLs
-created by the ``UriBuilder``.
+The composer **update / install scripts will no longer overwrite the Web/.htaccess**
+file. This allows to keep adjustments - it might be needed to adjust that file manually
+in the future. This will be announced, though.
 
-If you expect the rendered HTML to contain URLs in the form
-"some/path.html" (that is: without leading slash) you might need to
-adjust your code or set the compatibility flag that is introduced with
-this change::
+If an **@IgnoreValidation** annotation is added for an action argument, the **validation
+will not be evaluated** by default anymore. The annotation option "evaluate" can be
+set to true to enable the old behaviour of evaluating the validator for the argument
+and storing the validation results (while still ignoring any error). This can be used
+of the results are needed for further processing.
 
- TYPO3:
-   Flow:
-     compatibility:
-       uriBuilder:
-         createRelativePaths: TRUE
+The **FileMonitor is switched to use json_encode() and json_decode() and a StringBackend**.
+This could be breaking if you implemented your own Strategy and use the Flow_Monitor cache
+there because it will no longer accept all kinds of variables but only strings.
 
-NOTE: This flag will be deprecated with version 2.2 and removed with
-version 3.0 of Flow. It's recommended to adjust your code so that it
-does not rely on the generated URLs
+The **option to provide the plural quantity as a single numeric argument during translation
+was removed**. This change is breaking for cases where an application depends on previous
+behavior that ``translateBy*`` calls with a single numeric argument would implicate
+a quantity for plural form. Also classes extending ``I18n\\Translator`` and using the
+protected method ``getPluralForm()`` will break due to a signature change.
 
-Persistence
-^^^^^^^^^^^
+If **the PECL YAML extension is installed it will be used** to parse configuration
+files, which results in a speed improvement, especially in Development context. This is
+breaking if the YAML extension is installed and you have invalid YAML files.
 
-The former ``DatabaseConnectionException`` **has been moved** to
-``Exception\\DatabaseConnectionException``, a code migration is
-provided with the change.
+The **status code for persisted entities that can't be found is no longer 500** but
+404 now. This is a breaking change only when code relies on the (incorrect) behavior
+of returning a status code 500 for entities that couldn't be found.
 
-Other Flow changes
-^^^^^^^^^^^^^^^^^^
+The **sorting of packages is now done with an depth-first algorithm** that makes sure
+that package settings overrule settings from depending packages. This is a breaking
+change in case you relied on the previous (and sometimes incorrect) sorting of packages.
 
-The **logException() signature in LoggerInterface** has the $additionalData
-parameter added. It was always supported, but missing on the interface.
+Fluid
+^^^^^
 
-Breaking in case you implemented a logger and left out that parameter.
+The **form.validationResults view helper is moved to validation.results** for consistency
+reasons. If you use this ViewHelper you should update your Fluid templates from::
+
+ <f:form.validationResults>...</f:form.validationResults>
+
+to::
+
+ <f:validation.results></f:validation.results>
 
 Upgrading your Packages
 -----------------------

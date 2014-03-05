@@ -3,7 +3,7 @@ TYPO3 Flow Configuration Directory
 =============================================================================
 
 This directory contains the configuration for the TYPO3 Flow framework and the
-application based on it.The configuration files only contain additions and
+application based on it. The configuration files only contain additions and
 modifications of the original configuration and therefore don't contain all
 possible configuration options.
 
@@ -15,6 +15,12 @@ The following files play a role in the configuration system:
                     configuration which was defined in the various packages.
 
    Routes.yaml      Provides the routing configuration for the MVC framework.
+
+   Views.yaml       Can be used to influence resolutions of views in MVC.
+
+   Policy.yaml      Provides the configuration for the security framework.
+
+   Caches.yaml      Provides the configuration for the caching framework.
 
 All of these files become active in any application context if they reside
 in the main Configuration directory (the same directory where this README is
