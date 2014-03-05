@@ -93,12 +93,16 @@ TYPO3\Flow\Log\SystemLoggerInterface:
   factoryObjectName: TYPO3\Flow\Log\LoggerFactory
   arguments:
     1:
-      value: 'Flow_System'
+      # Note: This cannot be changed, it is hardcoded
+      value: 'SystemLogger'
     2:
-      value: 'TYPO3\Flow\Log\Logger'
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: TYPO3.Flow.log.systemLogger.logger
     3:
-      value: 'TYPO3\Flow\Log\Backend\FileBackend'
+      # Note: This cannot be changed here, adjust the setting if needed!
+      setting: TYPO3.Flow.log.systemLogger.backend
     4:
+      # Note: This cannot be changed here, adjust the setting if needed!
       setting: TYPO3.Flow.log.systemLogger.backendOptions
 
 TYPO3\Flow\Log\SecurityLoggerInterface:
@@ -110,7 +114,7 @@ TYPO3\Flow\Log\SecurityLoggerInterface:
     2:
       value: 'TYPO3\Flow\Log\Logger'
     3:
-      value: 'TYPO3\Flow\Log\Backend\FileBackend'
+      setting: TYPO3.Flow.log.securityLogger.backend
     4:
       setting: TYPO3.Flow.log.securityLogger.backendOptions
 
