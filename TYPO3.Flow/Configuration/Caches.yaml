@@ -46,6 +46,7 @@ Flow_I18n_Cldr_Reader_PluralsReaderCache: []
 # Flow_Monitor
 Flow_Monitor:
   backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
 
 # Flow_Mvc_Routing_*
 #

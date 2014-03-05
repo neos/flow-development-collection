@@ -41,7 +41,7 @@ class FileMonitor {
 	protected $systemLogger;
 
 	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
 	 */
 	protected $cache;
 
@@ -111,10 +111,10 @@ class FileMonitor {
 	/**
 	 * Injects the Flow_Monitor cache
 	 *
-	 * @param \TYPO3\Flow\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\Flow\Cache\Frontend\StringFrontend $cache
 	 * @return void
 	 */
-	public function injectCache(\TYPO3\Flow\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\Flow\Cache\Frontend\StringFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -125,7 +125,7 @@ class FileMonitor {
 	 */
 	public function initializeObject() {
 		if ($this->cache->has($this->identifier . '_directoriesAndFiles')) {
-			$this->directoriesAndFiles = $this->cache->get($this->identifier . '_directoriesAndFiles');
+			$this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles'), TRUE);
 		}
 	}
 
@@ -290,7 +290,7 @@ class FileMonitor {
 	 */
 	public function shutdownObject() {
 		if ($this->directoriesChanged === TRUE) {
-			$this->cache->set($this->identifier . '_directoriesAndFiles', $this->directoriesAndFiles);
+			$this->cache->set($this->identifier . '_directoriesAndFiles', json_encode($this->directoriesAndFiles));
 		}
 		$this->changeDetectionStrategy->shutdownObject();
 	}
