@@ -114,7 +114,7 @@ class ActionControllerTestBController extends \TYPO3\Flow\Mvc\Controller\ActionC
 	 * @param float $argument
 	 * @return string
 	 */
-	public function optionalFloatAction($argument = 12.34) {
+	public function optionalFloatAction($argument = 12.35) {
 		return var_export($argument, TRUE);
 	}
 
