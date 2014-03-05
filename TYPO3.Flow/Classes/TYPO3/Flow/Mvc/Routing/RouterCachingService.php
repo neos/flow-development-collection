@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
@@ -83,12 +84,11 @@ class RouterCachingService {
 	 * @return string|boolean the cached request path or FALSE if no cache entry was found
 	 */
 	public function getCachedResolvedUriPath(array $routeValues) {
-		try {
-			$routeValues = $this->convertObjectsToHashes($routeValues);
-			return $this->resolveCache->get($this->buildResolveCacheIdentifier($routeValues));
-		} catch (\InvalidArgumentException $exception) {
+		$routeValues = $this->convertObjectsToHashes($routeValues);
+		if ($routeValues === NULL) {
 			return FALSE;
 		}
+		return $this->resolveCache->get($this->buildResolveCacheIdentifier($routeValues));
 	}
 
 	/**
@@ -99,11 +99,11 @@ class RouterCachingService {
 	 * @return void
 	 */
 	public function storeResolvedUriPath($uriPath, array $routeValues) {
-		try {
-			$routeValues = $this->convertObjectsToHashes($routeValues);
-		} catch (\InvalidArgumentException $exception) {
+		$routeValues = $this->convertObjectsToHashes($routeValues);
+		if ($routeValues === NULL) {
 			return;
 		}
+
 		$cacheIdentifier = $this->buildResolveCacheIdentifier($routeValues);
 		if ($cacheIdentifier !== NULL) {
 			$this->resolveCache->set($cacheIdentifier, $uriPath, $this->extractUuids($routeValues));
@@ -157,18 +157,24 @@ class RouterCachingService {
 	 *
 	 * @param array $routeValues the array to be processed
 	 * @return array the modified array or NULL if $routeValues contain an object and its identifier could not be determined
-	 * @throws \InvalidArgumentException if $routeValues contain an object and its identifier could not be determine
 	 */
 	protected function convertObjectsToHashes(array $routeValues) {
 		foreach ($routeValues as &$value) {
 			if (is_object($value)) {
-				$identifier = $this->persistenceManager->getIdentifierByObject($value);
+				if ($value instanceof CacheAwareInterface) {
+					$identifier = $value->getCacheEntryIdentifier();
+				} else {
+					$identifier = $this->persistenceManager->getIdentifierByObject($value);
+				}
 				if ($identifier === NULL) {
-					throw new \InvalidArgumentException(sprintf('The identifier of an object of type "%s" could not be determined', get_class($value)), 1340102526);
+					return NULL;
 				}
 				$value = $identifier;
 			} elseif (is_array($value)) {
 				$value = $this->convertObjectsToHashes($value);
+				if ($value === NULL) {
+					return NULL;
+				}
 			}
 		}
 		return $routeValues;

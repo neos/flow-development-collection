@@ -228,4 +228,22 @@ class RouterCachingServiceTest extends UnitTestCase {
 		$this->routerCachingService->flushCaches();
 	}
 
+	/**
+	 * @test
+	 */
+	public function storeResolvedUriPathConvertsObjectsImplementingCacheAwareInterfaceToCacheEntryIdentifier() {
+		$mockObject = $this->getMock('TYPO3\Flow\Cache\CacheAwareInterface');
+
+		$mockObject->expects($this->atLeastOnce())->method('getCacheEntryIdentifier')->will($this->returnValue('objectIdentifier'));
+
+		$routeValues = array('b' => 'route values', 'someObject' => $mockObject);
+
+		$cacheIdentifier = '264b593d59582adea4ccc52b33cc093f';
+
+		$matchingUriPath = 'uncached/matching/uri';
+		$this->mockResolveCache->expects($this->once())->method('set')->with($cacheIdentifier, $matchingUriPath);
+
+		$this->routerCachingService->storeResolvedUriPath($matchingUriPath, $routeValues);
+	}
+
 }
