@@ -1,71 +1,16 @@
 Upgrading instructions
 ======================
 
-This file contains instructions for upgrading your Flow 2.1 based
-applications to TYPO3 Flow 2.2.
+This file contains instructions for upgrading your Flow 2.2 based
+applications to TYPO3 Flow x.y.
 
 What has changed
 ----------------
 
-Eel
-^^^
-
-The handling of the **boolean short circuit operators** for disjunction and
-conjunction has been adjusted to the JavaScript semantics of returning
-one of the left or right side values instead of a boolean.
-
-This is only breaking if the code using Eel relied on the exact type
-e.g. by using a strict comparison.
-
 Flow
 ^^^^
 
-The composer **update / install scripts will no longer overwrite the Web/.htaccess**
-file. This allows to keep adjustments - it might be needed to adjust that file manually
-in the future. This will be announced, though.
-
-If an **@IgnoreValidation** annotation is added for an action argument, the **validation
-will not be evaluated** by default anymore. The annotation option "evaluate" can be
-set to true to enable the old behaviour of evaluating the validator for the argument
-and storing the validation results (while still ignoring any error). This can be used
-of the results are needed for further processing.
-
-The **FileMonitor is switched to use json_encode() and json_decode() and a StringBackend**.
-This could be breaking if you implemented your own Strategy and use the Flow_Monitor cache
-there because it will no longer accept all kinds of variables but only strings.
-
-The **option to provide the plural quantity as a single numeric argument during translation
-was removed**. This change is breaking for cases where an application depends on previous
-behavior that ``translateBy*`` calls with a single numeric argument would implicate
-a quantity for plural form. Also classes extending ``I18n\\Translator`` and using the
-protected method ``getPluralForm()`` will break due to a signature change.
-
-If **the PECL YAML extension is installed it will be used** to parse configuration
-files, which results in a speed improvement, especially in Development context. This is
-breaking if the YAML extension is installed and you have invalid YAML files.
-
-The **status code for persisted entities that can't be found is no longer 500** but
-404 now. This is a breaking change only when code relies on the (incorrect) behavior
-of returning a status code 500 for entities that couldn't be found.
-
-The **sorting of packages is now done with an depth-first algorithm** that makes sure
-that package settings overrule settings from depending packages. This is a breaking
-change in case you relied on the previous (and sometimes incorrect) sorting of packages.
-
-In case you implemented your own **Persistence Manager**, you must add the **new
-hasUnpersistedChanges()** method, unless you extend the AbstractPersistenceManager.
-
-Fluid
-^^^^^
-
-The **form.validationResults view helper is moved to validation.results** for consistency
-reasons. If you use this ViewHelper you should update your Fluid templates from::
-
- <f:form.validationResults>...</f:form.validationResults>
-
-to::
-
- <f:validation.results></f:validation.results>
+TBD
 
 Upgrading your Packages
 -----------------------
