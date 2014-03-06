@@ -1,0 +1,1086 @@
+====================
+2.2.0-beta1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `752d6bb <https://git.typo3.org/Flow/Distributions/Base.git/commit/752d6bbad2716f48f3753949a2f29f54b6ac7608>`_
+
+[TASK] Add phpunit/phpunit as dev requirement
+-----------------------------------------------------------------------------------------
+
+* Commit: `5531c5d <https://git.typo3.org/Flow/Distributions/Base.git/commit/5531c5d1ea22c4c7de97035296e879c97a9e2c29>`_
+
+[TASK] Some tweaks to the release scripts
+-----------------------------------------------------------------------------------------
+
+* Commit: `a546323 <https://git.typo3.org/Flow/Distributions/Base.git/commit/a546323ae510ce07cba873223b87f66319729363>`_
+
+[TASK] Fix create-branch dependency handling
+-----------------------------------------------------------------------------------------
+
+* Commit: `ccb988d <https://git.typo3.org/Flow/Distributions/Base.git/commit/ccb988da6b41be1e8095f468f2165cb20b68905b>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `bf8b1de <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/bf8b1de74618769f070fd92638ee2a767c67096a>`_
+
+Revert "[FEATURE] shuffle() operation"
+-----------------------------------------------------------------------------------------
+
+After some discussion we decided to remove this feature again because the same
+behavior can, as Christopher pointed out, be achieved through the Array Helper:
+
+${Array.random(q(node).children('...').get())}
+
+The merged shuffle() operation also had the problem of preserving array keys.
+The following line of TypoScript would _not_ return a random, but always the
+first article:
+
+articles = ${q(this.someArticles).shuffle().get(0)}
+
+This reverts the following commits:
+2db53f9877b1d0b461a6b5df35d20bd66efb7469
+cdc83573e41778089143dc5cdb2413b825e9c200
+
+* Commit: `feb5d4d <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/feb5d4df0308c5b171befdb61e088f1c5eb31460>`_
+
+[FEATURE] Add first letter to upper/lower methods in StringsHelper
+-----------------------------------------------------------------------------------------
+
+* Commit: `86b894c <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/86b894c0ae3ed057e427362307d8442e880e6908>`_
+
+[BUGFIX] Make shuffle() a non-final operation
+-----------------------------------------------------------------------------------------
+
+* Commit: `cdc8357 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/cdc83573e41778089143dc5cdb2413b825e9c200>`_
+
+[FEATURE] shuffle() operation
+-----------------------------------------------------------------------------------------
+
+This introduces a new FlowQuery operation which randomizes the current
+context. If the context is, for example, an array of Nodes, ashuffle()
+can be used to pick one of these.
+
+TypoScript Example:
+
+  articleNode = ${q(this.articleNodes).shuffle().get(0)}
+
+* Commit: `2db53f9 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/2db53f9877b1d0b461a6b5df35d20bd66efb7469>`_
+
+[BUGFIX] Prevent race conditions in Eel Expression Cache
+-----------------------------------------------------------------------------------------
+
+This should prevent race conditions where the included cache
+file contained less expressions than the file that ends up in
+the code to be cached string.
+
+* Fixes: `#54487 <http://forge.typo3.org/issues/54487>`_
+* Commit: `65b34b4 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/65b34b448deeadd331c8fa7c079c36c7812fdcc1>`_
+
+Revert "[BUGFIX] Prevent race conditions in EEL Expression Cache"
+-----------------------------------------------------------------------------------------
+
+SORRY, accidentally hit the submit button, just wanted to leave my review.
+
+This reverts commit e30a9e7cf65fe4a260121900024157733b8dc6f6
+
+* Commit: `c39d5c5 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/c39d5c5e2db46d214ffdb1821b8a76ddd9be325f>`_
+
+[BUGFIX] Prevent race conditions in EEL Expression Cache
+-----------------------------------------------------------------------------------------
+
+This should prevent race conditions where the included cache
+file contained less expressions than the file that ends up in
+the code to be cached string.
+
+* Commit: `e30a9e7 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/e30a9e7cf65fe4a260121900024157733b8dc6f6>`_
+
+[BUGFIX] Fix unwrapping of left hand side operand for substractions
+-----------------------------------------------------------------------------------------
+
+This change fixes a missing unwrap on the Eel context for substraction
+expressions in the CompilingEelParser.
+
+All expressions should be re-generated by flushing the Eel expression
+cache.
+
+* Commit: `4859a3b <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/4859a3bd0fa7203819612f39dd24f925734a5a11>`_
+
+[FEATURE] Configuration Helper: settings
+-----------------------------------------------------------------------------------------
+
+This new helper is supposed to be the one which provides information
+about the environment. The first implemented method allows for retrieving
+settings.
+
+Example for use within TypoScript:
+
+	sitePackageKey = ${Configuration.setting(‚Acme.Demo.sitePackageKey')}
+
+* Commit: `fbf13ab <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/fbf13aba9ba5c044161d6186ef6acea57e35f801>`_
+
+[!!!][FEATURE] Use JavaScript semantics of || and && operators
+-----------------------------------------------------------------------------------------
+
+This change updates the handling of the boolean short circuit operators
+for disjunction and conjunction to the JavaScript semantics of returning
+one of the left or right side values instead of a boolean.
+
+This is only breaking if the code using Eel relied on the exact type
+e.g. by using a strict comparison.
+
+* Commit: `6205fbc <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/6205fbc0f24577add74045508a737ae3f5038c0a>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/13/
+
+* Commit: `8863063 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/8863063a544f3d5a78e4792303f72729cc5d8e70>`_
+
+[BUGFIX] Make RequestTest branch independent
+-----------------------------------------------------------------------------------------
+
+There are two tests testing headers rendered by Http\\Request, those
+include the FLOW_VERSION_BRANCH - but did not use the constant.
+
+* Commit: `89fd418 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/89fd41847b2e639ce6a9b51824f6439ab03c0ac7>`_
+
+[TASK] Adjust FLOW_VERSION_BRANCH to 2.2
+-----------------------------------------------------------------------------------------
+
+* Commit: `bd9d7b1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bd9d7b133c99dac55ba64d0f03410d8972cef099>`_
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `3d5a722 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/3d5a722b61c03cd10e84909f1098227c4d16b41c>`_
+
+[BUFGIX] Throw exception if PackageStates.php is not writeable
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#53238 <http://forge.typo3.org/issues/53238>`_
+* Commit: `1781926 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1781926870db735f5b32db6b9fe0199a6f4e99e6>`_
+
+[FEATURE] Add PSR-4 support to Package
+-----------------------------------------------------------------------------------------
+
+This change updates the Package class to properly load PSR-4
+based packages.
+
+Depends on: https://github.com/composer/installers/pull/135
+
+* Commit: `66e66d3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/66e66d39d90a0d712fef468dfa37f20ba5da3561>`_
+
+[!!!][FEATURE] Throw exception for unpersisted changes in Safe Requests
+-----------------------------------------------------------------------------------------
+
+This changeset keeps track if the PersistenceManager has unpersisted changes
+and notifies the Developer with a helpful exception if this happens in a
+safe request (GET/HEAD). This exception is only thrown in development context
+
+In case you implemented your own Persistence Manager, you must add the new
+hasUnpersistedChanges() method, unless you extend the AbstractPersistenceManager.
+
+* Resolves: `#51570 <http://forge.typo3.org/issues/51570>`_
+* Commit: `e9b5de3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e9b5de3f8708ce136c2a08d07e173f953013ecce>`_
+
+[TASK] Tweak readme and upgrading docs towards release
+-----------------------------------------------------------------------------------------
+
+* Commit: `4c39af6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4c39af690571e7bd0930e8bef1bdfaf93f533fd0>`_
+
+[BUGFIX] Do not serialize singleton properties on __sleep
+-----------------------------------------------------------------------------------------
+
+Serializing a Flow managed object will not serialize injected
+properties as they will be reinjected anyway. This now works
+consistently for all injections.
+
+This also is a workaround for the PHP bug:
+https://bugs.php.net/bug.php?id=65967
+
+As the only reason we serialize an SplObjectStorage curently is
+that we serialize Logger instances.
+
+* Commit: `cf5bb87 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/cf5bb875cbe57b72a1da2dc75ce49e9401bc3cb3>`_
+
+[TASK] Fix unit test failing due to float precision issue, part III
+-----------------------------------------------------------------------------------------
+
+Tries to fix two unit tests still failing with something like::
+
+  Expected: "12.35"
+  Actual: "12.349999999999999857891452847979962825775146484375"
+
+The first tries did not work, so we just raise the value from 12.34 to
+112.34 - that makes it 112.34000000... which makes the test pass.
+
+* Commit: `2c1148b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2c1148be6ed0c78edd5b449294dcc26bf9755b18>`_
+
+[TASK] Fix unit test failing due to float precision issue
+-----------------------------------------------------------------------------------------
+
+Tries to fix two unit tests still failing with something like::
+
+  Expected: "12.35"
+  Actual: "12.349999999999999857891452847979962825775146484375"
+
+The first try did not work, so maybe handing in the expected value in
+it's true format helps.
+
+* Commit: `260a686 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/260a6868b9b2536ca62133b716764625033c80e4>`_
+
+[TASK] Fix unit test failing due to float precision issue
+-----------------------------------------------------------------------------------------
+
+Tries to fix two unit failing with::
+
+  Expected: "12.34"
+  Actual: "12.339999999999999857891452847979962825775146484375"
+
+* Commit: `89bdc23 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/89bdc23257a91c75c861739cff0b1d773e7d4482>`_
+
+[BUGFIX] PackageManager initialize() signature is incompatible
+-----------------------------------------------------------------------------------------
+
+PackageManagerInterface contains following method declaration::
+
+ public function initialize(\\TYPO3\\Flow\\Core\\Bootstrap $bootstrap);
+
+however in the PackageManager the signature is::
+
+  public function initialize(\\TYPO3\\Flow\\Core\\Bootstrap $bootstrap,
+    $packagesBasePath = FLOW_PATH_PACKAGES,
+    $packageStatesPathAndFilename = '')
+
+This will create a fatal error on some versions of php and when running
+unit tests on hhvm (of CMS), see
+http://php.net/manual/en/language.oop5.interfaces.php:
+
+"The class implementing the interface must use the exact same method
+signatures as are defined in the interface. Not doing so will result
+in a fatal error."
+
+This change updates the method signature of the PackageManager to be in
+line with the interface.
+
+* Fixes: `#56409 <http://forge.typo3.org/issues/56409>`_
+* Commit: `bff1609 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bff1609471a84b50e0358f1d3ce0d25d7322f155>`_
+
+[FEATURE] Use CacheAwareInterface to build route cache identifier
+-----------------------------------------------------------------------------------------
+
+This change allows to cache route values with objects implementing
+CacheAwareInterface. As an optimization an exception that was used
+only internally is replaced by boolean values.
+
+* Commit: `fa28894 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/fa2889485eaa7adeab0dabc0a86aa1a774ee82d6>`_
+
+[BUGFIX] .htaccess is overwritten by the composer install scripts
+-----------------------------------------------------------------------------------------
+
+The composer update / install scripts overwrite the Web/.htaccess
+file which is unwanted behavior as this leads to issues when
+people add custom rewrite rules, or if for example setting the
+MultiViews option is not allowed.
+
+This change moves the .htaccess, index.php and flow scripts
+to the Defaults folder so it will only be initialy placed into
+the installation.
+
+* Fixes: `#54553 <http://forge.typo3.org/issues/54553>`_
+* Commit: `c2beba9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c2beba9f9ea05f8a732a2899db2523123c74df6c>`_
+
+[TASK] Add changelog for TYPO3 Flow 2.1.1
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/11/
+
+* Commit: `7c633c0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7c633c0962dcebedea220429764fe817e6a9b3fc>`_
+
+[TASK] Add changelog for TYPO3 Flow 2.0.2
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/10/
+
+* Commit: `f77957f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f77957f3e9f67d90d03c142551815bfb00091daf>`_
+
+[!!!][FEATURE] Optional evaluation of validator with IgnoreValidation
+-----------------------------------------------------------------------------------------
+
+If an @IgnoreValidation annotation is added for an action argument,
+the validation will not be evaluated by default anymore. This is an
+optimization for read-only actions and other cases where the validation
+adds a measurable overhead.
+
+The annotation option "evaluate" can be set to true to enable the old
+behaviour of evaluating the validator for the argument and storing the
+validation results (while still ignoring any error).
+
+* Related: `#3305 <http://forge.typo3.org/issues/3305>`_
+* Commit: `58cf4d4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/58cf4d49b1699cf73b137c664b0fe6c482ca5b91>`_
+
+[TASK] Proxy class cache is only asked for existing classes
+-----------------------------------------------------------------------------------------
+
+Build a map of proxied classes to be used by the class loader to prevent
+calls to the proxy class cache that cannot be fullfilled.
+
+* Commit: `c81dcc9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c81dcc99a248681b9877db1dfd005c72ca22ba34>`_
+
+[TASK] ValidatorResolver uses CompileStatic
+-----------------------------------------------------------------------------------------
+
+Available Validator implementations can be given to the
+ValidatorResolver via CompileStatic, there is no need to
+find them on runtime.
+
+* Commit: `2013e26 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2013e26ad0f88ca2c27b8e990e583fc5b072d84c>`_
+
+[BUGFIX] Classes from inactive packages should not be loaded
+-----------------------------------------------------------------------------------------
+
+The ClassLoader refactoring made it possible to load classes
+from inactive packages as the class paths would still be
+registered by composer which knows nothing about inactive
+packages.
+
+The solution is to unset class paths for inactive packages.
+Additionally an UnitTest was added to make sure the behavior
+stays correct.
+
+* Commit: `ed30c30 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ed30c3075a80b14759b0eaf47359a59fadfb5f5f>`_
+
+[TASK] Resources are published with relative symlinks
+-----------------------------------------------------------------------------------------
+
+Fixes an issue with the publication of persistent resources which
+used absolute paths rather than relative paths for generating symbolic
+links.
+
+TYPO3.Surf heavily relies on symbolic links for pointing to the
+currently active release. The key problem was that the symbolic
+link which is put into the Web/_Resources folder used an absolute
+path (realpath) to the resource file in Data/Persistent/ rather than
+a possible symbolic link. This worked fine as long as the actual
+directory (previous release) exists, but breaks as soon as old
+releases have been removed.
+
+* Resolves: `#51676 <http://forge.typo3.org/issues/51676>`_
+* Resolves: `#51809 <http://forge.typo3.org/issues/51809>`_
+
+* Commit: `6d206c1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6d206c1d35324f26e8780fdad80fed466bc9f4e1>`_
+
+[FEATURE] Cache backend's flushByTag() now reports no. of affected entries
+-----------------------------------------------------------------------------------------
+
+This slightly changes the behaviour of flushByTag() which now should
+return the number of actually removed entries. If a backend cannot or
+doesn't want to report that number (for example due to performance
+constraints), that function may still return NULL.
+
+* Commit: `14bacb4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/14bacb4a8c38068ab56fb6ec23981e2d26f0bbd6>`_
+
+[!!!][TASK] Use JSON instead of serialize() in FileMonitor
+-----------------------------------------------------------------------------------------
+
+For larger arrays JSON is faster than serialize() so the FileMonitor
+that caches large associative arrays is switched to use json_encode()
+and json_decode() and a StringBackend instead of the VariableBackend
+that serializes.
+
+This could be breaking if you implemented your own Strategy and use the
+Flow_Monitor cache there because it will no longer accept all kinds of
+variables but only strings.
+
+* Commit: `f270ae8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f270ae893a5fc9caaa946cd267157ae43cc583fd>`_
+
+[TASK] Clarify logger configuration in Objects.yaml
+-----------------------------------------------------------------------------------------
+
+The configuration given in Objects.yaml for the system logger is not really used,
+as the logger is set up from settings during boot.
+
+This change makes it clear that a change to the settings should be done
+through Settings.yaml.
+
+* Commit: `641364d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/641364d8af07164259f937f601b3e9b1f1c86d41>`_
+
+[FEATURE] Allow IgnoreValidation on class properties
+-----------------------------------------------------------------------------------------
+
+Ignoring class properties during object validation can be useful. This
+change allows to use the IngoreValidation annotation to be used on class
+properties. The ValidatorResolver will then skip those properties when
+building the base validator conjunction.
+
+* Commit: `f4aa656 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f4aa656dfd873814f1e1f07e0bf656bedd945600>`_
+
+[TASK] Warn on invalid persistence.doctrine settings
+-----------------------------------------------------------------------------------------
+
+If the Doctrine settings are removed (due to an error in the YAML files)
+compiling proxy classes will just not happen. Since this is hard to
+spot, throw an exception if the settings are NULL.
+
+* Commit: `1b4abf6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1b4abf6deef3492f5e3f194f1e90d9ce773428d1>`_
+
+[!!!][BUGFIX] Translation not working with single numeric argument
+-----------------------------------------------------------------------------------------
+
+This removes the option to provide the plural quantity as a single numeric
+argument, as this was used nowhere but prevented translations from working
+with such single arguments.
+
+This change is breaking for cases where an application depends on previous
+behavior that translateBy* calls with a single numeric argument would implicate
+a quantity for plural form. Also classes extending I18n\\Translator and using
+protected method getPluralForm() will break due to a signature change.
+
+* Fixes: `#45062 <http://forge.typo3.org/issues/45062>`_
+* Commit: `98748f8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/98748f8b10bf6746daa2594dc069ff0b473982de>`_
+
+[TASK] Fix intermittent failure in SessionTest unit test
+-----------------------------------------------------------------------------------------
+
+By injecting a system logger mock, the test for GC that would fail at
+random should now run reliably.
+
+Along this the test tweaks the code (style) a bit.
+
+* Commit: `be63e60 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/be63e6030cbe643c2396989435193219319a43a2>`_
+
+[BUGFIX] route caching should take hostnames into account
+-----------------------------------------------------------------------------------------
+
+With several Sites / Domains in Neos the routing cache identifier
+is not unique for nodes with the same name
+
+This change takes the hostname into account and ensures the
+cache Identifier is unique for all Sites
+
+* Resolves: `#54632 <http://forge.typo3.org/issues/54632>`_
+* Commit: `7dcacff <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7dcacff9d1f8a174d6ba67d023ae3887eada4753>`_
+
+[FEATURE] Allow conversion from objects to simple types
+-----------------------------------------------------------------------------------------
+
+This change allows the PropertyMapper to convert from object types to
+simple types by registering a specific converter for that direction.
+A converter from persistent objects to string is added to allow for a
+simple (reversible) way to represent entities and valueobjects
+as strings.
+
+* Commit: `a2a5266 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a2a5266b4a76b6d860e5754f6289da9e0d38691d>`_
+
+[TASK] Prevent errors on non existing classes
+-----------------------------------------------------------------------------------------
+
+Removing the shutup operator results in a non functional
+state when flushing all caches as the annotation parser tries
+to load all annotations as classes which results in warnings.
+
+* Commit: `67fb9de <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/67fb9decbce9c449c1653985187a3e002f5d2dca>`_
+
+[TASK] Use isset in mergeRecursiveOverrule where possible
+-----------------------------------------------------------------------------------------
+
+In some places array_key_exists is unnecessary and isset
+is faster. Because of the high amount of calls it makes
+sense to optimize this.
+
+* Commit: `c5f177c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c5f177c0165b92f3591162c891eb9385311b50a1>`_
+
+[TASK] getUnixStylePath uses only one str_replace
+-----------------------------------------------------------------------------------------
+
+A single str_replace call is less expensive than multiple
+nested calls. Therefor it is changed in getUnixstylePath().
+
+* Commit: `ad76fa3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ad76fa3e8f855f2c073cd8e0b53dd1a01d523f05>`_
+
+[TASK] Allow use of PHPUnit from PEAR
+-----------------------------------------------------------------------------------------
+
+The class loader change Ib7ff6f4f73f323ce9fc71627c84bf96ef077557e
+removed some code used to load PHPUnit from PEAR if needed.
+
+This change brings that back.
+
+* Commit: `774dac0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/774dac05c95d9689751568bf04e3ba4049a7741b>`_
+
+[TASK] Remove shut-up operator in ClassLoader
+-----------------------------------------------------------------------------------------
+
+The last classloader change added the shut-up operator to a number of
+include() calls. This change removes it again and uses file_exists()
+instead.
+
+Since those checks happen only once (when initializing the class
+loader), the performance impact should be minimal.
+
+* Commit: `15f5586 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/15f558637298aa704decfe1b4aaebf5d0770b4aa>`_
+
+[FEATURE] Provide request / response in exception dump
+-----------------------------------------------------------------------------------------
+
+This change enhances the Logger to compile some more post mortem data
+which is then written into the exception dump file. Now the HTTP
+request and response are also included if possible.
+
+* Commit: `55c39c6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/55c39c6235d0fb24c6c75a329de74fa77c11173c>`_
+
+[TASK] Optimize arrayMergeRecursiveOverrule by removing recursion
+-----------------------------------------------------------------------------------------
+
+Method calls in PHP are generally slow. As we rely heavily on this
+function in several parts it's worthwile to micro-optimize the
+implementation to get rid of recursion. Running the unit tests showed
+a performance improvement of 25% by using a stack based approach instead
+of nested calls. The effect could be even higher for highly nested
+arrays (like configuration).
+
+* Commit: `2e0ee9d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2e0ee9deea5f43e15f93b7b2c7f7f95fc4accfaa>`_
+
+[FEATURE] Allow to cache Doctrine ORM query results
+-----------------------------------------------------------------------------------------
+
+This change allows to cache query results in the persistence layer.
+
+The caching can be switched on by setting the new $cacheResult flag
+on Repository->findBy(), Repository->findOneBy() and Query->execute().
+
+In addition the caching can be switched on globally by setting::
+
+ TYPO3.Flow.persistence.cacheAllQueryResults
+
+to TRUE. Keep in mind this might have unexpected side effects.
+
+Note: The caching is only implemented for the Doctrine persistence.
+When using generic persistence it has no effect.
+
+* Commit: `060ab57 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/060ab576b4bc496db496745204d4206fe7bd869e>`_
+
+[TASK] Improve security checks and related logging
+-----------------------------------------------------------------------------------------
+
+The AccessDecisionVoterManager now doesn't throw & catch an exception
+in order to find out if hasAccessToResource().
+
+Also improves the log output for security / account related events.
+It adds the current session ID to the message
+
+   Successfully re-authenticated tokens for account "foo"
+
+* Commit: `15a9569 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/15a95698b7c7234558e3c1fd26f5aa4a69539a61>`_
+
+[!!!][FEATURE] Use PHP YAML extension if available
+-----------------------------------------------------------------------------------------
+
+If you have the PECL YAML extension installed it will be used
+to parse your configuration files, which results in a tremendous
+speed improvement, especially in Development context.
+
+As this YAML parser is stricter also all yaml files are adapted.
+
+This is breaking if the YAML extension is installed and you
+have invalid YAML files.
+
+* Commit: `63f7446 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/63f744685882203d128ceb222f927b262ca159d4>`_
+
+[BUGFIX] Set Max-Age for Cookies
+-----------------------------------------------------------------------------------------
+
+If the configured session cookie lifetime is > 0, the Max-Age property of the
+cookie is set accordingly in the response header.
+
+Before this change the lifetime would be used as the expiry time, leading to
+cookies having session lifetime only.
+
+* Fixes: `#55369 <http://forge.typo3.org/issues/55369>`_
+* Commit: `7f16897 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7f16897c90f34c97b667d7177488b863313fd1f8>`_
+
+[TASK] ClassLoader compatible with all composer packages
+-----------------------------------------------------------------------------------------
+
+The ClassLoader understands all composer autoload types (PSR-0
+autoloading, PSR-4 autoloading, classmap generation and files includes)
+and additionally has a faster resolution logic.
+
+For additional speed, e.g. in Production context, you can run::
+
+ composer install -o
+
+to let composer generate optimized autoloading maps.
+
+* Resolves: `#42961 <http://forge.typo3.org/issues/42961>`_
+* Commit: `d36117c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d36117c47bdbe37f3089323f799ac5add7bfcec7>`_
+
+[TASK] Add a forgotten change log
+-----------------------------------------------------------------------------------------
+
+* Commit: `0148179 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/01481791ab1c42b60ad8f989ce015918c0678864>`_
+
+[TASK] Remove ChangeLog from PDF
+-----------------------------------------------------------------------------------------
+
+* Resolves: `#55215 <http://forge.typo3.org/issues/55215>`_
+* Commit: `1f5e5fb <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/1f5e5fb1d1083e2a9037443593815ea9f37ecfcd>`_
+
+[BUGFIX] TOC is broken on docs.typo3.org
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#55212 <http://forge.typo3.org/issues/55212>`_
+* Commit: `9785181 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/97851812eabf4b040173e48d7602e4506f2a5f4c>`_
+
+[TASK] Introduce "CacheAwareInterface"
+-----------------------------------------------------------------------------------------
+
+This change introduces a new interface which describes how objects can
+provide a distinct identifier which can be used for a cache entry.
+
+* Commit: `d356f21 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d356f21d57a6e9828a18b10f388d18587a3bea56>`_
+
+[BUGFIX] Make Doctrine service return correct packages for migrations
+-----------------------------------------------------------------------------------------
+
+With a previous fix ``PackageManager::getPackageOfObject()`` now
+compares the namespace of a given object rather than it's location
+on the disk.
+This broke the behavior of
+``Doctrine\\Service::getPackageKeyFromMigrationVersion()`` because
+doctrine migrations all have the same namespace ``\\TYPO3\\Flow\\..``
+
+With this fix the doctrine service compares the file paths again.
+
+* Related: `#55309 <http://forge.typo3.org/issues/55309>`_
+* Commit: `5385bae <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5385bae67f18803beacad1e1b8ed622c2d5c02d1>`_
+
+[!!!][BUGFIX] Return 404 status code for removed entities
+-----------------------------------------------------------------------------------------
+
+With this change the status code for persisted entities that can't
+be found is no longer ``500``.
+
+Background:
+When an exception is thrown in ``PropertyMapper::convert()`` it is
+always wrapped in a ``\\TYPO3\\Flow\\Property\\Exception`` leading to the
+default exception handling which sets the status code of the HTTP
+response to 500.
+
+This is a breaking change only in the case that one relied on the
+(incorrect) behavior of returning a status code 500 for entities that
+couldn't be found.
+
+* Resolves: `#55618 <http://forge.typo3.org/issues/55618>`_
+* Commit: `bdc1c89 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bdc1c89ad2d3cba08767d8d45b9bfb4dbe12ff45>`_
+
+[BUGFIX] Fix PackageManager unit tests
+-----------------------------------------------------------------------------------------
+
+Due to a previous change the PackageManager's unit tests are failing.
+This change adjusts the tests to the modified code fixing the tests.
+
+Background:
+The method ``getPackageOfObject()`` fixed with
+I49cf6615b15f4414193d4b563dfe11169fcf44b7 changes the behavior of the
+PackageManager so that it compares namespaces rather than file paths.
+Unfortunately this broke unittests that generated dummy files with
+invalid PHP namespaces.
+
+* Related: `#55309 <http://forge.typo3.org/issues/55309>`_
+* Commit: `002243a <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/002243ac06cd96da5b54fabb5a4ab94994db1e8a>`_
+
+[!!!][BUGFIX] Sort packages by dependency
+-----------------------------------------------------------------------------------------
+
+Before this, packages were sorted with PHP sort functions which did
+not work in all cases due to the insufficiently determined order of
+package dependencies.
+
+With this change the sorting is done with an depth-first algorithm
+that makes sure that package settings overrule settings from
+depending packages.
+
+The algorithm is an adapted version of
+http://en.wikipedia.org/wiki/Topological_sorting
+
+This is a breaking change in case you relied on the previous (and
+sometimes incorrect) sorting of packages.
+
+* Commit: `318a0bc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/318a0bcafcd082c6dbb794b3a7fca88743ba87d4>`_
+
+[FEATURE] Add method getPackageByClassName to PackageManager
+-----------------------------------------------------------------------------------------
+
+Currently there is only a method to fetch the package of a given object.
+This change adds a new method ``PackageManager::getPackageByClassName()`` that
+resolves the package of a given class name.
+
+* Resolves: `#50118 <http://forge.typo3.org/issues/50118>`_
+* Commit: `6f335eb <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6f335eb49d7f70c9c3db9da8b9241405af7c0c8e>`_
+
+[BUGFIX] Make getPackageOfObject() work for proxy objects
+-----------------------------------------------------------------------------------------
+
+The method ``PackageManager::getPackageOfObject()`` failed to
+resolve the package of a given object if it was a proxy.
+
+This change fixes this by comparing the namespace of the object
+with the package namespaces rather than the file locations.
+
+Background:
+
+The Flow/Doctrine proxy classes usually reside in a folder underneath
+``Data/Temporary``. Comparing those paths with the package root paths
+led to invalid results.
+
+* Fixes: `#55309 <http://forge.typo3.org/issues/55309>`_
+* Commit: `9128a7f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9128a7f1895901f3308bf50986b69da514d61427>`_
+
+[TASK] Add notice about php path for windows users
+-----------------------------------------------------------------------------------------
+
+Adds an additional note to set the php path in Settings.yaml for
+windows users as most won't have php in C:/php/php.
+
+* Commit: `9858381 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9858381d095cc4788a53adebd8df25fa544760de>`_
+
+[BUGFIX] HTTP accept header parsing was not case-insensitive
+-----------------------------------------------------------------------------------------
+
+Some browsers send the Accept-Language header with uppercase letters for
+the region. This was not correctly matched by the
+parseAcceptLanguageHeader utility function.
+
+* Commit: `e1df340 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e1df340cc168838d556643a1a861f0dc25252314>`_
+
+[TASK] Tweak documentation settings
+-----------------------------------------------------------------------------------------
+
+* Commit: `221aa7e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/221aa7edae21348e5f7c465a56f72aea10d07758>`_
+
+[TASK] Add change log for TYPO3 Flow 2.1.0-RC1
+-----------------------------------------------------------------------------------------
+
+* Commit: `7b8af25 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7b8af25b681246a881c0c9078424d8817371f374>`_
+
+[TASK] Fix and tweak rST markup
+-----------------------------------------------------------------------------------------
+
+Note especially the changes to Förthner and Föder! :)
+
+Yes, they fix PDF rendering of the documentation.
+
+* Commit: `1085741 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/108574158a3d46eb6a24be0801ebc8da0d431b68>`_
+
+[TASK] Tweak documentation settings
+-----------------------------------------------------------------------------------------
+
+* Commit: `896c375 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/896c375215b507fe8b31ea006408909a1a177b13>`_
+
+[TASK] Fix tables in rST documents
+-----------------------------------------------------------------------------------------
+
+Although working for HTML rendering the syntax was wrong, breaking PDF
+rendering.
+
+* Commit: `b04fc8e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b04fc8e349571bb5e3d9dba703bdb55b976451bf>`_
+
+[TASK] Add change logs for TYPO3 Flow 2.0.0, 2.0.1, 2.1.0
+-----------------------------------------------------------------------------------------
+
+Add change logs, some minor tweaks to some distribution files.
+
+* Commit: `4490120 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4490120629268ef833d7a3eb77aec020404d404a>`_
+
+[BUGFIX] Fix configuration schema for package settings
+-----------------------------------------------------------------------------------------
+
+This adjusts the TYPO3.Flow.package.schema.yaml to the "packagesPathByType"
+setting introduced with Ic87ebaece612e25898318795c748941e5a96b8cb.
+
+* Commit: `ba088da <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ba088da3e7adf9d27a45fe86ef2a9c90a9283126>`_
+
+[BUGFIX] Fix configuration schema for Routes
+-----------------------------------------------------------------------------------------
+
+This adjusts the Routes.schema.yaml to the "httpMethods"
+setting introduced with #27117
+
+* Related: `#27117 <http://forge.typo3.org/issues/27117>`_
+* Commit: `d62a228 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d62a22857900c47f6f91defcf94a807424216020>`_
+
+[BUGFIX] Allow uppercase rewrite regex expression for session id
+-----------------------------------------------------------------------------------------
+
+The usage of the SecurityPublishingConfiguration in combination with
+the fluid resource viewhelper generates a link which includes the 
+users sessions id. This session id includes uppercase characters. 
+The mod_rewrite rule for this private resources doesnt allow uppercase
+characters for the session id, so the user gets a 404.
+
+* Fixes: `#54973 <http://forge.typo3.org/issues/54973>`_
+* Commit: `dc93887 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/dc9388740556f46d9091e2cd6d3399bc0f8f6d48>`_
+
+[TASK] Enable PDF rendering of the documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `dda156d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/dda156d2ba84eba180b3f166189b13c7f67ef2b3>`_
+
+[TASK] Fix some typos
+-----------------------------------------------------------------------------------------
+
+Fixes some typos within comments.
+This is a cosmetic fix only.
+
+* Commit: `99390af <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/99390afeeb24a03188f43f0034dec9a8bcd2c2a4>`_
+
+[BUGFIX] Classes without namespace create invalid proxy code
+-----------------------------------------------------------------------------------------
+
+This change makes classes without namespace create proper proxy
+class code, by optionally skipping the namespace declaration.
+Before such classes would create an empty namespace statement,
+which resulted in syntax errors, i.e.::
+
+   namespace ;
+
+=> "syntax error, unexpected ';', expecting T_STRING or
+T_NS_SEPARATOR or '{' in [filename]"
+
+* Fixes: `#52944 <http://forge.typo3.org/issues/52944>`_
+* Commit: `9352bf3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/9352bf3f8d582091dc0ba432c50c31b1ae917e25>`_
+
+[BUGFIX] Filebackend is prone to race condition while writing cache entry
+-----------------------------------------------------------------------------------------
+
+This change improves protection against race conditions by adding a unique
+identifier to the temporary file name while writing cache entry files.
+
+* Commit: `bfbec2f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/bfbec2f4f39393b9c65578402efaf963d2c0bad2>`_
+
+[BUGFIX] Respect X-Forwarded-Proto header consistently
+-----------------------------------------------------------------------------------------
+
+The ``Http\\Request`` currently only considers ``X-Forwarded-Proto``
+headers in its isSecure() method.
+
+With this change the header is checked in the constructor so that it
+overrules the requested protocol if set.
+
+Before::
+
+ GET http://acme.com:8080 HTTP/1.1
+ X-Forwarded-Proto: https
+ X-Forwarded-Port: 443
+
+Generated URIs like ``http://acme.com:8080``. With this change the
+result is ``https://acme.com``.
+
+* Fixes: `#54453 <http://forge.typo3.org/issues/54453>`_
+* Commit: `ca7d52f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/ca7d52f5f458f8191980ec41f9df21fb495286f1>`_
+
+[BUGFIX] Browser must not directly handle cookie
+-----------------------------------------------------------------------------------------
+
+Request::create() doesn't support "cookies" parameter.
+
+Cookie argument has been removed from Request::create
+with change Icdf7fea74d8331abcf95f1ec361abc78e31bfb8c.
+
+* Fixes: `#48290 <http://forge.typo3.org/issues/48290>`_
+* Commit: `32283a2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/32283a2a6e84eda922602d27075e7e6df1ecb943>`_
+
+[SECURITY] Remove possible XSS from ActionController Error output
+-----------------------------------------------------------------------------------------
+
+The errorAction method in the ActionController base class of Flow
+returns error messages without properly encoding them. Because these
+error messages can contain user input, this could lead to a Cross-Site
+Scripting vulnerability in Flow driven applications.
+
+The offending output has been removed without substitution.
+
+Hint: If you have customized the error action in your Flow application,
+we advise you to check that the error messages returned in these actions
+only contain static strings and are not derived from any kind of user
+input. If you are not sure whether your code is fine in that regard,
+feel free to ask on a public mailing list or the forum.
+
+* Fixes: `#31206 <http://forge.typo3.org/issues/31206>`_
+
+Security-Bulletin: TYPO3-FLOW-SA-2013-001
+
+* Commit: `f4fc77c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f4fc77ca74e539ac2998408d034dc65155237d89>`_
+
+[TASK] Add dependencies to newly created composer manifests
+-----------------------------------------------------------------------------------------
+
+Newly created composer manifests had a single dependency to
+Flow before this change. Now the dependencies from package
+meta data are added to the manifest.
+
+* Commit: `22edb22 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/22edb22a0474b5b8a8d64cd8bca04d647b51e4f6>`_
+
+[TASK] Update contributors list in guide
+-----------------------------------------------------------------------------------------
+
+* Commit: `f51de6b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f51de6bf28114b4f2630e5a63c9000bf8f6a5d64>`_
+
+[TASK] Remove version number in composer command to install Flow
+-----------------------------------------------------------------------------------------
+
+* Commit: `6df0dad <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/6df0dad73d1eab3ab7a19d0c17fb4796fb373db8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `e587e0f <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/e587e0ff7a78bf80f7e596268ff8572529e42ce9>`_
+
+[TASK] Fix failing functional FormObjectsTest
+-----------------------------------------------------------------------------------------
+
+With change Ic37008975e9c58ec9bea9d4277ee4621e6de061b being merged the
+test objectIsNotCreatedAnymoreIfIdentityFieldHasBeenAdded failed due to
+404 being returned instead of 500.
+
+* Commit: `675deaf <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/675deaf341be33bb3fcee375c7c046f535f82c4a>`_
+
+[BUGFIX] Use getPropertyPath in autocomplete widget
+-----------------------------------------------------------------------------------------
+
+Since the query in the widget that searches for autocomplete items
+already supports nested properties the building of the result array
+now also uses ObjectAccess::getPropertyPath() instead of
+ObjectAccess::getProperty().
+
+* Resolves: `#55142 <http://forge.typo3.org/issues/55142>`_
+* Commit: `5332635 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/5332635efb2b7f02a69ed87026edfd80fd42b040>`_
+
+[FEATURE] Add generic data-* attribute
+-----------------------------------------------------------------------------------------
+
+All elements in HTML5 can have any number of data-* attributes.
+This additional array attribute on tag bases viewhelpers makes
+it easier to add several data-* attributes to them::
+
+ <f:form.textfield data="{foo: 'bar', baz: 'foos'}" />
+
+Will render::
+
+ <input data-foo="bar" data-baz="foos" ...
+
+* Resolves: `#35748 <http://forge.typo3.org/issues/35748>`_
+* Commit: `8f7bd50 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/8f7bd506e06e62c4f28428f47d14a4e4f9ea8977>`_
+
+[TASK] Fix “flush() on a non-object” in TemplateCompiler
+-----------------------------------------------------------------------------------------
+
+* Commit: `89d02b3 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/89d02b3c4ae3d234abe70521deb582086d4e0923>`_
+
+[TASK] Move f:form.validationResults view helper to f:validation.results
+-----------------------------------------------------------------------------------------
+
+Moves the validationResults ViewHelper to the ``validation`` namespace
+for consistency reasons.
+If you use this ViewHelper you should update your Fluid templates from::
+ <f:form.validationResults>...</f:form.validationResults>
+to::
+ <f:validation.results></f:validation.results>
+
+* Related: `#54196 <http://forge.typo3.org/issues/54196>`_
+* Commit: `49dfdbe <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/49dfdbe5c17a617ddabf997bdf76703e66a196e5>`_
+
+[FEATURE] Introduce Validation.IfHasErrors ViewHelper
+-----------------------------------------------------------------------------------------
+
+This allows to check whether validation errors adhere
+to the current request, or if there is such an error
+for a particular property path.
+
+* Resolves: `#54196 <http://forge.typo3.org/issues/54196>`_
+* Commit: `c4d4db3 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/c4d4db3afcfb4fbc3a4b66b3c4c14813929f34df>`_
+
+[FEATURE] Make NumberViewHelper regard locale
+-----------------------------------------------------------------------------------------
+
+This change makes the NumberViewHelper use the forceLocale attribute
+like the Currency and DateViewHelper do.
+It also abstracts the locale awareness away into a seperate abstract
+ViewHelper class to lay a foundation for other such ViewHelpers.
+
+* Resolves: `#48218 <http://forge.typo3.org/issues/48218>`_
+* Commit: `df00bf9 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/df00bf92a42d92b26e66c30976272115a24992f1>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `93f267b <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/93f267b75b26e009aa2e0ecf272211ffcded8e27>`_
+
+[TASK] Fix CGL violations in generator service
+-----------------------------------------------------------------------------------------
+
+* Commit: `61b8b45 <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/61b8b45aea212cef84246f93289d805c6a4adadd>`_
+
+[TASK] Remove PHP closing tag in templates
+-----------------------------------------------------------------------------------------
+
+* Commit: `053ac2e <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/053ac2e0bdcc30f9a33cba7482f152379143f8ea>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `75cb8aa <https://git.typo3.org/Packages/TYPO3.Party.git/commit/75cb8aabb2fd5b346cc2b117beae1d60c7b11062>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-branch/4/
+
+* Commit: `9c182a4 <https://git.typo3.org/Packages/TYPO3.Welcome.git/commit/9c182a4d354bc46afbba65ec47afd3cdc9a64ffa>`_
+
