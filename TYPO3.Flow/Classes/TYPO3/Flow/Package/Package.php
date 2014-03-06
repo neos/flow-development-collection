@@ -21,6 +21,26 @@ use TYPO3\Flow\Utility\Files;
 class Package implements PackageInterface {
 
 	/**
+	 * @var string
+	 */
+	const AUTOLOADER_TYPE_PSR0 = 'psr-0';
+
+	/**
+	 * @var string
+	 */
+	const AUTOLOADER_TYPE_PSR4 = 'psr-4';
+
+	/**
+	 * @var string
+	 */
+	const AUTOLOADER_TYPE_CLASSMAP = 'classmap';
+
+	/**
+	 * @var string
+	 */
+	const AUTOLOADER_TYPE_FILES = 'files';
+
+	/**
 	 * Unique key of this package. Example for the Flow package: "TYPO3.Flow"
 	 * @var string
 	 */
@@ -98,29 +118,29 @@ class Package implements PackageInterface {
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException if no composer manifest file could be found
 	 */
-	public function __construct(\TYPO3\Flow\Package\PackageManager $packageManager, $packageKey, $packagePath, $classesPath = NULL, $manifestPath = '') {
+	public function __construct(PackageManager $packageManager, $packageKey, $packagePath, $classesPath = NULL, $manifestPath = '') {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
+			throw new Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		}
 		if (!(is_dir($packagePath) || (Files::is_link($packagePath) && is_dir(Files::getNormalizedPath($packagePath))))) {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('Tried to instantiate a package object for package "%s" with a non-existing package path "%s". Either the package does not exist anymore, or the code creating this object contains an error.', $packageKey, $packagePath), 1166631889);
+			throw new Exception\InvalidPackagePathException(sprintf('Tried to instantiate a package object for package "%s" with a non-existing package path "%s". Either the package does not exist anymore, or the code creating this object contains an error.', $packageKey, $packagePath), 1166631889);
 		}
 		if (substr($packagePath, -1, 1) !== '/') {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('The package path "%s" provided for package "%s" has no trailing forward slash.', $packagePath, $packageKey), 1166633720);
+			throw new Exception\InvalidPackagePathException(sprintf('The package path "%s" provided for package "%s" has no trailing forward slash.', $packagePath, $packageKey), 1166633720);
 		}
 		if (substr($classesPath, 1, 1) === '/') {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
+			throw new Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
 		}
 		if (!file_exists($packagePath . $manifestPath . 'composer.json')) {
-			throw new \TYPO3\Flow\Package\Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $manifestPath), 1349776393);
+			throw new Exception\InvalidPackageManifestException(sprintf('No composer manifest file found for package "%s". Please create one at "%scomposer.json".', $packageKey, $manifestPath), 1349776393);
 		}
 
 		$this->packageManager = $packageManager;
 		$this->manifestPath = $manifestPath;
 		$this->packageKey = $packageKey;
 		$this->packagePath = Files::getNormalizedPath($packagePath);
-		if (isset($this->getComposerManifest()->autoload->{'psr-0'})) {
-			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getNamespace()});
+		if (isset($this->getComposerManifest()->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{self::AUTOLOADER_TYPE_PSR0}->{$this->getNamespace()});
 		} else {
 			$this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
 		}
@@ -213,12 +233,19 @@ class Package implements PackageInterface {
 	public function getNamespace() {
 		if (!$this->namespace) {
 			$manifest = $this->getComposerManifest();
-			if (isset($manifest->autoload->{'psr-0'})) {
-				$namespaces = $manifest->autoload->{'psr-0'};
+			if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
+				$namespaces = $manifest->autoload->{self::AUTOLOADER_TYPE_PSR0};
 				if (count($namespaces) === 1) {
 					$namespace = key($namespaces);
 				} else {
-					throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
+					throw new Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
+				}
+			} elseif (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR4})) {
+				$namespaces = $manifest->autoload->{self::AUTOLOADER_TYPE_PSR4};
+				if (count($namespaces) === 1) {
+					$namespace = key($namespaces);
+				} else {
+					throw new Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
 				}
 			} else {
 				$namespace = str_replace('.', '\\', $this->getPackageKey());
@@ -226,6 +253,29 @@ class Package implements PackageInterface {
 			$this->namespace = $namespace;
 		}
 		return $this->namespace;
+	}
+
+	/**
+	 * PSR autoloading type
+	 *
+	 * @return string see self::AUTOLOADER_TYPE_* - NULL in case it is not defined or unknown
+	 */
+	protected function getAutoloadType() {
+		$manifest = $this->getComposerManifest();
+		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
+			return self::AUTOLOADER_TYPE_PSR0;
+		}
+		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR4})) {
+			return self::AUTOLOADER_TYPE_PSR4;
+		}
+		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_CLASSMAP})) {
+			return self::AUTOLOADER_TYPE_CLASSMAP;
+		}
+		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_FILES})) {
+			return self::AUTOLOADER_TYPE_FILES;
+		}
+
+		return NULL;
 	}
 
 	/**
@@ -365,7 +415,7 @@ class Package implements PackageInterface {
 				$filename = $documentationsDirectoryIterator->getFilename();
 				if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
 					$filename = $documentationsDirectoryIterator->getFilename();
-					$documentation = new \TYPO3\Flow\Package\Documentation($this, $filename, $documentationPath . $filename . '/');
+					$documentation = new Documentation($this, $filename, $documentationPath . $filename . '/');
 					$documentations[$filename] = $documentation;
 				}
 				$documentationsDirectoryIterator->next();
@@ -405,12 +455,17 @@ class Package implements PackageInterface {
 		$classFiles = array();
 		$currentPath = $classesPath . $subDirectory;
 		$currentRelativePath = substr($currentPath, strlen($this->packagePath));
+		$namespacePrefix = '';
+
+		if ($this->getAutoloadType() === self::AUTOLOADER_TYPE_PSR4) {
+			$namespacePrefix = $this->getNamespace();
+		}
 
 		if (!is_dir($currentPath)) {
 			return array();
 		}
 		if ($recursionLevel > 100) {
-			throw new \TYPO3\Flow\Package\Exception('Recursion too deep.', 1166635495);
+			throw new Exception('Recursion too deep while collecting class files.', 1166635495);
 		}
 
 		try {
@@ -422,7 +477,7 @@ class Package implements PackageInterface {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel + 1)));
 					} else {
 						if (substr($filename, -4, 4) === '.php') {
-							$className = (str_replace('/', '\\', ($extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
+							$className = ($namespacePrefix . str_replace('/', '\\', ($extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
 							$classFiles[$className] = $currentRelativePath . $filename;
 						}
 					}
@@ -431,7 +486,7 @@ class Package implements PackageInterface {
 			}
 
 		} catch (\Exception $exception) {
-			throw new \TYPO3\Flow\Package\Exception($exception->getMessage(), 1166633720);
+			throw new Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
 	}
