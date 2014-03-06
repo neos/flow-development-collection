@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-05-15
+The following reference was automatically generated from code on 2014-03-06
 
 
 Package *TYPO3.FLOW*
@@ -631,6 +631,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--package-type``
+  The package type of the package to create
+
 
 
 Related commands
@@ -871,6 +877,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--method``
+  The request method (GET, POST, PUT, DELETE, ...) to simulate
+
 
 
 
@@ -938,6 +950,71 @@ Related commands
 
 ``typo3.flow:security:importprivatekey``
   Import a private key
+
+
+
+``typo3.flow:security:showeffectivepolicy``
+*******************************************
+
+**Shows the effective policy rules currently active in the system**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--grants-only``
+  Only list methods effectively granted to the given roles
+
+
+
+
+
+``typo3.flow:security:showmethodsforresource``
+**********************************************
+
+**Shows the methods represented by the given security resource**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--resource-name``
+  The name of the resource as stated in the policy
+
+
+
+
+
+
+
+``typo3.flow:security:showunprotectedactions``
+**********************************************
+
+**Lists all public controller actions not covered by the active security policy**
+
+
+
+
+
+
+
+
+
+``typo3.flow:typeconverter:list``
+*********************************
+
+**Lists all currently active and registered type converters**
+
+All active converters are listed with ordered by priority and grouped by
+source type first and target type second.
+
+
+
+
 
 
 

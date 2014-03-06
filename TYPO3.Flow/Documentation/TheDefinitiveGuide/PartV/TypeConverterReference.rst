@@ -1,18 +1,21 @@
+.. _TYPO3 Flow TypeConverter Reference:
+
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2012-12-12
+This reference was automatically generated from code on 2014-03-06
 
 
 ArrayConverter
 --------------
 
-Converter which transforms arrays to arrays.
+Converter which transforms strings and arrays to arrays.
 
 :Priority: 1
 :Target type: array
-:Source type: array
-
+:Source types:
+ * array
+ * string
 
 
 
@@ -220,6 +223,22 @@ This converter transforms arrays or strings to persistent objects. It does the f
 :Source types:
  * string
  * array
+
+
+
+
+PersistentObjectSerializer
+--------------------------
+
+This converter transforms persistent objects to strings.
+
+Unpersisted changes to an object are not serialized, because only the persistence identifier is taken into account
+as the serialized value.
+
+:Priority: 1
+:Target type: string
+:Source type: TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface
+
 
 
 

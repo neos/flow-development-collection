@@ -1,7 +1,9 @@
+.. _TYPO3 Flow Annotation Reference:
+
 TYPO3 Flow Annotation Reference
 ===============================
 
-This reference was automatically generated from code on 2012-12-10
+This reference was automatically generated from code on 2014-03-06
 
 
 After
@@ -132,6 +134,14 @@ Arguments
 
 
 
+CompileStatic
+-------------
+
+
+
+
+
+
 Entity
 ------
 
@@ -188,9 +198,12 @@ created - thus the limitations of that need to be observed.
 IgnoreValidation
 ----------------
 
-Used to ignore validation on a specific method argument.
+Used to ignore validation on a specific method argument or class property.
 
-:Applicable to: Method
+By default no validation will be executed for the given argument. To gather validation results for further
+processing, the "evaluate" option can be set to true (while still ignoring any validation error).
+
+:Applicable to: Method, Property
 
 
 
@@ -199,6 +212,8 @@ Arguments
 *********
 
 * ``argumentName`` (string): Name of the argument to skip validation for. (Can be given as anonymous argument.)
+
+* ``evaluate`` (boolean): Whether to evaluate the validation results of the argument
 
 
 
@@ -213,6 +228,18 @@ to inject a value as specified by the var annotation.
 
 :Applicable to: Property
 
+
+
+
+Arguments
+*********
+
+* ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
+  proxy should be injected instead
+
+* ``setting`` (string): Path of a setting which should be injected into the property
+
+* ``package`` (string): Package to load the setting from
 
 
 
