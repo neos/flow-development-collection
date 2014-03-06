@@ -13,9 +13,9 @@
         "ext-json": ">=1.2.0",
         "ext-session": "*",
 
-        "typo3/fluid": "*",
-        "typo3/party": "*",
-        "typo3/eel": "*",
+        "typo3/fluid": "2.2.*@dev",
+        "typo3/party": "2.2.*@dev",
+        "typo3/eel": "2.2.*@dev",
 
         "doctrine/orm": "2.3.*",
         "doctrine/migrations": "dev-master",
