@@ -1135,7 +1135,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$metaDataCache->set($sessionIdentifier, $sessionInfo, array('session'), 0);
 		}
 
-		$this->assertEquals(5, $session->collectGarbage());
+		$this->assertLessThanOrEqual(5, $session->collectGarbage());
 	}
 
 	/**
