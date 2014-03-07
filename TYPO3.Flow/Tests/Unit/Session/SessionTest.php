@@ -1136,7 +1136,7 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}
 
 		$this->inject($session, 'systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface'));
-		$this->assertEquals(5, $session->collectGarbage());
+		$this->assertLessThanOrEqual(5, $session->collectGarbage());
 	}
 
 	/**
