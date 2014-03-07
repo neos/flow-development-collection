@@ -400,48 +400,4 @@ class FilesTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', TRUE);
 		$this->assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
 	}
-
-	/**
-	 * @test
-	 */
-	public function createRelativeSymlinkCreatesRelativeSymlink() {
-		$temporaryDirectory =  Files::concatenatePaths(array(realpath(sys_get_temp_dir()), 'FlowFileTest')) . '/';
-		Files::createDirectoryRecursively($temporaryDirectory . 'Foo');
-		Files::createDirectoryRecursively($temporaryDirectory . 'Baz/Some/Thing');
-		file_put_contents($temporaryDirectory . 'Foo/sample.txt', 'some data');
-		$linkPath = $temporaryDirectory . 'Baz/Some/Thing/thelink';
-		$this->assertTrue(Files::createRelativeSymlink($temporaryDirectory . 'Foo/sample.txt', $linkPath));
-		$this->assertTrue(Files::is_link($linkPath));
-		if (DIRECTORY_SEPARATOR === '/') {
-			$actualPath = readlink($linkPath);
-		} else {
-			// a reliable way on Windows to find out where a symlink points to is to execute `dir path/to/link | find "<SYMLINK>"`
-			// and examining the value between the square brackets in that output which looks like
-			// 22.10.2013  13:31    <SYMLINK>      thelink [..\..\..\Foo\sample.txt]
-			// for example.
-			$dirCommandOutput = exec(sprintf('dir %s | find "<SYMLINK>"', escapeshellarg($temporaryDirectory . 'Baz/Some/Thing')));
-			preg_match('/\<SYMLINK\>\s+thelink\s\[(.+)\]$/', $dirCommandOutput, $matches);
-			$actualPath = Files::getUnixStylePath($matches[1]);
-		}
-		$this->assertSame('../../../Foo/sample.txt', $actualPath);
-		Files::removeDirectoryRecursively($temporaryDirectory);
-	}
-
-	/**
-	 * @return array signature: $from, $to, $expected
-	 */
-	public function getRelativePathDataProvider() {
-		return array(
-			array(FLOW_PATH_DATA . 'Web', FLOW_PATH_DATA . 'Web/foo/bar/baz.txt', 'foo/bar/baz.txt'),
-			array(FLOW_PATH_DATA . 'Web/Some/Resources/foo.txt', FLOW_PATH_DATA . 'Data/More/foo.txt', '../../../Data/More/foo.txt'),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider getRelativePathDataProvider
-	 */
-	public function getRelativePathWorksAsIntended($from, $to, $expected) {
-		$this->assertSame($expected, Files::getRelativePath($from, $to));
-	}
 }
