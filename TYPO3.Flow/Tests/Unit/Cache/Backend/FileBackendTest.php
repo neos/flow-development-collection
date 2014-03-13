@@ -15,11 +15,12 @@ use org\bovigo\vfs\vfsStream;
 use TYPO3\Flow\Cache\Backend\FileBackend;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the cache to file backend
+ * Test case for the cache to file backend
  */
-class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class FileBackendTest extends UnitTestCase {
 
 	/**
 	 */
@@ -41,6 +42,30 @@ class FileBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$backend->injectEnvironment($mockEnvironment);
 
 		$backend->setCache($mockCache);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setCacheDirectoryAllowsToSetTheCurrentCacheDirectory() {
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('SomeCache'));
+
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
+
+		// We need to create the directory here because vfs doesn't support touch() which is used by
+		// createDirectoryRecursively() in the setCache method.
+		mkdir ('vfs://Foo/Cache');
+		mkdir ('vfs://Foo/OtherDirectory');
+
+		$context = new ApplicationContext('Testing');
+		$backend = new FileBackend($context, array('cacheDirectory' => 'vfs://Foo/OtherDirectory'));
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$this->assertEquals('vfs://Foo/OtherDirectory/', $backend->getCacheDirectory());
 	}
 
 	/**
