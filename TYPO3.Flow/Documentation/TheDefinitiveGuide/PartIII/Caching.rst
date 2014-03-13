@@ -297,7 +297,18 @@ production systems, so get and set performance is much more important in this sc
 Options
 ~~~~~~~
 
-The file backend has no options.
+:title:`File cache backend options`
+
++----------------+----------------------------------------+-----------+--------+---------+
+| Option         | Description                            | Mandatory | Type   | Default |
++================+========================================+===========+========+=========+
+| cacheDirectory | Full path leading to a custom cache    | No        | string |         |
+|                | directory.                             |           |        |         |
+|                |                                        |           |        |         |
+|                | :title:`Example:`                      |           |        |         |
+|                |                                        |           |        |         |
+|                | * /tmp/my-cache-directory/             |           |        |         |
++----------------+----------------------------------------+-----------+--------+---------+
 
 TYPO3\\Flow\\Cache\\Backend\\PdoBackend
 ---------------------------------------

@@ -37,7 +37,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 	 *
 	 * @var string
 	 */
-	protected $cacheDirectory = '';
+	protected $cacheDirectory;
 
 	/**
 	 * A file extension to use for each cache entry.
@@ -90,7 +90,7 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		parent::setCache($cache);
 
 		$codeOrData = ($cache instanceof PhpFrontend) ? 'Code' : 'Data';
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
+		$cacheDirectory = $this->cacheDirectory ?: $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
 		if (!is_writable($cacheDirectory)) {
 			try {
 				\TYPO3\Flow\Utility\Files::createDirectoryRecursively($cacheDirectory);
@@ -111,6 +111,17 @@ class SimpleFileBackend extends AbstractBackend implements PhpCapableBackendInte
 		if ((strlen($this->cacheDirectory) + 23) > $this->environment->getMaximumPathLength()) {
 			throw new \TYPO3\Flow\Cache\Exception('The length of the temporary cache path "' . $this->cacheDirectory . '" exceeds the maximum path length of ' . ($this->environment->getMaximumPathLength() - 23) . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
+	}
+
+	/**
+	 * Sets the directory where the cache files are stored
+	 *
+	 * @param string $cacheDirectory Full path of the cache directory
+	 * @return void
+	 * @api
+	 */
+	public function setCacheDirectory($cacheDirectory) {
+		$this->cacheDirectory = rtrim($cacheDirectory, '/') . '/';
 	}
 
 	/**
