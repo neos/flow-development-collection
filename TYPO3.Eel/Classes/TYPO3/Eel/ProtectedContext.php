@@ -33,7 +33,7 @@ class ProtectedContext extends Context {
 	 * @throws NotAllowedException
 	 */
 	public function call($method, array $arguments = array()) {
-		if (isset($this->whitelist[$method]) || isset($this->whitelist['*']) || ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod($method))) {
+		if ($this->value === NULL || isset($this->whitelist[$method]) || isset($this->whitelist['*']) || ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod($method))) {
 			return parent::call($method, $arguments);
 		}
 		throw new NotAllowedException('Method "' . $method . '" is not callable in untrusted context', 1369043080);

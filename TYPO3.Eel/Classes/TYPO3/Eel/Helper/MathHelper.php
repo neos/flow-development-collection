@@ -15,7 +15,7 @@ use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * String helpers for Eel contexts
+ * Math helpers for Eel contexts
  */
 class MathHelper implements ProtectedContextAwareInterface {
 

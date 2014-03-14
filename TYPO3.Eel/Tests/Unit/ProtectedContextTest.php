@@ -182,4 +182,17 @@ class ProtectedContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('Hello, Foo!', $result);
 	}
 
+	/**
+	 * @test
+	 */
+	public function methodCallToNullValueDoesNotThrowNotAllowedException() {
+		$context = new ProtectedContext(array(
+
+		));
+
+		$evaluator = new CompilingEvaluator();
+		$result = $evaluator->evaluate('unknown.someMethod()', $context);
+		$this->assertEquals(NULL, $result);
+	}
+
 }
