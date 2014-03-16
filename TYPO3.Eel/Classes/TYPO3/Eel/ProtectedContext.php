@@ -11,11 +11,15 @@ namespace TYPO3\Eel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * A protected evaluation context
  *
  * - Access to public properties and array is allowed
  * - Methods have to be whitelisted
+ *
+ * @Flow\Proxy(false)
  */
 class ProtectedContext extends Context {
 

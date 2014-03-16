@@ -11,11 +11,13 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Eel\ProtectedContextAwareInterface;
 
 /**
  * Date helpers for Eel contexts
+ *
+ * @Flow\Proxy(false)
  */
 class DateHelper implements ProtectedContextAwareInterface {
 

@@ -11,11 +11,15 @@ namespace TYPO3\Eel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * A Eel evaluation context
  *
  * It works as a variable container with wrapping of return values
  * for safe access without warnings (on missing properties).
+ *
+ * @Flow\Proxy(false)
  */
 class Context {
 

@@ -21,6 +21,8 @@ use TYPO3\Eel\ProtectedContextAwareInterface;
  *
  * See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
  * specification of the JavaScript implementation.
+ *
+ * @Flow\Proxy(false)
  */
 class ArrayHelper implements ProtectedContextAwareInterface {
 

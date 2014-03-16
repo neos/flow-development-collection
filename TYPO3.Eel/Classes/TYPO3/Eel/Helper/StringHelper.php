@@ -11,14 +11,16 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\EvaluationException;
 use TYPO3\Eel\ProtectedContextAwareInterface;
-use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Flow\Utility\Unicode\TextIterator;
 
 /**
  * String helpers for Eel contexts
+ *
+ * @Flow\Proxy(false)
  */
 class StringHelper implements ProtectedContextAwareInterface {
 
