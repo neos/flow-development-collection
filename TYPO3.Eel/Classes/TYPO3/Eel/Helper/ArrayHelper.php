@@ -11,11 +11,16 @@ namespace TYPO3\Eel\Helper;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Eel\ProtectedContextAwareInterface;
 
 /**
  * Array helpers for Eel contexts
+ *
+ * The implementation uses the JavaScript specificiation where applicable, including EcmaScript 6 proposals.
+ *
+ * See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
+ * specification of the JavaScript implementation.
  */
 class ArrayHelper implements ProtectedContextAwareInterface {
 
