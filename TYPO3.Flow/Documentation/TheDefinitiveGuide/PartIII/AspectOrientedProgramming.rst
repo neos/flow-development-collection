@@ -348,13 +348,19 @@ method()
 
 The ``method()`` designator matches on the execution of methods with a certain
 name. The parameter specifies the class and method name, regular expressions
-can be used for more flexibility [#]_. It follows the following scheme:
+can be used for more flexibility [#]_. It follows the following scheme::
 
-``method([public|protected] ClassName->methodName())``
+	method([public|protected] ClassName->methodName())
 
 Specifying the visibility modifier (public or protected) is optional - if none
 is specified, both visibilities will match. The class- and method name can be
-specified as a regular expression. Here are some examples for matching method
+specified as a regular expression.
+
+.. warning:: It is not possible to match for *interfaces* within the ``method()``
+   pointcut expression. Instead of ``method(InterfaceName->methodName())``, use
+   ``within(InterfaceName) && method(.*->methodName())``.
+
+ Here are some examples for matching method
 executions:
 
 *Example: method() pointcut designator*
@@ -422,6 +428,9 @@ Matches all methods in class ``Example\MyPackage\MyObject``:
 Matches all methods in namespace "Service":
 
 ``class(Example\MyPackage\Service\.*)``
+
+.. warning:: The ``class`` pointcut expression does not match interfaces. If
+   you want to match interfaces, use ``within()`` instead.
 
 -----
 
