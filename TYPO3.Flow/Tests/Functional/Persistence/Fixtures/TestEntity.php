@@ -11,8 +11,12 @@ namespace TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity as ImportedSubEntity;
 
 /**
  * A simple entity for persistence tests
@@ -23,7 +27,7 @@ use TYPO3\Flow\Annotations as Flow;
 class TestEntity {
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 * @Flow\Inject
 	 */
 	protected $objectManager;
@@ -35,19 +39,19 @@ class TestEntity {
 	protected $name = '';
 
 	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
+	 * @var TestEntity
 	 * @ORM\ManyToOne
 	 */
 	protected $relatedEntity;
 
 	/**
-	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity>
+	 * @var Collection<ImportedSubEntity>
 	 * @ORM\OneToMany(mappedBy="parentEntity")
 	 */
 	protected $subEntities;
 
 	/**
-	 * @var \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject
+	 * @var TestValueObject
 	 * @ORM\ManyToOne
 	 */
 	protected $relatedValueObject;
@@ -67,7 +71,7 @@ class TestEntity {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->subEntities = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->subEntities = new ArrayCollection();
 	}
 
 	/**
@@ -122,52 +126,52 @@ class TestEntity {
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity
+	 * @param TestEntity $relatedEntity
 	 * @return void
 	 */
-	public function setRelatedEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity $relatedEntity) {
+	public function setRelatedEntity(TestEntity $relatedEntity) {
 		$this->relatedEntity = $relatedEntity;
 	}
 
 	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestEntity
+	 * @return TestEntity
 	 */
 	public function getRelatedEntity() {
 		return $this->relatedEntity;
 	}
 
 	/**
-	 * @param \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity> $subEntities
+	 * @param Collection<ImportedSubEntity> $subEntities
 	 * @return void
 	 */
-	public function setSubEntities(\Doctrine\Common\Collections\Collection $subEntities) {
+	public function setSubEntities(Collection $subEntities) {
 		$this->subEntities = $subEntities;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $subEntity
+	 * @param ImportedSubEntity $subEntity
 	 * @return void
 	 */
-	public function addSubEntity(\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity $subEntity) {
+	public function addSubEntity(ImportedSubEntity $subEntity) {
 		$this->subEntities->add($subEntity);
 	}
 
 	/**
-	 * @return \Doctrine\Common\Collections\Collection<\TYPO3\Flow\Tests\Functional\Persistence\Fixtures\SubEntity>
+	 * @return Collection<ImportedSubEntity>
 	 */
 	public function getRelatedEntities() {
 		return $this->subEntities;
 	}
 
 	/**
-	 * @return \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @return ObjectManagerInterface
 	 */
 	public function getObjectManager() {
 		return $this->objectManager;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject $relatedValueObject
+	 * @param TestValueObject $relatedValueObject
 	 * @return void
 	 */
 	public function setRelatedValueObject($relatedValueObject) {
@@ -175,7 +179,7 @@ class TestEntity {
 	}
 
 	/**
-	 * @return \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject
+	 * @return TestValueObject
 	 */
 	public function getRelatedValueObject() {
 		return $this->relatedValueObject;
