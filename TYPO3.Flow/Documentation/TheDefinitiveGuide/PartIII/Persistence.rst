@@ -405,14 +405,38 @@ See the documentation ([#]_) for more information on the Doctrine Event System.
 
 	TYPO3:
 	  Flow:
-		persistence:
-		  doctrine:
-			eventSubscribers:
-			  - 'Foo\Bar\Events\EventSubscriber'
-			eventListeners:
-			  -
-				events: ['onFlush', 'preFlush', 'postFlush']
-				listener: 'Foo\Bar\Events\EventListener'
+	    persistence:
+	      doctrine:
+	        eventSubscribers:
+	          - 'Foo\Bar\Events\EventSubscriber'
+	        eventListeners:
+	          -
+	            events: ['onFlush', 'preFlush', 'postFlush']
+	            listener: 'Foo\Bar\Events\EventListener'
+
+On the Doctrine Filter System
+-----------------------------
+
+Doctrine provides a filter system that allows developers to add SQL
+to the conditional clauses of queries, regardless the place where the SQL
+is generated (e.g. from a DQL query, or by loading).
+
+TYPO3 Flow allows for easily registering Filters with Doctrine through the
+configuration setting ``TYPO3.Flow.persistence.doctrine.filters``.
+
+*Example: Configuration for Doctrine Filters*:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+	    persistence:
+	      doctrine:
+	        filters:
+	          'my-filter-name': 'Acme\Demo\Filters\MyFilter'
+
+See the Doctrine documentation ([#]_) for more information on the Doctrine
+Filter System.
 
 Differences between TYPO3 Flow and plain Doctrine
 -------------------------------------------------
@@ -1091,3 +1115,4 @@ the array of objects being returned.
 	that seemed to be confusing.
 .. [#] See https://github.com/doctrine/doctrine2/pull/265 for one approach in the making.
 .. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/events.html
+.. [#] https://doctrine-orm.readthedocs.org/en/latest/reference/filters.html#filters
