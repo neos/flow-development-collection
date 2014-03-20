@@ -1395,6 +1395,14 @@ class ReflectionService {
 	 * @return string the possibly expanded type
 	 */
 	protected function expandType(ClassReflection $class, $type) {
+		// expand "SomeType<SomeElementType>" to "\SomeTypeNamespace\SomeType<\ElementTypeNamespace\ElementType>"
+		if (strpos($type, '<') !== FALSE) {
+			$typeParts = explode('<', $type);
+			$type = $typeParts[0];
+			$elementType = rtrim($typeParts[1], '>');
+			return $this->expandType($class, $type) . '<' . $this->expandType($class, $elementType) . '>';
+		}
+
 		// skip simple types and types with fully qualified namespaces
 		if (substr($type, 0, 1) === '\\' || TypeHandling::isSimpleType($type) || $type === 'mixed') {
 			return $type;
