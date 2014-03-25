@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -122,10 +123,19 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * Commits new objects and changes to objects in the current persistence
 	 * session into the backend
 	 *
+	 * @param boolean $onlyWhitelistedObjects
 	 * @return void
 	 * @api
 	 */
-	public function persistAll() {
+	public function persistAll($onlyWhitelistedObjects = FALSE) {
+		if ($onlyWhitelistedObjects) {
+			$unitOfWork = $this->entityManager->getUnitOfWork();
+			/** @var \Doctrine\ORM\UnitOfWork $unitOfWork */
+			$objectsToBePersisted = $unitOfWork->getScheduledEntityUpdates() + $unitOfWork->getScheduledEntityDeletions() + $unitOfWork->getScheduledEntityInsertions();
+			foreach ($objectsToBePersisted as $object) {
+				$this->throwExceptionIfObjectIsNotWhitelisted($object);
+			}
+		}
 		if ($this->entityManager->isOpen()) {
 			$this->entityManager->flush();
 			$this->emitAllObjectsPersisted();
