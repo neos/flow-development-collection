@@ -147,10 +147,24 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 	 * Commits new objects and changes to objects in the current persistence
 	 * session into the backend
 	 *
+	 * @param boolean $onlyWhitelistedObjects
 	 * @return void
 	 * @api
 	 */
-	public function persistAll() {
+	public function persistAll($onlyWhitelistedObjects = FALSE) {
+		if ($onlyWhitelistedObjects) {
+			foreach ($this->changedObjects as $object) {
+				$this->throwExceptionIfObjectIsNotWhitelisted($object);
+			}
+			foreach ($this->removedObjects as $object) {
+				$this->throwExceptionIfObjectIsNotWhitelisted($object);
+			}
+			foreach ($this->addedObjects as $object) {
+				$this->throwExceptionIfObjectIsNotWhitelisted($object);
+			}
+
+		}
+
 		// hand in only aggregate roots, leaving handling of subobjects to
 		// the underlying storage layer
 		// reconstituted entities must be fetched from the session and checked
