@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="fr">
+  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="it">
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="fr">Authentication obligatoire</target></trans-unit>
+			<target xml:lang="it">Authentication required</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
+			<target xml:lang="it">Username</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="fr">Mot de passe</target></trans-unit>
+			<target xml:lang="it">Password</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="fr">Nouveau mot de passe</target></trans-unit>
+			<target xml:lang="it">New password</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="fr">Identifiant</target></trans-unit>
+			<target xml:lang="it">Login</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="fr">Déconnexion</target></trans-unit>
+			<target xml:lang="it">Logout</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="fr">Mise à jour</target></trans-unit>
+			<target xml:lang="it">Update</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="fr">Soumettre</target></trans-unit>
+			<target xml:lang="it">Submit</target></trans-unit>
     </body>
   </file>
 </xliff>

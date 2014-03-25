@@ -1,39 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file original="" product-name="TYPO3.Flow" source-language="en" target-language="de" datatype="plaintext">
-		<body>
-			<trans-unit id="authentication.required" xml:space="preserve">
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="de">
+    <body>
+      <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-				<target>Authentifizierung erforderlich</target>
-			</trans-unit>
-			<trans-unit id="authentication.username" xml:space="preserve">
+			<target xml:lang="de">Authentifizierung erforderlich</target></trans-unit>
+      <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-				<target>Benutzername</target>
-			</trans-unit>
-			<trans-unit id="authentication.password" xml:space="preserve">
+			<target xml:lang="de">Benutzername</target></trans-unit>
+      <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-				<target>Kennwort</target>
-			</trans-unit>
-			<trans-unit id="authentication.new-password" xml:space="preserve">
+			<target xml:lang="de">Kennwort</target></trans-unit>
+      <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-				<target>Neues Kennwort</target>
-			</trans-unit>
-			<trans-unit id="authentication.login" xml:space="preserve">
+			<target xml:lang="de">Neues Kennwort</target></trans-unit>
+      <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-				<target>Anmelden</target>
-			</trans-unit>
-			<trans-unit id="authentication.logout" xml:space="preserve">
+			<target xml:lang="de">Anmelden</target></trans-unit>
+      <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-				<target>Abmelden</target>
-			</trans-unit>
-			<trans-unit id="update" xml:space="preserve">
+			<target xml:lang="de">Abmelden</target></trans-unit>
+      <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-				<target>Aktualisieren</target>
-			</trans-unit>
-			<trans-unit id="submit" xml:space="preserve">
+			<target xml:lang="de">Aktualisieren</target></trans-unit>
+      <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-				<target>Absenden</target>
-			</trans-unit>
-		</body>
-	</file>
+			<target xml:lang="de">Absenden</target></trans-unit>
+    </body>
+  </file>
 </xliff>

@@ -1,199 +1,199 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="fr">
+  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="pl">
     <body>
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only the characters a to z and numbers are allowed</source>
-			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target></trans-unit>
+			<target xml:lang="pl">Only the characters a to z and numbers are allowed</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="fr">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="pl">The given value is expected to be {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="fr">Le sujet n'est pas une collection</target></trans-unit>
+			<target xml:lang="pl">The given subject is not a collection</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="fr">Le sujet n'est pas dénombrable</target></trans-unit>
+			<target xml:lang="pl">The given subject is not countable</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="fr">Ce nombre doit être compris entre {0, number} et {1, number}</target></trans-unit>
+			<target xml:lang="pl">The count must be between {0,number} and {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="fr">Ce n'est pas une date valide</target></trans-unit>
+			<target xml:lang="pl">The given value is not a valid date</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="fr">La date doit être comprise entre {0} et {1}</target></trans-unit>
+			<target xml:lang="pl">The given date must be between {0} and {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="fr">La date doit être postérieure au {0}</target></trans-unit>
+			<target xml:lang="pl">The given date must be after {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="fr">La date doit être antérieure {0}</target></trans-unit>
+			<target xml:lang="pl">The given date must be before {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="fr">L'option "locale" peut être uniquement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
+			<target xml:lang="pl">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target xml:lang="fr">Un heure valide est attendue</target></trans-unit>
+			<target xml:lang="pl">A valid time is expected</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target xml:lang="fr">Une date et heure valide est attendue</target></trans-unit>
+			<target xml:lang="pl">A valid date and time is expected</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
-			<target xml:lang="fr">Une date valide est attendue</target></trans-unit>
+			<target xml:lang="pl">A valid date is expected</target></trans-unit>
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve">
 				<source>Please specify a valid email address</source>
-			<target xml:lang="fr">S'il vous plaît, indiquer une adresse email valide</target></trans-unit>
+			<target xml:lang="pl">Please specify a valid email address</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target xml:lang="fr">Un nombre à virgule flottante valide est attendu</target></trans-unit>
+			<target xml:lang="pl">A valid float number is expected</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target xml:lang="fr">"{0}" ne peut pas être converti en nombre à virgule flottante</target></trans-unit>
+			<target xml:lang="pl">"{0}" cannot be converted to a float value</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target xml:lang="fr">Objet attendu, {0} fourni</target></trans-unit>
+			<target xml:lang="pl">Object expected, {0} given</target></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target xml:lang="fr">Un nombre entier valide est attendu</target></trans-unit>
+			<target xml:lang="pl">A valid integer number is expected</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="fr">"{0}" n'est pas un entier</target></trans-unit>
+			<target xml:lang="pl">"{0}" is no integer.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target xml:lang="fr">Seuls les lettres, les nombres, les espaces et certaines ponctuations sont attentus</target></trans-unit>
+			<target xml:lang="pl">Only letters, numbers, spaces and certain punctuation marks are expected</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="fr">Ce n'est pas un identifiant de locale I18n valide</target></trans-unit>
+			<target xml:lang="pl">Value is no valid I18n locale identifier</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="fr">Cette propriété est obligatoire</target></trans-unit>
+			<target xml:lang="pl">This property is required</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="fr">Cette propriété est obligatoire</target></trans-unit>
+			<target xml:lang="pl">This property is required</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
-			<target xml:lang="fr">Un nombre valide est attendu</target></trans-unit>
+			<target xml:lang="pl">A valid number is expected</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target xml:lang="fr">S'il vous plaît entrer un nombre valide compris entre {0, number} et {1, number}</target></trans-unit>
+			<target xml:lang="pl">Please enter a valid number between {0,number} and {1,number}</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="fr">L'option "locale" peut être seulement un identifiant de chaîne, ou un objet Locale</target></trans-unit>
+			<target xml:lang="pl">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
-			<target xml:lang="fr">Un pourcentage valide est attendu</target></trans-unit>
+			<target xml:lang="pl">A valid percent number is expected</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve">
 				<source>A valid decimal number is expected</source>
-			<target xml:lang="fr">Un nombre décimal valide est attendu</target></trans-unit>
+			<target xml:lang="pl">A valid decimal number is expected</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="fr">Le sujet ne correspond pas au modèle. Reçu: {0}</target></trans-unit>
+			<target xml:lang="pl">The given subject did not match the pattern. Got: {0}</target></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-			<target xml:lang="fr">L'objet ne peut pas être converti en chaîne</target></trans-unit>
+			<target xml:lang="pl">The given object could not be converted to a string</target></trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-			<target xml:lang="fr">La valeur n'est pas une chaîne valide</target></trans-unit>
+			<target xml:lang="pl">The given value is not a valid string</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target xml:lang="fr">La longueur de ce texte doit être comprise entre {0, number} et {1, number} caractères</target></trans-unit>
+			<target xml:lang="pl">The length of this text must be between {0,number} and {1,number} characters</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]" xml:space="preserve">
 					<source>This field must contain at least {0,number} character</source>
-				<target xml:lang="fr">Ce champ doit contenir au moins {0,number} caractère</target></trans-unit>
+				<target xml:lang="pl">This field must contain at least {0,number} character</target></trans-unit>
         <trans-unit id="1238108068[1]" xml:space="preserve">
 					<source>This field must contain at least {0,number} characters</source>
-				<target xml:lang="fr">Ce champ doit contenir au moins {0,number} caractères</target></trans-unit>
+				<target xml:lang="pl">This field must contain at least {0,number} characters</target></trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]" xml:space="preserve">
 					<source>This text may not exceed {0,number} character</source>
-				<target xml:lang="fr">Ce texte ne doit pas dépasser {0,number} caractère</target></trans-unit>
+				<target xml:lang="pl">This text may not exceed {0,number} character</target></trans-unit>
         <trans-unit id="1238108069[1]" xml:space="preserve">
 					<source>This text may not exceed {0,number} characters</source>
-				<target xml:lang="fr">Ce texte ne doit pas dépasser {0,number} caractères</target></trans-unit>
+				<target xml:lang="pl">This text may not exceed {0,number} characters</target></trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-			<target xml:lang="fr">Une chaîne valide est attendue</target></trans-unit>
+			<target xml:lang="pl">A valid string is expected</target></trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target xml:lang="fr">Le texte ne doit pas contenir de balises XML</target></trans-unit>
+			<target xml:lang="pl">Valid text without any XML tags is expected</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target xml:lang="fr">Le sujet n'est pas un UUID valide</target></trans-unit>
+			<target xml:lang="pl">The given subject is not a valid UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target xml:lang="fr">Aucun validateur trouvé pour l'adresse électronique de type "{0}"</target></trans-unit>
+			<target xml:lang="pl">No validator found for electronic address of type "{0}"</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target xml:lang="fr">Le nom de la personne ne peut pas être vide</target></trans-unit>
+			<target xml:lang="pl">The person name cannot be empty</target></trans-unit>
       <!-- Package "TYPO3.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fr">La ressource n'est pas une image</target></trans-unit>
+			<target xml:lang="pl">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="fr">Le type d'image "{0}" n'est pas autorisé</target></trans-unit>
+			<target xml:lang="pl">The image type "{0}" is not allowed</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target xml:lang="fr">Le fichier envoyé n'est pas une image valide</target></trans-unit>
+			<target xml:lang="pl">The uploaded file is no valid image</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fr">Ce n'est pas une image valide</target></trans-unit>
+			<target xml:lang="pl">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target xml:lang="fr">La largeur de l'image ({0, number}) est inférieure à la largeur minimale autorisée qui est de {1, number}</target></trans-unit>
+			<target xml:lang="pl">The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target xml:lang="fr">La largeur de l'image ({0, number}) est supérieure à la largeur maximale autorisée qui est de {1, number}</target></trans-unit>
+			<target xml:lang="pl">The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target xml:lang="fr">La hauteur de l'image ({0, number}) est inférieure à la hauteur minimale autorisée qui est de {1, number}</target></trans-unit>
+			<target xml:lang="pl">The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target xml:lang="fr">La hauteur de l'image ({0, number}) est supérieure à la hauteur maximale autorisée qui est de {1, number}</target></trans-unit>
+			<target xml:lang="pl">The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="fr">La résolution de l'image ({0,number} x {1,number}) est inférieure à la résolution minimale autorisée qui est de {2,number}</target></trans-unit>
+			<target xml:lang="pl">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="fr">La résolution de l'image ({0,number} x {1,number}) est supérieure à la résolution maximale autorisée qui est de {2,number}</target></trans-unit>
+			<target xml:lang="pl">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="fr">La ressource n'est pas une image</target></trans-unit>
+			<target xml:lang="pl">The given value is not a Image instance</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="fr">L'orientation de l'image doit être "{0}"</target></trans-unit>
+			<target xml:lang="pl">The image orientation must be "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="fr">L'orientation de l'image "{0}" n'est pas autorisée</target></trans-unit>
+			<target xml:lang="pl">The image orientation "{0}" is not allowed</target></trans-unit>
     </body>
   </file>
 </xliff>
