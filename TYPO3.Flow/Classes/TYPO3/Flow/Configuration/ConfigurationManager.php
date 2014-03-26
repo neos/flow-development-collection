@@ -406,6 +406,13 @@ class ConfigurationManager {
 				}
 			break;
 			case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
+				if ($this->context->isTesting()) {
+					$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy';
+					if ($this->configurationSource->has($testingPolicyPathAndFilename)) {
+						$this->configurations[$configurationType] = $this->configurationSource->load($testingPolicyPathAndFilename);
+						break;
+					}
+				}
 				$this->configurations[$configurationType] = array();
 				/** @var $package PackageInterface */
 				foreach ($packages as $package) {
