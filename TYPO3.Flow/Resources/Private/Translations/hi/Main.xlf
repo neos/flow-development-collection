@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="da">
+  <file original="" product-name="TYPO3.Flow" source-language="en" datatype="plaintext" target-language="hi">
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="da">Godkendelse kræves</target></trans-unit>
+			<target xml:lang="hi">Authentication required</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="da">Brugernavn</target></trans-unit>
+			<target xml:lang="hi">Username</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="da">Adgangskode</target></trans-unit>
+			<target xml:lang="hi">Password</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="da">Ny adgangskode</target></trans-unit>
+			<target xml:lang="hi">New password</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="da">Log ind</target></trans-unit>
+			<target xml:lang="hi">Login</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="da">Log ud</target></trans-unit>
+			<target xml:lang="hi">Logout</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="da">Opdater</target></trans-unit>
+			<target xml:lang="hi">Update</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="da">Indsend</target></trans-unit>
+			<target xml:lang="hi">Submit</target></trans-unit>
     </body>
   </file>
 </xliff>
