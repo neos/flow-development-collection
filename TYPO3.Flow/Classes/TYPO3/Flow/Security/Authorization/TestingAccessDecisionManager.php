@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Tests\Functional\Security\Authorization;
+namespace TYPO3\Flow\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow framework.                       *
@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * An access decision manager that can be overriden for functional tests
+ * An access decision manager that can be overridden for tests
  *
  * @Flow\Scope("singleton")
  */
