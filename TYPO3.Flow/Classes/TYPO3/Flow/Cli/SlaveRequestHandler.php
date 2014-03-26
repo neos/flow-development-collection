@@ -75,11 +75,12 @@ class SlaveRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface {
 		try {
 			while (TRUE) {
 				$commandLine = trim(fgets(STDIN));
-				$systemLogger->log(sprintf('Received command "%s".', $commandLine), LOG_INFO);
+				$trimmedCommandLine = trim($commandLine);
+				$systemLogger->log(sprintf('Received command "%s".', $trimmedCommandLine), LOG_INFO);
 				if ($commandLine === "QUIT\n") {
 					break;
 				}
-				$request = $objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build($commandLine);
+				$request = $objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build($trimmedCommandLine);
 				$response = new \TYPO3\Flow\Cli\Response();
 				if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
 					echo "This command must be executed during compiletime.\n";
