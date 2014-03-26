@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Monitor;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
 
 /**
  * A monitor which detects changes in directories or files
@@ -74,6 +75,32 @@ class FileMonitor {
 	 */
 	public function __construct($identifier) {
 		$this->identifier = $identifier;
+	}
+
+	/**
+	 * Helper method to create a FileMonitor instance during boot sequence as injections have to be done manually.
+	 *
+	 * @param string $identifier
+	 * @param Bootstrap $bootstrap
+	 * @return FileMonitor
+	 */
+	static public function createFileMonitorAtBoot($identifier, Bootstrap $bootstrap) {
+		$fileMonitorCache = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Monitor');
+
+		// The change detector needs to be instantiated and registered manually because
+		// it has a complex dependency (cache) but still needs to be a singleton.
+		$fileChangeDetector = new \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
+		$fileChangeDetector->injectCache($fileMonitorCache);
+		$bootstrap->getObjectManager()->registerShutdownObject($fileChangeDetector, 'shutdownObject');
+
+		$fileMonitor = new FileMonitor($identifier);
+		$fileMonitor->injectCache($fileMonitorCache);
+		$fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
+		$fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance('TYPO3\Flow\SignalSlot\Dispatcher'));
+		$fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface'));
+		$fileMonitor->initializeObject();
+
+		return $fileMonitor;
 	}
 
 	/**
@@ -162,17 +189,18 @@ class FileMonitor {
 	 * All files in these directories will be monitored too.
 	 *
 	 * @param string $path Absolute path of the directory to monitor
+	 * @param string $filenamePattern A pattern for filenames to consider for file monitoring (regular expression)
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
-	public function monitorDirectory($path) {
+	public function monitorDirectory($path, $filenamePattern = NULL) {
 		if (!is_string($path)) {
 			throw new \InvalidArgumentException('String expected, ' . gettype($path), ' given.', 1231171810);
 		}
 		$path = rtrim(\TYPO3\Flow\Utility\Files::getUnixStylePath($path), '/');
-		if (array_search($path, $this->monitoredDirectories) === FALSE) {
-			$this->monitoredDirectories[] = $path;
+		if (!array_key_exists($path, $this->monitoredDirectories)) {
+			$this->monitoredDirectories[$path] = $filenamePattern;
 		}
 	}
 
@@ -193,7 +221,7 @@ class FileMonitor {
 	 * @api
 	 */
 	public function getMonitoredDirectories() {
-		return $this->monitoredDirectories;
+		return array_keys($this->monitoredDirectories);
 	}
 
 	/**
@@ -207,9 +235,11 @@ class FileMonitor {
 		$changedDirectories = array();
 		$changedFiles = $this->detectChangedFiles($this->monitoredFiles);
 
-		foreach ($this->monitoredDirectories as $path) {
+		foreach ($this->monitoredDirectories as $path => $filenamePattern) {
 			if (!isset($this->directoriesAndFiles[$path])) {
-				$this->directoriesAndFiles[$path] = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($path);
+				$currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path);
+				$this->directoriesAndFiles[$path] = $currentSubDirectoriesAndFiles;
+
 				$this->directoriesChanged = TRUE;
 				$changedDirectories[$path] = \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
 			}
@@ -217,9 +247,11 @@ class FileMonitor {
 
 		foreach ($this->directoriesAndFiles as $path => $pathAndFilenames) {
 			try {
-				$currentSubDirectoriesAndFiles = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($path);
+				$currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path);
 				if ($currentSubDirectoriesAndFiles != $pathAndFilenames) {
 					$pathAndFilenames = array_unique(array_merge($currentSubDirectoriesAndFiles, $pathAndFilenames));
+					$this->directoriesAndFiles[$path] = $pathAndFilenames;
+					$this->directoriesChanged = TRUE;
 				}
 				$changedFiles = array_merge($changedFiles, $this->detectChangedFiles($pathAndFilenames));
 			} catch (\TYPO3\Flow\Utility\Exception $exception) {
@@ -238,6 +270,26 @@ class FileMonitor {
 		if (count($changedFiles) > 0 || count($changedDirectories) > 0) {
 			$this->systemLogger->log(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, count($changedFiles), count($changedDirectories)), LOG_INFO);
 		}
+	}
+
+	/**
+	 * Read a monitored directory recursively, taking into account filename patterns
+	 *
+	 * @param string $path The path of a monitored directory
+	 * @return array An array of filenames with full path
+	 */
+	protected function readMonitoredDirectoryRecursively($path) {
+		$filenames = \TYPO3\Flow\Utility\Files::readDirectoryRecursively($path);
+		$filenamePattern = isset($this->monitoredDirectories[$path]) ? $this->monitoredDirectories[$path] : NULL;
+		if ($filenamePattern !== NULL) {
+			$filenames = array_filter(
+				$filenames,
+				function ($pathAndFilename) use ($filenamePattern) {
+					return preg_match('|' . $filenamePattern . '|', basename($pathAndFilename)) === 1;
+				}
+			);
+		}
+		return $filenames;
 	}
 
 	/**
@@ -294,4 +346,5 @@ class FileMonitor {
 		}
 		$this->changeDetectionStrategy->shutdownObject();
 	}
+
 }

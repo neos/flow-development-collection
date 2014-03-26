@@ -260,4 +260,154 @@ class FileMonitorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertEquals(array(__FILE__ . '1' => ChangeDetectionStrategyInterface::STATUS_CREATED), $result);
 	}
+
+	/**
+	 * @test
+	 */
+	public function detectChangesDetectsChangesInFilesOfMonitoredDirectoriesIfPatternIsMatched() {
+		$testPath = vfsStream::url('testDirectory');
+
+		// Initially known files per path
+		$knownDirectoriesAndFiles = array(
+			$testPath => array(
+				$testPath . '/NodeTypes.foo.yaml'
+			)
+		);
+
+		// Outcome of the change dection per file
+		$changeDetectionResult = array(
+			$testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		);
+
+		// Expected emitted changes for files
+		$expectedEmittedChanges = array(
+			$testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_CHANGED
+		);
+
+		$fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
+		$fileMonitor->monitorDirectory($testPath, 'NodeTypes(\..+)?\.yaml');
+		$fileMonitor->detectChanges();
+	}
+
+	/**
+	 * @test
+	 */
+	public function detectChangesDetectsCreatedFilesOfMonitoredDirectoriesOnlyIfPatternIsMatched() {
+		$testPath = vfsStream::url('testDirectory');
+
+		// Initially known files per path
+		$knownDirectoriesAndFiles = array(
+			$testPath => array(
+				$testPath . '/NodeTypes.foo.yaml'
+			)
+		);
+
+		// Create some new files
+		file_put_contents($testPath . '/test.txt', '');
+		file_put_contents($testPath . '/NodeTypes.yaml', '');
+
+		// Outcome of the change dection per file
+		$changeDetectionResult = array(
+			$testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED,
+			$testPath . '/NodeTypes.yaml' => ChangeDetectionStrategyInterface::STATUS_CREATED
+		);
+
+		// Expected emitted changes for files
+		$expectedEmittedChanges = array(
+			$testPath . '/NodeTypes.yaml' => ChangeDetectionStrategyInterface::STATUS_CREATED
+		);
+
+		$fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
+		$fileMonitor->monitorDirectory($testPath, 'NodeTypes(\..+)?\.yaml');
+		$fileMonitor->detectChanges();
+	}
+
+	/**
+	 * @test
+	 */
+	public function detectChangesDetectsDeletedFilesOfMonitoredDirectoriesIfPatternIsMatched() {
+		$testPath = vfsStream::url('testDirectory');
+
+		// Initially known files per path
+		$knownDirectoriesAndFiles = array(
+			$testPath => array(
+				$testPath . '/NodeTypes.foo.yaml'
+			)
+		);
+
+		// Outcome of the change dection per file
+		$changeDetectionResult = array(
+			$testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_DELETED
+		);
+
+		// Expected emitted changes for files
+		$expectedEmittedChanges = array(
+			$testPath . '/NodeTypes.foo.yaml' => ChangeDetectionStrategyInterface::STATUS_DELETED
+		);
+
+		$fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
+		$fileMonitor->monitorDirectory($testPath, 'NodeTypes(\..+)?\.yaml');
+		$fileMonitor->detectChanges();
+	}
+
+	/**
+	 * @test
+	 */
+	public function detectChangesAddsCreatedFilesOfMonitoredDirectoriesToStoredDirectories() {
+		$testPath = vfsStream::url('testDirectory');
+
+		// Initially known files per path
+		$knownDirectoriesAndFiles = array(
+			$testPath => array()
+		);
+
+		// Create a new file
+		file_put_contents($testPath . '/test.txt', '');
+
+		// Outcome of the change dection per file
+		$changeDetectionResult = array(
+			$testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED
+		);
+
+		// Expected emitted changes for files
+		$expectedEmittedChanges = array(
+			$testPath . '/test.txt' => ChangeDetectionStrategyInterface::STATUS_CREATED
+		);
+
+		$fileMonitor = $this->setUpFileMonitorForDetection($changeDetectionResult, $expectedEmittedChanges, $knownDirectoriesAndFiles);
+		$fileMonitor->monitorDirectory($testPath);
+		$fileMonitor->detectChanges();
+
+		$this->assertEquals(array(
+			$testPath => array($testPath . '/test.txt')
+		), $fileMonitor->_get('directoriesAndFiles'));
+		$this->assertTrue($fileMonitor->_get('directoriesChanged'));
+	}
+
+	/**
+	 * @param array $changeDetectionResult
+	 * @param array $expectedEmittedChanges
+	 * @param array $knownDirectoriesAndFiles
+	 * @return \TYPO3\Flow\Monitor\FileMonitor
+	 */
+	protected function setUpFileMonitorForDetection(array $changeDetectionResult, array $expectedEmittedChanges, array $knownDirectoriesAndFiles) {
+		$mockChangeDetectionStrategy = $this->getMock('TYPO3\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
+		$mockChangeDetectionStrategy->expects($this->any())->method('getFileStatus')->will($this->returnCallback(function ($pathAndFilename) use ($changeDetectionResult) {
+			if (isset($changeDetectionResult[$pathAndFilename])) {
+				return $changeDetectionResult[$pathAndFilename];
+			} else {
+				return ChangeDetectionStrategyInterface::STATUS_UNCHANGED;
+			}
+		}));
+
+		$fileMonitor = $this->getAccessibleMock('TYPO3\Flow\Monitor\FileMonitor', array('emitFilesHaveChanged', 'emitDirectoriesHaveChanged'), array('Flow_Test'), '', TRUE, TRUE);
+		$this->inject($fileMonitor, 'changeDetectionStrategy', $mockChangeDetectionStrategy);
+
+		$fileMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('Flow_Test', $expectedEmittedChanges);
+
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+		$fileMonitor->injectSystemLogger($mockSystemLogger);
+		$fileMonitor->_set('directoriesAndFiles', $knownDirectoriesAndFiles);
+		return $fileMonitor;
+	}
 }
