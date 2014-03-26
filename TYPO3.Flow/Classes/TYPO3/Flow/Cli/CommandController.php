@@ -118,6 +118,7 @@ class CommandController implements ControllerInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
 	 */
 	protected function initializeCommandMethodArguments() {
+		$this->arguments->removeAll();
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->commandMethodName);
 
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
