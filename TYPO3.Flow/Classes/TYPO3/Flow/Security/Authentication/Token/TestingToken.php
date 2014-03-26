@@ -16,7 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * An authentication token used for functional tests
  */
-class TestingToken extends \TYPO3\Flow\Security\Authentication\Token\AbstractToken {
+class TestingToken extends AbstractToken implements SessionlessTokenInterface {
 
 	/**
 	 * Simply sets the authentication status to AUTHENTICATION_NEEDED
