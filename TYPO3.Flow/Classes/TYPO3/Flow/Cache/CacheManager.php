@@ -280,12 +280,16 @@ class CacheManager {
 			}
 		}
 		$flushDoctrineProxyCache = FALSE;
+		$flushPolicyCache = FALSE;
 		if (count($modifiedClassNamesWithUnderscores) > 0) {
 			$reflectionStatusCache = $this->getCache('Flow_Reflection_Status');
 			foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
 				$reflectionStatusCache->remove($classNameWithUnderscores);
 				if ($flushDoctrineProxyCache === FALSE && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
 					$flushDoctrineProxyCache = TRUE;
+				}
+				if ($flushPolicyCache === FALSE && preg_match('/_Controller_(.+)Controller/', $classNameWithUnderscores) === 1) {
+					$flushPolicyCache = TRUE;
 				}
 			}
 			$objectConfigurationCache->remove('allCompiledCodeUpToDate');
@@ -298,6 +302,12 @@ class CacheManager {
 			$this->systemLogger->log('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LOG_INFO);
 			$this->getCache('Flow_Persistence_Doctrine')->flush();
 			$objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
+		}
+		if ($flushPolicyCache === TRUE) {
+			$this->systemLogger->log('Controller changes have been detected, trigger AOP rebuild.', LOG_INFO);
+			$this->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
+			$objectConfigurationCache->remove('allAspectClassesUpToDate');
+			$objectConfigurationCache->remove('allCompiledCodeUpToDate');
 		}
 	}
 
