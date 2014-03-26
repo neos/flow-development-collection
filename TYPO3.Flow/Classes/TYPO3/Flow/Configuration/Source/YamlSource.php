@@ -47,16 +47,15 @@ class YamlSource {
 	 */
 	public function has($pathAndFilename, $allowSplitSource = FALSE) {
 		if ($allowSplitSource === TRUE) {
-			$pathsAndFileNames = glob($pathAndFilename . '*.yaml');
+			$pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
 			foreach ($pathsAndFileNames as $pathAndFilename) {
 				if (file_exists($pathAndFilename)) {
 					return TRUE;
 				}
 			}
-		} else {
-			if (file_exists($pathAndFilename . '.yaml')) {
-				return TRUE;
-			}
+		}
+		if (file_exists($pathAndFilename . '.yaml')) {
+			return TRUE;
 		}
 		return FALSE;
 	}
@@ -72,11 +71,11 @@ class YamlSource {
 	 * @throws \TYPO3\Flow\Configuration\Exception\ParseErrorException
 	 */
 	public function load($pathAndFilename, $allowSplitSource = FALSE) {
+		$pathsAndFileNames = array($pathAndFilename . '.yaml');
 		if ($allowSplitSource === TRUE) {
-			$pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
-			sort($pathsAndFileNames);
-		} else {
-			$pathsAndFileNames = array($pathAndFilename . '.yaml');
+			$splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml');
+			sort($splitSourcePathsAndFileNames);
+			$pathsAndFileNames = array_merge($pathsAndFileNames, $splitSourcePathsAndFileNames);
 		}
 		$configuration = array();
 		foreach ($pathsAndFileNames as $pathAndFilename) {

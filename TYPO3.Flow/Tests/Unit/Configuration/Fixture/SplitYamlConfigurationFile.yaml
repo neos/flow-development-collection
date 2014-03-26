@@ -1,5 +1,5 @@
 configurationFileHasBeenLoaded: TRUE
 TYPO3:
   Flow:
-    something: 'aaa'
-    '@bar': 1
+    default: 'test'
+    toBeOverwritten: 1

@@ -204,7 +204,7 @@ configuration filenames.
 
 	$dispatcher = $bootstrap->getSignalSlotDispatcher();
 	$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady',
-		function ($configurationManager) {
+		function (ConfigurationManager $configurationManager) {
 			$configurationManager->registerConfigurationType(
 				'Models',
 				ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
@@ -219,6 +219,7 @@ configuration of type ``Models`` is requested:
 .. code-block:: text
 
 	Configuration/
+		Models.yaml
 		Models.Foo.yaml
 		Models.Bar.yaml
 		Models.Quux.yaml
