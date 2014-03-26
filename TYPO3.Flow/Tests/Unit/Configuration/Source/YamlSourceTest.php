@@ -108,6 +108,8 @@ class YamlSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'configurationFileHasBeenLoaded' => TRUE,
 			'TYPO3' => array(
 				'Flow' => array(
+					'default' => 'test',
+					'toBeOverwritten' => 2,
 					'something' => 'zzz',
 					'@bar' => 1,
 					'aboolean' => TRUE
