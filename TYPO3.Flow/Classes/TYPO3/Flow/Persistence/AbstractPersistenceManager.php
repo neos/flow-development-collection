@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Persistence;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * The Flow Persistence Manager base class
@@ -32,6 +33,18 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
 	 * @var boolean
 	 */
 	protected $hasUnpersistedChanges = FALSE;
+
+	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $whitelistedObjects;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->whitelistedObjects = new \SplObjectStorage();
+	}
 
 	/**
 	 * Injects the Flow settings, the persistence part is kept
@@ -69,6 +82,37 @@ abstract class AbstractPersistenceManager implements \TYPO3\Flow\Persistence\Per
 	public function registerNewObject(\TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface $object) {
 		$identifier = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', TRUE);
 		$this->newObjects[$identifier] = $object;
+	}
+
+	/**
+	 * Adds the given object to a whitelist of objects which may be persisted even if the current HTTP request
+	 * is considered a "safe" request.
+	 *
+	 * @param object $object The object
+	 * @return void
+	 * @api
+	 */
+	public function whitelistObject($object) {
+		$this->whitelistedObjects->attach($object);
+	}
+
+	/**
+	 * Checks if the given object is whitelisted and if not, throws an exception
+	 *
+	 * @param object $object
+	 * @return void
+	 * @throws \TYPO3\Flow\Persistence\Exception
+	 */
+	protected function throwExceptionIfObjectIsNotWhitelisted($object) {
+		if (!$this->whitelistedObjects->contains($object)) {
+			$message = 'Detected modified or new objects (' . get_class($object). ', uuid:' . $this->getIdentifierByObject($object). ') to be persisted which is not allowed for "safe requests"' . chr(10) .
+					'According to the HTTP 1.1 specification, so called "safe request" (usually GET or HEAD requests)' . chr(10) .
+					'should not change your data on the server side and should be considered read-only. If you need to add,' . chr(10) .
+					'modify or remove data, you should use the respective request methods (POST, PUT, DELETE and PATCH).' . chr(10) . chr(10) .
+					'If you need to store some data during a safe request (for example, logging some data for your analytics),' . chr(10) .
+					'you are still free to call PersistenceManager->persistAll() manually.';
+			throw new \TYPO3\Flow\Persistence\Exception($message, 1377788621);
+		}
 	}
 
 	/**
