@@ -12,6 +12,8 @@ namespace TYPO3\Flow\Mvc\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Exception\InvalidActionVisibilityException;
+use TYPO3\Flow\Mvc\Exception\NoSuchActionException;
 
 /**
  * An HTTP based multi-action controller.
@@ -173,12 +175,16 @@ class ActionController extends AbstractController {
 	 * Resolves and checks the current action method name
 	 *
 	 * @return string Method name of the current action
-	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchActionException
+	 * @throws NoSuchActionException
+	 * @throws InvalidActionVisibilityException
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
 		if (!is_callable(array($this, $actionMethodName))) {
-			throw new \TYPO3\Flow\Mvc\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+			throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, get_class($this)), 1186669086);
+		}
+		if (!$this->reflectionService->isMethodPublic(get_class($this), $actionMethodName)) {
+			throw new InvalidActionVisibilityException(sprintf('The action "%s" in controller "%s" is not public!', $actionMethodName, get_class($this)), 1186669086);
 		}
 		return $actionMethodName;
 	}
