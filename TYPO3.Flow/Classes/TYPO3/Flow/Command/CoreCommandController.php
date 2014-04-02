@@ -65,6 +65,11 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected $dependencyInjectionProxyClassBuilder;
 
 	/**
+	 * @var \TYPO3\Flow\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * @param \TYPO3\Flow\Cli\RequestBuilder $requestBuilder
 	 * @return void
 	 */
@@ -129,6 +134,14 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
+	 * @param \TYPO3\Flow\Utility\Environment $environment
+	 * @return void
+	 */
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
 	 * Explicitly compile proxy classes
 	 *
 	 * The compile command triggers the proxy class compilation.
@@ -156,9 +169,9 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$classCount = $this->proxyClassCompiler->compile();
 
-		$dataTemporaryPath = FLOW_PATH_DATA . 'Temporary/' . (string)$this->bootstrap->getContext();
+		$dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
 		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($dataTemporaryPath);
-		file_put_contents($dataTemporaryPath . '/AvailableProxyClasses.php', $this->proxyClassCompiler->getStoredProxyClassMap());
+		file_put_contents($dataTemporaryPath . 'AvailableProxyClasses.php', $this->proxyClassCompiler->getStoredProxyClassMap());
 
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE);
 
