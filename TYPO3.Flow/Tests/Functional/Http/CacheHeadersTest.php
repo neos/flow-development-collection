@@ -20,7 +20,7 @@ class CacheHeadersTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function x() {
-
+		$this->markTestIncomplete('This is a dummy that needs some love.');
 	}
 
 }
