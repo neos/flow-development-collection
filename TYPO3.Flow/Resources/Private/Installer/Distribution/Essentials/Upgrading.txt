@@ -54,6 +54,8 @@ change in case you relied on the previous (and sometimes incorrect) sorting of p
 
 In case you implemented your own **Persistence Manager**, you must add the **new
 hasUnpersistedChanges()** method, unless you extend the AbstractPersistenceManager.
+Additionally the **persistAll()** method has got a new argument to persist whitelisted
+entities. See **PersistenceManagerInterface**.
 
 Fluid
 ^^^^^
