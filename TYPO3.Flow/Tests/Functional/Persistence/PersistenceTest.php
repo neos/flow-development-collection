@@ -285,7 +285,7 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 		$testEntity = $this->testEntityRepository->findOneByName('Flow');
 
-		// We now make the TestEntitys Description *invalid*, and still
+		// We now make the TestEntities Description *invalid*, and still
 		// expect that the saving works without exception.
 		$testEntity->setDescription('');
 		$this->testEntityRepository->update($testEntity);
@@ -316,6 +316,30 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($eventSubscriber->preFlushCalled, 'Assert that preFlush event was triggered.');
 		$this->assertTrue($eventSubscriber->onFlushCalled, 'Assert that onFlush event was triggered.');
 		$this->assertTrue($eventSubscriber->postFlushCalled, 'Assert that postFlush event was triggered.');
+	}
+
+	/**
+	 * @expectedException \TYPO3\Flow\Persistence\Exception
+	 * @test
+	 */
+	public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet() {
+		$testEntity = new TestEntity();
+		$testEntity->setName('Surfer girl');
+		$this->testEntityRepository->add($testEntity);
+		$this->persistenceManager->persistAll(TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet() {
+		$testEntity = new TestEntity();
+		$testEntity->setName('Surfer girl');
+		$this->testEntityRepository->add($testEntity);
+
+		$this->persistenceManager->whitelistObject($testEntity);
+		$this->persistenceManager->persistAll(TRUE);
+		$this->assertTrue(TRUE);
 	}
 
 	/**
