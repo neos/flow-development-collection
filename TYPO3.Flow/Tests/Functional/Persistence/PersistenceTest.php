@@ -290,6 +290,9 @@ class PersistenceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$testEntity->setDescription('');
 		$this->testEntityRepository->update($testEntity);
 		$this->persistenceManager->persistAll();
+
+		// dummy assertion to suppress PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
