@@ -89,6 +89,14 @@ class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
+	 * @param \TYPO3\Flow\Utility\Environment $environment
+	 * @return void
+	 */
+	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
 	 * Flush all caches
 	 *
 	 * The flush command flushes all caches (including code caches) which have been
@@ -114,7 +122,8 @@ class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 		// other code can cause fatal errors.
 
 		$this->cacheManager->flushCaches();
-		\TYPO3\Flow\Utility\Files::unlink(FLOW_PATH_DATA . 'Temporary/' . (string)$this->bootstrap->getContext() . '/AvailableProxyClasses.php');
+		$dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
+		\TYPO3\Flow\Utility\Files::unlink($dataTemporaryPath . 'AvailableProxyClasses.php');
 		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context.');
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();
