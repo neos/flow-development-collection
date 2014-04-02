@@ -18,6 +18,9 @@ use TYPO3\Eel\Helper\DateHelper;
  */
 class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
+	/**
+	 * @return array
+	 */
 	public function parseExamples() {
 		$date = \DateTime::createFromFormat('Y-m-d', '2013-07-03');
 		$dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
@@ -35,9 +38,12 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$helper = new DateHelper();
 		$result = $helper->parse($string, $format);
 		$this->assertInstanceOf('DateTime', $result);
-		$this->assertEquals($expected->format('U'), $result->format('U'), 'Timestamps should match', 60);
+		$this->assertEquals((float)$expected->format('U'), (float)$result->format('U'), 'Timestamps should match', 60);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function formatExamples() {
 		$dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
 		return array(
@@ -80,6 +86,9 @@ class DateHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($today->getTimestamp(), $result->getTimestamp(), 'Today should be today', 1);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function calculationExamples() {
 		$dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
 		return array(
