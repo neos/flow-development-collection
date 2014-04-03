@@ -647,6 +647,43 @@ class SessionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getActiveSessionsReturnsAllActiveSessions() {
+		$metaDataCache = $this->createCache('Meta');
+		$storageCache = $this->createCache('Storage');
+
+		$sessions = array();
+		$sessionIDs = array();
+		for ($i = 0; $i < 5; $i++) {
+			$session = new Session();
+			$this->inject($session, 'bootstrap', $this->mockBootstrap);
+			$this->inject($session, 'settings', $this->settings);
+			$this->inject($session, 'metaDataCache', $metaDataCache);
+			$this->inject($session, 'storageCache', $storageCache);
+			$this->inject($session, 'objectManager', $this->mockObjectManager);
+			$session->initializeObject();
+			$session->start();
+			$sessions[] = $session;
+			$sessionIDs[] = $session->getId();
+			$session->close();
+		}
+
+		$sessionManager = new SessionManager();
+		$this->inject($sessionManager, 'metaDataCache', $metaDataCache);
+
+		$activeSessions = $sessionManager->getActiveSessions();
+
+		$this->assertCount(5, $activeSessions);
+
+		/* @var $randomActiveSession Session */
+		$randomActiveSession = $activeSessions[array_rand($activeSessions)];
+		$randomActiveSession->resume();
+
+		$this->assertContains($randomActiveSession->getId(), $sessionIDs);
+	}
+
+	/**
+	 * @test
+	 */
 	public function getTagsOnAResumedSessionReturnsTheTagsSetWithAddTag() {
 		$metaDataCache = $this->createCache('Meta');
 		$storageCache = $this->createCache('Storage');
