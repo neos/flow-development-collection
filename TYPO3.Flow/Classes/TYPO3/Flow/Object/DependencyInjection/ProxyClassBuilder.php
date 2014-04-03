@@ -239,6 +239,7 @@ class ProxyClassBuilder {
 	foreach (\$allReflectedProperties as \$reflectionProperty) {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('Flow_Aop_Proxy_targetMethodsAndGroupedAdvices', 'Flow_Aop_Proxy_groupedAdviceChains', 'Flow_Aop_Proxy_methodIsInAdviceMode'))) continue;
+		if (isset(\$this->Flow_Injected_Properties) && is_array(\$this->Flow_Injected_Properties) && in_array(\$propertyName, \$this->Flow_Injected_Properties)) continue;
 		if (\$reflectionService->isPropertyAnnotatedWith('" . $className . "', \$propertyName, 'TYPO3\\Flow\\Annotations\\Transient')) continue;
 		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
 			foreach (\$this->\$propertyName as \$key => \$value) {
@@ -249,7 +250,13 @@ class ProxyClassBuilder {
 			if (\$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				\$className = get_parent_class(\$this->\$propertyName);
 			} else {
-				\$className = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));
+				\$varTagValues = \$reflectionService->getPropertyTagValues('" . $className . "', \$propertyName, 'var');
+				if (count(\$varTagValues) > 0) {
+					\$className = trim(\$varTagValues[0], '\\\\');
+				}
+				if (\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->isRegistered(\$className) === FALSE) {
+					\$className = \\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));
+				}
 			}
 			if (\$this->\$propertyName instanceof \\TYPO3\\Flow\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\Flow\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\Flow\\Persistence\\PersistenceManagerInterface')->isNewObject(\$this->\$propertyName) || \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				if (!property_exists(\$this, 'Flow_Persistence_RelatedEntities') || !is_array(\$this->Flow_Persistence_RelatedEntities)) {
@@ -400,6 +407,7 @@ class ProxyClassBuilder {
 	 */
 	protected function buildPropertyInjectionCode(Configuration $objectConfiguration) {
 		$commands = array();
+		$injectedProperties = array();
 		foreach ($objectConfiguration->getProperties() as $propertyName => $propertyConfiguration) {
 			/* @var $propertyConfiguration ConfigurationProperty */
 			if ($propertyConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
@@ -432,8 +440,17 @@ class ProxyClassBuilder {
 					$commands = array_merge($commands, $this->buildPropertyInjectionCodeBySettingPath($objectConfiguration, $propertyName, $propertyValue));
 				break;
 			}
+			$injectedProperties[] = $propertyName;
 		}
-		return count($commands) > 0 ? "\t\t" . implode("\n\t\t", $commands) . "\n" : '';
+
+		if (count($commands) > 0) {
+			$commandString = "\t\t" . implode("\n\t\t", $commands) . "\n";
+			$commandString .= '$this->Flow_Injected_Properties = ' . var_export($injectedProperties, TRUE) . ";\n";
+		} else {
+			$commandString = '';
+		}
+
+		return $commandString;
 	}
 
 	/**

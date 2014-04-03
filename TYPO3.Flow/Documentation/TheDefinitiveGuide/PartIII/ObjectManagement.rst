@@ -372,6 +372,14 @@ Dependencies on other objects can be declared in the object's configuration (see
 Generally there are two modes of dependency injection supported by TYPO3 Flow:
 *Constructor Injection* and *Setter Injection*.
 
+.. note::
+	Please note that Flow removes all injected properties before serializing an object.
+	Then after unserializing injections happen again. That means that injected properties are
+	fresh instances and do not keep any state from before the serialization. That hold true
+	also for Prototypes. If you want to keep a Prototype instance with its state throughout
+	a serialize/unserialize cycle you should not inject the Prototype but rather create it in
+	constructor of the object.
+
 Constructor Injection
 ---------------------
 
