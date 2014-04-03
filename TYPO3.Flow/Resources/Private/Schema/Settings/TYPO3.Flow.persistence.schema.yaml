@@ -69,3 +69,6 @@ properties:
           properties:
             'events': { type: [string, array], items: { type: string } }
             'listener': { type: string, format: class-name }
+  'cacheAllQueryResults':
+    type: boolean
+    required: TRUE
