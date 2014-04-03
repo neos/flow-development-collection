@@ -746,6 +746,7 @@ class Session implements SessionInterface {
 			return Session::TAG_PREFIX . $tag;
 		}, $this->tags);
 		$tagsForCacheEntry[] = $this->sessionIdentifier;
+		$tagsForCacheEntry[] = 'session';
 
 		$this->metaDataCache->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
 	}
