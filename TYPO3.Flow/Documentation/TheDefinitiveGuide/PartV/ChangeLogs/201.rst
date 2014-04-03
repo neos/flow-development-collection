@@ -1,0 +1,331 @@
+====================
+2.0.1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix create-branch dependency handling
+-----------------------------------------------------------------------------------------
+
+* Commit: `7bdf476 <https://git.typo3.org/Flow/Distributions/Base.git/commit/7bdf476d1eb25b72457c32213af609291cfcc319>`_
+
+[TASK] Some tweaks to the release scripts
+-----------------------------------------------------------------------------------------
+
+* Commit: `ef4373b <https://git.typo3.org/Flow/Distributions/Base.git/commit/ef4373b77ecdb0db23afd0f087eb0134e09ee7f5>`_
+
+[BUGFIX] Fix commit links in create-changelog.sh script
+-----------------------------------------------------------------------------------------
+
+Link to correct URI for git.typo3.org commit details.
+
+* Commit: `d7d0522 <https://git.typo3.org/Flow/Distributions/Base.git/commit/d7d0522cbe54e378d9972b6175edd63bd8255bca>`_
+
+[TASK] Tweak to create-changelog.sh script
+-----------------------------------------------------------------------------------------
+
+Also link FLOW-SA-… bulletins
+
+* Commit: `5fc1627 <https://git.typo3.org/Flow/Distributions/Base.git/commit/5fc162780c915d3c7d79d01e7d3653cb9a11064d>`_
+
+[TASK] Add suggestion for pdo_sqlite to composer manifest
+-----------------------------------------------------------------------------------------
+
+For running the functional tests out-of-the-box pdo_sqlite is required,
+so inform about that during installation.
+
+* Commit: `b44f1fb <https://git.typo3.org/Flow/Distributions/Base.git/commit/b44f1fbf0d17083ccb7d7626494b8524799e2329>`_
+
+[TASK] Update vfsstream requirement to 1.2.*
+-----------------------------------------------------------------------------------------
+
+This updates the requirement for mikey179/vfsstream from 1.1.* to 1.2.*.
+* Commit: `e8448da <https://git.typo3.org/Flow/Distributions/Base.git/commit/e8448da664d89ddb37bf5c6567d7a2f60b73d8bd>`_
+
+[TASK] Tweak scripts to help with releases and branching
+-----------------------------------------------------------------------------------------
+
+* Commit: `5c6251e <https://git.typo3.org/Flow/Distributions/Base.git/commit/5c6251e5f8d011c16d0be823663b35d9326dbbcb>`_
+
+[TASK] Add scripts to help with releases and branching
+-----------------------------------------------------------------------------------------
+
+This adds a number of scripts specific to the Flow distribution to aid
+with creating new branches and for releasing new versions.
+
+* Commit: `88d2676 <https://git.typo3.org/Flow/Distributions/Base.git/commit/88d267630ae6ee8f9399a36442800ab5754e8ff2>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/typo3-flow-release/7/
+
+* Commit: `32fb9ef <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/32fb9ef3b6ea75c95ec6ad8926956d4e7e467f15>`_
+
+[SECURITY] Remove possible XSS from ActionController Error output
+-----------------------------------------------------------------------------------------
+
+The errorAction method in the ActionController base class of Flow
+returns error messages without properly encoding them. Because these
+error messages can contain user input, this could lead to a Cross-Site
+Scripting vulnerability in Flow driven applications.
+
+The offending output has been removed without substitution.
+
+Hint: If you have customized the error action in your Flow application,
+we advise you to check that the error messages returned in these actions
+only contain static strings and are not derived from any kind of user
+input. If you are not sure whether your code is fine in that regard,
+feel free to ask on a public mailing list or the forum.
+
+* Fixes: `#31206 <http://forge.typo3.org/issues/31206>`_
+
+Security-Bulletin: TYPO3-FLOW-SA-2013-001
+
+* Commit: `170b2b1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/170b2b115ef91bc586fac8742429311523a4fdb8>`_
+
+[TASK] Update contributors list in guide
+-----------------------------------------------------------------------------------------
+
+* Commit: `4e3b3c7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/4e3b3c7c97cf0597699bad9f67a3658e3d6b7b41>`_
+
+[TASK] Improve documentation for excludeClasses setting
+-----------------------------------------------------------------------------------------
+
+* Commit: `e5073a3 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e5073a3fbe2ec837e7a3743f740cc8d8fcd72ddd>`_
+
+[TASK] Mention PHP closing tag omission in CGL
+-----------------------------------------------------------------------------------------
+
+This updates the Coding Guidelines to omit the PHP closing tag.
+
+* Commit: `843cae1 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/843cae1fbd5fdd1460ec84dca9750cb65c4fc477>`_
+
+[TASK]  Replace some leftover FLOW3 in tests
+-----------------------------------------------------------------------------------------
+
+* Commit: `eac16e7 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/eac16e7f633fbb745a69c3764a252ca4e11a742d>`_
+
+[BUGFIX] UUID Validator rejects too long UUIDs
+-----------------------------------------------------------------------------------------
+
+Now the validation regex has start- and end of string
+boundaries, hence rejecting strings which only
+contain a valid UUID, but having extraordinary strings
+before or behind.
+
+* Fixes: `#52311 <http://forge.typo3.org/issues/52311>`_
+* Commit: `0b91dd2 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0b91dd2c92743a6737d637ca66a4849511b1cc45>`_
+
+[BUGFIX] Skip csrf protection for authenticate action
+-----------------------------------------------------------------------------------------
+
+As the authenticate action is usually called by a
+POST request, this request is considered a non safe
+request. However, as you are most likely not logged in
+when calling authenticate, csrf protection is neither
+working nor needed.
+
+* Commit: `dac79bb <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/dac79bb0f97ebb330b07d4c396f0ba126e36671f>`_
+
+[BUGFIX] FileBasedSimpleKeyProvider has to authenticate an account with roles
+-----------------------------------------------------------------------------------------
+
+To be able to use real role based authorization with the
+FileBasedSimpleKeyProvider, we have to authenticate an
+account which holds existing roles.
+
+* Commit: `d56e646 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/d56e646aa59b7a9c5904ab4faa06a782a3a99144>`_
+
+[BUGFIX] Transient Properties should not be serialized
+-----------------------------------------------------------------------------------------
+
+Properties annotated with the \\TYPO3\\Flow\\Annotations\\Transient
+annotation should not be serialized in the autogenerated __sleep
+method.
+
+* Fixes: `#52448 <http://forge.typo3.org/issues/52448>`_
+* Commit: `26ee5d8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/26ee5d83293a022eb4b1ee7048ba3bd1c6cd4ccc>`_
+
+[TASK] Make code migration checking roles in policies more robust
+-----------------------------------------------------------------------------------------
+
+The migration checking for the use of globally defined roles identifier
+was a bit too eager in working on packages without Policy.yaml and/or
+role definitions, plus it did not skip local roles in ACLs.
+
+* Commit: `85556d0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/85556d0db1691166e86f667aa4768d445f943329>`_
+
+[BUGFIX] Allow access to resources GRANTED to "Everybody"
+-----------------------------------------------------------------------------------------
+
+PolicyEnforcement does no longer throw an AccessDenied exception
+if not logged in before checking the actual ACLs for the
+resource in question. This allows creating resources and
+granting access to them for "Everybody" which was not possible
+before.
+
+* Fixes: `#46036 <http://forge.typo3.org/issues/46036>`_
+* Commit: `b6768cc <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b6768ccfb736ef8b536f420cd2d8068edc44267b>`_
+
+[TASK] Clean up tests and fix for PHPUnit 3.8
+-----------------------------------------------------------------------------------------
+
+* Commit: `10b33e8 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/10b33e8c569f46e2d87a669c3126eb80390aedb0>`_
+
+[TASK] Fix typo in name of "Joel on Software"
+-----------------------------------------------------------------------------------------
+
+* Commit: `8880548 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/888054812757f580464e238439c2b93547c37720>`_
+
+[BUGFIX] Fix race condition when setting cache entries
+-----------------------------------------------------------------------------------------
+
+This change adds the uniqid() to the temporary filename again and adds
+the process id (if the function "posix_getpid" is present) as another
+unique identifier.
+
+* Fixes: `#33621 <http://forge.typo3.org/issues/33621>`_
+* Commit: `54486a0 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/54486a0145c77eb95d1e8cdb34b8adff66d4b8eb>`_
+
+[TASK] Update and fix CGL, add PDF to Flow package
+-----------------------------------------------------------------------------------------
+
+Updates and fixes the CGL to be on par with the master version, only
+the namespace handling is omitted as it is not supported in 2.0.
+
+Includes the "TYPO3 Flow Coding Guidelines on one page" PDF
+as asset to the Flow documentation, fixing the download.
+
+This also links the CGL thumbnail with the PDF and moves images
+two levels up in the directory structure.
+
+* Commit: `c50e02f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/c50e02fba80a58705e1c47512df733c2877ddfb0>`_
+
+[TASK] Fix license in file level docblocks
+-----------------------------------------------------------------------------------------
+
+* Related: `#50835 <http://forge.typo3.org/issues/50835>`_
+* Commit: `a0af240 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a0af24058ac2bd285f4ad52ef4bcd6ec63eed1ba>`_
+
+[TASK] use 'note' to make statement more catching
+-----------------------------------------------------------------------------------------
+
+* Commit: `cedb88e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/cedb88ec37f4a2350ef9180e29a322706693179e>`_
+
+[BUGFIX] Broken annotation in documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `2a9d929 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2a9d929016ad1d857135b0a7b21ab883a790393a>`_
+
+[BUGFIX] Replace wrong keyword in documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `deef437 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/deef4373d3d23bcc3260e0504c2da85c6745ee77>`_
+
+[BUGFIX] ControllerContext constructor has 4 arguments
+-----------------------------------------------------------------------------------------
+
+ControllerContext constructor has no flashMessageContainer
+argument, 5th argument.
+
+* Fixes: `#49923 <http://forge.typo3.org/issues/49923>`_
+* Commit: `5829189 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/5829189b8141fa4a252840411055ad5cfd4e19c3>`_
+
+[BUGFIX] Cache Management Exception when files changed but no classes
+-----------------------------------------------------------------------------------------
+
+When classes did not change, but other files did, an exception occurs
+because $modifiedClassNamesWithUnderscores does not exist, as it can
+be seen when reading the source code.
+
+* Resolves: `#49571 <http://forge.typo3.org/issues/49571>`_
+* Commit: `7948698 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/79486985e6032381bdae2634156e5e74f5224cfb>`_
+
+[TASK] Document translated validation error messages
+-----------------------------------------------------------------------------------------
+
+This adds documentation on how to use translated validation error
+messages.
+
+* Resolves: `#48251 <http://forge.typo3.org/issues/48251>`_
+* Commit: `405cf6d <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/405cf6d001dbf1268b74ebf9ac2b924a394788c2>`_
+
+[TASK] Add german translation for validation error messages
+-----------------------------------------------------------------------------------------
+
+This adds german translatsions for bundled validation error messages.
+
+* Resolves: `#48254 <http://forge.typo3.org/issues/48254>`_
+* Related: `#45279 <http://forge.typo3.org/issues/45279>`_
+
+* Commit: `205a369 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/205a369d3015c14540c98545934afe7d3d1565d8>`_
+
+[BUGFIX] Comment now references to the correct method name
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#48557 <http://forge.typo3.org/issues/48557>`_
+* Commit: `0c04d16 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/0c04d16f07cda8d0530e0ee48e54d9db06a6f882>`_
+
+[BUGFIX] Use deterministic join aliases
+-----------------------------------------------------------------------------------------
+
+Before this change, we used uniqid() for building join aliases. This prevented
+the doctrine DQL cache to work correctly.
+
+We found this change during profiling TYPO3 Neos, where it led to about
+10% performance increase in frontend rendering.
+
+* Resolves: `#49569 <http://forge.typo3.org/issues/49569>`_
+* Commit: `95032c6 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/95032c6a66b5330229654a9fb0cfad4eb7513f45>`_
+
+[BUGFIX] Behave silently if no translation unit elements are present
+-----------------------------------------------------------------------------------------
+
+If a translation source does not contain any translationUnit elements,
+which is allowed in XLIFF for <trans-unit> elements inside //file/body,
+now there is no Undefined Index error anymore, but the incident is
+silently logged to the system logger as every other translation-related
+incident.
+
+* Fixes: `#47058 <http://forge.typo3.org/issues/47058>`_
+* Commit: `850bd55 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/850bd551b6fae19cf3b243652165cde6e9b05900>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix license in file level docblocks
+-----------------------------------------------------------------------------------------
+
+* Related: `#50835 <http://forge.typo3.org/issues/50835>`_
+* Commit: `b7c8a29 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/b7c8a2926d3209a76223c4077b5a54b201f8552e>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Fix license in file level docblocks
+-----------------------------------------------------------------------------------------
+
+* Related: `#50835 <http://forge.typo3.org/issues/50835>`_
+* Commit: `7eeeb6d <https://git.typo3.org/Packages/TYPO3.Kickstart.git/commit/7eeeb6dd3ebc2ea09b0fb33219b25c017b41d3fb>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
