@@ -17,11 +17,25 @@ namespace TYPO3\Flow\Security\Authentication;
  */
 interface TokenInterface {
 
-	const
-		NO_CREDENTIALS_GIVEN = 1,
-		WRONG_CREDENTIALS = 2,
-		AUTHENTICATION_SUCCESSFUL = 3,
-		AUTHENTICATION_NEEDED = 4;
+	/**
+	 * This is the default state. The token is not authenticated and holds no credentials, that could be used for authentication.
+	 */
+	const NO_CREDENTIALS_GIVEN = 1;
+
+	/**
+	 * It was tried to authenticate the token, but the credentials were wrong.
+	 */
+	const WRONG_CREDENTIALS = 2;
+
+	/**
+	 * The token has been successfully authenticated.
+	 */
+	const AUTHENTICATION_SUCCESSFUL = 3;
+
+	/**
+	 * This indicates, that the token received credentials, but has not been authenticated yet.
+	 */
+	const AUTHENTICATION_NEEDED = 4;
 
 	/**
 	 * Returns the name of the authentication provider responsible for this token

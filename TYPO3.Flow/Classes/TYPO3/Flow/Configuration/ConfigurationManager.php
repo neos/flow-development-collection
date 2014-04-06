@@ -28,29 +28,100 @@ use TYPO3\Flow\Utility\Files;
  */
 class ConfigurationManager {
 
-	const MAXIMUM_RECURSIONS = 99;
+	/**
+	 * The maximum number of recursions when merging subroute configurations.
+	 *
+	 * @var integer
+	 */
+	const MAXIMUM_SUBROUTE_RECURSIONS = 99;
 
+	/**
+	 * Contains a list of caches which are registered automatically. Caches defined in this configuration file are
+	 * registered in an early stage of the boot process and profit from mechanisms such as automatic flushing by the
+	 * File Monitor. See the chapter about the Cache Framework for details.
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_TYPE_CACHES = 'Caches';
+
+	/**
+	 * Contains object configuration, i.e. options which configure objects and the combination of those on a lower
+	 * level. See the Object Framework chapter for more information.
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
+
+	/**
+	 * Contains routes configuration. This routing information is parsed and used by the MVC Web Routing mechanism.
+	 * Refer to the Routing chapter for more information.
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
+
+	/**
+	 * Contains the configuration of the security policies of the system. See the Security chapter for details.
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_TYPE_POLICY = 'Policy';
+
+	/**
+	 * Contains user-level settings, i.e. configuration options the users or administrators are meant to change.
+	 * Settings are the highest level of system configuration.
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 
-	// This is the default processing, which merges configurations similar to how CONFIGURATION_PROCESSING_TYPE_SETTINGS are merged (except that for settings an empty array is initialized for each package)
+	/**
+	 * This is the default processing, which merges configurations similar to how CONFIGURATION_PROCESSING_TYPE_SETTINGS
+	 * are merged (except that for settings an empty array is initialized for each package)
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_PROCESSING_TYPE_DEFAULT = 'DefaultProcessing';
-	// Appends all configurations, prefixed by the PackageKey of the configuration source
+
+	/**
+	 * Appends all configurations, prefixed by the PackageKey of the configuration source
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_PROCESSING_TYPE_OBJECTS = 'ObjectsProcessing';
-	// Loads and merges configurations from Packages (global Policy-configurations are not allowed)
+
+	/**
+	 * Loads and merges configurations from Packages (global Policy-configurations are not allowed)
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_PROCESSING_TYPE_POLICY = 'PolicyProcessing';
-	// Loads and appends global configurations and resolves SubRoutes, creating a combined flat array of all Routes
+
+	/**
+	 * Loads and appends global configurations and resolves SubRoutes, creating a combined flat array of all Routes
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_PROCESSING_TYPE_ROUTES = 'RoutesProcessing';
-	// Similar to CONFIGURATION_PROCESSING_TYPE_DEFAULT, but for every active package an empty array is initialized. Besides this sets "TYPO3.Flow.core.context" to the current context
+
+	/**
+	 * Similar to CONFIGURATION_PROCESSING_TYPE_DEFAULT, but for every active package an empty array is initialized.
+	 * Besides this sets "TYPO3.Flow.core.context" to the current context
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_PROCESSING_TYPE_SETTINGS = 'SettingsProcessing';
-	// Appends all configurations to one flat array
+
+	/**
+	 * Appends all configurations to one flat array
+	 *
+	 * @var string
+	 */
 	const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
 
 	/**
 	 * Defines which Configuration Type is processed by which logic
+	 *
 	 * @var array
 	 */
 	protected $configurationTypes = array(
@@ -94,6 +165,7 @@ class ConfigurationManager {
 
 	/**
 	 * Storage of the raw special configurations
+	 *
 	 * @var array
 	 */
 	protected $configurations = array(
@@ -102,6 +174,7 @@ class ConfigurationManager {
 
 	/**
 	 * Active packages to load the configuration for
+	 *
 	 * @var array<TYPO3\Flow\Package\PackageInterface>
 	 */
 	protected $packages = array();
@@ -112,7 +185,8 @@ class ConfigurationManager {
 	protected $cacheNeedsUpdate = FALSE;
 
 	/**
-	 * Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_RECURSIONS, an exception is thrown
+	 * Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_SUBROUTE_RECURSIONS, an exception is thrown
+	 *
 	 * @var integer
 	 */
 	protected $subRoutesRecursionLevel = 0;
@@ -484,7 +558,7 @@ class ConfigurationManager {
 			foreach ($configuration['roles'] as $roleIdentifier => $parentRoles) {
 				$packageKey = $packageKeyOfCurrentPackage;
 				if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous' || $roleIdentifier === 'AuthenticatedUser') {
-					throw new InvalidConfigurationException('You must not redefine the built-in "' . $roleIdentifier . '" role. Please check the configuration of package "' . $packageKeyOfCurrentPackage . '" ('. $pathAndFilename . ').', 1352986475);
+					throw new InvalidConfigurationException('You must not redefine the built-in "' . $roleIdentifier . '" role. Please check the configuration of package "' . $packageKeyOfCurrentPackage . '" (' . $pathAndFilename . ').', 1352986475);
 				}
 				if (strpos($roleIdentifier, '.') !== FALSE || strpos($roleIdentifier, ':') !== FALSE) {
 					throw new InvalidConfigurationException('Roles defined in a package policy must not be qualified (that is, using the dot notation), but the role "' . $roleIdentifier . '" is (in package "' . $packageKeyOfCurrentPackage . '"). Please use the short notation with only the role name (for example "Administrator").', 1365447412);
@@ -492,8 +566,8 @@ class ConfigurationManager {
 
 				// Add packageKey to parentRoles
 				if ($parentRoles !== array()) {
-					$parentRoles = array_map(function($roleIdentifier) use ($packageKey, $localRoles) {
-						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous'|| $roleIdentifier === 'AuthenticatedUser') {
+					$parentRoles = array_map(function ($roleIdentifier) use ($packageKey, $localRoles) {
+						if ($roleIdentifier === 'Everybody' || $roleIdentifier === 'Anonymous' || $roleIdentifier === 'AuthenticatedUser') {
 							return $roleIdentifier;
 						}
 						if (strpos($roleIdentifier, '.') === FALSE && strpos($roleIdentifier, ':') === FALSE && in_array($roleIdentifier, $localRoles)) {
@@ -511,9 +585,10 @@ class ConfigurationManager {
 		// Read acls
 		if (isset($configuration['acls']) && is_array($configuration['acls'])) {
 			foreach ($configuration['acls'] as $aclIndex => $aclConfiguration) {
-				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous'|| $aclIndex === 'AuthenticatedUser'
-					|| preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1) {
-						$roleIdentifier = $aclIndex;
+				if ($aclIndex === 'Everybody' || $aclIndex === 'Anonymous' || $aclIndex === 'AuthenticatedUser'
+					|| preg_match('/^[\w]+((\.[\w]+)*\:[\w]+)+$/', $aclIndex) === 1
+				) {
+					$roleIdentifier = $aclIndex;
 				} elseif (preg_match('/^[\w]+$/', $aclIndex) === 1) {
 					$roleIdentifier = $packageKeyOfCurrentPackage . ':' . $aclIndex;
 				} else {
@@ -557,7 +632,7 @@ class ConfigurationManager {
 	 */
 	public function flushConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
-		$cachePathAndFilename = $configurationCachePath  . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
+		$cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
 		if (file_exists($cachePathAndFilename)) {
 			if (unlink($cachePathAndFilename) === FALSE) {
 				throw new Exception(sprintf('Could not delete configuration cache file "%s". Check file permissions for the parent directory.', $cachePathAndFilename), 1341999203);
@@ -578,7 +653,7 @@ class ConfigurationManager {
 		if (!file_exists($configurationCachePath)) {
 			Files::createDirectoryRecursively($configurationCachePath);
 		}
-		$cachePathAndFilename = $configurationCachePath  . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
+		$cachePathAndFilename = $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
 
 		$flowRootPath = FLOW_PATH_ROOT;
 		$includeCachedConfigurationsCode = <<< "EOD"
@@ -666,13 +741,13 @@ EOD;
 				}
 				$subRouteFilePathAndName = $package->getConfigurationPath() . $subRouteFilename;
 				$subRouteConfiguration = array_merge($subRouteConfiguration, $this->configurationSource->load($subRouteFilePathAndName));
-				if ($this->subRoutesRecursionLevel > self::MAXIMUM_RECURSIONS) {
-					throw new Exception\RecursionException(sprintf('Recursion level of SubRoutes exceed ' . self::MAXIMUM_RECURSIONS . ', probably because of a circular reference. Last successfully loaded route configuration is "%s".', $subRouteFilePathAndName), 1361535753);
+				if ($this->subRoutesRecursionLevel > self::MAXIMUM_SUBROUTE_RECURSIONS) {
+					throw new Exception\RecursionException(sprintf('Recursion level of SubRoutes exceed ' . self::MAXIMUM_SUBROUTE_RECURSIONS . ', probably because of a circular reference. Last successfully loaded route configuration is "%s".', $subRouteFilePathAndName), 1361535753);
 				}
 
-				$this->subRoutesRecursionLevel ++;
+				$this->subRoutesRecursionLevel++;
 				$this->mergeRoutesWithSubRoutes($subRouteConfiguration);
-				$this->subRoutesRecursionLevel --;
+				$this->subRoutesRecursionLevel--;
 				$mergedSubRoutesConfiguration = $this->buildSubRouteConfigurations($mergedSubRoutesConfiguration, $subRouteConfiguration, $subRouteKey, $subRouteOptions);
 			}
 			$mergedRoutesConfiguration = array_merge($mergedRoutesConfiguration, $mergedSubRoutesConfiguration);

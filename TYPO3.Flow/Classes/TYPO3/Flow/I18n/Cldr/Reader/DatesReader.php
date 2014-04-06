@@ -27,19 +27,59 @@ use TYPO3\Flow\Annotations as Flow;
 class DatesReader {
 
 	/**
-	 * Constants for available format types.
+	 * Constant for date-only format
+	 *
+	 * @var string
 	 */
 	const FORMAT_TYPE_DATE = 'date';
+
+	/**
+	 * Constant for time-only format
+	 *
+	 * @var string
+	 */
 	const FORMAT_TYPE_TIME = 'time';
+
+	/**
+	 * Constant for date and time format
+	 *
+	 * @var string
+	 */
 	const FORMAT_TYPE_DATETIME = 'dateTime';
 
 	/**
-	 * Constants for available format lengths.
+	 * Constant for default length
+	 *
+	 * @var string
 	 */
 	const FORMAT_LENGTH_DEFAULT = 'default';
+
+	/**
+	 * Constant for full length
+	 *
+	 * @var string
+	 */
 	const FORMAT_LENGTH_FULL = 'full';
+
+	/**
+	 * Constant for long length
+	 *
+	 * @var string
+	 */
 	const FORMAT_LENGTH_LONG = 'long';
+
+	/**
+	 * Constant for medium length
+	 *
+	 * @var string
+	 */
 	const FORMAT_LENGTH_MEDIUM = 'medium';
+
+	/**
+	 * Constant for short length
+	 *
+	 * @var string
+	 */
 	const FORMAT_LENGTH_SHORT = 'short';
 
 	/**
