@@ -388,7 +388,7 @@ code:
 	 *
 	 * @param \TYPO3\Blog\Domain\Model\Blog $blog The blog the post must refer to
 	 * @param integer $limit The number of posts to return at max
-	 * @return \TYPO3\Flow\Persistence\QueryResultProxy The posts
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface The posts
 	 */
 	public function findByBlog(\TYPO3\Blog\Domain\Model\Blog $blog) {
 		$query = $this->createQuery();

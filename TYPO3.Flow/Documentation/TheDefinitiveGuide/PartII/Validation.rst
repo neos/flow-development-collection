@@ -132,7 +132,7 @@ validation errors. Just add the ``<f:form.errors>`` view helper to your
 							<dd>
 								<ul>
 									<f:for each="{errors}" as="error">
-										<li>{error -> f:translate(key: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}</li>
+										<li>{error -> f:translate(id: error.code, arguments: error.arguments, package: 'TYPO3.Flow', source: 'ValidationErrors')}</li>
 									</f:for>
 								</ul>
 							</dd>
