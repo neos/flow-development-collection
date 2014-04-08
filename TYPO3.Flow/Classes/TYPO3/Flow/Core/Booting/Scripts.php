@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Core\Booting;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Monitor\FileMonitor;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -25,7 +26,7 @@ class Scripts {
 	/**
 	 * Initializes the Class Loader
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeClassLoader(Bootstrap $bootstrap) {
@@ -62,7 +63,7 @@ class Scripts {
 	 * Register the class loader into the Doctrine AnnotationRegistry so
 	 * the DocParser is able to load annation classes from packages.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap) {
@@ -72,7 +73,7 @@ class Scripts {
 	/**
 	 * Injects the classes cache to the already initialized class loader
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeClassLoaderClassesCache(Bootstrap $bootstrap) {
@@ -84,7 +85,7 @@ class Scripts {
 	 * Does some emergency, forced, low level flush caches if the user told to do
 	 * so through the command line.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function forceFlushCachesIfNecessary(Bootstrap $bootstrap) {
@@ -105,7 +106,7 @@ class Scripts {
 	/**
 	 * Initializes the Signal Slot module
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeSignalSlot(Bootstrap $bootstrap) {
@@ -116,7 +117,7 @@ class Scripts {
 	 * Initializes the package system and loads the package configuration and settings
 	 * provided by the packages.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializePackageManagement(Bootstrap $bootstrap) {
@@ -129,7 +130,7 @@ class Scripts {
 	/**
 	 * Initializes the Configuration Manager, the Flow settings and the Environment service
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeConfiguration(Bootstrap $bootstrap) {
@@ -158,7 +159,7 @@ class Scripts {
 	/**
 	 * Initializes the System Logger
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeSystemLogger(Bootstrap $bootstrap) {
@@ -178,7 +179,7 @@ class Scripts {
 	/**
 	 * Initializes the Lock Manager
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeLockManager(Bootstrap $bootstrap) {
@@ -197,7 +198,7 @@ class Scripts {
 	/**
 	 * Initializes the error handling
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeErrorHandling(Bootstrap $bootstrap) {
@@ -214,7 +215,7 @@ class Scripts {
 	/**
 	 * Initializes the cache framework
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeCacheManagement(Bootstrap $bootstrap) {
@@ -234,7 +235,7 @@ class Scripts {
 	/**
 	 * Runs the compile step if necessary
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 * @throws \TYPO3\Flow\Exception
 	 */
@@ -276,7 +277,7 @@ class Scripts {
 	 * Recompile classes after file monitoring was executed and class files
 	 * have been changed.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 * @throws \TYPO3\Flow\Exception
 	 */
@@ -287,7 +288,7 @@ class Scripts {
 	/**
 	 * Initializes the Compiletime Object Manager (phase 1)
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 */
 	static public function initializeObjectManagerCompileTimeCreate(Bootstrap $bootstrap) {
 		$objectManager = new \TYPO3\Flow\Object\CompileTimeObjectManager($bootstrap->getContext());
@@ -305,7 +306,7 @@ class Scripts {
 	/**
 	 * Initializes the Compiletime Object Manager (phase 2)
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap) {
@@ -333,7 +334,7 @@ class Scripts {
 	/**
 	 * Initializes the runtime Object Manager
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeObjectManager(Bootstrap $bootstrap) {
@@ -358,7 +359,7 @@ class Scripts {
 	/**
 	 * Initializes the Reflection Service
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeReflectionService(Bootstrap $bootstrap) {
@@ -392,14 +393,14 @@ class Scripts {
 	 * by the file monitor through a signal. For Flow, those signal-slot connections
 	 * are defined in the class \TYPO3\Flow\Package.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeSystemFileMonitor(Bootstrap $bootstrap) {
 		$fileMonitors = array(
-			'Flow_ClassFiles' => self::createFileMonitor('Flow_ClassFiles', $bootstrap),
-			'Flow_ConfigurationFiles' => self::createFileMonitor('Flow_ConfigurationFiles', $bootstrap),
-			'Flow_TranslationFiles' => self::createFileMonitor('Flow_TranslationFiles', $bootstrap)
+			'Flow_ClassFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ClassFiles', $bootstrap),
+			'Flow_ConfigurationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_ConfigurationFiles', $bootstrap),
+			'Flow_TranslationFiles' => FileMonitor::createFileMonitorAtBoot('Flow_TranslationFiles', $bootstrap)
 		);
 
 		$context = $bootstrap->getContext();
@@ -427,40 +428,13 @@ class Scripts {
 	}
 
 	/**
-	 * Factory method for conveniently building a file monitor using a
-	 * ModificationTimeStrategy.
-	 *
-	 * @param string $monitorIdentifier Identifier for the new file monitor
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The bootstrap instance
-	 * @return \TYPO3\Flow\Monitor\FileMonitor
-	 */
-	static protected function createFileMonitor($monitorIdentifier, Bootstrap $bootstrap) {
-		$fileMonitorCache = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager')->getCache('Flow_Monitor');
-
-		// The change detector needs to be instantiated and registered manually because
-		// it has a complex dependency (cache) but still needs to be a singleton.
-		$fileChangeDetector = new \TYPO3\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
-		$fileChangeDetector->injectCache($fileMonitorCache);
-		$bootstrap->getObjectManager()->registerShutdownObject($fileChangeDetector, 'shutdownObject');
-
-		$fileMonitor = new \TYPO3\Flow\Monitor\FileMonitor($monitorIdentifier);
-		$fileMonitor->injectCache($fileMonitorCache);
-		$fileMonitor->injectChangeDetectionStrategy($fileChangeDetector);
-		$fileMonitor->injectSignalDispatcher($bootstrap->getEarlyInstance('TYPO3\Flow\SignalSlot\Dispatcher'));
-		$fileMonitor->injectSystemLogger($bootstrap->getEarlyInstance('TYPO3\Flow\Log\SystemLoggerInterface'));
-		$fileMonitor->initializeObject();
-
-		return $fileMonitor;
-	}
-
-	/**
 	 * Let the given file monitor track changes of the specified directory if it exists.
 	 *
-	 * @param \TYPO3\Flow\Monitor\FileMonitor $fileMonitor
+	 * @param FileMonitor $fileMonitor
 	 * @param string $path
 	 * @return void
 	 */
-	static protected function monitorDirectoryIfItExists(\TYPO3\Flow\Monitor\FileMonitor $fileMonitor, $path) {
+	static protected function monitorDirectoryIfItExists(FileMonitor $fileMonitor, $path) {
 		if (is_dir($path)) {
 			$fileMonitor->monitorDirectory($path);
 		}
@@ -473,7 +447,7 @@ class Scripts {
 	 * needs the advised proxy classes to run. When that signal is fired, they
 	 * have been written, but not loaded.
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static protected function compileDoctrineProxies(Bootstrap $bootstrap) {
@@ -496,7 +470,7 @@ class Scripts {
 	/**
 	 * Initializes the persistence framework
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializePersistence(Bootstrap $bootstrap) {
@@ -507,7 +481,7 @@ class Scripts {
 	/**
 	 * Initializes the session framework
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeSession(Bootstrap $bootstrap) {
@@ -520,7 +494,7 @@ class Scripts {
 	 * Initialize the resource management component, setting up stream wrappers,
 	 * publishing the public resources of all found packages, ...
 	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
 	static public function initializeResources(Bootstrap $bootstrap) {
