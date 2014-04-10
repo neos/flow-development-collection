@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2014-04-02
+The following reference was automatically generated from code on 2014-04-10
 
 
 Package *TYPO3.FLOW*
