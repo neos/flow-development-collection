@@ -304,7 +304,7 @@ abstract class AbstractViewHelper {
 			if (!$this->objectManager->getContext()->isProduction()) {
 				throw $exception;
 			} else {
-				$this->systemLogger->log('An Exception was captured: ' . $exception->getMessage() . '(' . $exception->getCode() . ')', LOG_ERR, 'TYPO3.Fluid', get_class($this));
+				$this->systemLogger->log(sprintf('An Exception was captured: %s (%d)', $exception->getMessage(), $exception->getCode()), LOG_ERR, NULL, 'TYPO3.Fluid', get_class($this));
 				return '';
 			}
 		}
