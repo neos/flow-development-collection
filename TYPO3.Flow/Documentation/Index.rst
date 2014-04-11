@@ -55,7 +55,7 @@ TYPO3 Flow Documentation
 	**Table of Contents**
 
 .. toctree::
-	:maxdepth: 2
+	:titlesonly:
 
 	Quickstart/Index
 	TheDefinitiveGuide/Index

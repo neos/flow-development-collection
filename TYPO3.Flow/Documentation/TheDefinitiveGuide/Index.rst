@@ -2,7 +2,7 @@ The Definitive Guide
 --------------------
 
 .. toctree::
-	:maxdepth: 2
+	:titlesonly:
 
 	PartI/Index
 	PartII/Index

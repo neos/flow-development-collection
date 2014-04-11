@@ -4,7 +4,7 @@ Part V: Appendixes
 .. only:: html
 
 	.. toctree::
-		:maxdepth: 2
+		:titlesonly:
 
 		ValidatorReference
 		AnnotationReference
