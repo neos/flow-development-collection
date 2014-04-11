@@ -9,7 +9,7 @@ the MVC framework, object management, persistence and templating are explained
 on the basis of a sample application.
 
 .. toctree::
-	:maxdepth: 1
+	:titlesonly:
 
 	Introduction
 	Requirements
