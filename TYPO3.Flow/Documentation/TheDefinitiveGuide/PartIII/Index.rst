@@ -2,7 +2,7 @@ Part III: Manual
 ================
 
 .. toctree::
-	:maxdepth: 1
+	:titlesonly:
 
 	ArchitecturalOverview
 	Bootstrapping

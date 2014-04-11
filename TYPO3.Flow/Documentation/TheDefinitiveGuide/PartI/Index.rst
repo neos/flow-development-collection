@@ -2,7 +2,7 @@ Part I: Introduction and Fundamentals
 =====================================
 
 .. toctree::
-	:maxdepth: 2
+	:titlesonly:
 
 	Introduction
 	Object-OrientedProgramming
