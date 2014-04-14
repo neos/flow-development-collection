@@ -111,7 +111,7 @@ class ClassLoader {
 	 */
 	public function __construct(ApplicationContext $context = NULL) {
 		$distributionComposerManifest = json_decode(file_get_contents(FLOW_PATH_ROOT . 'composer.json'));
-		$this->defaultVendorDirectory = $distributionComposerManifest->config->{"vendor-dir"};
+		$this->defaultVendorDirectory = $distributionComposerManifest->config->{'vendor-dir'};
 		$composerPath = FLOW_PATH_ROOT . $this->defaultVendorDirectory . '/composer/';
 		$this->initializeAutoloadInformation($composerPath, $context);
 	}
@@ -270,6 +270,22 @@ class ClassLoader {
 	}
 
 	/**
+	 * Adds an entry to the fallback path map. MappingType for this kind of paths is always PSR4 as no package namespace is used then.
+	 *
+	 * @param string $path The fallback path to search in.
+	 * @return void
+	 */
+	public function createFallbackPathEntry($path) {
+		$entryIdentifier = md5($path);
+		if (!isset($this->fallbackClassPaths[$entryIdentifier])) {
+			$this->fallbackClassPaths[$entryIdentifier] = array(
+				'path' => $path,
+				'mappingType' => self::MAPPING_TYPE_PSR4
+			);
+		}
+	}
+
+	/**
 	 * Tries to remove a possibly existing namespace to class path map entry.
 	 *
 	 * @param string $namespace A namespace mapped to a class path.
@@ -329,6 +345,7 @@ class ClassLoader {
 	/**
 	 * @param string $composerPath Path to the composer directory (with trailing slash).
 	 * @param ApplicationContext $context
+	 * @return void
 	 */
 	protected function initializeAutoloadInformation($composerPath, ApplicationContext $context = NULL) {
 		if (file_exists($composerPath . 'autoload_classmap.php')) {
@@ -342,19 +359,14 @@ class ClassLoader {
 			$namespaceMap = include($composerPath . 'autoload_namespaces.php');
 			if ($namespaceMap !== FALSE) {
 				foreach ($namespaceMap as $namespace => $paths) {
-					if (is_array($paths)) {
-						foreach ($paths as $path) {
-							if ($namespace === '') {
-								$this->fallbackClassPaths[] = $path;
-							} else {
-								$this->createNamespaceMapEntry($namespace, $path);
-							}
-						}
-					} else {
+					if (!is_array($paths)) {
+						$paths = array($paths);
+					}
+					foreach ($paths as $path) {
 						if ($namespace === '') {
-							$this->fallbackClassPaths[] = $paths;
+							$this->createFallbackPathEntry($path);
 						} else {
-							$this->createNamespaceMapEntry($namespace, $paths);
+							$this->createNamespaceMapEntry($namespace, $path);
 						}
 					}
 				}
@@ -365,19 +377,14 @@ class ClassLoader {
 			$psr4Map = include($composerPath . 'autoload_psr4.php');
 			if ($psr4Map !== FALSE) {
 				foreach ($psr4Map as $namespace => $possibleClassPaths) {
-					if (is_array($possibleClassPaths)) {
-						foreach ($possibleClassPaths as $possibleClassPath) {
-							if ($namespace === '') {
-								$this->fallbackClassPaths[] = $possibleClassPath;
-							} else {
-								$this->createNamespaceMapEntry($namespace, $possibleClassPath, self::MAPPING_TYPE_PSR4);
-							}
-						}
-					} else {
+					if (!is_array($possibleClassPaths)) {
+						$possibleClassPaths = array($possibleClassPaths);
+					}
+					foreach ($possibleClassPaths as $possibleClassPath) {
 						if ($namespace === '') {
-							$this->fallbackClassPaths[] = $possibleClassPaths;
+							$this->createFallbackPathEntry($possibleClassPath);
 						} else {
-							$this->createNamespaceMapEntry($namespace, $possibleClassPaths, self::MAPPING_TYPE_PSR4);
+							$this->createNamespaceMapEntry($namespace, $possibleClassPath, self::MAPPING_TYPE_PSR4);
 						}
 					}
 				}
