@@ -89,8 +89,7 @@ class RequestDispatchingAspect {
 				if ($entryPoint !== NULL) {
 					$entryPointFound = TRUE;
 					if ($entryPoint instanceof WebRedirect) {
-						$options = $entryPoint->getOptions();
-						$this->securityLogger->log('Redirecting to authentication entry point with URI ' . (isset($options['uri']) ? $options['uri'] : '- undefined -'), LOG_INFO);
+						$this->securityLogger->log('Redirecting to authentication entry point', LOG_INFO, $entryPoint->getOptions());
 					} else {
 						$this->securityLogger->log('Starting authentication with entry point of type ' . get_class($entryPoint), LOG_INFO);
 					}
