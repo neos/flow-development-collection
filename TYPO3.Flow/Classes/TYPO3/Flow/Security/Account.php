@@ -13,10 +13,13 @@ namespace TYPO3\Flow\Security;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Utility\Now;
+use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\Party\Domain\Model\AbstractParty;
+use TYPO3\Party\Domain\Service\PartyService;
 
 /**
  * An account model
@@ -48,12 +51,6 @@ class Account {
 	protected $credentialsSource;
 
 	/**
-	 * @var AbstractParty
-	 * @ORM\ManyToOne(inversedBy="accounts")
-	 */
-	protected $party;
-
-	/**
 	 * @var \DateTime
 	 */
 	protected $creationDate;
@@ -81,6 +78,12 @@ class Account {
 	 * @var PolicyService
 	 */
 	protected $policyService;
+
+	/**
+	 * @Flow\Inject
+	 * @var ObjectManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 * @Flow\Inject
@@ -182,21 +185,38 @@ class Account {
 	 * Returns the party object this account corresponds to
 	 *
 	 * @return AbstractParty The party object
-	 * @api
+	 * @deprecated since 3.0 something like a party is not attached to the account directly anymore. Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories (see https://jira.typo3.org/browse/FLOW-5)
+	 * @throws SecurityException
 	 */
 	public function getParty() {
-		return $this->party;
+		if ($this->accountIdentifier === NULL || $this->accountIdentifier === '') {
+			throw new SecurityException('The account identifier for the account where the party is tried to be got is not yet set. Make sure that you set the account identifier prior to calling getParty().', 1397747246);
+		}
+		if (!$this->objectManager->isRegistered('TYPO3\Party\Domain\Service\PartyService')) {
+			throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747288);
+		}
+		/** @var PartyService $partyService */
+		$partyService = $this->objectManager->get('TYPO3\Party\Domain\Service\PartyService');
+		return $partyService->getAssignedPartyOfAccount($this);
 	}
 
 	/**
 	 * Sets the corresponding party for this account
 	 *
 	 * @param AbstractParty $party The party object
-	 * @return void
-	 * @api
+	 * @deprecated since 3.0 something like a party is not attached to the account directly anymore. Fetch your user/party/organization etc. instance on your own using Domain Services or Repositories (see https://jira.typo3.org/browse/FLOW-5)
+	 * @throws SecurityException
 	 */
 	public function setParty(AbstractParty $party) {
-		$this->party = $party;
+		if ($this->accountIdentifier === NULL || $this->accountIdentifier === '') {
+			throw new SecurityException('The account identifier for the account where the party is tried to be set is not yet set. Make sure that you set the account identifier prior to calling setParty().', 1397745354);
+		}
+		if (!$this->objectManager->isRegistered('TYPO3\Party\Domain\Service\PartyService')) {
+			throw new SecurityException('The \TYPO3\Party\Domain\Service\PartyService is not available. When using the obsolete method \TYPO3\Flow\Security\Account::getParty, make sure the package TYPO3.Party is installed.', 1397747413);
+		}
+		/** @var PartyService $partyService */
+		$partyService = $this->objectManager->get('TYPO3\Party\Domain\Service\PartyService');
+		$partyService->assignAccountToParty($this, $party);
 	}
 
 	/**

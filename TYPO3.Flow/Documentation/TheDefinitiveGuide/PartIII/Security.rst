@@ -711,7 +711,7 @@ The following example defines a Privilege Target for the ``MethodPrivilege`` typ
             matcher: 'method(Acme\MyPackage\Controller\RestrictedController->adminAction())'
 
           'Acme.MyPackage:editOwnPost':
-            matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.securityContext.party))'
+            matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.userService.currentUser))'
 
 
 
