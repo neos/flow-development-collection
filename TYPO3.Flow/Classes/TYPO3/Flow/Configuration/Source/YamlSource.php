@@ -48,9 +48,11 @@ class YamlSource {
 	public function has($pathAndFilename, $allowSplitSource = FALSE) {
 		if ($allowSplitSource === TRUE) {
 			$pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
-			foreach ($pathsAndFileNames as $pathAndFilename) {
-				if (file_exists($pathAndFilename)) {
-					return TRUE;
+			if ($pathsAndFileNames !== FALSE) {
+				foreach ($pathsAndFileNames as $pathAndFilename) {
+					if (file_exists($pathAndFilename)) {
+						return TRUE;
+					}
 				}
 			}
 		}
@@ -74,8 +76,10 @@ class YamlSource {
 		$pathsAndFileNames = array($pathAndFilename . '.yaml');
 		if ($allowSplitSource === TRUE) {
 			$splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml');
-			sort($splitSourcePathsAndFileNames);
-			$pathsAndFileNames = array_merge($pathsAndFileNames, $splitSourcePathsAndFileNames);
+			if ($splitSourcePathsAndFileNames !== FALSE) {
+				sort($splitSourcePathsAndFileNames);
+				$pathsAndFileNames = array_merge($pathsAndFileNames, $splitSourcePathsAndFileNames);
+			}
 		}
 		$configuration = array();
 		foreach ($pathsAndFileNames as $pathAndFilename) {
