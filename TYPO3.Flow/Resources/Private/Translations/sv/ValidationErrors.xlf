@@ -5,39 +5,39 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only the characters a to z and numbers are allowed</source>
-			<target xml:lang="sv-SE">Only the characters a to z and numbers are allowed</target></trans-unit>
+			<target xml:lang="sv-SE">Endast tecknen ifrån a till z och siffror tillåts</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target xml:lang="sv-SE">The given value is expected to be {0}.</target></trans-unit>
+			<target xml:lang="sv-SE">Det angivna värdet förväntas vara {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target xml:lang="sv-SE">The given subject is not a collection</target></trans-unit>
+			<target xml:lang="sv-SE">Det givna ämnet är inte en samling</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target xml:lang="sv-SE">The given subject is not countable</target></trans-unit>
+			<target xml:lang="sv-SE">Det givna ämnet är inte räknebart</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
-			<target xml:lang="sv-SE">The count must be between {0,number} and {1,number}</target></trans-unit>
+			<target xml:lang="sv-SE">Antalet måste vara mellan {0,number} och {1,number}</target></trans-unit>
       <!-- DateTimeRangeValidator -->
       <trans-unit id="1324314378" xml:space="preserve">
 				<source>The given value is not a valid date</source>
-			<target xml:lang="sv-SE">The given value is not a valid date</target></trans-unit>
+			<target xml:lang="sv-SE">Det angivna värdet är inte ett giltigt datum</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target xml:lang="sv-SE">The given date must be between {0} and {1}</target></trans-unit>
+			<target xml:lang="sv-SE">Det givna datumet måste vara mellan {0} och {1}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target xml:lang="sv-SE">The given date must be after {0}</target></trans-unit>
+			<target xml:lang="sv-SE">Det givna datumet måste vara efter {0}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target xml:lang="sv-SE">The given date must be before {0}</target></trans-unit>
+			<target xml:lang="sv-SE">Det givna datumet måste vara innan {0}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target xml:lang="sv-SE">The "locale" option can be only set to string identifier, or Locale object</target></trans-unit>
+			<target xml:lang="sv-SE">Alternativet "locale" kan endast anges som sträng-ID eller ett Locale objekt</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
 			<target xml:lang="sv-SE">A valid time is expected</target></trans-unit>
