@@ -175,13 +175,18 @@ class ClassLoader {
 
 		$currentPackageArray = $this->packageNamespaces;
 		$packagenamespacePartCount = 0;
-		while (($packagenamespacePartCount + 1) < $namespacePartCount) {
-			$possiblePackageNamespacePart = $namespaceParts[$packagenamespacePartCount];
-			if (isset($currentPackageArray[$possiblePackageNamespacePart])) {
+		if ($namespacePartCount === 1 && isset($currentPackageArray[$namespaceParts[0]])) {
+			$currentPackageArray = $currentPackageArray[$namespaceParts[0]];
+		} else {
+			while (($packagenamespacePartCount + 1) < $namespacePartCount) {
+				$possiblePackageNamespacePart = $namespaceParts[$packagenamespacePartCount];
+
+				if (!isset($currentPackageArray[$possiblePackageNamespacePart])) {
+					break;
+				}
+
 				$packagenamespacePartCount++;
 				$currentPackageArray = $currentPackageArray[$possiblePackageNamespacePart];
-			} else {
-				break;
 			}
 		}
 
