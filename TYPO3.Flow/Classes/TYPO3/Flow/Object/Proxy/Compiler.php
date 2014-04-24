@@ -210,11 +210,21 @@ return " . var_export($this->storedProxyClasses, TRUE) . ";";
 	 * @param string $pathAndFilename Full path and filename of the original class file
 	 * @param string $proxyClassCode The code that makes up the proxy class
 	 * @return void
+	 *
+	 * @throws Exception If the original class filename doesn't match the actual class name inside the file.
 	 */
 	protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode) {
 		$classCode = file_get_contents($pathAndFilename);
 		$classCode = preg_replace('/^<\\?php.*\n/', '', $classCode);
-		$classCode = preg_replace('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', '$1$2 $3' . self::ORIGINAL_CLASSNAME_SUFFIX, $classCode);
+
+		$classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
+		$classCode = preg_replace_callback('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function($matches) use ($pathAndFilename, $classNameSuffix) {
+			$classNameAccordingToFileName = basename($pathAndFilename, '.php');
+			if ($matches[3] !== $classNameAccordingToFileName) {
+				throw new Exception('The name of the class "' . $matches[3] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
+			}
+			return $matches[1] . $matches[2] . ' ' . $matches[3] . $classNameSuffix;
+		}, $classCode);
 
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
