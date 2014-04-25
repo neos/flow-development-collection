@@ -59,7 +59,7 @@ class Result {
 	protected $propertyResults = array();
 
 	/**
-	 * @var \TYPO3\Flow\Error\Result
+	 * @var Result
 	 */
 	protected $parent = NULL;
 
@@ -67,7 +67,7 @@ class Result {
 	 * Injects the parent result and propagates the
 	 * cached error states upwards
 	 *
-	 * @param \TYPO3\Flow\Error\Result $parent
+	 * @param Result $parent
 	 * @return void
 	 */
 	public function setParent(Result $parent) {
@@ -88,7 +88,7 @@ class Result {
 	/**
 	 * Add an error to the current Result object
 	 *
-	 * @param \TYPO3\Flow\Error\Error $error
+	 * @param Error $error
 	 * @return void
 	 * @api
 	 */
@@ -100,7 +100,7 @@ class Result {
 	/**
 	 * Add a warning to the current Result object
 	 *
-	 * @param \TYPO3\Flow\Error\Warning $warning
+	 * @param Warning $warning
 	 * @return void
 	 * @api
 	 */
@@ -112,7 +112,7 @@ class Result {
 	/**
 	 * Add a notice to the current Result object
 	 *
-	 * @param \TYPO3\Flow\Error\Notice $notice
+	 * @param Notice $notice
 	 * @return void
 	 * @api
 	 */
@@ -124,64 +124,73 @@ class Result {
 	/**
 	 * Get all errors in the current Result object (non-recursive)
 	 *
+	 * @param string $messageTypeFilter if specified only errors implementing the given class are returned
 	 * @return array<\TYPO3\Flow\Error\Error>
 	 * @api
 	 */
-	public function getErrors() {
-		return $this->errors;
+	public function getErrors($messageTypeFilter = NULL) {
+		return $this->filterMessages($this->errors, $messageTypeFilter);
 	}
 
 	/**
 	 * Get all warnings in the current Result object (non-recursive)
 	 *
+	 * @param string $messageTypeFilter if specified only warnings implementing the given class are returned
 	 * @return array<\TYPO3\Flow\Error\Warning>
 	 * @api
 	 */
-	public function getWarnings() {
-		return $this->warnings;
+	public function getWarnings($messageTypeFilter = NULL) {
+		return $this->filterMessages($this->warnings, $messageTypeFilter);
 	}
 
 	/**
 	 * Get all notices in the current Result object (non-recursive)
 	 *
+	 * @param string $messageTypeFilter if specified only notices implementing the given class are returned
 	 * @return array<\TYPO3\Flow\Error\Notice>
 	 * @api
 	 */
-	public function getNotices() {
-		return $this->notices;
+	public function getNotices($messageTypeFilter = NULL) {
+		return $this->filterMessages($this->notices, $messageTypeFilter);
 	}
 
 	/**
 	 * Get the first error object of the current Result object (non-recursive)
 	 *
-	 * @return \TYPO3\Flow\Error\Error
+	 * @param string $messageTypeFilter if specified only errors implementing the given class are considered
+	 * @return Error
 	 * @api
 	 */
-	public function getFirstError() {
-		reset($this->errors);
-		return current($this->errors);
+	public function getFirstError($messageTypeFilter = NULL) {
+		$matchingErrors = $this->filterMessages($this->errors, $messageTypeFilter);
+		reset($matchingErrors);
+		return current($matchingErrors);
 	}
 
 	/**
 	 * Get the first warning object of the current Result object (non-recursive)
 	 *
-	 * @return \TYPO3\Flow\Error\Warning
+	 * @param string $messageTypeFilter if specified only warnings implementing the given class are considered
+	 * @return Warning
 	 * @api
 	 */
-	public function getFirstWarning() {
-		reset($this->warnings);
-		return current($this->warnings);
+	public function getFirstWarning($messageTypeFilter = NULL) {
+		$matchingWarnings = $this->filterMessages($this->warnings, $messageTypeFilter);
+		reset($matchingWarnings);
+		return current($matchingWarnings);
 	}
 
 	/**
 	 * Get the first notice object of the current Result object (non-recursive)
 	 *
-	 * @return \TYPO3\Flow\Error\Notice
+	 * @param string $messageTypeFilter if specified only notices implementing the given class are considered
+	 * @return Notice
 	 * @api
 	 */
-	public function getFirstNotice() {
-		reset($this->notices);
-		return current($this->notices);
+	public function getFirstNotice($messageTypeFilter = NULL) {
+		$matchingNotices = $this->filterMessages($this->notices, $messageTypeFilter);
+		reset($matchingNotices);
+		return current($matchingNotices);
 	}
 
 	/**
@@ -191,7 +200,7 @@ class Result {
 	 * for property "foo.bar"
 	 *
 	 * @param string $propertyPath
-	 * @return \TYPO3\Flow\Error\Result
+	 * @return Result
 	 * @api
 	 */
 	public function forProperty($propertyPath) {
@@ -202,8 +211,9 @@ class Result {
 			return $this->recurseThroughResult(explode('.', $propertyPath));
 		}
 		if (!isset($this->propertyResults[$propertyPath])) {
-			$this->propertyResults[$propertyPath] = new Result();
-			$this->propertyResults[$propertyPath]->setParent($this);
+			$newResult = new Result();
+			$newResult->setParent($this);
+			$this->propertyResults[$propertyPath] = $newResult;
 		}
 		return $this->propertyResults[$propertyPath];
 	}
@@ -212,7 +222,7 @@ class Result {
 	 * Internal use only!
 	 *
 	 * @param array $pathSegments
-	 * @return \TYPO3\Flow\Error\Result
+	 * @return Result
 	 */
 	public function recurseThroughResult(array $pathSegments) {
 		if (count($pathSegments) === 0) {
@@ -222,11 +232,14 @@ class Result {
 		$propertyName = array_shift($pathSegments);
 
 		if (!isset($this->propertyResults[$propertyName])) {
-			$this->propertyResults[$propertyName] = new Result();
-			$this->propertyResults[$propertyName]->setParent($this);
+			$newResult = new Result();
+			$newResult->setParent($this);
+			$this->propertyResults[$propertyName] = $newResult;
 		}
 
-		return $this->propertyResults[$propertyName]->recurseThroughResult($pathSegments);
+		/** @var Result $result */
+		$result = $this->propertyResults[$propertyName];
+		return $result->recurseThroughResult($pathSegments);
 	}
 
 	/**
@@ -318,7 +331,22 @@ class Result {
 	 */
 	public function getFlattenedErrors() {
 		$result = array();
-		$this->flattenTree('errors', $result, array());
+		$this->flattenTree('errors', $result);
+		return $result;
+	}
+
+	/**
+	 * Get a list of all Error objects recursively. The result is an array,
+	 * where the key is the property path where the error occurred, and the
+	 * value is a list of all errors (stored as array)
+	 *
+	 * @param string $type
+	 * @return array<\TYPO3\Flow\Error\Error>
+	 * @api
+	 */
+	public function getFlattenedErrorsOfType($type) {
+		$result = array();
+		$this->flattenTree('errors', $result, array(), $type);
 		return $result;
 	}
 
@@ -332,7 +360,7 @@ class Result {
 	 */
 	public function getFlattenedWarnings() {
 		$result = array();
-		$this->flattenTree('warnings', $result, array());
+		$this->flattenTree('warnings', $result);
 		return $result;
 	}
 
@@ -346,35 +374,51 @@ class Result {
 	 */
 	public function getFlattenedNotices() {
 		$result = array();
-		$this->flattenTree('notices', $result, array());
+		$this->flattenTree('notices', $result);
 		return $result;
 	}
 
 	/**
 	 * Only use internally!
-	 *
 	 * Flatten a tree of Result objects, based on a certain property.
 	 *
 	 * @param string $propertyName
-	 * @param array $result
-	 * @param array $level
+	 * @param array $result The current result to be flattened
+	 * @param array $level The property path in the format array('level1', 'level2', ...) for recursion
+	 * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
 	 * @return void
 	 */
-	public function flattenTree($propertyName, &$result, $level) {
+	public function flattenTree($propertyName, array &$result, array $level = array(), $messageTypeFilter = NULL) {
 		if (count($this->$propertyName) > 0) {
-			$result[implode('.', $level)] = $this->$propertyName;
+			$propertyPath = implode('.', $level);
+			$result[$propertyPath] = $this->filterMessages($this->$propertyName, $messageTypeFilter);
 		}
+		/** @var Result $subResult */
 		foreach ($this->propertyResults as $subPropertyName => $subResult) {
 			array_push($level, $subPropertyName);
-			$subResult->flattenTree($propertyName, $result, $level);
+			$subResult->flattenTree($propertyName, $result, $level, $messageTypeFilter);
 			array_pop($level);
 		}
 	}
 
 	/**
+	 * @param Message[] $messages an array of Message instances to filter
+	 * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
+	 * @return array the filtered message instances
+	 */
+	protected function filterMessages(array $messages, $messageTypeFilter = NULL) {
+		if ($messageTypeFilter === NULL) {
+			return $messages;
+		}
+		return array_filter($messages, function(Message $message) use ($messageTypeFilter) {
+			return $message instanceof $messageTypeFilter;
+		});
+	}
+
+	/**
 	 * Merge the given Result object into this one.
 	 *
-	 * @param \TYPO3\Flow\Error\Result $otherResult
+	 * @param Result $otherResult
 	 * @return void
 	 * @api
 	 */
@@ -389,8 +433,8 @@ class Result {
 			$this->mergeProperty($otherResult, 'getNotices', 'addNotice');
 		}
 
+		/** @var $subResult Result */
 		foreach ($otherResult->getSubResults() as $subPropertyName => $subResult) {
-			/** @var $subResult Result */
 			if (array_key_exists($subPropertyName, $this->propertyResults) && $this->propertyResults[$subPropertyName]->hasMessages()) {
 				$this->forProperty($subPropertyName)->merge($subResult);
 			} else {
@@ -403,7 +447,7 @@ class Result {
 	/**
 	 * Merge a single property from the other result object.
 	 *
-	 * @param \TYPO3\Flow\Error\Result $otherResult
+	 * @param Result $otherResult
 	 * @param string $getterName
 	 * @param string $adderName
 	 * @return void

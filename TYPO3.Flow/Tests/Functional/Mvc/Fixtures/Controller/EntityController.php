@@ -60,7 +60,7 @@ class EntityController extends ActionController {
 	/**
 	 * @return string
 	 */
-	public function errorAction() {
+	protected function getFlattenedValidationErrorMessage() {
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
 		foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
 			foreach ($errors as $error) {
