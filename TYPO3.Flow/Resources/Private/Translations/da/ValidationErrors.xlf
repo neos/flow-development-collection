@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only the characters a to z and numbers are allowed</source>
-			<target xml:lang="da">Kun tegnene, a-z og tal er tilladt</target></trans-unit>
+			<target xml:lang="da">Kun tegnene a-z og tal er tilladt</target><alt-trans><target xml:lang="da">Kun tegnene, a-z og tal er tilladt</target></alt-trans></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -68,7 +68,7 @@
 			<target xml:lang="da">Et gyldigt heltal forventes</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target xml:lang="da">"{0}" er ingen heltal.</target></trans-unit>
+			<target xml:lang="da">"{0}" er ikke et heltal.</target><alt-trans><target xml:lang="da">"{0}" er ingen heltal.</target></alt-trans></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
@@ -76,7 +76,7 @@
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target xml:lang="da">Værdien er ikke gyldig I18n landestandard-id</target></trans-unit>
+			<target xml:lang="da">Værdien er ikke et gyldigt I18n landestandard-id</target><alt-trans><target xml:lang="da">Værdien er ikke gyldig I18n landestandard-id</target></alt-trans></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
@@ -104,7 +104,7 @@
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target xml:lang="da">Given genstand ikke matche mønsteret. Fik: {0}</target></trans-unit>
+			<target xml:lang="da">Den angivne værdi passer ikke med mønsteret. Modtog: {0}</target><alt-trans><target xml:lang="da">Given genstand ikke matche mønsteret. Fik: {0}</target></alt-trans></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
@@ -158,7 +158,7 @@
 			<target xml:lang="da">Den angivne værdi er ikke en forekomst af et Image objekt</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target xml:lang="da">Billede typen "{0}" er ikke tilladt</target></trans-unit>
+			<target xml:lang="da">Billedtypen "{0}" er ikke tilladt</target><alt-trans><target xml:lang="da">Billede typen "{0}" er ikke tilladt</target></alt-trans></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
 			<target xml:lang="da">Den uploadede fil er ikke gyldigt billede</target></trans-unit>
@@ -180,20 +180,20 @@
 			<target xml:lang="da">Den faktiske billedhøjde {0,number} er højere end den tilladte maksimale højde {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target xml:lang="da">Den givne billedstørrelse for {0,number} x {1,number} er for lavt for den påkrævede minimumopløsning {2,number}</target></trans-unit>
+			<target xml:lang="da">Billedets størrelse på {0,number} x {1,number} er mindre end den mindst tilladte opløsning på {2,number}</target><alt-trans><target xml:lang="da">Den givne billedstørrelse for {0,number} x {1,number} er for lavt for den påkrævede minimumopløsning {2,number}</target></alt-trans></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target xml:lang="da">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target></trans-unit>
+			<target xml:lang="da">Billedets størrelse på {0,number} x {1,number} er større end den maksimalt tilladte opløsning på {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target xml:lang="da">The given value is not a Image instance</target></trans-unit>
+			<target xml:lang="da">Den angivne værdi er ikke et billede (Image instans)</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target xml:lang="da">The image orientation must be "{0}"</target></trans-unit>
+			<target xml:lang="da">Billedets orientering skal være "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target xml:lang="da">The image orientation "{0}" is not allowed</target></trans-unit>
+			<target xml:lang="da">Billed-orienteringen "{0}" er ikke tilladt</target></trans-unit>
     </body>
   </file>
 </xliff>
