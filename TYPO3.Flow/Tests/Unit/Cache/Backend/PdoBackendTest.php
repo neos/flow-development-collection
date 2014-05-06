@@ -16,6 +16,7 @@ use TYPO3\Flow\Core\ApplicationContext;
 /**
  * Testcase for the PDO cache backend
  *
+ * @requires extension pdo_sqlite
  */
 class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -33,15 +34,6 @@ class PdoBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @var string
 	 */
 	protected $fixtureDB;
-
-	/**
-	 * Set up this testcase
-	 */
-	public function setUp() {
-		if (!extension_loaded('pdo_sqlite')) {
-			$this->markTestSkipped('The PHP PDO SQLite was not available');
-		}
-	}
 
 	/**
 	 * @test

@@ -16,6 +16,8 @@ use TYPO3\Flow\Core\ApplicationContext;
 
 /**
  * Testcase for the APC cache backend
+ *
+ * @requires extension apc
  */
 class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -31,8 +33,8 @@ class ApcBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function setUp() {
 		$this->markTestSkipped('Disabling ALL apc tests for now as they are so unreliable');
-		if (!extension_loaded('apc') || ini_get('apc.enabled') == 0 || ini_get('apc.enable_cli') == 0) {
-			$this->markTestSkipped('APC extension was not available, or it was disabled for CLI.');
+		if (ini_get('apc.enabled') == 0 || ini_get('apc.enable_cli') == 0) {
+			$this->markTestSkipped('APC is disabled (for CLI).');
 		}
 		if (ini_get('apc.slam_defense') == 1) {
 			$this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');

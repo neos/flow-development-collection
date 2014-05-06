@@ -26,6 +26,7 @@ use TYPO3\Flow\Core\ApplicationContext;
  * Warning:
  * The unit tests use and flush redis database numbers 0 and 1!
  *
+ * @requires extension redis
  */
 class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -48,10 +49,6 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 *
 	 */
 	public function setUp() {
-		if (!extension_loaded('redis')) {
-			$this->markTestSkipped('redis extension was not available');
-		}
-
 		try {
 			if (!@fsockopen('127.0.0.1', 6379)) {
 				$this->markTestSkipped('redis server not reachable');

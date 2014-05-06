@@ -16,6 +16,7 @@ use TYPO3\Flow\Core\ApplicationContext;
 /**
  * Testcase for the cache to memcached backend
  *
+ * @requires extension memcache
  */
 class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -30,10 +31,6 @@ class MemcachedBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		if (!extension_loaded('memcache')) {
-			$this->markTestSkipped('memcache extension was not available');
-		}
-
 		try {
 			if (!@fsockopen('localhost', 11211)) {
 				$this->markTestSkipped('memcached not reachable');

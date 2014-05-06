@@ -13,6 +13,8 @@ namespace TYPO3\Flow\Tests\Functional\Http\Client;
 
 /**
  * Functional tests for the HTTP client internal request engine
+ *
+ * @requires extension curl
  */
 class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
@@ -26,9 +28,6 @@ class CurlEngineTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		if (!extension_loaded('curl')) {
-			$this->markTestSkipped('Curl extension was not available.');
-		}
 		$curlEngine = $this->objectManager->get('TYPO3\Flow\Http\Client\CurlEngine');
 		$this->browser->setRequestEngine($curlEngine);
 	}

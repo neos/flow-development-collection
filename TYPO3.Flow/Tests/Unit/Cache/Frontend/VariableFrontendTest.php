@@ -66,12 +66,9 @@ class VariableFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @requires extension igbinary
 	 */
 	public function setUsesIgBinarySerializeIfAvailable() {
-		if (!extension_loaded('igbinary')) {
-			$this->markTestSkipped('Cannot test igbinary support, because igbinary is not installed.');
-		}
-
 		$theString = 'Just some value';
 		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(igbinary_serialize($theString)));
@@ -117,12 +114,9 @@ class VariableFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @requires extension igbinary
 	 */
 	public function getUsesIgBinaryIfAvailable() {
-		if (!extension_loaded('igbinary')) {
-			$this->markTestSkipped('Cannot test igbinary support, because igbinary is not installed.');
-		}
-
 		$theArray = array('Just some value', 'and another one.');
 		$backend = $this->getMock('TYPO3\Flow\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(igbinary_serialize($theArray)));
@@ -187,12 +181,9 @@ class VariableFrontendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @requires extension igbinary
 	 */
 	public function getByTagUsesIgBinaryIfAvailable() {
-		if (!extension_loaded('igbinary')) {
-			$this->markTestSkipped('Cannot test igbinary support, because igbinary is not installed.');
-		}
-
 		$tag = 'sometag';
 		$identifiers = array('one', 'two');
 		$entries = array('one' => 'one value', 'two' => 'two value');
