@@ -80,10 +80,10 @@
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="nl">Deze eigenschap is vereist</target></trans-unit>
+			<target xml:lang="nl">Dit is een verplicht veld</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve">
 				<source>This property is required</source>
-			<target xml:lang="nl">Deze eigenschap is vereist</target></trans-unit>
+			<target xml:lang="nl">Dit is een verplicht veld</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve">
 				<source>A valid number is expected</source>
