@@ -234,14 +234,14 @@ class Package implements PackageInterface {
 		if (!$this->namespace) {
 			$manifest = $this->getComposerManifest();
 			if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
-				$namespaces = $manifest->autoload->{self::AUTOLOADER_TYPE_PSR0};
+				$namespaces = (array)$manifest->autoload->{self::AUTOLOADER_TYPE_PSR0};
 				if (count($namespaces) === 1) {
 					$namespace = key($namespaces);
 				} else {
 					throw new Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
 				}
 			} elseif (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR4})) {
-				$namespaces = $manifest->autoload->{self::AUTOLOADER_TYPE_PSR4};
+				$namespaces = (array)$manifest->autoload->{self::AUTOLOADER_TYPE_PSR4};
 				if (count($namespaces) === 1) {
 					$namespace = key($namespaces);
 				} else {
