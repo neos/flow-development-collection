@@ -12,6 +12,7 @@ namespace TYPO3\Flow\Core;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Package;
 
 /**
  * Class Loader implementation which loads .php files found in the classes
@@ -215,15 +216,24 @@ class ClassLoader {
 	 * @return void
 	 */
 	public function setPackages(array $allPackages, array $activePackages) {
+		/** @var Package $package */
 		foreach ($allPackages as $packageKey => $package) {
 			if (isset($activePackages[$packageKey])) {
-				$this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
+				if ($package->getAutoloadType() === Package::AUTOLOADER_TYPE_PSR4) {
+					$this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath(), self::MAPPING_TYPE_PSR4);
+				} else {
+					$this->createNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
+				}
 				if ($this->considerTestsNamespace) {
 					$this->createNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
 				}
 			} else {
 				// Remove entries coming from composer for inactive packages.
-				$this->removeNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
+				if ($package->getAutoloadType() === Package::AUTOLOADER_TYPE_PSR4) {
+					$this->removeNamespaceMapEntry($package->getNamespace(), $package->getClassesPath(), self::MAPPING_TYPE_PSR4);
+				} else {
+					$this->removeNamespaceMapEntry($package->getNamespace(), $package->getClassesPath());
+				}
 				if ($this->considerTestsNamespace) {
 					$this->removeNamespaceMapEntry($package->getNamespace(), $package->getPackagePath(), self::MAPPING_TYPE_PSR4);
 				}
@@ -239,7 +249,7 @@ class ClassLoader {
 	 * @param string $mappingType The mapping type for this mapping entry. Currently one of self::MAPPING_TYPE_PSR0 or self::MAPPING_TYPE_PSR4 will work. Defaults to self::MAPPING_TYPE_PSR0
 	 * @return void
 	 */
-	public function createNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0) {
+	protected function createNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0) {
 		$unifiedClassPath = ((substr($classPath, -1, 1) === '/') ? $classPath : $classPath . '/');
 
 		$currentArray = & $this->packageNamespaces;
