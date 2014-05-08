@@ -112,8 +112,8 @@ class Package implements PackageInterface {
 	 * @param \TYPO3\Flow\Package\PackageManager $packageManager the package manager which knows this package
 	 * @param string $packageKey Key of this package
 	 * @param string $packagePath Absolute path to the location of the package's composer manifest
-	 * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, read from Composer manifest if not set.
-	 * @param string $manifestPath Path the composer manifest of the package, relative to $packagePath. Optional, defaults to ''.
+	 * @param string $classesPath Path the classes of the package are in, relative to $packagePath. Optional, PSR-0/PSR-4 mappings of the composer manifest overrule this argument, if present
+	 * @param string $manifestPath Path the composer manifest of the package, relative to $packagePath. Optional, defaults to ''
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageManifestException if no composer manifest file could be found
@@ -128,7 +128,7 @@ class Package implements PackageInterface {
 		if (substr($packagePath, -1, 1) !== '/') {
 			throw new Exception\InvalidPackagePathException(sprintf('The package path "%s" provided for package "%s" has no trailing forward slash.', $packagePath, $packageKey), 1166633720);
 		}
-		if (substr($classesPath, 1, 1) === '/') {
+		if (substr($classesPath, 0, 1) === '/') {
 			throw new Exception\InvalidPackagePathException(sprintf('The package classes path provided for package "%s" has a leading forward slash.', $packageKey), 1334841320);
 		}
 		if (!file_exists($packagePath . $manifestPath . 'composer.json')) {
@@ -139,8 +139,9 @@ class Package implements PackageInterface {
 		$this->manifestPath = $manifestPath;
 		$this->packageKey = $packageKey;
 		$this->packagePath = Files::getNormalizedPath($packagePath);
-		if (isset($this->getComposerManifest()->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
-			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{self::AUTOLOADER_TYPE_PSR0}->{$this->getNamespace()});
+		$autoloadType = $this->getAutoloadType();
+		if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{$autoloadType}->{$this->getNamespace()});
 		} else {
 			$this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
 		}
@@ -233,20 +234,10 @@ class Package implements PackageInterface {
 	public function getNamespace() {
 		if (!$this->namespace) {
 			$manifest = $this->getComposerManifest();
-			if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
-				$namespaces = (array)$manifest->autoload->{self::AUTOLOADER_TYPE_PSR0};
-				if (count($namespaces) === 1) {
-					$namespace = key($namespaces);
-				} else {
-					throw new Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
-				}
-			} elseif (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR4})) {
-				$namespaces = (array)$manifest->autoload->{self::AUTOLOADER_TYPE_PSR4};
-				if (count($namespaces) === 1) {
-					$namespace = key($namespaces);
-				} else {
-					throw new Exception\InvalidPackageStateException(sprintf('The Composer manifest of package "%s" contains multiple namespace definitions in its autoload section but Flow does only support one namespace per package.', $this->packageKey), 1348053245);
-				}
+			$autoloadType = $this->getAutoloadType();
+			if ($autoloadType === self::AUTOLOADER_TYPE_PSR0 || $autoloadType === self::AUTOLOADER_TYPE_PSR4) {
+				$namespaces = (array)$manifest->autoload->{$autoloadType};
+				$namespace = key($namespaces);
 			} else {
 				$namespace = str_replace('.', '\\', $this->getPackageKey());
 			}
