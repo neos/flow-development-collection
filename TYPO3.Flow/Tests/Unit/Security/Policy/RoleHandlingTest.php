@@ -41,6 +41,8 @@ class RoleHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$package2->getPackageKey() => $package2
 		));
 		$this->configurationManager->injectConfigurationSource(new \TYPO3\Flow\Configuration\Source\YamlSource());
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$this->configurationManager->injectEnvironment($mockEnvironment);
 
 		$this->policyService = $this->getAccessibleMock('TYPO3\Flow\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
 		$this->policyService->injectConfigurationManager($this->configurationManager);

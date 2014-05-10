@@ -21,6 +21,15 @@ use org\bovigo\vfs\vfsStream;
 class ConfigurationManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
+	 * @var ApplicationContext|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockContext;
+
+	public function setUp() {
+		$this->mockContext = $this->getMockBuilder('TYPO3\Flow\Core\ApplicationContext')->disableOriginalConstructor()->getMock();
+	}
+
+	/**
 	 * @test
 	 */
 	public function getConfigurationForSettingsLoadsConfigurationIfNecessary() {
@@ -664,7 +673,8 @@ EOD;
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
-		$configurationManager->_set('context', 'Testing');
+
+		$configurationManager->_set('context', $this->mockContext);
 
 		$configurationManager->expects($this->once())->method('postProcessConfiguration');
 
@@ -715,9 +725,57 @@ EOD;
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
-		$configurationManager->_set('context', 'Testing');
+		$configurationManager->_set('context', $this->mockContext);
 
 		$configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_POLICY, $mockPackages);
+	}
+
+	/**
+	 * @test
+	 */
+	public function loadConfigurationLoadsTestingPoliciesInTestingContext() {
+		$testingPolicyConfiguration = array(
+			'roles' => array(
+				'Customer' => array(),
+				'Expert' => array('Customer')
+			),
+			'acls' => array(
+				'Everybody' => array(),
+				'Anonymous' => array(),
+				'Customer' => array(),
+				'Expert' => array(),
+			)
+		);
+		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
+
+		$mockConfigurationSource = $this->getMock('TYPO3\Flow\Configuration\Source\YamlSource', array('has', 'load', 'save'));
+		$mockConfigurationSource->expects($this->once())->method('has')->with('Some/Temporary/Path/Policy')->will($this->returnValue(TRUE));
+		$mockConfigurationSource->expects($this->once())->method('load')->with('Some/Temporary/Path/Policy')->will($this->returnValue($testingPolicyConfiguration));
+		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+
+		$mockPackageFlow = $this->getMock('TYPO3\Flow\Package\Package', array(), array(), '', FALSE);
+		$mockPackageFlow->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
+		$mockPackageFlow->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.Flow'));
+
+		$mockPackages = array(
+			'TYPO3.Flow' => $mockPackageFlow
+		);
+
+		$mockEnvironment = $this->getMock('TYPO3\Flow\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('Some/Temporary/Path/'));
+		$configurationManager->_set('environment', $mockEnvironment);
+
+
+
+		$this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('Testing/SomeSubContext'));
+		$this->mockContext->expects($this->any())->method('isTesting')->will($this->returnValue(TRUE));
+		$configurationManager->_set('context', $this->mockContext);
+
+		$configurationManager->expects($this->once())->method('postProcessConfiguration');
+
+		$configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_POLICY, $mockPackages);
+		$actualConfigurations = $configurationManager->_get('configurations');
+		$this->assertEquals($testingPolicyConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_POLICY]);
 	}
 
 	/**
@@ -742,7 +800,8 @@ EOD;
 		$configurationManager = $this->getAccessibleMock('TYPO3\Flow\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->injectEnvironment($mockEnvironment);
 		$configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
-		$configurationManager->_set('context', 'FooContext');
+		$this->mockContext->expects($this->any())->method('__toString')->will($this->returnValue('FooContext'));
+		$configurationManager->_set('context', $this->mockContext);
 		$configurationManager->_set('configurations', $mockConfigurations);
 
 		$configurationManager->_call('saveConfigurationCache');
