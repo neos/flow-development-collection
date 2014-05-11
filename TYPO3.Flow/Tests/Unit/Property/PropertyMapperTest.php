@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Property;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Utility\TypeHandling;
+
 require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
 
 /**
@@ -412,6 +414,42 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$propertyMapper->_set('typeConverters', $typeConverters);
 
 		$propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipUnknownProperties());
+
+		// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider() {
+		return array(
+			array('source' => 'foo', 'fullTargetType' => 'string'),
+			array('source' => 'foo', 'fullTargetType' => 'array'),
+			array('source' => 'foo', 'fullTargetType' => 'array<string>'),
+			array('source' => 'foo', 'fullTargetType' => 'SplObjectStorage'),
+			array('source' => 'foo', 'fullTargetType' => 'SplObjectStorage<Some\Element\Type>'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider
+	 */
+	public function convertCallsCanConvertFromWithTheFullNormalizedTargetType($source, $fullTargetType) {
+		$mockTypeConverter = $this->getMockTypeConverter();
+		$mockTypeConverter->expects($this->atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetType);
+		$truncatedTargetType = TypeHandling::truncateElementType($fullTargetType);
+		$mockTypeConverters = array(
+			gettype($source) => array(
+				$truncatedTargetType => array(1 => $mockTypeConverter)
+			),
+		);
+		$propertyMapper = $this->getAccessibleMock('TYPO3\Flow\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->_set('typeConverters', $mockTypeConverters);
+
+		$mockConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfiguration')->disableOriginalConstructor()->getMock();
+		$propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
 
 		// dummy assertion to avoid PHPUnit warning
 		$this->assertTrue(TRUE);

@@ -135,6 +135,20 @@ class TypeHandling {
 	}
 
 	/**
+	 * Parses a composite type like "\Foo\Collection<\Bar\Entity>" into "\Foo\Collection"
+	 * Note: If the given type does not specify an element type it is not changed
+	 *
+	 * @param string $type
+	 * @return string The original type without its element type (if any)
+	 */
+	static public function truncateElementType($type) {
+		if (strpos($type, '<') === FALSE) {
+			return $type;
+		}
+		return substr($type, 0, strpos($type, '<'));
+	}
+
+	/**
 	 * Converts a hex encoded string into binary data
 	 *
 	 * @param string $hexadecimalData A hex encoded string of data

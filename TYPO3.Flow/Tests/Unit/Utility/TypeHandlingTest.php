@@ -11,18 +11,21 @@ namespace TYPO3\Flow\Tests\Unit\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\TypeHandling;
+
 /**
  * Testcase for the Utility\TypeHandling class
  *
  */
-class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class TypeHandlingTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 * @expectedException \TYPO3\Flow\Utility\Exception\InvalidTypeException
 	 */
 	public function parseTypeThrowsExceptionOnInvalidType() {
-		\TYPO3\Flow\Utility\TypeHandling::parseType('something not a type');
+		TypeHandling::parseType('something not a type');
 	}
 
 	/**
@@ -30,7 +33,7 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Utility\Exception\InvalidTypeException
 	 */
 	public function parseTypeThrowsExceptionOnInvalidElementTypeHint() {
-		\TYPO3\Flow\Utility\TypeHandling::parseType('string<integer>');
+		TypeHandling::parseType('string<integer>');
 	}
 
 	/**
@@ -59,7 +62,40 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function parseTypeReturnsArrayWithInformation($type, $expectedResult) {
 		$this->assertEquals(
 			$expectedResult,
-			\TYPO3\Flow\Utility\TypeHandling::parseType($type),
+			TypeHandling::parseType($type),
+			'Failed for ' . $type
+		);
+	}
+
+	/**
+	 * data provider for extractCollectionTypeReturnsOnlyTheMainType
+	 */
+	public function compositeTypes() {
+		return array(
+			array('integer', 'integer'),
+			array('int', 'int'),
+			array('array', 'array'),
+			array('ArrayObject', 'ArrayObject'),
+			array('SplObjectStorage', 'SplObjectStorage'),
+			array('Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\Collection'),
+			array('Doctrine\Common\Collections\ArrayCollection', 'Doctrine\Common\Collections\ArrayCollection'),
+			array('array<\Some\Other\Class>', 'array'),
+			array('ArrayObject<int>', 'ArrayObject'),
+			array('SplObjectStorage<\object>', 'SplObjectStorage'),
+			array('Doctrine\Common\Collections\Collection<ElementType>', 'Doctrine\Common\Collections\Collection'),
+			array('Doctrine\Common\Collections\ArrayCollection<>', 'Doctrine\Common\Collections\ArrayCollection'),
+		);
+	}
+
+
+	/**
+	 * @test
+	 * @dataProvider compositeTypes
+	 */
+	public function extractCollectionTypeReturnsOnlyTheMainType($type, $expectedResult) {
+		$this->assertEquals(
+			$expectedResult,
+			TypeHandling::truncateElementType($type),
 			'Failed for ' . $type
 		);
 	}
@@ -81,7 +117,7 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider normalizeTypes
 	 */
 	public function normalizeTypesReturnsNormalizedType($type, $normalized) {
-		$this->assertEquals(\TYPO3\Flow\Utility\TypeHandling::normalizeType($type), $normalized);
+		$this->assertEquals(TypeHandling::normalizeType($type), $normalized);
 	}
 
 	/**
@@ -102,7 +138,7 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider nonliteralTypes
 	 */
 	public function isLiteralReturnsFalseForNonLiteralTypes($type) {
-		$this->assertFalse(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type), 'Failed for ' . $type);
+		$this->assertFalse(TypeHandling::isLiteral($type), 'Failed for ' . $type);
 	}
 
 	/**
@@ -125,7 +161,7 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider literalTypes
 	 */
 	public function isLiteralReturnsTrueForLiteralType($type) {
-		$this->assertTrue(\TYPO3\Flow\Utility\TypeHandling::isLiteral($type), 'Failed for ' . $type);
+		$this->assertTrue(TypeHandling::isLiteral($type), 'Failed for ' . $type);
 	}
 
 	/**
@@ -144,7 +180,6 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array('array', TRUE),
 			array('ArrayObject', TRUE),
 			array('SplObjectStorage', TRUE),
-			array('SplObjectStorage', TRUE),
 			array('Doctrine\Common\Collections\Collection', TRUE),
 			array('Doctrine\Common\Collections\ArrayCollection', TRUE)
 		);
@@ -155,6 +190,6 @@ class TypeHandlingTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider collectionTypes
 	 */
 	public function isCollectionTypeReturnsTrueForCollectionType($type, $expected) {
-		$this->assertSame($expected, \TYPO3\Flow\Utility\TypeHandling::isCollectionType($type), 'Failed for ' . $type);
+		$this->assertSame($expected, TypeHandling::isCollectionType($type), 'Failed for ' . $type);
 	}
 }

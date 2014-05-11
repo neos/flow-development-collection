@@ -143,8 +143,8 @@ class PropertyMapper {
 	 */
 	protected function doMapping($source, $targetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
 		if (is_object($source)) {
-			$targetType = $this->parseCompositeType($targetType);
-			if ($source instanceof $targetType) {
+			$targetClass = TypeHandling::truncateElementType($targetType);
+			if ($source instanceof $targetClass) {
 				return $source;
 			}
 		}
@@ -212,16 +212,15 @@ class PropertyMapper {
 		if (!is_string($targetType)) {
 			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
 		}
-		$targetType = $this->parseCompositeType($targetType);
 		$normalizedTargetType = TypeHandling::normalizeType($targetType);
+		$truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
 		$converter = NULL;
 
 		$sourceTypes = $this->determineSourceTypes($source);
-
 		foreach ($sourceTypes as $sourceType) {
-			if (TypeHandling::isSimpleType($normalizedTargetType)) {
-				if (isset($this->typeConverters[$sourceType][$normalizedTargetType])) {
-					$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$normalizedTargetType], $source, $normalizedTargetType);
+			if (TypeHandling::isSimpleType($truncatedTargetType)) {
+				if (isset($this->typeConverters[$sourceType][$truncatedTargetType])) {
+					$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$truncatedTargetType], $source, $normalizedTargetType);
 				}
 			} else {
 				$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $normalizedTargetType);
@@ -240,13 +239,14 @@ class PropertyMapper {
 	 *
 	 * @param string $source The actual source value
 	 * @param string $sourceType Type of the source to convert from
-	 * @param string $targetClass Name of the target class to find a type converter for
+	 * @param string $targetType Name of the target type to find a type converter for
 	 * @return mixed Either the matching object converter or NULL
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
 	 */
-	protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetClass) {
+	protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetType) {
+		$targetClass = TypeHandling::truncateElementType($targetType);
 		if (!class_exists($targetClass) && !interface_exists($targetClass)) {
-			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Could not find a suitable type converter for "' . $targetClass . '" because no such class or interface exists.', 1297948764);
+			throw new \TYPO3\Flow\Property\Exception\InvalidTargetException(sprintf('Could not find a suitable type converter for "%s" because no such the class/interface "%s" does not exist.', $targetType, $targetClass), 1297948764);
 		}
 
 		if (!isset($this->typeConverters[$sourceType])) {
@@ -255,7 +255,7 @@ class PropertyMapper {
 
 		$convertersForSource = $this->typeConverters[$sourceType];
 		if (isset($convertersForSource[$targetClass])) {
-			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$targetClass], $source, $targetClass);
+			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$targetClass], $source, $targetType);
 			if ($converter !== NULL) {
 				return $converter;
 			}
@@ -266,20 +266,20 @@ class PropertyMapper {
 				continue;
 			}
 
-			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$parentClass], $source, $targetClass);
+			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$parentClass], $source, $targetType);
 			if ($converter !== NULL) {
 				return $converter;
 			}
 		}
 
 		$converters = $this->getConvertersForInterfaces($convertersForSource, class_implements($targetClass));
-		$converter = $this->findEligibleConverterWithHighestPriority($converters, $source, $targetClass);
+		$converter = $this->findEligibleConverterWithHighestPriority($converters, $source, $targetType);
 
 		if ($converter !== NULL) {
 			return $converter;
 		}
 		if (isset($convertersForSource['object'])) {
-			return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetClass);
+			return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetType);
 		} else {
 			return NULL;
 		}
@@ -297,6 +297,7 @@ class PropertyMapper {
 		}
 		krsort($converters);
 		reset($converters);
+		/** @var TypeConverterInterface $converter */
 		foreach ($converters as $converter) {
 			if ($converter->canConvertFrom($source, $targetType)) {
 				return $converter;
@@ -352,20 +353,6 @@ class PropertyMapper {
 		} else {
 			throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The source is not of type string, array, float, integer, boolean or object, but of type "' . gettype($source) . '"', 1297773150);
 		}
-	}
-
-	/**
-	 * Parse a composite type like \Foo\Collection<\Bar\Entity> into
-	 * \Foo\Collection
-	 *
-	 * @param string $compositeType
-	 * @return string
-	 */
-	public function parseCompositeType($compositeType) {
-		if (strpos($compositeType, '<') !== FALSE) {
-			$compositeType = substr($compositeType, 0, strpos($compositeType, '<'));
-		}
-		return $compositeType;
 	}
 
 	/**
