@@ -12,17 +12,35 @@ namespace TYPO3\Flow\Tests\Unit\Core;
  *                                                                        */
 
 use org\bovigo\vfs\vfsStream;
+use TYPO3\Flow\Core\ClassLoader;
+use TYPO3\Flow\Package\Package;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the object class loader
  *
  */
-class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ClassLoaderTest extends UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Core\ClassLoader
+	 * @var ClassLoader
 	 */
 	protected $classLoader;
+
+	/**
+	 * @var Package|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockPackage1;
+
+	/**
+	 * @var Package|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockPackage2;
+
+	/**
+	 * @var Package[]|\PHPUnit_Framework_MockObject_MockObject[]
+	 */
+	protected $mockPackages;
 
 	/**
 	 * Test flag used in in this test case
@@ -36,20 +54,23 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function setUp() {
 		vfsStream::setup('Test');
 
-		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/', 0770, TRUE);
-		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/composer.json', '{"name": "acme/myapp", "type": "flow-test"}');
-		$package1 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
+		self::$testClassWasLoaded = FALSE;
 
-		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/', 0770, TRUE);
-		file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/composer.json', '{"name": "acme/myappaddon", "type": "flow-test"}');
-		$package2 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
+		$this->classLoader = new ClassLoader();
 
-		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
-		$allPackages = array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2);
-		$this->classLoader->setPackages($allPackages, $allPackages);
-		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/Classes/');
-		$this->classLoader->createNamespaceMapEntry('Acme\\MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', \TYPO3\Flow\Core\ClassLoader::MAPPING_TYPE_PSR4);
-		$this->classLoader->createNamespaceMapEntry('Acme\\MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/');
+		$this->mockPackage1 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$this->mockPackage1->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyApp'));
+		$this->mockPackage1->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/Classes/'));
+		$this->mockPackage1->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
+
+		$this->mockPackage2 = $this->getMockBuilder('TYPO3\Flow\Package\Package')->disableOriginalConstructor()->getMock();
+		$this->mockPackage2->expects($this->any())->method('getNamespace')->will($this->returnValue('Acme\\MyAppAddon'));
+		$this->mockPackage2->expects($this->any())->method('getClassesPath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/'));
+		$this->mockPackage2->expects($this->any())->method('getPackagePath')->will($this->returnValue('vfs://Test/Packages/Application/Acme.MyAppAddon/'));
+
+		$this->mockPackages = array('Acme.MyApp' => $this->mockPackage1, 'Acme.MyAppAddon' => $this->mockPackage2);
+
+		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
 	}
 
 	/**
@@ -61,7 +82,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyApp\SubDirectory\ClassInSubDirectory');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -74,8 +94,9 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function classesFromFunctionalTestsDirectoriesAreLoaded() {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
-		self::$testClassWasLoaded = FALSE;
+
 		$this->classLoader->setConsiderTestsNamespace(TRUE);
+		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
 		$this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -87,7 +108,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D/E.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyApp\SubDirectory\A\B\C\D\E');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -102,7 +122,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyAppAddon\Class');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -116,7 +135,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyApp_Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -130,7 +148,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyApp\My_Underscore\Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -144,7 +161,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme_MyApp_Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -156,7 +172,6 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('\Acme\MyApp\Foo');
 		$this->assertTrue(self::$testClassWasLoaded);
 	}
@@ -165,18 +180,28 @@ class ClassLoaderTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function classesFromInactivePackagesAreNotLoaded() {
-		$package1 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyApp', 'vfs://Test/Packages/Application/Acme.MyApp/', 'Classes');
-		$package2 = new \TYPO3\Flow\Package\Package($this->getMock('TYPO3\Flow\Package\PackageManager'), 'Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme.MyAppAddon/', 'Classes');
-
-		$this->classLoader = new \TYPO3\Flow\Core\ClassLoader();
-		$allPackages = array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2);
-		$activePackages = array('Acme.MyApp' => $package1);
+		$this->classLoader = new ClassLoader();
+		$allPackages = array('Acme.MyApp' => $this->mockPackage1, 'Acme.MyAppAddon' => $this->mockPackage2);
+		$activePackages = array('Acme.MyApp' => $this->mockPackage1);
 		$this->classLoader->setPackages($allPackages, $activePackages);
 		mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		self::$testClassWasLoaded = FALSE;
 		$this->classLoader->loadClass('Acme\MyAppAddon\Class');
 		$this->assertFalse(self::$testClassWasLoaded);
+	}
+
+	/**
+	 * @test
+	 */
+	public function classesFromPsr4PackagesAreLoaded() {
+		$this->mockPackage1->expects($this->any())->method('getAutoloadType')->will($this->returnValue(Package::AUTOLOADER_TYPE_PSR4));
+
+		mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme.MyApp/Classes/Foo.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+
+		$this->classLoader->setPackages($this->mockPackages , $this->mockPackages );
+		$this->classLoader->loadClass('Acme\MyApp\Foo');
+		$this->assertTrue(self::$testClassWasLoaded);
 	}
 }

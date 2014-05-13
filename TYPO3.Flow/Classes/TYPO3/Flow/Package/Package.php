@@ -250,8 +250,9 @@ class Package implements PackageInterface {
 	 * PSR autoloading type
 	 *
 	 * @return string see self::AUTOLOADER_TYPE_* - NULL in case it is not defined or unknown
+	 * @api
 	 */
-	protected function getAutoloadType() {
+	public function getAutoloadType() {
 		$manifest = $this->getComposerManifest();
 		if (isset($manifest->autoload->{self::AUTOLOADER_TYPE_PSR0})) {
 			return self::AUTOLOADER_TYPE_PSR0;
