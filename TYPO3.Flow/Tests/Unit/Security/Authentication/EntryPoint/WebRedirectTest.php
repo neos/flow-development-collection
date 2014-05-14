@@ -53,6 +53,21 @@ class WebRedirectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function startAuthenticationDoesNotPrefixAConfiguredUriIfItsAbsolute() {
+		$request = Request::create(new Uri('http://robertlemke.com/admin'));
+		$response = new Response();
+
+		$entryPoint = new WebRedirect();
+		$entryPoint->setOptions(array('uri' => 'http://some.abs/olute/url'));
+
+		$entryPoint->startAuthentication($request, $response);
+
+		$this->assertEquals('http://some.abs/olute/url', $response->getHeader('Location'));
+	}
+
+	/**
+	 * @test
 	 * @expectedException TYPO3\Flow\Security\Exception\MissingConfigurationException
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfiguredRoutePartsAreInvalid() {
