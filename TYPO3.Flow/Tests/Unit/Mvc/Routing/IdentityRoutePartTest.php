@@ -29,22 +29,22 @@ class IdentityRoutePartTest extends UnitTestCase {
 	protected $identityRoutePart;
 
 	/**
-	 * @var PersistenceManagerInterface
+	 * @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockPersistenceManager;
 
 	/**
-	 * @var ReflectionService
+	 * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockReflectionService;
 
 	/**
-	 * @var ClassSchema
+	 * @var ClassSchema|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockClassSchema;
 
 	/**
-	 * @var ObjectPathMappingRepository
+	 * @var ObjectPathMappingRepository|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockObjectPathMappingRepository;
 
@@ -230,6 +230,18 @@ class IdentityRoutePartTest extends UnitTestCase {
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
 		$this->assertTrue($this->identityRoutePart->_call('resolveValue', $value));
 		$this->assertSame('thepathsegment', $this->identityRoutePart->getValue());
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueDoesNotAcceptObjectsWithMultiValueIdentifiers() {
+		$value = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($value)->will($this->returnValue(array('foo' => 'Foo', 'bar' => 'Bar')));
+
+		$this->identityRoutePart->setObjectType('stdClass');
+		$this->identityRoutePart->setUriPattern('SomeUriPattern');
+		$this->assertFalse($this->identityRoutePart->_call('resolveValue', $value));
 	}
 
 	/**
