@@ -68,15 +68,11 @@ class ObjectPathMappingRepository extends Repository {
 	/**
 	 * @param string $objectType the object type of the ObjectPathMapping object
 	 * @param string $uriPattern the URI pattern of the ObjectPathMapping object
-	 * @param mixed $identifier the identifier of the object, for example the UUID, @see \TYPO3\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
+	 * @param string|integer $identifier the identifier of the object, for example the UUID, @see \TYPO3\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
 	 * @return \TYPO3\Flow\Mvc\Routing\ObjectPathMapping
 	 * @throws \InvalidArgumentException
 	 */
 	public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier) {
-		// TODO support "complex" identifiers (see http://forge.typo3.org/issues/29979)
-		if (!is_string($identifier)) {
-			throw new \InvalidArgumentException('Only identifiers of type "string" are supported currently. "' . (is_object($identifier) ? get_class($identifier) : gettype($identifier)) . '" given.', 1316354957);
-		}
 		$query = $this->createQuery();
 		return $query->matching(
 			$query->logicalAnd(
