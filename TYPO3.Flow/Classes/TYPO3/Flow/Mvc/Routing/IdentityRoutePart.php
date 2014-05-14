@@ -14,7 +14,9 @@ namespace TYPO3\Flow\Mvc\Routing;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Exception\InfiniteLoopException;
 use TYPO3\Flow\Mvc\Exception\InvalidUriPatternException;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
 
 /**
  * Identity Route Part
@@ -33,20 +35,20 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 class IdentityRoutePart extends DynamicRoutePart {
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 * @Flow\Inject
+	 * @var PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 * @Flow\Inject
+	 * @var ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\ObjectPathMappingRepository
 	 * @Flow\Inject
+	 * @var ObjectPathMappingRepository
 	 */
 	protected $objectPathMappingRepository;
 
@@ -135,7 +137,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 * If no matching ObjectPathMapping was found or the given $pathSegment is no valid identifier NULL is returned.
 	 *
 	 * @param string $pathSegment the query path segment to convert
-	 * @return string the technical identifier of the object or NULL if it couldn't be found
+	 * @return string|integer the technical identifier of the object or NULL if it couldn't be found
 	 */
 	protected function getObjectIdentifierFromPathSegment($pathSegment) {
 		if ($this->getUriPattern() === '') {
@@ -192,7 +194,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 		} elseif ($value instanceof $this->objectType) {
 			$identifier = $this->persistenceManager->getIdentifierByObject($value);
 		}
-		if ($identifier === NULL) {
+		if ($identifier === NULL || (!is_string($identifier) && !is_integer($identifier))) {
 			return FALSE;
 		}
 		$pathSegment = $this->getPathSegmentByIdentifier($identifier);
@@ -210,7 +212,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 * If no ObjectPathMapping exists for the given identifier, a new ObjectPathMapping is created.
 	 *
 	 * @param string $identifier the technical identifier of the object
-	 * @return string the resolved path segment(s)
+	 * @return string|integer the resolved path segment(s)
 	 * @throws InfiniteLoopException if no unique path segment could be found after 100 iterations
 	 */
 	protected function getPathSegmentByIdentifier($identifier) {
@@ -279,7 +281,7 @@ class IdentityRoutePart extends DynamicRoutePart {
 	 * Creates a new ObjectPathMapping and stores it in the repository
 	 *
 	 * @param string $pathSegment
-	 * @param mixed $identifier
+	 * @param string|integer $identifier
 	 * @return void
 	 */
 	protected function storeObjectPathMapping($pathSegment, $identifier) {
