@@ -341,15 +341,19 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 	 * @param string $uriPattern The uriPattern property of the route
 	 * @param array $defaults An array of defaults declarations
 	 * @param boolean $appendExceedingArguments If exceeding arguments may be appended
+	 * @param array $httpMethods An array of accepted http methods
 	 * @return void
 	 * @api
 	 */
-	protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = FALSE) {
+	protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = FALSE, array $httpMethods = NULL) {
 		$route = new Route();
 		$route->setName($name);
 		$route->setUriPattern($uriPattern);
 		$route->setDefaults($defaults);
 		$route->setAppendExceedingArguments($appendExceedingArguments);
+		if ($httpMethods !== NULL) {
+			$route->setHttpMethods($httpMethods);
+		}
 		$this->router->addRoute($route);
 	}
 

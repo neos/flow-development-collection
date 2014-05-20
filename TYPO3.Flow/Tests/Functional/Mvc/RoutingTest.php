@@ -321,4 +321,38 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals($expectedResolvedUriPath, $resolvedUriPath);
 	}
 
+	/**
+	 * @return array
+	 */
+	public function requestMethodAcceptArray() {
+		return array(
+			array('GET', '404 Not Found'),
+			array('PUT', '404 Not Found'),
+			array('POST', '200 OK'),
+			array('DELETE', '200 OK')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider requestMethodAcceptArray
+	 */
+	public function routesWithoutRequestedHttpMethodConfiguredResultInA404($requestMethod, $expectedStatus) {
+		$this->registerRoute(
+			'HTTP Method Test',
+			'http-method-test',
+			array(
+				'@package' => 'TYPO3.Flow',
+				'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+				'@controller' => 'ActionControllerTestA',
+				'@action' => 'second',
+				'@format' =>'html'
+			),
+			FALSE,
+			array('POST', 'DELETE')
+		);
+
+		$response = $this->browser->request('http://localhost/http-method-test/', $requestMethod);
+		$this->assertEquals($expectedStatus, $response->getStatus());
+	}
 }
