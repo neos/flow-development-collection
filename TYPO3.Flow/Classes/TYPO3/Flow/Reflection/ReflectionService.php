@@ -670,16 +670,6 @@ class ReflectionService {
 	}
 
 	/**
-	 * Mark class as unconfigurable, allowing automatic configuration to ignore it.
-	 *
-	 * @param string $className Name of the class to mark unconfigurable
-	 * @return void
-	 */
-	protected function markClassUnconfigurable($className) {
-		$this->classReflectionData[$className] = array();
-	}
-
-	/**
 	 * Returns all class names of classes containing at least one method annotated
 	 * with the given annotation class
 	 *
@@ -1273,14 +1263,8 @@ class ReflectionService {
 			// see bug http://forge.typo3.org/issues/29449 for details.
 			throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
 		}
-		try {
-			$class = new ClassReflection($className);
-		} catch (Exception\ClassLoadingForReflectionFailedException $exception) {
-			$this->markClassUnconfigurable($className);
-			$this->log('Could not reflect "' . $className . '" because the class could not be loaded.', LOG_DEBUG);
-			return;
-		}
 
+		$class = new ClassReflection($className);
 		if (!isset($this->classReflectionData[$className])) {
 			$this->classReflectionData[$className] = array();
 		}
