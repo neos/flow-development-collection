@@ -265,7 +265,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider ignoredValidationArgumentsProvider
 	 */
 	public function initializeActionMethodValidatorsDoesNotAddValidatorForIgnoredArgumentsWithoutEvaluation($evaluateIgnoredValidationArgument, $setValidatorShouldBeCalled) {
-		$this->actionController = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\ActionController', array('getActionValidationGroups', 'getActionMethodParameters', 'getActionValidateAnnotationData', 'getActionIgnoredValidationArguments'));
+		$this->actionController = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\ActionController', array('getInformationNeededForInitializeActionMethodValidators'));
 
 		$mockArgument = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\Argument')->disableOriginalConstructor()->getMock();
 		$mockArgument->expects($this->any())->method('getName')->will($this->returnValue('node'));
@@ -286,10 +286,7 @@ class ActionControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'node' => $mockValidator
 		);
 
-		$this->actionController->staticExpects($this->any())->method('getActionValidationGroups')->will($this->returnValue(array()));
-		$this->actionController->staticExpects($this->any())->method('getActionMethodParameters')->will($this->returnValue(array()));
-		$this->actionController->staticExpects($this->any())->method('getActionValidateAnnotationData')->will($this->returnValue(array()));
-		$this->actionController->staticExpects($this->any())->method('getActionIgnoredValidationArguments')->will($this->returnValue($ignoredValidationArguments));
+		$this->actionController->expects($this->any())->method('getInformationNeededForInitializeActionMethodValidators')->will($this->returnValue(array(array(), array(), array(), $ignoredValidationArguments)));
 
 		$this->inject($this->actionController, 'actionMethodName', 'showAction');
 		$this->inject($this->actionController, 'arguments', $arguments);

@@ -247,6 +247,21 @@ class ActionController extends AbstractController {
 	}
 
 	/**
+	 * This is a helper method purely used to make initializeActionMethodValidators()
+	 * testable without mocking static methods.
+	 *
+	 * @return array
+	 */
+	protected function getInformationNeededForInitializeActionMethodValidators() {
+		return array(
+			static::getActionValidationGroups($this->objectManager),
+			static::getActionMethodParameters($this->objectManager),
+			static::getActionValidateAnnotationData($this->objectManager),
+			static::getActionIgnoredValidationArguments($this->objectManager)
+		);
+	}
+
+	/**
 	 * Adds the needed validators to the Arguments:
 	 *
 	 * - Validators checking the data type from the @param annotation
@@ -257,20 +272,20 @@ class ActionController extends AbstractController {
 	 * @return void
 	 */
 	protected function initializeActionMethodValidators() {
-		$validateGroupAnnotations = static::getActionValidationGroups($this->objectManager);
+		list($validateGroupAnnotations, $actionMethodParameters, $actionValidateAnnotations, $actionIgnoredArguments) = $this->getInformationNeededForInitializeActionMethodValidators();
+
 		if (isset($validateGroupAnnotations[$this->actionMethodName])) {
 			$validationGroups = $validateGroupAnnotations[$this->actionMethodName];
 		} else {
 			$validationGroups = array('Default', 'Controller');
 		}
 
-		$actionMethodParameters = static::getActionMethodParameters($this->objectManager);
 		if (isset($actionMethodParameters[$this->actionMethodName])) {
 			$methodParameters = $actionMethodParameters[$this->actionMethodName];
 		} else {
 			$methodParameters = array();
 		}
-		$actionValidateAnnotations = static::getActionValidateAnnotationData($this->objectManager);
+
 		if (isset($actionValidateAnnotations[$this->actionMethodName])) {
 			$validateAnnotations = $actionValidateAnnotations[$this->actionMethodName];
 		} else {
@@ -278,7 +293,6 @@ class ActionController extends AbstractController {
 		}
 		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations);
 
-		$actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
 		if (isset($actionIgnoredArguments[$this->actionMethodName])) {
 			$ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
 		} else {
