@@ -1,0 +1,228 @@
+====================
+2.2.0-beta4
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Upgrade PHPUnit to 4.0.*
+-----------------------------------------------------------------------------------------
+
+Require PHPUnit 4.0.* instead of 3.7.*.
+* Commit: `6cf26e2 <https://git.typo3.org/Flow/Distributions/Base.git/commit/6cf26e29c75e18fc90e8ab3701d5bbb1b05b7dfe>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Eel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Adjust unit test to PHPUnit 4
+-----------------------------------------------------------------------------------------
+
+This adjusts one unit test to to work with PHPUnit 4. The delta for
+assertEquals() is only applied to float values, so the integer
+timestamps in that test need to be cast.
+
+* Commit: `7c377a3 <https://git.typo3.org/Packages/TYPO3.Eel.git/commit/7c377a38d2e0f11fc0cd4b594cca058574dc856e>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/typo3-flow-release/18/
+
+* Commit: `38474b5 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/38474b5af3c6eefe916a2dd0ae22317dbc0c4d85>`_
+
+[BUGFIX] Support Doctrine Collections in PersistenceQueryRewriting
+-----------------------------------------------------------------------------------------
+
+Security's PersistenceQueryRewritingAspect now supports also Doctrine
+collection handling rather than only primitive arrays for ``in``, ``contains``
+and ``matches`` operators.
+
+* Fixes: `#46076 <http://forge.typo3.org/issues/46076>`_
+* Commit: `b415443 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/b4154434384c33e835abb3ee9e0c176e915d03ee>`_
+
+[BUGFIX] ClassLoader works with UniqueGlobalClass declaration
+-----------------------------------------------------------------------------------------
+
+composer allows a PSR-0 mapping for global classes without
+namespace in https://getcomposer.org/doc/04-schema.md#psr-0
+The new ClassLoader did not accomodate for that.
+
+(cherry picked from commit d902b3f749acbfc52353885b60d25a7a30a1fa44)
+
+* Commit: `2de0f3e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/2de0f3e9de41dfd10330e1b67b917ebcd0a321a1>`_
+
+[BUGFIX] Throw exception if case of class- and filename don't match
+-----------------------------------------------------------------------------------------
+
+Mismatching class- and filename case is now detected during compiletime
+already and a helpful exception is thrown.
+
+* Related: `#59031 <http://forge.typo3.org/issues/59031>`_
+* Commit: `e29e699 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/e29e699591d57291e180ba0bb08df323097fd685>`_
+
+[BUGFIX] Fix support for absolute URIs in WebRedirect options
+-----------------------------------------------------------------------------------------
+
+Fixes support for authentication provider redirects to external
+domains.
+
+Background:
+
+If a ``WebRedirect`` is configured with a relative URI like::
+
+  entryPoint: 'WebRedirect'
+  entryPointOptions:
+    uri: 'some/path'
+
+The ``Location`` header gets properly prefixed with the current
+base URI.
+But due to a typo this happened as well for absolute URIs.
+
+Note: using the "uri" option for internal redirects is deprecated,
+use the ``routeParts`` option instead for those.
+
+* Fixes: `#56598 <http://forge.typo3.org/issues/56598>`_
+* Commit: `96c4210 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/96c42102f1f83276d5dd1da7b50e928376041234>`_
+
+[BUGFIX] TestingToken must not rely on a session
+-----------------------------------------------------------------------------------------
+
+This changes the ``TestingToken`` to implement the
+``SessionLessTokenInterface`` so that it doesn't rely on a session
+to be started whenever it is authenticated.
+
+This is required in order to make use of the token for CLI based
+tests (e.g. from behat).
+The change also removes the TestingProviderTest that were actually
+outdated and only worked by accident.
+
+* Commit: `7dea97e <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/7dea97ed5d0ba245d69642e15901131cc99e8a6a>`_
+
+[BUGFIX] CommandController must reset its arguments on dispatch
+-----------------------------------------------------------------------------------------
+
+The CLI CommandController is not stateless in the sense that it
+just adds argument definitions without removing previous definitions
+in ``processRequest()``.
+Usual this is not a problem, because every command is called only
+once per request. But in tests or when using the ``flow:core:shell``
+command this has weird side effects.
+
+* Commit: `71de1a4 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/71de1a4684f85b7d9be37c7ab2c6dff04628ca9d>`_
+
+[TASK] Log configuration details of WebRedirects
+-----------------------------------------------------------------------------------------
+
+Log all WebRedirect options instead of only ``uri``.
+
+Background:
+Even though it's encouraged to use the ``routeParts`` option rather
+than ``uri`` for security WebRedirects, the corresponding AOP aspect
+logs "Redirecting to authentication entry point with URI - undefined"
+when no ``uri`` is specified.
+This change fixes this by logging all redirect options.
+
+* Commit: `9208112 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/920811282abba0e4c8565ccb454af6a237bbae69>`_
+
+[FEATURE] Add Configuration for Doctrine Filters
+-----------------------------------------------------------------------------------------
+
+This change adds analog to eventSubscribers and eventListeners
+a setting to register filters to the EntityManager. This makes
+it possible to use extensions like SoftDeleteableFilter from the
+gedmo/doctrine-extensions.
+
+* Commit: `35add7f <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/35add7fc4ece4d845efd3c032c5dfd151640984f>`_
+
+[BUGFIX] SplitSources break on glob errors
+-----------------------------------------------------------------------------------------
+
+When using SplitSource a glob call is used to fetch all
+configuration files. This can return FALSE on error and on some
+systems also on no result which was not correctly catched.
+
+* Commit: `a2b427b <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/a2b427bc0d380fee571d4e9cfd7d58e857467efd>`_
+
+[TASK] Fix documentation version
+-----------------------------------------------------------------------------------------
+
+Sets the version of this documentation to "2.2.0" to match the released
+version.
+
+* Commit: `82a385c <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/82a385c0e127f5b58ff773339fbe64839765400e>`_
+
+[TASK] Fix navigation menus in documentation
+-----------------------------------------------------------------------------------------
+
+* Commit: `f4666e9 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/f4666e9b9df1fac9a1a9c37c3693dab6f99d4a07>`_
+
+[TASK] Adjust tests to PHPUnit 4
+-----------------------------------------------------------------------------------------
+
+This adjusts one functional test to to work with PHPUnit 4. Mocking
+static methods is no longer possible, so a test workaround in the
+ActionController class is added.
+
+Besides that some cleanup is done.
+
+* Commit: `affdb42 <https://git.typo3.org/Packages/TYPO3.Flow.git/commit/affdb429d9ebff1db15fbd85c63947832ee385e9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Fluid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[FEATURE] "DefaultCase" view helper for the "Switch" view helper
+-----------------------------------------------------------------------------------------
+
+This introduces a view helper which allows for specifying markup being
+rendered when no "case" view helpers matches within a "switch" view helper
+construct.
+
+Example:
+
+<f:switch expression="{fruit}">
+	<f:case value="apple">Apple</f:case>
+	<f:case value="pear">Pear</f:case>
+	<f:defaultCase>Some other fruit</f:defaultCase>
+</f:switch>
+
+* Commit: `cb6d0b6 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/cb6d0b6d126ded1639e331b705bf6dcf41621ca1>`_
+
+[BUGFIX] Make required work on Textfield and Textarea VH
+-----------------------------------------------------------------------------------------
+
+The way required was checked any non-null value would mark a field as
+required - including FALSE, which is not expected behavior.
+
+This change fixes this by strictly comparing to TRUE, before marking as
+required, thus following the documented argument type.
+
+The TextareaViewHelper also gains support for the required attribute
+with this change.
+
+* Commit: `5c3f697 <https://git.typo3.org/Packages/TYPO3.Fluid.git/commit/5c3f697ceadc4a37e0ea028ffe5b24ea4ecf2ed8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Kickstart
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Party
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Welcome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
