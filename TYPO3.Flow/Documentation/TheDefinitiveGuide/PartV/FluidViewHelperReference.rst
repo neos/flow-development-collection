@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2014-04-10
+This reference was automatically generated from code on 2014-05-26
 
 
 f:alias
@@ -266,6 +266,14 @@ Expected result::
 Expected result::
 
 	the type or class name of {object}
+
+
+
+
+f:defaultCase
+-------------
+
+
 
 
 
@@ -1144,6 +1152,8 @@ Arguments
 * ``autofocus`` (string, *optional*): Specifies that a text area should automatically get focus when the page loads
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
+
+* ``required`` (boolean, *optional*): If the field should be marked as required or not
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2651,6 +2661,8 @@ f:switch
 Switch view helper which can be used to render content depending on a value or expression.
 Implements what a basic switch()-PHP-method does.
 
+An optional default case can be specified which is rendered if none of the "f:case" conditions matches.
+
 
 
 Arguments
@@ -2669,12 +2681,13 @@ Examples
 	<f:switch expression="{person.gender}">
 	  <f:case value="male">Mr.</f:case>
 	  <f:case value="female">Mrs.</f:case>
+	  <f:defaultCase>Mr. / Mrs.</f:defaultCase>
 	</f:switch>
 
 
 Expected result::
 
-	Mr. / Mrs. (depending on the value of {person.gender})
+	"Mr.", "Mrs." or "Mr. / Mrs." (depending on the value of {person.gender})
 
 
 
