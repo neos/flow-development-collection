@@ -29,11 +29,11 @@ class ConfigurationHelper implements ProtectedContextAwareInterface {
 	/**
 	 * Return the specified settings
 	 *
-	 * Examples:
+	 * Examples::
 	 *
-	 *   Configuration.setting('TYPO3.Flow.core.context') === 'Production'
+	 *     Configuration.setting('TYPO3.Flow.core.context') == 'Production'
 	 *
-	 *   Configuration.setting('Acme.Demo.speedMode') === 'light speed'
+	 *     Configuration.setting('Acme.Demo.speedMode') == 'light speed'
 	 *
 	 * @param string $settingPath
 	 * @return mixed
