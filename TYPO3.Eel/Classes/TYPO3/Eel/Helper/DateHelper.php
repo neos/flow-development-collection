@@ -55,9 +55,9 @@ class DateHelper implements ProtectedContextAwareInterface {
 	/**
 	 * Get the current date and time
 	 *
-	 * Examples:
+	 * Examples::
 	 *
-	 *   Date.now.timestamp
+	 *     Date.now().timestamp
 	 *
 	 * @return \DateTime
 	 */

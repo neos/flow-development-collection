@@ -240,7 +240,7 @@ class ArrayHelper implements ProtectedContextAwareInterface {
 	/**
 	 * Insert one or more elements at the end of an array
 	 *
-	 * Allows to push multiple elements at once:
+	 * Allows to push multiple elements at once::
 	 *
 	 *     Array.push(array, e1, e2)
 	 *
@@ -275,7 +275,7 @@ class ArrayHelper implements ProtectedContextAwareInterface {
 	/**
 	 * Insert one or more elements at the beginning of an array
 	 *
-	 * Allows to insert multiple elements at once:
+	 * Allows to insert multiple elements at once::
 	 *
 	 *     Array.unshift(array, e1, e2)
 	 *
@@ -296,7 +296,7 @@ class ArrayHelper implements ProtectedContextAwareInterface {
 	/**
 	 * Replaces a range of an array by the given replacements
 	 *
-	 * Allows to give multiple replacements at once:
+	 * Allows to give multiple replacements at once::
 	 *
 	 *     Array.splice(array, 3, 2, 'a', 'b')
 	 *
