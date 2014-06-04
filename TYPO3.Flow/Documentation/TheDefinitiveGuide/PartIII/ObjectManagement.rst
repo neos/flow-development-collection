@@ -720,6 +720,29 @@ the object belongs to and pass it to the ``injectSettings`` method.
 
 The ``doSomething`` method will output the settings of the ``MyPackage`` package.
 
+In case you only need a specific setting, there's an even more convenient way to inject a single
+setting value into a class property:
+
+.. code-block:: php
+
+	namespace Acme\Demo;
+
+	class SomeClass {
+
+		/**
+		 * @var string
+		 * @Flow\Inject(setting="administrator.name")
+		 */
+		protected $name;
+
+		/**
+		 * @var string
+		 * @Flow\Inject(setting="email", package="SomeOther.Package")
+		 */
+		protected $email;
+
+	}
+
 Required Dependencies
 ---------------------
 
