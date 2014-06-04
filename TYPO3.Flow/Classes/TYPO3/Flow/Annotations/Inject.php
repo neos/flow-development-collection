@@ -31,14 +31,19 @@ final class Inject {
 	public $lazy = TRUE;
 
 	/**
-	 * Path of a setting which should be injected into the property
+	 * Path of a setting (without the package key) which should be injected into the property.
+	 * Example: security.enable
 	 *
 	 * @var string
 	 */
 	public $setting;
 
 	/**
-	 * Package to load the setting from
+	 * Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
+	 * is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
+	 * used.
+	 *
+	 * Example: TYPO3.Flow
 	 *
 	 * @var string
 	 */
