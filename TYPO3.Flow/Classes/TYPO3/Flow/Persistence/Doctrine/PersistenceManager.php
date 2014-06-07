@@ -13,6 +13,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Reflection\ClassSchema;
 
 /**
  * Flow's Doctrine PersistenceManager
@@ -68,9 +69,9 @@ class PersistenceManager extends \TYPO3\Flow\Persistence\AbstractPersistenceMana
 		$validatedInstancesContainer = new \SplObjectStorage();
 		$knownValueObjects = array();
 		foreach ($entityInsertions as $entity) {
-			if ($this->reflectionService->getClassSchema($entity)->getModelType() === \TYPO3\Flow\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+			$className = $this->reflectionService->getClassNameByObject($entity);
+			if ($this->reflectionService->getClassSchema($className)->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
 				$identifier = $this->getIdentifierByObject($entity);
-				$className = $this->reflectionService->getClassNameByObject($entity);
 
 				if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
 					unset($entityInsertions[spl_object_hash($entity)]);
