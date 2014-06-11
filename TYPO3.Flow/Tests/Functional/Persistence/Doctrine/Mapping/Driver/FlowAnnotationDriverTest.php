@@ -52,6 +52,16 @@ class FlowAnnotationDriverTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function lifecycleCallbacksAreNotRegisteredForUnproxiedEntities() {
+		$classMetadata = new \TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\UnproxiedTestEntity');
+		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\UnproxiedTestEntity', $classMetadata);
+		$this->assertFalse($classMetadata->hasLifecycleCallbacks(\Doctrine\ORM\Events::postLoad));
+	}
+
+	/**
+	 * @test
+	 */
 	public function inheritanceTypeIsNotChangedIfNoSubclassesOfNonAbstractClassExist() {
 		$classMetadata = new ClassMetadata('TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Post');
 		$driver = $this->objectManager->get('TYPO3\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver');
