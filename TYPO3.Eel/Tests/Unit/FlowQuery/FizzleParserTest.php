@@ -95,6 +95,7 @@ class FizzleParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$parser->assertMatches('AttributeFilter', '[instanceof "asdf"]');
 		$parser->assertMatches('AttributeFilter', '[instanceof asdf]');
+		$parser->assertMatches('AttributeFilter', '[foo instanceof string]');
 	}
 
 	/**

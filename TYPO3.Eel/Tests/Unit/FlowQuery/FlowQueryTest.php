@@ -181,6 +181,12 @@ class FlowQueryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'expectedResult' => array(array('foo'))
 			),
 
+			'Instanceof test works on attributes' => array(
+				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4, $myObject5, $myObject6),
+				'filter' => '[ isHidden instanceof boolean ]',
+				'expectedResult' => array($myObject5)
+			),
+
 			'Begin query match' => array(
 				'sourceObjects' => array($myObject, $myObject2, $myObject3, $myObject4),
 				'filter' => '[ myProperty ^= as ]',

@@ -27,6 +27,7 @@ Syntax Examples
 * `filter('[a*= b]')`, `filter('[a^= b]')`, `filter('[a$= b]')`: Substring match, beginning-of-string-match, end-of-string-match
 * `filter('[instanceof foo]')`: select the object if it is instance of foo
 * `filter('[instanceof "foo"]')`: same as above
+* `filter('[attribute instanceof object]')`: Selects an object if it has an attribute `attribute` that is an instance of `object`
 
 Operations
 ----------

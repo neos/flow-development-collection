@@ -62,7 +62,7 @@ AttributeFilter:
           ( Operator:'instanceof' S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
           | ( :Identifier S
               (
-                  Operator:( PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch )
+                  Operator:( 'instanceof' | PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch )
                   S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
               )?
           )
