@@ -25,7 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
  * =
  *   Strict equality of value and operand
  * !=
- *   Strict no equality of value and operand
+ *   Strict inequality of value and operand
  * $=
  *   Value ends with operand (string-based)
  * ^=
