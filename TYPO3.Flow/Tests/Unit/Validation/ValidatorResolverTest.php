@@ -241,7 +241,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsBuildsAConjunctionFromValidateAnnotationsOfTheSpecifiedMethod() {
-		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
+		$mockObject = new \stdClass();
 
 		$methodParameters = array(
 			'arg1' => array(
@@ -306,7 +306,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyConjunctionIfNoValidatorIsFoundForMethodParameter() {
-		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
+		$mockObject = new \stdClass();
 
 		$methodParameters = array(
 			'arg' => array(
@@ -335,7 +335,7 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationConfigurationException
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsThrowsExceptionIfValidationAnnotationForNonExistingArgumentExists() {
-		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
+		$mockObject = new \stdClass();
 
 		$methodParameters = array(
 			'arg1' => array(
