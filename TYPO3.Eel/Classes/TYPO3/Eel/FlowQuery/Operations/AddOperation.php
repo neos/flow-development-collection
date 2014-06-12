@@ -38,7 +38,7 @@ class AddOperation extends AbstractOperation {
 			$output[] = $element;
 		}
 		if (isset($arguments[0])) {
-			foreach ($arguments[0] as $element)	{
+			foreach ($arguments[0] as $element) {
 				$output[] = $element;
 			}
 		}

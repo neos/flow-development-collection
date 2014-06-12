@@ -107,7 +107,7 @@ class FlowQuery implements \TYPO3\Eel\ProtectedContextAwareInterface, \IteratorA
 	 * @api
 	 */
 	public function __construct($context, array $operations = array()) {
-		if(!(is_array($context) || $context instanceof \Traversable)) {
+		if (!(is_array($context) || $context instanceof \Traversable)) {
 			throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
 		}
 		if ($context instanceof FlowQuery) {
