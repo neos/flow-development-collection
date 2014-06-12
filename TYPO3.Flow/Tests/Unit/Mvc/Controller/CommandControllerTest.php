@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Symfony\Component\Console\Output\ConsoleOutput;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -31,12 +32,20 @@ class CommandControllerTest extends UnitTestCase {
 	 */
 	protected $mockReflectionService;
 
+	/**
+	 * @var ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockConsoleOutput;
+
 	public function setUp() {
 		$this->commandController = $this->getAccessibleMock('TYPO3\Flow\Cli\CommandController', array('resolveCommandMethodName', 'callCommandMethod'));
 
 		$this->mockReflectionService = $this->getMockBuilder('TYPO3\Flow\Reflection\ReflectionService')->disableOriginalConstructor()->getMock();
 		$this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array()));
 		$this->inject($this->commandController, 'reflectionService', $this->mockReflectionService);
+
+		$this->mockConsoleOutput = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutput')->disableOriginalConstructor()->getMock();
+		$this->inject($this->commandController, 'output', $this->mockConsoleOutput);
 	}
 
 
@@ -82,10 +91,8 @@ class CommandControllerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function outputAppendsGivenStringToTheResponseContent() {
-		$mockResponse = $this->getMock('TYPO3\Flow\Cli\Response');
-		$mockResponse->expects($this->once())->method('appendContent')->with('some text');
-		$this->commandController->_set('response', $mockResponse);
+	public function outputWritesGivenStringToTheConsoleOutput() {
+		$this->mockConsoleOutput->expects($this->once())->method('write')->with('some text');
 		$this->commandController->_call('output', 'some text');
 	}
 
@@ -93,9 +100,7 @@ class CommandControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function outputReplacesArgumentsInGivenString() {
-		$mockResponse = $this->getMock('TYPO3\Flow\Cli\Response');
-		$mockResponse->expects($this->once())->method('appendContent')->with('some text');
-		$this->commandController->_set('response', $mockResponse);
+		$this->mockConsoleOutput->expects($this->once())->method('write')->with('some text');
 		$this->commandController->_call('output', '%2$s %1$s', array('text', 'some'));
 	}
 
@@ -103,30 +108,7 @@ class CommandControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function outputLineAppendsGivenStringAndNewlineToTheResponseContent() {
-		$mockResponse = $this->getMock('TYPO3\Flow\Cli\Response');
-		$mockResponse->expects($this->once())->method('appendContent')->with('some text' . PHP_EOL);
-		$this->commandController->_set('response', $mockResponse);
+		$this->mockConsoleOutput->expects($this->once())->method('write')->with('some text' . PHP_EOL);
 		$this->commandController->_call('outputLine', 'some text');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Mvc\Exception\StopActionException
-	 */
-	public function quitThrowsStopActionException() {
-		$mockResponse = $this->getMock('TYPO3\Flow\Cli\Response');
-		$this->commandController->_set('response', $mockResponse);
-		$this->commandController->_call('quit');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Mvc\Exception\StopActionException
-	 */
-	public function quitSetsResponseExitCode() {
-		$mockResponse = $this->getMock('TYPO3\Flow\Cli\Response');
-		$mockResponse->expects($this->once())->method('setExitCode')->with(123);
-		$this->commandController->_set('response', $mockResponse);
-		$this->commandController->_call('quit', 123);
 	}
 }
