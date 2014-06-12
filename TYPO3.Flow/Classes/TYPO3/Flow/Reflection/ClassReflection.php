@@ -28,7 +28,7 @@ class ClassReflection extends \ReflectionClass {
 	 */
 	public function __construct($classNameOrObject) {
 		$throwExceptionOnUnloadedClasses =
-			function($className) {
+			function ($className) {
 				throw new Exception\ClassLoadingForReflectionFailedException('Required class "' . $className . '" could not be loaded properly for reflection, possibly requiring non-existent classes or using non-supported annotations.');
 			};
 		spl_autoload_register($throwExceptionOnUnloadedClasses);
@@ -181,6 +181,25 @@ class ClassReflection extends \ReflectionClass {
 	 */
 	public function getDescription() {
 		return $this->getDocCommentParser()->getDescription();
+	}
+
+	/**
+	 * Creates a new class instance without invoking the constructor.
+	 *
+	 * Overridden to make sure DI works even when instances are created using
+	 * newInstanceWithoutConstructor()
+	 *
+	 * @see https://github.com/doctrine/doctrine2/commit/530c01b5e3ed7345cde564bd511794ac72f49b65
+	 * @return object
+	 */
+	public function newInstanceWithoutConstructor() {
+		$instance = parent::newInstanceWithoutConstructor();
+
+		if (method_exists($instance, '__wakeup') && is_callable(array($instance, '__wakeup'))) {
+			$instance->__wakeup();
+		}
+
+		return $instance;
 	}
 
 	/**
