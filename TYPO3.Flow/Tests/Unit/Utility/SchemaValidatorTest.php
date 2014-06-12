@@ -968,6 +968,20 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
 	}
 
+	/**
+	 * @test
+	 */
+	public function validateHandlesDictionaryTypeWithAdditionalPropertyTrueSchemaConstraint() {
+		$schema = array(
+			'type' => 'dictionary',
+			'additionalProperties' => TRUE
+		);
+		$value = array(
+			'foo' => 42
+		);
+
+		$this->assertSuccess($this->configurationValidator->validate($value, $schema), TRUE);
+	}
 
 	/// NULL ///
 
