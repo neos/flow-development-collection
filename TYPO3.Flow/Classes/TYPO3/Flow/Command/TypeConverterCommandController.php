@@ -12,17 +12,19 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Property\PropertyMapper;
 
 /**
  * Command controller for listing active type converters
  *
  * @Flow\Scope("singleton")
  */
-class TypeConverterCommandController extends \TYPO3\Flow\Cli\CommandController {
+class TypeConverterCommandController extends CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 

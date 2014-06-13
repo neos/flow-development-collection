@@ -11,14 +11,19 @@ namespace TYPO3\Flow\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Util\Debug;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Error\Debugger;
+use TYPO3\Flow\Persistence\Doctrine\Service as DoctrineService;
 
 /**
  * Command controller for tasks related to Doctrine
  *
  * @Flow\Scope("singleton")
  */
-class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
+class DoctrineCommandController extends CommandController {
 
 	/**
 	 * @var array
@@ -27,7 +32,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\Doctrine\Service
+	 * @var DoctrineService
 	 */
 	protected $doctrineService;
 
@@ -77,7 +82,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 					$this->outputLine('    %s', array($errorMessage));
 				}
 			}
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -106,7 +111,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			}
 		} else {
 			$this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -135,7 +140,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			}
 		} else {
 			$this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -160,11 +165,11 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 		} else {
 			$this->outputLine('Found %d mapped entities:', array(count($info)));
 			foreach ($info as $entityClassName => $entityStatus) {
-				if ($entityStatus instanceof \Doctrine\Common\Persistence\Mapping\ClassMetadata) {
+				if ($entityStatus instanceof ClassMetadata) {
 					$this->outputLine('[OK]   %s', array($entityClassName));
 					if ($dumpMappingData) {
-						\TYPO3\Flow\Error\Debugger::clearState();
-						$this->outputLine(\TYPO3\Flow\Error\Debugger::renderDump($entityStatus, 0, TRUE, TRUE));
+						Debugger::clearState();
+						$this->outputLine(Debugger::renderDump($entityStatus, 0, TRUE, TRUE));
 					}
 				} else {
 					$this->outputLine('[FAIL] %s', array($entityClassName));
@@ -201,11 +206,11 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 			foreach ($dqlStatements as $dql) {
 				$resultSet = $this->doctrineService->runDql($dql, constant($hydrationModeConstant), $offset, $limit);
-				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
+				Debug::dump($resultSet, $depth);
 			}
 		} else {
 			$this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -228,7 +233,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine($this->doctrineService->getMigrationStatus());
 		} else {
 			$this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -269,7 +274,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -302,7 +307,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -332,7 +337,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->doctrineService->markAsMigrated($version, $add ?: FALSE);
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
@@ -364,7 +369,7 @@ class DoctrineCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('- (optional) execute the migration using <b>%s doctrine:migrate</b>', array($this->getFlowInvocationString()));
 		} else {
 			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			$this->quit(1);
+			exit(1);
 		}
 	}
 

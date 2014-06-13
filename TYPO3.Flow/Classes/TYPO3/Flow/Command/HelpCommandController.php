@@ -12,53 +12,39 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\Command;
+use TYPO3\Flow\Cli\CommandArgumentDefinition;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\CommandManager;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
+use TYPO3\Flow\Mvc\Exception\CommandException;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * A Command Controller which provides help for available commands
  *
  * @Flow\Scope("singleton")
  */
-class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
+class HelpCommandController extends CommandController {
 
 	/**
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @Flow\Inject
+	 * @var Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
+	 * @Flow\Inject
 	 * @var CommandManager
 	 */
 	protected $commandManager;
-
-	/**
-	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
-	 * @return void
-	 */
-	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
-	 * @return void
-	 */
-	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
-		$this->bootstrap = $bootstrap;
-	}
-
-	/**
-	 * @param CommandManager $commandManager
-	 * @return void
-	 */
-	public function injectCommandManager(CommandManager $commandManager) {
-		$this->commandManager = $commandManager;
-	}
 
 	/**
 	 * Displays a short, general help message
@@ -140,6 +126,7 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('PACKAGE "%s":', array(strtoupper($packageKey)));
 			$this->outputLine(str_repeat('-', self::MAXIMUM_LINE_LENGTH));
 			foreach ($commandControllers as $commands) {
+				/** @var Command $command */
 				foreach ($commands as $command) {
 					$description = wordwrap($command->getShortDescription(), self::MAXIMUM_LINE_LENGTH - 43, PHP_EOL . str_repeat(' ', 43), TRUE);
 					$shortCommandIdentifier = $this->commandManager->getShortestIdentifierForCommand($command);
@@ -154,10 +141,10 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 	/**
 	 * Render help text for a single command
 	 *
-	 * @param \TYPO3\Flow\Cli\Command $command
+	 * @param Command $command
 	 * @return void
 	 */
-	protected function displayHelpForCommand(\TYPO3\Flow\Cli\Command $command) {
+	protected function displayHelpForCommand(Command $command) {
 		$this->outputLine();
 		$this->outputLine('<u>' . $command->getShortDescription() . '</u>');
 		$this->outputLine();
@@ -169,6 +156,7 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$commandArgumentDefinitions = $command->getArgumentDefinitions();
 		$usage = '';
 		$hasOptions = FALSE;
+		/** @var CommandArgumentDefinition $commandArgumentDefinition */
 		foreach ($commandArgumentDefinitions as $commandArgumentDefinition) {
 			if (!$commandArgumentDefinition->isRequired()) {
 				$hasOptions = TRUE;
@@ -231,7 +219,7 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 				try {
 					$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
 					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
-				} catch (\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
+				} catch (CommandException $exception) {
 					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, '<i>Command not available</i>'));
 				}
 			}
@@ -244,12 +232,12 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Displays an error message
 	 *
 	 * @Flow\Internal
-	 * @param \TYPO3\Flow\Mvc\Exception\CommandException $exception
+	 * @param CommandException $exception
 	 * @return void
 	 */
-	public function errorCommand(\TYPO3\Flow\Mvc\Exception\CommandException $exception) {
+	public function errorCommand(CommandException $exception) {
 		$this->outputLine($exception->getMessage());
-		if ($exception instanceof \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException) {
+		if ($exception instanceof AmbiguousCommandIdentifierException) {
 			$this->outputLine('Please specify the complete command identifier. Matched commands:');
 			$this->displayShortHelpForCommands($exception->getMatchingCommands());
 		}
@@ -267,6 +255,7 @@ class HelpCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 */
 	protected function buildCommandsIndex(array $commands) {
 		$commandsByPackagesAndControllers = array();
+		/** @var Command $command */
 		foreach ($commands as $command) {
 			if ($command->isInternal()) {
 				continue;

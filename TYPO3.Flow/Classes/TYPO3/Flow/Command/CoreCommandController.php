@@ -12,7 +12,21 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\Builder\ProxyClassBuilder as AopProxyClassBuilder;
 use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\Frontend\PhpFrontend;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Cli\RequestBuilder;
+use TYPO3\Flow\Cli\Response;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Mvc\Dispatcher;
+use TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder;
+use TYPO3\Flow\Object\Proxy\Compiler;
+use TYPO3\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Command controller for core commands
@@ -22,122 +36,122 @@ use TYPO3\Flow\Cache\Backend\FreezableBackendInterface;
  * @Flow\Scope("singleton")
  * @Flow\Proxy(false)
  */
-class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
+class CoreCommandController extends CommandController {
 
 	/**
-	 * @var \TYPO3\Flow\Cli\RequestBuilder
+	 * @var RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Dispatcher
+	 * @var Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var \TYPO3\Flow\SignalSlot\Dispatcher
+	 * @var SignalSlotDispatcher
 	 */
 	protected $signalSlotDispatcher;
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @var Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\Flow\Cache\CacheManager
+	 * @var CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \TYPO3\Flow\Object\Proxy\Compiler
+	 * @var Compiler
 	 */
 	protected $proxyClassCompiler;
 
 	/**
-	 * @var \TYPO3\Flow\Aop\Builder\ProxyClassBuilder
+	 * @var AopProxyClassBuilder
 	 */
 	protected $aopProxyClassBuilder;
 
 	/**
-	 * @var \TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder
+	 * @var ProxyClassBuilder
 	 */
 	protected $dependencyInjectionProxyClassBuilder;
 
 	/**
-	 * @var \TYPO3\Flow\Utility\Environment
+	 * @var Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @param \TYPO3\Flow\Cli\RequestBuilder $requestBuilder
+	 * @param RequestBuilder $requestBuilder
 	 * @return void
 	 */
-	public function injectRequestBuilder(\TYPO3\Flow\Cli\RequestBuilder $requestBuilder) {
+	public function injectRequestBuilder(RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Mvc\Dispatcher $dispatcher
+	 * @param Dispatcher $dispatcher
 	 * @return void
 	 */
-	public function injectDispatcher(\TYPO3\Flow\Mvc\Dispatcher $dispatcher) {
+	public function injectDispatcher(Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\SignalSlot\Dispatcher $signalSlotDispatcher
+	 * @param SignalSlotDispatcher $signalSlotDispatcher
 	 * @return void
 	 */
-	public function injectSignalSlotDispatcher(\TYPO3\Flow\SignalSlot\Dispatcher $signalSlotDispatcher) {
+	public function injectSignalSlotDispatcher(SignalSlotDispatcher $signalSlotDispatcher) {
 		$this->signalSlotDispatcher = $signalSlotDispatcher;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
+	 * @param CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Object\Proxy\Compiler $proxyClassCompiler
+	 * @param Compiler $proxyClassCompiler
 	 * @return void
 	 */
-	public function injectProxyClassCompiler(\TYPO3\Flow\Object\Proxy\Compiler $proxyClassCompiler) {
+	public function injectProxyClassCompiler(Compiler $proxyClassCompiler) {
 		$this->proxyClassCompiler = $proxyClassCompiler;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder
+	 * @param AopProxyClassBuilder $aopProxyClassBuilder
 	 * @return void
 	 */
-	public function injectAopProxyClassBuilder(\TYPO3\Flow\Aop\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
+	public function injectAopProxyClassBuilder(AopProxyClassBuilder $aopProxyClassBuilder) {
 		$this->aopProxyClassBuilder = $aopProxyClassBuilder;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder
+	 * @param ProxyClassBuilder $dependencyInjectionProxyClassBuilder
 	 * @return void
 	 */
-	public function injectDependencyInjectionProxyClassBuilder(\TYPO3\Flow\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder) {
+	public function injectDependencyInjectionProxyClassBuilder(ProxyClassBuilder $dependencyInjectionProxyClassBuilder) {
 		$this->dependencyInjectionProxyClassBuilder = $dependencyInjectionProxyClassBuilder;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Utility\Environment $environment
+	 * @param Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
+	public function injectEnvironment(Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -153,6 +167,7 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @return void
 	 */
 	public function compileCommand($force = FALSE) {
+		/** @var VariableFrontend $objectConfigurationCache */
 		$objectConfigurationCache = $this->cacheManager->getCache('Flow_Object_Configuration');
 		if ($force === FALSE) {
 			if ($objectConfigurationCache->has('allCompiledCodeUpToDate')) {
@@ -160,6 +175,7 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 			}
 		}
 
+		/** @var PhpFrontend $classesCache */
 		$classesCache = $this->cacheManager->getCache('Flow_Object_Classes');
 		$this->proxyClassCompiler->injectClassesCache($classesCache);
 
@@ -170,14 +186,16 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$classCount = $this->proxyClassCompiler->compile();
 
 		$dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
-		\TYPO3\Flow\Utility\Files::createDirectoryRecursively($dataTemporaryPath);
+		Files::createDirectoryRecursively($dataTemporaryPath);
 		file_put_contents($dataTemporaryPath . 'AvailableProxyClasses.php', $this->proxyClassCompiler->getStoredProxyClassMap());
 
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE);
 
 		$classesCacheBackend = $classesCache->getBackend();
 		if ($this->bootstrap->getContext()->isProduction() && $classesCacheBackend instanceof FreezableBackendInterface) {
-			$classesCache->getBackend()->freeze();
+			/** @var FreezableBackendInterface $backend */
+			$backend = $classesCache->getBackend();
+			$backend->freeze();
 		}
 
 		$this->emitFinishedCompilationRun($classCount);
@@ -236,7 +254,7 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 	public function shellCommand() {
 		if (!function_exists('readline_read_history')) {
 			$this->outputLine('Interactive Shell is not available on this system!');
-			$this->quit(1);
+			exit(1);
 		}
 		$subProcess = FALSE;
 		$pipes = array();
@@ -258,7 +276,7 @@ class CoreCommandController extends \TYPO3\Flow\Cli\CommandController {
 			readline_write_history($historyPathAndFilename);
 
 			$request = $this->requestBuilder->build($commandLine);
-			$response = new \TYPO3\Flow\Cli\Response();
+			$response = new Response();
 			$command = $request->getCommand();
 
 			if ($request === FALSE || $command->getCommandIdentifier() === FALSE) {

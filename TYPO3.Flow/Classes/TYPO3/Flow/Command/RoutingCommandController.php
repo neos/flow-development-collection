@@ -12,24 +12,29 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException;
+use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Mvc\Routing\Router;
 
 /**
  * Command controller for tasks related to routing
  *
  * @Flow\Scope("singleton")
  */
-class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
+class RoutingCommandController extends CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
+	 * @var ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
+	 * @var Router
 	 */
 	protected $router;
 
@@ -44,6 +49,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->initializeRouter();
 
 		$this->outputLine('Currently registered routes:');
+		/** @var Route $route */
 		foreach ($this->router->getRoutes() as $index => $route) {
 			$uriPattern = $route->getUriPattern();
 			$this->outputLine(str_pad(($index + 1) . '. ' . $uriPattern, 80) . $route->getName());
@@ -51,7 +57,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
-	 * Show informations for a route
+	 * Show information for a route
 	 *
 	 * This command displays the configuration of a route specified by index number.
 	 *
@@ -63,6 +69,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$routes = $this->router->getRoutes();
 		if (isset($routes[$index - 1])) {
+			/** @var Route $route */
 			$route = $routes[$index - 1];
 
 			$this->outputLine('<b>Information for route ' . $index . ':</b>');
@@ -114,12 +121,13 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->outputLine('  Action: ' . $routeValues['@action']);
 		$this->outputLine('  Format: ' . $routeValues['@format']);
 
+		$controllerObjectName = NULL;
 		/** @var $route \TYPO3\Flow\Mvc\Routing\Route */
 		foreach ($this->router->getRoutes() as $route) {
 			try {
 				$resolves = $route->resolves($routeValues);
 				$controllerObjectName = $this->router->getControllerObjectName($package, $subpackage, $controller);
-			} catch (\TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException $e) {
+			} catch (InvalidControllerException $e) {
 				$resolves = FALSE;
 			}
 
@@ -163,6 +171,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 		);
 		$httpRequest = new Request(array(), array(), array(), $server);
 
+		/** @var Route $route */
 		foreach ($this->router->getRoutes() as $route) {
 			if ($route->matches($httpRequest) === TRUE) {
 
@@ -186,15 +195,15 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 				if ($controllerObjectName === NULL) {
 					$this->outputLine('<b>Controller Error:</b>');
 					$this->outputLine('  !!! No Controller Object found !!!');
-					$this->quit(1);
+					exit(1);
 				}
 				$this->outputLine('<b>Controller:</b>');
 				$this->outputLine('  ' . $controllerObjectName);
-				$this->quit(0);
+				exit(0);
 			}
 		}
 		$this->outputLine('No matching Route was found');
-		$this->quit(1);
+		exit(1);
 	}
 
 	/**
@@ -203,7 +212,7 @@ class RoutingCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @return void
 	 */
 	protected function initializeRouter() {
-		$routesConfiguration = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 	}
 }

@@ -12,7 +12,16 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\Response;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Core\LockManager;
+use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Command controller for managing caches
@@ -21,78 +30,83 @@ use TYPO3\Flow\Cli\Response;
  *
  * @Flow\Scope("singleton")
  */
-class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
+class CacheCommandController extends CommandController {
 
 	/**
-	 * @var \TYPO3\Flow\Cache\CacheManager
+	 * @var CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \TYPO3\Flow\Core\LockManager
+	 * @var LockManager
 	 */
 	protected $lockManager;
 
 	/**
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @var Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManager
+	 * @var ObjectManager
 	 */
 	protected $objectManager;
 
 	/**
-	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
+	 * @var Environment
+	 */
+	protected $environment;
+
+	/**
+	 * @param CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Core\LockManager $lockManager
+	 * @param LockManager $lockManager
 	 * @return void
 	 */
-	public function injectLockManager(\TYPO3\Flow\Core\LockManager $lockManager) {
+	public function injectLockManager(LockManager $lockManager) {
 		$this->lockManager = $lockManager;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Package\PackageManagerInterface $packageManager
+	 * @param PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\TYPO3\Flow\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(PackageManagerInterface $packageManager) {
 		$this->packageManager =  $packageManager;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap
+	 * @param Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Object\ObjectManagerInterface $objectManager
+	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\Flow\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Utility\Environment $environment
+	 * @param Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\TYPO3\Flow\Utility\Environment $environment) {
+	public function injectEnvironment(Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -123,7 +137,7 @@ class CacheCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$this->cacheManager->flushCaches();
 		$dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
-		\TYPO3\Flow\Utility\Files::unlink($dataTemporaryPath . 'AvailableProxyClasses.php');
+		Files::unlink($dataTemporaryPath . 'AvailableProxyClasses.php');
 		$this->outputLine('Flushed all caches for "' . $this->bootstrap->getContext() . '" context.');
 		if ($this->lockManager->isSiteLocked()) {
 			$this->lockManager->unlockSite();

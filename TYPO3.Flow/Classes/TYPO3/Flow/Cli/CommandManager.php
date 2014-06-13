@@ -87,7 +87,7 @@ class CommandManager {
 	 * If more than one Command matches an AmbiguousCommandIdentifierException is thrown that contains the matched Commands
 	 *
 	 * @param string $commandIdentifier command identifier in the format foo:bar:baz
-	 * @return \TYPO3\Flow\Mvc\Cli\Command
+	 * @return \TYPO3\Flow\Cli\Command
 	 * @throws \TYPO3\Flow\Mvc\Exception\NoSuchCommandException if no matching command is available
 	 * @throws \TYPO3\Flow\Mvc\Exception\AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
 	 * @api

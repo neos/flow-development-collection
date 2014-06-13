@@ -12,50 +12,61 @@ namespace TYPO3\Flow\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPoint;
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager;
+use TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp;
+use TYPO3\Flow\Security\DummyContext;
+use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use TYPO3\Flow\Security\Policy\PolicyService;
 
 /**
  * Command controller for tasks related to security
  *
  * @Flow\Scope("singleton")
  */
-class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
+class SecurityCommandController extends CommandController {
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 * @Flow\Inject
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
 	 * @Flow\Inject
+	 * @var ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Cryptography\RsaWalletServicePhp
 	 * @Flow\Inject
+	 * @var RsaWalletServicePhp
 	 */
 	protected $rsaWalletService;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Policy\PolicyService
 	 * @Flow\Inject
+	 * @var PolicyService
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+	 * @var VariableFrontend
 	 */
 	protected $policyCache;
 
 	/**
 	 * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
 	 *
-	 * @param \TYPO3\Flow\Cache\CacheManager $cacheManager
+	 * @param CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\TYPO3\Flow\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(CacheManager $cacheManager) {
 		$this->policyCache = $cacheManager->getCache('Flow_Security_Policy');
 	}
 
@@ -119,7 +130,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		if (empty($roleIdentifiers) === TRUE) {
 			$this->outputLine('Please specify at leas one role, to calculate the effective privileges for!');
-			$this->quit(1);
+			exit(1);
 		}
 
 		foreach ($roleIdentifiers as $roleIdentifier) {
@@ -136,7 +147,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		if (count($roles) === 0) {
 			$this->outputLine('The specified role(s) do not exist.');
-			$this->quit(1);
+			exit(1);
 		}
 
 		$this->outputLine(PHP_EOL . 'The following roles will be used for calculating the effective privileges (retrieved from the configured roles hierarchy):' . PHP_EOL);
@@ -144,9 +155,9 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine($roleIdentifier);
 		}
 
-		$dummySecurityContext = new \TYPO3\Flow\Security\DummyContext();
+		$dummySecurityContext = new DummyContext();
 		$dummySecurityContext->setRoles($roles);
-		$accessDecisionManager = new \TYPO3\Flow\Security\Authorization\AccessDecisionVoterManager($this->objectManager, $dummySecurityContext);
+		$accessDecisionManager = new AccessDecisionVoterManager($this->objectManager, $dummySecurityContext);
 
 		if ($this->policyCache->has('acls')) {
 			$classes = array();
@@ -188,8 +199,8 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 				if ($runtimeEvaluationsInPlace === FALSE) {
 					try {
-						$accessDecisionManager->decideOnJoinPoint(new \TYPO3\Flow\Aop\JoinPoint(NULL, $className, $methodName, array()));
-					} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
+						$accessDecisionManager->decideOnJoinPoint(new JoinPoint(NULL, $className, $methodName, array()));
+					} catch (AccessDeniedException $e) {
 						$classes[$className][$methodName]['effectivePrivilege'] = $e->getMessage();
 					}
 					if (!isset($classes[$className][$methodName]['effectivePrivilege'])) {
@@ -215,13 +226,13 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 					if (isset($resources['resources']) === TRUE && is_array($resources['resources']) === TRUE) {
 						foreach ($resources['resources'] as $resourceName => $privilege) {
 							switch ($privilege['privilege']) {
-								case \TYPO3\Flow\Security\Policy\PolicyService::PRIVILEGE_GRANT:
+								case PolicyService::PRIVILEGE_GRANT:
 									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Access granted');
 									break;
-								case \TYPO3\Flow\Security\Policy\PolicyService::PRIVILEGE_DENY:
+								case PolicyService::PRIVILEGE_DENY:
 									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Access denied');
 									break;
-								case \TYPO3\Flow\Security\Policy\PolicyService::PRIVILEGE_ABSTAIN:
+								case PolicyService::PRIVILEGE_ABSTAIN:
 									$this->outputLine('   Resource "<i>' . $resourceName . '</i>": Vote abstained (no acl entry for given roles)');
 									break;
 							}
@@ -306,7 +317,7 @@ class SecurityCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 			if (count($classes) === 0) {
 				$this->outputLine('The given Resource did not match any method or is unknown.');
-				$this->quit(1);
+				exit(1);
 			}
 
 			foreach ($classes as $className => $methods) {

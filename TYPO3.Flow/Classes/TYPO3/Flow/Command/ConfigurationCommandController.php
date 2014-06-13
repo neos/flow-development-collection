@@ -11,30 +11,38 @@ namespace TYPO3\Flow\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Configuration\ConfigurationSchemaValidator;
+use TYPO3\Flow\Configuration\Exception\SchemaValidationException;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\SchemaGenerator;
 
 /**
  * Configuration command controller for the TYPO3.Flow package
  *
  * @Flow\Scope("singleton")
  */
-class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
+class ConfigurationCommandController extends CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
+	 * @var ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
 	 * @Flow\Inject(lazy = FALSE)
-	 * @var \TYPO3\Flow\Configuration\ConfigurationSchemaValidator
+	 * @var ConfigurationSchemaValidator
 	 */
 	protected $configurationSchemaValidator;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Utility\SchemaGenerator
+	 * @var SchemaGenerator
 	 */
 	protected $schemaGenerator;
 
@@ -55,13 +63,13 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 		if (in_array($type, $availableConfigurationTypes)) {
 			$configuration = $this->configurationManager->getConfiguration($type);
 			if ($path !== NULL) {
-				$configuration = \TYPO3\Flow\Utility\Arrays::getValueByPath($configuration, $path);
+				$configuration = Arrays::getValueByPath($configuration, $path);
 			}
 			$typeAndPath = $type . ($path ? ': ' . $path : '');
 			if ($configuration === NULL) {
 				$this->outputLine('<b>Configuration "%s" was empty!</b>', array($typeAndPath));
 			} else {
-				$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration, 99);
+				$yaml = Yaml::dump($configuration, 99);
 				$this->outputLine('<b>Configuration "%s":</b>', array($typeAndPath));
 				$this->outputLine();
 				$this->outputLine($yaml . chr(10));
@@ -119,13 +127,13 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 		$this->outputLine();
 
+		$validatedSchemaFiles = array();
 		try {
-			$validatedSchemaFiles = array();
 			$result = $this->configurationSchemaValidator->validate($type, $path, $validatedSchemaFiles);
-		} catch (\TYPO3\Flow\Configuration\Exception\SchemaValidationException $exception) {
+		} catch (SchemaValidationException $exception) {
 			$this->outputLine('<b>Error:</b>');
 			$this->outputFormatted($exception->getMessage(), array(), 4);
-			$this->quit(2);
+			exit(2);
 		}
 
 		if ($verbose) {
@@ -139,15 +147,15 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 		if ($result->hasErrors()) {
 			$errors = $result->getFlattenedErrors();
 			$this->outputLine('<b>%s errors were found:</b>', array(count($errors)));
+			/** @var Error $error */
 			foreach ($errors as $path => $pathErrors) {
 				foreach ($pathErrors as $error) {
 					$this->outputLine(' - %s -> %s', array($path, $error->render()));
 				}
 			}
-			$this->quit(1);
+			exit(1);
 		} else {
 			$this->outputLine('<b>All Valid!</b>');
-			$this->quit(0);
 		}
 	}
 
@@ -166,21 +174,20 @@ class ConfigurationCommandController extends \TYPO3\Flow\Cli\CommandController {
 	public function generateSchemaCommand($type = NULL, $path = NULL, $yaml = NULL) {
 		$data = NULL;
 		if ($yaml !== NULL && is_file($yaml) && is_readable($yaml)) {
-			$data = \Symfony\Component\Yaml\Yaml::parse($yaml);
+			$data = Yaml::parse($yaml);
 		} elseif ($type !== NULL) {
 			$data = $this->configurationManager->getConfiguration($type);
 			if ($path !== NULL) {
-				$data = \TYPO3\Flow\Utility\Arrays::getValueByPath($data, $path);
+				$data = Arrays::getValueByPath($data, $path);
 			}
 		}
 
 		if (empty($data)) {
 			$this->outputLine('Data was not found or is empty');
-			return;
+			exit(1);
 		}
 
-		$yaml = \Symfony\Component\Yaml\Yaml::dump($this->schemaGenerator->generate($data), 99);
-		$this->output($yaml . chr(10));
+		$this->outputLine(Yaml::dump($this->schemaGenerator->generate($data), 99));
 	}
 
 }
