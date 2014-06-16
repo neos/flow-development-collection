@@ -391,7 +391,7 @@ class SchemaValidator {
 			}
 		}
 
-		if (isset($schema['additionalProperties']) && count($propertyKeysToHandle) > 0) {
+		if (isset($schema['additionalProperties']) && $schema['additionalProperties'] !== TRUE && count($propertyKeysToHandle) > 0) {
 			if ($schema['additionalProperties'] === FALSE) {
 				foreach ($propertyKeysToHandle as $propertyKey) {
 					$result->forProperty($propertyKey)->addError($this->createError('This property is not allowed here, check the spelling if you think it belongs here.'));
