@@ -62,8 +62,8 @@ properties:
       'sqlLogger': { type: [string, 'null'], required: TRUE }
       'eventSubscribers': { type: array, items: { type: string, format: class-name } }
       'eventListeners':
-        type: array
-        items:
+        type: dictionary
+        additionalProperties:
           type: dictionary
           additionalProperties: FALSE
           properties:
