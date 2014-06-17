@@ -66,7 +66,7 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * Sets up the redis backend used for testing
 	 *
-	 * @param array Options for the memcache backend
+	 * @param array $backendOptions Options for the memcache backend
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
 		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
@@ -101,6 +101,8 @@ class RedisBackendTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function initializeObjectThrowsNoExceptionIfGivenDatabaseWasSuccessfullySelected() {
 		$this->setUpBackend(array('database' => 1));
+		// dummy assertion to avoid "risky test" warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**
