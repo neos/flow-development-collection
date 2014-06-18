@@ -477,8 +477,9 @@ class FormViewHelper extends AbstractFormViewHelper {
 		$result = '';
 		if ($this->viewHelperVariableContainer->exists('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames')) {
 			$emptyHiddenFieldNames = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames');
-			foreach ($emptyHiddenFieldNames as $hiddenFieldName) {
-				$result .= '<input type="hidden" name="' . htmlspecialchars($hiddenFieldName) . '" value="" />' . chr(10);
+			foreach ($emptyHiddenFieldNames as $hiddenFieldName => $disabled) {
+				$disabledAttribute = $disabled !== FALSE ? ' disabled="' . htmlspecialchars($disabled) . '"' : '';
+				$result .= '<input type="hidden" name="' . htmlspecialchars($hiddenFieldName) . '" value=""' . $disabledAttribute . ' />' . chr(10);
 			}
 		}
 		return $result;

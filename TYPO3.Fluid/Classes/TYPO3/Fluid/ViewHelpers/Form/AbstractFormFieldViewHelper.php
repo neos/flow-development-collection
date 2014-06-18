@@ -309,8 +309,12 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper {
 		if (substr($fieldName, -2) === '[]') {
 			$fieldName = substr($fieldName, 0, -2);
 		}
-		if (!in_array($fieldName, $emptyHiddenFieldNames)) {
-			$emptyHiddenFieldNames[] = $fieldName;
+		if (!isset($emptyHiddenFieldNames[$fieldName])) {
+			$disabled = FALSE;
+			if ($this->tag->hasAttribute('disabled')) {
+				$disabled = $this->tag->getAttribute('disabled');
+			}
+			$emptyHiddenFieldNames[$fieldName] = $disabled;
 			$this->viewHelperVariableContainer->addOrUpdate('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'emptyHiddenFieldNames', $emptyHiddenFieldNames);
 		}
 	}
