@@ -11,14 +11,19 @@ namespace TYPO3\Flow\Persistence\Doctrine\Mapping;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Persistence\Mapping\ReflectionService as DoctrineReflectionService;
+use TYPO3\Flow\Reflection\ClassReflection;
+
 /**
+ * A ClassMetadata instance holds all the object-relational mapping metadata
+ * of an entity and it's associations.
  */
 class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 
 	/**
 	 * Gets the ReflectionClass instance of the mapped class.
 	 *
-	 * @return \TYPO3\Flow\Reflection\ClassReflection
+	 * @return ClassReflection
 	 */
 	public function getReflectionClass() {
 		if ($this->reflClass === NULL) {
@@ -30,11 +35,22 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 	/**
 	 * Initializes $this->reflClass and a number of related variables.
 	 *
-	 * @param \Doctrine\Common\Persistence\Mapping\ReflectionService $reflService
+	 * @param DoctrineReflectionService $reflService
 	 * @return void
 	 */
 	public function initializeReflection($reflService) {
 		$this->_initializeReflection();
+	}
+
+	/**
+	 * Restores some state that can not be serialized/unserialized.
+	 *
+	 * @param DoctrineReflectionService $reflService
+	 * @return void
+	 */
+	public function wakeupReflection($reflService) {
+		parent::wakeupReflection($reflService);
+		$this->reflClass = new ClassReflection($this->name);
 	}
 
 	/**
@@ -43,7 +59,7 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 	 * @return void
 	 */
 	protected function _initializeReflection() {
-		$this->reflClass = new \TYPO3\Flow\Reflection\ClassReflection($this->name);
+		$this->reflClass = new ClassReflection($this->name);
 		$this->namespace = $this->reflClass->getNamespaceName();
 		$this->name = $this->rootEntityName = $this->reflClass->getName();
 		$this->table['name'] = $this->reflClass->getShortName();
