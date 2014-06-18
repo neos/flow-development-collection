@@ -242,7 +242,7 @@ class CsrfProtectionTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$controllerActionName = 'list';
 
 		$httpRequest = Request::create(new Uri('http://localhost'), 'POST');
-		$httpRequest->setHeader('X-Flow-CsrfToken', 'validToken');
+		$httpRequest->setHeader('X-Flow-Csrftoken', 'validToken');
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 
