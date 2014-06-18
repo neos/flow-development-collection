@@ -3,7 +3,7 @@
 TYPO3 Flow Annotation Reference
 ===============================
 
-This reference was automatically generated from code on 2014-05-26
+This reference was automatically generated from code on 2014-06-18
 
 
 After
@@ -237,9 +237,14 @@ Arguments
 * ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
   proxy should be injected instead
 
-* ``setting`` (string): Path of a setting which should be injected into the property
+* ``setting`` (string): Path of a setting (without the package key) which should be injected into the property.
+  Example: security.enable
 
-* ``package`` (string): Package to load the setting from
+* ``package`` (string): Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
+  is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
+  used.
+  
+  Example: TYPO3.Flow
 
 
 
