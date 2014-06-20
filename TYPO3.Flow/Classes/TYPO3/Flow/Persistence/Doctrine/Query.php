@@ -412,7 +412,7 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 			return $this->queryBuilder->expr()->eq($aliasedPropertyName, $this->getParamNeedle($operand));
 		}
 
-		return $this->queryBuilder->expr()->eq($this->queryBuilder->expr()->lower($aliasedPropertyName), $this->getParamNeedle(strtolower($operand)));
+		return $this->queryBuilder->expr()->eq($this->queryBuilder->expr()->lower($aliasedPropertyName), $this->getParamNeedle(UnicodeFunctions::strtolower($operand)));
 	}
 
 	/**
