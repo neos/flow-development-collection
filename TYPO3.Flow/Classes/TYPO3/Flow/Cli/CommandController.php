@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Cli;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -97,6 +98,11 @@ class CommandController implements ControllerInterface {
 	public function __construct() {
 		$this->arguments = new Arguments(array());
 		$this->output = new ConsoleOutput();
+		$this->output->getFormatter()->setStyle('b', new OutputFormatterStyle(NULL, NULL, array('bold')));
+		$this->output->getFormatter()->setStyle('i', new OutputFormatterStyle('black', 'white'));
+		$this->output->getFormatter()->setStyle('u', new OutputFormatterStyle(NULL, NULL, array('underscore')));
+		$this->output->getFormatter()->setStyle('em', new OutputFormatterStyle(NULL, NULL, array('reverse')));
+		$this->output->getFormatter()->setStyle('strike', new OutputFormatterStyle(NULL, NULL, array('conceal')));
 	}
 
 	/**
