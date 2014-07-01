@@ -431,7 +431,9 @@ class Headers {
 		$cookiePairs = explode(';', $rawFieldValue);
 		foreach ($cookiePairs as $cookiePair) {
 			list($name, $value) = explode('=', $cookiePair, 2);
-			$this->setCookie(new Cookie(trim($name), urldecode(trim($value, "\t ;\""))));
+			if (trim($name) !== '') {
+				$this->setCookie(new Cookie(trim($name), urldecode(trim($value, "\t ;\""))));
+			}
 		}
 	}
 

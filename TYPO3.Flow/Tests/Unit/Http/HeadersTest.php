@@ -13,11 +13,12 @@ namespace TYPO3\Flow\Tests\Unit\Http;
 
 use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Cookie;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the Http Headers class
+ * Test case for the Http Headers class
  */
-class HeadersTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class HeadersTest extends UnitTestCase {
 
 	/**
 	 * @test
@@ -209,6 +210,19 @@ class HeadersTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('the value number 2', $headers->getCookie('cookie2')->getValue());
 
 		$this->assertEquals('Fön + x = \'test\'', $headers->getCookie('Cookie-Thing3')->getValue());
+	}
+
+	/**
+	 * See FLOW-12
+	 *
+	 * @test
+	 */
+	public function cookiesWithEmptyNameAreIgnored() {
+		$headers = new Headers();
+		$headers->set('Cookie', array('cookie1=the+value+number+1; =foo'));
+
+		$this->assertTrue($headers->hasCookie('cookie1'));
+		$this->assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
 	}
 
 	/**
