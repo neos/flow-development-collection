@@ -31,7 +31,7 @@ class BooleanConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('boolean', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals(array('boolean', 'string', 'integer', 'float'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
 		$this->assertEquals('boolean', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
@@ -62,21 +62,24 @@ class BooleanConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	public function convertFromDataProvider() {
 		return array(
-			array('source' => '', 'expected' => FALSE),
-			array('source' => '0', 'expected' => FALSE),
-			array('source' => '1', 'expected' => TRUE),
-			array('source' => 'false', 'expected' => FALSE),
-			array('source' => 'true', 'expected' => TRUE),
-			array('source' => 'some string', 'expected' => TRUE),
-			array('source' => 'FaLsE', 'expected' => FALSE),
-			array('source' => 'tRuE', 'expected' => TRUE),
-			array('source' => 'tRuE', 'expected' => TRUE),
-			array('source' => 'off', 'expected' => FALSE),
-			array('source' => 'N', 'expected' => FALSE),
-			array('source' => 'no', 'expected' => FALSE),
-			array('source' => 'not no', 'expected' => TRUE),
-			array('source' => TRUE, 'expected' => TRUE),
-			array('source' => FALSE, 'expected' => FALSE),
+			array('', FALSE),
+			array('0', FALSE),
+			array('1', TRUE),
+			array('false', FALSE),
+			array('true', TRUE),
+			array('some string', TRUE),
+			array('FaLsE', FALSE),
+			array('tRuE', TRUE),
+			array('tRuE', TRUE),
+			array('off', FALSE),
+			array('N', FALSE),
+			array('no', FALSE),
+			array('not no', TRUE),
+			array(TRUE, TRUE),
+			array(FALSE, FALSE),
+			array(1, TRUE),
+			array(0, FALSE),
+			array(1.0, TRUE),
 		);
 	}
 

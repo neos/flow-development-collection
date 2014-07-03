@@ -14,7 +14,9 @@ namespace TYPO3\Flow\Property\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A type converter for converting URI strings to Http Uri objects
+ * A type converter for converting URI strings to Http Uri objects.
+ *
+ * This converter simply creates a TYPO3\Flow\Http\Uri instance from the source string.
  *
  * @Flow\Scope("singleton")
  */

@@ -14,7 +14,7 @@ namespace TYPO3\Flow\Property\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * This converter transforms persistent objects to strings.
+ * This converter transforms persistent objects to strings by returning their (technical) identifier.
  *
  * Unpersisted changes to an object are not serialized, because only the persistence identifier is taken into account
  * as the serialized value.
@@ -45,20 +45,9 @@ class PersistentObjectSerializer extends AbstractTypeConverter {
 	protected $persistenceManager;
 
 	/**
-	 * We can only convert if the $targetType is either tagged with entity or value object.
-	 *
-	 * @param mixed $source
-	 * @param string $targetType
-	 * @return boolean
-	 */
-	public function canConvertFrom($source, $targetType) {
-		return TRUE;
-	}
-
-	/**
 	 * Convert an entity or valueobject to a string representation (by using the identifier)
 	 *
-	 * @param mixed $source
+	 * @param object $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration

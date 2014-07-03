@@ -14,12 +14,13 @@ namespace TYPO3\Flow\Property\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Converter which transforms from different input formats into DateTime objects.
+ * Converter which transforms from string, integer and array into DateTime objects.
  *
- * Source can be either a string or an array. The date string is expected to be formatted
- * according to DEFAULT_DATE_FORMAT.
+ * For integers the default is to treat them as a unix timestamp. If a format to cerate from is given, this will be
+ * used instead.
  *
- * But the default date format can be overridden in the initialize*Action() method like this::
+ * If source is a string it is expected to be formatted according to DEFAULT_DATE_FORMAT. This default date format
+ * can be overridden in the initialize*Action() method like this::
  *
  *  $this->arguments['<argumentName>']
  *    ->getPropertyMappingConfiguration()

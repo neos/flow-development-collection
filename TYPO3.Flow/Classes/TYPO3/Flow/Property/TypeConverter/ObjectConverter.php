@@ -16,6 +16,14 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * This converter transforms arrays to simple objects (POPO) by setting properties.
  *
+ * This converter will only be used on target types that are not entities or value objects (for those the
+ * PersistentObjectConverter is used).
+ *
+ * The target type can be overridden in the source by setting the __type key to the desired value.
+ *
+ * The converter will return an instance of the target type with all properties given in the source array set to
+ * the respective values. For the mechanics used to set the values see ObjectAccess::setProperty().
+ *
  * @api
  * @Flow\Scope("singleton")
  */

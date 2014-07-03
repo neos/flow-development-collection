@@ -17,11 +17,13 @@ use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use TYPO3\Flow\I18n\Cldr\Reader\NumbersReader;
 
 /**
- * Converter which transforms a simple type to a float.
+ * Converter which transforms a float, integer or string to a float.
  *
- * This is basically done by simply casting it, except you provide some configuration options
- * which will make this converter use Flow's locale parsing capabilities in order to respect
- * deviating decimal separators.
+ * This is basically done by simply casting it, unless the input is a string and you provide some configuration
+ * options which will make this converter use Flow's locale parsing capabilities in order to respect deviating
+ * decimal separators.
+ *
+ * Using NULL or an empty string as input will result in a NULL return value.
  *
  * **Advanced usage in action controller context**
  *

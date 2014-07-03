@@ -16,6 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Type converter which provides sensible default implementations for most methods. If you extend this class
  * you only need to do the following:
+ *
  * - set $sourceTypes
  * - set $targetType
  * - set $priority

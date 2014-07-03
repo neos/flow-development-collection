@@ -14,7 +14,11 @@ namespace TYPO3\Flow\Property\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Converter which transforms simple types to a boolean, by simply casting it.
+ * Converter which transforms simple types to a boolean.
+ *
+ * For boolean this is a no-op, integer and float are simply typecast to boolean.
+ *
+ * Strings are converted to TRUE unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
  *
  * @api
  * @Flow\Scope("singleton")
@@ -24,7 +28,7 @@ class BooleanConverter extends AbstractTypeConverter {
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('boolean', 'string');
+	protected $sourceTypes = array('boolean', 'string', 'integer', 'float');
 
 	/**
 	 * @var string
@@ -39,7 +43,7 @@ class BooleanConverter extends AbstractTypeConverter {
 	/**
 	 * Actually convert from $source to $targetType
 	 *
-	 * @param string $source
+	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
@@ -50,6 +54,11 @@ class BooleanConverter extends AbstractTypeConverter {
 		if (is_bool($source)) {
 			return $source;
 		}
+
+		if (is_int($source) || is_float(($source))) {
+			return (boolean)$source;
+		}
+
 		return (!empty($source) && !in_array(strtolower($source), array('off', 'n', 'no', 'false')));
 	}
 }
