@@ -31,7 +31,7 @@ class IntegerConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('integer', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals(array('integer', 'string', 'DateTime'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
 		$this->assertEquals('integer', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
@@ -39,8 +39,16 @@ class IntegerConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function convertFromShouldCastTheStringToInteger() {
+	public function convertFromCastsStringToInteger() {
 		$this->assertSame(15, $this->converter->convertFrom('15', 'integer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertFromCastsDateTimeToInteger() {
+		$dateTime = new \DateTime();
+		$this->assertSame($dateTime->format('U'), $this->converter->convertFrom($dateTime, 'integer'));
 	}
 
 	/**
@@ -91,6 +99,13 @@ class IntegerConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function canConvertFromShouldReturnTrueForANullValue() {
 		$this->assertTrue($this->converter->canConvertFrom(NULL, 'integer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function canConvertFromShouldReturnTrueForADateTimeValue() {
+		$this->assertTrue($this->converter->canConvertFrom(new \DateTime(), 'integer'));
 	}
 
 	/**

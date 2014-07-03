@@ -14,10 +14,8 @@ namespace TYPO3\Flow\Utility;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The array functions from the good old t3lib_div plus new code.
+ * Some array functions to help with common tasks
  *
- * @Flow\Scope("singleton")
- * @todo (robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
  */
 class Arrays {
 

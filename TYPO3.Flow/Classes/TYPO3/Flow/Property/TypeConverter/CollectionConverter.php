@@ -14,11 +14,13 @@ namespace TYPO3\Flow\Property\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Converter which transforms simple types to a Doctrine ArrayCollection.
+ * Converter which transforms strings and arrays into a Doctrine ArrayCollection.
+ *
+ * The input will be transformed to the element type <T> given with the $targetType (Type<T>) using available
+ * type converters and the result will be used to populate a Doctrine ArrayCollection.
  *
  * @api
  * @Flow\Scope("singleton")
- * @todo Implement functionality for converting collection properties.
  */
 class CollectionConverter extends AbstractTypeConverter {
 

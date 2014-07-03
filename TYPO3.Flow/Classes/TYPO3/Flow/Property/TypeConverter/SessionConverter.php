@@ -16,6 +16,8 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * This converter transforms a session identifier into a real session object.
  *
+ * Given a session ID this will return an instance of TYPO3\Flow\Session\Session.
+ *
  * @api
  * @Flow\Scope("singleton")
  */

@@ -16,7 +16,10 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Utility\TypeHandling;
 
 /**
- * Converter which recursively transforms typed arrays (array<T>)
+ * Converter which recursively transforms typed arrays (array<T>).
+ *
+ * This is a meta converter that will take an array and try to transform all elements in that array to
+ * the element type <T> of the target array using an available type converter.
  *
  * @api
  * @Flow\Scope("singleton")

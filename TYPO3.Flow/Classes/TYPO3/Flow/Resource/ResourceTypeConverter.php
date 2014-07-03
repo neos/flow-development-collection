@@ -14,7 +14,14 @@ namespace TYPO3\Flow\Resource;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * An type converter for ResourcePointer objects
+ * An type converter for converting uploaded files to Resource objects.
+ *
+ * The input array is expected to be a fresh file upload following the native PHP handling. The temporary upload file
+ * is then imported through the resource manager.
+ *
+ * To enable the handling of files that have already been uploaded earlier, the special fields ['submittedFile'],
+ * ['submittedFile']['filename'] and ['submittedFile']['resourcePointer'] are checked. If set, they are used to
+ * fetch a file that has already been uploaded even if no file has been actually uploaded in the current request.
  *
  * @Flow\Scope("singleton")
  */
@@ -59,9 +66,22 @@ class ResourceTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 	protected $convertedResources = array();
 
 	/**
-	 * Converts the given string or array to a ResourcePointer object.
+	 * Here, the TypeConverter can do some additional runtime checks to see whether
+	 * it can handle the given source data and the given target type.
 	 *
-	 * If the input format is an array, this method assumes the resource to be a
+	 * @param mixed $source the source data
+	 * @param string $targetType the type to convert to.
+	 * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, FALSE otherwise.
+	 * @api
+	 */
+	public function canConvertFrom($source, $targetType) {
+		return isset($source['error']) || isset($source['submittedFile']);
+	}
+
+	/**
+	 * Converts the given string or array to a Resource object.
+	 *
+	 * This method expects an array input and assumes the resource to be a
 	 * fresh file upload and imports the temporary upload file through the
 	 * resource manager.
 	 *

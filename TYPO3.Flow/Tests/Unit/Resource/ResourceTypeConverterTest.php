@@ -54,8 +54,15 @@ class ResourceTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function canConvertFromReturnsTrueIfSourceTypeIsAnArray() {
-		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array(), 'TYPO3\Flow\Resource\Resource'));
+	public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithErrorSet() {
+		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('error' => \UPLOAD_ERR_OK), 'TYPO3\Flow\Resource\Resource'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function canConvertFromReturnsTrueIfSourceTypeIsAnArrayWithSubmittedFileSet() {
+		$this->assertTrue($this->resourceTypeConverter->canConvertFrom(array('submittedFile' => 'somehash'), 'TYPO3\Flow\Resource\Resource'));
 	}
 
 	/**

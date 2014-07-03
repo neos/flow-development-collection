@@ -11,6 +11,8 @@ namespace TYPO3\Flow\Tests\Unit\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Property\TypeConverter\StringConverter;
+
 /**
  * Testcase for the String converter
  *
@@ -24,14 +26,14 @@ class StringConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \TYPO3\Flow\Property\TypeConverter\StringConverter();
+		$this->converter = new StringConverter();
 	}
 
 	/**
 	 * @test
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('string', 'integer'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals(array('string', 'integer', 'float', 'boolean', 'array', 'DateTime'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
 		$this->assertEquals('string', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
@@ -55,5 +57,36 @@ class StringConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
 		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));
+	}
+
+
+	public function arrayToStringDataProvider() {
+		return array(
+			array(array('Foo', 'Bar', 'Baz'), 'Foo,Bar,Baz', array()),
+			array(array('Foo', 'Bar', 'Baz'), 'Foo, Bar, Baz', array(StringConverter::CONFIGURATION_CSV_DELIMITER => ', ')),
+			array(array(), '', array()),
+			array(array(1,2, 'foo'), '[1,2,"foo"]', array(StringConverter::CONFIGURATION_ARRAY_FORMAT => StringConverter::ARRAY_FORMAT_JSON))
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider arrayToStringDataProvider
+	 */
+	public function canConvertFromStringToArray($source, $expectedResult, $mappingConfiguration) {
+
+		// Create a map of arguments to return values.
+		$configurationValueMap = array();
+		foreach ($mappingConfiguration as $setting => $value) {
+			$configurationValueMap[] = array('TYPO3\Flow\Property\TypeConverter\StringConverter', $setting, $value);
+		}
+
+		$propertyMappingConfiguration = $this->getMock('\TYPO3\Flow\Property\PropertyMappingConfiguration');
+		$propertyMappingConfiguration
+			->expects($this->any())
+			->method('getConfigurationValue')
+			->will($this->returnValueMap($configurationValueMap));
+
+		$this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', array(), $propertyMappingConfiguration));
 	}
 }
