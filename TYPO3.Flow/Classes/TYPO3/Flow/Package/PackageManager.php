@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Package\Exception\MissingPackageManifestException;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\TypeHandling;
@@ -37,6 +38,11 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @var PackageFactory
 	 */
 	protected $packageFactory;
+
+	/**
+	 * @var array
+	 */
+	static protected $composerLockCache = NULL;
 
 	/**
 	 * Array of available packages, indexed by package key (case sensitive)
@@ -805,7 +811,7 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 				$this->composerNameToPackageKeyMap[strtolower($composerManifest->name)] = $packageKey;
 				$this->packageStatesConfiguration['packages'][$packageKey]['manifestPath'] = substr($composerManifestPath, strlen($packagePath)) ?: '';
 				$this->packageStatesConfiguration['packages'][$packageKey]['composerName'] = $composerManifest->name;
-			} catch (\TYPO3\Flow\Package\Exception\MissingPackageManifestException $exception) {
+			} catch (MissingPackageManifestException $exception) {
 				$relativePackagePath = substr($packagePath, strlen($this->packagesBasePath));
 				$packageKey = substr($relativePackagePath, strpos($relativePackagePath, '/') + 1, -1);
 			}
@@ -895,16 +901,12 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 	 * @param string $key Optional. Only return the part of the manifest indexed by 'key'
 	 * @param object $composerManifest Optional. Manifest to use instead of reading it from file
 	 * @return mixed
-	 * @throws \TYPO3\Flow\Package\Exception\MissingPackageManifestException
+	 * @throws MissingPackageManifestException
 	 * @see json_decode for return values
 	 */
 	static public function getComposerManifest($manifestPath, $key = NULL, $composerManifest = NULL) {
 		if ($composerManifest === NULL) {
-			if (!file_exists($manifestPath . 'composer.json')) {
-				throw new \TYPO3\Flow\Package\Exception\MissingPackageManifestException('No composer manifest file found at "' . $manifestPath . '/composer.json".', 1349868540);
-			}
-			$json = file_get_contents($manifestPath . 'composer.json');
-			$composerManifest = json_decode($json);
+			$composerManifest = self::readComposerManifest($manifestPath);
 		}
 
 		if ($key !== NULL) {
@@ -917,6 +919,65 @@ class PackageManager implements \TYPO3\Flow\Package\PackageManagerInterface {
 			$value = $composerManifest;
 		}
 		return $value;
+	}
+
+	/**
+	 * Read the content of the composer.lock
+	 *
+	 * @return array
+	 */
+	static public function readComposerLock() {
+		if (self::$composerLockCache === NULL) {
+			if (!file_exists(FLOW_PATH_ROOT . 'composer.lock')) {
+				return array();
+			}
+			$json = file_get_contents(FLOW_PATH_ROOT . 'composer.lock');
+			$composerLock = json_decode($json, TRUE);
+			$composerPackageVersions = isset($composerLock['packages']) ? $composerLock['packages'] : array();
+			$composerPackageDevVersions = isset($composerLock['packages-dev']) ? $composerLock['packages-dev'] : array();
+			self::$composerLockCache = array_merge($composerPackageVersions, $composerPackageDevVersions);
+		}
+
+		return self::$composerLockCache;
+	}
+
+	/**
+	 * Read the content of composer.json in the given path
+	 *
+	 * @param string $manifestPath
+	 * @return \stdClass
+	 * @throws MissingPackageManifestException
+	 */
+	static protected function readComposerManifest($manifestPath) {
+		if (!file_exists($manifestPath . 'composer.json')) {
+			throw new MissingPackageManifestException(sprintf('No composer manifest file found at "%s/composer.json".', $manifestPath), 1349868540);
+		}
+		$json = file_get_contents($manifestPath . 'composer.json');
+		$composerManifest = json_decode($json);
+		$composerManifest->version = self::getPackageVersion($composerManifest->name);
+
+		return $composerManifest;
+	}
+
+	/**
+	 * Get the package version of the given package
+	 * Return normalized package version.
+	 *
+	 * @param string $packageName
+	 * @return string
+	 * @see https://getcomposer.org/doc/04-schema.md#version
+	 */
+	static protected function getPackageVersion($packageName) {
+		foreach (self::readComposerLock() as $packageState) {
+			if (!isset($packageState['name'])) {
+				continue;
+			}
+			if ($packageState['name'] === $packageName) {
+				return preg_replace('/^v([0-9])/', '$1', $packageState['version'], 1);
+			}
+		}
+
+		return '';
 	}
 
 	/**
