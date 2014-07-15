@@ -447,3 +447,5 @@ TYPO3:
         # The directory must be writable and Flow will automatically create a sub
         # directory (named after the context) which will contain the actual temporary files.
         temporaryDirectoryBase: '%FLOW_PATH_DATA%Temporary/'
+
+      lockStrategyClassName: TYPO3\Flow\Utility\Lock\FlockLockStrategy
