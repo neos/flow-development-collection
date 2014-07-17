@@ -69,6 +69,23 @@ properties:
           properties:
             'events': { type: [string, array], items: { type: string } }
             'listener': { type: string, format: class-name }
+      'dql':
+        type: dictionary
+        required: FALSE
+        additionalProperties: FALSE
+        properties:
+          customStringFunctions:
+            type: dictionary
+            patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
+            additionalProperties: false
+          customNumericFunctions:
+            type: dictionary
+            patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
+            additionalProperties: false
+          customDatetimeFunctions:
+            type: dictionary
+            patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
+            additionalProperties: false
   'cacheAllQueryResults':
     type: boolean
     required: TRUE

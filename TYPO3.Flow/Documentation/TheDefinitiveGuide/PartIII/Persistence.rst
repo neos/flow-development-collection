@@ -453,6 +453,32 @@ configuration setting ``TYPO3.Flow.persistence.doctrine.filters``.
 See the Doctrine documentation ([#]_) for more information on the Doctrine
 Filter System.
 
+Custom Doctrine DQL functions
+-----------------------------
+
+Doctrine allows custom functions for use in DQL. In order to
+configure these for the use in Flow, use the following Settings:
+
+.. code-block:: yaml
+
+	TYPO3:
+	  Flow:
+	    persistence:
+	      doctrine:
+	        dql:
+	          customStringFunctions:
+	            'SOMEFUNCTION': 'Acme\Demo\Persistence\Ast\SomeFunction'
+	          customNumericFunctions:
+	            'FLOOR': 'Acme\Demo\Persistence\Ast\Floor'
+	            'CEIL': 'Acme\Demo\Persistence\Ast\Ceil'
+	          customDatetimeFunctions:
+	            'UTCDIFF': 'Acme\Demo\Persistence\Ast\UtcDiff'
+
+See the Doctrine documentation ([#doctrineDqlFunctions]_) for more information on the Custom DQL
+functions.
+
+.. [#doctrineDqlFunctions] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#adding-your-own-functions-to-the-dql-language
+
 Differences between TYPO3 Flow and plain Doctrine
 -------------------------------------------------
 

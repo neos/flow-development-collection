@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Configuration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 
@@ -65,7 +66,7 @@ class EntityManagerFactory {
 	 * @return \Doctrine\ORM\EntityManager
 	 */
 	public function create() {
-		$config = new \Doctrine\ORM\Configuration();
+		$config = new Configuration();
 		$config->setClassMetadataFactoryName('TYPO3\Flow\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
 		$cache = new \TYPO3\Flow\Persistence\Doctrine\CacheAdapter();
@@ -106,6 +107,10 @@ class EntityManagerFactory {
 			}
 		}
 
+		if (isset($this->settings['doctrine']['dql']) && is_array($this->settings['doctrine']['dql'])) {
+			$this->applyDqlSettingsToConfiguration($this->settings['doctrine']['dql'], $config);
+		}
+
 		return $entityManager;
 	}
 
@@ -133,6 +138,26 @@ class EntityManagerFactory {
 			}
 		}
 		return $eventManager;
+	}
+
+	/**
+	 * Apply configured settings regarding DQL to the Doctrine Configuration.
+	 * At the moment, these are custom DQL functions.
+	 *
+	 * @param array $configuredSettings
+	 * @param Configuration $doctrineConfiguration
+	 * @return void
+	 */
+	protected function applyDqlSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration) {
+		if (isset($configuredSettings['customStringFunctions'])) {
+			$doctrineConfiguration->setCustomStringFunctions($configuredSettings['customStringFunctions']);
+		}
+		if (isset($configuredSettings['customNumericFunctions'])) {
+			$doctrineConfiguration->setCustomNumericFunctions($configuredSettings['customNumericFunctions']);
+		}
+		if (isset($configuredSettings['customDatetimeFunctions'])) {
+			$doctrineConfiguration->setCustomDatetimeFunctions($configuredSettings['customDatetimeFunctions']);
+		}
 	}
 
 }
