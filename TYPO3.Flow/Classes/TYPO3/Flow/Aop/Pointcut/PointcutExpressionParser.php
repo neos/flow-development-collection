@@ -172,13 +172,17 @@ class PointcutExpressionParser {
 	 * filter composite object.
 	 *
 	 * @param string $operator The operator
-	 * @param string $classAnnotationPattern The pattern expression as configuration for the class annotation filter
+	 * @param string $annotationPattern The pattern expression as configuration for the class annotation filter
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
 	 * @return void
 	 */
-	protected function parseDesignatorClassAnnotatedWith($operator, $classAnnotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
-		$filter = new PointcutClassAnnotatedWithFilter($classAnnotationPattern);
+	protected function parseDesignatorClassAnnotatedWith($operator, $annotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
+		$annotationPropertyConstraints = array();
+		$this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
+
+		$filter = new PointcutClassAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
 		$filter->injectReflectionService($this->reflectionService);
+		$filter->injectSystemLogger($this->objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface'));
 		$pointcutFilterComposite->addFilter($operator, $filter);
 	}
 
@@ -202,15 +206,38 @@ class PointcutExpressionParser {
 	 * filter composite object.
 	 *
 	 * @param string $operator The operator
-	 * @param string $methodAnnotationPattern The pattern expression as configuration for the method annotation filter
+	 * @param string $annotationPattern The pattern expression as configuration for the method annotation filter
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
 	 * @return void
 	 * @deprecated since 1.0
 	 */
-	protected function parseDesignatorMethodAnnotatedWith($operator, $methodAnnotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
-		$filter = new PointcutMethodAnnotatedWithFilter($methodAnnotationPattern);
+	protected function parseDesignatorMethodAnnotatedWith($operator, $annotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
+		$annotationPropertyConstraints = array();
+		$this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
+
+		$filter = new PointcutMethodAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
 		$filter->injectReflectionService($this->reflectionService);
+		$filter->injectSystemLogger($this->objectManager->get('TYPO3\Flow\Log\SystemLoggerInterface'));
 		$pointcutFilterComposite->addFilter($operator, $filter);
+	}
+
+	/**
+	 * Parse an annotation pattern and adjust $annotationPattern and $annotationPropertyConstraints as
+	 * needed.
+	 *
+	 * @param string $annotationPattern
+	 * @param array $annotationPropertyConstraints
+	 * @return void
+	 */
+	protected function parseAnnotationPattern(&$annotationPattern, array &$annotationPropertyConstraints) {
+		if (strpos($annotationPattern, '(') !== FALSE) {
+			$matches = array();
+			preg_match(self::PATTERN_MATCHMETHODNAMEANDARGUMENTS, $annotationPattern, $matches);
+
+			$annotationPattern = $matches['MethodName'];
+			$annotationPropertiesPattern = $matches['MethodArguments'];
+			$annotationPropertyConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($annotationPropertiesPattern);
+		}
 	}
 
 	/**
