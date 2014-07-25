@@ -163,4 +163,52 @@ class Functions {
 		return $pathinfo;
 	}
 
+	/**
+	 * Parse a URL and return its components, UTF-8 safe
+	 *
+	 * @param string $url The URL to parse. Invalid characters are replaced by _.
+	 * @param integer $component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
+	 * @return mixed
+	 */
+	static public function parse_url($url, $component = -1) {
+		$encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function($matches) {
+			return urlencode($matches[0]);
+		}, $url);
+		$components = parse_url($encodedUrl);
+
+		if ($components === FALSE) {
+			return FALSE;
+		}
+
+		foreach ($components as &$currentComponent) {
+			$currentComponent = urldecode($currentComponent);
+		}
+
+		if (array_key_exists('port', $components)) {
+			$components['port'] = (integer)$components['port'];
+		}
+
+		switch ($component) {
+			case -1:
+				return $components;
+			case PHP_URL_SCHEME:
+				return $components['scheme'];
+			case PHP_URL_HOST:
+				return $components['host'];
+			case PHP_URL_PORT:
+				return $components['port'];
+			case PHP_URL_USER:
+				return $components['user'];
+			case PHP_URL_PASS:
+				return $components['pass'];
+			case PHP_URL_PATH:
+				return $components['path'];
+			case PHP_URL_QUERY:
+				return $components['query'];
+			case PHP_URL_FRAGMENT:
+				return $components['fragment'];
+			default:
+				throw new \InvalidArgumentException('Invalid component requested for URL parsing.', 1406280743);
+		}
+	}
 }

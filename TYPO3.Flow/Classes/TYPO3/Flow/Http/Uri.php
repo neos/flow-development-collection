@@ -97,7 +97,7 @@ class Uri {
 
 		$parseUrlException = NULL;
 		try {
-			$uriParts = parse_url($uriString);
+			$uriParts = \TYPO3\Flow\Utility\Unicode\Functions::parse_url($uriString);
 		} catch (\TYPO3\Flow\Error\Exception $exception) {
 			$parseUrlException = $exception;
 		}
