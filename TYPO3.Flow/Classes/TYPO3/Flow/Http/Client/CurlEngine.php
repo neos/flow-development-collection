@@ -30,17 +30,17 @@ class CurlEngine implements RequestEngineInterface {
 		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		CURLOPT_FRESH_CONNECT => TRUE,
 		CURLOPT_FORBID_REUSE => TRUE,
-		CURLOPT_TIMEOUT => 5,
+		CURLOPT_TIMEOUT => 30,
 	);
 
 	/**
 	 * Sets an option to be used by cURL.
 	 *
-	 * @param integer $option One of the CURLOPT_* constants
+	 * @param integer $optionName One of the CURLOPT_* constants
 	 * @param mixed $value The value to set
 	 */
-	public function setOption($option, $value) {
-		$this->options[$option] = $value;
+	public function setOption($optionName, $value) {
+		$this->options[$optionName] = $value;
 	}
 
 	/**
