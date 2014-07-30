@@ -188,11 +188,11 @@ class Service {
 	 * @return array
 	 */
 	public function getLocaleChain(Locale $locale) {
-		$fallBackRule = $this->configuration->getFallbackRule();
+		$fallbackRule = $this->configuration->getFallbackRule();
 		$localeChain = array((string)$locale => $locale);
 
-		if ($fallBackRule['strict'] === TRUE) {
-			foreach ($fallBackRule['order'] as $localeIdentifier) {
+		if ($fallbackRule['strict'] === TRUE) {
+			foreach ($fallbackRule['order'] as $localeIdentifier) {
 				$localeChain[$localeIdentifier] = new Locale($localeIdentifier);
 			}
 		} else {
@@ -201,7 +201,7 @@ class Service {
 				$localeChain[(string)$locale] = $locale;
 				$locale = $this->getParentLocaleOf($locale);
 			}
-			foreach ($fallBackRule['order'] as $localeIdentifier) {
+			foreach ($fallbackRule['order'] as $localeIdentifier) {
 				$locale = new Locale($localeIdentifier);
 				$locale = $this->findBestMatchingLocale($locale);
 				while ($locale !== NULL) {

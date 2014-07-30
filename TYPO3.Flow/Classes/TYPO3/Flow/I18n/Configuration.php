@@ -31,7 +31,7 @@ class Configuration {
 	/**
 	 * @var array
 	 */
-	protected $fallbackRule = array();
+	protected $fallbackRule = array('strict' => FALSE, 'order' => array());
 
 	/**
 	 * Constructs a new configuration object with the given locale identifier to
@@ -69,7 +69,7 @@ class Configuration {
 
 	/**
 	 * Returns the current locale. This is the default locale if
-	 * no current lcoale has been set or the set current locale has
+	 * no current locale has been set or the set current locale has
 	 * a language code of "mul".
 	 *
 	 * @return \TYPO3\Flow\I18n\Locale
@@ -102,6 +102,12 @@ class Configuration {
 	 * @param array $fallbackRule
 	 */
 	public function setFallbackRule(array $fallbackRule) {
+		if (!array_key_exists('order', $fallbackRule)) {
+			throw new \InvalidArgumentException('The given fallback rule did not contain an order element.', 1406710671);
+		}
+		if (!array_key_exists('strict', $fallbackRule)) {
+			$fallbackRule['strict'] = FALSE;
+		}
 		$this->fallbackRule = $fallbackRule;
 	}
 
