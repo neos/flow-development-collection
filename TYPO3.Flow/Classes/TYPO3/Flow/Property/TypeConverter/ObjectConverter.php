@@ -12,6 +12,11 @@ namespace TYPO3\Flow\Property\TypeConverter;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\Exception\InvalidDataTypeException;
+use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use TYPO3\Flow\Property\Exception\InvalidTargetException;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * This converter transforms arrays to simple objects (POPO) by setting properties.
@@ -99,32 +104,39 @@ class ObjectConverter extends AbstractTypeConverter {
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
+	 * @throws InvalidTargetException
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
 		}
 
-		if ($this->reflectionService->hasMethod($targetType, \TYPO3\Flow\Reflection\ObjectAccess::buildSetterMethodName($propertyName))) {
-			$methodParameters = $this->reflectionService->getMethodParameters($targetType, \TYPO3\Flow\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
+		$methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
+		if (isset($methodParameters[$propertyName]) && isset($methodParameters[$propertyName]['type'])) {
+			return $methodParameters[$propertyName]['type'];
+		} elseif ($this->reflectionService->hasMethod($targetType, ObjectAccess::buildSetterMethodName($propertyName))) {
+			$methodParameters = $this->reflectionService->getMethodParameters($targetType, ObjectAccess::buildSetterMethodName($propertyName));
 			$methodParameter = current($methodParameters);
 			if (!isset($methodParameter['type'])) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
+				throw new InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
 			} else {
 				return $methodParameter['type'];
 			}
 		} else {
-			$methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
-			if (isset($methodParameters[$propertyName]) && isset($methodParameters[$propertyName]['type'])) {
-				return $methodParameters[$propertyName]['type'];
-			} else {
-				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" had no setter or constructor argument in target object of type "' . $targetType . '".', 1303379126);
+			$targetPropertyNames = $this->reflectionService->getClassPropertyNames($targetType);
+			if (in_array($propertyName, $targetPropertyNames)) {
+				$values = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
+				if (count($values) > 0) {
+					return current($values);
+				} else {
+					throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
+				}
 			}
 		}
+		throw new InvalidTargetException(sprintf('Property "%s" has neither a setter or constructor argument, nor is public, in target object of type "%s".', $propertyName, $targetType), 1303379126);
 	}
 
 	/**
@@ -133,16 +145,16 @@ class ObjectConverter extends AbstractTypeConverter {
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidDataTypeException
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
+	 * @throws InvalidTargetException
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidPropertyMappingConfigurationException
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		$object = $this->buildObject($convertedChildProperties, $targetType);
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
-			$result = \TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+			$result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
 				$exceptionMessage = sprintf(
 					'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
@@ -150,7 +162,7 @@ class ObjectConverter extends AbstractTypeConverter {
 					(is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
 					$targetType
 				);
-				throw new \TYPO3\Flow\Property\Exception\InvalidTargetException($exceptionMessage, 1304538165);
+				throw new InvalidTargetException($exceptionMessage, 1304538165);
 			}
 		}
 
@@ -162,13 +174,13 @@ class ObjectConverter extends AbstractTypeConverter {
 	 *
 	 * @param mixed $source
 	 * @param string $originalTargetType
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return string
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidDataTypeException
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidPropertyMappingConfigurationException
 	 * @throws \InvalidArgumentException
 	 */
-	public function getTargetTypeForSource($source, $originalTargetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$targetType = $originalTargetType;
 
 		if (is_array($source) && array_key_exists('__type', $source)) {
@@ -178,11 +190,11 @@ class ObjectConverter extends AbstractTypeConverter {
 				throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1326277369);
 			}
 			if ($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
+				throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
 			}
 
 			if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, TRUE) === FALSE) {
-				throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
+				throw new InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
 			}
 		}
 
@@ -199,7 +211,7 @@ class ObjectConverter extends AbstractTypeConverter {
 	 * @param array &$possibleConstructorArgumentValues
 	 * @param string $objectType
 	 * @return object The created instance
-	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException if a required constructor argument is missing
+	 * @throws InvalidTargetException if a required constructor argument is missing
 	 */
 	protected function buildObject(array &$possibleConstructorArgumentValues, $objectType) {
 		$className = $this->objectManager->getClassNameByObjectName($objectType);
@@ -213,7 +225,7 @@ class ObjectConverter extends AbstractTypeConverter {
 				} elseif ($constructorArgumentInformation['optional'] === TRUE) {
 					$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
 				} else {
-					throw new \TYPO3\Flow\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
+					throw new InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
 				}
 			}
 			$classReflection = new \ReflectionClass($className);
