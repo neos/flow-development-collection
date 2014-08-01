@@ -20,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @ORM\Table(name="property_testentity")
  */
-class TestEntity {
+class TestEntity implements TestEntityInterface {
 
 	/**
 	 * @var string
@@ -38,6 +38,12 @@ class TestEntity {
 	 * @var float
 	 */
 	protected $averageNumberOfKids;
+
+	/**
+	 * @var TestEntityInterface
+	 * @Flow\Transient
+	 */
+	protected $relatedEntity;
 
 	/**
 	 * @return string
@@ -80,5 +86,21 @@ class TestEntity {
 	public function setYearOfBirth($yearOfBirth) {
 		$this->setAge(2013 - $yearOfBirth);
 	}
+
+	/**
+	 * @param TestEntityInterface $relatedEntity
+	 * @return void
+	 */
+	public function setRelatedEntity(TestEntityInterface $relatedEntity) {
+		$this->relatedEntity = $relatedEntity;
+	}
+
+	/**
+	 * @return TestEntityInterface
+	 */
+	public function getRelatedEntity() {
+		return $this->relatedEntity;
+	}
+
 
 }
