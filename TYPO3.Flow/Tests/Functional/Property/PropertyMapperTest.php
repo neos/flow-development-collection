@@ -210,6 +210,19 @@ class PropertyMapperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function mappingOfPropertiesWithUnqualifiedInterfaceName() {
+		$relatedEntity = new Fixtures\TestEntity();
+
+		$source = array(
+			'relatedEntity' => $relatedEntity,
+		);
+		$result = $this->propertyMapper->convert($source, 'TYPO3\Flow\Tests\Functional\Property\Fixtures\TestEntity');
+		$this->assertSame($relatedEntity, $result->getRelatedEntity());
+	}
+
+	/**
 	 * Testcase for http://forge.typo3.org/issues/36988 - needed for Neos
 	 * editing
 	 *
