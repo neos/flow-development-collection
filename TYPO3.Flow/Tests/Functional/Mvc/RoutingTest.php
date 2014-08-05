@@ -14,8 +14,12 @@ namespace TYPO3\Flow\Tests\Functional\Mvc;
 use TYPO3\Flow\Http\Client;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Routing\Route;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\Router;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Functional tests for the Router
@@ -23,7 +27,7 @@ use TYPO3\Flow\Mvc\Routing\Router;
  * HINT: The routes used in these tests are defined in the Routes.yaml file in the
  *       Testing context of the Flow package configuration.
  */
-class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class RoutingTest extends FunctionalTestCase {
 
 	/**
 	 * Validate that test routes are loaded
@@ -32,6 +36,7 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		parent::setUp();
 
 		$foundRoute = FALSE;
+		/** @var $route Route */
 		foreach ($this->router->getRoutes() as $route) {
 			if ($route->getName() === 'Flow :: Functional Test: HTTP - FooController') {
 				$foundRoute = TRUE;
@@ -46,58 +51,18 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
-	 * @test
-	 * @expectedException \TYPO3\Flow\Mvc\Exception\NoMatchingRouteException
+	 * @param Request $httpRequest
+	 * @param array $matchResults
+	 * @return ActionRequest
 	 */
-	public function routerThrowsExceptionIfNoRouteCanBeResolved() {
-		$this->router = new Router();
-		$this->router->resolve(array());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getControllerObjectNameIsEmptyIfNoRouteMatchesCurrentRequest() {
-		$this->router = new Router();
-		$request = Request::create(new Uri('http://localhost'));
-		$actionRequest = $this->router->route($request);
-		$this->assertEquals('', $actionRequest->getControllerObjectName());
-	}
-
-	/**
-	 * @test
-	 */
-	public function routerSetsDefaultControllerAndActionIfNotSetByRoute() {
-		$this->router = new Router();
-		$this->registerRoute('Test Route', '', array(
-			'@package' => 'TYPO3.Flow',
-			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
-			'@format' =>'html'
-		));
-
-		$request = Request::create(new Uri('http://localhost'));
-		$actionRequest = $this->router->route($request);
-		$this->assertEquals('TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController', $actionRequest->getControllerObjectName());
-		$this->assertEquals('index', $actionRequest->getControllerActionName());
-	}
-
-	/**
-	 * @test
-	 */
-	public function routeDefaultsOverrideStandardControllerAndAction() {
-		$this->router = new Router();
-		$this->registerRoute('Test Route', '', array(
-			'@package' => 'TYPO3.Flow',
-			'@subpackage' => 'Tests\Functional\Mvc\Fixtures',
-			'@controller' => 'ActionControllerTestA',
-			'@action' => 'second',
-			'@format' =>'html'
-		));
-
-		$request = Request::create(new Uri('http://localhost'));
-		$actionRequest = $this->router->route($request);
-		$this->assertEquals('TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController', $actionRequest->getControllerObjectName());
-		$this->assertEquals('second', $actionRequest->getControllerActionName());
+	protected function createActionRequest(Request $httpRequest, array $matchResults = NULL) {
+		$actionRequest = new ActionRequest($httpRequest);
+		if ($matchResults !== NULL) {
+			$requestArguments = $actionRequest->getArguments();
+			$mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
+			$actionRequest->setArguments($mergedArguments);
+		}
+		return $actionRequest;
 	}
 
 	/**
@@ -106,8 +71,8 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function httpMethodsAreRespectedForGetRequests() {
 		$requestUri = 'http://localhost/typo3/flow/test/httpmethods';
 		$request = Request::create(new Uri($requestUri), 'GET');
-		$actionRequest = $this->router->route($request);
-		$matchedRoute = $this->router->getLastMatchedRoute();
+		$matchResults = $this->router->route($request);
+		$actionRequest = $this->createActionRequest($request, $matchResults);
 		$this->assertEquals('TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController', $actionRequest->getControllerObjectName());
 		$this->assertEquals('first', $actionRequest->getControllerActionName());
 	}
@@ -118,8 +83,8 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function httpMethodsAreRespectedForPostRequests() {
 		$requestUri = 'http://localhost/typo3/flow/test/httpmethods';
 		$request = Request::create(new Uri($requestUri), 'POST');
-		$actionRequest = $this->router->route($request);
-		$matchedRoute = $this->router->getLastMatchedRoute();
+		$matchResults = $this->router->route($request);
+		$actionRequest = $this->createActionRequest($request, $matchResults);
 		$this->assertEquals('TYPO3\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController', $actionRequest->getControllerObjectName());
 		$this->assertEquals('second', $actionRequest->getControllerActionName());
 	}
@@ -225,7 +190,8 @@ class RoutingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function routeTests($requestUri, $expectedMatchingRouteName, $expectedControllerObjectName = NULL, array $expectedArguments = NULL) {
 		$request = Request::create(new Uri($requestUri));
-		$actionRequest = $this->router->route($request);
+		$matchResults = $this->router->route($request);
+		$actionRequest = $this->createActionRequest($request, $matchResults);
 		$matchedRoute = $this->router->getLastMatchedRoute();
 		if ($expectedMatchingRouteName === NULL) {
 			if ($matchedRoute !== NULL) {

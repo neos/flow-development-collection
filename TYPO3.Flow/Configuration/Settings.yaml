@@ -102,6 +102,30 @@ TYPO3:
       # request (default).
       baseUri: NULL
 
+      # Defines the workflow of one request from bootstrap to the HTTP response
+      #
+      # By default this workflow is devided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
+      #
+      chain:
+
+        'preprocess':
+          position: 'before process'
+          chain: []
+
+        'process':
+          chain:
+            'routing':
+              position: 'start'
+              component: 'TYPO3\Flow\Mvc\Routing\RoutingComponent'
+            'dispatching':
+              component: 'TYPO3\Flow\Mvc\DispatchComponent'
+
+        'postprocess':
+          chain:
+            'standardsCompliance':
+              position: 'end'
+              component: 'TYPO3\Flow\Http\Component\StandardsComplianceComponent'
+
     log:
 
       # Settings for TYPO3 Flow's default loggers

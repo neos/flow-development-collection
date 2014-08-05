@@ -13,8 +13,8 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Controller;
 
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\Arguments;
-use TYPO3\Flow\Http\Request as HttpRequest;
-use TYPO3\Flow\Http\Response as HttpResponse;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -25,12 +25,12 @@ use TYPO3\Flow\Tests\UnitTestCase;
 class AbstractControllerTest extends UnitTestCase {
 
 	/**
-	 * @var HttpRequest
+	 * @var Request
 	 */
 	protected $mockHttpRequest;
 
 	/**
-	 * @var HttpResponse
+	 * @var Response
 	 */
 	protected $mockHttpResponse;
 
@@ -65,7 +65,7 @@ class AbstractControllerTest extends UnitTestCase {
 	 * @test
 	 */
 	public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext() {
-		$request = new ActionRequest(HttpRequest::create(new Uri('http://localhost/foo')));
+		$request = new ActionRequest(Request::create(new Uri('http://localhost/foo')));
 
 		$controller = $this->getAccessibleMock('TYPO3\Flow\Mvc\Controller\AbstractController', array('processRequest'));
 		$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());

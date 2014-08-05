@@ -4,3 +4,13 @@ properties:
   'baseUri':
     type: [string, 'null']
     required: TRUE
+  'chain':
+    type: dictionary
+    required: TRUE
+    additionalProperties:
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+        'position': { type: [string, number], required: TRUE }
+        'component': { type: string, required: TRUE, format: class-name }
+        'componentOptions': { type: dictionary }

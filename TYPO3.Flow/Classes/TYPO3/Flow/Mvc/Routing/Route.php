@@ -16,6 +16,8 @@ use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use TYPO3\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use TYPO3\Flow\Mvc\Exception\InvalidUriPatternException;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -110,22 +112,16 @@ class Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 * @Flow\Inject
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @var PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
-	 */
-	protected $router;
 
 	/**
 	 * Sets Route name.
@@ -403,7 +399,6 @@ class Route {
 		}
 
 		$resolvedUriPath = '';
-		$mergedRouteValues = Arrays::arrayMergeRecursiveOverrule($this->defaults, $routeValues);
 		$remainingDefaults = $this->defaults;
 		$requireOptionalRouteParts = FALSE;
 		$matchingOptionalUriPortion = '';
@@ -451,8 +446,6 @@ class Route {
 		if (isset($routeValues['@format']) && $routeValues['@format'] === '') {
 			unset($routeValues['@format']);
 		}
-
-		$this->throwExceptionIfTargetControllerDoesNotExist($mergedRouteValues);
 
 		// add query string
 		if (count($routeValues) > 0) {
@@ -541,23 +534,6 @@ class Route {
 	}
 
 	/**
-	 * Try to get the controller object name from the given $routeValues and throw an exception, if it can't be resolved.
-	 *
-	 * @param array $routeValues
-	 * @return void
-	 * @throws \TYPO3\Flow\Mvc\Routing\Exception\InvalidControllerException
-	 */
-	protected function throwExceptionIfTargetControllerDoesNotExist(array $routeValues) {
-		$packageKey = isset($routeValues['@package']) ? $routeValues['@package'] : '';
-		$subPackageKey = isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : '';
-		$controllerName = isset($routeValues['@controller']) ? $routeValues['@controller'] : '';
-		$controllerObjectName = $this->router->getControllerObjectName($packageKey, $subPackageKey, $controllerName);
-		if ($controllerObjectName === NULL) {
-			throw new Exception\InvalidControllerException('No controller object was found for package "' . $packageKey . '", subpackage "' . $subPackageKey . '", controller "' . $controllerName . '" in route "' . $this->getName() . '".', 1301650951);
-		}
-	}
-
-	/**
 	 * Checks if the given subject contains an object
 	 *
 	 * @param mixed $subject
@@ -641,6 +617,7 @@ class Route {
 				case self::ROUTEPART_TYPE_STATIC:
 					$routePart = new StaticRoutePart();
 					if ($lastRoutePart !== NULL && $lastRoutePart instanceof DynamicRoutePartInterface) {
+						/** @var DynamicRoutePartInterface $lastRoutePart */
 						$lastRoutePart->setSplitString($routePartName);
 					}
 			}

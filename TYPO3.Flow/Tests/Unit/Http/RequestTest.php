@@ -510,14 +510,10 @@ class RequestTest extends UnitTestCase {
 			'PHP_SELF' => '/index.php',
 		);
 
-		$settings = array(
-			'http' => array(
-				'baseUri' => 'http://prod.blog.rob/'
-			)
-		);
-
 		$request = new Request(array(), array(), array(), array(), $server);
-		$request->injectSettings($settings);
+
+		$baseUri = new \TYPO3\Flow\Http\Uri('http://prod.blog.rob/');
+		$request->setBaseUri($baseUri);
 		$this->assertEquals('http://prod.blog.rob/', (string)$request->getBaseUri());
 	}
 

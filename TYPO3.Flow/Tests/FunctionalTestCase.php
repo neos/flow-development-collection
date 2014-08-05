@@ -13,7 +13,10 @@ namespace TYPO3\Flow\Tests;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\Route;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A base test case for functional tests
@@ -185,12 +188,26 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		));
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
-		$httpRequest = $requestHandler->getHttpRequest();
-		$actionRequest = $this->router->route($httpRequest);
+		$actionRequest = $this->route($requestHandler->getHttpRequest());
 
 		$this->securityContext = $this->objectManager->get('TYPO3\Flow\Security\Context');
 		$this->securityContext->clearContext();
 		$this->securityContext->setRequest($actionRequest);
+	}
+
+	/**
+	 * @param Request $httpRequest
+	 * @return ActionRequest
+	 */
+	protected function route(Request $httpRequest) {
+		$actionRequest = new ActionRequest($httpRequest);
+		$matchResults = $this->router->route($httpRequest);
+		if ($matchResults !== NULL) {
+			$requestArguments = $actionRequest->getArguments();
+			$mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
+			$actionRequest->setArguments($mergedArguments);
+		}
+		return $actionRequest;
 	}
 
 	/**
@@ -318,8 +335,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		$this->securityContext->clearContext();
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
-		$httpRequest = $requestHandler->getHttpRequest();
-		$actionRequest = $this->router->route($httpRequest);
+		$actionRequest = $this->route($requestHandler->getHttpRequest());
 		$this->securityContext->setRequest($actionRequest);
 		$this->authenticationManager->authenticate();
 	}
@@ -408,7 +424,7 @@ abstract class FunctionalTestCase extends \TYPO3\Flow\Tests\BaseTestCase {
 		$this->router = $this->browser->getRequestEngine()->getRouter();
 
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
-		$requestHandler->setHttpRequest(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test')));
+		$requestHandler->setHttpRequest(Request::create(new \TYPO3\Flow\Http\Uri('http://localhost/typo3/flow/test')));
 		$requestHandler->setHttpResponse(new \TYPO3\Flow\Http\Response());
 	}
 

@@ -261,7 +261,7 @@ class CacheManager {
 		$objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
 		$caches = array(
 			'/Policy\.yaml/' => array('Flow_Security_Policy'),
-			'/Routes([^\/]*)\.yaml/' => array('Flow_Mvc_Routing_FindMatchResults', 'Flow_Mvc_Routing_Resolve'),
+			'/Routes([^\/]*)\.yaml/' => array('Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve'),
 			'/Views\.yaml/' => array('Flow_Mvc_ViewConfigurations'),
 		);
 		$cachesToFlush = array();
