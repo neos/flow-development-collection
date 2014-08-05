@@ -12,23 +12,44 @@ namespace TYPO3\Flow\Tests\Unit\Security\RequestPattern;
  *                                                                        */
 
 use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the URI request pattern
  */
-class UriTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class UriTest extends UnitTestCase {
+
+	public function matchRequestDataProvider() {
+		return array(
+			array('uriPath' => '', 'pattern' => '.*', 'shouldMatch' => TRUE),
+			array('uriPath' => '', 'pattern' => '/some/nice/.*', 'shouldMatch' => FALSE),
+			array('uriPath' => '/some/nice/path/to/index.php', 'pattern' => '/some/nice/.*', 'shouldMatch' => TRUE),
+			array('uriPath' => '/some/other/path', 'pattern' => '.*/other/.*', 'shouldMatch' => TRUE),
+		);
+	}
 
 	/**
 	 * @test
+	 * @dataProvider matchRequestDataProvider
 	 */
-	public function requestMatchingBasicallyWorks() {
-		$uri = new \TYPO3\Flow\Http\Uri('http://typo3.org/some/nice/path/to/index.php');
-		$request = Request::create($uri)->createActionRequest();
+	public function matchRequestTests($uriPath, $pattern, $shouldMatch) {
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
+
+		$mockUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+		$mockHttpRequest->expects($this->atLeastOnce())->method('getUri')->will($this->returnValue($mockUri));
+
+		$mockUri->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue($uriPath));
 
 		$requestPattern = new \TYPO3\Flow\Security\RequestPattern\Uri();
-		$requestPattern->setPattern('/some/nice/.*');
+		$requestPattern->setPattern($pattern);
 
-		$this->assertEquals('/some/nice/.*', $requestPattern->getPattern());
-		$this->assertTrue($requestPattern->matchRequest($request));
+		if ($shouldMatch) {
+			$this->assertTrue($requestPattern->matchRequest($mockActionRequest));
+		} else {
+			$this->assertFalse($requestPattern->matchRequest($mockActionRequest));
+		}
 	}
 }

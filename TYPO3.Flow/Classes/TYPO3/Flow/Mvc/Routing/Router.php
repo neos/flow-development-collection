@@ -12,10 +12,10 @@ namespace TYPO3\Flow\Mvc\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Request as HttpRequest;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Exception\InvalidRouteSetupException;
 use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
-use TYPO3\Flow\Utility\Arrays;
 
 /**
  * The default web router
@@ -67,12 +67,6 @@ class Router implements RouterInterface {
 	protected $routesCreated = FALSE;
 
 	/**
-	 * The current request. Will be set in route()
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
-	 */
-	protected $actionRequest;
-
-	/**
 	 * @var \TYPO3\Flow\Mvc\Routing\Route
 	 */
 	protected $lastMatchedRoute;
@@ -97,20 +91,18 @@ class Router implements RouterInterface {
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest The web request to be analyzed. Will be modified by the router.
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @param \TYPO3\Flow\Http\Request $httpRequest The web request the returned ActionRequest will be bound to
+	 * @return ActionRequest
 	 */
-	public function route(Request $httpRequest) {
-		$this->actionRequest = $httpRequest->createActionRequest();
-
+	public function route(HttpRequest $httpRequest) {
+		/** @var $actionRequest ActionRequest */
+		$actionRequest = $this->objectManager->get('TYPO3\Flow\Mvc\ActionRequest', $httpRequest);
 		$matchResults = $this->findMatchResults($httpRequest);
 		if ($matchResults !== NULL) {
-			$requestArguments = $this->actionRequest->getArguments();
-			$mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
-			$this->actionRequest->setArguments($mergedArguments);
+			$actionRequest->setArguments($matchResults);
 		}
-		$this->setDefaultControllerAndActionNameIfNoneSpecified();
-		return $this->actionRequest;
+		$this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
+		return $actionRequest;
 	}
 
 	/**
@@ -147,14 +139,15 @@ class Router implements RouterInterface {
 	/**
 	 * Set the default controller and action names if none has been specified.
 	 *
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $actionRequest
 	 * @return void
 	 */
-	protected function setDefaultControllerAndActionNameIfNoneSpecified() {
-		if ($this->actionRequest->getControllerName() === NULL) {
-			$this->actionRequest->setControllerName('Standard');
+	protected function setDefaultControllerAndActionNameIfNoneSpecified(ActionRequest $actionRequest) {
+		if ($actionRequest->getControllerName() === NULL) {
+			$actionRequest->setControllerName('Standard');
 		}
-		if ($this->actionRequest->getControllerActionName() === NULL) {
-			$this->actionRequest->setControllerActionName('index');
+		if ($actionRequest->getControllerActionName() === NULL) {
+			$actionRequest->setControllerActionName('index');
 		}
 	}
 
@@ -167,11 +160,12 @@ class Router implements RouterInterface {
 	 * @return array results of the matching route
 	 * @see route()
 	 */
-	protected function findMatchResults(Request $httpRequest) {
+	protected function findMatchResults(HttpRequest $httpRequest) {
 		$cachedMatchResults = $this->routerCachingService->getCachedMatchResults($httpRequest);
 		if ($cachedMatchResults !== FALSE) {
 			return $cachedMatchResults;
 		}
+
 		$this->lastMatchedRoute = NULL;
 		$this->createRoutesFromConfiguration();
 

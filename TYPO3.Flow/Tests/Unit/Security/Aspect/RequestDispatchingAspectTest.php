@@ -11,28 +11,25 @@ namespace TYPO3\Flow\Tests\Unit\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the request dispatching aspect
  */
-class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class RequestDispatchingAspectTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 * @return void
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
-		$actionRequest = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-		$response = new Response();
-
-		$getMethodArgumentCallback = function() use (&$actionRequest, &$response) {
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
+		$getMethodArgumentCallback = function() use (&$mockActionRequest, &$mockResponse) {
 			$args = func_get_args();
 
-			if ($args[0] === 'request') return $actionRequest;
-			elseif ($args[0] === 'response') return $response;
+			if ($args[0] === 'request') return $mockActionRequest;
+			elseif ($args[0] === 'response') return $mockResponse;
 		};
 
 		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
@@ -43,7 +40,7 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
-		$mockFirewall->expects($this->once())->method('blockIllegalRequests')->with($actionRequest);
+		$mockFirewall->expects($this->once())->method('blockIllegalRequests')->with($mockActionRequest);
 
 		$dispatchingAspect = new \TYPO3\Flow\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
@@ -54,14 +51,13 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsOnlyInterceptsActionRequests() {
-		$httpRequest = Request::create(new Uri('http://wwwision.de'));
-		$response = new Response();
-
-		$getMethodArgumentCallback = function() use (&$httpRequest, &$response) {
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
+		$getMethodArgumentCallback = function() use (&$mockHttpRequest, &$mockResponse) {
 			$args = func_get_args();
 
-			if ($args[0] === 'request') return $httpRequest;
-			elseif ($args[0] === 'response') return $response;
+			if ($args[0] === 'request') return $mockHttpRequest;
+			elseif ($args[0] === 'response') return $mockResponse;
 		};
 
 		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
@@ -83,14 +79,14 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsDoesNotBlockRequestsIfAuthorizationChecksAreDisabled() {
-		$request = Request::create(new Uri('http://wwwision.de'))->createActionRequest();
-		$response = new Response();
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
 
-		$getMethodArgumentCallback = function() use (&$request, &$response) {
+		$getMethodArgumentCallback = function() use (&$mockActionRequest, &$mockResponse) {
 			$args = func_get_args();
 
-			if ($args[0] === 'request') return $request;
-			elseif ($args[0] === 'response') return $response;
+			if ($args[0] === 'request') return $mockActionRequest;
+			elseif ($args[0] === 'response') return $mockResponse;
 		};
 
 		$mockSecurityLogger = $this->getMock('TYPO3\Flow\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
@@ -113,17 +109,20 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-		$response = new Response();
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
+		$mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
 		$exception = new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
-		$getMethodArgumentCallback = function() use (&$request, &$response) {
+		$getMethodArgumentCallback = function() use (&$mockActionRequest, &$mockResponse) {
 			$args = func_get_args();
 
 			if ($args[0] === 'request') {
-				return $request;
+				return $mockActionRequest;
 			} elseif ($args[0] === 'response') {
-				return $response;
+				return $mockResponse;
 			}
 		};
 
@@ -148,7 +147,7 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockJoinPoint->expects($this->any())->method('getException')->will($this->returnCallback($getExceptionCallback));
 		$mockContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken)));
 		$mockToken->expects($this->once())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint));
-		$mockEntryPoint->expects($this->once())->method('startAuthentication')->with($this->equalTo($request->getHttpRequest()), $this->equalTo($response));
+		$mockEntryPoint->expects($this->once())->method('startAuthentication')->with($this->equalTo($mockActionRequest->getHttpRequest()), $this->equalTo($mockResponse));
 
 		$dispatchingAspect = new \TYPO3\Flow\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
@@ -160,17 +159,17 @@ class RequestDispatchingAspectTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
-		$request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
-		$response = $this->getMock('TYPO3\Flow\Http\Response', array(), array(), '', FALSE);
+		$mockActionRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('TYPO3\Flow\Http\Response', array(), array(), '', FALSE);
 		$exception = new \TYPO3\Flow\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
-		$getMethodArgumentCallback = function() use (&$request, &$response) {
+		$getMethodArgumentCallback = function() use (&$mockActionRequest, &$mockResponse) {
 			$args = func_get_args();
 
 			if ($args[0] === 'request') {
-				return $request;
+				return $mockActionRequest;
 			} elseif ($args[0] === 'response') {
-				return $response;
+				return $mockResponse;
 			}
 		};
 

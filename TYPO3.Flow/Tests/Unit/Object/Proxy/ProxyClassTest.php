@@ -86,5 +86,3 @@ class ProxyClassTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

@@ -72,5 +72,3 @@ class BooleanValueValidatorTest extends \TYPO3\Flow\Tests\Unit\Validation\Valida
 	}
 
 }
-
-?>

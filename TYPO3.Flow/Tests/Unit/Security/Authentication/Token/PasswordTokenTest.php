@@ -11,16 +11,43 @@ namespace TYPO3\Flow\Tests\Unit\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request,
-	TYPO3\Flow\Http\Uri,
-	TYPO3\Flow\Security\Authentication\TokenInterface,
-	TYPO3\Flow\Security\Authentication\Token\PasswordToken;
+use TYPO3\Flow\Http\Request as HttpRequest;
+use TYPO3\Flow\Mvc\ActionRequest;
+use	TYPO3\Flow\Security\Authentication\TokenInterface;
+use	TYPO3\Flow\Security\Authentication\Token\PasswordToken;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for password authentication token
- *
  */
-class PasswordTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class PasswordTokenTest extends UnitTestCase {
+
+	/**
+	 * @var PasswordToken
+	 */
+	protected $token;
+
+	/**
+	 * @var ActionRequest
+	 */
+	protected $mockActionRequest;
+
+	/**
+	 * @var HttpRequest
+	 */
+	protected $mockHttpRequest;
+
+	/**
+	 * Set up this test case
+	 */
+	public function setUp() {
+		$this->token = new PasswordToken();
+
+		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+	}
 
 	/**
 	 * @test
@@ -29,13 +56,13 @@ class PasswordTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$token = new PasswordToken();
-		$token->updateCredentials($actionRequest);
+		$this->token->updateCredentials($this->mockActionRequest);
 
 		$expectedCredentials = array('password' => 'verysecurepassword');
-		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
+		$this->assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
 	}
 
 	/**
@@ -45,12 +72,12 @@ class PasswordTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$token = new PasswordToken();
-		$token->updateCredentials($actionRequest);
+		$this->token->updateCredentials($this->mockActionRequest);
 
-		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
 	}
 
 	/**
@@ -60,14 +87,19 @@ class PasswordTokenTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$arguments = array();
 		$arguments['__authentication']['TYPO3']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'POST', $arguments)->createActionRequest();
-		$token = new PasswordToken();
-		$token->updateCredentials($actionRequest);
-		$this->assertEquals(array('password' => 'verysecurepassword'), $token->getCredentials());
+		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->will($this->returnValue($arguments));
 
-		$actionRequest = Request::create(new Uri('http://robertlemke.com/login'), 'GET', $arguments)->createActionRequest();
-		$token = new PasswordToken();
-		$token->updateCredentials($actionRequest);
-		$this->assertEquals(array('password' => ''), $token->getCredentials());
+		$this->token->updateCredentials($this->mockActionRequest);
+		$this->assertEquals(array('password' => 'verysecurepassword'), $this->token->getCredentials());
+
+		$secondToken = new PasswordToken();
+		$secondMockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+
+		$secondMockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$secondMockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($secondMockHttpRequest));
+		$secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
+		$secondToken->updateCredentials($secondMockActionRequest);
+		$this->assertEquals(array('password' => ''), $secondToken->getCredentials());
 	}
 }

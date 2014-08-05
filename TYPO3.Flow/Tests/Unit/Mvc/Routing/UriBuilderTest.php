@@ -11,9 +11,11 @@ namespace TYPO3\Flow\Tests\Unit\Mvc\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request as HttpRequest;
-use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Routing\RouterInterface;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * Testcase for the URI Helper
@@ -22,34 +24,34 @@ use TYPO3\Flow\Tests\UnitTestCase;
 class UriBuilderTest extends UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\RouterInterface
+	 * @var UriBuilder
+	 */
+	protected $uriBuilder;
+
+	/**
+	 * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockRouter;
 
 	/**
-	 * @var \TYPO3\Flow\Http\Request
+	 * @var Request|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockHttpRequest;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
+	 * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockMainRequest;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
+	 * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockSubRequest;
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\ActionRequest
+	 * @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected $mockSubSubRequest;
-
-	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
-	 */
-	protected $uriBuilder;
 
 	/**
 	 * Sets up the test case
@@ -83,7 +85,7 @@ class UriBuilderTest extends UnitTestCase {
 		$environment = $this->getMock('TYPO3\Flow\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
 		$environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(TRUE));
 
-		$this->uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
+		$this->uriBuilder = new UriBuilder();
 		$this->inject($this->uriBuilder, 'router', $this->mockRouter);
 		$this->inject($this->uriBuilder, 'environment', $environment);
 		$this->uriBuilder->setRequest($this->mockMainRequest);
@@ -182,15 +184,16 @@ class UriBuilderTest extends UnitTestCase {
 	 * @test
 	 */
 	public function uriForInSubRequestWithExplicitEmptySubpackageKeyDoesNotUseRequestSubpackageKey() {
-		$this->mockSubRequest = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array(), array($this->mockMainRequest));
-		$this->mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-		$this->mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
-		$this->mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
-		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
-		$this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
-		$this->mockSubRequest->expects($this->any())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKeyFromRequest'));
+		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $mockSubRequest */
+		$mockSubRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->setMethods(array())->setConstructorArgs(array($this->mockMainRequest))->getMock();
+		$mockSubRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+		$mockSubRequest->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->mockMainRequest));
+		$mockSubRequest->expects($this->any())->method('isMainRequest')->will($this->returnValue(FALSE));
+		$mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockMainRequest));
+		$mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue(''));
+		$mockSubRequest->expects($this->any())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKeyFromRequest'));
 
-		$this->uriBuilder->setRequest($this->mockSubRequest);
+		$this->uriBuilder->setRequest($mockSubRequest);
 
 		$expectedArguments = array('@action' => 'show', '@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => '');
 
@@ -734,6 +737,7 @@ class UriBuilderTest extends UnitTestCase {
 	 * @test
 	 */
 	public function setRequestResetsUriBuilder() {
+		/** @var UriBuilder|\PHPUnit_Framework_MockObject_MockObject $uriBuilder */
 		$uriBuilder = $this->getAccessibleMock('TYPO3\Flow\Mvc\Routing\UriBuilder', array('reset'));
 		$uriBuilder->expects($this->once())->method('reset');
 		$uriBuilder->setRequest($this->mockMainRequest);

@@ -82,7 +82,7 @@ are passed along within the application must be instances of ``Mvc\ActionRequest
 Creating an Action Request as a sub request of the original HTTP Request is simple,
 although you rarely need to do that::
 
-	$actionRequest = $httpRequest->createActionRequest();
+	$actionRequest = new ActionRequest($httpRequest);
 
 An Action Request always holds a reference to a *parent request*. In most cases
 the hierarchy is shallow and the Action Request is just a direct sub request of

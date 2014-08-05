@@ -15,27 +15,29 @@ use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Security\Authentication\EntryPoint\HttpBasic;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for HTTP Basic Auth authentication entry point
  */
-class HttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class HttpBasicTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-		$response = new Response();
+		$mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+		$mockResponse = $this->getMockBuilder('TYPO3\Flow\Http\Response')->getMock();
 
 		$entryPoint = new HttpBasic();
 		$entryPoint->setOptions(array('realm' => 'realm string'));
 
-		$entryPoint->startAuthentication($request->getHttpRequest(), $response);
+		$mockResponse->expects($this->once())->method('setStatus')->with(401);
+		$mockResponse->expects($this->once())->method('setHeader')->with('WWW-Authenticate', 'Basic realm="realm string"');
+		$mockResponse->expects($this->once())->method('setContent')->with('Authorization required');
 
-		$this->assertEquals('401', substr($response->getStatus(), 0, 3));
-		$this->assertEquals('Basic realm="realm string"', $response->getHeader('WWW-Authenticate'));
-		$this->assertEquals('Authorization required', $response->getContent());
+		$entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
+
 		$this->assertEquals(array('realm' => 'realm string'), $entryPoint->getOptions());
 	}
 }

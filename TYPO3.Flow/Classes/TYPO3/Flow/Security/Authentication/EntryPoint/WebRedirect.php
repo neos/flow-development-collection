@@ -14,6 +14,7 @@ namespace TYPO3\Flow\Security\Authentication\EntryPoint;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Security\Exception\MissingConfigurationException;
 
 /**
@@ -42,7 +43,7 @@ class WebRedirect extends AbstractEntryPoint {
 			if (!is_array($routeValues)) {
 				throw new MissingConfigurationException(sprintf('The configuration for the WebRedirect authentication entry point is incorrect. "routeValues" must be an array, got "%s".', gettype($routeValues)), 1345040415);
 			}
-			$actionRequest = $request->createActionRequest();
+			$actionRequest = new ActionRequest($request);
 			$this->uriBuilder->setRequest($actionRequest);
 
 			$actionName = $this->extractRouteValue($routeValues, '@action');

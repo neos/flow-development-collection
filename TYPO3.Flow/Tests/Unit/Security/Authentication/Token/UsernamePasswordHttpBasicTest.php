@@ -15,12 +15,25 @@ use TYPO3\Flow\Http\Request;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for username/password HTTP Basic Auth authentication token
  *
  */
-class UsernamePasswordHttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class UsernamePasswordHttpBasicTest extends UnitTestCase {
+
+	/**
+	 * @var UsernamePasswordHttpBasic
+	 */
+	protected $token;
+
+	/**
+	 * Sets up this test case
+	 */
+	public function setUp() {
+		$this->token = new UsernamePasswordHttpBasic();
+	}
 
 	/**
 	 * @test
@@ -31,14 +44,15 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'PHP_AUTH_PW' => 'mysecretpassword, containing a : colon ;-)'
 		);
 
-		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
-		$actionRequest = $request->createActionRequest();
-		$token = new UsernamePasswordHttpBasic();
-		$token->updateCredentials($actionRequest);
+		$httpRequest = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+
+		$this->token->updateCredentials($mockActionRequest);
 
 		$expectedCredentials = array ('username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)');
-		$this->assertEquals($expectedCredentials, $token->getCredentials());
-		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertEquals($expectedCredentials, $this->token->getCredentials());
+		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
 	}
 
 	/**
@@ -51,25 +65,24 @@ class UsernamePasswordHttpBasicTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'REDIRECT_REMOTE_AUTHORIZATION' => 'Basic ' . base64_encode($expectedCredentials['username'] . ':' . $expectedCredentials['password'])
 		);
 
-		$request = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
-		$actionRequest = $request->createActionRequest();
-		$token = new UsernamePasswordHttpBasic();
-		$token->updateCredentials($actionRequest);
+		$httpRequest = Request::create(new Uri('http://foo.com'), 'GET', array(), array(), $serverEnvironment);
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+		$this->token->updateCredentials($mockActionRequest);
 
-		$this->assertEquals($expectedCredentials, $token->getCredentials());
-		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertEquals($expectedCredentials, $this->token->getCredentials());
+		$this->assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
 	}
 
 	/**
 	 * @test
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived() {
-		$request = Request::create(new Uri('http://foo.com'));
-		$actionRequest = $request->createActionRequest();
+		$httpRequest = Request::create(new Uri('http://foo.com'));
+		$mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+		$this->token->updateCredentials($mockActionRequest);
 
-		$token = new UsernamePasswordHttpBasic();
-		$token->updateCredentials($actionRequest);
-
-		$this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
+		$this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
 	}
 }

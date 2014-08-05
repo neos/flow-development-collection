@@ -140,15 +140,14 @@ by PHP's superglobals and specialized functions into account. It creates a
 web server. This method is best used if you need a ``Request`` object with all
 properties set according to the current server environment and incoming HTTP request.
 
-createActionRequest()
-~~~~~~~~~~~~~~~~~~~~~
+Creating an ActionRequest
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to dispatch a request to a controller, you need an ``ActionRequest``.
-Such a request is always bound to an ``Http\Request``. The easiest way to create
-one and binding it at the same time, is using the ``createActionRequest()`` method::
+Such a request is always bound to an ``Http\Request``::
 
 	$httpRequest = Request::createFromEnvironment();
-	$actionRequest = $httpRequest->createActionRequest();
+	$actionRequest = new ActionRequest($httpRequest);
 
 Arguments
 ~~~~~~~~~

@@ -11,56 +11,61 @@ namespace TYPO3\Flow\Tests\Unit\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the security context
  */
-class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ContextTest extends UnitTestCase {
+
+	/**
+	 * @var Context
+	 */
+	protected $securityContext;
+
+	/**
+	 * @var ActionRequest
+	 */
+	protected $mockActionRequest;
+
+	/**
+	 * @var AuthenticationManagerInterface
+	 */
+	protected $mockAuthenticationManager;
+
+	/**
+	 * Sets up this test case
+	 */
+	public function setUp() {
+		$this->securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('separateActiveAndInactiveTokens'));
+
+		$this->mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
+		$this->mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
+		$this->securityContext->injectAuthenticationManager($this->mockAuthenticationManager);
+
+		$this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->securityContext->setRequest($this->mockActionRequest);
+	}
 
 	/**
 	 * @test
 	 */
 	public function currentRequestIsSetInTheSecurityContext() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
-		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
-		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
-
-		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('separateActiveAndInactiveTokens'));
-		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
-		$securityContext->setRequest($request);
-
-		$securityContext->_call('initialize');
-
-		$this->assertSame($request, $securityContext->_get('request'));
+		$this->securityContext->initialize();
+		$this->assertSame($this->mockActionRequest, $this->securityContext->_get('request'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function securityContextIsSetToInitialized() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
-
-		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
-
-		$mockRequestHandler = $this->getMock('TYPO3\Flow\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
-		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($request));
-
-		$bootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE);
-		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
-
-		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('separateActiveAndInactiveTokens'));
-		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
-		$securityContext->_set('bootstrap', $bootstrap);
-		$securityContext->setRequest($request);
-
-		$this->assertFalse($securityContext->isInitialized());
-		$securityContext->_call('initialize');
-		$this->assertTrue($securityContext->isInitialized());
+		$this->assertFalse($this->securityContext->isInitialized());
+		$this->securityContext->initialize();
+		$this->assertTrue($this->securityContext->isInitialized());
 	}
 
 	/**
@@ -83,34 +88,19 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeSeparatesActiveAndInactiveTokens() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
-
-		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
-
-		$mockRequestHandler = $this->getMock('TYPO3\Flow\Mvc\ActionRequestHandler', array(), array(), '', FALSE);
-		$mockRequestHandler->expects($this->any())->method('getRequest')->will($this->returnValue($request));
-
-		$bootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array(), array(), '', FALSE);
-		$bootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
-
-		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('separateActiveAndInactiveTokens'));
-		$securityContext->expects($this->once())->method('separateActiveAndInactiveTokens');
-		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
-		$securityContext->_set('bootstrap', $bootstrap);
-		$securityContext->setRequest($request);
-
-		$securityContext->_call('initialize');
+		$this->securityContext->expects($this->once())->method('separateActiveAndInactiveTokens');
+		$this->securityContext->initialize();
 	}
 
 	/**
 	 * @test
 	 */
 	public function initializeUpdatesAndSeparatesActiveAndInactiveTokensCorrectly() {
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
+
 		$settings = array();
 		$settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
-
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$securityContext->injectSettings($settings);
 
 		$matchingRequestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
 		$matchingRequestPattern->expects($this->any())->method('matchRequest')->will($this->returnValue(TRUE));
@@ -158,13 +148,15 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
 		$securityContext->injectSettings($settings);
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
 		$securityContext->_set('sessionManager', $mockSessionManager);
 		$securityContext->_set('securityLogger', $mockSecurityLogger);
 		$securityContext->_set('tokens', array($token1, $token3, $token4));
 
-		$securityContext->_call('initialize');
+		$securityContext->setRequest($this->mockActionRequest);
+		$securityContext->_set('tokens', array($token1, $token3, $token4));
+		$securityContext->initialize();
 
 		$this->assertEquals(array($token1, $token2, $token4), array_values($securityContext->_get('activeTokens')));
 		$this->assertEquals(array($token3, $token5), array_values($securityContext->_get('inactiveTokens')));
@@ -175,24 +167,20 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function securityContextCallsTheAuthenticationManagerToSetItsTokens() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
+		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
 
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
-
-		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
-		$securityContext->setRequest($request);
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
+		$securityContext->setRequest($this->mockActionRequest);
 
-		$securityContext->_call('initialize');
+		$securityContext->initialize();
 	}
 
 	/**
 	 * @test
 	 */
 	public function tokenFromAnAuthenticationManagerIsReplacedIfThereIsOneOfTheSameTypeInTheSession() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$token1 = $this->getMock('TYPO3\Flow\Security\Authentication\TokenInterface');
@@ -222,7 +210,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('tokens', $tokensFromTheSession);
 		$securityContext->_set('sessionManager', $mockSessionManager);
 		$securityContext->_set('securityLogger', $mockSecurityLogger);
@@ -237,8 +225,6 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeCallsUpdateCredentialsOnAllActiveTokens() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$notMatchingRequestPattern = $this->getMock('TYPO3\Flow\Security\RequestPatternInterface');
@@ -260,7 +246,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('dummy'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 
 		$securityContext->_call('initialize');
@@ -286,13 +272,13 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$data = array();
 		$settings = array();
 		$settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::AUTHENTICATE_ALL_TOKENS);
+		$data[] = array($settings, Context::AUTHENTICATE_ALL_TOKENS);
 		$settings['security']['authentication']['authenticationStrategy'] = 'oneToken';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::AUTHENTICATE_ONE_TOKEN);
+		$data[] = array($settings, Context::AUTHENTICATE_ONE_TOKEN);
 		$settings['security']['authentication']['authenticationStrategy'] = 'atLeastOneToken';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN);
+		$data[] = array($settings, Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN);
 		$settings['security']['authentication']['authenticationStrategy'] = 'anyToken';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::AUTHENTICATE_ANY_TOKEN);
+		$data[] = array($settings, Context::AUTHENTICATE_ANY_TOKEN);
 		return $data;
 	}
 
@@ -328,11 +314,11 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$data = array();
 		$settings = array();
 		$settings['security']['csrf']['csrfStrategy'] = 'onePerRequest';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::CSRF_ONE_PER_REQUEST);
+		$data[] = array($settings, Context::CSRF_ONE_PER_REQUEST);
 		$settings['security']['csrf']['csrfStrategy'] = 'onePerSession';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::CSRF_ONE_PER_SESSION);
+		$data[] = array($settings, Context::CSRF_ONE_PER_SESSION);
 		$settings['security']['csrf']['csrfStrategy'] = 'onePerUri';
-		$data[] = array($settings, \TYPO3\Flow\Security\Context::CSRF_ONE_PER_URI);
+		$data[] = array($settings, Context::CSRF_ONE_PER_URI);
 		return $data;
 	}
 
@@ -644,8 +630,6 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPartyAsksTheCorrectAuthenticationTokenAndReturnsItsParty() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$mockParty = $this->getMockForAbstractClass('TYPO3\Party\Domain\Model\AbstractParty');
@@ -666,7 +650,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$token3->expects($this->never())->method('getAccount');
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2, $token3)));
 
@@ -677,8 +661,6 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAccountReturnsTheAccountAttachedToTheFirstAuthenticatedToken() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
@@ -696,7 +678,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$token3->expects($this->never())->method('getAccount');
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2, $token3)));
 
@@ -707,8 +689,6 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getPartyByTypeReturnsTheFirstAuthenticatedPartyWithGivenType() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$matchingMockParty = $this->getMockForAbstractClass('TYPO3\Party\Domain\Model\AbstractParty', array(), 'MatchingParty');
@@ -732,7 +712,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$token3->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount2));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2, $token3)));
 
@@ -743,8 +723,6 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAccountByAuthenticationProviderNameReturnsTheAuthenticatedAccountWithGivenProviderName() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$mockAccount1 = $this->getMock('TYPO3\Flow\Security\Account');
@@ -763,7 +741,7 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$token3->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount2));
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->_set('activeTokens', array('SomeOhterProvider' => $token1, 'SecondProvider' => $token2, 'MatchingProvider' => $token3));
 
@@ -774,12 +752,10 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getAccountByAuthenticationProviderNameReturnsNullIfNoAccountFound() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->_set('activeTokens', array());
 
@@ -790,12 +766,10 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCsrfProtectionTokenReturnsANewTokenIfNoneIsPresentInTheContext() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->_set('csrfTokens', array());
 
@@ -806,17 +780,15 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCsrfProtectionTokenReturnsANewTokenIfTheCsrfStrategyIsOnePerUri() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$existingTokens = array('token1' => TRUE, 'token2' => TRUE);
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('getAuthenticationTokens'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->_set('csrfTokens', $existingTokens);
-		$securityContext->_set('csrfStrategy', \TYPO3\Flow\Security\Context::CSRF_ONE_PER_URI);
+		$securityContext->_set('csrfStrategy', Context::CSRF_ONE_PER_URI);
 
 		$this->assertFalse(array_key_exists($securityContext->getCsrfProtectionToken(), $existingTokens));
 	}
@@ -825,14 +797,12 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContext() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$existingTokens = array('csrfToken12345' => TRUE);
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->_set('csrfProtectionTokens', $existingTokens);
 
@@ -844,17 +814,15 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContextAndUnsetsItIfTheCsrfStrategyIsOnePerUri() {
-		$request = Request::create(new Uri('http://robertlemke.com/admin'))->createActionRequest();
-
 		$mockAuthenticationManager = $this->getMock('TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface');
 
 		$existingTokens = array('csrfToken12345' => TRUE);
 
 		$securityContext = $this->getAccessibleMock('TYPO3\Flow\Security\Context', array('initialize'));
-		$securityContext->setRequest($request);
+		$securityContext->setRequest($this->mockActionRequest);
 		$securityContext->_set('authenticationManager', $mockAuthenticationManager);
 		$securityContext->_set('csrfProtectionTokens', $existingTokens);
-		$securityContext->_set('csrfProtectionStrategy', \TYPO3\Flow\Security\Context::CSRF_ONE_PER_URI);
+		$securityContext->_set('csrfProtectionStrategy', Context::CSRF_ONE_PER_URI);
 
 		$this->assertTrue($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));
 		$this->assertFalse($securityContext->isCsrfProtectionTokenValid('csrfToken12345'));

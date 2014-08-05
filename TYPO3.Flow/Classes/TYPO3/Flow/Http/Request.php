@@ -183,11 +183,11 @@ class Request extends Message {
 	 * Creates a new Action Request request as a sub request to this HTTP request.
 	 * Maps the arguments of this request to the new Action Request.
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @return ActionRequest
+	 * @deprecated since Flow 2.3. Create the ActionRequest manually instead: $actionRequest = new ActionRequest($httpRequest)
 	 */
 	public function createActionRequest() {
 		$actionRequest = new ActionRequest($this);
-		$actionRequest->setArguments($this->arguments);
 		return $actionRequest;
 	}
 
@@ -323,9 +323,6 @@ class Request extends Message {
 		}
 
 		parent::setContent($content);
-		if (!is_resource($content)) {
-			$this->arguments = $this->buildUnifiedArguments($this->arguments, array(), array());
-		}
 	}
 
 	/**
@@ -490,9 +487,8 @@ class Request extends Message {
 	}
 
 	/**
-	 * Takes the raw request data and - depending on the request method
-	 * maps them into the request object. Afterwards all mapped arguments
-	 * can be retrieved by the getArgument(s) method, no matter if they
+	 * Takes the raw GET & POST arguments and maps them into the request object.
+	 * Afterwards all mapped arguments can be retrieved by the getArgument(s) method, no matter if they
 	 * have been GET, POST or PUT arguments before.
 	 *
 	 * @param array $getArguments Arguments as found in $_GET
@@ -502,64 +498,8 @@ class Request extends Message {
 	 */
 	protected function buildUnifiedArguments(array $getArguments, array $postArguments, array $uploadArguments) {
 		$arguments = $getArguments;
-		$contentArguments = NULL;
-
-		if ($this->method === 'POST') {
-			$contentArguments = ($postArguments !== array()) ? $postArguments : $this->decodeBodyArguments($this->getContent(), $this->headers->get('Content-Type'));
-		} elseif ($this->method === 'PUT') {
-			$contentArguments = $this->decodeBodyArguments($this->getContent(), $this->headers->get('Content-Type'));
-		}
-
-		if ($contentArguments !== NULL) {
-			$arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $contentArguments);
-		}
+		$arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
 		$arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $this->untangleFilesArray($uploadArguments));
-		return $arguments;
-	}
-
-	/**
-	 * Decodes the given request body, depending on the given content type.
-	 *
-	 * Currently JSON, XML and encoded forms are supported. The media types accepted
-	 * for choosing the respective decoding algorithm are rather broad. This method
-	 * does, for example, accept "text/x-json" although "application/json" is the
-	 * only valid (that is, IANA registered) media type for JSON.
-	 *
-	 * In future versions of Flow, this part maybe extensible by third-party code.
-	 * For the time being, only the mentioned media types are supported.
-	 *
-	 * Errors are silently ignored and result in an empty array.
-	 *
-	 * @param string $body The request body
-	 * @param string $mediaType The IANA Media Type
-	 * @return array The decoded body
-	 */
-	protected function decodeBodyArguments($body, $mediaType) {
-		switch (MediaTypes::trimMediaType($mediaType)) {
-			case 'application/json':
-			case 'application/x-javascript':
-			case 'text/javascript':
-			case 'text/x-javascript':
-			case 'text/x-json':
-				$arguments = json_decode($body, TRUE);
-				if ($arguments === NULL) {
-					return array();
-				}
-			break;
-			case 'text/xml':
-			case 'application/xml':
-				try {
-					$xmlElement = new \SimpleXMLElement(urldecode($body), LIBXML_NOERROR);
-				} catch (\Exception $e) {
-					return array();
-				}
-				$arguments = Arrays::convertObjectToArray($xmlElement);
-			break;
-			case 'application/x-www-form-urlencoded':
-			default:
-				parse_str($body, $arguments);
-			break;
-		}
 		return $arguments;
 	}
 
