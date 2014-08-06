@@ -63,7 +63,6 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
 			$moreInformationLink = ($exceptionCodeNumber != '') ? '<p><a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a></p>' : '';
-			$createIssueLink = $this->getCreateIssueLink($exception);
 			$exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
 
 			$exceptionHeader .= '<h2 class="ExceptionSubject">' . $exceptionCodeNumber . htmlspecialchars($exceptionMessageParts['subject']) . '</h2>';
@@ -77,13 +76,13 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 			if ($exception instanceof \TYPO3\Flow\Exception) {
 				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
 			}
+
 			if ($exception->getPrevious() === NULL) {
-				$exceptionHeader .= '<br /><a href="' . $createIssueLink . '">Go to the FORGE issue tracker and report the issue</a> - <strong>if you think it is a bug!</strong><br />';
 				break;
-			} else {
-				$exceptionHeader .= '<br /><div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Nested Exception</div>';
-				$exception = $exception->getPrevious();
 			}
+
+			$exceptionHeader .= '<br /><div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Nested Exception</div>';
+			$exception = $exception->getPrevious();
 		}
 
 		$backtraceCode = Debugger::getBacktraceCode($exception->getTrace());
@@ -202,27 +201,6 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	}
 
 	/**
-	 * Returns a link pointing to Forge to create a new issue.
-	 *
-	 * @param \Exception $exception
-	 * @return string
-	 */
-	protected function getCreateIssueLink(\Exception $exception) {
-		$filename = basename($exception->getFile());
-		return 'http://forge.typo3.org/projects/package-typo3-flow/issues/new?issue[subject]=' .
-			urlencode (get_class($exception) . ' thrown in file ' . $filename) .
-			'&issue[description]=' .
-			urlencode (
-				$exception->getMessage() . chr(10) .
-				strip_tags(
-					str_replace(array('<br />', '</pre>'), chr(10), Debugger::getBacktraceCode($exception->getTrace(), FALSE))
-				) .
-				chr(10) . 'Please include more helpful information!'
-			) .
-			'&issue[category_id]=554&issue[priority_id]=7';
-	}
-
-	/**
 	 * Splits the given string into subject and body according to following rules:
 	 * - If the string is empty or does not contain more than one sentence nor line breaks, the subject will be equal to the string and body will be an empty string
 	 * - Otherwise the subject is everything until the first line break or end of sentence, the body contains the rest
@@ -231,7 +209,6 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	 * @return array in the format array('subject' => '<subject>', 'body' => '<body>');
 	 */
 	protected function splitExceptionMessage($exceptionMessage) {
-		$subject = '';
 		$body = '';
 		$pattern = '/
 			(?<=                # Begin positive lookbehind.
