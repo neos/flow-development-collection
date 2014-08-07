@@ -189,7 +189,7 @@ class Compiler {
 	 */
 	protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode) {
 		$classCode = file_get_contents($pathAndFilename);
-		$classCode = preg_replace('/^<\\?php.*\n/', '', $classCode);
+		$classCode = preg_replace('/^<\\?php\s*(.*)\n/', '$1', $classCode);
 
 		$classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
 		$classCode = preg_replace_callback('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', function($matches) use ($pathAndFilename, $classNameSuffix) {
