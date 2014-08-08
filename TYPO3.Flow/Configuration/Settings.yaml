@@ -56,6 +56,13 @@ TYPO3:
       # If set to boolean FALSE, Flow does not try to specify any php.ini file to the sub process.
       subRequestPhpIniPathAndFilename: NULL
 
+      # optional list of INI entries (entry: value) to set for all Flow CLI sub requests.
+      # This equals to the -d argument of the php CLI
+      # Example:
+      # subRequestIniEntries:
+      #   'date.timezone': 'UTC'
+      subRequestIniEntries: []
+
     error:
 
       exceptionHandler:
