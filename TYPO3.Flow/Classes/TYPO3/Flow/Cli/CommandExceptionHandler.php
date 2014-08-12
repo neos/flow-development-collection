@@ -12,13 +12,14 @@ namespace TYPO3\Flow\Cli;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\AbstractExceptionHandler;
 
 /**
  * An Exception handler exclusively responsible for Exceptions that occur during command controller invocation
  *
  * @Flow\Scope("singleton")
  */
-class CommandExceptionHandler extends \TYPO3\Flow\Error\AbstractExceptionHandler {
+class CommandExceptionHandler extends AbstractExceptionHandler {
 
 	/**
 	 * Dummy method to satisfy the parent abstract class

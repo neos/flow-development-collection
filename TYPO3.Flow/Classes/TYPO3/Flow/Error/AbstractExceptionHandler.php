@@ -70,7 +70,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 		}
 
 		if (is_object($this->systemLogger)) {
-			$this->systemLogger->logException($exception);
+			$options = $this->resolveCustomRenderingOptions($exception);
+			if (isset($options['logException']) && $options['logException']) {
+				$this->systemLogger->logException($exception);
+			}
 		}
 
 		switch (PHP_SAPI) {

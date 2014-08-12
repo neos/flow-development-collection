@@ -10,24 +10,74 @@ namespace TYPO3\Flow\Tests\Unit\Error;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Error\AbstractExceptionHandler;
+use TYPO3\Flow\Exception;
+use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the Abstract Exception Handler
- *
+ * Test case for the Abstract Exception Handler
  */
-class AbstractExceptionHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class AbstractExceptionHandlerTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 * @return void
 	 */
 	public function handleExceptionLogsInformationAboutTheExceptionInTheSystemLog() {
+		$options = array(
+			'defaultRenderingOptions' => array(
+				'renderTechnicalDetails' => TRUE,
+				'logException' => TRUE
+			),
+			'renderingGroups' => array()
+		);
+
 		$exception = new \Exception('The Message', 12345);
 
 		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$mockSystemLogger->expects($this->once())->method('logException')->with($exception);
 
 		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE);
+		/** @var AbstractExceptionHandler $exceptionHandler */
+		$exceptionHandler->setOptions($options);
+		$exceptionHandler->injectSystemLogger($mockSystemLogger);
+		$exceptionHandler->handleException($exception);
+	}
+
+	/**
+	 * @test
+	 * @return void
+	 */
+	public function handleExceptionDoesNotLogInformationAboutTheExceptionInTheSystemLogIfLogExceptionWasTurnedOff() {
+		$options = array(
+			'defaultRenderingOptions' => array(
+				'renderTechnicalDetails' => TRUE,
+				'logException' => TRUE
+			),
+			'renderingGroups' => array(
+				'notFoundExceptions' => array(
+					'matchingStatusCodes' => array(404),
+					'options' => array(
+						'logException' => FALSE,
+						'templatePathAndFilename' => 'resource://TYPO3.Flow/Private/Templates/Error/Default.html',
+						'variables' => array(
+							'errorDescription' => 'Sorry, the page you requested was not found.'
+						)
+
+					)
+				)
+			)
+		);
+
+		$exception = $this->getAccessibleMock('TYPO3\Flow\Exception', array('dummy'), array('Not Found ...', 1407751877));
+		$exception->_set('statusCode', 404);
+
+		$mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+		$mockSystemLogger->expects($this->never())->method('logException')->with($exception);
+
+		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\Flow\Error\AbstractExceptionHandler', array(), '', FALSE);
+		/** @var AbstractExceptionHandler $exceptionHandler */
+		$exceptionHandler->setOptions($options);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
 		$exceptionHandler->handleException($exception);
 	}

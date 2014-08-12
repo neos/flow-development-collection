@@ -67,6 +67,7 @@ TYPO3:
         # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
         defaultRenderingOptions:
           renderTechnicalDetails: FALSE
+          logException: TRUE
 
         # Rendering groups can define special renderings depending on status code or class of the
         # thrown exception.
@@ -75,6 +76,7 @@ TYPO3:
           notFoundExceptions:
             matchingStatusCodes: [404]
             options:
+              logException: FALSE
               templatePathAndFilename: 'resource://TYPO3.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the page you requested was not found.'

@@ -146,7 +146,7 @@ An example configuration could look like in the following Settings.yaml excerpt:
 	rendering group; see below.
 
 ``notFoundExceptions`` and ``databaseConnectionExceptions`` are freely chosen, descriptive
-key names, their actual naming has no further impressions.
+key names, their actual naming has no further implications.
 
 ``matchingStatusCodes``:
 	an array of integer values what HTTP status codes the rendering group is for
@@ -156,6 +156,16 @@ key names, their actual naming has no further impressions.
 	the class name must not contain a leading slash, but must be fully qualified, of course.
 
 ``options``:
+
+	``logException``:
+		a boolean telling Flow to log the exception and write a backtrace file. This is
+		on by default but switched off for exceptions with a 404 status code
+
+	``renderTechnicalDetails``:
+		a boolean passed to the error template during rendering and used in the default error
+		template to include more details on the error at hand. Defaults to FALSE but is set to TRUE
+		for development context.
+
 	``templatePathAndFilename``:
 		a resource string to the (Fluid) filename to use
 
