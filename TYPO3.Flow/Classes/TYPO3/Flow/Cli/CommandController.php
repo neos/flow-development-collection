@@ -251,6 +251,21 @@ class CommandController implements ControllerInterface {
 			$preparedArguments[] = $argument->getValue();
 		}
 
+		$command = new Command(get_class($this), $this->request->getControllerCommandName());
+		if ($command->isDeprecated()) {
+			$suggestedCommandMessage = '';
+
+			$relatedCommandIdentifiers = $command->getRelatedCommandIdentifiers();
+			if ($relatedCommandIdentifiers !== array()) {
+				$suggestedCommandMessage = sprintf(
+					', use the following command%s instead: %s',
+					count($relatedCommandIdentifiers) > 1 ? 's' : '',
+					implode(', ', $relatedCommandIdentifiers)
+				);
+			}
+			$this->outputLine('<b>Warning:</b> This command is <b>DEPRECATED</b>%s%s', array($suggestedCommandMessage, PHP_EOL));
+		}
+
 		$commandResult = call_user_func_array(array($this, $this->commandMethodName), $preparedArguments);
 
 		if (is_string($commandResult) && strlen($commandResult) > 0) {

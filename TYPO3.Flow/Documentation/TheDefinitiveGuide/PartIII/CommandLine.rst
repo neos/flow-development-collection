@@ -42,7 +42,7 @@ the current version number and the current context:
 .. code-block:: none
 
 	$ ./flow
-	TYPO3 Flow 1.x.x ("Development" context)
+	TYPO3 Flow 2.x.x ("Development" context)
 	usage: ./flow <command identifier>
 
 	See "./flow help" for a list of all available commands.
@@ -54,7 +54,7 @@ commands can be obtained with the *help* command:
 .. code-block:: none
 
 	$ ./flow help
-	TYPO3 Flow 1.x.x ("Development" context)
+	TYPO3 Flow 2.x.x ("Development" context)
 	usage: ./flow <command identifier>
 
 	The following commands are currently available:
@@ -335,6 +335,47 @@ A typical usage of the command above may look like this:
 	$ ./flow foo:processword --operation lowercase These Are The Words
 
 	these are the words
+
+See Other and Deprecated Commands
+---------------------------------
+
+A command's help screen can contain additional information about relations
+to other commands. This information is triggered by specifying one or more
+*@see* annotations in the command's doc comment block as follows:
+
+.. code-block:: php
+
+	/**
+	 * Drink juice
+	 *
+	 * This command provides some way of drinking juice.
+	 *
+	 * @return string
+	 * @see acme.demo:drink:coffee
+	 */
+	public function juiceCommand() {
+		...
+	}
+
+By adding a *@deprecated* annotation, the respective command will be marked
+as deprecated in all help screens and a warning will be displayed when
+executing the command. If a *@see* annotation is specified, the deprecation
+message additionally suggests to use the command mentioned there.
+
+.. code-block:: php
+
+	/**
+	 * Drink tea
+	 *
+	 * This command urges you to drink tea.
+	 *
+	 * @return string
+	 * @deprecated since 2.8.18
+	 * @see acme.demo:drink:coffee
+	 */
+	public function teaCommand() {
+		...
+	}
 
 
 Generating Styled Output
