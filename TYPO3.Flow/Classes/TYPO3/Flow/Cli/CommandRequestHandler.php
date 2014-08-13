@@ -85,13 +85,8 @@ class CommandRequestHandler implements \TYPO3\Flow\Core\RequestHandlerInterface 
 	 * @return void
 	 */
 	public function handleRequest() {
-		try {
-			$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? 'Compiletime' : 'Runtime';
-			$this->boot($runLevel);
-			$this->objectManager->get('TYPO3\Flow\Cli\CommandExceptionHandler');
-		} catch (\Exception $exception) {
-			\TYPO3\Flow\Cli\CommandExceptionHandler::writeResponseAndExit($exception);
-		}
+		$runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? 'Compiletime' : 'Runtime';
+		$this->boot($runLevel);
 
 		$commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
 		$this->request = $this->objectManager->get('TYPO3\Flow\Cli\RequestBuilder')->build(array_slice($commandLine, 1));
