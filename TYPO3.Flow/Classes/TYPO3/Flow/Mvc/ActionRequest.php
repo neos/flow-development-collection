@@ -16,9 +16,6 @@ use TYPO3\Flow\Http\Request as HttpRequest;
 use TYPO3\Flow\Object\Exception\UnknownObjectException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfiguration;
-use TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -48,17 +45,6 @@ class ActionRequest implements RequestInterface {
 	protected $packageManager;
 
 	/**
-	 * @Flow\Inject
-	 * @var PropertyMapper
-	 */
-	protected $propertyMapper;
-
-	/**
-	 * @var PropertyMappingConfiguration
-	 */
-	protected $propertyMappingConfiguration;
-
-	/**
 	 * Package key of the controller which is supposed to handle this request.
 	 * @var string
 	 */
@@ -81,12 +67,6 @@ class ActionRequest implements RequestInterface {
 	 * @var string
 	 */
 	protected $controllerActionName = NULL;
-
-	/**
-	 * Whether or not the arguments of this action request have been initialized
-	 * @var boolean
-	 */
-	protected $argumentsInitialized = FALSE;
 
 	/**
 	 * The arguments for this request. They must be only simple types, no
@@ -160,15 +140,6 @@ class ActionRequest implements RequestInterface {
 			throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
 		}
 		$this->parentRequest = $parentRequest;
-	}
-
-	/**
-	 * @param MediaTypeConverterInterface $mediaTypeConverter
-	 * @return void
-	 */
-	public function injectMediaTypeConverter(MediaTypeConverterInterface $mediaTypeConverter) {
-		$this->propertyMappingConfiguration = new PropertyMappingConfiguration();
-		$this->propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
 	}
 
 	/**
@@ -472,7 +443,6 @@ class ActionRequest implements RequestInterface {
 	 * @throws \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException if the given argument value is an object
 	 */
 	public function setArgument($argumentName, $value) {
-		$this->initializeArguments();
 		if (!is_string($argumentName) || strlen($argumentName) === 0) {
 			throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
 		}
@@ -522,7 +492,6 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getArgument($argumentName) {
-		$this->initializeArguments();
 		if (!isset($this->arguments[$argumentName])) {
 			throw new Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
 		}
@@ -537,7 +506,6 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function hasArgument($argumentName) {
-		$this->initializeArguments();
 		return isset($this->arguments[$argumentName]);
 	}
 
@@ -566,23 +534,7 @@ class ActionRequest implements RequestInterface {
 	 * @api
 	 */
 	public function getArguments() {
-		$this->initializeArguments();
 		return $this->arguments;
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function initializeArguments() {
-		if ($this->argumentsInitialized === TRUE) {
-			return;
-		}
-		$this->argumentsInitialized = TRUE;
-		$httpRequest = $this->getHttpRequest();
-		$this->propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
-		$bodyArguments = $this->propertyMapper->convert($httpRequest->getContent(), 'array', $this->propertyMappingConfiguration);
-		$requestArguments = Arrays::arrayMergeRecursiveOverrule($httpRequest->getArguments(), $bodyArguments);
-		$this->setArguments(Arrays::arrayMergeRecursiveOverrule($requestArguments, $this->arguments));
 	}
 
 	/**
@@ -595,7 +547,6 @@ class ActionRequest implements RequestInterface {
 	 * @return string Value of the argument, or NULL if not set.
 	 */
 	public function getInternalArgument($argumentName) {
-		$this->initializeArguments();
 		return (isset($this->internalArguments[$argumentName]) ? $this->internalArguments[$argumentName] : NULL);
 	}
 
@@ -606,7 +557,6 @@ class ActionRequest implements RequestInterface {
 	 * @return array
 	 */
 	public function getInternalArguments() {
-		$this->initializeArguments();
 		return $this->internalArguments;
 	}
 
@@ -695,8 +645,7 @@ class ActionRequest implements RequestInterface {
 	 * @return array
 	 */
 	public function __sleep() {
-		$this->initializeArguments();
-		$properties = array('controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'argumentsInitialized', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched');
+		$properties = array('controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched');
 		if ($this->parentRequest instanceof ActionRequest) {
 			$properties[] = 'parentRequest';
 		}

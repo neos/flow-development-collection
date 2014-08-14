@@ -35,25 +35,9 @@ class ActionRequestTest extends UnitTestCase {
 	 */
 	protected $mockHttpRequest;
 
-	/**
-	 * @var PropertyMappingConfiguration|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockPropertyMappingConfiguration;
-
-	/**
-	 * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected $mockPropertyMapper;
-
 	public function setUp() {
 		$this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$this->actionRequest = new ActionRequest($this->mockHttpRequest);
-
-		$this->mockPropertyMappingConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfiguration')->getMock();
-		$this->inject($this->actionRequest, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
-
-		$this->mockPropertyMapper = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMapper')->getMock();
-		$this->inject($this->actionRequest, 'propertyMapper', $this->mockPropertyMapper);
 	}
 
 	/**
@@ -358,8 +342,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @test
 	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
 		$this->actionRequest->setArgument('someArgumentName', 'theValue');
 		$this->assertEquals('theValue', $this->actionRequest->getArgument('someArgumentName'));
 	}
@@ -369,8 +351,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidArgumentNameException
 	 */
 	public function setArgumentThrowsAnExceptionOnInvalidArgumentNames() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
 		$this->actionRequest->setArgument('', 'theValue');
 	}
 
@@ -379,8 +359,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException
 	 */
 	public function setArgumentDoesNotAllowObjectValuesForRegularArguments() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
 		$this->actionRequest->setArgument('foo', new \stdClass());
 	}
 
@@ -393,9 +371,6 @@ class ActionRequestTest extends UnitTestCase {
 			'bar' => 'barValue'
 		);
 
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-
 		$this->actionRequest->setArguments($arguments);
 		$this->assertEquals($arguments, $this->actionRequest->getArguments());
 	}
@@ -404,9 +379,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @test
 	 */
 	public function internalArgumentsAreHandledSeparately() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-
 		$this->actionRequest->setArgument('__someInternalArgument', 'theValue');
 
 		$this->assertFalse($this->actionRequest->hasArgument('__someInternalArgument'));
@@ -418,9 +390,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @test
 	 */
 	public function internalArgumentsMayHaveObjectValues() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-
 		$someObject = new \stdClass();
 
 		$this->actionRequest->setArgument('__someInternalArgument', $someObject);
@@ -432,9 +401,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @test
 	 */
 	public function pluginArgumentsAreHandledSeparately() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-
 		$this->actionRequest->setArgument('--typo3-flow-foo-viewhelper-paginate', array('@controller' => 'Foo', 'page' => 5));
 
 		$this->assertFalse($this->actionRequest->hasArgument('--typo3-flow-foo-viewhelper-paginate'));
@@ -480,9 +446,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Flow\Security\Exception\InvalidHashException
 	 */
 	public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-
 		$serializedArguments = base64_encode('some manipulated arguments string without valid HMAC');
 		$referrer = array(
 			'@controller' => 'Foo',
@@ -503,7 +466,6 @@ class ActionRequestTest extends UnitTestCase {
 	 * @test
 	 */
 	public function setDispatchedEmitsSignalIfDispatched() {
-
 		$mockDispatcher = $this->getMock('TYPO3\Flow\SignalSlot\Dispatcher');
 		$mockDispatcher->expects($this->once())->method('dispatch')->with('TYPO3\Flow\Mvc\ActionRequest', 'requestDispatched', array($this->actionRequest));
 
@@ -530,139 +492,7 @@ class ActionRequestTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getArgumentInitializesArguments() {
-		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
-		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
-		$actionRequest->expects($this->once())->method('initializeArguments');
-		try {
-			$actionRequest->getArgument('foo');
-		} catch (NoSuchArgumentException $exception) {
-		}
-	}
-
-	/**
-	 * @test
-	 */
-	public function getArgumentsInitializesArguments() {
-		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
-		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
-		$actionRequest->expects($this->once())->method('initializeArguments');
-		$actionRequest->getArguments();
-	}
-
-	/**
-	 * @test
-	 */
-	public function getInternalArgumentInitializesArguments() {
-		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
-		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
-		$actionRequest->expects($this->once())->method('initializeArguments');
-		try {
-			$actionRequest->getInternalArgument('__foo');
-		} catch (NoSuchArgumentException $exception) {
-		}
-	}
-
-	/**
-	 * @test
-	 */
-	public function getInternalArgumentsInitializesArguments() {
-		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
-		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
-		$actionRequest->expects($this->once())->method('initializeArguments');
-		$actionRequest->getInternalArguments();
-	}
-
-	/**
-	 * @test
-	 */
-	public function hasArgumentInitializesArguments() {
-		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
-		$actionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->setMethods(array('initializeArguments'))->getMock();
-		$actionRequest->expects($this->once())->method('initializeArguments');
-		$actionRequest->hasArgument('foo');
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getArgumentsTestsDataProvider() {
-		return array(
-			array(
-				'httpRequestArguments' => array(),
-				'httpRequestBodyArguments' => array(),
-				'actionRequestArguments' => array(),
-				'expectedResult' => array()
-			),
-			array(
-				'httpRequestArguments' => array('httpRequest' => 'arguments'),
-				'httpRequestBodyArguments' => array(),
-				'actionRequestArguments' => array(),
-				'expectedResult' => array('httpRequest' => 'arguments')
-			),
-			array(
-				'httpRequestArguments' => array(),
-				'httpRequestBodyArguments' => array('httpRequestBody' => 'arguments'),
-				'actionRequestArguments' => array(),
-				'expectedResult' => array('httpRequestBody' => 'arguments')
-			),
-			array(
-				'httpRequestArguments' => array(),
-				'httpRequestBodyArguments' => array(),
-				'actionRequestArguments' => array('actionRequestBody' => 'arguments'),
-				'expectedResult' => array('actionRequestBody' => 'arguments')
-			),
-			array(
-				'httpRequestArguments' => array('someArgument' => 'from Request'),
-				'httpRequestBodyArguments' => array('someArgument' => 'overridden from body'),
-				'actionRequestArguments' => array(),
-				'expectedResult' => array('someArgument' => 'overridden from body')
-			),
-			array(
-				'httpRequestArguments' => array('someArgument' => 'from Request'),
-				'httpRequestBodyArguments' => array('someArgument' => 'overridden from body'),
-				'actionRequestArguments' => array('someArgument' => 'overridden from ActionRequest'),
-				'expectedResult' => array('someArgument' => 'overridden from ActionRequest')
-			),
-			array(
-				'httpRequestArguments' => array('someHttpRequestArgument' => 'foo', 'otherArgument' => 'quux'),
-				'httpRequestBodyArguments' => array(),
-				'actionRequestArguments' => array('someActionRequestArgument' => 'bar', 'otherArgument' => 'shouldBeOverridden'),
-				'expectedResult' => array('someHttpRequestArgument' => 'foo', 'otherArgument' => 'shouldBeOverridden', 'someActionRequestArgument' => 'bar')
-			),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider getArgumentsTestsDataProvider
-	 */
-	public function getArgumentsTests(array $httpRequestArguments, array $httpRequestBodyArguments, array $actionRequestArguments, array $expectedResult) {
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue($httpRequestBodyArguments));
-		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue($httpRequestArguments));
-		$this->actionRequest->setArguments($actionRequestArguments);
-
-		$this->assertSame($expectedResult, $this->actionRequest->getArguments());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getInternalArgumentReturnsMergedArguments() {
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array('__internalHttpRequestBody' => 'argument')));
-		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('__internalHttpRequest' => 'argument')));
-		$this->actionRequest->setArguments(array('__internalActionRequest' => 'argument'));
-
-		$expectedResult = array('__internalHttpRequest' => 'argument', '__internalHttpRequestBody' => 'argument', '__internalActionRequest' => 'argument');
-		$this->assertSame($expectedResult, $this->actionRequest->getInternalArguments());
-	}
-
-	/**
-	 * @test
-	 */
 	public function internalArgumentsOfActionRequestOverruleThoseOfTheHttpRequest() {
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('__internalArgument' => 'http request')));
 		$this->actionRequest->setArguments(array('__internalArgument' => 'action request'));
 
 		$expectedResult = array('__internalArgument' => 'action request');
@@ -673,57 +503,10 @@ class ActionRequestTest extends UnitTestCase {
 	 * @test
 	 */
 	public function pluginArgumentsOfActionRequestOverruleThoseOfTheHttpRequest() {
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(array()));
-		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('--pluginArgument' => 'http request')));
 		$this->actionRequest->setArguments(array('--pluginArgument' => 'action request'));
 
 		$expectedResult = array('pluginArgument' => 'action request');
 		$this->assertSame($expectedResult, $this->actionRequest->getPluginArguments());
 	}
 
-	/**
-	 * @test
-	 */
-	public function argumentsAreOnlyInitializedOnce() {
-		$this->mockPropertyMapper->expects($this->once())->method('convert')->will($this->returnValue(array()));
-		$this->mockHttpRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
-		$this->actionRequest->getArguments();
-		$this->actionRequest->getArguments();
-	}
-
-	/**
-	 * @test
-	 */
-	public function initializeArgumentsSetsMediaTypeInTheMediaTypeConverter() {
-		/** @var ActionRequest|\PHPUnit_Framework_MockObject_MockObject $actionRequest */
-		$actionRequest = $this->getAccessibleMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($this->mockHttpRequest));
-
-		$this->inject($actionRequest, 'propertyMappingConfiguration', $this->mockPropertyMappingConfiguration);
-		$this->inject($actionRequest, 'propertyMapper', $this->mockPropertyMapper);
-
-		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getHeader')->with('Content-Type')->will($this->returnValue('some/media-type'));
-		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue('some content'));
-		$this->mockHttpRequest->expects($this->atLeastOnce())->method('getArguments')->will($this->returnValue(array()));
-
-		$this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('setTypeConverterOption')->with('TYPO3\Flow\Property\TypeConverter\MediaTypeConverterInterface', MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, 'some/media-type');
-
-		$this->mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->with('some content', 'array', $this->mockPropertyMappingConfiguration)->will($this->returnValue(array()));
-
-		$actionRequest->_call('initializeArguments');
-	}
-
-	/**
-	 * @test
-	 */
-	public function argumentsAreInitializedOnSerialization() {
-		$this->mockHttpRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('foo' => 'bar', 'bar' => 'baz')));
-		$this->mockHttpRequest->expects($this->any())->method('getContent')->will($this->returnValue('foo=baz&bar=foos'));
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->with('foo=baz&bar=foos')->will($this->returnValue(array('bar' => 'overridden', 'baz' => 'Foos')));
-
-		$serializedActionRequest = serialize($this->actionRequest);
-		$unserializedActionRequest = unserialize($serializedActionRequest);
-
-		$expectedResult = array('foo' => 'bar', 'bar' => 'overridden', 'baz' => 'Foos');
-		$this->assertSame($expectedResult, $unserializedActionRequest->getArguments());
-	}
 }
