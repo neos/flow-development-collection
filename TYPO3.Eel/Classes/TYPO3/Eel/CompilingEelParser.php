@@ -260,11 +260,11 @@ class CompilingEelParser extends EelParser {
 	}
 
 	public function ConditionalExpression_then(&$result, $sub) {
-		$result['code'] = '(' . $this->unwrapExpression($result['code']) . '?' . $sub['code'];
+		$result['code'] = '(' . $this->unwrapExpression($result['code']) . '?(' . $sub['code'] . ')';
 	}
 
 	public function ConditionalExpression_else(&$result, $sub) {
-		$result['code'] .= ':' . $sub['code'] . ')';
+		$result['code'] .= ':(' . $sub['code'] . '))';
 	}
 
 }

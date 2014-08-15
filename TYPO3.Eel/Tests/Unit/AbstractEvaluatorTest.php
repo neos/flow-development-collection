@@ -383,7 +383,10 @@ abstract class AbstractEvaluatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			// Ternary operator using variables
 			array('trueVar ? answer : FALSE', $c, 42),
 			array('!trueVar ? FALSE : answer', $c, 42),
-			array('a < b ? 1 : 2', $c, 1)
+			array('a < b ? 1 : 2', $c, 1),
+			// Ternary operator with nested expressions
+			array('a < b ? 1 + a : 2 + b', $c, 6),
+			array('a > b ? 1 + a : 2 + b', $c, 12),
 		);
 	}
 
