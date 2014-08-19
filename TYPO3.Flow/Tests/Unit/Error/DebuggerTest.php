@@ -11,6 +11,7 @@ namespace TYPO3\Flow\Tests\Unit\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Core\ApplicationContext;
 use TYPO3\Flow\Error\Debugger;
 
 /**
@@ -18,6 +19,10 @@ use TYPO3\Flow\Error\Debugger;
  *
  */
 class DebuggerTest extends \TYPO3\Flow\Tests\UnitTestCase {
+
+	public function setUp() {
+		Debugger::clearState();
+	}
 
 	/**
 	 * @test
@@ -35,6 +40,22 @@ class DebuggerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$object = new \stdClass();
 		$object->__IS_PROXY__ = TRUE;
 		$this->assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, FALSE));
+	}
+
+	/**
+	 * @test
+	 */
+	public function ignoredClassesRegexContainsFallback() {
+		$ignoredClassesRegex = Debugger::getIgnoredClassesRegex();
+		$this->assertContains('TYPO3\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
+	}
+
+	/**
+	 * @test
+	 */
+	public function ignoredClassesAreNotRendered() {
+		$object = new ApplicationContext('Development');
+		$this->assertEquals('TYPO3\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 10, TRUE));
 	}
 
 }

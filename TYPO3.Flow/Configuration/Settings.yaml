@@ -94,6 +94,32 @@ TYPO3:
         # user-defined error handler are affected, of course.
         exceptionalErrors: ['%E_USER_ERROR%', '%E_RECOVERABLE_ERROR%']
 
+      debugger:
+
+        # List of regular expressions classes are matched against in the debugger
+        # to prevent them from being expanded.
+        ignoredClasses:
+          'TYPO3\\Flow\\Aop.*': TRUE
+          'TYPO3\\Flow\\Cac.*': TRUE
+          'TYPO3\\Flow\\Core\\.*': TRUE
+          'TYPO3\\Flow\\Con.*': TRUE
+          'TYPO3\\Flow\\Http\\RequestHandler': TRUE
+          'TYPO3\\Flow\\Uti.*': TRUE
+          'TYPO3\\Flow\\Mvc\\Routing.*': TRUE
+          'TYPO3\\Flow\\Log.*': TRUE
+          'TYPO3\\Flow\\Obj.*': TRUE
+          'TYPO3\\Flow\\Pac.*': TRUE
+          'TYPO3\\Flow\\Persistence\\(?!Doctrine\\Mapping).*': TRUE
+          'TYPO3\\Flow\\Pro.*': TRUE
+          'TYPO3\\Flow\\Ref.*': TRUE
+          'TYPO3\\Flow\\Sec.*': TRUE
+          'TYPO3\\Flow\\Sig.*': TRUE
+          'TYPO3\\Flow\\.*ResourceManager': TRUE
+          'TYPO3\\Fluid\\.*': TRUE
+          '.+Service$': TRUE
+          '.+Repository$': TRUE
+          'PHPUnit_Framework_MockObject_InvocationMocker': TRUE
+
     http:
       # Defines an explicit base URI that should be used. This affects
       # resource management, routing and all other parts accessing
