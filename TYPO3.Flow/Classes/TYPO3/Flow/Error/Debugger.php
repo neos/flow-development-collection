@@ -12,7 +12,10 @@ namespace TYPO3\Flow\Error;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A debugging utility class
@@ -22,7 +25,7 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 class Debugger {
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	static protected $objectManager;
 
@@ -33,31 +36,40 @@ class Debugger {
 	static protected $renderedObjects = array();
 
 	/**
-	 * Hardcoded list of Flow class names (regex) which should not be displayed during debugging
+	 * Hardcoded list of Flow class names (regex) which should not be displayed during debugging.
+	 * This is a fallback in case the classes could not be fetched from the configuration
 	 * @var array
 	 */
-	static protected $blacklistedClassNames = '/
-		(TYPO3\\\\Flow\\\\Aop.*)
-		(TYPO3\\\\Flow\\\\Cac.*) |
-		(TYPO3\\\\Flow\\\\Core\\\\.*) |
-		(TYPO3\\\\Flow\\\\Con.*) |
-		(TYPO3\\\\Flow\\\\Http\\\\RequestHandler) |
-		(TYPO3\\\\Flow\\\\Uti.*) |
-		(TYPO3\\\\Flow\\\\Mvc\\\\Routing.*) |
-		(TYPO3\\\\Flow\\\\Log.*) |
-		(TYPO3\\\\Flow\\\\Obj.*) |
-		(TYPO3\\\\Flow\\\\Pac.*) |
-		(TYPO3\\\\Flow\\\\Persistence\\\\(?!Doctrine\\\\Mapping).*) |
-		(TYPO3\\\\Flow\\\\Pro.*) |
-		(TYPO3\\\\Flow\\\\Ref.*) |
-		(TYPO3\\\\Flow\\\\Sec.*) |
-		(TYPO3\\\\Flow\\\\Sig.*) |
-		(TYPO3\\\\Fluid\\\\.*) |
-		(.+Service$) |
-		(.+Repository$) |
-		(PHPUnit_Framework_MockObject_InvocationMocker)
-		/xs';
+	static protected $ignoredClassesFallback = array(
+		'TYPO3\\\\Flow\\\\Aop.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Cac.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Core\\\\.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Con.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Http\\\\RequestHandler' => TRUE,
+		'TYPO3\\\\Flow\\\\Uti.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Mvc\\\\Routing.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Log.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Obj.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Pac.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Persistence\\\\(?!Doctrine\\\\Mapping).*' => TRUE,
+		'TYPO3\\\\Flow\\\\Pro.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Ref.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Sec.*' => TRUE,
+		'TYPO3\\\\Flow\\\\Sig.*' => TRUE,
+		'TYPO3\\\\Flow\\\\.*ResourceManager' => TRUE,
+		'TYPO3\\\\Fluid\\\\.*' => TRUE,
+		'.+Service$' => TRUE,
+		'.+Repository$' => TRUE,
+		'PHPUnit_Framework_MockObject_InvocationMocker' => TRUE);
 
+	/**
+	 * @var string
+	 */
+	static protected $ignoredClassesRegex = '';
+
+	/**
+	 * @var string
+	 */
 	static protected $blacklistedPropertyNames = '/
 		(Flow_Aop_.*)
 		/xs';
@@ -85,6 +97,7 @@ class Debugger {
 	 */
 	static public function clearState() {
 		self::$renderedObjects = array();
+		self::$ignoredClassesRegex = '';
 	}
 
 	/**
@@ -168,8 +181,7 @@ class Debugger {
 			$objectIdentifier = spl_object_hash($object);
 		}
 		$className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);
-
-		if (preg_match(self::$blacklistedClassNames, $className) !== 0 || isset(self::$renderedObjects[$objectIdentifier])) {
+		if (isset(self::$renderedObjects[$objectIdentifier]) || preg_match(self::getIgnoredClassesRegex(), $className) !== 0) {
 			$renderProperties = FALSE;
 		}
 		self::$renderedObjects[$objectIdentifier] = TRUE;
@@ -443,6 +455,41 @@ class Debugger {
 		} else {
 			return $string;
 		}
+	}
+
+	/**
+	 * Tries to load the 'TYPO3.Flow.error.debugger.ignoredClasses' setting
+	 * to build a regular expression that can be used to filter ignored class names
+	 * If settings can't be loaded it uses self::$ignoredClassesFallback.
+	 *
+	 * @return string
+	 */
+	static public function getIgnoredClassesRegex() {
+		if (self::$ignoredClassesRegex !== '') {
+			return self::$ignoredClassesRegex;
+		}
+
+		$ignoredClassesConfiguration = self::$ignoredClassesFallback;
+		$ignoredClasses = array();
+
+		if (self::$objectManager instanceof ObjectManagerInterface) {
+			$configurationManager = self::$objectManager->get('TYPO3\\Flow\\Configuration\\ConfigurationManager');
+			if ($configurationManager instanceof ConfigurationManager) {
+				$ignoredClassesFromSettings = $configurationManager->getConfiguration('Settings', 'TYPO3.Flow.error.debugger.ignoredClasses');
+				if (is_array($ignoredClassesFromSettings)) {
+					$ignoredClassesConfiguration = Arrays::arrayMergeRecursiveOverrule($ignoredClassesConfiguration, $ignoredClassesFromSettings);
+				}
+			}
+		}
+
+		foreach ($ignoredClassesConfiguration as $classNamePattern => $active) {
+			if ($active === TRUE) {
+				$ignoredClasses[] = $classNamePattern;
+			}
+		}
+
+		self::$ignoredClassesRegex = sprintf('/^%s$/xs', implode('$|^', $ignoredClasses));
+		return self::$ignoredClassesRegex;
 	}
 }
 
