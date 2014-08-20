@@ -12,6 +12,7 @@ namespace TYPO3\Kickstart\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Kickstart\Utility\Validation;
 
 /**
  * Command controller for the Kickstart generator
@@ -20,14 +21,14 @@ use TYPO3\Flow\Annotations as Flow;
 class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\Kickstart\Service\GeneratorService
 	 * @Flow\Inject
+	 * @var \TYPO3\Kickstart\Service\GeneratorService
 	 */
 	protected $generatorService;
 
@@ -48,7 +49,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" already exists.', array($packageKey));
-			$this->quit(2);
+			exit(2);
 		}
 		$this->packageManager->createPackage($packageKey);
 		$this->actionControllerCommand($packageKey, 'Standard');
@@ -96,7 +97,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 			if ($generateRelated === FALSE) {
 				$this->outputLine('Package "%s" is not available.', array($packageKey));
 				$this->outputLine('Hint: Use --generate-related for creating it!');
-				$this->quit(2);
+				exit(2);
 			}
 			$this->packageManager->createPackage($packageKey);
 		}
@@ -114,7 +115,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 					} else {
 						$this->outputLine('The model %s does not exist, but is necessary for creating the respective actions.', array($modelClassName));
 						$this->outputLine('Hint: Use --generate-related for creating it!');
-						$this->quit(3);
+						exit(3);
 					}
 				}
 
@@ -125,7 +126,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 					} else {
 						$this->outputLine('The repository %s does not exist, but is necessary for creating the respective actions.', array($repositoryClassName));
 						$this->outputLine('Hint: Use --generate-related for creating it!');
-						$this->quit(4);
+						exit(4);
 					}
 				}
 			}
@@ -173,7 +174,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" is not available.', array($packageKey));
-			$this->quit(2);
+			exit(2);
 		}
 		$generatedFiles = array();
 		$controllerNames = \TYPO3\Flow\Utility\Arrays::trimExplode(',', $controllerName);
@@ -200,8 +201,10 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" is not available.', array($packageKey));
-			$this->quit(2);
+			exit(2);
 		}
+
+		$this->validateModelName($modelName);
 
 		$fieldsArguments = $this->request->getExceedingArguments();
 		$fieldDefinitions = array();
@@ -240,7 +243,7 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->validatePackageKey($packageKey);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('Package "%s" is not available.', array($packageKey));
-			$this->quit(2);
+			exit(2);
 		}
 
 		$generatedFiles = $this->generatorService->generateRepository($packageKey, $modelName, $force);
@@ -256,8 +259,22 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected function validatePackageKey($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters in the format <VendorName>.<PackageKey>, please!', array($packageKey));
-			$this->quit(1);
+			exit(1);
 		}
 	}
 
+	/**
+	 * Check the given model name to be not one of the reserved words of PHP.
+	 *
+	 * @param string $modelName
+	 * @return boolean
+	 * @see http://www.php.net/manual/en/reserved.keywords.php
+	 */
+	protected function validateModelName($modelName) {
+		if (Validation::isReservedKeyword($modelName)) {
+			$this->outputLine('The name of the model cannot be one of the reserved words of PHP!');
+			$this->outputLine('Have a look at: http://www.php.net/manual/en/reserved.keywords.php');
+			exit(3);
+		}
+	}
 }
