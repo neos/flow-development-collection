@@ -173,17 +173,31 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 	}
 
 	/**
-	 * Removes all cache entries of this cache.
+	 * Removes all cache entries of this cache
+	 *
+	 * The flush method will use the EVAL command to flush all entries and tags for this cache
+	 * in an atomic way.
 	 *
 	 * @throws \RuntimeException
 	 * @return void
 	 * @api
 	 */
 	public function flush() {
-		$keyPattern = $this->cacheIdentifier . ':*';
-		foreach ($this->redis->keys($keyPattern) as $key) {
-			$this->redis->del($key);
-		}
+		$script = "
+		local entries = redis.call('LRANGE',KEYS[1],0,-1)
+		for k1,entryIdentifier in ipairs(entries) do
+			redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
+			local tags = redis.call('SMEMBERS', ARGV[1]..'tags:'..entryIdentifier)
+			for k2,tagName in ipairs(tags) do
+				redis.call('DEL', ARGV[1]..'tag:'..tagName)
+			end
+			redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
+		end
+		redis.call('DEL', KEYS[1])
+		redis.call('DEL', KEYS[2])
+		";
+		$this->redis->eval($script, array($this->buildKey('entries'), $this->buildKey('frozen'), $this->buildKey('')), 2);
+
 		$this->frozen = NULL;
 	}
 
@@ -226,11 +240,22 @@ class RedisBackend extends AbstractBackend implements TaggableBackendInterface, 
 		if ($this->isFrozen()) {
 			throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
 		}
-		$identifiers = $this->findIdentifiersByTag($tag);
-		foreach ($identifiers as $identifier) {
-			$this->remove($identifier);
-		}
-		return count($identifiers);
+
+		$script = "
+		local entries = redis.call('SMEMBERS',KEYS[1])
+		for k1,entryIdentifier in ipairs(entries) do
+			redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
+			local tags = redis.call('SMEMBERS', ARGV[1]..'tags:'..entryIdentifier)
+			for k2,tagName in ipairs(tags) do
+				redis.call('SREM', ARGV[1]..'tag:'..tagName, entryIdentifier)
+			end
+			redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
+		end
+		return #entries
+		";
+		$count = $this->redis->eval($script, array($this->buildKey('tag:' . $tag), $this->buildKey('')), 1);
+
+		return $count;
 	}
 
 	/**
