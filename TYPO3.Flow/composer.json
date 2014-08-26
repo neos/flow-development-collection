@@ -20,8 +20,8 @@
         "doctrine/orm": "2.3.*",
         "doctrine/migrations": "dev-master",
 
-        "symfony/yaml": "2.1.*",
-        "symfony/dom-crawler": "2.2.*",
+        "symfony/yaml": "2.5.*",
+        "symfony/dom-crawler": "2.5.*",
         "symfony/console": "2.*",
 
         "composer/installers": "~1.0.2"
