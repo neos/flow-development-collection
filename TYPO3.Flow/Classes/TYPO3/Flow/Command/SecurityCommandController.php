@@ -130,7 +130,7 @@ class SecurityCommandController extends CommandController {
 
 		if (empty($roleIdentifiers) === TRUE) {
 			$this->outputLine('Please specify at leas one role, to calculate the effective privileges for!');
-			exit(1);
+			$this->quit(1);
 		}
 
 		foreach ($roleIdentifiers as $roleIdentifier) {
@@ -147,7 +147,7 @@ class SecurityCommandController extends CommandController {
 
 		if (count($roles) === 0) {
 			$this->outputLine('The specified role(s) do not exist.');
-			exit(1);
+			$this->quit(1);
 		}
 
 		$this->outputLine(PHP_EOL . 'The following roles will be used for calculating the effective privileges (retrieved from the configured roles hierarchy):' . PHP_EOL);
@@ -317,7 +317,7 @@ class SecurityCommandController extends CommandController {
 
 			if (count($classes) === 0) {
 				$this->outputLine('The given Resource did not match any method or is unknown.');
-				exit(1);
+				$this->quit(1);
 			}
 
 			foreach ($classes as $className => $methods) {

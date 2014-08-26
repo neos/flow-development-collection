@@ -65,15 +65,15 @@ class PackageCommandController extends CommandController {
 	public function createCommand($packageKey, $packageType = 'typo3-flow-package') {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			$this->outputLine('The package key "%s" is not valid.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('The package "%s" already exists.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 		if (substr($packageType, 0, 11) !== 'typo3-flow-') {
 			$this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 		$package = $this->packageManager->createPackage($packageKey, NULL, NULL, $packageType);
 		$this->outputLine('Created new package "' . $packageKey . '" at "' . $package->getPackagePath() . '".');
@@ -91,7 +91,7 @@ class PackageCommandController extends CommandController {
 	public function deleteCommand($packageKey) {
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('The package "%s" does not exist.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 		$this->packageManager->deletePackage($packageKey);
 		$this->outputLine('Deleted package "%s".', array($packageKey));
@@ -112,12 +112,12 @@ class PackageCommandController extends CommandController {
 	public function activateCommand($packageKey) {
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('The package "%s" does not exist.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 
 		if ($this->packageManager->isPackageActive($packageKey)) {
 			$this->outputLine('Package "%s" is already active.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 
 		$this->packageManager->activatePackage($packageKey);
@@ -139,12 +139,12 @@ class PackageCommandController extends CommandController {
 	public function deactivateCommand($packageKey) {
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$this->outputLine('The package "%s" does not exist.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			$this->outputLine('Package "%s" was not active.', array($packageKey));
-			exit(1);
+			$this->quit(1);
 		}
 
 		$this->packageManager->deactivatePackage($packageKey);
@@ -235,7 +235,7 @@ class PackageCommandController extends CommandController {
 	public function freezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
-			exit(3);
+			$this->quit(3);
 		}
 
 		$packagesToFreeze = array();
@@ -248,25 +248,25 @@ class PackageCommandController extends CommandController {
 			}
 			if ($packagesToFreeze === array()) {
 				$this->outputLine('Nothing to do, all active packages were already frozen.');
-				exit(0);
+				$this->quit(0);
 			}
 		} elseif ($packageKey === 'blackberry') {
 			$this->outputLine('http://bit.ly/freeze-blackberry');
-			exit(42);
+			$this->quit(42);
 		} else {
 			if (!$this->packageManager->isPackageActive($packageKey)) {
 				if ($this->packageManager->isPackageAvailable($packageKey)) {
 					$this->outputLine('Package "%s" is not active and thus cannot be frozen.', array($packageKey));
-					exit(1);
+					$this->quit(1);
 				} else {
 					$this->outputLine('Package "%s" is not available.', array($packageKey));
-					exit(2);
+					$this->quit(2);
 				}
 			}
 
 			if ($this->packageManager->isPackageFrozen($packageKey)) {
 				$this->outputLine('Package "%s" was already frozen.', array($packageKey));
-				exit(0);
+				$this->quit(0);
 			}
 
 			$packagesToFreeze = array($packageKey);
@@ -296,7 +296,7 @@ class PackageCommandController extends CommandController {
 	public function unfreezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
-			exit(3);
+			$this->quit(3);
 		}
 
 		$packagesToUnfreeze = array();
@@ -309,21 +309,21 @@ class PackageCommandController extends CommandController {
 			}
 			if ($packagesToUnfreeze === array()) {
 				$this->outputLine('Nothing to do, no packages were frozen.');
-				exit(0);
+				$this->quit(0);
 			}
 		} else {
 			if ($packageKey === NULL) {
 				$this->outputLine('You must specify a package to unfreeze.');
-				exit(1);
+				$this->quit(1);
 			}
 
 			if (!$this->packageManager->isPackageAvailable($packageKey)) {
 				$this->outputLine('Package "%s" is not available.', array($packageKey));
-				exit(2);
+				$this->quit(2);
 			}
 			if (!$this->packageManager->isPackageFrozen($packageKey)) {
 				$this->outputLine('Package "%s" was not frozen.', array($packageKey));
-				exit(0);
+				$this->quit(0);
 			}
 			$packagesToUnfreeze = array($packageKey);
 		}
@@ -353,7 +353,7 @@ class PackageCommandController extends CommandController {
 	public function refreezeCommand($packageKey = 'all') {
 		if (!$this->bootstrap->getContext()->isDevelopment()) {
 			$this->outputLine('Package freezing is only supported in Development context.');
-			exit(3);
+			$this->quit(3);
 		}
 
 		$packagesToRefreeze = array();
@@ -366,21 +366,21 @@ class PackageCommandController extends CommandController {
 			}
 			if ($packagesToRefreeze === array()) {
 				$this->outputLine('Nothing to do, no packages were frozen.');
-				exit(0);
+				$this->quit(0);
 			}
 		} else {
 			if ($packageKey === NULL) {
 				$this->outputLine('You must specify a package to refreeze.');
-				exit(1);
+				$this->quit(1);
 			}
 
 			if (!$this->packageManager->isPackageAvailable($packageKey)) {
 				$this->outputLine('Package "%s" is not available.', array($packageKey));
-				exit(2);
+				$this->quit(2);
 			}
 			if (!$this->packageManager->isPackageFrozen($packageKey)) {
 				$this->outputLine('Package "%s" was not frozen.', array($packageKey));
-				exit(0);
+				$this->quit(0);
 			}
 			$packagesToRefreeze = array($packageKey);
 		}

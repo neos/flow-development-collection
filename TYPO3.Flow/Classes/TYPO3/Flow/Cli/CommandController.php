@@ -470,15 +470,18 @@ class CommandController implements ControllerInterface {
 	}
 
 	/**
-	 * Exits the CLI through the dispatcher
-	 * An exit status code can be specified @see http://www.php.net/exit
+	 * Exits the CLI through the dispatcher and makes sure that Flow is properly shut down.
 	 *
-	 * @param integer $exitCode Exit code to return on exit
+	 * If your command relies on functionality which is triggered through the Bootstrap
+	 * shutdown (such as the persistence framework), you must use quit() instead of exit().
+	 *
+	 * @param integer $exitCode Exit code to return on exit (see http://www.php.net/exit)
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 * @return void
-	 * @deprecated since Flow 2.3. This has no advantage over using \exit() any longer
 	 */
 	protected function quit($exitCode = 0) {
-		exit($exitCode);
+		$this->response->setExitCode($exitCode);
+		throw new StopActionException;
 	}
 
 	/**

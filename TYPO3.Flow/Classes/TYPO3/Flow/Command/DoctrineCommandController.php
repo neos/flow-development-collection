@@ -82,7 +82,7 @@ class DoctrineCommandController extends CommandController {
 					$this->outputLine('    %s', array($errorMessage));
 				}
 			}
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -111,7 +111,7 @@ class DoctrineCommandController extends CommandController {
 			}
 		} else {
 			$this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -140,7 +140,7 @@ class DoctrineCommandController extends CommandController {
 			}
 		} else {
 			$this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -210,7 +210,7 @@ class DoctrineCommandController extends CommandController {
 			}
 		} else {
 			$this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -233,7 +233,7 @@ class DoctrineCommandController extends CommandController {
 			$this->outputLine($this->doctrineService->getMigrationStatus());
 		} else {
 			$this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -274,7 +274,7 @@ class DoctrineCommandController extends CommandController {
 
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -307,7 +307,7 @@ class DoctrineCommandController extends CommandController {
 			$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -337,7 +337,7 @@ class DoctrineCommandController extends CommandController {
 			$this->doctrineService->markAsMigrated($version, $add ?: FALSE);
 		} else {
 			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
@@ -369,7 +369,7 @@ class DoctrineCommandController extends CommandController {
 			$this->outputLine('- (optional) execute the migration using <b>%s doctrine:migrate</b>', array($this->getFlowInvocationString()));
 		} else {
 			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
-			exit(1);
+			$this->quit(1);
 		}
 	}
 
