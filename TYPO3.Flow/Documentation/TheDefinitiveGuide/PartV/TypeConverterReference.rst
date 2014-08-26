@@ -3,19 +3,29 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2014-06-18
+This reference was automatically generated from code on 2014-08-26
 
 
 ArrayConverter
 --------------
 
-Converter which transforms strings and arrays to arrays.
+Converter which transforms various types to arrays.
+
+* If the source is an array, it is returned unchanged.
+* If the source is a string, is is converted depending on CONFIGURATION_STRING_FORMAT,
+  which can be STRING_FORMAT_CSV or STRING_FORMAT_JSON. For CSV the delimiter can be
+  set via CONFIGURATION_STRING_DELIMITER.
+* If the source is a Resource object, it is converted to an array. The actual resource
+  content is either embedded as base64-encoded data or saved to a file, depending on
+  CONFIGURATION_RESOURCE_EXPORT_TYPE. For RESOURCE_EXPORT_TYPE_FILE the setting
+  CONFIGURATION_RESOURCE_SAVE_PATH must be set as well.
 
 :Priority: 1
 :Target type: array
 :Source types:
  * array
  * string
+ * TYPO3\Flow\Resource\Resource
 
 
 
@@ -23,13 +33,19 @@ Converter which transforms strings and arrays to arrays.
 BooleanConverter
 ----------------
 
-Converter which transforms simple types to a boolean, by simply casting it.
+Converter which transforms simple types to a boolean.
+
+For boolean this is a no-op, integer and float are simply typecast to boolean.
+
+Strings are converted to TRUE unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
 
 :Priority: 1
 :Target type: boolean
 :Source types:
  * boolean
  * string
+ * integer
+ * float
 
 
 
@@ -37,7 +53,10 @@ Converter which transforms simple types to a boolean, by simply casting it.
 CollectionConverter
 -------------------
 
-Converter which transforms simple types to a Doctrine ArrayCollection.
+Converter which transforms strings and arrays into a Doctrine ArrayCollection.
+
+The input will be transformed to the element type <T> given with the $targetType (Type<T>) using available
+type converters and the result will be used to populate a Doctrine ArrayCollection.
 
 :Priority: 1
 :Target type: Doctrine\Common\Collections\Collection
@@ -51,12 +70,13 @@ Converter which transforms simple types to a Doctrine ArrayCollection.
 DateTimeConverter
 -----------------
 
-Converter which transforms from different input formats into DateTime objects.
+Converter which transforms from string, integer and array into DateTime objects.
 
-Source can be either a string or an array. The date string is expected to be formatted
-according to DEFAULT_DATE_FORMAT.
+For integers the default is to treat them as a unix timestamp. If a format to cerate from is given, this will be
+used instead.
 
-But the default date format can be overridden in the initialize*Action() method like this::
+If source is a string it is expected to be formatted according to DEFAULT_DATE_FORMAT. This default date format
+can be overridden in the initialize*Action() method like this::
 
  $this->arguments['<argumentName>']
    ->getPropertyMappingConfiguration()
@@ -101,11 +121,13 @@ As an alternative to providing the date as string, you might supply day, month a
 FloatConverter
 --------------
 
-Converter which transforms a simple type to a float.
+Converter which transforms a float, integer or string to a float.
 
-This is basically done by simply casting it, except you provide some configuration options
-which will make this converter use Flow's locale parsing capabilities in order to respect
-deviating decimal separators.
+This is basically done by simply casting it, unless the input is a string and you provide some configuration
+options which will make this converter use Flow's locale parsing capabilities in order to respect deviating
+decimal separators.
+
+Using NULL or an empty string as input will result in a NULL return value.
 
 **Advanced usage in action controller context**
 
@@ -180,13 +202,18 @@ pattern should be used. In most cases leaving this DEFAULT would be the correct 
 IntegerConverter
 ----------------
 
-Converter which transforms a simple type to an integer, by simply casting it.
+Converter which transforms to an integer.
+
+* If the source is an integer, it is returned unchanged.
+* If the source a numeric string, it is cast to integer
+* If the source is a DateTime instance, the UNIX timestamp is returned
 
 :Priority: 1
 :Target type: integer
 :Source types:
  * integer
  * string
+ * DateTime
 
 
 
@@ -195,6 +222,14 @@ ObjectConverter
 ---------------
 
 This converter transforms arrays to simple objects (POPO) by setting properties.
+
+This converter will only be used on target types that are not entities or value objects (for those the
+PersistentObjectConverter is used).
+
+The target type can be overridden in the source by setting the __type key to the desired value.
+
+The converter will return an instance of the target type with all properties given in the source array set to
+the respective values. For the mechanics used to set the values see ObjectAccess::setProperty().
 
 :Priority: 0
 :Target type: object
@@ -230,7 +265,7 @@ This converter transforms arrays or strings to persistent objects. It does the f
 PersistentObjectSerializer
 --------------------------
 
-This converter transforms persistent objects to strings.
+This converter transforms persistent objects to strings by returning their (technical) identifier.
 
 Unpersisted changes to an object are not serialized, because only the persistence identifier is taken into account
 as the serialized value.
@@ -243,10 +278,39 @@ as the serialized value.
 
 
 
+ResourceConverter
+-----------------
+
+An type converter for converting strings and arrays to Resource objects.
+
+If the source
+
+- is a string looking like a SHA1 (40 characters [0-9a-f]) or
+- is an array and contains the key 'hash' with a value looking like a SHA1 (40 characters [0-9a-f])
+
+the coverter will look up an existing Resource(Pointer) with that hash and return it if found. If that fails,
+the converter will try to import a file named like that hash from the configured CONFIGURATION_RESOURCE_LOAD_PATH.
+
+If no hash is given in an array source but the key 'data' is set, the content of that key is assumed a binary string
+and a Resource representing this content is created and returned.
+
+The imported Resource will be given a 'filename' if set in the source array in both cases (import from file or data).
+
+:Priority: 2
+:Target type: TYPO3\Flow\Resource\Resource
+:Source types:
+ * string
+ * array
+
+
+
+
 SessionConverter
 ----------------
 
 This converter transforms a session identifier into a real session object.
+
+Given a session ID this will return an instance of TYPO3\Flow\Session\Session.
 
 :Priority: 1
 :Target type: TYPO3\Flow\Session\Session
@@ -261,11 +325,22 @@ StringConverter
 
 Converter which transforms simple types to a string.
 
+* If the source is a DateTime instance, it will be formatted as string. The format
+  can be set via CONFIGURATION_DATE_FORMAT.
+* If the source is an array, it will be converted to a CSV string or JSON, depending
+  on CONFIGURATION_ARRAY_FORMAT.
+
+For array to CSV string, the delimiter can be set via CONFIGURATION_CSV_DELIMITER.
+
 :Priority: 1
 :Target type: string
 :Source types:
  * string
  * integer
+ * float
+ * boolean
+ * array
+ * DateTime
 
 
 
@@ -273,7 +348,9 @@ Converter which transforms simple types to a string.
 UriTypeConverter
 ----------------
 
-A type converter for converting URI strings to Http Uri objects
+A type converter for converting URI strings to Http Uri objects.
+
+This converter simply creates a TYPO3\Flow\Http\Uri instance from the source string.
 
 :Priority: 1
 :Target type: TYPO3\Flow\Http\Uri

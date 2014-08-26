@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2014-06-18
+This reference was automatically generated from code on 2014-08-26
 
 
 f:alias
@@ -14,6 +14,9 @@ Takes a "map"-Parameter which is an associative array which defines the shorthan
 
 The variables are only declared inside the <f:alias>...</f:alias>-tag. After the
 closing tag, all declared variables are removed again.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\AliasViewHelper
+
 
 
 
@@ -60,6 +63,9 @@ View helper which creates a <base href="..." /> tag. The Base URI
 is taken from the current request.
 In TYPO3 Flow, this ViewHelper is no longer required to make the links work.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\BaseViewHelper
+
+
 
 
 
@@ -82,6 +88,9 @@ Expected result::
 f:case
 ------
 
+Case view helper that is only usable within the SwitchViewHelper.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\CaseViewHelper
 
 
 
@@ -101,6 +110,9 @@ This ViewHelper prevents rendering of any content inside the tag
 Note: Contents of the comment will still be **parsed** thus throwing an
 Exception if it contains syntax errors. You can put child nodes in
 CDATA tags to avoid this.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\CommentViewHelper
+
 
 
 
@@ -137,6 +149,9 @@ f:count
 -------
 
 This ViewHelper counts elements of the specified array or countable object.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\CountViewHelper
+
 
 
 
@@ -179,6 +194,9 @@ f:cycle
 This ViewHelper cycles through the specified values.
 This can be often used to specify CSS classes for example.
 **Note:** To achieve the "zebra class" effect in a loop you can also use the "iteration" argument of the **for** ViewHelper.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\CycleViewHelper
+
 
 
 
@@ -233,6 +251,9 @@ f:debug
 
 View helper that outputs its child nodes with \TYPO3\Flow\var_dump()
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\DebugViewHelper
+
+
 
 
 Arguments
@@ -273,6 +294,9 @@ Expected result::
 f:defaultCase
 -------------
 
+A view helper which specifies the "default" case when used within the SwitchViewHelper.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\DefaultCaseViewHelper
 
 
 
@@ -282,6 +306,9 @@ f:else
 ------
 
 Else-Branch of a condition. Only has an effect inside of "If". See the If-ViewHelper for documentation.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\ElseViewHelper
+
 
 
 
@@ -310,6 +337,9 @@ f:flashMessages
 ---------------
 
 View helper which renders the flash messages (if there are any) as an unsorted list.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\FlashMessagesViewHelper
+
 
 
 
@@ -402,6 +432,9 @@ f:for
 Loop view helper which can be used to iterate over arrays.
 Implements what a basic foreach()-PHP-method does.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\ForViewHelper
+
+
 
 
 Arguments
@@ -476,6 +509,33 @@ Expected result::
 f:form
 ------
 
+Form view helper. Generates a <form> Tag.
+
+= Basic usage =
+
+Use <f:form> to output an HTML <form> tag which is targeted at the specified action, in the current controller and package.
+It will submit the form data via a POST request. If you want to change this, use method="get" as an argument.
+<code title="Example">
+<f:form action="...">...</f:form>
+</code>
+
+= A complex form with a specified encoding type =
+
+<code title="Form with enctype set">
+<f:form action=".." controller="..." package="..." enctype="multipart/form-data">...</f:form>
+</code>
+
+= A Form which should render a domain object =
+
+<code title="Binding a domain object to a form">
+<f:form action="..." name="customer" object="{customer}">
+  <f:form.hidden property="id" />
+  <f:form.textfield property="name" />
+</f:form>
+</code>
+This automatically inserts the value of {customer.name} inside the textbox and adjusts the name of the textbox accordingly.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\FormViewHelper
 
 
 
@@ -554,6 +614,9 @@ f:form.button
 -------------
 
 Creates a button.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\ButtonViewHelper
+
 
 
 
@@ -638,6 +701,9 @@ f:form.checkbox
 ---------------
 
 View Helper which creates a simple checkbox (<input type="checkbox">).
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\CheckboxViewHelper
+
 
 
 
@@ -725,6 +791,9 @@ f:form.hidden
 
 Renders an <input type="hidden" ...> tag.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\HiddenViewHelper
+
+
 
 
 Arguments
@@ -780,6 +849,9 @@ f:form.password
 ---------------
 
 View Helper which creates a simple Password Text Box (<input type="password">).
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\PasswordViewHelper
+
 
 
 
@@ -848,6 +920,9 @@ f:form.radio
 ------------
 
 View Helper which creates a simple radio button (<input type="radio">).
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\RadioViewHelper
+
 
 
 
@@ -933,6 +1008,86 @@ Expected result::
 f:form.select
 -------------
 
+This view helper generates a <select> dropdown list for the use with a form.
+
+= Basic usage =
+
+The most straightforward way is to supply an associative array as the "options" parameter.
+The array key is used as option key, and the value is used as human-readable name.
+
+<code title="Basic usage">
+<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" />
+</code>
+
+= Pre-select a value =
+
+To pre-select a value, set "value" to the option key which should be selected.
+<code title="Default value">
+<f:form.select name="paymentOptions" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" value="visa" />
+</code>
+Generates a dropdown box like above, except that "VISA Card" is selected.
+
+If the select box is a multi-select box (multiple="true"), then "value" can be an array as well.
+
+= Usage on domain objects =
+
+If you want to output domain objects, you can just pass them as array into the "options" parameter.
+To define what domain object value should be used as option key, use the "optionValueField" variable. Same goes for optionLabelField.
+If neither is given, the Identifier (UUID/uid) and the __toString() method are tried as fallbacks.
+
+If the optionValueField variable is set, the getter named after that value is used to retrieve the option key.
+If the optionLabelField variable is set, the getter named after that value is used to retrieve the option value.
+
+If the prependOptionLabel variable is set, an option item is added in first position, bearing an empty string
+or - if specified - the value of the prependOptionValue variable as value.
+
+<code title="Domain objects">
+<f:form.select name="users" options="{userArray}" optionValueField="id" optionLabelField="firstName" />
+</code>
+In the above example, the userArray is an array of "User" domain objects, with no array key specified.
+
+So, in the above example, the method $user->getId() is called to retrieve the key, and $user->getFirstName() to retrieve the displayed value of each entry.
+
+The "value" property now expects a domain object, and tests for object equivalence.
+
+<code title="Prepend option">
+<f:form.select property="salutation" options="{salutations}" prependOptionLabel="- select one -" />
+</code>
+<output>
+<select name="salutation">
+  <option value="">- select one -</option>
+  <option value="Mr">Mr</option>
+  <option value="Mrs">Mrs</option>
+  <option value="Ms">Ms</option>
+  <option value="Dr">Dr</option>
+</select>
+(depending on variable "salutations")
+</output>
+
+= Translation of select content =
+
+The view helper can be given a "translate" argument with configuration on how to translate option labels.
+The array can have the following keys:
+- "by" defines if translation by message id or original label is to be used ("id" or "label")
+- "using" defines if the option tag's "value" or "label" should be used as translation input, defaults to "value"
+- "locale" defines the locale identifier to use, optional, defaults to current locale
+- "source" defines the translation source name, optional, defaults to "Main"
+- "package" defines the package key of the translation source, optional, defaults to current package
+- "prefix" defines a prefix to use for the message id – only works in combination with "by id"
+
+<code title="Label translation">
+<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id'}" />
+</code>
+
+The above example would use the values "payPal" and "visa" to look up translations for those ids in the current package's "Main" XLIFF file.
+
+<code title="Label translation">
+<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id', prefix: 'shop.paymentOptions.'}" />
+</code>
+
+The above example would use the translation ids "shop.paymentOptions.payPal" and "shop.paymentOptions.visa" for translating the labels.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\SelectViewHelper
 
 
 
@@ -1057,6 +1212,9 @@ f:form.submit
 
 Creates a submit button.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\SubmitViewHelper
+
+
 
 
 Arguments
@@ -1125,6 +1283,9 @@ f:form.textarea
 
 Textarea view helper.
 The value of the text area needs to be set via the "value" attribute, as with all other form ViewHelpers.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\TextareaViewHelper
+
 
 
 
@@ -1195,6 +1356,9 @@ f:form.textfield
 ----------------
 
 View Helper which creates a text field (<input type="text">).
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\TextfieldViewHelper
+
 
 
 
@@ -1277,6 +1441,9 @@ won't have to upload the file again.
 
 You can use a separate ViewHelper to display previously uploaded resources in order to remove/replace them.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\UploadViewHelper
+
+
 
 
 Arguments
@@ -1349,6 +1516,9 @@ f:form.validationResults
 
 
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\ValidationResultsViewHelper
+
+
 
 
 Arguments
@@ -1365,6 +1535,9 @@ f:format.bytes
 --------------
 
 Formats an integer with a byte count into human-readable form.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\BytesViewHelper
+
 
 
 
@@ -1412,6 +1585,30 @@ Expected result::
 f:format.case
 -------------
 
+Modifies the case of an input string to upper- or lowercase or capitalization.
+The default transformation will be uppercase as in ``mb_convert_case`` [1].
+
+Possible modes are:
+
+``lower``
+  Transforms the input string to its lowercase representation
+
+``upper``
+  Transforms the input string to its uppercase representation
+
+``capital``
+  Transforms the input string to its first letter upper-cased, i.e. capitalization
+
+``uncapital``
+  Transforms the input string to its first letter lower-cased, i.e. uncapitalization
+
+``capitalWords``
+  Transforms the input string to each containing word being capitalized
+
+Note that the behavior will be the same as in the appropriate PHP function ``mb_convert_case`` [1];
+especially regarding locale and multibyte behavior.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\CaseViewHelper
 
 
 
@@ -1430,6 +1627,9 @@ f:format.crop
 -------------
 
 Use this view helper to crop the text between its opening and closing tags.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\CropViewHelper
+
 
 
 
@@ -1484,6 +1684,9 @@ f:format.currency
 -----------------
 
 Formats a given float to a currency representation.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\CurrencyViewHelper
+
 
 
 
@@ -1563,6 +1766,9 @@ f:format.date
 -------------
 
 Formats a \DateTime object.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\DateViewHelper
+
 
 
 
@@ -1678,6 +1884,9 @@ Expected result::
 f:format.htmlentities
 ---------------------
 
+Applies htmlentities() escaping to a value
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\HtmlentitiesViewHelper
 
 
 
@@ -1699,6 +1908,9 @@ Arguments
 f:format.htmlentitiesDecode
 ---------------------------
 
+Applies html_entity_decode() to a value
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\HtmlentitiesDecodeViewHelper
 
 
 
@@ -1718,6 +1930,9 @@ Arguments
 f:format.htmlspecialchars
 -------------------------
 
+Applies htmlspecialchars() escaping to a value
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\HtmlspecialcharsViewHelper
 
 
 
@@ -1739,6 +1954,11 @@ Arguments
 f:format.identifier
 -------------------
 
+This ViewHelper renders the identifier of a persisted object (if it has an identity).
+Usually the identifier is the UUID of the object, but it could be an array of the
+identity properties, too.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\IdentifierViewHelper
 
 
 
@@ -1755,6 +1975,9 @@ f:format.json
 -------------
 
 Wrapper for PHPs json_encode function.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\JsonViewHelper
+
 
 
 
@@ -1807,6 +2030,9 @@ Expected result::
 f:format.nl2br
 --------------
 
+Wrapper for PHPs nl2br function.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\Nl2brViewHelper
 
 
 
@@ -1815,6 +2041,9 @@ f:format.nl2br
 f:format.number
 ---------------
 
+Formats a number with custom precision, decimal point and grouped thousands.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\NumberViewHelper
 
 
 
@@ -1838,6 +2067,9 @@ Arguments
 f:format.padding
 ----------------
 
+Formats a string using PHPs str_pad function.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\PaddingViewHelper
 
 
 
@@ -1860,6 +2092,9 @@ f:format.printf
 A view helper for formatting values with printf. Either supply an array for
 the arguments or a single value.
 See http://www.php.net/manual/en/function.sprintf.php
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\PrintfViewHelper
+
 
 
 
@@ -1925,6 +2160,9 @@ an ObjectAccessor which should not be escaped, but output as-is.
 PAY SPECIAL ATTENTION TO SECURITY HERE (especially Cross Site Scripting),
 as the output is NOT SANITIZED!
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\RawViewHelper
+
+
 
 
 Arguments
@@ -1973,6 +2211,9 @@ Expected result::
 f:format.stripTags
 ------------------
 
+Removes tags from the given string (applying PHPs strip_tags() function)
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\StripTagsViewHelper
 
 
 
@@ -1988,6 +2229,9 @@ Arguments
 f:format.urlencode
 ------------------
 
+Encodes the given string according to http://www.faqs.org/rfcs/rfc3986.html (applying PHPs rawurlencode() function)
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\UrlencodeViewHelper
 
 
 
@@ -2007,6 +2251,9 @@ Grouped loop view helper.
 Loops through the specified values.
 
 The groupBy argument also supports property paths.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\GroupedForViewHelper
+
 
 
 
@@ -2121,6 +2368,9 @@ below).
     Will result true if {foo.bar}'s represented value equals 'stringToCompare'.
   </f:if>
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\IfViewHelper
+
+
 
 
 Arguments
@@ -2186,6 +2436,9 @@ f:layout
 
 With this tag, you can select a layout to be used for the current template.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\LayoutViewHelper
+
+
 
 
 Arguments
@@ -2200,6 +2453,9 @@ f:link.action
 -------------
 
 A view helper for creating links to actions.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Link\\ActionViewHelper
+
 
 
 
@@ -2296,6 +2552,9 @@ f:link.email
 Email link view helper.
 Generates an email link.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Link\\EmailViewHelper
+
+
 
 
 Arguments
@@ -2366,6 +2625,9 @@ f:link.external
 
 A view helper for creating links to external targets.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Link\\ExternalViewHelper
+
+
 
 
 Arguments
@@ -2426,6 +2688,62 @@ Expected result::
 f:render
 --------
 
+ViewHelper that renders a section or a specified partial
+
+== Examples ==
+
+<code title="Rendering partials">
+<f:render partial="SomePartial" arguments="{foo: someVariable}" />
+</code>
+<output>
+the content of the partial "SomePartial". The content of the variable {someVariable} will be available in the partial as {foo}
+</output>
+
+<code title="Rendering sections">
+<f:section name="someSection">This is a section. {foo}</f:section>
+<f:render section="someSection" arguments="{foo: someVariable}" />
+</code>
+<output>
+the content of the section "someSection". The content of the variable {someVariable} will be available in the partial as {foo}
+</output>
+
+<code title="Rendering recursive sections">
+<f:section name="mySection">
+ <ul>
+   <f:for each="{myMenu}" as="menuItem">
+     <li>
+       {menuItem.text}
+       <f:if condition="{menuItem.subItems}">
+         <f:render section="mySection" arguments="{myMenu: menuItem.subItems}" />
+       </f:if>
+     </li>
+   </f:for>
+ </ul>
+</f:section>
+<f:render section="mySection" arguments="{myMenu: menu}" />
+</code>
+<output>
+<ul>
+  <li>menu1
+    <ul>
+      <li>menu1a</li>
+      <li>menu1b</li>
+    </ul>
+  </li>
+[...]
+(depending on the value of {menu})
+</output>
+
+
+<code title="Passing all variables to a partial">
+<f:render partial="somePartial" arguments="{_all}" />
+</code>
+<output>
+the content of the partial "somePartial".
+Using the reserved keyword "_all", all available variables will be passed along to the partial
+</output>
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\RenderViewHelper
 
 
 
@@ -2514,6 +2832,13 @@ Expected result::
 f:renderChildren
 ----------------
 
+Render the inner parts of a Widget.
+This ViewHelper can only be used in a template which belongs to a Widget Controller.
+
+It renders everything inside the Widget ViewHelper, and you can pass additional
+arguments.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\RenderChildrenViewHelper
 
 
 
@@ -2529,6 +2854,46 @@ Arguments
 f:section
 ---------
 
+A Section view helper
+
+== Examples ==
+
+<code title="Rendering sections">
+<f:section name="someSection">This is a section. {foo}</f:section>
+<f:render section="someSection" arguments="{foo: someVariable}" />
+</code>
+<output>
+the content of the section "someSection". The content of the variable {someVariable} will be available in the partial as {foo}
+</output>
+
+<code title="Rendering recursive sections">
+<f:section name="mySection">
+ <ul>
+   <f:for each="{myMenu}" as="menuItem">
+     <li>
+       {menuItem.text}
+       <f:if condition="{menuItem.subItems}">
+         <f:render section="mySection" arguments="{myMenu: menuItem.subItems}" />
+       </f:if>
+     </li>
+   </f:for>
+ </ul>
+</f:section>
+<f:render section="mySection" arguments="{myMenu: menu}" />
+</code>
+<output>
+<ul>
+  <li>menu1
+    <ul>
+      <li>menu1a</li>
+      <li>menu1b</li>
+    </ul>
+  </li>
+[...]
+(depending on the value of {menu})
+</output>
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\SectionViewHelper
 
 
 
@@ -2595,6 +2960,9 @@ ViewHelper that outputs a CSRF token which is required for "unsafe" requests (e.
 Note: You won't need this ViewHelper if you use the Form ViewHelper, because that creates a hidden field with
 the CSRF token for unsafe requests automatically. This ViewHelper is mainly useful in conjunction with AJAX.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\CsrfTokenViewHelper
+
+
 
 
 
@@ -2602,6 +2970,9 @@ f:security.ifAccess
 -------------------
 
 This view helper implements an ifAccess/else condition.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\IfAccessViewHelper
+
 
 
 
@@ -2622,6 +2993,9 @@ f:security.ifAuthenticated
 
 This view helper implements an ifAuthenticated/else condition.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\IfAuthenticatedViewHelper
+
+
 
 
 Arguments
@@ -2638,6 +3012,9 @@ f:security.ifHasRole
 --------------------
 
 This view helper implements an ifHasRole/else condition.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\IfHasRoleViewHelper
+
 
 
 
@@ -2662,6 +3039,9 @@ Switch view helper which can be used to render content depending on a value or e
 Implements what a basic switch()-PHP-method does.
 
 An optional default case can be specified which is rendered if none of the "f:case" conditions matches.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\SwitchViewHelper
+
 
 
 
@@ -2695,6 +3075,9 @@ Expected result::
 f:then
 ------
 
+"THEN" -> only has an effect inside of "IF". See If-ViewHelper for documentation.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\ThenViewHelper
 
 
 
@@ -2706,6 +3089,9 @@ f:translate
 Returns translated message using source message or key ID.
 
 Also replaces all placeholders with formatted versions of provided values.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\TranslateViewHelper
+
 
 
 
@@ -2799,6 +3185,9 @@ f:uri.action
 
 A view helper for creating URIs to actions.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\ActionViewHelper
+
+
 
 
 Arguments
@@ -2864,6 +3253,9 @@ f:uri.email
 Email uri view helper.
 Currently the specified email is simply prepended by "mailto:" but we might add spam protection.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\EmailViewHelper
+
+
 
 
 Arguments
@@ -2894,6 +3286,9 @@ f:uri.external
 
 A view helper for creating URIs to external targets.
 Currently the specified URI is simply passed through.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\ExternalViewHelper
+
 
 
 
@@ -2926,6 +3321,9 @@ f:uri.resource
 --------------
 
 A view helper for creating URIs to resources.
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\ResourceViewHelper
+
 
 
 
@@ -2997,6 +3395,9 @@ f:validation.ifHasErrors
 
 This view helper allows to check whether validation errors adhere to the current request.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Validation\\IfHasErrorsViewHelper
+
+
 
 
 Arguments
@@ -3015,6 +3416,9 @@ f:validation.results
 --------------------
 
 Validation results view helper
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Validation\\ResultsViewHelper
+
 
 
 
@@ -3082,6 +3486,17 @@ Expected result::
 f:widget.autocomplete
 ---------------------
 
+Usage:
+<f:input id="name" ... />
+<f:widget.autocomplete for="name" objects="{posts}" searchProperty="author">
+
+Make sure to include jQuery and jQuery UI in the HTML, like that:
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
+   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/base/jquery-ui.css" type="text/css" media="all" />
+   <link rel="stylesheet" href="http://static.jquery.com/ui/css/demo-docs-theme/ui.theme.css" type="text/css" media="all" />
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\AutocompleteViewHelper
 
 
 
@@ -3107,6 +3522,9 @@ f:widget.link
 
 widget.link ViewHelper
 This ViewHelper can be used inside widget templates in order to render links pointing to widget actions
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\LinkViewHelper
+
 
 
 
@@ -3163,6 +3581,9 @@ f:widget.paginate
 
 This ViewHelper renders a Pagination of objects.
 
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\PaginateViewHelper
+
+
 
 
 Arguments
@@ -3184,6 +3605,9 @@ f:widget.uri
 
 widget.uri ViewHelper
 This ViewHelper can be used inside widget templates in order to render URIs pointing to widget actions
+
+:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\UriViewHelper
+
 
 
 
