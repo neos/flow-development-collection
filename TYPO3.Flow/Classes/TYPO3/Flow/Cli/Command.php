@@ -15,7 +15,6 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Represents a Command
- *
  */
 class Command {
 
@@ -101,7 +100,7 @@ class Command {
 	 */
 	public function getShortDescription() {
 		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
-		return (count($lines) > 0) ? trim($lines[0]) : '<no description available>';
+		return ((count($lines) > 0) ? trim($lines[0]) : '<no description available>') . ($this->isDeprecated() ? ' <b>(DEPRECATED)</b>' : '');
 	}
 
 	/**
@@ -170,6 +169,17 @@ class Command {
 	 */
 	public function isInternal() {
 		return $this->getCommandMethodReflection()->isTaggedWith('internal');
+	}
+
+	/**
+	 * Tells if this command is deprecated and thus should be marked as such in help texts, user documentation etc.
+	 * Deprecated commands are still accessible through the regular command line interface, but should not be used
+	 * by users anymore.
+	 *
+	 * @return boolean
+	 */
+	public function isDeprecated() {
+		return $this->getCommandMethodReflection()->isTaggedWith('deprecated');
 	}
 
 	/**
