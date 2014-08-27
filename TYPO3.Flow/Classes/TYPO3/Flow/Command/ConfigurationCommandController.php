@@ -133,7 +133,7 @@ class ConfigurationCommandController extends CommandController {
 		} catch (SchemaValidationException $exception) {
 			$this->outputLine('<b>Error:</b>');
 			$this->outputFormatted($exception->getMessage(), array(), 4);
-			exit(2);
+			$this->quit(2);
 		}
 
 		if ($verbose) {
@@ -153,7 +153,7 @@ class ConfigurationCommandController extends CommandController {
 					$this->outputLine(' - %s -> %s', array($path, $error->render()));
 				}
 			}
-			exit(1);
+			$this->quit(1);
 		} else {
 			$this->outputLine('<b>All Valid!</b>');
 		}
@@ -184,7 +184,7 @@ class ConfigurationCommandController extends CommandController {
 
 		if (empty($data)) {
 			$this->outputLine('Data was not found or is empty');
-			exit(1);
+			$this->quit(1);
 		}
 
 		$this->outputLine(Yaml::dump($this->schemaGenerator->generate($data), 99));

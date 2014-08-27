@@ -254,7 +254,7 @@ class CoreCommandController extends CommandController {
 	public function shellCommand() {
 		if (!function_exists('readline_read_history')) {
 			$this->outputLine('Interactive Shell is not available on this system!');
-			exit(1);
+			$this->quit(1);
 		}
 		$subProcess = FALSE;
 		$pipes = array();

@@ -202,15 +202,15 @@ class RoutingCommandController extends CommandController {
 				if ($controllerObjectName === NULL) {
 					$this->outputLine('<b>Controller Error:</b>');
 					$this->outputLine('  !!! No Controller Object found !!!');
-					exit(1);
+					$this->quit(1);
 				}
 				$this->outputLine('<b>Controller:</b>');
 				$this->outputLine('  ' . $controllerObjectName);
-				exit(0);
+				$this->quit(0);
 			}
 		}
 		$this->outputLine('No matching Route was found');
-		exit(1);
+		$this->quit(1);
 	}
 
 	/**
