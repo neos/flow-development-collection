@@ -323,7 +323,6 @@ class ValidatorResolverTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$validatorResolver = $this->getAccessibleMock('TYPO3\Flow\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('TYPO3\Flow\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction));
-		$validatorResolver->expects($this->at(1))->method('createValidator')->with('FLOW8\Blog\Domain\Validator\BlogValidator')->will($this->returnValue(NULL));
 
 		$validatorResolver->_set('reflectionService', $mockReflectionService);
 
