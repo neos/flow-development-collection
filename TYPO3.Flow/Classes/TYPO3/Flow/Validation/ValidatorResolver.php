@@ -165,9 +165,6 @@ class ValidatorResolver {
 			}
 			if (strpos($methodParameter['type'], '\\') === FALSE) {
 				$typeValidator = $this->createValidator($methodParameter['type']);
-			} elseif (strpos($methodParameter['type'], '\\Model\\') !== FALSE) {
-				$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $methodParameter['type']) . 'Validator';
-				$typeValidator = $this->createValidator($possibleValidatorClassName);
 			} else {
 				$typeValidator = NULL;
 			}
