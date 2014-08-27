@@ -147,57 +147,65 @@ class DebugExceptionHandler extends AbstractExceptionHandler {
 	 * @return void
 	 */
 	protected function echoExceptionCli(\Exception $exception) {
+		$response = new \TYPO3\Flow\Cli\Response();
+
+		$backtraceSteps = $exception->getTrace();
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
 		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
-		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
+		$exceptionMessage = PHP_EOL . '<b>Uncaught Exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
+		$exceptionMessage .= '<b>Message</b>' . PHP_EOL;
+		foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
+			$exceptionMessage .= '  ' . $messageLine . PHP_EOL;
+		}
 
-		echo PHP_EOL . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
-		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
-		echo 'in line ' . $exception->getLine() . PHP_EOL;
+		$exceptionMessage .= PHP_EOL . '<b>More Information</b>' . PHP_EOL;
+		if ($exception->getCode()) {
+			$exceptionMessage .= '  Exception code ' . $exception->getCode() . PHP_EOL;
+		}
+		$exceptionMessage .= '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
 		if ($exception instanceof \TYPO3\Flow\Exception) {
-			echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
+			$exceptionMessage .= '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
 		}
 
 		$indent = '  ';
 		while (($exception = $exception->getPrevious()) !== NULL) {
-			echo PHP_EOL . $indent . 'Nested exception:' . PHP_EOL;
-			$pathPosition = strpos($exception->getFile(), 'Packages/');
-			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+			$exceptionMessage .= PHP_EOL . $indent . '<b>Nested exception: ' . get_class($exception) . '</b>' . PHP_EOL . PHP_EOL;
+			$exceptionMessage .= $indent . '<b>Message</b>' . PHP_EOL;
+			foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
+				$exceptionMessage .= $indent . '  ' . $messageLine . PHP_EOL;
+			}
 
-			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
-
-			echo PHP_EOL . $indent . 'Uncaught Exception in Flow ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
-			echo $indent . 'thrown in file ' . $filePathAndName . PHP_EOL;
-			echo $indent . 'in line ' . $exception->getLine() . PHP_EOL;
+			$exceptionMessage .= PHP_EOL . $indent . '<b>More Information</b>' . PHP_EOL;
+			if ($exception->getCode()) {
+				$exceptionMessage .= $indent . '  Exception code ' . $exception->getCode() . PHP_EOL;
+			}
+			$exceptionMessage .= $indent . '  File           ' . $filePathAndName . ' line ' . $exception->getLine() . PHP_EOL;
 			if ($exception instanceof \TYPO3\Flow\Exception) {
-				echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
+				$exceptionMessage .= $indent . '  Reference code ' . $exception->getReferenceCode() . PHP_EOL;
 			}
 
 			$indent .= '  ';
 		}
 
-		if (function_exists('xdebug_get_function_stack')) {
-			$backtraceSteps = xdebug_get_function_stack();
-		} else {
-			$backtraceSteps = debug_backtrace();
-		}
-
+		$exceptionMessage .= PHP_EOL . '<b>Stack trace</b>' . PHP_EOL;
 		for ($index = 0; $index < count($backtraceSteps); $index ++) {
-			echo PHP_EOL . '#' . $index . ' ';
+			$exceptionMessage .= PHP_EOL . '#' . $index . ' ';
 			if (isset($backtraceSteps[$index]['class'])) {
-				echo $backtraceSteps[$index]['class'];
+				$exceptionMessage .= $backtraceSteps[$index]['class'];
 			}
 			if (isset($backtraceSteps[$index]['function'])) {
-				echo '::' . $backtraceSteps[$index]['function'] . '()';
+				$exceptionMessage .= '::' . $backtraceSteps[$index]['function'] . '()';
 			}
-			echo PHP_EOL;
+			$exceptionMessage .= PHP_EOL;
 			if (isset($backtraceSteps[$index]['file'])) {
-				echo '   ' . $backtraceSteps[$index]['file'] . (isset($backtraceSteps[$index]['line']) ? ':' . $backtraceSteps[$index]['line'] : '') . PHP_EOL;
+				$exceptionMessage .= '   ' . $backtraceSteps[$index]['file'] . (isset($backtraceSteps[$index]['line']) ? ':' . $backtraceSteps[$index]['line'] : '') . PHP_EOL;
 			}
 		}
+		$exceptionMessage .= PHP_EOL;
 
-		echo PHP_EOL;
+		$response->setContent($exceptionMessage);
+		$response->send();
 		exit(1);
 	}
 
