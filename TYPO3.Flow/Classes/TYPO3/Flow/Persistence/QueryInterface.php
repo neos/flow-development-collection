@@ -166,6 +166,23 @@ interface QueryInterface {
 	public function getLimit();
 
 	/**
+	 * Sets the DISTINCT flag for this query.
+	 *
+	 * @param boolean $distinct
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
+	 * @api
+	 */
+	public function setDistinct($distinct = TRUE);
+
+	/**
+	 * Returns the DISTINCT flag for this query.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isDistinct();
+
+	/**
 	 * Sets the start offset of the result set to offset. Returns $this to
 	 * allow for chaining (fluid interface).
 	 *

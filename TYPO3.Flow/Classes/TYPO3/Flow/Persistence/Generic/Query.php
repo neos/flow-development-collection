@@ -62,6 +62,11 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	protected $limit;
 
 	/**
+	 * @var boolean
+	 */
+	protected $distinct = FALSE;
+
+	/**
 	 * @var integer
 	 */
 	protected $offset = 0;
@@ -185,6 +190,28 @@ class Query implements \TYPO3\Flow\Persistence\QueryInterface {
 	 */
 	public function getLimit() {
 		return $this->limit;
+	}
+
+	/**
+	 * Sets the DISTINCT flag for this query.
+	 *
+	 * @param boolean $distinct
+	 * @return \TYPO3\Flow\Persistence\QueryInterface
+	 * @api
+	 */
+	public function setDistinct($distinct = TRUE) {
+		$this->distinct = $distinct;
+		return $this;
+	}
+
+	/**
+	 * Returns the DISTINCT flag for this query.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isDistinct() {
+		return $this->distinct;
 	}
 
 	/**

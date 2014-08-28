@@ -23,7 +23,7 @@ class SubEntity extends SuperEntity {
 
 	/**
 	 * @var TestEntity
-	 * @ORM\OneToOne
+	 * @ORM\ManyToOne(inversedBy="subEntities")
 	 */
 	protected $parentEntity;
 
