@@ -58,7 +58,7 @@
 <IfModule mod_setenvif.c>
 
 	# Redirect authorization header when PHP is running as CGI
-	SetEnvIfNoCase Authorization "Basic ([a-zA-Z0-9\+/=]+)" REMOTE_AUTHORIZATION=$1
+	SetEnvIfNoCase Authorization "Basic ([a-zA-Z0-9\+/=]+)" REMOTE_AUTHORIZATION=$0
 
 </IfModule>
 
