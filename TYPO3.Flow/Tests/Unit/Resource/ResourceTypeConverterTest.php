@@ -46,7 +46,7 @@ class ResourceTypeConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('array'), $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals(array('string', 'array'), $this->resourceTypeConverter->getSupportedSourceTypes(), 'Source types do not match');
 		$this->assertEquals('TYPO3\Flow\Resource\Resource', $this->resourceTypeConverter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->resourceTypeConverter->getPriority(), 'Priority does not match');
 	}
