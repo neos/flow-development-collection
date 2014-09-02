@@ -3,7 +3,7 @@
 TYPO3 Flow TypeConverter Reference
 ==================================
 
-This reference was automatically generated from code on 2014-08-26
+This reference was automatically generated from code on 2014-09-02
 
 
 ArrayConverter
@@ -274,33 +274,6 @@ as the serialized value.
 :Target type: string
 :Source type: TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface
 
-
-
-
-
-ResourceConverter
------------------
-
-An type converter for converting strings and arrays to Resource objects.
-
-If the source
-
-- is a string looking like a SHA1 (40 characters [0-9a-f]) or
-- is an array and contains the key 'hash' with a value looking like a SHA1 (40 characters [0-9a-f])
-
-the coverter will look up an existing Resource(Pointer) with that hash and return it if found. If that fails,
-the converter will try to import a file named like that hash from the configured CONFIGURATION_RESOURCE_LOAD_PATH.
-
-If no hash is given in an array source but the key 'data' is set, the content of that key is assumed a binary string
-and a Resource representing this content is created and returned.
-
-The imported Resource will be given a 'filename' if set in the source array in both cases (import from file or data).
-
-:Priority: 2
-:Target type: TYPO3\Flow\Resource\Resource
-:Source types:
- * string
- * array
 
 
 
