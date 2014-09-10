@@ -67,7 +67,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			array(array('foo' => 'a string', 'bar' => 'a string'), TRUE),
 			array(array('foo' => 123, 'bar' => 'a string'), FALSE),
 			array(array('foo' => NULL, 'bar' => 'a string'), FALSE),
-			array(array('bar'=> 'string'), FALSE)
+			array(array('bar' => 'string'), FALSE)
 		);
 	}
 
@@ -105,7 +105,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesDisallowProperty($value, $expectSuccess) {
 		$schema = array(
-			'disallow'=>'integer'
+			'disallow' => 'integer'
 		);
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
 	}
@@ -128,7 +128,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesEnumProperty($value, $expectSuccess) {
 		$schema = array(
-			'enum'=>array(1,2,3)
+			'enum' => array(1,2,3)
 		);
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
 	}
@@ -172,7 +172,37 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$firstPathError = $pathErrors[0];
 		$this->assertEquals($firstPathError->getCode(), 1328557141);
 		$this->assertEquals($firstPathError->getArguments(), array('type=number', 'type=string'));
+	}
 
+	/**
+	 * @test
+	 */
+	public function validateHandlesMultipleTypes() {
+		$schema = array(
+			'type' => 'dictionary',
+			'properties' => array(
+				'foo' => array(
+					'type' => array('dictionary', 'string')
+				)
+			)
+		);
+
+		$result = $this->configurationValidator->validate(array(
+			'foo' => array(
+				'property' => 'value'
+			)
+		), $schema);
+		$this->assertSuccess($result);
+
+		$result = $this->configurationValidator->validate(array(
+			'foo' => 'value'
+		), $schema);
+		$this->assertSuccess($result);
+
+		$result = $this->configurationValidator->validate(array(
+			'foo' => FALSE
+		), $schema);
+		$this->assertError($result);
 	}
 
 	/// INTEGER ///
@@ -229,7 +259,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function validateHandlesNumberTypePropertyWithMinimumAndMaximumConstraintDataProvider (){
+	public function validateHandlesNumberTypePropertyWithMinimumAndMaximumConstraintDataProvider () {
 		return array(
 			array(33, TRUE),
 			array(99, FALSE),
@@ -270,7 +300,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function validateHandlesNumberTypePropertyWithExclusiveMinimumAndMaximumConstraintDataProvider (){
+	public function validateHandlesNumberTypePropertyWithExclusiveMinimumAndMaximumConstraintDataProvider () {
 		return array(
 			array(10, FALSE),
 			array(22, FALSE),
@@ -701,7 +731,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		return array(
 			array(array(1, 2, 3), TRUE),
 			array('foo', FALSE),
-			array(array('foo'=>'bar'), FALSE)
+			array(array('foo' => 'bar'), FALSE)
 		);
 	}
 
@@ -733,7 +763,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function validateHandlesArrayTypePropertyWithItemsConstraint($value, $expectedResult) {
 		$schema = array(
 			'type' => 'array',
-			'items'=> 'integer'
+			'items' => 'integer'
 		);
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
 	}
@@ -755,8 +785,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function validateHandlesArrayTypePropertyWithItemsSchemaConstraint($value, $expectedResult) {
 		$schema = array(
 			'type' => 'array',
-			'items'=> array (
-				'type'=>'integer'
+			'items' => array(
+				'type' => 'integer'
 			)
 		);
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
@@ -779,8 +809,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function validateHandlesArrayTypePropertyWithItemsArrayConstraint($value, $expectedResult) {
 		$schema = array(
 			'type' => 'array',
-			'items'=> array (
-				array('type'=>'integer'),
+			'items' => array(
+				array('type' => 'integer'),
 				'string'
 			)
 		);
@@ -839,9 +869,9 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesDictionaryTypeWithPropertiesConstraintDataProvider() {
 		return array(
-			array(array('foo'=>123, 'bar'=>'baz'), TRUE),
-			array(array('foo'=>'baz', 'bar'=>'baz'), FALSE),
-			array(array('foo'=>123, 'bar'=>123), FALSE)
+			array(array('foo' => 123, 'bar' => 'baz'), TRUE),
+			array(array('foo' => 'baz', 'bar' => 'baz'), FALSE),
+			array(array('foo' => 123, 'bar' => 123), FALSE)
 		);
 	}
 
@@ -854,7 +884,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'type' => 'dictionary',
 			'properties' => array(
 				'foo' => 'integer',
-				'bar' => array('type'=>'string')
+				'bar' => array('type' => 'string')
 			)
 		);
 		$this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectedResult);
@@ -865,7 +895,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesDictionaryTypeWithPatternPropertiesConstraintDataProvider() {
 		return array(
-			array(array("ab1" => 'string'), TRUE),
+			array(array('ab1' => 'string'), TRUE),
 			array(array('bbb' => 123), FALSE),
 			array(array('ab' => 123), FALSE),
 			array(array('ad12' => 'string'), FALSE),
@@ -892,7 +922,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesDictionaryTypeWithFormatPropertiesConstraintDataProvider() {
 		return array(
-			array(array("127.0.0.1" => 'string'), TRUE),
+			array(array('127.0.0.1' => 'string'), TRUE),
 			array(array('string' => 123), FALSE),
 			array(array('127.0.0.1' => 123), FALSE),
 		);
@@ -919,8 +949,8 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function validateHandlesDictionaryTypeWithAdditionalPropertyFalseConstraintDataProvider() {
 		return array(
 			array(array('empty' => NULL), TRUE),
-			array(array('foo'=>123, 'bar'=>'baz'), TRUE),
-			array(array('foo'=>123, 'bar'=>'baz', 'baz'=>'blah'), FALSE)
+			array(array('foo' => 123, 'bar' => 'baz'), TRUE),
+			array(array('foo' => 123, 'bar' => 'baz', 'baz' => 'blah'), FALSE)
 		);
 	}
 
@@ -934,7 +964,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'properties' => array(
 				'empty' => 'null',
 				'foo' => 'integer',
-				'bar' => array('type'=>'string')
+				'bar' => array('type' => 'string')
 			),
 			'additionalProperties' => FALSE
 		);
@@ -946,9 +976,9 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function validateHandlesDictionaryTypeWithAdditionalPropertySchemaConstraintDataProvider() {
 		return array(
-			array(array('foo'=>123, 'bar'=>'baz'), TRUE),
-			array(array('foo'=>123, 'bar'=>'baz', 'baz'=>123), TRUE),
-			array(array('foo'=>123, 'bar'=>123, 'baz'=>'string'), FALSE)
+			array(array('foo' => 123, 'bar' => 'baz'), TRUE),
+			array(array('foo' => 123, 'bar' => 'baz', 'baz' => 123), TRUE),
+			array(array('foo' => 123, 'bar' => 123, 'baz' => 'string'), FALSE)
 		);
 	}
 
@@ -961,7 +991,7 @@ class SchemaValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'type' => 'dictionary',
 			'properties' => array(
 				'foo' => 'integer',
-				'bar' => array('type'=>'string')
+				'bar' => array('type' => 'string')
 			),
 			'additionalProperties' => 'integer'
 		);
