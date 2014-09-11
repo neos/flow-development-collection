@@ -359,15 +359,17 @@ class Uri {
 			}
 		}
 		$uriString .= $this->host;
-		switch ($this->scheme) {
-			case 'http':
-				$uriString .= ($this->port !== 80 ? ':' . $this->port : '');
-			break;
-			case 'https':
-				$uriString .= ($this->port !== 443 ? ':' . $this->port : '');
-			break;
-			default:
-				$uriString .= (isset($this->port) ? ':' . $this->port : '');
+		if ($this->port !== NULL) {
+			switch ($this->scheme) {
+				case 'http':
+					$uriString .= ($this->port !== 80 ? ':' . $this->port : '');
+					break;
+				case 'https':
+					$uriString .= ($this->port !== 443 ? ':' . $this->port : '');
+					break;
+				default:
+					$uriString .= (isset($this->port) ? ':' . $this->port : '');
+			}
 		}
 		$uriString .= isset($this->path) ? $this->path : '';
 		$uriString .= isset($this->query) ? '?' . $this->query : '';
