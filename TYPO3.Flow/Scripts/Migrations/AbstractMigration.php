@@ -271,10 +271,9 @@ abstract class AbstractMigration {
 		}
 
 		$yamlPathsAndFilenames = Files::readDirectoryRecursively($this->targetPackageData['path'] . '/Configuration', 'yaml', TRUE);
-		$expectedConfigurationFileName = $configurationType . '.yaml';
 		$configurationPathsAndFilenames = array_filter($yamlPathsAndFilenames,
-			function ($pathAndFileName) use ($expectedConfigurationFileName) {
-				if (basename($pathAndFileName) === $expectedConfigurationFileName) {
+			function ($pathAndFileName) use ($configurationType) {
+				if (strpos(basename($pathAndFileName, '.yaml'), $configurationType) === 0) {
 					return TRUE;
 				} else {
 					return FALSE;
