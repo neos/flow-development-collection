@@ -54,7 +54,6 @@ class ViewConfigurationManager {
 	 * @return array
 	 */
 	public function getViewConfiguration(ActionRequest $request) {
-		$cacheIdentifiersParts = array();
 		$cacheIdentifier = $this->createCacheIdentifier($request);
 
 		$viewConfiguration = $this->cache->get($cacheIdentifier);
@@ -101,6 +100,7 @@ class ViewConfigurationManager {
 	 * @return string
 	 */
 	protected function createCacheIdentifier($request) {
+		$cacheIdentifiersParts = array();
 		do {
 			$cacheIdentifiersParts[] = $request->getControllerPackageKey();
 			$cacheIdentifiersParts[] = $request->getControllerSubpackageKey();
