@@ -24,7 +24,7 @@ use TYPO3\Flow\Annotations as Flow;
  * Variations from the spec:
  * - The "type" constraint is required for all properties.
  * - The validator only executes the checks that make sense for a specific type
- *   -> see list of possible contstraints below.
+ *   -> see list of possible constraints below.
  * - The "format" constraint for string type has additional class-name and instance-name options.
  * - The "dependencies" constraint of the spec is not implemented.
  * - Similar to "patternProperties" "formatProperties" can be specified specified for dictionaries
@@ -34,7 +34,7 @@ use TYPO3\Flow\Annotations as Flow;
  * - disallow
  * - enum
  *
- * Additional Constraints for types:
+ * Additional constraints for types:
  * - string: pattern, minLength, maxLength, format(date-time|date|time|uri|email|ipv4|ipv6|ip-address|host-name|class-name|interface-name)
  * - number: maximum, minimum, exclusiveMinimum, exclusiveMaximum, divisibleBy
  * - integer: maximum, minimum, exclusiveMinimum, exclusiveMaximum, divisibleBy
@@ -43,6 +43,9 @@ use TYPO3\Flow\Annotations as Flow;
  * - dictionary: properties, patternProperties, formatProperties, additionalProperties
  * - null: --
  * - any: --
+ *
+ * Combine types to allow mixed types, the primitive type of the given value is used to determine which type to validate for:
+ * - type: ['integer', 'string']
  *
  * @Flow\Scope("singleton")
  */
@@ -119,12 +122,20 @@ class SchemaValidator {
 	protected function validateType($value, array $schema) {
 		$result = new \TYPO3\Flow\Error\Result();
 		if (isset($schema['type'])) {
-			switch ($schema['type']) {
+			if (is_array($schema['type'])) {
+				$type = $schema['type'][0];
+				if (in_array(gettype($value), $schema['type'])) {
+					$type = gettype($value);
+				}
+			} else {
+				$type = $schema['type'];
+			}
+			switch ($type) {
 				case 'string':
-					$result->merge( $this->validateStringType($value, $schema));
+					$result->merge($this->validateStringType($value, $schema));
 					break;
 				case 'number':
-					$result->merge( $this->validateNumberType($value, $schema));
+					$result->merge($this->validateNumberType($value, $schema));
 					break;
 				case 'integer':
 					$result->merge($this->validateIntegerType($value, $schema));
