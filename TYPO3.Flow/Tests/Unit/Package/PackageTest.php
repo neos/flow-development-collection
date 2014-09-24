@@ -331,4 +331,18 @@ class PackageTest extends UnitTestCase {
 
 		$this->assertEquals($expectedClassFilesArray, $actualClassFilesArray);
 	}
+
+	/**
+	 * @test
+	 */
+	public function packageMetaDataContainsPackageType() {
+		$packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
+		mkdir($packagePath, 0777, TRUE);
+		file_put_contents($packagePath . 'composer.json', '{"name": "acme/mypackage", "type": "flow-test"}');
+
+		$package = new Package($this->getMock('TYPO3\\Flow\\Package\\PackageManager'), 'Acme.MyPackage', $packagePath, 'Classes');
+
+		$metaData = $package->getPackageMetaData();
+		$this->assertEquals('flow-test', $metaData->getPackageType());
+	}
 }
