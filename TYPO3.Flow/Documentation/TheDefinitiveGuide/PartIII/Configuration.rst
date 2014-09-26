@@ -287,12 +287,13 @@ of a classes' package and output some option value:
 Injection of single settings into properties
 --------------------------------------------
 
-TYPO3 Flow provides a way to inject specific settings through the Inject annotation directly into your properties.
+TYPO3 Flow provides a way to inject specific settings through the InjectSettings annotation directly into your properties.
 The annotation provides two options related to settings injection:
 
-* ``setting`` specifies the path to the setting that should be injected
 * ``package`` is optional and specifies the package to get the setting from. Defaults to the package the current
   class belongs to.
+* ``path`` is optional and specifies the path to the setting that should be injected. If it's not set all settings of
+  the current (or specified) package are injected.
 
 .. note::
   As a best-practice for testing and extensibility you should also provide setters for
@@ -316,22 +317,30 @@ The annotation provides two options related to settings injection:
 
 	namespace Acme\Demo;
 
+	use TYPO3\Flow\Annotations as Flow;
+
 	class SomeClass {
 
 		/**
+		 * @Flow\InjectSettings(path="administrator.name")
 		 * @var string
-		 * @Flow\Inject(setting="administrator.name")
 		 */
 		protected $name;
 
 		/**
+		 * @Flow\InjectSettings(package="SomeOther.Package", path="email")
 		 * @var string
-		 * @Flow\Inject(setting="email", package="SomeOther.Package")
 		 */
 		protected $email;
 
 		/**
-		 * Set the name
+		 * @Flow\InjectSettings(package="SomeOther.Package")
+		 * @var array
+		 */
+		protected $someOtherPackageSettings = array();
+
+		/**
+		 * Overrides the name
 		 *
 		 * @param string $name
 		 * @return void
@@ -341,23 +350,13 @@ The annotation provides two options related to settings injection:
 		}
 
 		/**
-		 * Set the email
+		 * Overrides the email
 		 *
 		 * @param string $email
 		 * @return void
 		 */
 		public function setEmail($email) {
 			$this->email = $email;
-		}
-
-		/**
-		 * Outputs some settings of the "Demo" package.
-		 *
-		 * @return void
-		 */
-		public function theMethod() {
-			echo $this->name;
-			echo $this->email;
 		}
 	}
 

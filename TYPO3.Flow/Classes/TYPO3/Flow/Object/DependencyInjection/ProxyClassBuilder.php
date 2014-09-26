@@ -432,7 +432,7 @@ class ProxyClassBuilder {
 					if ($propertyValue instanceof Configuration) {
 						$commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfiguration($objectConfiguration, $propertyName, $propertyValue));
 					} else {
-						$commands = array_merge($commands, $this->buildPropertyInjectionCodeByString($objectConfiguration, $propertyName, $propertyValue));
+						$commands = array_merge($commands, $this->buildPropertyInjectionCodeByString($objectConfiguration, $propertyConfiguration, $propertyName, $propertyValue));
 					}
 
 				break;
@@ -504,31 +504,19 @@ class ProxyClassBuilder {
 	 * Builds code which injects an object which was specified by its object name
 	 *
 	 * @param Configuration $objectConfiguration Configuration of the object to inject into
-	 * @param $propertyName
-	 * @param $propertyObjectName
+	 * @param ConfigurationProperty $propertyConfiguration
 	 * @param string $propertyName Name of the property to inject
 	 * @param string $propertyObjectName Object name of the object to inject
 	 * @return array PHP code
 	 * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
 	 */
-	public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, $propertyName, $propertyObjectName) {
+	public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, ConfigurationProperty $propertyConfiguration, $propertyName, $propertyObjectName) {
 		$className = $objectConfiguration->getClassName();
-		$injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, 'TYPO3\Flow\Annotations\Inject');
 
 		if (strpos($propertyObjectName, '.') !== FALSE) {
 			$settingPath = explode('.', $propertyObjectName);
 			$settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
 			$propertyObjectName = Arrays::getValueByPath($settings, $settingPath);
-		}
-
-		if ($injectAnnotation !== NULL && $injectAnnotation->setting !== NULL) {
-			if ($injectAnnotation->package === NULL) {
-				$settingPath = $objectConfiguration->getPackageKey();
-			} else {
-				$settingPath = $injectAnnotation->package;
-			}
-			$settingPath .= '.' . $injectAnnotation->setting;
-			return array('$this->' . $propertyName . ' = \TYPO3\Flow\Core\Bootstrap::$staticObjectManager->get(\'TYPO3\Flow\Configuration\ConfigurationManager\')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $settingPath . '\');');
 		}
 
 		if (!isset($this->objectConfigurations[$propertyObjectName])) {
@@ -554,7 +542,7 @@ class ProxyClassBuilder {
 			return $result;
 		}
 
-		if ($injectAnnotation->lazy === TRUE && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+		if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
 			return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
 		} else {
 			return array('$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';');

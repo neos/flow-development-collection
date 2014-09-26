@@ -19,22 +19,34 @@ use TYPO3\Flow\Annotations as Flow;
 class ClassWithSettings {
 
 	/**
-	 * @Flow\Inject(setting="some.nonExisting.setting")
+	 * @Flow\InjectSettings(path="some.nonExisting.setting")
 	 * @var string
 	 */
 	protected $nonExistingSetting;
 
 	/**
-	 * @Flow\Inject(setting="tests.functional.settingInjection.someSetting")
+	 * @Flow\InjectSettings(path="tests.functional.settingInjection.someSetting")
 	 * @var string
 	 */
 	protected $injectedSettingA;
 
 	/**
-	 * @Flow\Inject(setting="tests.functional.settingInjection.someSetting", Package="TYPO3.Flow")
+	 * @Flow\InjectSettings(path="tests.functional.settingInjection.someSetting", package="TYPO3.Flow")
 	 * @var string
 	 */
 	protected $injectedSettingB;
+
+	/**
+	 * @Flow\InjectSettings(package="TYPO3.Flow")
+	 * @var array
+	 */
+	protected $injectedSpecifiedPackageSettings;
+
+	/**
+	 * @Flow\InjectSettings
+	 * @var array
+	 */
+	protected $injectedCurrentPackageSettings;
 
 	/**
 	 * @var array
@@ -76,5 +88,20 @@ class ClassWithSettings {
 	public function getSettings() {
 		return $this->settings;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getInjectedSpecifiedPackageSettings() {
+		return $this->injectedSpecifiedPackageSettings;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getInjectedCurrentPackageSettings() {
+		return $this->injectedCurrentPackageSettings;
+	}
+
 
 }

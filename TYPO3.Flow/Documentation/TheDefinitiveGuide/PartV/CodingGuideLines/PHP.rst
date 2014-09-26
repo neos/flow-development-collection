@@ -767,7 +767,9 @@ the order given here should be kept for the sake of consistency.
 * @Flow\Identity
 * @Flow\Transient
 * @Flow\Lazy
+* @Flow\IgnoreValidation
 * @Flow\Inject
+* @Flow\InjectSettings
 * @Flow\Validate
 * @var
 * @api

@@ -11,11 +11,25 @@ namespace TYPO3\Flow\Tests\Functional\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+
 /**
  * Functional tests for the Dependency Injection features
  *
  */
-class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class DependencyInjectionTest extends FunctionalTestCase {
+
+	/**
+	 * @var ConfigurationManager
+	 */
+	protected $configurationManager;
+
+	public function setUp() {
+		parent::setUp();
+
+		$this->configurationManager = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager');
+	}
 
 	/**
 	 * @test
@@ -175,8 +189,29 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function injectionOfAllSettings() {
 		$classWithSettings = new Fixtures\ClassWithSettings();
-		$actualSettings = $classWithSettings->getSettings();
-		$this->assertSame($actualSettings['tests']['functional']['settingInjection']['someSetting'], 'injected setting');
+		$actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+		$this->assertSame($actualSettings, $classWithSettings->getSettings());
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function injectionOfSpecifiedPackageSettings() {
+		$classWithSettings = new Fixtures\ClassWithSettings();
+
+		$actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+		$this->assertSame($actualSettings, $classWithSettings->getInjectedSpecifiedPackageSettings());
+	}
+
+	/**
+	 * @test
+	 */
+	public function injectionOfCurrentPackageSettings() {
+		$classWithSettings = new Fixtures\ClassWithSettings();
+
+		$actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow');
+		$this->assertSame($actualSettings, $classWithSettings->getInjectedCurrentPackageSettings());
 	}
 
 	/**
@@ -192,7 +227,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function injectionOfSingleSettings() {
 		$classWithSettings = new Fixtures\ClassWithSettings();
-		$this->assertSame($classWithSettings->getInjectedSettingA(), 'injected setting');
+		$this->assertSame('injected setting', $classWithSettings->getInjectedSettingA());
 	}
 
 	/**
@@ -200,6 +235,7 @@ class DependencyInjectionTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function injectionOfSingleSettingsFromSpecificPackage() {
 		$classWithSettings = new Fixtures\ClassWithSettings();
-		$this->assertSame($classWithSettings->getInjectedSettingB(), 'injected setting');
+		$this->assertSame('injected setting', $classWithSettings->getInjectedSettingB());
 	}
+
 }

@@ -52,15 +52,23 @@ class ConfigurationProperty {
 	protected $autowiring = \TYPO3\Flow\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
 
 	/**
+	 * Should this property be lazy loaded
+	 *
+	 * @var boolean
+	 */
+	protected $lazyLoading = TRUE;
+
+	/**
 	 * Constructor - sets the name, type and value of the property
 	 *
 	 * @param string $name Name of the property
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+	 * @param boolean $lazyLoading
 	 */
-	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
-		$this->set($name, $value, $type, $objectConfiguration);
+	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL, $lazyLoading = TRUE) {
+		$this->set($name, $value, $type, $objectConfiguration, $lazyLoading);
 	}
 
 	/**
@@ -70,13 +78,15 @@ class ConfigurationProperty {
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @param \TYPO3\Flow\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+	 * @param boolean $lazyLoading
 	 * @return void
 	 */
-	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
+	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL, $lazyLoading = TRUE) {
 		$this->name = $name;
 		$this->value = $value;
 		$this->type = $type;
 		$this->objectConfiguration = $objectConfiguration;
+		$this->lazyLoading = $lazyLoading;
 	}
 
 	/**
@@ -132,6 +142,15 @@ class ConfigurationProperty {
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;
+	}
+
+	/**
+	 * If this property can be lazy loaded if the dependency injection mechanism offers that.
+	 *
+	 * @return boolean
+	 */
+	public function isLazyLoading() {
+		return $this->lazyLoading;
 	}
 
 }

@@ -12,42 +12,32 @@ namespace TYPO3\Flow\Annotations;
  *                                                                        */
 
 /**
- * Used to enable property injection.
+ * Used to enable property injection for settings.
  *
  * Flow will build Dependency Injection code for the property and try
- * to inject a value as specified by the var annotation.
+ * to inject the configured setting.
  *
  * @Annotation
  * @Target("PROPERTY")
  */
-final class Inject {
-
-	/**
-	 * Whether the dependency should be injected instantly or if a lazy dependency
-	 * proxy should be injected instead
-	 *
-	 * @var boolean
-	 */
-	public $lazy = TRUE;
+final class InjectSettings {
 
 	/**
 	 * Path of a setting (without the package key) which should be injected into the property.
+	 *
 	 * Example: security.enable
 	 *
 	 * @var string
-	 * @deprecated since 2.3. Use the InjectSettings annotation instead.
 	 */
-	public $setting;
+	public $path;
 
 	/**
-	 * Defines the package to be used for retrieving a setting specified via the "setting" parameter. If no package
-	 * is specified, we'll assume the package to be the same which contains the class where the Inject annotation is
-	 * used.
+	 * Defines the package key to be used for retrieving a setting specified via the "package" parameter. If no package key
+	 * is specified, we'll assume the package to be the same which contains the class where the Inject annotation is used.
 	 *
 	 * Example: TYPO3.Flow
 	 *
 	 * @var string
-	 * @deprecated since 2.3. Use the InjectSettings annotation instead.
 	 */
 	public $package;
 
@@ -55,11 +45,8 @@ final class Inject {
 	 * @param array $values
 	 */
 	public function __construct(array $values) {
-		if (isset($values['lazy'])) {
-			$this->lazy = (boolean)$values['lazy'];
-		}
-		if (isset($values['setting'])) {
-			$this->setting = (string)$values['setting'];
+		if (isset($values['path'])) {
+			$this->path = (string)$values['path'];
 		}
 		if (isset($values['package'])) {
 			$this->package = (string)$values['package'];
