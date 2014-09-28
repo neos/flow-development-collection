@@ -120,7 +120,11 @@ class Package implements PackageInterface {
 		$this->packageKey = $packageKey;
 		$this->packagePath = Files::getNormalizedPath($packagePath);
 		if (isset($this->getComposerManifest()->autoload->{'psr-0'})) {
-			$this->classesPath = Files::getNormalizedPath($this->packagePath . $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getNamespace()});
+			$autoloadPath = $this->getComposerManifest()->autoload->{'psr-0'}->{$this->getNamespace()};
+			if (is_array($autoloadPath)) {
+				$autoloadPath = $autoloadPath[0];
+			}
+			$this->classesPath = Files::getNormalizedPath($this->packagePath . $autoloadPath);
 		} else {
 			$this->classesPath = Files::getNormalizedPath($this->packagePath . $classesPath);
 		}
